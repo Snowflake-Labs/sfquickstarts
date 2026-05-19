@@ -25,7 +25,8 @@ if [ ! -f "config.env" ]; then
         echo -e "${YELLOW}IMPORTANT: Please edit config.env with your values before continuing.${NC}"
         echo "At minimum, update:"
         echo "  - SNOWFLAKE_CONNECTION (your Snowflake CLI connection name)"
-        echo "  - Storage provider settings (or set USE_EXISTING_VOLUME=true)"
+        echo "  - By default, Iceberg tables use Snowflake-managed storage (no cloud bucket needed)."
+        echo "  - For customer-managed storage only: set USE_SNOWFLAKE_STORAGE=false and configure an external volume."
         echo ""
         read -p "Open config.env in your editor now, then press Enter to continue... "
     else
@@ -36,6 +37,10 @@ fi
 
 # Load configuration
 source config.env
+
+# Default: Snowflake-managed Iceberg storage (no external volume object).
+# Set USE_SNOWFLAKE_STORAGE=false in config.env to use S3/GCS/Azure via external volume.
+USE_SNOWFLAKE_STORAGE="${USE_SNOWFLAKE_STORAGE:-true}"
 
 # Set default connection name if not specified
 SNOWFLAKE_CONNECTION="${SNOWFLAKE_CONNECTION:-default}"
@@ -53,6 +58,11 @@ echo -e "${GREEN}Configuration loaded successfully${NC}"
 echo "  Connection: $SNOWFLAKE_CONNECTION"
 echo "  Database: $SNOWFLAKE_DATABASE"
 echo "  Warehouse: $SNOWFLAKE_WAREHOUSE"
+if [ "$USE_SNOWFLAKE_STORAGE" = "true" ]; then
+    echo "  Iceberg storage: Snowflake-managed (SNOWFLAKE_MANAGED)"
+else
+    echo "  Iceberg storage: Customer-managed external volume"
+fi
 echo ""
 
 # Test the connection
@@ -116,6 +126,15 @@ echo ""
 echo -e "${YELLOW}Step 2: Generating external volume configuration...${NC}"
 
 generate_external_volume_sql() {
+    if [ "$USE_SNOWFLAKE_STORAGE" = "true" ]; then
+        cat << 'EOF'
+-- Snowflake-managed storage for Iceberg tables (reserved volume SNOWFLAKE_MANAGED).
+-- No CREATE EXTERNAL VOLUME is required.
+-- See: https://docs.snowflake.com/en/user-guide/tables-iceberg-internal-storage
+EOF
+        return
+    fi
+
     if [ "$USE_EXISTING_VOLUME" == "true" ] && [ -n "$EXISTING_VOLUME_NAME" ]; then
         echo "-- Using existing external volume: $EXISTING_VOLUME_NAME"
         echo "-- ALTER DATABASE command will be added to database creation script"
@@ -221,16 +240,21 @@ cp 05_create_governance.sql generated_sql/
 cp 06_load_sample_data.sql generated_sql/
 cp 07_create_agent.sql generated_sql/
 
-# Update external volume references in SQL files based on configuration
-if [ "$USE_EXISTING_VOLUME" == "true" ] && [ -n "$EXISTING_VOLUME_NAME" ]; then
-    # Replace volume name in table definitions with existing volume
-    sed -i.bak "s/FLEET_ICEBERG_VOL/$EXISTING_VOLUME_NAME/g" generated_sql/*.sql
-    # Append ALTER DATABASE to the end of database creation script (after database exists)
+# Set database default external volume and align table DDL with chosen storage
+if [ "$USE_SNOWFLAKE_STORAGE" = "true" ]; then
+    if [ "$USE_EXISTING_VOLUME" = "true" ] && [ -n "$EXISTING_VOLUME_NAME" ]; then
+        echo -e "${YELLOW}Note: USE_SNOWFLAKE_STORAGE=true — ignoring USE_EXISTING_VOLUME / EXISTING_VOLUME_NAME.${NC}"
+    fi
+    echo "" >> generated_sql/02_create_database.sql
+    echo "-- Default Iceberg storage: Snowflake-managed" >> generated_sql/02_create_database.sql
+    echo "ALTER DATABASE $SNOWFLAKE_DATABASE SET EXTERNAL_VOLUME = 'SNOWFLAKE_MANAGED';" >> generated_sql/02_create_database.sql
+elif [ "$USE_EXISTING_VOLUME" == "true" ] && [ -n "$EXISTING_VOLUME_NAME" ]; then
+    sed -i.bak "s/SNOWFLAKE_MANAGED/$EXISTING_VOLUME_NAME/g" generated_sql/*.sql
     echo "" >> generated_sql/02_create_database.sql
     echo "-- Set default external volume for the database" >> generated_sql/02_create_database.sql
     echo "ALTER DATABASE $SNOWFLAKE_DATABASE SET EXTERNAL_VOLUME = '$EXISTING_VOLUME_NAME';" >> generated_sql/02_create_database.sql
 else
-    # Creating a new external volume - add ALTER DATABASE to set it as default
+    sed -i.bak "s/SNOWFLAKE_MANAGED/FLEET_ICEBERG_VOL/g" generated_sql/*.sql
     echo "" >> generated_sql/02_create_database.sql
     echo "-- Set default external volume for the database" >> generated_sql/02_create_database.sql
     echo "ALTER DATABASE $SNOWFLAKE_DATABASE SET EXTERNAL_VOLUME = 'FLEET_ICEBERG_VOL';" >> generated_sql/02_create_database.sql

@@ -2,19 +2,19 @@ author: Vino Duraisamy, Chase Thomas
 id: getting-started-with-snowpipe-streaming-v2
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
 language: en
-summary: Stream data into Snowflake in real-time using Snowpipe Streaming V2 (high-performance architecture) with the Python SDK and monitor it with a live Streamlit dashboard.
+summary: Stream data into Snowflake in real-time using Snowpipe Streaming high-performance architecture with the Python SDK and monitor it with a live Streamlit dashboard.
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
-# Getting Started with Snowpipe Streaming V2 and Cortex Code
+# Getting Started with Snowpipe Streaming high-performance architecture and Cortex Code
 <!---------------------------->
 
 ## Overview
 
 Duration: 3
 
-Getting data into Snowflake shouldn't require staging files, managing pipes, or writing boilerplate infrastructure code. With [Snowpipe Streaming V2](https://www.snowflake.com/en/engineering-blog/next-gen-snowpipe-streaming-architecture/) (SSV2), our next-gen high-performance architecture lets you stream rows directly into Snowflake tables with low latency — no staging files, no explicit pipe creation required.
+Getting data into Snowflake shouldn't require staging files, managing pipes, or writing boilerplate infrastructure code. With [Snowpipe Streaming high-performance architecture](https://www.snowflake.com/en/engineering-blog/next-gen-snowpipe-streaming-architecture/), our next-gen architecture lets you stream rows directly into Snowflake tables with low latency — no staging files, no explicit pipe creation required.
 
 The key difference from classic Snowpipe Streaming is the use of a **default auto-created pipe**. When you first stream data into a table, Snowflake automatically creates a managed pipe named `<TABLE_NAME>-streaming`. There is no `CREATE PIPE` SQL needed.
 
@@ -28,7 +28,7 @@ In this guide, you will build an end-to-end streaming pipeline in under a few mi
 
 ### What You Will Learn
 
-- How Snowpipe Streaming V2 (SSV2) works
+- How Snowpipe Streaming high-performance architecture works
 - How to configure RSA key-pair (JWT) authentication for the Python SDK
 - How to use the `snowpipe-streaming` Python SDK to open channels and stream rows
 - How to deploy a real-time Streamlit in Snowflake dashboard
@@ -51,6 +51,84 @@ Cortex Code is Snowflake's CLI-based AI coding assistant. It understands Snowfla
 - OpenSSL installed locally (included by default on macOS and most Linux distributions)
 - A terminal (macOS Terminal, Linux shell, or WSL2 on Windows)
 - Basic familiarity with SQL and Python
+
+<!---------------------------->
+
+## Automate With Cortex Code
+
+Duration: 5
+
+Everything you did manually in this guide can be fully automated with [Cortex Code](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code) — Snowflake's CLI-based AI coding assistant. Two open-source Cortex Code skills handle the entire pipeline for you, from RSA key generation to live dashboards.
+
+### Install the Skills
+
+The skills live in the [SSv2-AI-Webinar](https://github.com/sfc-gh-chathomas/SSv2-AI-Webinar) repository. Clone the repo and copy the skill directories into your Cortex Code skills folder:
+
+```bash
+git clone https://github.com/sfc-gh-chathomas/SSv2-AI-Webinar.git
+mkdir -p ~/.snowflake/cortex/skills
+cp -r SSv2-AI-Webinar/skills/ssv2-quickstart ~/.snowflake/cortex/skills/
+cp -r SSv2-AI-Webinar/skills/ssv2-AI-webinar ~/.snowflake/cortex/skills/
+```
+
+The skills are automatically discovered by Cortex Code on the next session.
+
+### Available Skills
+
+| Skill | Trigger Phrase | What It Does |
+|---|---|---|
+| **SSv2 Quickstart** | `ssv2 quickstart` | Runs everything in this guide end-to-end (~5 min) |
+| **SSv2 AI Webinar** | `ssv2 ai webinar` | Quickstart + Semantic View + Cortex Agent for live demos |
+
+#### ssv2-quickstart
+
+Automates every step in this guide: platform detection, RSA key-pair generation, Snowflake object creation, Python venv setup, Streamlit dashboard deployment, data streaming, and cleanup. Just type the trigger phrase and confirm.
+
+#### ssv2-AI-webinar
+
+Builds on the quickstart and adds an AI layer for live presentations:
+
+- Streams data **in the background** for 30 minutes so you can keep presenting
+- Creates a **Semantic View** on the streaming table with computed dimensions and metrics
+- Creates a **Cortex Agent** for natural-language queries on live streaming data
+- Runs showcase queries to prove everything works, then hands off to the presenter
+
+### Example Prompts
+
+Start a Cortex Code session and try any of these:
+
+```
+ssv2 quickstart
+```
+
+```
+try snowpipe streaming
+```
+
+```
+ssv2 ai webinar
+```
+
+```
+demo snowpipe streaming
+```
+
+Each skill confirms your intent before creating any resources and asks for your preferences (database name, table name, etc.). When the demo is done, it offers to clean up all Snowflake objects automatically.
+
+### What Gets Automated
+
+Here is how the skill maps to the steps you completed manually in this guide:
+
+| Manual Step | What the Skill Does |
+|---|---|
+| Generate RSA Keys | Runs `openssl` commands in a single batch |
+| Create Snowflake Objects | Executes all CREATE/GRANT statements in one SQL call |
+| Set Up Python | Creates venv, installs SDK and Faker, writes `profile.json` and `ssv2_demo.py` in parallel |
+| Deploy Live Dashboard | Creates stage, uploads Streamlit app, creates Streamlit object — 3 parallel operations |
+| Stream Sample Data | Runs the demo script (foreground for quickstart, background for webinar) |
+| Clean Up | Drops all Snowflake objects in one SQL call |
+
+> **Tip:** The AI Webinar skill is designed for [live presentations](https://www.snowflake.com/en/webinars/demo/build-high-performance-ai-pipelines-with-real-time-streaming-2026-03-11/). It streams data in the background while you build the Semantic View and Cortex Agent on stage. Re-ask the same natural-language question a few minutes later and the numbers will have changed — that's the wow factor.
 
 <!---------------------------->
 
@@ -373,7 +451,7 @@ Create a file called `streamlit_app.py` in your `~/ssv2-quickstart` directory:
 import streamlit as st
 import time
 
-st.set_page_config(page_title="SSV2 Streaming Monitor", layout="wide")
+st.set_page_config(page_title="Snowpipe Streaming high-performance architecture Monitor", layout="wide")
 
 conn = st.connection("snowflake")
 
@@ -382,7 +460,7 @@ SCHEMA   = "SSV2_SCHEMA"
 TABLE    = "SSV2_QUICKSTART_USERS"
 REFRESH_INTERVAL = 2
 
-st.title("Snowpipe Streaming V2 — Live Monitor")
+st.title("Snowpipe Streaming high-performance architecture — Live Monitor")
 st.caption(f"Reading from `{DATABASE}.{SCHEMA}.{TABLE}` · refreshes every {REFRESH_INTERVAL}s")
 
 try:
@@ -475,7 +553,7 @@ CREATE OR REPLACE STREAMLIT SSV2_QUICKSTART_DB.SSV2_SCHEMA.SSV2_LIVE_MONITOR
     ROOT_LOCATION = '@SSV2_QUICKSTART_DB.SSV2_SCHEMA.SSV2_STREAMLIT_STAGE'
     MAIN_FILE = 'streamlit_app.py'
     QUERY_WAREHOUSE = <YOUR_WAREHOUSE>
-    TITLE = 'SSV2 Streaming Monitor';
+    TITLE = 'Snowpipe Streaming high-performance architecture Monitor';
 
 -- Get the URL to open the dashboard
 SHOW STREAMLITS IN SCHEMA SSV2_QUICKSTART_DB.SSV2_SCHEMA;
@@ -590,93 +668,15 @@ cd ~ && rm -rf ~/ssv2-quickstart
 
 <!---------------------------->
 
-## Automate With Cortex Code
-
-Duration: 5
-
-Everything you did manually in this guide can be fully automated with [Cortex Code](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code) — Snowflake's CLI-based AI coding assistant. Two open-source Cortex Code skills handle the entire pipeline for you, from RSA key generation to live dashboards.
-
-### Install the Skills
-
-The skills live in the [SSv2-AI-Webinar](https://github.com/sfc-gh-chathomas/SSv2-AI-Webinar) repository. Clone the repo and copy the skill directories into your Cortex Code skills folder:
-
-```bash
-git clone https://github.com/sfc-gh-chathomas/SSv2-AI-Webinar.git
-mkdir -p ~/.snowflake/cortex/skills
-cp -r SSv2-AI-Webinar/skills/ssv2-quickstart ~/.snowflake/cortex/skills/
-cp -r SSv2-AI-Webinar/skills/ssv2-AI-webinar ~/.snowflake/cortex/skills/
-```
-
-The skills are automatically discovered by Cortex Code on the next session.
-
-### Available Skills
-
-| Skill | Trigger Phrase | What It Does |
-|---|---|---|
-| **SSv2 Quickstart** | `ssv2 quickstart` | Runs everything in this guide end-to-end (~5 min) |
-| **SSv2 AI Webinar** | `ssv2 ai webinar` | Quickstart + Semantic View + Cortex Agent for live demos |
-
-#### ssv2-quickstart
-
-Automates every step in this guide: platform detection, RSA key-pair generation, Snowflake object creation, Python venv setup, Streamlit dashboard deployment, data streaming, and cleanup. Just type the trigger phrase and confirm.
-
-#### ssv2-AI-webinar
-
-Builds on the quickstart and adds an AI layer for live presentations:
-
-- Streams data **in the background** for 30 minutes so you can keep presenting
-- Creates a **Semantic View** on the streaming table with computed dimensions and metrics
-- Creates a **Cortex Agent** for natural-language queries on live streaming data
-- Runs showcase queries to prove everything works, then hands off to the presenter
-
-### Example Prompts
-
-Start a Cortex Code session and try any of these:
-
-```
-ssv2 quickstart
-```
-
-```
-try snowpipe streaming
-```
-
-```
-ssv2 ai webinar
-```
-
-```
-demo snowpipe streaming
-```
-
-Each skill confirms your intent before creating any resources and asks for your preferences (database name, table name, etc.). When the demo is done, it offers to clean up all Snowflake objects automatically.
-
-### What Gets Automated
-
-Here is how the skill maps to the steps you completed manually in this guide:
-
-| Manual Step | What the Skill Does |
-|---|---|
-| Generate RSA Keys | Runs `openssl` commands in a single batch |
-| Create Snowflake Objects | Executes all CREATE/GRANT statements in one SQL call |
-| Set Up Python | Creates venv, installs SDK and Faker, writes `profile.json` and `ssv2_demo.py` in parallel |
-| Deploy Live Dashboard | Creates stage, uploads Streamlit app, creates Streamlit object — 3 parallel operations |
-| Stream Sample Data | Runs the demo script (foreground for quickstart, background for webinar) |
-| Clean Up | Drops all Snowflake objects in one SQL call |
-
-> **Tip:** The AI Webinar skill is designed for [live presentations](https://www.snowflake.com/en/webinars/demo/build-high-performance-ai-pipelines-with-real-time-streaming-2026-03-11/). It streams data in the background while you build the Semantic View and Cortex Agent on stage. Re-ask the same natural-language question a few minutes later and the numbers will have changed — that's the wow factor.
-
-<!---------------------------->
-
 ## Conclusion And Resources
 
 Duration: 1
 
-Congratulations! You have successfully built an end-to-end real-time streaming pipeline using Snowpipe Streaming V2 and seen how Cortex Code can automate the entire workflow with a single prompt.
+Congratulations! You have successfully built an end-to-end real-time streaming pipeline using Snowpipe Streaming high-performance architecture and seen how Cortex Code can automate the entire workflow with a single prompt.
 
 ### What You Learned
 
-- **Snowpipe Streaming V2** uses a high-performance architecture with default auto-created pipes — no `CREATE PIPE` SQL needed
+- **Snowpipe Streaming high-performance architecture** uses default auto-created pipes — no `CREATE PIPE` SQL needed
 - The default pipe follows the naming convention `<TABLE_NAME>-streaming` (with a **hyphen**)
 - The Python SDK authenticates via **RSA key-pair (JWT)** and streams rows through channels
 - **Streamlit in Snowflake** can be used to build real-time monitoring dashboards with zero local infrastructure

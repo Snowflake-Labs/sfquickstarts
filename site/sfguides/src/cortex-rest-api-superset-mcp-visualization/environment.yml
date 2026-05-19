@@ -1,0 +1,10 @@
+name: app_environment
+channels:
+  - snowflake
+dependencies:
+  - python=3.11
+  - streamlit=1.39.0
+  - snowflake-snowpark-python
+  - pandas
+  - requests
+  - altair

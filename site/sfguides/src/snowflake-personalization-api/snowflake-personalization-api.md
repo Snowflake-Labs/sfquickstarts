@@ -66,7 +66,10 @@ GRANT ROLE DATA_API_ROLE TO ROLE ACCOUNTADMIN;
 
 The code used in this guide is hosted in github. You will need a new Codespace from the GitHub [repository](https://github.com/sfc-gh-lambrosetti/snow_personalization_api).
 
+Alternatively, the correct files are in the assets folder of the quickstart guides. You can create your own repo from those assets.
+
 To create a new codespace, browse to the GitHub [repository](https://github.com/sfc-gh-lambrosetti/snow_personalization_api) in a browser. You will need to login to GitHub if you are not already logged in to access Codespaces. After logging in, click on the green "<> Code" button and "create codespace on main" button.
+
 
 You will then be redirected into Codespaces where your development environment will load and all code from GitHub will be loaded in the project.
 

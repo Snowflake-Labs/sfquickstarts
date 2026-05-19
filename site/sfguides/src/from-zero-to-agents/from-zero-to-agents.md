@@ -243,7 +243,18 @@ Tools are the capabilities an agent can use to accomplish a task. Think of them 
 - **Service database & schema:** `DASH_DB_SI.Retail`
 - **Select semantic view:** `SEMANTIC_VIEW`
 - **Name:** `semantic_view`
-- **Description:** Click on `Generate with Cortex`
+- **Description:**
+
+  Retail analytics semantic view in DASH_DB_SI.RETAIL connecting 6 tables:
+    - ENRICHED_MARKETING_INTELLIGENCE: Campaign performance + sentiment (CAMPAIGN_NAME, PRODUCT_NAME, CLICKS, AVG_SENTIMENT)
+    - MARKETING_CAMPAIGN_METRICS: Campaign KPIs by category/date (CAMPAIGN_NAME, CATEGORY, CLICKS, IMPRESSIONS, DATE)
+    - PRODUCTS: Product catalog (PRODUCT_ID, PRODUCT_NAME, CATEGORY)
+    - SALES: Sales transactions by region (PRODUCT_ID, REGION, UNITS_SOLD, SALES_AMOUNT, DATE)
+    - SOCIAL_MEDIA: Influencer mentions by platform/category (CATEGORY, INFLUENCER, MENTIONS, PLATFORM, DATE)
+    - SUPPORT_CASES: Customer support interactions (ID, PRODUCT, TITLE, TRANSCRIPT, DATE)
+
+    Key joins: ENRICHED_MARKETING_INTELLIGENCE.PRODUCT_NAME → MARKETING_CAMPAIGN_METRICS.CATEGORY; PRODUCTS.PRODUCT_ID → SALES.PRODUCT_ID. Enables end-to-end     analysis from marketing exposure → sales performance → post-sale support.
+  
 - **Warehouse:** `Custom` > `DASH_WH_SI`
 - **Query timeout:** 60
 
