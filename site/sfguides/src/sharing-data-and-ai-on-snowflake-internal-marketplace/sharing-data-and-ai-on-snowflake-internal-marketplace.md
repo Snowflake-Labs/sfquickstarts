@@ -103,6 +103,9 @@ show available internal marketplace configs;
 USE ROLE accountadmin;
 SHOW USERS;
 SHOW ROLES;
+
+-- List existing listings in the internal marketplace
+SHOW AVAILABLE LISTINGS IS_ORGANIZATION = TRUE;
 ```
 <!--
 - `SHOW DATABASES` should return the `TPCH` database.
@@ -211,16 +214,24 @@ Click **Set up request approval flow** to proceed.
 ![](assets/2026-raw-b.png)
 
 
-### Step 5 of 5: Publish
+### Step 5 of 5: Publish & Verify
 
 Click the blue **Publish** button in the top right corner.
 
 Your **Order Insights** data product is now live on the Internal Marketplace!
 
 To verify, navigate to the **Catalog** > **Internal Marketplace**. 
-- You should now see the **Order Insights** listing. 
+- Set the **Sort By** to **Most Recent** or search for your account locator to find your listing.
 - Use the **Profile** filter to show listings for the profile (domain) that you selected for your data product.
-- You can also use the custom attribute filters to narrow down the data product.
+- You can also use the custom attribute filters to narrow down the visible data products.
+- In a workspace you can also run this query:
+
+   ```sql
+   select *
+   from snowflake.information_schema.listings
+   where state = 'PUBLISHED';
+   ```
+
 
 
 ![](assets/2026-publish10_done_newui.png)
