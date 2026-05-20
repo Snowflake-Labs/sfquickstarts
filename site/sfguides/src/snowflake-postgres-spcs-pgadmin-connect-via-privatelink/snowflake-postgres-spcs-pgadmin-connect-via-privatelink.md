@@ -1,6 +1,6 @@
 author: Brian Pace
 id: snowflake-postgres-spcs-pgadmin-connect-via-privatelink
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/snowflake-feature/postgres
 language: en
 summary: Deploy pgAdmin to SPCS Connecting to Snowflake Postgres via Private Link
 environments: web
