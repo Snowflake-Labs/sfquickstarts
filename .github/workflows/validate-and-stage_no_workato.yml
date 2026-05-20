@@ -22,6 +22,8 @@ jobs:
       md_file_count: ${{ steps.detect.outputs.md_file_count }}
       sidebar_json_files: ${{ steps.check_relevant.outputs.sidebar_json_files }}
       has_sidebar_changes: ${{ steps.check_relevant.outputs.has_sidebar_changes }}
+      journey_guides_json: ${{ steps.check_relevant.outputs.journey_guides_json }}
+      has_journey_guides: ${{ steps.check_relevant.outputs.has_journey_guides }}
       
     steps:
       - name: Check for relevant changes (early exit)
@@ -46,7 +48,23 @@ jobs:
             echo "sidebar_json_files=[]" >> $GITHUB_OUTPUT
           fi
           
-          if [ -z "$relevant_files" ] && [ -z "$sidebar_json_files" ]; then
+          journey_md_files=$(echo "$files_json" | jq -r '.[]?.filename | select(startswith("journeys/")) | select(endswith(".md"))')
+          if [ -n "$journey_md_files" ]; then
+            echo "has_journey_guides=true" >> $GITHUB_OUTPUT
+            journey_objs='[]'
+            while IFS= read -r md_path; do
+              [ -z "$md_path" ] && continue
+              folder_path=$(dirname "$md_path")
+              guide_name=$(basename "$folder_path")
+              journey_objs=$(echo "$journey_objs" | jq -c --arg name "$guide_name" --arg source "$folder_path" '. + [{name:$name, source_path:$source}]')
+            done <<< "$journey_md_files"
+            echo "journey_guides_json=$journey_objs" >> $GITHUB_OUTPUT
+          else
+            echo "has_journey_guides=false" >> $GITHUB_OUTPUT
+            echo "journey_guides_json=[]" >> $GITHUB_OUTPUT
+          fi
+          
+          if [ -z "$relevant_files" ] && [ -z "$sidebar_json_files" ] && [ -z "$journey_md_files" ]; then
             echo "has_relevant_changes=false" >> $GITHUB_OUTPUT
             echo ":information_source: No changes in site/sfguides/src/ or journeys/, skipping"
             exit 0
@@ -635,7 +653,8 @@ jobs:
     if: |
       needs.validate_and_stage_no_workato.outputs.has_relevant_changes == 'true' && 
       needs.validate_and_stage_no_workato.outputs.all_validations_passed == 'true' &&
-      needs.validate_and_stage_no_workato.outputs.md_file_count < 7
+      needs.validate_and_stage_no_workato.outputs.md_file_count < 7 &&
+      needs.validate_and_stage_no_workato.outputs.quickstart_names_json != '[]'
     strategy:
       matrix:
         quickstart: ${{ fromJson(needs.validate_and_stage_no_workato.outputs.quickstart_names_json) }}
@@ -719,3 +738,25 @@ jobs:
             bash scripts/upload-dam-asset.sh "$file" "snowflake-site/developers/technical/guides-navigation"
           done
           echo "✅ Sidebar JSON upload complete"
+
+  stage_journey_guides:
+    needs: validate_and_stage_no_workato
+    if: needs.validate_and_stage_no_workato.outputs.has_journey_guides == 'true'
+    strategy:
+      matrix:
+        guide: ${{ fromJson(needs.validate_and_stage_no_workato.outputs.journey_guides_json) }}
+      max-parallel: 1
+      fail-fast: false
+    uses: ./.github/workflows/stage-to-aem.yml
+    with:
+      quickstart_name: ${{ matrix.guide.name }}
+      language: en
+      commit_sha: ${{ github.event.pull_request.head.sha }}
+      pr_number: ${{ github.event.pull_request.number }}
+      source_path: ${{ matrix.guide.source_path }}
+      page_base_path: /content/snowflake-site/global/en/developers/guides/journey-sidebar-base
+    secrets:
+      AEM_USERNAME: ${{ secrets.AEM_USERNAME_STAGING }}
+      AEM_PASSWORD: ${{ secrets.AEM_PASSWORD_STAGING }}
+      AEM_AUTHOR_URL: ${{ secrets.AEM_AUTHOR_URL_STAGING }}
+      AEM_PUBLISH_URL: ${{ secrets.AEM_PUBLISH_URL_STAGING }}
