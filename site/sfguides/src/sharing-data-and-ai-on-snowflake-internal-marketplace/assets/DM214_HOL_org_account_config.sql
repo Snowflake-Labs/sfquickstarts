@@ -420,10 +420,10 @@ set qid=last_query_id();
 
 EXECUTE IMMEDIATE $$
 DECLARE
-    -- Loop through all listings and unpublish them
-    listing_cursor CURSOR FOR select 
-                                'SELECT SYSTEM$ENABLE_GLOBAL_DATA_SHARING_FOR_ACCOUNT('''||"account_name"||''');' as stmt  
-                              from table(result_scan($qid))  
+    -- Enable Global Data Sharing on all accounts
+    listing_cursor CURSOR FOR select
+                                'SELECT SYSTEM$ENABLE_GLOBAL_DATA_SHARING_FOR_ACCOUNT('''||"account_name"||''');' as stmt
+                              from table(result_scan($qid))
                               where "account_name" like $acct_prefix||'%';
 BEGIN
     FOR record IN listing_cursor DO
@@ -432,3 +432,7 @@ BEGIN
 END;
 $$
 ;
+
+
+
+
