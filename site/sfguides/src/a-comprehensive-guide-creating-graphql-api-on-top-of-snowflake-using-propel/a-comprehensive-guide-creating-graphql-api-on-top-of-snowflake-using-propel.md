@@ -1,5 +1,3 @@
-sidebar: true
-sidebar_json: well-architected-framework
 author: YK
 id: a-comprehensive-guide-creating-graphql-api-on-top-of-snowflake-using-propel
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/snowflake-feature/external-collaboration
