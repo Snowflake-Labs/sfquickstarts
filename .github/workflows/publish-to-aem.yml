@@ -19,6 +19,16 @@ on:
         description: 'Base URL for image references (e.g., CDN URL for prod, publish URL for dev/staging)'
         required: true
         type: string
+      source_path:
+        description: 'Path to the source folder containing the markdown (e.g., site/sfguides/src/my-guide or journeys/waf/my-guide)'
+        required: false
+        type: string
+        default: ''
+      page_base_path:
+        description: 'Base page path to clone from when creating new pages'
+        required: false
+        type: string
+        default: ''
     secrets:
       AEM_USERNAME:
         description: 'AEM username for basic auth'
@@ -36,7 +46,7 @@ on:
 env:
   BASE_CF_PATH: /content/dam/snowflake-site/en/content-fragments/base-fragments/base-quickstart-cf
   CF_DEST_PATH: /content/dam/snowflake-site
-  PAGE_BASE_PATH: /content/snowflake-site/global/en/developers/guides/quickstart-base
+  PAGE_BASE_PATH_DEFAULT: /content/snowflake-site/global/en/developers/guides/quickstart-base
   DAM_GUIDES_PATH: /content/dam/snowflake-site/developers/guides
 
 jobs:
@@ -55,7 +65,7 @@ jobs:
         with:
           ref: ${{ inputs.commit_sha }}
           sparse-checkout: |
-            site/sfguides/src/${{ inputs.quickstart_name }}
+            ${{ inputs.source_path || format('site/sfguides/src/{0}', inputs.quickstart_name) }}
             scripts/aem-staging
           sparse-checkout-cone-mode: true
 
@@ -146,9 +156,10 @@ jobs:
       - name: Find markdown file
         id: find_md
         run: |
-          md_file=$(find "site/sfguides/src/${{ inputs.quickstart_name }}" -maxdepth 1 -name "*.md" -type f | head -n1)
+          search_path="${{ inputs.source_path || format('site/sfguides/src/{0}', inputs.quickstart_name) }}"
+          md_file=$(find "$search_path" -maxdepth 1 -name "*.md" -type f | head -n1)
           if [ -z "$md_file" ]; then
-            echo "❌ No markdown file found in ${{ inputs.quickstart_name }}"
+            echo "❌ No markdown file found in $search_path"
             exit 1
           fi
           echo "md_file=$md_file" >> $GITHUB_OUTPUT
@@ -256,7 +267,8 @@ jobs:
 
       - name: Upload images to AEM DAM
         run: |
-          assets_dir="site/sfguides/src/${{ inputs.quickstart_name }}/assets"
+          source_path="${{ inputs.source_path || format('site/sfguides/src/{0}', inputs.quickstart_name) }}"
+          assets_dir="${source_path}/assets"
           dam_folder="${DAM_GUIDES_PATH}/${{ inputs.quickstart_name }}"
           folder_exists="${{ steps.check_img_folder.outputs.folder_exists }}"
           
@@ -464,6 +476,7 @@ jobs:
           page_path="${{ steps.check_page.outputs.page_path }}"
           
           echo "📄 Creating page: $page_path"
+          PAGE_BASE_PATH="${{ inputs.page_base_path || env.PAGE_BASE_PATH_DEFAULT }}"
           echo "   Source: ${PAGE_BASE_PATH}"
           
           /tmp/aem_retry.sh POST "${AEM_URL}${PAGE_BASE_PATH}" \
