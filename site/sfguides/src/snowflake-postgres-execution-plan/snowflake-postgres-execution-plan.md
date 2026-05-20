@@ -1,6 +1,6 @@
 author: Brian Pace
 id: snowflake-postgres-execution-plan
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/snowflake-feature/postgres
 language: en
 summary: Using Postgres EXPLAIN to understand query execution
 environments: web
