@@ -1,6 +1,6 @@
 author: Elizabeth Christensen
 id: migrate-to-snowflake-postgres-using-logical-replication
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/snowflake-feature/postgres
 language: en
 summary: Learn how to lift and shift existing PostgreSQL workloads into Snowflake Postgres using logical replication for minimal downtime environments
 environments: web

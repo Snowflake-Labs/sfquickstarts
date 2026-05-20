@@ -1,0 +1,33 @@
+# ============================================================================
+# Cortex Code CLI — Connection Snippet for Lab Participants
+# ============================================================================
+# APPEND this block to your existing ~/.snowflake/connections.toml
+# (Do NOT replace your file — just add this to the bottom.)
+#
+# Fill in the 3 fields marked <<< then launch with:
+#   cortex -c COCO_LAB
+# ============================================================================
+
+[connections.COCO_LAB]
+account   = "<ACCOUNT_IDENTIFIER>"        # <<< Your instructor will provide this
+user      = "<YOUR_USERNAME>"              # <<< Your Snowflake login username
+password  = "<YOUR_PASSWORD>"              # <<< Your password or PAT
+role      = "COCO_WORKSHOP_ROLE"           # DO NOT CHANGE
+warehouse = "COCO_WORKSHOP_WH"             # DO NOT CHANGE
+database  = "COCO_WORKSHOP"                # DO NOT CHANGE
+schema    = "<YOUR_SCHEMA>"                # <<< CRITICAL: Your assigned schema, e.g. "USER_07"
+
+# ============================================================================
+# WHY YOUR SCHEMA MATTERS
+# ============================================================================
+# All participants share one database.  Your schema (e.g. USER_07) is YOUR
+# workspace — all objects you create (Dynamic Tables, Semantic Views, Agents)
+# go here.  Setting it in this connection ensures Cortex Code CLI always
+# targets the right place so you won't accidentally write to someone else's
+# schema.
+#
+# If you do NOT have an existing connections.toml file yet:
+#   1. Create the file:  ~/.snowflake/connections.toml
+#   2. Paste this entire block into it
+#   3. Launch:           cortex -c COCO_LAB
+# ============================================================================

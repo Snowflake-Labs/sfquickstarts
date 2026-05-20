@@ -193,7 +193,7 @@ identify which queries scored lowest. What are the common failure patterns?
 - Redundant tool calls
 - VaIncomplete summaries missing key data
 
-### Generate improved instructions
+## Improve the Agent
 
 ```
 Based on the failure analysis, generate improved orchestration instructions
@@ -209,7 +209,7 @@ Cortex Code will:
 
 **What changes:** Only the `instructions.orchestration` field. Tools, tool_resources, and models stay identical. Better instructions are the only lever.
 
-### Validate with a second eval
+## Validate Agent Improvement
 
 ```
 Run the evaluation of SELF_IMPROVING_AGENT_DB.AGENTS.MARKETING_CAMPAIGNS_AGENT

@@ -1,4 +1,4 @@
-author: Gilberto Hernandez
+author: Gilberto Hernandez, Scott Teal
 id: get-started-snowflake-managed-iceberg-tables
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/snowflake-feature/apache-iceberg, snowflake-site:taxonomy/snowflake-feature/lakehouse-analytics, snowflake-site:taxonomy/snowflake-feature/ingestion, snowflake-site:taxonomy/snowflake-feature/interoperable-storage
 language: en
@@ -9,11 +9,13 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 fork repo link: https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/get-started-snowflake-managed-iceberg-tables/assets
 
 
-# Get Started with Snowflake-Managed Iceberg Tables
+# Get Started with Iceberg Tables on Snowflake-Managed Storage
 <!-- ------------------------ -->
 ## Overview
 
 Apache Iceberg tables in Snowflake give you the benefits of an open table format — interoperability with engines like Spark, DuckDB, and Flink — while Snowflake handles storage, optimization, and governance for you. With Snowflake-managed Iceberg storage, you don't need to configure a cloud bucket or external volume. Snowflake stores and manages all Iceberg data and metadata files internally, so you can focus on building pipelines and analytics rather than infrastructure.
+
+> **Note**: Snowflake-managed Iceberg tables can be stored in your own cloud storage bucket or in Snowflake-managed storage. For simplicity, this guide uses Snowflake-managed storage so you can get started without any external cloud configuration.
 
 In this Quickstart, you'll build a fleet analytics pipeline using Snowflake-managed Iceberg tables. You'll work with a fictitious fleet management company that collects vehicle telemetry, sensor readings, and maintenance logs. Along the way, you'll stream data, create declarative transformation pipelines, power an AI agent with your data, and prove interoperability by querying the same tables from DuckDB and Apache Spark — without moving a single byte of data.
 
@@ -615,6 +617,8 @@ conda activate fleet-spark
 pip install pyspark==4.0.0 jupyter python-dotenv requests
 jupyter notebook spark_iceberg_interop.ipynb
 ```
+
+> **Note**: PySpark 4.0 requires **Java 17 or 21**. Java 25 is not compatible. Check with `java -version` before running the notebook.
 
 ### Connect Spark to Horizon Catalog
 
