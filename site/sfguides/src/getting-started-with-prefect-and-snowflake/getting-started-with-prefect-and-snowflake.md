@@ -67,7 +67,7 @@ CREATE WAREHOUSE IF NOT EXISTS PREFECT_WH WITH WAREHOUSE_SIZE='XSMALL' AUTO_SUSP
 SELECT SNOWFLAKE.CORTEX.COMPLETE('mistral-large2', 'Say hello') AS test;
 ```
 
-> If the Cortex test fails, try `llama3.1-70b` or `claude-3-5-sonnet` — model availability varies by region. You can also enable cross-region inference: `ALTER ACCOUNT SET CORTEX_ENABLED_CROSS_REGION = 'ANY_REGION';`
+> If the Cortex test fails, try llama3.1-70b or claude-3-5-sonnet — model availability varies by region. You can also enable cross-region inference: ALTER ACCOUNT SET CORTEX_ENABLED_CROSS_REGION = 'ANY_REGION';
 
 > Full table DDL and seed data are in the repo's `setup.sql`.
 
