@@ -11,7 +11,6 @@ fork repo link: https://github.com/snowflake-eng/sfguide-getting-started-with-pr
 # Build Workflows That Think, Decide, and Act Across Systems
 <!-- ------------------------ -->
 ## Overview
-Duration: 5
 
 Every organization runs workflows that span multiple systems. A customer submits a loan application — it needs to be scored by an AI model, checked against compliance rules, routed to an underwriter if the amount is high enough, and the decision needs to land back in the CRM and notify the operations team. A supplier sends an invoice — it needs to be matched against purchase orders in the ERP, flagged for anomalies, approved by finance if the amount exceeds a threshold, and posted to the ledger. A patient's lab results come in — they need to be compared against clinical baselines, escalated to the care team if values are critical, and the chart needs to be updated across three systems before the next appointment.
 
@@ -51,7 +50,6 @@ If the pipeline fails at step 7, Prefect **resumes from step 7** — it doesn't 
 
 <!-- ------------------------ -->
 ## Setup
-Duration: 5
 
 The companion repo has full setup instructions. Here's the minimum to get running:
 
@@ -93,7 +91,6 @@ export SLACK_CHANNEL=your-channel
 
 <!-- ------------------------ -->
 ## Fetch and Ingest
-Duration: 5
 
 Create `pr_review_pipeline.py`. The pipeline starts by fetching PR data from GitHub and landing it in Snowflake.
 
@@ -152,7 +149,6 @@ Every PR that enters this pipeline gets a permanent record in Snowflake.
 
 <!-- ------------------------ -->
 ## Cortex AI Assessment
-Duration: 5
 
 This is the most important step. Instead of calling an external LLM, the AI runs **inside Snowflake** — co-located with your data, governed by your access policies. We use **`CLASSIFY_TEXT`** for risk classification (returns a clean category — no prompt engineering or output parsing needed) and **`COMPLETE`** for the free-form summary.
 
@@ -202,7 +198,6 @@ Two Cortex calls happen here — `CLASSIFY_TEXT` for structured classification, 
 
 <!-- ------------------------ -->
 ## Decision and Human Gate
-Duration: 5
 
 Based on the Cortex AI classification and historical context, the pipeline **decides at runtime** what path to take.
 
@@ -260,7 +255,6 @@ When the flow calls `pause_flow_run(wait_for_input=ReviewDecision, timeout=86400
 
 <!-- ------------------------ -->
 ## Close the Loop
-Duration: 5
 
 After the decision, the pipeline closes the loop across all systems — Snowflake, GitHub, and Slack.
 
@@ -297,7 +291,6 @@ The pipeline also sends **two Slack notifications** — one when approval is nee
 
 <!-- ------------------------ -->
 ## Wiring It Together
-Duration: 5
 
 Here's where the agentic behavior comes together. One flow, four systems, runtime branching, and a human gate:
 
@@ -395,7 +388,6 @@ if __name__ == "__main__":
 
 <!-- ------------------------ -->
 ## Run It
-Duration: 3
 
 ```bash
 GITHUB_TOKEN=your_token \
@@ -421,7 +413,6 @@ Watch the pipeline execute in real-time in Prefect Cloud. You'll see:
 
 <!-- ------------------------ -->
 ## Deploy It
-Duration: 3
 
 Running `python pr_review_pipeline.py` is great for development. To operate this as a production workflow — with authentication, RBAC, scheduling, and event triggers — deploy to **Prefect Cloud**. You'll need a worker to execute your flows. Options include:
 
@@ -469,7 +460,6 @@ From here you can add **Automations** in Prefect Cloud to trigger this deploymen
 
 <!-- ------------------------ -->
 ## What Just Happened
-Duration: 3
 
 Once your accounts are set up, the pipeline runs in under a minute:
 
@@ -492,7 +482,6 @@ If the pipeline had failed at step 8, retrying would skip steps 1–5 entirely. 
 
 <!-- ------------------------ -->
 ## Cleanup
-Duration: 2
 
 > Skip this if you want to keep your PR assessment history in Snowflake.
 
@@ -503,7 +492,6 @@ DROP WAREHOUSE IF EXISTS PREFECT_WH;
 
 <!-- ------------------------ -->
 ## Conclusion
-Duration: 3
 
 You built a pipeline that no single platform can run alone. GitHub triggers the work. Snowflake stores the data and runs the AI. Prefect coordinates everything — with durability, human gates, and runtime decisions. Slack keeps the team in the loop. And the PR gets merged or closed automatically.
 
