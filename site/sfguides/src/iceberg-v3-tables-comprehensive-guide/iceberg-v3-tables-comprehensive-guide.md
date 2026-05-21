@@ -65,9 +65,12 @@ You'll build an analytics platform for a fleet management company that:
 > snow connection add --connection-name default --account <your-account> --user <your-user>
 > ```
 
-**For External Storage:**
-- AWS S3, Google Cloud Storage, or Azure Storage (Blob, ADLS Gen2, or OneLake)
-- Appropriate IAM roles/service principals configured
+**For Snowflake-managed Iceberg storage (default in this lab):**
+- No customer-owned bucket or external volume is required. Snowflake stores Iceberg files using the reserved volume `SNOWFLAKE_MANAGED`; see [Snowflake storage for Apache Iceberg tables](https://docs.snowflake.com/en/user-guide/tables-iceberg-internal-storage).
+- This storage option is available on accounts hosted on **AWS** or **Azure** (not Google Cloud).
+
+**Optional — customer-managed object storage:**
+- If you set `USE_SNOWFLAKE_STORAGE=false` in `config.env`, you need AWS S3, Google Cloud Storage, or Azure Storage (Blob, ADLS Gen2, or OneLake) and the appropriate IAM roles or service principals.
 
 **For Spark Interoperability Section:**
 - Conda package manager installed (for isolated PySpark environment)
@@ -81,7 +84,7 @@ You'll build an analytics platform for a fleet management company that:
 |------------|------|---------|
 | Database | FLEET_ANALYTICS_DB | Contains all demo objects |
 | Warehouse | FLEET_ANALYTICS_WH | Compute for all operations |
-| External Volume | FLEET_ICEBERG_VOL | Storage for Iceberg data |
+| Iceberg table storage | Snowflake-managed (`SNOWFLAKE_MANAGED`) | Default: Snowflake stores Iceberg files; no external volume object. Optional: customer volume `FLEET_ICEBERG_VOL` if `USE_SNOWFLAKE_STORAGE=false` |
 | Iceberg Table | VEHICLE_TELEMETRY_STREAM | Real-time streaming events (VARIANT) |
 | Iceberg Table | MAINTENANCE_LOGS | Batch-loaded JSON logs (VARIANT) |
 | Iceberg Table | SENSOR_READINGS | Time-series sensor data |
@@ -124,13 +127,16 @@ SNOWFLAKE_ROLE="ACCOUNTADMIN"
 SNOWFLAKE_WAREHOUSE="FLEET_ANALYTICS_WH"
 SNOWFLAKE_DATABASE="FLEET_ANALYTICS_DB"
 
-# External Volume Configuration: Choose ONE option
+# Iceberg storage — default is Snowflake-managed (no bucket or external volume).
+# See: https://docs.snowflake.com/en/user-guide/tables-iceberg-internal-storage
+USE_SNOWFLAKE_STORAGE=true
 
-# OPTION A: Use an existing external volume (if you already have one configured)
+# --- Only if USE_SNOWFLAKE_STORAGE=false (customer-managed storage) ---
+# OPTION A: Use an existing external volume
 USE_EXISTING_VOLUME=false
 EXISTING_VOLUME_NAME=""
 
-# OPTION B: Create a new external volume (configure provider below)
+# OPTION B: Create a new external volume named FLEET_ICEBERG_VOL
 STORAGE_PROVIDER="S3"  # Options: S3, GCS, AZURE
 
 # --- AWS S3 ---
@@ -169,7 +175,7 @@ chmod +x setup.sh
 **What the setup script does:**
 
 1. Creates the database, schema, and warehouse
-2. Configures the external volume (or uses your existing one)
+2. Sets Iceberg storage to Snowflake-managed by default (`SNOWFLAKE_MANAGED`), or creates/uses a customer external volume when `USE_SNOWFLAKE_STORAGE=false`
 3. Creates all Iceberg V3 tables with appropriate schemas
 4. Creates Dynamic Iceberg Tables for transformation pipelines
 5. Creates governance objects (masking policies, data quality functions) - *Enterprise edition only*
@@ -199,13 +205,15 @@ Import the pre-populated notebook into Snowflake to follow along with the live d
 
 For more details on creating notebooks, see [Create a notebook](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-create#create-a-new-notebook).
 
-### External Volume Setup Details
+### External volume setup (customer-managed storage only)
 
-Iceberg tables require an external volume pointing to your cloud storage. If you don't already have one configured, you'll need to complete provider-specific setup before running the setup script. 
+With the default `USE_SNOWFLAKE_STORAGE=true`, Iceberg tables use [Snowflake storage for Apache Iceberg tables](https://docs.snowflake.com/en/user-guide/tables-iceberg-internal-storage) (`EXTERNAL_VOLUME = 'SNOWFLAKE_MANAGED'`). You can skip this entire subsection.
 
-You can also create External Volumes from Snowflake's web UI by navigating to **Catalog > External data > External volumes tab**.
+If you set `USE_SNOWFLAKE_STORAGE=false`, Iceberg tables use a **customer-managed external volume** pointing to your object storage. Configure `config.env` (existing volume or new `FLEET_ICEBERG_VOL` via `STORAGE_PROVIDER`) and complete provider-specific setup before running `setup.sh`.
 
-![Create External Volume](/assets/create_external_volume.png)
+You can also create external volumes from Snowflake's web UI by navigating to **Catalog > External data > External volumes tab**.
+
+![Create External Volume](assets/create_external_volume.png)
 
 **AWS S3 Setup:**
 
@@ -575,13 +583,13 @@ These tables automatically refresh based on their TARGET_LAG setting, processing
 
 The transformation pipeline looks like this:
 
-![Dynamic Iceberg Table Graph](/assets/dit_graph.png)
+![Dynamic Iceberg Table Graph](assets/dit_graph.png)
 
 #### Monitor Incremental Refreshes
 
 As streaming data flows in, watch the dynamic tables refresh:
 
-![Dynamic Iceberg Table Incremental Refresh](/assets/dit_incremental_refresh.png)
+![Dynamic Iceberg Table Incremental Refresh](assets/dit_incremental_refresh.png)
 
 The `REFRESH_MODE = INCREMENTAL` setting ensures only new or changed data is processed, making the pipeline highly efficient.
 
@@ -606,10 +614,6 @@ ORDER BY EVENT_TIMESTAMP DESC
 LIMIT 20;
 ```
 
-### Deletion Vectors Overview
-
-
-
 <!-- ------------------------ -->
 ## Security and Governance
 
@@ -628,7 +632,7 @@ Snowflake can automatically detect and classify sensitive data across your entir
 5. Toggle **Automatically tag data** ON
 6. Click **Classify and Tag Sensitive Data**
 
-![Classify and Tag Sensitive Data](/assets/classify_sensitive_data.png)
+![Classify and Tag Sensitive Data](assets/classify_sensitive_data.png)
 
 #### View Applied Tags
 
@@ -638,7 +642,7 @@ After classification completes:
 2. Click the **Columns** tab
 3. Notice tags applied to sensitive columns like `DRIVER_NAME`, `DRIVER_EMAIL`, `DRIVER_PHONE`
 
-![Tagged Sensitive Data](/assets/classification_tag.png)
+![Tagged Sensitive Data](assets/classification_tag.png)
 
 Common tags that may be applied:
 - `SEMANTIC_CATEGORY:NAME` - Personal names
@@ -686,7 +690,7 @@ RETURNS STRING ->
 5. Select `PII_NAME_MASK` and click **Done**
 6. Repeat for `DRIVER_EMAIL` and `DRIVER_PHONE` with `PII_EMAIL_MASK` and `PII_PHONE_MASK`
 
-![Mask Tagged Columns](/assets/tag_mask.png)
+![Mask Tagged Columns](assets/tag_mask.png)
 
 #### Test Masking Behavior
 
@@ -808,7 +812,7 @@ The lineage graph is valuable for:
 - **Data quality investigation**: Tracing issues back to their source
 - **Security auditing**: Understanding data flow for sensitive information
 
-![Data Lineage](/assets/lineage.png)
+![Data Lineage](assets/lineage.png)
 
 <!-- ------------------------ -->
 ## Analytics and AI
@@ -1256,6 +1260,8 @@ Follow these steps to set up cross-region replication for your Iceberg tables:
    - Warehouses (optional)
    - Roles and privileges (recommended for consistent access)
 
+> With **Snowflake-managed** Iceberg storage (`SNOWFLAKE_MANAGED`, the lab default), you do not add customer external volumes for table files, and failover/replication groups can use `OBJECT_TYPES = DATABASES` without listing external volumes. See [Replication](https://docs.snowflake.com/en/user-guide/tables-iceberg-internal-storage#replication) under *Snowflake storage for Apache Iceberg tables*.
+
 #### Step 4: Enable and Monitor
 
 1. Click **Create** to enable replication
@@ -1298,12 +1304,14 @@ Ensure you have:
 - Conda installed
 - The repository cloned (`sfguide-iceberg-v3-comprehensive-guide`)
 
+> External engines still read Iceberg tables that use [Snowflake-managed storage](https://docs.snowflake.com/en/user-guide/tables-iceberg-internal-storage) through Horizon Catalog. The Spark notebook includes a **Cloud Storage Bundles** section—use the bundle that matches your account’s cloud if you adjust storage or see file I/O errors.
+
 ### Start the Spark Environment
 
 The setup script created a Conda environment with Spark 4.0+ and all necessary dependencies:
 
 ```bash
-cd sfguide-iceberg-v3-comprehensive-guide/assets
+cd sfquickstarts/site/sfguides/src/iceberg-v3-comprehensive-guide/assets
 
 # Activate the Spark environment
 conda activate fleet-spark
@@ -1537,7 +1545,7 @@ spark_analyst.sql("""
 """).show(truncate=True)
 ```
 
-![Interoperable Masking](/assets/spark_masked.png)
+![Interoperable Masking](assets/spark_masked.png)
 
 
 The masking policies defined in Snowflake are enforced even when accessing data through Spark!
@@ -1557,7 +1565,7 @@ USE ROLE ACCOUNTADMIN;
 -- Drop the database (this removes all tables, schemas, and objects)
 DROP DATABASE IF EXISTS FLEET_ANALYTICS_DB;
 
--- Drop the external volume (if you created one)
+-- Drop the external volume only if you used customer-managed storage (USE_SNOWFLAKE_STORAGE=false)
 DROP EXTERNAL VOLUME IF EXISTS FLEET_ICEBERG_VOL;
 
 -- Drop the warehouse
@@ -1581,7 +1589,7 @@ DROP INTEGRATION IF EXISTS OPEN_METEO_ACCESS;
 SELECT 'Uncomment the commands above to cleanup' AS NOTE;
 ```
 
-If you used external cloud storage, you may also want to clean up the Iceberg data files in your bucket/container.
+If you used customer-managed cloud storage, you may also want to clean up the Iceberg data files in your bucket or container.
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
@@ -1612,6 +1620,7 @@ Congratulations! You've built a comprehensive analytics platform using Snowflake
 ### Related Resources
 
 **Documentation:**
+- [Snowflake storage for Apache Iceberg tables](https://docs.snowflake.com/en/user-guide/tables-iceberg-internal-storage)
 - [Iceberg V3 Support in Snowflake](https://docs.snowflake.com/en/LIMITEDACCESS/iceberg/tables-iceberg-v3-specification-support)
 - [Snowpipe Streaming](https://docs.snowflake.com/en/user-guide/snowpipe-streaming/snowpipe-streaming-high-performance-overview)
 - [Dynamic Iceberg Tables](https://docs.snowflake.com/en/user-guide/dynamic-tables-create-iceberg)

@@ -8,6 +8,11 @@ status: Archived
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 # Create a Route Optimization and Vehicle Route Plan Simulator
+
+> Note: This guide is no longer maintained and will not work.
+The content has been consolidated into a single comprehensive quickstart.
+Please see [Build Routing Solution in Snowflake with Cortex Code](https://www.snowflake.com/en/developers/guides/oss-install-openrouteservice-native-app/) for the latest version.
+
 <!-- ------------------------ -->
 ## Overview 
 

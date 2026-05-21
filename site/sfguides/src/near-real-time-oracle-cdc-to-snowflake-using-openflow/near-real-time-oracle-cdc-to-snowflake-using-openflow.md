@@ -52,7 +52,7 @@ By the end of this guide, you'll have a working near real-time CDC pipeline that
 
 ### Prerequisites
 - A [Snowflake account](https://signup.snowflake.com/) in an AWS or Azure commercial region
-- An Oracle Database (12c R2, 18c, 19c, 21c, 23ai, or 26ai) with SYSDBA access
+- An Oracle Database (12cR1 or later) with SYSDBA access
 - Network connectivity between Snowflake (SPCS) and the Oracle database
 - Snowflake `ACCOUNTADMIN` or a role with Openflow admin privileges
 - All Oracle source tables must have a **primary key** — tables without primary keys will silently fail to replicate
@@ -88,10 +88,24 @@ Starting from a working Openflow runtime, the skill handles all steps in the **C
 | Verify Controllers | Runs `verify_config` before enabling controller services |
 | Enable Controllers | Enables all controller services and checks for errors |
 | Verify Processors | Runs `verify_config` after controllers are enabled |
+| Verify XStream Connectivity | Runs `verify_processor` on CaptureChangeOracle to confirm XStream capture is running and reading redo logs |
 | Start the Connector | Starts the pipeline and confirms LCRs are flowing |
 | Validate Data Flow | Checks flow status and confirms rows are appearing in Snowflake |
+| Reconcile Source vs Destination | Connects to Oracle to query source row counts, compares against Snowflake destination across all replicated tables, and flags mismatches |
 
 > **Note:** Creating the Openflow deployment and runtime, Oracle database prerequisites (ARCHIVELOG, XStream, supplemental logging, users, outbound server), and Snowflake account prerequisites (destination database, connector role) must all be completed before invoking Cortex Code.
+
+### Beyond Initial Setup
+
+Cortex Code also helps with **Day 2 operations** after your pipeline is running:
+
+| Operation | What Cortex Code Does |
+|---|---|
+| Add tables to a running pipeline | Updates inclusion parameters and monitors new tables through snapshot into incremental replication |
+| Data reconciliation | Connects to Oracle, queries source row counts, compares against Snowflake destination across all replicated tables, and flags mismatches |
+| Incremental replication | Configures skip-snapshot mode for tables you've already bulk-loaded via other methods |
+| Troubleshooting | Reads NiFi bulletins, runs XStream diagnostic queries (`dba_capture`, `V$LOGMNR_SESSION`, `V$XSTREAM_CAPTURE`), and guides recovery for failed tables |
+| Journal table cleanup | Identifies stale journal tables for removed tables and guides safe cleanup |
 
 ### Get Started
 
@@ -135,7 +149,7 @@ This separation ensures that no change events are lost during ingestion and that
 
 ### Supported Environments
 
-The connector supports Oracle Database versions 12c R2 (12.2), 18c, 19c, 21c, 23ai, and 26ai in the following environments:
+The connector supports Oracle Database versions 12cR1 and later in the following environments:
 
 | Status | Environment |
 |--------|-------------|

@@ -3,8 +3,21 @@
 -- Creates a 100K row sample and builds a Cortex Search service for batch testing
 -- ============================================================================
 
+-- ============================================================================
+-- STEP 0: Environment setup
+-- ============================================================================
+USE ROLE ACCOUNTADMIN;
+
+-- Import programatically marketplace wikipedia dataset or alternatively do it via UI as described in the snowflake guide.
+CALL SYSTEM$ACCEPT_LEGAL_TERMS('DATA_EXCHANGE_LISTING', 'GZT0Z4C8RF3FT');
+CREATE DATABASE IF NOT EXISTS AI_TRAINING_DATASET_FROM_WIKIPEDIA
+FROM LISTING 'GZT0Z4C8RF3FT';
+
+-- Create database and warehouse
+CREATE DATABASE IF NOT EXISTS BATCH_DEMO;
+CREATE WAREHOUSE IF NOT EXISTS BATCH_SEARCH_WH WITH WAREHOUSE_SIZE = 'SMALL' AUTO_SUSPEND = 300 AUTO_RESUME = TRUE;
+
 -- Set context
-USE ROLE SYSADMIN;
 USE WAREHOUSE BATCH_SEARCH_WH;
 USE DATABASE BATCH_DEMO;
 CREATE SCHEMA IF NOT EXISTS PUBLIC;

@@ -84,11 +84,11 @@ Let's start by understanding what weather data we have. Use the `#table` syntax 
 ### Explore the Weather Station Index
 
 You can point Cortex Code at a table in two ways:
-- Use the `#DATABASE.SCHEMA.TABLE` syntax in your prompt (recommended for clarity)
+- Use the `@DATABASE.SCHEMA.TABLE` syntax in your prompt (recommended for clarity) when you use Cortex Code in Snowsight.
 - Or click the **+** button in the Cortex Code panel to add a table as context
 
 ```
-#PUBLIC_DATA.PUBLIC_DATA.NOAA_WEATHER_STATION_INDEX — How many weather stations are in this table? Show me a breakdown by country for the top 10 countries.
+@PUBLIC_DATA.PUBLIC_DATA.NOAA_WEATHER_STATION_INDEX — How many weather stations are in this table? Show me a breakdown by country for the top 10 countries.
 ```
 
 ![Cortex Code results for NOAA weather station count by country](assets/cortex-code-noaa-station-index-top-countries.jpg)
@@ -98,7 +98,7 @@ Cortex Code will query the table and show you the distribution of weather statio
 ### Explore the Weather Timeseries
 
 ```
-#PUBLIC_DATA.PUBLIC_DATA.NOAA_WEATHER_METRICS_TIMESERIES — What variables are available in this table? Show me the distinct variable names and a count of records for each.
+@PUBLIC_DATA.PUBLIC_DATA.NOAA_WEATHER_METRICS_TIMESERIES — What variables are available in this table? Show me the distinct variable names and a count of records for each.
 ```
 
 This reveals the available weather metrics: temperature (avg, min, max), precipitation, snowfall, snow depth, wind speed, and more.
@@ -121,13 +121,13 @@ Now let's get familiar with the financial datasets.
 ### Explore Stock Prices
 
 ```
-#PUBLIC_DATA.PUBLIC_DATA.STOCK_PRICE_TIMESERIES — What columns and tickers are available? Show me the top 20 tickers by trading volume in the last available month.
+@PUBLIC_DATA.PUBLIC_DATA.STOCK_PRICE_TIMESERIES — What columns and tickers are available? Show me the top 20 tickers by trading volume in the last available month.
 ```
 
 ### Explore Economic Indicators
 
 ```
-#PUBLIC_DATA.PUBLIC_DATA.FINANCIAL_ECONOMIC_INDICATORS_TIMESERIES — What types of economic indicators are in this table? Show me 10 example variable names and their latest values.
+@PUBLIC_DATA.PUBLIC_DATA.FINANCIAL_ECONOMIC_INDICATORS_TIMESERIES — What types of economic indicators are in this table? Show me 10 example variable names and their latest values.
 ```
 
 ### Chart Energy Stocks vs. Tech Stocks

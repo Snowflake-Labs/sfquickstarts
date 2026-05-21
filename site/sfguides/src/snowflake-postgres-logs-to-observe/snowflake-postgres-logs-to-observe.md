@@ -1,26 +1,28 @@
 author: Elizabeth Christensen
 id: snowflake-postgres-logs-to-observe
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/snowflake-feature/postgres
 language: en
-summary: Stream Postgres logs from Snowflake into Observe using the event table and the native app
+summary: Monitor Snowflake Postgres with Observe using the native app and the event table for logs and metrics
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 
-# Set up Log Export from Snowflake Postgres to Observe
+# Monitor Snowflake Postgres with Observe
 
-This guide walks through setting up a log pipeline from Snowflake-managed Postgres instances to [Observe](https://observeinc.com) using the **Observe for Snowflake** native application. Postgres query logs, connection events, and DDL statements flow through the Snowflake event table and are pushed to Observe automatically.
+This guide walks through setting up Postgres monitoring with [Observe](https://observeinc.com) using the **Observe for Snowflake** native application. Postgres logs and metrics flow through the Snowflake event table and are pushed to Observe automatically, giving you log exploration, metrics dashboards, and alerting without any intermediate pipeline.
 
-**What you'll build:** A pipeline where Snowflake Postgres logs are captured in Snowflake's event table and automatically ingested into Observe's Log Explorer for monitoring, searching, and alerting.
+Snowflake Postgres logs and metrics are routed through Snowflake's account-level event table at `SNOWFLAKE.TELEMETRY.EVENTS`. This table is the bridge between your Postgres instance and Observe.
+
+**What you'll build:** A monitoring pipeline where Snowflake Postgres logs and metrics are captured in Snowflake's event table and automatically ingested into Observe for monitoring, searching, and alerting.
 
 ### What You'll Learn
 
 - How to configure Postgres logging parameters on a Snowflake Postgres instance
-- How Snowflake's event table captures and stores Postgres logs
+- How Snowflake's event table captures and stores Postgres logs and metrics
 - How to set up Snowflake roles, grants, and network policies for Observe
-- How to configure Observe's Snowflake integration for log ingestion
-- How to verify logs flow end-to-end from Postgres to Observe
+- How to configure Observe's Snowflake integration for log and metric ingestion
+- How to verify logs and metrics flow end-to-end from Postgres to Observe
 
 ## Prerequisites
 
@@ -38,7 +40,16 @@ Snowflake Postgres supports standard PostgreSQL logging parameters. Before flipp
 
 A modern Postgres instance produces comprehensive logs covering nearly every facet of database behavior. While logs are the go-to place for finding critical errors, they're also a key tool for application performance monitoring. Here are the parameters you should know about:
 
-**Log severity level (`log_min_messages`):** Controls which server messages are logged based on severity — from `DEBUG5` (most verbose) up through `INFO`, `NOTICE`, `WARNING`, `ERROR`, `LOG`, `FATAL`, and `PANIC`. The default is `WARNING`, which is a sensible baseline for most environments.
+**Log severity level (`log_min_messages`):** Controls which server messages are logged based on severity. Setting a level includes that level and everything above it. The default in Snowflake Postgres is `NOTICE`, which is a sensible baseline for most environments.
+
+- `DEBUG5` through `DEBUG1` — Increasingly verbose developer diagnostics. Rarely useful outside of Postgres core development.
+- `INFO` — Messages explicitly requested by the user (e.g., output from `VACUUM VERBOSE`).
+- `NOTICE` — Information the user should know about, such as truncation of long identifiers or index creation hints. **(default)**
+- `WARNING` — Potential problems that don't prevent the operation from completing (e.g., committing outside a transaction block).
+- `ERROR` — The current command failed and was aborted, but the session continues.
+- `LOG` — Operational messages useful for administrators (e.g., checkpoint activity, connection authorized).
+- `FATAL` — The current session is terminated due to an unrecoverable error.
+- `PANIC` — The entire database server is shut down. All sessions are aborted.
 
 **What SQL to log (`log_statement`):**
 - `none` — Don't log SQL statements (errors and warnings still appear via `log_min_messages`)
@@ -80,8 +91,6 @@ This is a printf-style format string that gets prepended to every log line. Each
 | `%a` | Application name | `psql` |
 | `%h` | Client hostname/IP | `34.214.158.144` |
 
-This can be changed with the `log_line_prefix` setting as needed.
-
 ### Configure Logging on Your Snowflake Postgres Instance
 
 By default, Snowflake Postgres does not generate logs. You will need to set `log_statement` to enable them. If you do not have a production instance, you can set this to `all` for testing log ingestion. For production, review your necessary configurations.
@@ -91,11 +100,11 @@ ALTER SYSTEM SET log_statement = 'all';
 ```
 
 <!-- ------------------------ -->
-## 2: Confirm Logs in the Snowflake Event Table
+## 2: Confirm Logs and Metrics in the Snowflake Event Table
 
-Snowflake Postgres logs are routed through Snowflake's account-level event table at `SNOWFLAKE.TELEMETRY.EVENTS`. This table is the bridge between your Postgres instance and Observe.
+### Snowflake Postgres logs
 
-After enabling logging (Step 1), run a few queries against your Postgres instance to generate some log data. If you set `log_statement` to `all`, here's a sample to run:
+After enabling logging (above), run a few queries against your Postgres instance to generate some log data. If you set `log_statement` to `all`, here's a sample to run:
 
 ```sql
 CREATE TABLE cookie_monster (
@@ -124,7 +133,7 @@ Now verify that logs appear in the event table:
 
 ```sql
 -- Replace the instance ID with your Postgres instance's ID
--- Find it with: SHOW POSTGRES INSTANCES;  (look at the "id" column)
+-- Find it with: SHOW POSTGRES INSTANCES;  
 SELECT
     TIMESTAMP,
     RESOURCE_ATTRIBUTES['instance.id']::STRING AS instance_id,
@@ -137,7 +146,96 @@ ORDER BY TIMESTAMP DESC
 LIMIT 20;
 ```
 
-> **Tip:** To find your Postgres instance ID, run `SHOW POSTGRES INSTANCES;` and look at the `id` column. It's a string like `4jypgsndvzd5ta6ufaryx6owja`.
+> **Tip:** To find your Postgres instance ID, run `SHOW POSTGRES INSTANCES;` Use the first segment of the host column (everything before the first period). For example, if host is 4jypgsndvzd5ta6ufaryx6owja.sfdevrel-sfdevrel-enterprise.us-west-2.aws.postgres.snowflake.app, the instance ID is 4jypgsndvzd5ta6ufaryx6owja.
+
+### Snowflake Postgres metrics
+
+Snowflake Postgres collects metrics in `SNOWFLAKE.TELEMETRY.EVENTS` automatically via a monitoring agent every ~5 seconds. The tables below list every metric by category.
+
+#### Postgres
+
+| Metric | Type | Description |
+|---|---|---|
+| `postgres_connections` | gauge | Number of active backend connections |
+| `postgres_databases_size_bytes` | gauge | Total size of all databases (bytes) |
+| `postgres_wal_size_bytes` | gauge | WAL directory size (bytes) |
+| `postgres_log_size_bytes` | gauge | Log directory size (bytes) |
+| `postgres_tmp_size_bytes` | gauge | Temp file size (bytes) |
+| `postgres_locking_transactions` | gauge | Number of granted locks |
+| `postgres_locked_transactions` | gauge | Number of waiting/blocked locks |
+| `server_version` | gauge | Postgres version as an integer (e.g., 180003 = 18.0.3) |
+
+#### CPU
+
+| Metric | Type | Unit | Dimensions |
+|---|---|---|---|
+| `system.cpu.time` | sum | seconds | state: user, system, wait, idle, nice, interrupt, softirq, steal |
+| `system.cpu.load_average.1m` | gauge | threads | — |
+| `system.cpu.load_average.5m` | gauge | threads | — |
+| `system.cpu.load_average.15m` | gauge | threads | — |
+
+> `system.cpu.time` is a cumulative counter. To get a percentage, compute the delta between consecutive samples and divide by the elapsed interval.
+
+#### Memory
+
+| Metric | Type | Unit | Dimensions |
+|---|---|---|---|
+| `system.memory.usage` | sum | bytes | state: used, free, cached, buffered, slab_reclaimable, slab_unreclaimable |
+
+#### Disk
+
+| Metric | Type | Unit | Dimensions |
+|---|---|---|---|
+| `system.filesystem.usage` | sum | bytes | mountpoint, device, state (used, free), type, mode |
+
+#### Network
+
+| Metric | Type | Unit | Dimensions |
+|---|---|---|---|
+| `system.network.io` | sum | bytes | device, direction (transmit, receive) |
+
+#### Paging
+
+| Metric | Type | Unit | Dimensions |
+|---|---|---|---|
+| `system.paging.usage` | sum | bytes | device, state (used, free) |
+
+#### Resource attributes
+
+Every metric row includes the following in `RESOURCE_ATTRIBUTES`:
+
+| Attribute | Description | Example |
+|---|---|---|
+| `instance_id` | Postgres instance identifier | `4jypgsndvzd5ta6ufaryx6owja` |
+| `host.id` | EC2 instance ID | `i-0f6724aef472706a3` |
+| `host.type` | Instance family | `m8g.medium` |
+| `cloud.region` | AWS region | `us-west-2` |
+| `cloud.availability_zone` | Availability zone | `us-west-2b` |
+| `application` | Always `postgres` | `postgres` |
+| `os.type` | Always `linux` | `linux` |
+
+Here's a query to check that metrics are being collected as expected.
+
+```sql
+    SELECT metric, state, time, value
+    FROM (
+        SELECT
+            RECORD['metric']['name']::VARCHAR AS metric,
+            RECORD_ATTRIBUTES['state']::VARCHAR AS state,
+            TIMESTAMP AS time,
+            ROUND(VALUE::FLOAT, 2) AS value,
+            ROW_NUMBER() OVER (
+                PARTITION BY metric, state
+                ORDER BY TIMESTAMP DESC
+            ) AS rn
+        FROM SNOWFLAKE.TELEMETRY.EVENTS
+        WHERE RECORD_TYPE = 'METRIC'
+          AND RESOURCE_ATTRIBUTES['instance_id']::VARCHAR = '<your_instance_id>'
+          AND TIMESTAMP > DATEADD('minute', -5, CURRENT_TIMESTAMP())
+    )
+    WHERE rn = 1
+    ORDER BY metric, state;
+```
 
 <!-- ------------------------ -->
 
@@ -299,57 +397,54 @@ You can also add it via SQL:
 CALL OBSERVE_FOR_SNOWFLAKE.PUBLIC.ADD_EVENT_TABLE('SNOWFLAKE.TELEMETRY.EVENTS');
 ```
 
-## 7: Verify Logs in Observe
+## 7: Verify Logs and Metrics in Observe
 
 1. Log into your Observe UI
 2. View the log event data and search for `postgres` 
+3. View metrics in the panel, see drop down list for Postgres specific and system parameters 
 
-> **Note**: There may be a 1-3 minute delay between logs appearing in the Snowflake event table and showing up in Observe. The app sends data in chunks approximately every 60 seconds. Newly created log pipelines may take several minutes to appear. 
+> **Note**: There may be a 1-3 minute delay between data appearing in the Snowflake event table and showing up in Observe. The app sends data in chunks approximately every 60 seconds. Newly created pipelines may take several minutes to appear. 
 
-From here, use the Observe tools to filter logs, create monitors or dashboards. 
+From here, use the Observe tools to filter logs, build metrics dashboards, create monitors, and set up alerts.
 
-## How It Works
+## 8: Build Metrics and Dashboards in Observe
 
-The Observe app runs a procedure called `SEND_EVENT_TABLE_TO_OBSERVE` on a recurring schedule (~every 60 seconds). Each run:
+Using the metrics panel, you can now create queries and filters for exactly the metrics you want to view. You'll see a dropdown of available metrics. Metrics in a Snowflake event table typically have data for many different services, so each metric needs to be filtered for the specific Postgres resource. In the filter area, enter something like this:
 
-1. Reads new rows from `SNOWFLAKE.TELEMETRY.EVENTS` using change tracking
-2. Processes all record types: `LOG`, `METRIC`, `SPAN`, `EVENT`, `SPAN_EVENT`
-3. POSTs batches to your Observe ingest endpoint via the external access integration
-
-Postgres logs are not filtered or treated specially -- they flow as `LOG` record type rows with `service.name = postgres_syslog`. No additional configuration is needed to include them.
-
-## Reference: Useful Queries
-
-Count Postgres log volume in the last hour:
-
-```sql
-SELECT COUNT(*) AS postgres_log_count
-FROM SNOWFLAKE.TELEMETRY.EVENTS
-WHERE TIMESTAMP > DATEADD('hour', -1, CURRENT_TIMESTAMP())
-  AND RECORD_TYPE = 'LOG'
-  AND RESOURCE_ATTRIBUTES:"service.name" = 'postgres_syslog';
+```
+RESOURCE_ATTRIBUTES.instance_id = "4jypgsndvzd5ta6ufaryx6owja"
 ```
 
-List all Postgres instances logging to the event table:
+With the full metric catalog available (see Section 2), a good starting point for basic Postgres health monitoring is:
 
-```sql
-SELECT DISTINCT RESOURCE_ATTRIBUTES:"instance.id"::STRING AS instance_id
-FROM SNOWFLAKE.TELEMETRY.EVENTS
-WHERE TIMESTAMP > DATEADD('hour', -1, CURRENT_TIMESTAMP())
-  AND RESOURCE_ATTRIBUTES:"service.name" = 'postgres_syslog';
-```
+- **`postgres_connections`** — Track active connections relative to your `max_connections` setting. A sustained climb toward the limit signals connection pool issues or application connection leaks.
+- **`system.cpu.load_average.1m`** — Quick read on whether the instance is under CPU pressure. Load sustained above your vCPU count indicates saturation.
+- **`system.filesystem.usage`** — Monitor disk consumption before it becomes an emergency.
 
-Check Observe app send status:
+![Observe sample dashboard](observe%20sample%20dashboard.png)
 
-```sql
-SELECT TIMESTAMP, VALUE::STRING AS log_message
-FROM SNOWFLAKE.TELEMETRY.EVENTS
-WHERE TIMESTAMP > DATEADD('hour', -1, CURRENT_TIMESTAMP())
-  AND RESOURCE_ATTRIBUTES:"snow.executable.name"::STRING ILIKE '%SEND_EVENT_TABLE%'
-  AND RECORD_TYPE = 'LOG'
-ORDER BY TIMESTAMP DESC
-LIMIT 20;
-```
+### Alerts 
+
+Once your dashboards are in place, consider adding Observe monitors for:
+
+- **Connection saturation** — Alert when `postgres_connections` crosses a percentage of `max_connections` (e.g., 80%).
+- **CPU pressure** — Alert when `system.cpu.load_average.5m` stays above your vCPU count for a sustained period.
+- **Disk usage** — Alert when `system.filesystem.usage` (state: `used`) exceeds a threshold relative to total disk.
+- **Error spikes** — Alert on a sudden increase in `ERROR`, `FATAL`, or `PANIC` log events from the Postgres syslog stream.
+
+
+
+<!-- ------------------------ -->
+## Conclusion and Resources
+
+You now have a monitoring pipeline that pushes Postgres logs and metrics from the Snowflake event table into Observe automatically. Because the Observe native app handles ingestion on a recurring schedule, there's no external infrastructure to manage — data flows as long as the app is configured and the warehouse is bound.
+
+### What You Learned
+
+- How to configure Postgres logging parameters on a Snowflake Postgres instance
+- How the Snowflake event table captures and stores Postgres logs and metrics
+- How to set up the Observe native app with the required Snowflake roles, grants, and network policies
+- How to build metrics dashboards and set up monitoring in Observe
 
 ### Resources
 

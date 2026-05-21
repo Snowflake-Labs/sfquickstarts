@@ -1,6 +1,6 @@
 author: Elizabeth Christensen
 id: snowflake-postgres-logs-to-datadog
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/snowflake-feature/postgres
 language: en
 summary: Stream Postgres logs from Snowflake into Datadog using the native event table
 environments: web
@@ -12,6 +12,8 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 ## Overview
 
 This guide walks through the full end-to-end setup for streaming logs from a Snowflake Postgres instance into Datadog using Snowflake's native event table and Datadog's Snowflake integration.
+
+Snowflake Postgres logs are routed through Snowflake's account-level event table at `SNOWFLAKE.TELEMETRY.EVENTS`. This table is the bridge between your Postgres instance and Datadog.
 
 **What you'll build:** A pipeline where Snowflake Postgres logs are captured in Snowflake's event table and automatically ingested into Datadog's Log Explorer for monitoring, searching, and alerting.
 
@@ -44,7 +46,16 @@ Snowflake Postgres supports standard PostgreSQL logging parameters. Before flipp
 
 A modern Postgres instance produces comprehensive logs covering nearly every facet of database behavior. While logs are the go-to place for finding critical errors, they're also a key tool for application performance monitoring. Here are the parameters you should know about:
 
-**Log severity level (`log_min_messages`):** Controls which server messages are logged based on severity — from `DEBUG5` (most verbose) up through `INFO`, `NOTICE`, `WARNING`, `ERROR`, `LOG`, `FATAL`, and `PANIC`. The default is `WARNING`, which is a sensible baseline for most environments.
+**Log severity level (`log_min_messages`):** Controls which server messages are logged based on severity. Setting a level includes that level and everything above it. The default in Snowflake Postgres is `NOTICE`, which is a sensible baseline for most environments.
+
+- `DEBUG5` through `DEBUG1` — Increasingly verbose developer diagnostics. Rarely useful outside of Postgres core development.
+- `INFO` — Messages explicitly requested by the user (e.g., output from `VACUUM VERBOSE`).
+- `NOTICE` — Information the user should know about, such as truncation of long identifiers or index creation hints. **(default)**
+- `WARNING` — Potential problems that don't prevent the operation from completing (e.g., committing outside a transaction block).
+- `ERROR` — The current command failed and was aborted, but the session continues.
+- `LOG` — Operational messages useful for administrators (e.g., checkpoint activity, connection authorized).
+- `FATAL` — The current session is terminated due to an unrecoverable error.
+- `PANIC` — The entire database server is shut down. All sessions are aborted.
 
 **What SQL to log (`log_statement`):**
 - `none` — Don't log SQL statements (errors and warnings still appear via `log_min_messages`)
@@ -86,8 +97,6 @@ This is a printf-style format string that gets prepended to every log line. Each
 | `%a` | Application name | `psql` |
 | `%h` | Client hostname/IP | `34.214.158.144` |
 
-This can be changed with the `log_line_prefix` setting as needed.
-
 ### Configure Logging on Your Snowflake Postgres Instance
 
 By default, Snowflake Postgres does not generate logs. You will need to set `log_statement` to enable them. If you do not have a production instance, you can set this to `all` for testing log ingestion. For production, review your necessary configurations.
@@ -99,9 +108,7 @@ ALTER SYSTEM SET log_statement = 'all';
 <!-- ------------------------ -->
 ## 2. Confirm Logs in the Snowflake Event Table
 
-Snowflake Postgres logs are routed through Snowflake's account-level event table at `SNOWFLAKE.TELEMETRY.EVENTS`. This table is the bridge between your Postgres instance and Datadog.
-
-After enabling logging (Step 1), run a few queries against your Postgres instance to generate some log data. If you set `log_statement` to `all`, here's a sample to run:
+After enabling logging (above), run a few queries against your Postgres instance to generate some log data. If you set `log_statement` to `all`, here's a sample to run:
 
 ```sql
 CREATE TABLE cookie_monster (
@@ -130,7 +137,7 @@ Now verify that logs appear in the event table:
 
 ```sql
 -- Replace the instance ID with your Postgres instance's ID
--- Find it with: SHOW POSTGRES INSTANCES;  (look at the "id" column)
+-- Find it with: SHOW POSTGRES INSTANCES;  
 SELECT
     TIMESTAMP,
     RESOURCE_ATTRIBUTES['instance.id']::STRING AS instance_id,
@@ -143,7 +150,7 @@ ORDER BY TIMESTAMP DESC
 LIMIT 20;
 ```
 
-> **Tip:** To find your Postgres instance ID, run `SHOW POSTGRES INSTANCES;` and look at the `id` column. It's a string like `4jypgsndvzd5ta6ufaryx6owja`.
+> **Tip:** To find your Postgres instance ID, run `SHOW POSTGRES INSTANCES;` Use the first segment of the host column (everything before the first period). For example, if host is 4jypgsndvzd5ta6ufaryx6owja.sfdevrel-sfdevrel-enterprise.us-west-2.aws.postgres.snowflake.app, the instance ID is 4jypgsndvzd5ta6ufaryx6owja.
 
 <!-- ------------------------ -->
 ## 3. Create the Snowflake Role and Grants
@@ -169,6 +176,8 @@ GRANT MONITOR USAGE ON ACCOUNT TO ROLE DATADOG;
 -- Grant warehouse usage (replace with your warehouse name)
 GRANT USAGE ON WAREHOUSE MY_WAREHOUSE TO ROLE DATADOG;
 ```
+
+Note that `IMPORTED PRIVILEGES ON DATABASE SNOWFLAKE` grant is `ACCOUNTADMIN` only with no workaround. Some other SQL could be done with lower permissions. 
 
 ```sql
 SHOW GRANTS TO ROLE DATADOG;
@@ -305,7 +314,7 @@ Now configure Datadog to connect to your Snowflake account using the role, user,
 - **Account URL**: `<your-account>.snowflakecomputing.com`
 - **Username**: `DATADOG_USER` 
 
-6. Under **Data Collection**, enable the settings you'd like for your account. Make sure that **Events Records:** is tabbed on, these are the Postgres logs.
+6. Under **Data Collection**, enable the settings you'd like for your account. Make sure that **Events Records:** is toggled on — these are the Postgres logs.
 
 7. Upload the private key file from above.
 
@@ -349,6 +358,9 @@ With everything configured, generate some test traffic against your Postgres ins
 
 From here you can use Datadog's tools to search, filter, and create alerts around the Postgres logs. 
 
+
+Snowflake Postgres also sends `RECORD_TYPE = 'METRIC'` to the event table, in addition to `RECORD_TYPE = 'LOG'`. Currently the Datadog web integration does not support metrics. However, events could be ingested through other API processes or agents. See [metrics API](https://docs.datadoghq.com/api/latest/metrics/) and [metric submission](https://docs.datadoghq.com/metrics/custom_metrics/dogstatsd_metrics_submission/?tab=python) for more details.
+
 <!-- ------------------------ -->
 ## Conclusion and Resources
 
@@ -362,6 +374,7 @@ Congratulations! You've built an end-to-end pipeline that streams Postgres logs 
 - How to generate and configure RSA key-pair authentication
 - How to whitelist Datadog's IP ranges with Snowflake network policies
 - How to configure and verify the Datadog Snowflake integration
+ 
 
 ### Resources
 

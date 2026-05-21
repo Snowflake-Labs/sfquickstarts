@@ -100,8 +100,21 @@ Starting from a working Openflow runtime, the skill handles all steps in the **C
 | Verify Processors | Runs `verify_config` after controllers are enabled |
 | Start the Connector | Starts the pipeline and confirms changes are streaming |
 | Validate Data Flow | Checks flow status and confirms rows are appearing in Snowflake |
+| Reconcile Source vs Destination | Connects to SQL Server to query source row counts, compares against Snowflake destination across all replicated tables, and flags mismatches |
 
 > **Note:** Creating the Openflow deployment and runtime, SQL Server prerequisites (AWS RDS setup, SSMS, Northwind database, Change Tracking enablement), and Snowflake account prerequisites (destination database, connector role) must all be completed before invoking Cortex Code.
+
+### Beyond Initial Setup
+
+Cortex Code also helps with **Day 2 operations** after your pipeline is running:
+
+| Operation | What Cortex Code Does |
+|---|---|
+| Add tables to a running pipeline | Updates inclusion parameters and monitors new tables through snapshot into incremental replication |
+| Data reconciliation | Connects to SQL Server, queries source row counts, compares against Snowflake destination across all replicated tables, and flags mismatches |
+| Incremental replication | Configures skip-snapshot mode for tables you've already bulk-loaded via other methods |
+| Troubleshooting | Reads NiFi bulletins, diagnoses Change Tracking retention expiry, and guides FAILED state recovery |
+| Journal table cleanup | Identifies stale journal tables for removed tables and guides safe cleanup |
 
 ### Get Started
 
