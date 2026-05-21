@@ -2,7 +2,7 @@ author: Akhil Ramasagaram
 id: getting-started-with-prefect-and-snowflake
 language: en
 summary: Build an agentic PR review pipeline that orchestrates GitHub, Snowflake Cortex AI, Slack, and human approvals — with durable execution and full observability.
-categories: snowflake-site:taxonomy/solution-center/certification/partner-solution,snowflake-site:taxonomy/product/ai,snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions,snowflake-site:taxonomy/snowflake-feature/snowpark-container-services
+categories: snowflake-site:taxonomy/solution-center/certification/partner-solution,snowflake-site:taxonomy/product/ai,snowflake-site:taxonomy/snowflake-feature/marketplace-and-integrations,snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
