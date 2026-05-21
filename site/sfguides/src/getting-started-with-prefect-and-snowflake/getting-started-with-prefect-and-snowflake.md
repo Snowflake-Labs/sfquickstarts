@@ -92,7 +92,7 @@ export SLACK_CHANNEL=your-channel
 > See the [repo README](https://github.com/snowflake-eng/sfguide-getting-started-with-prefect-and-snowflake) for Snowflake connection configuration, Slack app setup, GitHub token scopes, and `uv` / `pyproject.toml` setup.
 
 <!-- ------------------------ -->
-## The Pipeline — Fetch and Ingest
+## Fetch and Ingest
 Duration: 5
 
 Create `pr_review_pipeline.py`. The pipeline starts by fetching PR data from GitHub and landing it in Snowflake.
@@ -151,7 +151,7 @@ def load_pr_to_snowflake(pr_data: dict) -> int:
 Every PR that enters this pipeline gets a permanent record in Snowflake.
 
 <!-- ------------------------ -->
-## The Pipeline — Cortex AI Assessment
+## Cortex AI Assessment
 Duration: 5
 
 This is the most important step. Instead of calling an external LLM, the AI runs **inside Snowflake** — co-located with your data, governed by your access policies. We use **`CLASSIFY_TEXT`** for risk classification (returns a clean category — no prompt engineering or output parsing needed) and **`COMPLETE`** for the free-form summary.
@@ -201,7 +201,7 @@ Two Cortex calls happen here — `CLASSIFY_TEXT` for structured classification, 
 > **Why two different Cortex functions?** Use the right tool for the job. `CLASSIFY_TEXT` guarantees a clean category from your list — no regex parsing, no prompt engineering for output format. `COMPLETE` is for open-ended generation where you need free-form text.
 
 <!-- ------------------------ -->
-## The Pipeline — Decision and Human Gate
+## Decision and Human Gate
 Duration: 5
 
 Based on the Cortex AI classification and historical context, the pipeline **decides at runtime** what path to take.
@@ -259,7 +259,7 @@ class ReviewDecision(RunInput):
 When the flow calls `pause_flow_run(wait_for_input=ReviewDecision, timeout=86400)`, execution literally **stops** and waits for a human to submit this form in Prefect Cloud (up to 24 hours). No custom webhook infrastructure. No polling loop.
 
 <!-- ------------------------ -->
-## The Pipeline — Close the Loop
+## Close the Loop
 Duration: 5
 
 After the decision, the pipeline closes the loop across all systems — Snowflake, GitHub, and Slack.
@@ -296,7 +296,7 @@ The pipeline also sends **two Slack notifications** — one when approval is nee
 ![SS4 — Slack channel showing the approval request message with Review and Approve button](assets/SS4.png)
 
 <!-- ------------------------ -->
-## The Flow — Wiring It Together
+## Wiring It Together
 Duration: 5
 
 Here's where the agentic behavior comes together. One flow, four systems, runtime branching, and a human gate:
