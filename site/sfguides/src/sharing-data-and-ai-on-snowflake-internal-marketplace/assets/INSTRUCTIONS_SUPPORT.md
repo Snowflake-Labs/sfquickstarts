@@ -2,8 +2,9 @@
 
 
 ## Account & Organization Setup
-All accounts have an ADMIN user you can login to if needed for support
-ADMIN
+All accounts have an ADMIN user you can login to if needed for support - this user has ACCOUNTADMIN access
+
+User = ADMIN
 
 Henrik will share the password in the slack channel.
 
