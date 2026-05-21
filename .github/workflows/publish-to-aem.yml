@@ -239,7 +239,7 @@ jobs:
         run: |
           cf_path="${{ steps.check_cf.outputs.cf_path }}"
           
-          jq -r '.content_fragment_payload' aem_payload.json > cf_payload.txt
+          jq -j '.content_fragment_payload' aem_payload.json > cf_payload.txt
           
           echo "📝 Updating content fragment: $cf_path"
           echo "   Title: $(jq -r '.title' parsed_content.json)"
@@ -489,7 +489,7 @@ jobs:
         run: |
           page_path="${{ steps.check_page.outputs.page_path }}"
           
-          jq -r '.page_payload' aem_payload.json > page_payload.txt
+          jq -j '.page_payload' aem_payload.json > page_payload.txt
           
           echo "🔗 Updating page: $page_path"
           
