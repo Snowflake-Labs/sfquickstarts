@@ -67,7 +67,7 @@ The lab environment consists of:
   - `consumer` with the `consumer_role`
 - **A TPC-H database** (`TPCH`) with sample data in the `SF1` schema, including tables (customer, orders, lineitem, nation, region, part, partsupp, supplier), an `ORDER_SUMMARY` view, and an `ORDERS_PER_CUSTOMER` function
 - **Twenty organizational profiles** representing different business units when publishing a data product 
-- **Several custom attributes** that we have pre-defined for all lab participants for richer data product metdata 
+- **Several custom attributes** that we have pre-defined for all lab participants for richer data product metadata 
 
 ### Review via the Snowsight UI
 
@@ -141,10 +141,15 @@ You will work as `provider` with the `provider_role`. The publishing flow in the
 
 ### Step 2 of 5: Select Data Objects to Share
 
-Now select the data objects for this data product.
+Now select the data objects for this data product. 
 
 1. Navigate to the `TPCH` database > `SF1` schema, and select:
-   - All tables **except** *Region* and *Part*
+   - These 5 tables:
+      - `CUSTOMER`
+      - `ORDERS`
+      - `LINEITEM`
+      - `SUPPLIER`
+      - `REGION`
    - The `ORDER_SUMMARY` view
    - The `ORDERS_PER_CUSTOMER` function
 2. Click **Done** to proceed, then **Generate Listing** if you chose "AI generation on"
@@ -168,7 +173,7 @@ Now select the data objects for this data product.
 6. Sensitive **column masking** in the data preview.
     - Click the **Edit** button at the top right of the data dictionary.
     - Select the customer table.
-    - Select the c_address, c_name, and c_phone columns for masking.
+    - Select the c_address, c_name, and c_phone columns for masking. Save.
   - Note:
     - It may take up to 2 hours before data consumers see the properly generated data preview.
     - The selection of sensitive columns only affects the data preview in the internal marketplace. When data consumers are granted _access_ to the data product, row- and column-level access policies must be in place to govern their access.
@@ -196,12 +201,12 @@ Click the "**>**" button next to "Discovery" to configure who can discover and a
 - **Discovery** determines who can see the listing and its metadata in the Internal Marketplace.
 - **Access** determines who can discover the listing *and* query the shared data objects.
 
-For this listing, change discovery from "Entire Organization" to your current account:
-- Click on "Entire Organization"
-- Choose "Selected accounts and roles"
-- Search for and select your current account. Done.
-
-Leave the **Access** as "No accounts or roles are pre-approved".
+Configure this listing as follows:
+- **Grant Access**: Leave the setting as "_No accounts or roles are pre-aproved_"
+- **Allow Discovery**: change discovery from "Entire Organization" to your current account:
+   - Click on "Entire Organization"
+   - Choose "Selected accounts and roles"
+   - Select your current account, it should be the first in the list. Done.
 
 Click **Set up request approval flow** to proceed.
 
@@ -275,7 +280,7 @@ In this section:
 
 ### Verify Access
 
-Switch back to the `consumer` user and navigate to the **Order Insights** listing in the Internal Marketplace. The blue **Request Access** button should now have changed to **Query in Worksheet** (reload the browser tab if needed). This confirms that access has been granted successfully.
+Switch back to the `consumer` user and navigate to the **Order Insights** listing in the Internal Marketplace. The blue **Request Access** button should now have changed to **Query in Workspaces** (reload the browser tab if needed). This confirms that access has been granted successfully.
 
 ---
 
@@ -292,8 +297,9 @@ Now that access has been granted, let's consume the **Order Insights** data prod
 1. Log in to your account as the `consumer` user (or switch browser tab).
 2. Navigate to  **Catalog** > **Internal Marketplace**.
 3. Open the **Order Insights** listing. Reload the browser tab if you still see the "Request Access" button.
-4. Click **Query in Worksheet**. Snowflake opens a new worksheet pre-populated with the sample queries from the listing.
+4. Click **Query in Workspaces**. Snowflake opens a new worksheet pre-populated with the sample queries from the listing.
 5. Review and run the sample queries.
+6. Keep the worksheet open for the consumer side of the next (optional) exercise, to use the same `use database` context.
 
 <!--
 ### Query via SQL in a Worksheet
@@ -373,7 +379,7 @@ You can do this manually by going back to the "Step 4 of 5: Configure Access Con
    ![](assets/2026-allow-coco-to-alter.png)
 
 7. Hide Coco by clicking the **->|** icon in the top right corner.
-8. Reload the browver tab to validate the effect of Coco's ALTER statement in the UI: 
+8. Reload the browser tab to validate the effect of Coco's ALTER statement in the UI: 
 
      ![](assets/2026-validate-coco-ui.png)
 
@@ -415,7 +421,7 @@ Let's make your data product AI-ready by generating and adding a semantic model 
 9. Your data product is now marked as **Cortex AI Ready**.
 ---
 
-## Talk to your Data Product in Snowflake Intelligence
+## Talk to your Data Product in CoWork (fka Snowflake Intelligence)
 
 1. Log in to your account as the `consumer` user (or switch browser tab).
 2. Navigate to  **Catalog** > **Internal Marketplace**.
@@ -459,11 +465,11 @@ Next:
 
 - Issue the following prompt to create and publish a new data product: 
 
-   "_Please publish the supplier, part, and partsupp tables as a data product. Please generate suitable metadata to describe the data product. Also generate and include a semantic view. The new data product should be visible to the entire organization, but noone has access unless requested. Please append my account locator to the title of the listing._"
+   "_Please publish the supplier, part, anad partsupp tables as a data product. Please generate suitable metadata to describe the data product, including a data dictionary with data preview for all tables. Also generate and include a semantic view. The new data product should be visible to the entire organization, but noone has access unless requested. Please append my account locator to the title of the listing._"
 - Respond to any questions that Coco will ask you to perform this request
 - Click **Allow** to permit Coco to create a semantic view and a share.
 - When asked to allow a GRANT, select "**Allow GRANT in this chat**" to allow all required grants for this data product  
-- Coco may present a plan and ask "_Shall I proceed?_".  Respond with "_Yes_".
+- Coco may present a plan ask "_Shall I proceed?_".  Respond with "_Yes_".
 - Finally, **Allow** Coco to create the organization listing:
 
     ![](assets/2026-coco-create-listing.png)
@@ -478,9 +484,15 @@ Next, let's ask Coco to implement a new governance requirement.
 
 Issue the following prompt:
 
-   - "_Please add a masking policy so that the supplier address and supplier phone is only visible to the provider_role role within my account but not visible to the consumer role and not to any other accounts in this organization._"
+   - "_Please add a masking policy so that the supplier address and supplier phone is only visible to the provider_role role within my account but not visible to the consumer_role and not to any other accounts in this organization._"
 
-Once Coco has created the policy, switch to the `consumer` user to see the effect of the masking.
+Coco may ask you a series of questions to get this done. 
+
+Once Coco has created the policy, switch to the `consumer` user to see the effect of the masking, e.g. by selecting rows from the `SUPPLIER` table in a worksheet:
+
+```sql
+SELECT * FROM supplier LIMIT 100;
+```
 
 ---
 
@@ -521,3 +533,5 @@ Congratulations, you completed this **Snowflake Internal Marketplace** hands-on 
 - [Automatic Data Agents for listings and shares](https://docs.snowflake.com/en/collaboration/auto-generated-data-agents)
 
 - [Managing Listings via API](https://other-docs.snowflake.com/progaccess/listing-progaccess-about)
+
+
