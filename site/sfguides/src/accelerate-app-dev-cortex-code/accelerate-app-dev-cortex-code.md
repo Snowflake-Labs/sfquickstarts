@@ -203,7 +203,7 @@ print(cortex.complete(model, prompt))
 
 You just called a hosted LLM running inside your Snowflake account. No API key, no data leaving your security perimeter.
 
-Run the **model comparison cell** below it to contrast `mistral-7b`, `snowflake-arctic`, and `llama3-70b` side by side.
+Run the **model comparison cell** below it to contrast `mistral-7b` and `llama3-70b` side by side.
 
 ### Step 2: The Hallucination Problem
 
