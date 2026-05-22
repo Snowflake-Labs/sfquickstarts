@@ -277,12 +277,12 @@ FEATURE_DOCS table
 
 ### Step 1: Chunk the Text
 
-Real documents are too long to fit in a single LLM prompt. We break them into overlapping chunks so the search index can return the most relevant piece. Cortex Search indexes chucnks, not the whole document. The search service finds the most relevant chunk for a question. If you indexed full documents, you'd retrieve a wall of text (much of it irrelevant) and would send it all to the LLM. Precision in this case improves answer quality and provides you a higher groundedness score (covered later in this lab).
+Real documents are too long to fit in a single LLM prompt. We break them into overlapping chunks so the search index can return the most relevant piece. Cortex Search indexes chunks, not the whole document. The search service finds the most relevant chunk for a question. If you indexed full documents, you'd retrieve a wall of text (much of it irrelevant) and would send it all to the LLM. Precision in this case improves answer quality and provides you a higher groundedness score (covered later in this lab).
 
 > **Cortex Code prompt to try first:**  
 > *"Chunk the content column in FEATURE_DOCS into 1500-character pieces with 200-character overlap using SPLIT_TEXT_RECURSIVE_CHARACTER and store in CHUNKED_DOCS"*
 
-Click to run the command provided by Cortex Code. You should see it created 15 chunks across 15 features with each each at most 1500 characters and a 200-character overlap between consecutive chunks.
+Click to run the command provided by Cortex Code. You should see it created 15 chunks across 15 features with each at most 1500 characters and a 200-character overlap between consecutive chunks.
 
 
 > Our documents are short so most produce a single chunk. With real PDFs or long articles, you would see many more chunks per source document.
@@ -294,7 +294,7 @@ A single DDL statement creates a fully managed hybrid search index — Snowflake
 > **Cortex Code prompt to try first:**  
 > *"Create a Cortex Search Service called FEATURE_SEARCH_SERVICE on CHUNKED_DOCS.chunk_text, with feature_name as an attribute, using snowflake-arctic-embed-l-v2.0 and a 1-minute target lag"*
 
-Click to run the command provided by Cortex Code. The FEATURE_SEARCH_SERVICE is created. The service will index automaticall, but may take a few minutes to become active. 
+Click to run the command provided by Cortex Code. The FEATURE_SEARCH_SERVICE is created. The service will index automatically, but may take a few minutes to become active. 
 
 Ask Cortex Code after a few minutes: 
 > *"Is the service active and ready to query?"*
@@ -313,7 +313,7 @@ Run the **Step 4 cell** in the notebook. It asks 5 test questions against your R
 
 Run the **Evaluate Response Quality** quality step in the notebook. 
 
-This uses Cortex LLM to score the quality of the your RAG app's answers. For each test question, the service calls retrieve_context() to fetch the top 3 matching chunks from Cortex Search. Then, it calls generate_answer() to send those chunks and the question to mistral-large2 to product an answer. It score on three metrics: groundedness, context relevance, and answer relevance on a scale from 0.0 to 1.0 asking the LLM to judge. 
+This uses Cortex LLM to score the quality of your RAG app's answers. For each test question, the service calls retrieve_context() to fetch the top 3 matching chunks from Cortex Search. Then, it calls generate_answer() to send those chunks and the question to mistral-large2 to produce an answer. It scores on three metrics: groundedness, context relevance, and answer relevance on a scale from 0.0 to 1.0 asking the LLM to judge. 
 
 A well-tuned RAG app should score **> 0.8 on all metrics**. If Groundedness is low, tighten the prompt instructions. If Context Relevance is low, your search service or chunking needs improvement. If groundedness is low, your prompt isn't constraining the model tightly enough. If answer relevance is low, the model is retrieving the right context, but generating poor answers. 
 
