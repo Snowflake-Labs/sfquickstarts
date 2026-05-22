@@ -58,14 +58,14 @@ All setup runs in a **SQL Worksheet** in Snowsight. Navigate to **Left Pane > Cr
 --Find your USER IDENTIFIER. Paste this value in the CURRENT_USER field.
 SELECT CURRENT_USER();
 
--- Enable secondary roles for permission inheritance
+-- Enable secondary roles for permission inheritance. Replace CURRENT_USER in the script with the USER IDENTIFIER from the previous step.
 ALTER USER CURRENT_USER SET DEFAULT_SECONDARY_ROLES = ('ALL');
 
 -- Activate secondary roles in the current session
 USE SECONDARY ROLES ALL;
 
 -- Enable a Personal Database for Private Notebooks
-ALTER USER CURRENT_USER SET ENABLE_PERSONAL_DATABASE = TRUE;
+ALTER ACCOUNT SET ENABLE_PERSONAL_DATABASE = TRUE;
 ```
 
 ### Step 2: Create the Workshop Database and Schemas
@@ -106,7 +106,7 @@ All Python steps in this lab run from a single pre-built Snowflake Notebook. Upl
 
 1. In Snowsight, navigate to **Projects > Legacy Notebooks**
 2. Click the **⋮** menu (top right) and select **Import .ipynb file**
-3. Upload `building-ai-apps-snowflake-cortex.ipynb`
+3. Upload `accelerate-app-dev-cortex-code.ipynb`
 4. Set **Database** to `AI_WORKSHOP_DB` and **Schema** to `RAG_DATA`
 5. Set **Warehouse** to `WORKSHOP_WH`
 6. Click **Create**
