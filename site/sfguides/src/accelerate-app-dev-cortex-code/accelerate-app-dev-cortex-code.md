@@ -146,7 +146,7 @@ Navigate back to your SQL Worksheet, look for the icon (sparkle ✦) in the righ
 In the Cortex Code chat panel, type the following prompt exactly:
 
 ```
-Create an internal stage in the RAG_DATA schema called DOCS_STAGE with directory
+Create an internal stage in the AI_WORKSHOP_DB database and RAG_DATA schema called DOCS_STAGE with directory
 tables enabled and Snowflake SSE encryption.
 ```
 
