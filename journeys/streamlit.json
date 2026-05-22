@@ -1,0 +1,42 @@
+{
+  "categories": [
+    {
+      "id": "streamlit",
+      "label": "Streamlit",
+      "url": "https://www.snowflake.com/en/developers/guides/streamlit/",
+      "subcategories": [],
+      "topics": [
+        {
+          "id": "getting-started",
+          "label": "Getting Started",
+          "url": "https://www.snowflake.com/en/developers/guides/streamlit/getting-started/"
+        },
+        {
+          "id": "build-a-dashboard",
+          "label": "Build a Dashboard",
+          "url": "https://www.snowflake.com/en/developers/guides/streamlit/build-a-dashboard/"
+        },
+        {
+          "id": "connect-to-snowflake",
+          "label": "Connect to Snowflake",
+          "url": "https://www.snowflake.com/en/developers/guides/streamlit/connect-to-snowflake/"
+        },
+        {
+          "id": "deploy-your-app",
+          "label": "Deploy Your App",
+          "url": "https://www.snowflake.com/en/developers/guides/streamlit/deploy-your-app/"
+        },
+        {
+          "id": "data-visualization",
+          "label": "Data Visualization",
+          "url": "https://www.snowflake.com/en/developers/guides/streamlit/data-visualization/"
+        },
+        {
+          "id": "user-authentication",
+          "label": "User Authentication",
+          "url": "https://www.snowflake.com/en/developers/guides/streamlit/user-authentication/"
+        }
+      ]
+    }
+  ]
+}

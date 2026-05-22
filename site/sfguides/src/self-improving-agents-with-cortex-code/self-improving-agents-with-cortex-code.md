@@ -1,4 +1,4 @@
-author: Josh Reini
+authors: Josh Reini, Elliott Botwick
 id: self-improving-agents-with-cortex-code
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/snowflake-feature/cortex-code, snowflake-site:taxonomy/snowflake-feature/cortex-agents
 language: en
@@ -103,15 +103,16 @@ Your goal is to generate a mix of successful and failing traces by asking progre
 ```
 What is the total spend across all campaigns?
 ```
-
 ```
-What content was used in the Summer Sale campaign?
-```
-
-```
-Which campaign had the highest ROI?
+Generate a report for our holiday gift guide
 ```
 
+```
+What content format generated the most revenue per dollar spent?
+```
+```
+Compare the A/B test performance for our email vs social media campaigns
+```
 ### Multi-tool queries
 
 ```
@@ -119,17 +120,17 @@ Which campaign had the highest ROI and what did customers say about it? Generate
 ```
 
 ```
-Find our worst performing campaigns, look up what customers complained about, compare to industry benchmarks, and recommend fixes
+Which audience segment responded best to our promotions and what was their average spend?
 ```
 
 ### Complex synthesis queries
 
 ```
-For each of our top 5 campaigns by revenue, show me the customer feedback and whether the A/B test results support scaling them up
+Which campaigns had the best A/B test lift but the worst customer sentiment?
 ```
 
 ```
-Build me a quarterly business review — top campaigns, underperformers, customer sentiment trends, and how we stack up against competitors
+Show me campaigns where customer sentiment was negative but ROI was still positive — what made them work financially?
 ```
 
 > **Note:** It can take up to 10 minutes for agent interaction traces to appear in the observability logs. If you just finished running the queries above, now is a good time to install Cortex Code (next step) while the traces propagate.
@@ -163,10 +164,11 @@ For detailed setup instructions, see the [Cortex Code CLI docs](https://docs.sno
 Open Cortex Code and enter `/bypass` to enable bypass mode, then enter the following prompt:
 
 ```
-Use the dataset-curation skill to pull production traces for
-SELF_IMPROVING_AGENT_DB.AGENTS.MARKETING_CAMPAIGNS_AGENT and curate
-an evaluation dataset. Store it in SELF_IMPROVING_AGENT_DB.AGENTS and register it as a new
-evaluation dataset.
+Use the cortex agent dataset-curation skill to pull all available production traces for
+SELF_IMPROVING_AGENT_DB.AGENTS.MARKETING_CAMPAIGNS_AGENT and curate an evaluation dataset.
+Ground truth should always include key figures, a key insights and curated suggestion section,
+and be specific enough to accurately evaluate agent quality.  Store the evalset in
+SELF_IMPROVING_AGENT_DB.AGENTS and register it as a new evaluation dataset.
 ```
 
 Cortex Code will:
@@ -182,9 +184,10 @@ Cortex Code will:
 Run Agent GPA on your curated dataset. Enter this prompt in Cortex Code:
 
 ```
-Run an evaluation for SELF_IMPROVING_AGENT_DB.AGENTS.MARKETING_CAMPAIGNS_AGENT
-against the registered dataset. Once the eval completes, show me the evaluation results. Break down scores by metric and
-identify which queries scored lowest. What are the common failure patterns?
+Run an evaluation for SELF_IMPROVING_AGENT_DB.AGENTS.MARKETING_CAMPAIGNS_AGENT against the registered dataset.
+Compute Answer Correctness, Logical Consistency, Execution Efficiency, Plan Quality and Plan Adherance as metrics.
+All metrics should use a 0-1 scale where 1 is optimal beavior. Once the eval completes, show me the evaluation results.
+Break down scores by metric and identify which queries scored lowest. What are the common failure patterns?
 ```
 
 **Common failure patterns you'll see:**
@@ -193,13 +196,13 @@ identify which queries scored lowest. What are the common failure patterns?
 - Redundant tool calls
 - VaIncomplete summaries missing key data
 
-### Generate improved instructions
+## Improve the Agent
 
 ```
-Based on the failure analysis, generate improved orchestration instructions
-for SELF_IMPROVING_AGENT_DB.AGENTS.MARKETING_CAMPAIGNS_AGENT that fix
-the identified issues. The instructions should tell the agent when to use
-multiple tools and in what order. Apply the changes.
+Based on the failure analysis, generate improved orchestration and response instructions for
+SELF_IMPROVING_AGENT_DB.AGENTS.MARKETING_CAMPAIGNS_AGENT that fix the identified issues.
+The instructions should tell the agent what format to respond in, when to use multiple tools and in what order,
+and encourage efficient tool calling. Apply the changes.
 ```
 
 Cortex Code will:
@@ -207,15 +210,14 @@ Cortex Code will:
 1. Draft improved orchestration instructions with explicit tool routing rules
 2. Apply via `ALTER AGENT ... SET SPECIFICATION = ...`
 
-**What changes:** Only the `instructions.orchestration` field. Tools, tool_resources, and models stay identical. Better instructions are the only lever.
+**What changes:** Only the `instructions.orchestration` and `instructions.response` field. Tools, tool_resources, and orchestration model stay the same. Improved instructions is the only lever.
 
-### Validate with a second eval
+## Validate Agent Improvement
 
 ```
-Run the evaluation of SELF_IMPROVING_AGENT_DB.AGENTS.MARKETING_CAMPAIGNS_AGENT
-against the same dataset again. Compare the results
-against the baseline — show me a side-by-side comparison of
-scores by metric and highlight what improved.
+Run the evaluation of SELF_IMPROVING_AGENT_DB.AGENTS.MARKETING_CAMPAIGNS_AGENT against the same dataset again.
+Compare the results against the baseline — show me a side-by-side comparison of scores by metric
+and highlight what improved.
 ```
 
 **What to look for:**
