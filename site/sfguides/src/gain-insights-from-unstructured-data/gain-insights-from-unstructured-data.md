@@ -1,4 +1,4 @@
-author: James Cha-Earley
+author: James Cha-Earley, Sho Tanaka
 id: gain-insights-from-unstructured-data
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions, snowflake-site:taxonomy/snowflake-feature/unstructured-data-analysis
 language: en
@@ -87,7 +87,14 @@ Now upload the media files into the dedicated stages created by setup.sql:
    * Click **+ Files** on the top right hand corner
    * Click **Browse** and upload the files in the `video/` folder
 
+6. Run Post-Upload SQL:
+   * After uploading all files, open a new SQL worksheet in [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#)
+   * Load and execute the **`setup-post-upload.sql`** file to register the uploaded files into the corresponding tables
+   * This step is required to make the uploaded audio, video, and image files available for processing in subsequent steps
+
 Your Snowflake environment now contains the complete set of data across all modalities.
+
+
 
 <!-- ------------------------ -->
 ## Setup Notebook

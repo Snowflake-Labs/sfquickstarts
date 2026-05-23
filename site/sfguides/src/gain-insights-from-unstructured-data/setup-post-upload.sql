@@ -1,0 +1,21 @@
+/*--
+• Post-upload: Populate media tables
+  Run these statements AFTER you have uploaded files to the stages
+--*/
+
+USE ROLE sysadmin;
+
+ALTER STAGE tb_voc.MEDIA.IMAGES REFRESH;
+ALTER STAGE tb_voc.MEDIA.AUDIO REFRESH;
+ALTER STAGE tb_voc.MEDIA.VIDEO REFRESH;
+
+INSERT INTO tb_voc.MEDIA.IMAGE_TABLE (IMAGE_PATH)
+SELECT RELATIVE_PATH FROM DIRECTORY(@tb_voc.MEDIA.IMAGES);
+
+INSERT INTO tb_voc.MEDIA.AUDIO_TABLE (AUDIO_PATH)
+SELECT RELATIVE_PATH FROM DIRECTORY(@tb_voc.MEDIA.AUDIO);
+
+INSERT INTO tb_voc.MEDIA.VIDEO_TABLE (VIDEO_PATH)
+SELECT RELATIVE_PATH FROM DIRECTORY(@tb_voc.MEDIA.VIDEO);
+
+SELECT 'Setup after upload is complete. Try to run notebook.' AS note;
