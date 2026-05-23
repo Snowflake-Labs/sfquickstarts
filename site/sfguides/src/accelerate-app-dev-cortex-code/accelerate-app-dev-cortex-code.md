@@ -104,18 +104,15 @@ All Python steps in this lab run from a single pre-built Snowflake Notebook. Upl
 
 ### Step 1: Upload the Notebook
 
-1. In Snowsight, navigate to **Projects > Legacy Notebooks**
-2. Click the **⋮** menu (top right) and select **Import .ipynb file**
-3. Upload `accelerate-app-dev-cortex-code.ipynb`
-4. Set **Database** to `AI_WORKSHOP_DB` and **Schema** to `RAG_DATA`
-5. Set **Warehouse** to `WORKSHOP_WH`
-6. Click **Create**
+1. In Snowsight, navigate to **Projects > Workspaces**
+2. Click on **+ Add new > Upload files** and the downloaded `accelerate-app-dev-cortex-code.ipynb`
+3. Click on **Connect** next to the **Run** button and select **Create and connect**
+4. Wait for connection to commplete
+6. Set **Warehouse** to `WORKSHOP_WH`
 
 ### Step 2: Run the Setup Cell
 
-Before you run the setup cell, from the 'Packages' drop down on the top right, install the following: 'snowflake.core'. You will be prompted to restart the session. 
-
-Now run The setup code cell in the notebook imports all libraries and sets the active database, schema, and warehouse. **Run this cell before any other.** You should see:
+Now run the setup code cell in the notebook imports all libraries and sets the active database, schema, and warehouse. **Run this cell before any other.** You should see:
 
 ```
 Session ready.
