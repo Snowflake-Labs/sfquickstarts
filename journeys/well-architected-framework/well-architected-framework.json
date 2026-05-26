@@ -11,6 +11,21 @@
           "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/cost-optimization/",
           "topics": [
             {
+              "id": "overview",
+              "label": "Overview",
+              "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/cost-optimization/overview/"
+            },
+            {
+              "id": "principles",
+              "label": "Principles",
+              "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/cost-optimization/principles/"
+            },
+            {
+              "id": "recommendations",
+              "label": "Recommendations",
+              "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/cost-optimization/recommendations/"
+            },
+            {
               "id": "business-impact",
               "label": "Business Impact",
               "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/cost-optimization/business-impact/"
@@ -33,29 +48,54 @@
           ]
         },
         {
-          "id": "security-governance",
+          "id": "security-and-governance",
           "label": "Security & Governance",
-          "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/security-governance/",
+          "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/security-and-governance/",
           "topics": [
+            {
+              "id": "overview",
+              "label": "Overview",
+              "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/security-and-governance/overview/"
+            },
+            {
+              "id": "principles",
+              "label": "Principles",
+              "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/security-and-governance/principles/"
+            },
+            {
+              "id": "recommendations",
+              "label": "Recommendations",
+              "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/security-and-governance/recommendations/"
+            },
             {
               "id": "secure-the-perimeter",
               "label": "Secure the Perimeter",
-              "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/security-governance/secure-the-perimeter/"
+              "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/security-and-governance/secure-the-perimeter/"
             },
             {
               "id": "data-governance",
               "label": "Data Governance",
-              "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/security-governance/data-governance/"
+              "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/security-and-governance/data-governance/"
             },
             {
               "id": "responsible-ai",
               "label": "Responsible AI",
-              "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/security-governance/responsible-ai/"
+              "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/security-and-governance/responsible-ai/"
             },
             {
               "id": "assume-breach",
               "label": "Assume Breach",
-              "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/security-governance/assume-breach/"
+              "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/security-and-governance/assume-breach/"
+            },
+            {
+              "id": "identify-and-assess-threat",
+              "label": "Identify and Assess Threat",
+              "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/security-and-governance/identify-and-assess-threat/"
+            },
+            {
+              "id": "tradeoffs-considerations",
+              "label": "Tradeoffs & Considerations",
+              "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/security-and-governance/tradeoffs-considerations/"
             }
           ]
         },
@@ -64,6 +104,21 @@
           "label": "Reliability",
           "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/reliability/",
           "topics": [
+            {
+              "id": "overview",
+              "label": "Overview",
+              "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/reliability/overview/"
+            },
+            {
+              "id": "principles",
+              "label": "Principles",
+              "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/reliability/principles/"
+            },
+            {
+              "id": "recommendations",
+              "label": "Recommendations",
+              "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/reliability/recommendations/"
+            },
             {
               "id": "reliability-strategy-governance",
               "label": "Reliability Strategy & Governance",
@@ -101,6 +156,16 @@
           "label": "Performance",
           "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/performance/",
           "topics": [
+            {
+              "id": "overview",
+              "label": "Overview",
+              "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/performance/overview/"
+            },
+            {
+              "id": "principles-and-recommendations",
+              "label": "Principles and Recommendations",
+              "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/performance/principles-and-recommendations/"
+            },
             {
               "id": "establish-and-validate-performance-objectives",
               "label": "Establish and Validate Performance Objectives",
@@ -160,6 +225,11 @@
               "id": "implement-continuous-performance-monitoring-and-optimization",
               "label": "Implement Continuous Performance Monitoring and Optimization",
               "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/performance/implement-continuous-performance-monitoring-and-optimization/"
+            },
+            {
+              "id": "conclusion",
+              "label": "Conclusion",
+              "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/performance/conclusion/"
             }
           ]
         },
@@ -168,6 +238,16 @@
           "label": "Operational Excellence",
           "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/operational-excellence/",
           "topics": [
+            {
+              "id": "overview",
+              "label": "Overview",
+              "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/operational-excellence/overview/"
+            },
+            {
+              "id": "principles",
+              "label": "Principles",
+              "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/operational-excellence/principles/"
+            },
             {
               "id": "ensure-operational-readiness-performance",
               "label": "Ensure Operational Readiness & Performance",
@@ -211,6 +291,11 @@
           "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/ai-data-governance-lens/",
           "topics": [
             {
+              "id": "overview",
+              "label": "Overview",
+              "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/ai-data-governance-lens/overview/"
+            },
+            {
               "id": "pillar-guidance",
               "label": "Pillar Guidance",
               "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/ai-data-governance-lens/pillar-guidance/"
@@ -242,6 +327,11 @@
           "label": "Open and Interoperable",
           "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/interoperable/",
           "topics": [
+            {
+              "id": "overview",
+              "label": "Overview",
+              "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/interoperable/overview/"
+            },
             {
               "id": "pillar-guidance",
               "label": "Pillar Guidance",
