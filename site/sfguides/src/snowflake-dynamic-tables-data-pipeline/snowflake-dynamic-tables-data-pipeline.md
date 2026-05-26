@@ -2,113 +2,89 @@ author: Gilberto Hernandez
 id: snowflake-dynamic-tables-data-pipeline
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/transformation
 language: en
-summary: Build declarative data pipelines using Dynamic Tables, driven by natural language prompts to Cortex Code inside Snowsight Workspaces.
+summary: Build autonomous SQL pipelines for AI agents using Dynamic Tables, driven by natural language prompts to Cortex Code.
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 fork repo link: https://github.com/Snowflake-Labs/sfguide-declarative-pipelines-dynamic-tables
 
-# Build Autonomous SQL Pipelines with Cortex Code & Dynamic Tables
+# Build Autonomous SQL Pipelines for AI Agents
 <!-- ------------------------ -->
-## Overview 
+## Overview
 
-What if you could build a production data pipeline by simply describing what you want? In this quickstart, you'll do exactly that — using **Cortex Code** as your AI co-pilot inside Snowsight Workspaces to build an end-to-end **Dynamic Tables** pipeline from natural language prompts.
+What if you could build a production data pipeline by simply describing what you want? In this quickstart, you'll do exactly that — using **Cortex Code** as your AI co-pilot to build an end-to-end **Dynamic Tables** pipeline from natural language prompts.
 
-Dynamic Tables let you declare *what* your pipeline should produce using SQL. Cortex Code lets you describe *what* you want in plain English and generates the SQL for you. Together, they represent a fully declarative approach to data engineering — from intent to production pipeline with zero boilerplate.
+Dynamic Tables let you declare *what* your pipeline should produce using SQL. Cortex Code lets you describe *what* you want in plain English and generates the SQL for you. Together, they represent a fully declarative approach to data engineering — from intent to production pipeline, no boilerplate required.
 
-You'll work with the Tasty Bytes dataset (a fictitious food truck company) to build a three-tier pipeline that enriches raw order data, joins it into fact tables, and pre-aggregates business metrics — all by giving Cortex Code prompts.
+You'll work with the Tasty Bytes dataset (a fictitious food truck company) to build a three-tier pipeline that enriches raw order data, joins it into fact tables, and pre-aggregates business metrics — all by giving Cortex Code prompts. Once the pipeline is running, you'll wire it up to an AI agent that answers natural language questions about your data.
 
 ### Prerequisites
 - Basic familiarity with data engineering concepts (data loading, transformations)
-- No SQL knowledge required — Cortex Code writes it for you
+- No SQL writing required — Cortex Code writes it for you
 
-### What You'll Learn 
-- How to use Cortex Code as a data engineering co-pilot inside Snowsight Workspaces
+### What You'll Learn
+- How to use Cortex Code as a data engineering co-pilot in Snowsight
 - How to build Dynamic Tables by describing your pipeline in natural language
 - How to configure refresh strategies (TARGET_LAG, DOWNSTREAM) through prompts
 - How Dynamic Tables handle incremental refresh automatically
 - How to monitor pipeline operations conversationally
 - How to create semantic views and AI agents using Cortex Code
 
-### What You'll Need 
-- A Snowflake account ([trial](https://signup.snowflake.com/developers), or otherwise)
+### What You'll Need
+- A Snowflake account ([trial](https://signup.snowflake.com/developers), or otherwise) — preferably AWS US West 2 (Oregon), Enterprise edition
 - ACCOUNTADMIN access (available in trial accounts)
-- Cortex Code enabled in your account ([setup guide](https://docs.snowflake.com/en/user-guide/cortex-code))
+- Cortex Code enabled in your account ([setup guide](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-snowsight))
 
-### What You'll Build 
+### What You'll Build
 - A three-tier declarative data pipeline processing ~1 billion order records
 - A stored procedure for generating synthetic test data
 - Monitoring queries for pipeline observability
 - A semantic view for natural language querying
 - A Cortex Agent for conversational data exploration
+- A Streamlit dashboard visualizing pipeline metrics
 
 <!-- ------------------------ -->
-## Create a Workspace from Git
+## Open Cortex Code
 
-In this step, you'll create a Snowsight Workspace linked to the companion repository on GitHub.
+All of the work in this quickstart is driven through **Cortex Code** — Snowflake's AI co-pilot built into Snowsight.
 
-1. Navigate to **Projects > Workspaces** in Snowsight.
-2. Click **Create** (+) and select **Git repository**.
-3. Enter the repository URL: `https://github.com/Snowflake-Labs/sfguide-declarative-pipelines-dynamic-tables`
-4. Select an API Integration for GitHub ([create one if needed](https://docs.snowflake.com/en/user-guide/ui-snowsight/workspaces-git#label-create-a-git-workspace)).
-5. Select **Public repository**.
+Open the Cortex Code panel by pressing **Cmd+L** (Mac) or **Ctrl+L** (Windows), or click the Cortex Code icon in the Snowsight toolbar.
 
-Once the workspace is created, you'll see these files in the file explorer:
+![Cortex Code prompt panel in Snowsight](./assets/coco_prompt.png)
 
-| File | Purpose |
-|:-----|:--------|
-| `00_setup_environment.sql` | Environment setup and data loading |
-| `01_dynamic_tables.sql` | Dynamic Tables pipeline |
-| `02_sproc.sql` | Test data stored procedure |
-| `03_incremental_refresh.sql` | Incremental refresh testing |
-| `04_monitoring.sql` | Pipeline monitoring |
-| `05_semantic_view_agent.sql` | Semantic view and agent |
-| `06_cleanup.sql` | Teardown |
-
-### Open Cortex Code
-
-Each file contains a **CORTEX CODE PROMPT** block at the top. Instead of running the SQL manually, you'll copy each prompt into Cortex Code:
-
-1. Open the Cortex Code panel by pressing **Cmd+L** (Mac) or **Ctrl+L** (Windows), or click the Cortex Code icon in the workspace toolbar
-2. You'll see a chat interface — this is where you'll give your prompts
-
-**The workflow for each step:**
-1. Open the SQL file in your workspace
-2. Copy the prompt from the header block
-3. Paste it into Cortex Code
-4. Review the generated SQL (compare against the expected output in the file)
-5. Tell CoCo to execute
-
-> **Tip**: The SQL in each file is fully runnable on its own. If you prefer the traditional approach, you can run the files directly instead of using prompts.
+You'll see a chat interface. Throughout this quickstart, you'll paste prompts from each section directly into CoCo. CoCo will generate the SQL, explain what it's doing, and execute it for you.
 
 <!-- ------------------------ -->
 ## Set Up the Environment
 
-Let's set up our database, warehouse, and load the Tasty Bytes dataset.
+Let's create the database, warehouse, and load the Tasty Bytes dataset. Give CoCo the following prompt:
 
-Open **00_setup_environment.sql** in your workspace. Copy the prompt from the top of the file into Cortex Code:
-
-**Prompt:**
 ```
-Set up a lab environment: create role lab_role with CREATE WAREHOUSE and 
-CREATE DATABASE privileges. Create database tasty_bytes_db with schemas 
-raw and analytics. Create a 2XL standard warehouse tasty_bytes_wh with 
-60s auto-suspend. Create tables order_header, order_detail, and menu in 
-the raw schema. Set up a CSV file format and external stage pointing to 
-s3://sfquickstarts/tasty-bytes-builder-education/. Load all tables using 
-COPY INTO from the raw_pos/ subdirectories.
+Using ACCOUNTADMIN, create a role called lab_role and grant it CREATE WAREHOUSE
+and CREATE DATABASE privileges on the account. Then switch to lab_role and:
+- Create a database called tasty_bytes_db with two schemas: raw and analytics
+- Create a 2XL standard warehouse called tasty_bytes_wh with 60s auto-suspend
+  and auto-resume enabled
+- Create these tables in tasty_bytes_db.raw:
+  - order_header: columns for order_id, truck_id, location_id, customer_id,
+    discount_id, shift_id, shift_start_time, shift_end_time, order_channel,
+    order_ts (TIMESTAMP_NTZ), served_ts, order_currency, order_amount (NUMBER),
+    order_tax_amount, order_discount_amount, order_total (NUMBER)
+  - order_detail: columns for order_detail_id, order_id, menu_item_id,
+    discount_id, line_number, quantity, unit_price, price, order_item_discount_amount
+  - menu: columns for menu_id, menu_type_id, menu_type, truck_brand_name,
+    menu_item_id, menu_item_name, item_category, item_subcategory,
+    cost_of_goods_usd, sale_price_usd, menu_item_health_metrics_obj (VARIANT)
+- Create a CSV file format in tasty_bytes_db.public
+- Create an external stage tasty_bytes_db.raw.tasty_bytes_stage pointing to
+  s3://sfquickstarts/tasty-bytes-builder-education/ using the CSV file format
+- Load all three tables using COPY INTO from the stage subdirectories:
+  raw_pos/order_header/, raw_pos/order_detail/, raw_pos/menu/
 ```
 
-Cortex Code will generate the SQL to:
-- Create `lab_role` with necessary privileges
-- Create `tasty_bytes_db` with `raw` and `analytics` schemas
-- Create a 2XL warehouse for fast data loading
-- Define tables for order headers, order details, and menu items
-- Load ~1 billion rows from S3
+CoCo will create all infrastructure and load ~1 billion rows from S3. The data load takes a few minutes due to the volume.
 
-Review CoCo's output against the expected SQL in the file, then let it execute. The data load takes a few minutes due to the volume.
-
-> **What just happened**: CoCo created all infrastructure objects and loaded nearly 1 billion rows of food truck order data. Compare CoCo's SQL against the file to see how closely it matched.
+> **Note**: If you encounter permission errors, ensure you're running as ACCOUNTADMIN when creating the role and granting privileges.
 
 <!-- ------------------------ -->
 ## Understanding Dynamic Tables
@@ -136,38 +112,54 @@ Now let's tell Cortex Code to build a three-tier pipeline using these concepts.
 <!-- ------------------------ -->
 ## Build the Pipeline
 
-This is the core of the quickstart — you'll describe an entire three-tier data pipeline to Cortex Code, and it will generate all the Dynamic Table DDL.
+This is the core of the quickstart — you'll describe an entire three-tier data pipeline to Cortex Code, and it will generate all the Dynamic Table DDL. Give CoCo the following prompt:
 
-Open **01_dynamic_tables.sql** in your workspace. Copy the prompt into Cortex Code:
-
-**Prompt:**
 ```
-Build a 3-tier dynamic table pipeline in tasty_bytes_db.analytics using 
+Build a 3-tier dynamic table pipeline in tasty_bytes_db.analytics using
 warehouse tasty_bytes_wh:
 
 Tier 1 - Enrichment (TARGET_LAG = DOWNSTREAM):
-- orders_enriched: From raw.order_header. Add temporal dimensions 
-  (order_date, day_name, order_hour). Cast discount amount to NUMBER(10,2). 
-  Add has_discount boolean flag. Filter nulls.
-- order_items_enriched: Join raw.order_detail with raw.menu on menu_item_id.
-  Calculate unit_profit, line_profit, profit_margin_pct.
+- orders_enriched: From tasty_bytes_db.raw.order_header. Include order_id,
+  truck_id, customer_id, order_channel. Add temporal dimensions: order_date,
+  day_name (DAYNAME), order_hour (HOUR), and order_ts as order_timestamp.
+  Include order_amount and order_total. Cast order_discount_amount to NUMBER(10,2)
+  using TRY_TO_NUMBER. Add a has_discount boolean (true when discount_id is not
+  null and not empty string). Filter out null order_id and null order_ts.
+
+- order_items_enriched: Join tasty_bytes_db.raw.order_detail with
+  tasty_bytes_db.raw.menu on menu_item_id. Include order_detail_id, order_id,
+  line_number, menu_item_id, menu_item_name, item_category, item_subcategory,
+  truck_brand_name, menu_type, quantity, unit_price, price as line_total,
+  cost_of_goods_usd, sale_price_usd. Calculate unit_profit (unit_price minus
+  cost_of_goods_usd), line_profit (unit_profit times quantity), and
+  profit_margin_pct (rounded to 2 decimals, handle zero unit_price). Cast
+  order_item_discount_amount to NUMBER(10,2) as line_discount_amount. Add
+  has_discount flag. Filter out null order_id and null menu_item_id.
 
 Tier 2 - Fact Table (TARGET_LAG = DOWNSTREAM):
-- order_fact: Join orders_enriched with order_items_enriched on order_id.
+- order_fact: Inner join orders_enriched (alias o) with order_items_enriched
+  (alias oi) on order_id. Include all columns from both. Rename
+  o.order_discount_amount as order_level_discount and o.has_discount as
+  order_has_discount, oi.has_discount as line_has_discount.
 
 Tier 3 - Aggregated Metrics (TARGET_LAG = 1 hour):
-- daily_business_metrics: Aggregate order_fact by date.
-- product_performance_metrics: Aggregate order_fact by product.
+- daily_business_metrics: Aggregate order_fact by order_date and day_name.
+  Include count distinct order_id (total_orders), truck_id (active_trucks),
+  customer_id (unique_customers), sum quantity (total_items_sold), sum
+  order_total (total_revenue), avg order_total (avg_order_value), sum
+  line_total (total_line_item_revenue), sum line_profit (total_profit),
+  avg profit_margin_pct (avg_profit_margin_pct), count orders with discount,
+  sum discount amounts.
+
+- product_performance_metrics: Aggregate order_fact by menu_item_id,
+  menu_item_name, item_category, item_subcategory, truck_brand_name, menu_type.
+  Include count distinct order_id (order_count), sum quantity (total_units_sold),
+  sum line_total (total_revenue), sum line_profit (total_profit), avg unit_price,
+  avg profit_margin_pct, avg cost_of_goods_usd (avg_cogs), avg sale_price_usd
+  (standard_sale_price), revenue_per_unit, profit_per_unit.
 ```
 
-> **Important**: Before executing, **review the generated SQL**. Compare it against the expected output in `01_dynamic_tables.sql`. Verify:
-> - TARGET_LAG values match your specifications (DOWNSTREAM for Tier 1-2, 1 hour for Tier 3)
-> - Join conditions are correct (menu_item_id for items, order_id for fact)
-> - The dependency graph flows correctly: raw → Tier 1 → Tier 2 → Tier 3
-
-When satisfied, tell CoCo to execute. The first refresh will process the full ~1 billion rows and may take several minutes. Subsequent refreshes will be incremental (much faster).
-
-> **What just happened**: You described a multi-tier pipeline in plain English and CoCo generated 5 CREATE DYNAMIC TABLE statements with proper dependency management. Snowflake now automatically tracks the DAG and handles refreshes.
+> **Review before executing**: Verify that TARGET_LAG values match (DOWNSTREAM for Tier 1-2, 1 hour for Tier 3), join conditions are correct, and the dependency flows raw → Tier 1 → Tier 2 → Tier 3. The first refresh processes the full ~1 billion rows and takes several minutes. Subsequent refreshes will be incremental.
 
 <!-- ------------------------ -->
 ## View Dependency Graph
@@ -194,109 +186,99 @@ Show me all dynamic tables in tasty_bytes_db.analytics with their target lag set
 <!-- ------------------------ -->
 ## Generate Test Data
 
-To test incremental refresh, we need a way to generate new orders. Let's ask CoCo to create a stored procedure for this.
+To demonstrate incremental refresh, we need a way to insert new orders. Ask CoCo to create a stored procedure:
 
-Open **02_sproc.sql** in your workspace. Copy the prompt into Cortex Code:
-
-**Prompt:**
 ```
-Create a stored procedure tasty_bytes_db.raw.generate_demo_orders(num_rows INTEGER) 
-that generates synthetic orders for testing incremental refresh. It should:
-- Sample random existing orders from order_header
-- Generate new unique order IDs
-- Update timestamps to current date preserving time-of-day
-- Randomize prices ±20%
-- Generate matching order_detail records maintaining referential integrity
-- Return a summary string with counts
+Create a stored procedure tasty_bytes_db.raw.generate_demo_orders(num_rows INTEGER)
+using SQL language that generates synthetic orders. It should:
+- Capture row counts in order_header and order_detail before insertion
+- Sample num_rows random existing orders from order_header into a temporary table
+- Assign new unique order IDs to avoid conflicts with existing data
+- Set timestamps to the current date while preserving the original time-of-day
+- Apply random price variation of plus or minus 20% using UNIFORM
+- Insert the new orders into order_header
+- For each new order, copy the corresponding order_detail records from the
+  original order, generating new order_detail_ids and applying the same
+  price randomization
+- Capture row counts after insertion
+- Clean up the temporary table
+- Return a summary string showing how many orders and line items were inserted
 ```
 
-**Review the generated SQL** — this is a complex stored procedure. Key things to verify:
-- Uses a temp table to track original vs new order IDs
-- Maintains referential integrity between order_header and order_detail
-- Applies UNIFORM for randomization
-- Properly cleans up the temp table
-
-Compare against the expected output in `02_sproc.sql`, then execute.
-
-> **What just happened**: CoCo generated a multi-step stored procedure with variables, temp tables, and proper referential integrity logic — all from a natural language description.
+> **Review before executing**: This is a complex stored procedure — verify it creates a temp table with new_order_id mappings and joins back to order_detail to preserve referential integrity.
 
 <!-- ------------------------ -->
 ## Test Incremental Refresh
 
-Now let's see incremental refresh in action. Open **03_incremental_refresh.sql** — this file has multiple sequential prompts.
-
-Give CoCo these prompts one at a time:
+Now let's see incremental refresh in action. Give CoCo these prompts one at a time:
 
 **Prompt 1** — Establish baseline:
 ```
-How many rows are currently in tasty_bytes_db.raw.order_header and order_detail?
+How many rows are currently in tasty_bytes_db.raw.order_header and
+tasty_bytes_db.raw.order_detail?
 ```
 
 **Prompt 2** — Generate new data:
 ```
-Call tasty_bytes_db.raw.generate_demo_orders with 500 rows
+Call tasty_bytes_db.raw.generate_demo_orders(500)
 ```
 
 **Prompt 3** — Trigger refresh:
 ```
-Manually refresh all dynamic tables in tasty_bytes_db.analytics in dependency 
-order: first orders_enriched and order_items_enriched, then order_fact, then 
-daily_business_metrics and product_performance_metrics
+Using tasty_bytes_wh, manually refresh all dynamic tables in
+tasty_bytes_db.analytics in dependency order: first refresh orders_enriched
+and order_items_enriched (tier 1), then order_fact (tier 2), then
+daily_business_metrics and product_performance_metrics (tier 3).
 ```
 
 **Prompt 4** — Verify incremental behavior:
 ```
-Show me the refresh history for all 5 dynamic tables. Was the latest refresh 
-incremental or full? How long did each take?
+Query tasty_bytes_db.information_schema.dynamic_table_refresh_history() for each
+of the 5 dynamic tables in tasty_bytes_db.analytics. Show the most recent
+refresh_action, state, refresh_trigger, and duration in seconds for each.
 ```
 
-> **Key insight**: Look at the `refresh_action` column. You should see **INCREMENTAL** — Snowflake processed only the 500 new orders through the entire pipeline, not the full billion-row dataset. This is what makes Dynamic Tables efficient at scale.
+> **Key insight**: The `refresh_action` column should show **INCREMENTAL** — Snowflake processed only the 500 new orders through the entire pipeline, not the full billion-row dataset. This is what makes Dynamic Tables efficient at scale.
 
-**Prompt 5** — View results:
+**Prompt 5** — View updated results:
 ```
-Show me the latest daily business metrics and top 10 products by revenue
+Query tasty_bytes_db.analytics.daily_business_metrics ordered by order_date
+descending, limit 5. Then query tasty_bytes_db.analytics.product_performance_metrics
+ordered by total_revenue descending, limit 10.
 ```
-
-You should see today's date in the daily metrics with the newly generated orders included.
 
 <!-- ------------------------ -->
 ## Monitor Pipeline
 
-Monitoring is crucial for production pipelines. Ask CoCo for a monitoring summary.
+Ask CoCo for a full monitoring summary:
 
-Open **04_monitoring.sql** and copy the prompt:
-
-**Prompt:**
 ```
-Show me a monitoring dashboard for all dynamic tables in tasty_bytes_db.analytics: 
-list each table with its scheduling state, target lag, and for the most recent 
-refresh show the refresh type (incremental vs full), state, and duration in seconds
+Show a monitoring summary for all dynamic tables in tasty_bytes_db.analytics.
+For each table, show its name, target_lag, scheduling state, and — from
+tasty_bytes_db.information_schema.dynamic_table_refresh_history() — the most
+recent refresh_action, state, and duration in seconds. Use a window function
+to get only the latest refresh per table.
 ```
 
-CoCo will query `INFORMATION_SCHEMA.DYNAMIC_TABLE_REFRESH_HISTORY()` and format the results. Key columns:
+Key columns to watch:
 
 - **refresh_action**: `INCREMENTAL` (efficient) vs `FULL` (first run or when incremental isn't possible)
 - **state**: `SUCCEEDED` or `FAILED`
-- **refresh_duration_seconds**: How long the refresh took
-
-These monitoring patterns are essential for production pipeline observability.
+- **duration**: How long the refresh took
 
 <!-- ------------------------ -->
 ## Create Semantic View and Agent
 
-Let's make our pipeline data queryable in natural language by creating a semantic view and AI agent.
+Let's make our pipeline data queryable in natural language by creating a semantic view and AI agent:
 
-Open **05_semantic_view_agent.sql** and copy the prompt:
-
-**Prompt:**
 ```
-Create a semantic view called tasty_bytes_semantic_model in TASTY_BYTES_DB.ANALYTICS 
-over all 5 dynamic tables in the analytics schema. Then create a Cortex Agent 
-called tasty_bytes_agent that uses this semantic view. Set the display name to 
-"Tasty Bytes Analytics Agent".
+Create a semantic view called tasty_bytes_semantic_model in TASTY_BYTES_DB.ANALYTICS
+over all 5 dynamic tables in the analytics schema: orders_enriched,
+order_items_enriched, order_fact, daily_business_metrics, and
+product_performance_metrics. Then create a Cortex Agent called tasty_bytes_agent
+in TASTY_BYTES_DB.ANALYTICS that uses this semantic view as its Cortex Analyst
+tool. Set the display name to "Tasty Bytes Analytics Agent".
 ```
-
-CoCo will use its semantic view and agent creation skills to set up both objects.
 
 ### Test Your Agent
 
@@ -312,39 +294,61 @@ The agent translates natural language into SQL queries against your Dynamic Tabl
 ![agent](./assets/gent.png)
 
 <!-- ------------------------ -->
+## Streamlit Dashboard (Bonus)
+
+Now that the pipeline is running, let's visualize the data with a Streamlit app. For this step you'll create a Snowsight Workspace from the companion GitHub repository, which contains a ready-made Streamlit dashboard.
+
+### Create a Workspace from Git
+
+1. Navigate to **Projects > Workspaces** in Snowsight.
+2. Click **Create** (+) and select **Git repository**.
+3. Enter the repository URL: `https://github.com/Snowflake-Labs/sfguide-declarative-pipelines-dynamic-tables`
+4. Select an API Integration for GitHub ([create one if needed](https://docs.snowflake.com/en/user-guide/ui-snowsight/workspaces-git#label-create-a-git-workspace)).
+5. Select **Public repository**.
+
+![Creating a Workspace from a Git repository](./assets/create_workspace.png)
+
+### Run the Dashboard
+
+Once the workspace is created, open `tasty_bytes_dashboard.py`. This Streamlit app:
+
+- Displays the **top 10 products by revenue** as a bar chart colored by profit margin
+- Shows **today's key metrics** (orders, revenue, profit, margin, customers, items sold) pulled from `daily_business_metrics` and `product_performance_metrics`
+
+Click **Run** to launch the dashboard.
+
+<!-- ------------------------ -->
 ## Clean up
 
-To remove all objects created during this quickstart, open **06_cleanup.sql** and give CoCo the prompt:
+Ask CoCo to tear down everything created during this quickstart:
 
-**Prompt:**
 ```
-Clean up: drop database tasty_bytes_db and warehouse tasty_bytes_wh using lab_role. 
-Then using ACCOUNTADMIN, drop the lab_role.
+Drop database tasty_bytes_db and warehouse tasty_bytes_wh using lab_role.
+Then switch to ACCOUNTADMIN and drop lab_role.
 ```
-
-This drops all databases, tables, Dynamic Tables, semantic views, agents, and compute resources.
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
 
-Congratulations! You've built a complete production data pipeline without writing a single line of SQL manually. By combining **Cortex Code** (your AI co-pilot) with **Dynamic Tables** (declarative pipeline infrastructure), you achieved:
+Congratulations! You've built a complete autonomous data pipeline without writing a single line of SQL manually. By combining **Cortex Code** with **Dynamic Tables**, you:
 
-- Fully automated, incremental data pipelines
-- Natural language-driven development inside Snowsight
-- AI-powered data access through semantic views and agents
+- Described a multi-tier pipeline in plain English and had it materialized automatically
+- Generated and executed complex stored procedures from a single prompt
+- Verified incremental refresh behavior across a billion-row dataset
+- Created a natural language AI agent backed by your pipeline data
 
 ### What You Learned
 
-- Using Cortex Code inside Snowsight Workspaces to generate and execute SQL from prompts
+- Using Cortex Code to generate and execute SQL from natural language
 - Building multi-tier Dynamic Table pipelines declaratively
 - Configuring TARGET_LAG and DOWNSTREAM refresh strategies
 - Verifying incremental refresh behavior
-- Monitoring pipeline operations conversationally
-- Creating semantic views and AI agents with natural language
+- Monitoring Dynamic Table operations
+- Creating semantic views and AI agents with Cortex Code
 
 ### Related Resources
 
-- [Cortex Code Documentation](https://docs.snowflake.com/en/user-guide/cortex-code)
+- [Cortex Code Documentation](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-snowsight)
 - [Dynamic Tables Documentation](https://docs.snowflake.com/en/user-guide/dynamic-tables-intro)
 - [Dynamic Table Refresh](https://docs.snowflake.com/en/user-guide/dynamic-tables-refresh)
 - [Cortex Analyst Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst)
