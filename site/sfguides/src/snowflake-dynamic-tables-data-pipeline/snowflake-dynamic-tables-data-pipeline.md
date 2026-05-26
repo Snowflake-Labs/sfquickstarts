@@ -43,19 +43,6 @@ You'll work with the Tasty Bytes dataset (a fictitious food truck company) to bu
 - A Cortex Agent for conversational data exploration
 
 <!-- ------------------------ -->
-## Create a Workspace from Git
-
-In this step, you'll create a Snowsight Workspace linked to the companion repository on GitHub. The workspace gives Cortex Code context about the lab structure and contains the reference SQL files.
-
-1. Navigate to **Projects > Workspaces** in Snowsight.
-2. Click **Create** (+) and select **Git repository**.
-3. Enter the repository URL: `https://github.com/Snowflake-Labs/sfguide-declarative-pipelines-dynamic-tables`
-4. Select an API Integration for GitHub ([create one if needed](https://docs.snowflake.com/en/user-guide/ui-snowsight/workspaces-git#label-create-a-git-workspace)).
-5. Select **Public repository**.
-
-![Creating a Workspace from a Git repository](./assets/create_workspace.png)
-
-<!-- ------------------------ -->
 ## Open Cortex Code
 
 All of the work in this quickstart is driven through **Cortex Code** — Snowflake's AI co-pilot built into Snowsight.
