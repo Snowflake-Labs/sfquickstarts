@@ -48,7 +48,7 @@ You'll work with the Tasty Bytes dataset (a fictitious food truck company) to bu
 
 All of the work in this quickstart is driven through **Cortex Code** — Snowflake's AI co-pilot built into Snowsight.
 
-Open the Cortex Code panel by pressing **Cmd+L** (Mac) or **Ctrl+L** (Windows), or click the Cortex Code icon in the Snowsight toolbar.
+Open the Cortex Code panel by clicking the **Cortex Code icon** in the lower-right corner of Snowsight.
 
 ![Cortex Code prompt panel in Snowsight](./assets/coco_prompt.png)
 
@@ -107,6 +107,8 @@ Before we build the pipeline, let's understand the key concepts.
 
 - **Dependency Graph**: Snowflake tracks dependencies between Dynamic Tables and determines refresh order automatically.
 
+- **INITIALIZE = 'ON_REFRESH'**: By default (`ON_CREATE`), a Dynamic Table performs an immediate full refresh the moment it's created — processing all source data before returning. With `ON_REFRESH`, the table is created instantly (empty) and populated on the first scheduled or manual refresh. This is the recommended approach for production and lab pipelines because it separates **definition** from **execution**: you can create the entire pipeline structure quickly, then trigger the initial load when you're ready. It also avoids long-running CREATE statements and makes deployments faster and more predictable.
+
 Now let's tell Cortex Code to build a three-tier pipeline using these concepts.
 
 <!-- ------------------------ -->
@@ -117,6 +119,8 @@ This is the core of the quickstart — you'll describe an entire three-tier data
 ```
 Build a 3-tier dynamic table pipeline in tasty_bytes_db.analytics using
 warehouse tasty_bytes_wh:
+
+Use INITIALIZE = 'ON_REFRESH' for all dynamic tables.
 
 Tier 1 - Enrichment (TARGET_LAG = DOWNSTREAM):
 - orders_enriched: From tasty_bytes_db.raw.order_header. Include order_id,
@@ -159,7 +163,9 @@ Tier 3 - Aggregated Metrics (TARGET_LAG = 1 hour):
   (standard_sale_price), revenue_per_unit, profit_per_unit.
 ```
 
-> **Review before executing**: Verify that TARGET_LAG values match (DOWNSTREAM for Tier 1-2, 1 hour for Tier 3), join conditions are correct, and the dependency flows raw → Tier 1 → Tier 2 → Tier 3. The first refresh processes the full ~1 billion rows and takes several minutes. Subsequent refreshes will be incremental.
+> **Review before executing**: Verify that TARGET_LAG values match (DOWNSTREAM for Tier 1-2, 1 hour for Tier 3), `INITIALIZE = 'ON_REFRESH'` is set on all tables, join conditions are correct, and the dependency flows raw → Tier 1 → Tier 2 → Tier 3.
+
+> **Why ON_REFRESH?** With `INITIALIZE = 'ON_REFRESH'`, all 5 CREATE statements return immediately — no waiting for an initial full scan of 1 billion rows. The pipeline is defined but empty. You'll trigger the first load manually in the next step, giving you full control over when the expensive initial refresh happens.
 
 <!-- ------------------------ -->
 ## View Dependency Graph
