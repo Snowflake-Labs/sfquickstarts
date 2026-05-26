@@ -146,11 +146,11 @@ Now select the data objects for this data product.
 1. Navigate to the `TPCH` database > `SF1` schema, and select:
    - These 5 tables:
       - `CUSTOMER`
-      - `ORDERS`
       - `LINEITEM`
-      - `SUPPLIER`
+      - `ORDERS`
       - `REGION`
-   - The `ORDER_SUMMARY` view
+      - `SUPPLIER`
+   - The `ORDER_SUMMARY` secure view
    - The `ORDERS_PER_CUSTOMER` function
 2. Click **Done** to proceed, then **Generate Listing** if you chose "AI generation on"
 
@@ -162,6 +162,8 @@ Now select the data objects for this data product.
 2. Change the listing title to "Order Insights (_<account locator\>_)"
     - For disambiguation in this lab only, add your 7-character Snowflake account locator to the listing title.  The locator is part of the URL in your browser address bar.
 3. Under title use the **Select profile** box to select the profile (domain) under which to publish this data product
+    - You're free to pick _any_ profile from the list - there is no right or wrong in this lab.
+    - Among all the lab attendees we hope to see many different profiles being chosen!
 4. If desired, make changes to the listing description or other metadata fields. 
    - For example, in the **Documentation** field you could add any URL to supplementary documentation, e.g. `http://www.snowflake.com`.
 5. Enable **Data preview** in the **Data dictionary**.
@@ -173,7 +175,7 @@ Now select the data objects for this data product.
 6. Sensitive **column masking** in the data preview.
     - Click the **Edit** button at the top right of the data dictionary.
     - Select the customer table.
-    - Select the c_address, c_name, and c_phone columns for masking. Save.
+    - Select the `c_address`, `c_name`, and `c_phone columns for masking. Save.
   - Note:
     - It may take up to 2 hours before data consumers see the properly generated data preview.
     - The selection of sensitive columns only affects the data preview in the internal marketplace. When data consumers are granted _access_ to the data product, row- and column-level access policies must be in place to govern their access.
@@ -250,11 +252,13 @@ To verify, navigate to the **Catalog** > **Internal Marketplace**.
 In this section:
 - The **Consumer** user will request access to your **Order Insights** listing that you just published
 - The **Data Owner**  will review and approve the request. 
-- Since both users are in the same account, you will switch between users (or use separate browser tabs or windows) to play both roles.
+
+> **Important:** Since both users are in the same account, you will switch between users. 
+We suggest using a separate Incognito or Private Browser window to log in as the consumer. Then you can switch windows to switch between the provider and consumer user, without unwanted side-effects.
 
 ### Request Access as the Consumer User
 
-1. Log in to your account as the `consumer` user (e.g. open a new browser tab / incognito window and log in as `consumer`).
+1. Log in to your account as the `consumer` user (e.g. in a new incognito browser window).
 2. Navigate to  **Catalog** > **Internal Marketplace**.
 3. You should see your **Order Insights** listing. Click on it.
    - If needed, set the **Sort By** to **Most Recent** or search for your account locator.
@@ -294,7 +298,7 @@ Now that access has been granted, let's consume the **Order Insights** data prod
 
 ### Query via the Internal Marketplace
 
-1. Log in to your account as the `consumer` user (or switch browser tab).
+1. Log in to your account as the `consumer` user (or switch browser windows).
 2. Navigate to  **Catalog** > **Internal Marketplace**.
 3. Open the **Order Insights** listing. Reload the browser tab if you still see the "Request Access" button.
 4. Click **Query in Workspaces**. Snowflake opens a new worksheet pre-populated with the sample queries from the listing.
@@ -374,7 +378,11 @@ You can do this manually by going back to the "Step 4 of 5: Configure Access Con
    ![](assets/2026-invoke-coco.png)
 
 
-6. Prompt Coco to make the desired change for you: "_Please change the discoverability of this listing to the entire organization_". Then click **Allow** to confirm:
+6. Prompt Coco to make the desired change for you: 
+   ```code
+   Please change the discoverability of this listing to the entire organization. 
+   ```
+   Then click **Allow** to confirm:
 
    ![](assets/2026-allow-coco-to-alter.png)
 
@@ -465,7 +473,9 @@ Next:
 
 - Issue the following prompt to create and publish a new data product: 
 
-   "_Please publish the supplier, part, anad partsupp tables as a data product. Please generate suitable metadata to describe the data product, including a data dictionary with data preview for all tables. Also generate and include a semantic view. The new data product should be visible to the entire organization, but noone has access unless requested. Please append my account locator to the title of the listing._"
+   ```code
+   Please publish the supplier, part, anad partsupp tables as a data product. Please generate suitable metadata to describe the data product, including a data dictionary with data preview for all tables. Also generate and include a semantic view. The new data product should be visible to the entire organization, but noone has access unless requested. Please append my account locator to the title of the listing.
+   ```
 - Respond to any questions that Coco will ask you to perform this request
 - Click **Allow** to permit Coco to create a semantic view and a share.
 - When asked to allow a GRANT, select "**Allow GRANT in this chat**" to allow all required grants for this data product  
@@ -484,7 +494,9 @@ Next, let's ask Coco to implement a new governance requirement.
 
 Issue the following prompt:
 
-   - "_Please add a masking policy so that the supplier address and supplier phone is only visible to the provider_role role within my account but not visible to the consumer_role and not to any other accounts in this organization._"
+   ```code
+   Please add a masking policy so that the supplier address and supplier phone is only visible to the provider_role role within my account but not visible to the consumer_role and not to any other accounts in this organization.
+   ```
 
 Coco may ask you a series of questions to get this done. 
 
