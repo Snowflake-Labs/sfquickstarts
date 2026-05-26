@@ -11,6 +11,8 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 ## Overview
 
+> Learn more about the Posit Package Manager that just entered Public Preview at [this blog](https://posit.co/preview-link/node/14816/976bf2ac-6506-4ae1-99d7-62a19524b94b) and more about the Posit & Snowflake partnership [here](https://posit.co/preview-link/node/14811/6e8fefc5-a12f-40bc-8257-e141d80ae49f).
+
 In this guide, we'll use the Posit Team Snowflake Native App to build an interactive dashboard that lets users explore Home Mortgage Disclosure Act (HMDA) data. In Posit Workbench, we'll use Positron Assistant and Databot with Snowflake Cortex AI to do some quick, yet powerful exploratory data analysis. Then, we'll create an interactive Shiny app and deploy it to Posit Connect in Snowflake with one-click publishing for easy sharing across your organization.
 
 ![](assets/guide-overview.png)
