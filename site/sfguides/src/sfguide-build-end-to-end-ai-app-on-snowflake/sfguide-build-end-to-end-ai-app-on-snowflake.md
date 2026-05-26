@@ -14,7 +14,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 In this hands-on lab, you'll build a complete AI-powered retail analytics platform entirely within Snowflake — no external infrastructure required. Using Cortex Code as your AI-assisted development environment, you'll work through the full data lifecycle: stream real-time orders via Snowpipe Streaming, MERGE them into production tables with Gen2 Warehouses, transform them through a 3-tier Dynamic Tables pipeline, and serve them with Interactive Tables for low-latency point lookups.
 
-You'll build analytical models with dbt, monitor data quality with Data Metric Functions, explore Iceberg V3 features, and create custom CoCo skills for reusable workflows. Tie it all together with Snowflake Intelligence — a conversational AI interface where a Cortex Agent orchestrates Cortex Analyst and Agentic Search to answer "what happened" and "why" from both structured and unstructured data. Finally, evaluate your agent with ground-truth datasets, implement row-level security, and expose your agent as a managed MCP server for external AI clients.
+You'll build analytical models with dbt, monitor data quality with Data Metric Functions, explore Iceberg V3 features, and create custom CoCo skills for reusable workflows. Tie it all together with Snowflake CoWork — a conversational AI interface where a Cortex Agent orchestrates Cortex Analyst and Agentic Search to answer "what happened" and "why" from both structured and unstructured data. Finally, evaluate your agent with ground-truth datasets, implement row-level security, and expose your agent as a managed MCP server for external AI clients.
 
 ### What You'll Learn
 - Accelerate development with Cortex Code (AI-assisted SQL, deployment, and data exploration)
@@ -321,13 +321,13 @@ CoCo creates `.cortex/skills/profile-table/SKILL.md` with the skill definition, 
 This demonstrates how teams package repeatable workflows as shareable CoCo skills.
 
 <!-- ------------------------ -->
-## Snowflake Intelligence
+## Snowflake CoWork
 
 ### Create the Agent
 
 **Prompt CoCo:**
 
-> *"Run snowflake-intelligence/create_agent.sql to create the Business Insights Agent"*
+> *"Run snowflake-cowork/create_agent.sql to create the Business Insights Agent"*
 
 ### Test Agent Routing
 
@@ -348,9 +348,9 @@ This is the capstone moment — the agent routes across structured data (text-to
 <!-- ------------------------ -->
 ## Security and Governance
 
-The Row Access Policy and WEST_COAST_MANAGER role were created by `setup.sql`. Demonstrate the contrast using Snowflake Intelligence:
+The Row Access Policy and WEST_COAST_MANAGER role were created by `setup.sql`. Demonstrate the contrast using Snowflake CoWork:
 
-1. Open **Snowflake Intelligence** in Snowsight
+1. Open **Snowflake CoWork** in Snowsight
 2. Ask the Business Insights Agent: *"What is our total revenue and customer count by state?"*
 3. Note the result — all 10 states visible as ACCOUNTADMIN
 4. Switch role to `WEST_COAST_MANAGER` and ask the same question
