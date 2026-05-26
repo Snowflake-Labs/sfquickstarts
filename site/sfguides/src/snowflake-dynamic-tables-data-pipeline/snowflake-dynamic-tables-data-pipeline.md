@@ -167,6 +167,15 @@ Tier 3 - Aggregated Metrics (TARGET_LAG = 1 hour):
 
 > **Why ON_REFRESH?** With `INITIALIZE = 'ON_REFRESH'`, all 5 CREATE statements return immediately — no waiting for an initial full scan of 1 billion rows. The pipeline is defined but empty. You'll trigger the first load manually in the next step, giving you full control over when the expensive initial refresh happens.
 
+Now trigger the initial load by refreshing only the top-tier tables. Snowflake will automatically cascade through the dependency graph — refreshing Tier 1 and Tier 2 first, then Tier 3:
+
+```
+Refresh daily_business_metrics and product_performance_metrics in
+tasty_bytes_db.analytics. Snowflake will handle the upstream dependencies.
+```
+
+> **What to observe**: You only triggered Tier 3 — but Snowflake automatically refreshed orders_enriched and order_items_enriched (Tier 1), then order_fact (Tier 2), before completing the Tier 3 aggregations. This is dependency graph management in action.
+
 <!-- ------------------------ -->
 ## View Dependency Graph
 
@@ -229,13 +238,13 @@ tasty_bytes_db.raw.order_detail?
 Call tasty_bytes_db.raw.generate_demo_orders(500)
 ```
 
-**Prompt 3** — Trigger refresh:
+**Prompt 3** — Trigger refresh (top tier only):
 ```
-Using tasty_bytes_wh, manually refresh all dynamic tables in
-tasty_bytes_db.analytics in dependency order: first refresh orders_enriched
-and order_items_enriched (tier 1), then order_fact (tier 2), then
-daily_business_metrics and product_performance_metrics (tier 3).
+Refresh daily_business_metrics and product_performance_metrics in
+tasty_bytes_db.analytics.
 ```
+
+> **What to observe**: You only issued refresh commands for the Tier 3 tables — but Snowflake automatically cascaded through Tier 2 and Tier 1 first. This is the DOWNSTREAM dependency model at work.
 
 **Prompt 4** — Verify incremental behavior:
 ```
@@ -245,6 +254,8 @@ refresh_action, state, refresh_trigger, and duration in seconds for each.
 ```
 
 > **Key insight**: The `refresh_action` column should show **INCREMENTAL** — Snowflake processed only the 500 new orders through the entire pipeline, not the full billion-row dataset. This is what makes Dynamic Tables efficient at scale.
+
+> **Discussion**: Notice that `product_performance_metrics` shows a **FULL** refresh. Why? This table aggregates across all products — when a new order arrives for an existing product (e.g., "The King Combo"), the aggregate row for that product must be updated. Snowflake rewrites the affected group rather than appending a new row. Does a full rewrite make sense here? Consider: with 500 new rows out of 1 billion, the rewrite only touches the affected product groups — it's still far more efficient than processing all source data.
 
 **Prompt 5** — View updated results:
 ```
