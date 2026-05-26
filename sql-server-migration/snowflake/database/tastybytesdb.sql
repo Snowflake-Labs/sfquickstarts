@@ -1,0 +1,5 @@
+﻿CREATE DATABASE IF NOT EXISTS TastyBytesDB
+COMMENT = '{ "origin": "sf_sc", "name": "snowconvert", "version": {  "major": 2,  "minor": 29,  "patch": "0-Pr.424" }, "attributes": {  "component": "transact",  "convertedOn": "05/26/2026",  "domain": "no-domain-provided",  "migrationid": "JmWeAWK07nK+5zZKD9nimA==" }}';
+-- ** SSC-EWI-0001 - UNRECOGNIZED TOKEN ON LINE '1' COLUMN '29' OF THE SOURCE CODE STARTING AT 'COLLATE'. EXPECTED 'BATCH' GRAMMAR. **
+--                                                                                                                                                                                                                                                                                COLLATE SQL_Latin1_General_CP1_CI_AS
+                                                                                                                                                                                                                                                                                                                    ;

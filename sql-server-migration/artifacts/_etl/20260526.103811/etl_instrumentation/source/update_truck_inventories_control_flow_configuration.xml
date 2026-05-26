@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ControlFlowInstrumentation>
+  <TaskConfig TaskName="update_inventory_truck1" TaskRefId="Package\update_inventory_truck1" TaskGuid="{91895700-A0E9-4B9B-AFDE-45E5245B0DA6}" />
+  <TaskConfig TaskName="update_inventory_truck2" TaskRefId="Package\update_inventory_truck2" TaskGuid="{4BDD0B83-C31E-4DB1-9349-12B5424A6EF2}" />
+</ControlFlowInstrumentation>
