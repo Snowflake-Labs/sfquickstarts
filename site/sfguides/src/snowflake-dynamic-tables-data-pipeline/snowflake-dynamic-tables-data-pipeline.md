@@ -31,7 +31,7 @@ You'll work with the Tasty Bytes dataset (a fictitious food truck company) to bu
 - How to create semantic views and AI agents using Cortex Code
 
 ### What You'll Need
-- A Snowflake account ([trial](https://signup.snowflake.com/developers), or otherwise) — preferably AWS US West 2 (Oregon), Enterprise edition
+- A Snowflake account ([trial](https://signup.snowflake.com/developers), or existing accounts) - preferably in AWS US West 2 (Oregon) region, Enterprise edition
 - ACCOUNTADMIN access (available in trial accounts)
 - Cortex Code enabled in your account ([setup guide](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-snowsight))
 
@@ -47,9 +47,7 @@ You'll work with the Tasty Bytes dataset (a fictitious food truck company) to bu
 
 All of the work in this quickstart is driven through **Cortex Code** — Snowflake's AI co-pilot built into Snowsight.
 
-Open the Cortex Code panel by clicking the **Cortex Code icon** in the lower-right corner of Snowsight.
-
-![Cortex Code prompt panel in Snowsight](./assets/coco_prompt.png)
+Open the Cortex Code panel by clicking the **Cortex Code icon** in the lower-right corner of Snowsight. ![CoCo icon](./assets/snowsight_home_coco_button.png)
 
 You'll see a chat interface. Throughout this quickstart, you'll paste prompts from each section directly into CoCo. CoCo will generate the SQL, explain what it's doing, and execute it for you.
 
