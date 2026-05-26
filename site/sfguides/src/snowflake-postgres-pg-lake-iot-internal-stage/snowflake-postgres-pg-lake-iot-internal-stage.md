@@ -1,6 +1,6 @@
 author: Brian Pace
 id: snowflake-postgres-pg-lake-iot-internal-stage
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/snowflake-feature/postgres
 language: en
 summary: Build bidirectional data pipelines between Snowflake Postgres (pg_lake) and Snowflake - Internal Stage
 environments: web
@@ -811,7 +811,7 @@ USE SCHEMA IOT_LAB.SENSORS;
 DROP TABLE IF EXISTS SENSOR_ANOMALIES;
 DROP TABLE IF EXISTS SENSOR_READINGS;
 
-DROP STAUSE ROLE ACCOUNTADMIN;
+USE ROLE ACCOUNTADMIN;
 
 DROP STORAGE INTEGRATION IF EXISTS SF_LAB_INTS3_INTEGRATION;
 
@@ -820,15 +820,7 @@ DROP POSTGRES INSTANCE IF EXISTS IOT_PG;
 USE SCHEMA PG_NETWORK_DB.PG_NETWORK;
 
 DROP NETWORK POLICY IF EXISTS PG_IOT_NETWORK_POLICY;
-DROP NETWORK RULE IF EXISTS PG_IOT_INGRESS_RULE;Execute in: Snowsight (Snowflake)
-USE ROLE ACCOUNTADMIN;
-
-DROP POSTGRES INSTANCE IF EXISTS IOT_PG;
-
-USE SCHEMA PG_NETWORK_DB.PG_NETWORK;
-
-DROP NETWORK POLICY IF EXISTS PG_IOT_NETWORK_POLICY;
-DROP NETWORK RULE IF EXISTS PGand _IOT_INGRESS_RULE;
+DROP NETWORK RULE IF EXISTS PG_IOT_INGRESS_RULE;
 
 DROP STAGE IF EXISTS IOT_INT_STAGE;
 DROP STORAGE INTEGRATION IF EXISTS SF_LAB_INTS3_INTEGRATION;

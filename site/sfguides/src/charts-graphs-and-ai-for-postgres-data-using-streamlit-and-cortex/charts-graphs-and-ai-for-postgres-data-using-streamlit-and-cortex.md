@@ -1,7 +1,7 @@
 author: Elizabeth Christensen
 id: charts-graphs-and-ai-for-postgres-data-using-streamlit-and-cortex
 summary: Build an IoT sensor dashboard with Snowflake Postgres, Streamlit in Snowflake, and a Cortex AI chatbot that answers questions about your data in plain English.
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart,snowflake-site:taxonomy/product/ai,snowflake-site:taxonomy/product/applications-and-collaboration
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart,snowflake-site:taxonomy/product/ai,snowflake-site:taxonomy/product/applications-and-collaboration,snowflake-site:taxonomy/snowflake-feature/postgres
 environments: web
 status: Published
 language: en

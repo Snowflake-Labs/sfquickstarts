@@ -1,6 +1,6 @@
 author: Elizabeth Christensen
 id: snowflake-postgres-logs-to-datadog
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/snowflake-feature/postgres
 language: en
 summary: Stream Postgres logs from Snowflake into Datadog using the native event table
 environments: web

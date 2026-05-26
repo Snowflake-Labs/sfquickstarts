@@ -1,7 +1,7 @@
 author: Reza Brianca
 id: build-a-lakehouse-with-snowflake-postgres-and-pg-lake
 summary: Build a zero-ETL lakehouse where Snowflake Postgres writes Iceberg to S3 via pg_lake and Snowflake reads it directly — no COPY INTO, no data duplication.
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/apache-iceberg
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/apache-iceberg, snowflake-site:taxonomy/snowflake-feature/postgres
 environments: web
 status: Published
 language: en

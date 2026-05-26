@@ -1,6 +1,6 @@
 author: Elizabeth Christensen
 id: snowflake-postgres-logs-to-observe
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/snowflake-feature/postgres
 language: en
 summary: Monitor Snowflake Postgres with Observe using the native app and the event table for logs and metrics
 environments: web
