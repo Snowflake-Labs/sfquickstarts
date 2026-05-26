@@ -6,7 +6,7 @@ categories: snowflake-site:taxonomy/solution-center/certification/partner-soluti
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-fork repo link: https://github.com/snowflake-eng/sfguide-getting-started-with-prefect-and-snowflake
+fork repo link: https://github.com/sfc-gh-aramasagaram/sfguide-getting-started-with-prefect-and-snowflake
 
 # Build Workflows That Think, Decide, and Act Across Systems
 <!-- ------------------------ -->
@@ -46,7 +46,7 @@ If the pipeline fails at step 7, Prefect **resumes from step 7** — it doesn't 
 - Slack workspace with a bot app
 - Python 3.9+
 
-> **Detailed setup instructions** for Snowflake, Python, Slack, and GitHub are in the [companion repo](https://github.com/snowflake-eng/sfguide-getting-started-with-prefect-and-snowflake). This guide focuses on the pipeline itself.
+> **Detailed setup instructions** for Snowflake, Python, Slack, and GitHub are in the [companion repo](https://github.com/sfc-gh-aramasagaram/sfguide-getting-started-with-prefect-and-snowflake). This guide focuses on the pipeline itself.
 
 <!-- ------------------------ -->
 ## Setup
@@ -87,7 +87,7 @@ export SLACK_BOT_TOKEN=xoxb-your-bot-token
 export SLACK_CHANNEL=your-channel
 ```
 
-> See the [repo README](https://github.com/snowflake-eng/sfguide-getting-started-with-prefect-and-snowflake) for Snowflake connection configuration, Slack app setup, GitHub token scopes, and `uv` / `pyproject.toml` setup.
+> See the [repo README](https://github.com/sfc-gh-aramasagaram/sfguide-getting-started-with-prefect-and-snowflake) for Snowflake connection configuration, Slack app setup, GitHub token scopes, and `uv` / `pyproject.toml` setup.
 
 <!-- ------------------------ -->
 ## Fetch and Ingest
@@ -405,7 +405,7 @@ Watch the pipeline execute in real-time in Prefect Cloud. You'll see:
 4. The flow pause, waiting for your approval
 5. After you approve — the PR merges on GitHub, Slack gets the completion notice, and the assessment lands in Snowflake
 
-> This runs the flow as a local Python process connected to Prefect Cloud. For production, deploy with `prefect deploy` and run your worker on [Snowpark Container Services](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview) — your orchestration compute stays inside Snowflake's security perimeter. See the [companion repo](https://github.com/snowflake-eng/sfguide-getting-started-with-prefect-and-snowflake) for a `prefect.yaml` deployment example.
+> This runs the flow as a local Python process connected to Prefect Cloud. For production, deploy with `prefect deploy` and run your worker on [Snowpark Container Services](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview) — your orchestration compute stays inside Snowflake's security perimeter. See the [companion repo](https://github.com/sfc-gh-aramasagaram/sfguide-getting-started-with-prefect-and-snowflake) for a `prefect.yaml` deployment example.
 
 ![SS5 — Prefect Cloud flow run timeline showing all tasks completed in sequence](assets/SS5.png)
 
@@ -509,13 +509,13 @@ The PR review pipeline is one example. But think about the workflows in your org
 
 Any time your workflow crosses system boundaries, makes decisions at runtime, or needs a human in the loop — that's where Prefect and Snowflake work together.
 
-We hope this guide gave you a glimpse of what's possible. **Snowflake powers the intelligence. Prefect orchestrates the workflow.** The code is in the [companion repo](https://github.com/snowflake-eng/sfguide-getting-started-with-prefect-and-snowflake) — fork it and make it yours.
+We hope this guide gave you a glimpse of what's possible. **Snowflake powers the intelligence. Prefect orchestrates the workflow.** The code is in the [companion repo](https://github.com/sfc-gh-aramasagaram/sfguide-getting-started-with-prefect-and-snowflake) — fork it and make it yours.
 
 ### Resources
 
 | Topic | Link |
 |---|---|
-| Full source code and setup | [Companion Repo](https://github.com/snowflake-eng/sfguide-getting-started-with-prefect-and-snowflake) |
+| Full source code and setup | [Companion Repo](https://github.com/sfc-gh-aramasagaram/sfguide-getting-started-with-prefect-and-snowflake) |
 | Prefect Documentation | [docs.prefect.io](https://docs.prefect.io/) |
 | Snowflake Cortex AI | [Cortex AI Functions](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions) |
 | Durable Execution | [Task Caching](https://docs.prefect.io/v3/develop/task-caching) |
