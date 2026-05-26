@@ -93,10 +93,14 @@ Verify setup succeeded — the final statement should print a success banner.
 
 Open the agent in Snowflake Intelligence:
 
-1. Go to [ai.snowflake.com](https://ai.snowflake.com) or in Snowsight select **AI & ML > Agents**
+1. In Snowsight select **AI & ML > Agents**
 2. Select **MARKETING_CAMPAIGNS_AGENT**
+3. Query your newly created agent in the Agent Admin View or Click Preview in Snowflake Intelligence to get the full front end experience!
+4. Or optionally - Go to [ai.snowflake.com](https://ai.snowflake.com)
 
 Your goal is to generate a mix of successful and failing traces by asking progressively harder questions. Copy-paste these one at a time:
+
+> **Note:** If you'd prefer a quicker less interactive route you can run - [`agent_requests.sql`](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/self-improving-agents-with-cortex-code/assets/agent_requests.sql). As the script executes (~3-5 minutes) visit the **AI & ML > Agents > MARKETING_CAMPAIGNS_AGENT > Monitoring** tab to inspect traces of all of the calls made to your agent!  
 
 ### Simple queries
 
@@ -133,7 +137,7 @@ Which campaigns had the best A/B test lift but the worst customer sentiment?
 Show me campaigns where customer sentiment was negative but ROI was still positive — what made them work financially?
 ```
 
-> **Note:** It can take up to 10 minutes for agent interaction traces to appear in the observability logs. If you just finished running the queries above, now is a good time to install Cortex Code (next step) while the traces propagate.
+> **Note:** It may take a few minutes for agent interaction traces to appear in the observability logs. If you just finished running the queries above, now is a good time to install Cortex Code (next step) while the traces propagate.
 
 <!-- ------------------------ -->
 
@@ -194,7 +198,7 @@ Break down scores by metric and identify which queries scored lowest. What are t
 
 - Wrong tool selection for multi-tool queries
 - Redundant tool calls
-- VaIncomplete summaries missing key data
+- Incomplete summaries missing key data
 
 ## Improve the Agent
 
@@ -207,7 +211,7 @@ and encourage efficient tool calling. Apply the changes.
 
 Cortex Code will:
 
-1. Draft improved orchestration instructions with explicit tool routing rules
+1. Draft improved orchestration and response instructions with explicit tool routing rules and response guidelines
 2. Apply via `ALTER AGENT ... SET SPECIFICATION = ...`
 
 **What changes:** Only the `instructions.orchestration` and `instructions.response` field. Tools, tool_resources, and orchestration model stay the same. Improved instructions is the only lever.
@@ -239,7 +243,7 @@ Congratulations! You've built a self-improving AI agent workflow — deploying a
 - How to run Agent GPA evaluations with built-in metrics
 - How to analyze failure patterns and generate improved orchestration instructions
 - How to validate improvements by comparing baseline vs optimized evaluation scores
-- That better instructions — not more tools — are the key lever for agent improvement
+- That better instructions — not more tools — can be the key lever for agent improvement
 
 ### Key Concepts
 
