@@ -1,0 +1,1018 @@
+{
+  "SYMBOLS": [
+    {
+      "NAME": "etl_logs",
+      "SYMBOLTYPE": "TABLE",
+      "SCHEMANAME": "etl_results",
+      "DATABASENAME": "TastyBytesDB",
+      "INNERSYMBOLS": [
+        {
+          "NAME": "logid",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "INT"
+        },
+        {
+          "NAME": "name",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "NVARCHAR"
+        },
+        {
+          "NAME": "execution_date",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "DATETIME"
+        }
+      ]
+    },
+    {
+      "NAME": "FoodTruck",
+      "SYMBOLTYPE": "TABLE",
+      "SCHEMANAME": "TastyBytes",
+      "DATABASENAME": "TastyBytesDB",
+      "INNERSYMBOLS": [
+        {
+          "NAME": "truckid",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "INT"
+        },
+        {
+          "NAME": "truckguid",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "uniqueidentifier"
+        },
+        {
+          "NAME": "truckname",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "NVARCHAR"
+        },
+        {
+          "NAME": "licenseplate",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "VARCHAR"
+        },
+        {
+          "NAME": "cityid",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "INT"
+        },
+        {
+          "NAME": "truckconfig",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "NVARCHAR"
+        },
+        {
+          "NAME": "yearpurchased",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "INT"
+        },
+        {
+          "NAME": "maxcapacity",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "INT"
+        },
+        {
+          "NAME": "isoperational",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "BIT"
+        },
+        {
+          "NAME": "createdat",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "DATETIME"
+        },
+        {
+          "NAME": "modifiedat",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "DATETIME"
+        }
+      ]
+    },
+    {
+      "NAME": "OrderDetail",
+      "SYMBOLTYPE": "TABLE",
+      "SCHEMANAME": "TastyBytes",
+      "DATABASENAME": "TastyBytesDB",
+      "INNERSYMBOLS": [
+        {
+          "NAME": "orderid",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "INT"
+        },
+        {
+          "NAME": "linenumber",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "INT"
+        },
+        {
+          "NAME": "menuitemid",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "INT"
+        },
+        {
+          "NAME": "quantity",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "INT"
+        },
+        {
+          "NAME": "unitprice",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "SMALLMONEY"
+        },
+        {
+          "NAME": "discount",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "SMALLMONEY"
+        },
+        {
+          "NAME": "linetotal",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "DECIMAL"
+        },
+        {
+          "NAME": "specialrequests",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "NVARCHAR"
+        }
+      ]
+    },
+    {
+      "NAME": "Customer",
+      "SYMBOLTYPE": "TABLE",
+      "SCHEMANAME": "TastyBytes",
+      "DATABASENAME": "TastyBytesDB",
+      "INNERSYMBOLS": [
+        {
+          "NAME": "customerid",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "INT"
+        },
+        {
+          "NAME": "customerguid",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "uniqueidentifier"
+        },
+        {
+          "NAME": "firstname",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "NVARCHAR"
+        },
+        {
+          "NAME": "lastname",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "NVARCHAR"
+        },
+        {
+          "NAME": "email",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "VARCHAR"
+        },
+        {
+          "NAME": "phonenumber",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "VARCHAR"
+        },
+        {
+          "NAME": "preferredcityid",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "INT"
+        },
+        {
+          "NAME": "loyaltypoints",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "INT"
+        },
+        {
+          "NAME": "membersince",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "DATE"
+        },
+        {
+          "NAME": "isactive",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "BIT"
+        },
+        {
+          "NAME": "createdat",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "DATETIME"
+        },
+        {
+          "NAME": "modifiedat",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "DATETIME"
+        }
+      ]
+    },
+    {
+      "NAME": "Menu",
+      "SYMBOLTYPE": "TABLE",
+      "SCHEMANAME": "TastyBytes",
+      "DATABASENAME": "TastyBytesDB",
+      "INNERSYMBOLS": [
+        {
+          "NAME": "menuid",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "INT"
+        },
+        {
+          "NAME": "menuname",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "NVARCHAR"
+        },
+        {
+          "NAME": "truckid",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "INT"
+        },
+        {
+          "NAME": "cuisinetype",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "NVARCHAR"
+        },
+        {
+          "NAME": "menudescription",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "NTEXT"
+        },
+        {
+          "NAME": "basepricetier",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "MONEY"
+        },
+        {
+          "NAME": "isseasonalmenu",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "BIT"
+        },
+        {
+          "NAME": "effectivefrom",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "DATE"
+        },
+        {
+          "NAME": "effectiveto",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "DATE"
+        },
+        {
+          "NAME": "createdat",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "DATETIME"
+        }
+      ]
+    },
+    {
+      "NAME": "MenuItem",
+      "SYMBOLTYPE": "TABLE",
+      "SCHEMANAME": "TastyBytes",
+      "DATABASENAME": "TastyBytesDB",
+      "INNERSYMBOLS": [
+        {
+          "NAME": "menuitemid",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "INT"
+        },
+        {
+          "NAME": "menuid",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "INT"
+        },
+        {
+          "NAME": "itemname",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "NVARCHAR"
+        },
+        {
+          "NAME": "itemdescription",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "NVARCHAR"
+        },
+        {
+          "NAME": "baseprice",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "MONEY"
+        },
+        {
+          "NAME": "caloriecount",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "INT"
+        },
+        {
+          "NAME": "isvegetarian",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "BIT"
+        },
+        {
+          "NAME": "isglutenfree",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "BIT"
+        },
+        {
+          "NAME": "isspicy",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "BIT"
+        },
+        {
+          "NAME": "pricewithtax",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "DECIMAL"
+        },
+        {
+          "NAME": "rowver",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "TIMESTAMP"
+        },
+        {
+          "NAME": "createdat",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "DATETIME"
+        }
+      ]
+    },
+    {
+      "NAME": "City",
+      "SYMBOLTYPE": "TABLE",
+      "SCHEMANAME": "TastyBytes",
+      "DATABASENAME": "TastyBytesDB",
+      "INNERSYMBOLS": [
+        {
+          "NAME": "cityid",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "INT"
+        },
+        {
+          "NAME": "cityname",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "NVARCHAR"
+        },
+        {
+          "NAME": "countryid",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "INT"
+        },
+        {
+          "NAME": "stateprovince",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "NVARCHAR"
+        },
+        {
+          "NAME": "latitude",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "DECIMAL"
+        },
+        {
+          "NAME": "longitude",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "DECIMAL"
+        },
+        {
+          "NAME": "populationsize",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "INT"
+        },
+        {
+          "NAME": "createdat",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "DATETIME"
+        }
+      ]
+    },
+    {
+      "NAME": "Country",
+      "SYMBOLTYPE": "TABLE",
+      "SCHEMANAME": "TastyBytes",
+      "DATABASENAME": "TastyBytesDB",
+      "INNERSYMBOLS": [
+        {
+          "NAME": "countryid",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "INT"
+        },
+        {
+          "NAME": "countryname",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "NVARCHAR"
+        },
+        {
+          "NAME": "countrycode",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "CHAR"
+        },
+        {
+          "NAME": "currencycode",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "CHAR"
+        },
+        {
+          "NAME": "taxrate",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "DECIMAL"
+        },
+        {
+          "NAME": "displayname",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "NVARCHAR"
+        },
+        {
+          "NAME": "isactive",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "BIT"
+        },
+        {
+          "NAME": "createdat",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "DATETIME"
+        },
+        {
+          "NAME": "modifiedat",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "DATETIME"
+        }
+      ]
+    },
+    {
+      "NAME": "OrderHeader",
+      "SYMBOLTYPE": "TABLE",
+      "SCHEMANAME": "TastyBytes",
+      "DATABASENAME": "TastyBytesDB",
+      "INNERSYMBOLS": [
+        {
+          "NAME": "orderid",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "INT"
+        },
+        {
+          "NAME": "customerid",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "INT"
+        },
+        {
+          "NAME": "truckid",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "INT"
+        },
+        {
+          "NAME": "orderdate",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "DATETIME"
+        },
+        {
+          "NAME": "completedat",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "DATETIME"
+        },
+        {
+          "NAME": "orderstatus",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "VARCHAR"
+        },
+        {
+          "NAME": "totalamount",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "MONEY"
+        },
+        {
+          "NAME": "tipamount",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "MONEY"
+        },
+        {
+          "NAME": "paymentmethod",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "VARCHAR"
+        },
+        {
+          "NAME": "ordernotes",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "NVARCHAR"
+        },
+        {
+          "NAME": "createdat",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "DATETIME"
+        },
+        {
+          "NAME": "modifiedat",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "DATETIME"
+        }
+      ]
+    },
+    {
+      "NAME": "EmployeeShift",
+      "SYMBOLTYPE": "TABLE",
+      "SCHEMANAME": "TastyBytes",
+      "DATABASENAME": "TastyBytesDB",
+      "INNERSYMBOLS": [
+        {
+          "NAME": "shiftid",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "INT"
+        },
+        {
+          "NAME": "employeename",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "NVARCHAR"
+        },
+        {
+          "NAME": "truckid",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "INT"
+        },
+        {
+          "NAME": "shiftdate",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "DATE"
+        },
+        {
+          "NAME": "starttime",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "DATETIME"
+        },
+        {
+          "NAME": "endtime",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "DATETIME"
+        },
+        {
+          "NAME": "hoursworked",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "NUMERIC"
+        },
+        {
+          "NAME": "role",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "VARCHAR"
+        },
+        {
+          "NAME": "hourlyrate",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "SMALLMONEY"
+        },
+        {
+          "NAME": "createdat",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "DATETIME"
+        }
+      ]
+    },
+    {
+      "NAME": "Inventory",
+      "SYMBOLTYPE": "TABLE",
+      "SCHEMANAME": "TastyBytes",
+      "DATABASENAME": "TastyBytesDB",
+      "INNERSYMBOLS": [
+        {
+          "NAME": "inventoryid",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "INT"
+        },
+        {
+          "NAME": "truckid",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "INT"
+        },
+        {
+          "NAME": "ingredientname",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "NVARCHAR"
+        },
+        {
+          "NAME": "quantityonhand",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "DECIMAL"
+        },
+        {
+          "NAME": "unitofmeasure",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "VARCHAR"
+        },
+        {
+          "NAME": "reorderlevel",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "DECIMAL"
+        },
+        {
+          "NAME": "expirationdate",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "DATE"
+        },
+        {
+          "NAME": "suppliernotes",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "NVARCHAR"
+        },
+        {
+          "NAME": "lastrestocked",
+          "SYMBOLTYPE": "COLUMN",
+          "TYPE": "DATETIME"
+        }
+      ]
+    },
+    {
+      "NAME": "vw_DailySalesSummary",
+      "SYMBOLTYPE": "VIEW",
+      "SCHEMANAME": "TastyBytes",
+      "DATABASENAME": "TastyBytesDB",
+      "INNERSYMBOLS": [
+        {
+          "NAME": null,
+          "SYMBOLTYPE": "QUERY",
+          "SELECTALL": false,
+          "TABLESALLSELECTED": [],
+          "INNERSYMBOLS": [
+            {
+              "NAME": "saledate",
+              "SYMBOLTYPE": "COLUMN",
+              "TYPE": "DATE"
+            },
+            {
+              "NAME": "truckname",
+              "SYMBOLTYPE": "COLUMN",
+              "TYPE": "NVARCHAR"
+            },
+            {
+              "NAME": "cityname",
+              "SYMBOLTYPE": "COLUMN",
+              "TYPE": "NVARCHAR"
+            },
+            {
+              "NAME": "totalorders",
+              "SYMBOLTYPE": "COLUMN",
+              "TYPE": "Integer"
+            },
+            {
+              "NAME": "grossrevenue",
+              "SYMBOLTYPE": "COLUMN",
+              "TYPE": "MONEY"
+            },
+            {
+              "NAME": "totaltips",
+              "SYMBOLTYPE": "COLUMN",
+              "TYPE": "MONEY"
+            },
+            {
+              "NAME": "avgordervalue",
+              "SYMBOLTYPE": "COLUMN",
+              "TYPE": "Money"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "NAME": "vw_CustomerOrderHistory",
+      "SYMBOLTYPE": "VIEW",
+      "SCHEMANAME": "TastyBytes",
+      "DATABASENAME": "TastyBytesDB",
+      "INNERSYMBOLS": [
+        {
+          "NAME": null,
+          "SYMBOLTYPE": "QUERY",
+          "SELECTALL": false,
+          "TABLESALLSELECTED": [],
+          "INNERSYMBOLS": [
+            {
+              "NAME": "customerid",
+              "SYMBOLTYPE": "COLUMN",
+              "TYPE": "INT"
+            },
+            {
+              "NAME": "customername",
+              "SYMBOLTYPE": "COLUMN",
+              "TYPE": "NVarchar"
+            },
+            {
+              "NAME": "email",
+              "SYMBOLTYPE": "COLUMN",
+              "TYPE": "VARCHAR"
+            },
+            {
+              "NAME": "loyaltypoints",
+              "SYMBOLTYPE": "COLUMN",
+              "TYPE": "INT"
+            },
+            {
+              "NAME": "orderid",
+              "SYMBOLTYPE": "COLUMN",
+              "TYPE": "INT"
+            },
+            {
+              "NAME": "orderdate",
+              "SYMBOLTYPE": "COLUMN",
+              "TYPE": "DATETIME"
+            },
+            {
+              "NAME": "totalamount",
+              "SYMBOLTYPE": "COLUMN",
+              "TYPE": "MONEY"
+            },
+            {
+              "NAME": "orderstatus",
+              "SYMBOLTYPE": "COLUMN",
+              "TYPE": "VARCHAR"
+            },
+            {
+              "NAME": "truckname",
+              "SYMBOLTYPE": "COLUMN",
+              "TYPE": "NVARCHAR"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "NAME": "vw_MenuPricing",
+      "SYMBOLTYPE": "VIEW",
+      "SCHEMANAME": "TastyBytes",
+      "DATABASENAME": "TastyBytesDB",
+      "INNERSYMBOLS": []
+    },
+    {
+      "NAME": "vw_TopSellingItems",
+      "SYMBOLTYPE": "VIEW",
+      "SCHEMANAME": "TastyBytes",
+      "DATABASENAME": "TastyBytesDB",
+      "INNERSYMBOLS": [
+        {
+          "NAME": null,
+          "SYMBOLTYPE": "QUERY",
+          "SELECTALL": false,
+          "TABLESALLSELECTED": [],
+          "INNERSYMBOLS": [
+            {
+              "NAME": "TopItems",
+              "SYMBOLTYPE": "QUERY",
+              "SELECTALL": false,
+              "TABLESALLSELECTED": [],
+              "INNERSYMBOLS": [
+                {
+                  "NAME": "menuitemid",
+                  "SYMBOLTYPE": "COLUMN",
+                  "TYPE": "INT"
+                },
+                {
+                  "NAME": "itemname",
+                  "SYMBOLTYPE": "COLUMN",
+                  "TYPE": "NVARCHAR"
+                },
+                {
+                  "NAME": "totalquantitysold",
+                  "SYMBOLTYPE": "COLUMN",
+                  "TYPE": "INT"
+                },
+                {
+                  "NAME": "totalrevenue",
+                  "SYMBOLTYPE": "COLUMN",
+                  "TYPE": "Smallmoney"
+                }
+              ]
+            },
+            {
+              "NAME": "truckid",
+              "SYMBOLTYPE": "COLUMN",
+              "TYPE": "INT"
+            },
+            {
+              "NAME": "truckname",
+              "SYMBOLTYPE": "COLUMN",
+              "TYPE": "NVARCHAR"
+            },
+            {
+              "NAME": "menuitemid",
+              "SYMBOLTYPE": "COLUMN",
+              "TYPE": "INT"
+            },
+            {
+              "NAME": "itemname",
+              "SYMBOLTYPE": "COLUMN",
+              "TYPE": "NVARCHAR"
+            },
+            {
+              "NAME": "totalquantitysold",
+              "SYMBOLTYPE": "COLUMN",
+              "TYPE": "INT"
+            },
+            {
+              "NAME": "totalrevenue",
+              "SYMBOLTYPE": "COLUMN",
+              "TYPE": "Smallmoney"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "NAME": "fn_ParseTruckConfigJSON",
+      "SYMBOLTYPE": "FUNCTION",
+      "RETURNTYPE": "INT",
+      "SCHEMANAME": "TastyBytes",
+      "DATABASENAME": "TastyBytesDB",
+      "ISDETERMINISTIC": false,
+      "INNERSYMBOLS": [
+        {
+          "NAME": null,
+          "SYMBOLTYPE": "QUERY",
+          "SELECTALL": false,
+          "TABLESALLSELECTED": [],
+          "INNERSYMBOLS": []
+        },
+        {
+          "NAME": "@truckid",
+          "SYMBOLTYPE": "PARAMETER",
+          "TYPE": "INT"
+        },
+        {
+          "NAME": "@equipmentcount",
+          "SYMBOLTYPE": "LOCAL VARIABLE",
+          "TYPE": "INT"
+        }
+      ]
+    },
+    {
+      "NAME": "fn_FormatPhoneNumber",
+      "SYMBOLTYPE": "FUNCTION",
+      "RETURNTYPE": "VARCHAR",
+      "SCHEMANAME": "TastyBytes",
+      "DATABASENAME": "TastyBytesDB",
+      "ISDETERMINISTIC": false,
+      "INNERSYMBOLS": [
+        {
+          "NAME": "@rawphone",
+          "SYMBOLTYPE": "PARAMETER",
+          "TYPE": "VARCHAR"
+        },
+        {
+          "NAME": "@cleanphone",
+          "SYMBOLTYPE": "LOCAL VARIABLE",
+          "TYPE": "VARCHAR"
+        },
+        {
+          "NAME": "@formatted",
+          "SYMBOLTYPE": "LOCAL VARIABLE",
+          "TYPE": "VARCHAR"
+        }
+      ]
+    },
+    {
+      "NAME": "vw_ActiveTrucks",
+      "SYMBOLTYPE": "VIEW",
+      "SCHEMANAME": "TastyBytes",
+      "DATABASENAME": "TastyBytesDB",
+      "INNERSYMBOLS": [
+        {
+          "NAME": null,
+          "SYMBOLTYPE": "QUERY",
+          "SELECTALL": false,
+          "TABLESALLSELECTED": [],
+          "INNERSYMBOLS": [
+            {
+              "NAME": "truckid",
+              "SYMBOLTYPE": "COLUMN",
+              "TYPE": "INT"
+            },
+            {
+              "NAME": "truckname",
+              "SYMBOLTYPE": "COLUMN",
+              "TYPE": "NVARCHAR"
+            },
+            {
+              "NAME": "licenseplate",
+              "SYMBOLTYPE": "COLUMN",
+              "TYPE": "VARCHAR"
+            },
+            {
+              "NAME": "cityname",
+              "SYMBOLTYPE": "COLUMN",
+              "TYPE": "NVARCHAR"
+            },
+            {
+              "NAME": "countryname",
+              "SYMBOLTYPE": "COLUMN",
+              "TYPE": "NVARCHAR"
+            },
+            {
+              "NAME": "yearpurchased",
+              "SYMBOLTYPE": "COLUMN",
+              "TYPE": "INT"
+            },
+            {
+              "NAME": "maxcapacity",
+              "SYMBOLTYPE": "COLUMN",
+              "TYPE": "INT"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "NAME": "sp_UpdateInventory",
+      "SYMBOLTYPE": "PROCEDURE",
+      "SCHEMANAME": "TastyBytes",
+      "DATABASENAME": "TastyBytesDB",
+      "INNERSYMBOLS": [
+        {
+          "NAME": null,
+          "SYMBOLTYPE": "QUERY",
+          "SELECTALL": false,
+          "TABLESALLSELECTED": [],
+          "INNERSYMBOLS": [
+            {
+              "NAME": "itemsrestocked",
+              "SYMBOLTYPE": "COLUMN",
+              "TYPE": "ExactNumeric"
+            }
+          ]
+        },
+        {
+          "NAME": null,
+          "SYMBOLTYPE": "QUERY",
+          "SELECTALL": false,
+          "TABLESALLSELECTED": null,
+          "INNERSYMBOLS": [
+            {
+              "NAME": "Inventory",
+              "SYMBOLTYPE": "TABLE",
+              "SCHEMANAME": "TastyBytes",
+              "DATABASENAME": "TastyBytesDB",
+              "INNERSYMBOLS": [
+                {
+                  "NAME": "inventoryid",
+                  "SYMBOLTYPE": "COLUMN",
+                  "TYPE": "INT"
+                },
+                {
+                  "NAME": "truckid",
+                  "SYMBOLTYPE": "COLUMN",
+                  "TYPE": "INT"
+                },
+                {
+                  "NAME": "ingredientname",
+                  "SYMBOLTYPE": "COLUMN",
+                  "TYPE": "NVARCHAR"
+                },
+                {
+                  "NAME": "quantityonhand",
+                  "SYMBOLTYPE": "COLUMN",
+                  "TYPE": "DECIMAL"
+                },
+                {
+                  "NAME": "unitofmeasure",
+                  "SYMBOLTYPE": "COLUMN",
+                  "TYPE": "VARCHAR"
+                },
+                {
+                  "NAME": "reorderlevel",
+                  "SYMBOLTYPE": "COLUMN",
+                  "TYPE": "DECIMAL"
+                },
+                {
+                  "NAME": "expirationdate",
+                  "SYMBOLTYPE": "COLUMN",
+                  "TYPE": "DATE"
+                },
+                {
+                  "NAME": "suppliernotes",
+                  "SYMBOLTYPE": "COLUMN",
+                  "TYPE": "NVARCHAR"
+                },
+                {
+                  "NAME": "lastrestocked",
+                  "SYMBOLTYPE": "COLUMN",
+                  "TYPE": "DATETIME"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "NAME": null,
+          "SYMBOLTYPE": "QUERY",
+          "SELECTALL": false,
+          "TABLESALLSELECTED": [],
+          "INNERSYMBOLS": [
+            {
+              "NAME": "itemsrestocked",
+              "SYMBOLTYPE": "COLUMN",
+              "TYPE": "INT"
+            }
+          ]
+        },
+        {
+          "NAME": "@truckid",
+          "SYMBOLTYPE": "PARAMETER",
+          "TYPE": "INT"
+        },
+        {
+          "NAME": "@asof",
+          "SYMBOLTYPE": "PARAMETER",
+          "TYPE": "DATETIME"
+        },
+        {
+          "NAME": "@restockcount",
+          "SYMBOLTYPE": "LOCAL VARIABLE",
+          "TYPE": "INT"
+        }
+      ]
+    }
+  ]
+}

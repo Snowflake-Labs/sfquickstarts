@@ -5,3 +5,4 @@ git_remote_url: https://github.com/sfc-gh-aaguilarmoya/sfquickstarts.git
 git_remote_name: origin
 dashboard_port: -1
 cortex_safe_tools_acknowledged: 'true'
+committed_setup_tasks: registerCode
