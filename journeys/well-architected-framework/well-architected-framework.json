@@ -204,6 +204,75 @@
               "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/operational-excellence/continuously-improve-performance-practices/"
             }
           ]
+        },
+        {
+          "id": "ai-data-governance-lens",
+          "label": "AI & Data Governance Lens",
+          "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/ai-data-governance-lens/",
+          "topics": [
+            {
+              "id": "pillar-guidance",
+              "label": "Pillar Guidance",
+              "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/ai-data-governance-lens/pillar-guidance/"
+            },
+            {
+              "id": "lifecycle-guidance",
+              "label": "Lifecycle Guidance",
+              "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/ai-data-governance-lens/lifecycle-guidance/"
+            },
+            {
+              "id": "maturity-model",
+              "label": "Maturity Model",
+              "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/ai-data-governance-lens/maturity-model/"
+            },
+            {
+              "id": "assessment-checklist",
+              "label": "Assessment Checklist",
+              "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/ai-data-governance-lens/assessment-checklist/"
+            },
+            {
+              "id": "references-resources",
+              "label": "References & Resources",
+              "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/ai-data-governance-lens/references-resources/"
+            }
+          ]
+        },
+        {
+          "id": "interoperable",
+          "label": "Open and Interoperable",
+          "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/interoperable/",
+          "topics": [
+            {
+              "id": "pillar-guidance",
+              "label": "Pillar Guidance",
+              "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/interoperable/pillar-guidance/"
+            },
+            {
+              "id": "key-decisions-tradeoffs",
+              "label": "Key Decisions & Tradeoffs",
+              "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/interoperable/key-decisions-tradeoffs/"
+            },
+            {
+              "id": "maturity-model",
+              "label": "Maturity Model",
+              "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/interoperable/maturity-model/"
+            },
+            {
+              "id": "assessment-checklist",
+              "label": "Assessment Checklist",
+              "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/interoperable/assessment-checklist/"
+            },
+            {
+              "id": "feature-status",
+              "label": "Feature Status",
+              "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/interoperable/feature-status/"
+            },
+            {
+              "id": "references-resources",
+              "label": "References & Resources",
+              "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/interoperable/references-resources/"
+            }
+          ]
         }
       ]
     }
