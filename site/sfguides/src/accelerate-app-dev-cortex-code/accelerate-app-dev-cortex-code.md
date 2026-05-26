@@ -105,7 +105,7 @@ All Python steps in this lab run from a single pre-built Snowflake Notebook. Upl
 ### Step 1: Upload the Notebook
 
 1. In Snowsight, navigate to **Projects > Workspaces**
-2. Click on **+ Add new > Upload files** and the downloaded `accelerate-app-dev-cortex-code.ipynb`
+2. Click on **+ Add new > Upload files** and the select the downloaded [`accelerate-app-dev-cortex-code.ipynb`](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/accelerate-app-dev-cortex-code/assets/accelerate-app-dev-cortex-code.ipynb)
 3. Click on **Connect** next to the **Run** button and select **Create and connect**
 4. Wait for connection to commplete
 6. Set **Warehouse** to `WORKSHOP_WH`
