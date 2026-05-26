@@ -44,6 +44,19 @@ You'll work with the Tasty Bytes dataset (a fictitious food truck company) to bu
 - A Streamlit dashboard visualizing pipeline metrics
 
 <!-- ------------------------ -->
+## Create a Workspace from Git
+
+In this step, you'll create a Snowsight Workspace linked to the companion repository on GitHub. The workspace gives Cortex Code context about the lab structure and contains the reference SQL files.
+
+1. Navigate to **Projects > Workspaces** in Snowsight.
+2. Click **Create** (+) and select **Git repository**.
+3. Enter the repository URL: `https://github.com/Snowflake-Labs/sfguide-declarative-pipelines-dynamic-tables`
+4. Select an API Integration for GitHub ([create one if needed](https://docs.snowflake.com/en/user-guide/ui-snowsight/workspaces-git#label-create-a-git-workspace)).
+5. Select **Public repository**.
+
+![Creating a Workspace from a Git repository](./assets/create_workspace.png)
+
+<!-- ------------------------ -->
 ## Open Cortex Code
 
 All of the work in this quickstart is driven through **Cortex Code** — Snowflake's AI co-pilot built into Snowsight.
@@ -313,21 +326,11 @@ The agent translates natural language into SQL queries against your Dynamic Tabl
 <!-- ------------------------ -->
 ## Streamlit Dashboard (Bonus)
 
-Now that the pipeline is running, let's visualize the data with a Streamlit app. For this step you'll create a Snowsight Workspace from the companion GitHub repository, which contains a ready-made Streamlit dashboard.
-
-### Create a Workspace from Git
-
-1. Navigate to **Projects > Workspaces** in Snowsight.
-2. Click **Create** (+) and select **Git repository**.
-3. Enter the repository URL: `https://github.com/Snowflake-Labs/sfguide-declarative-pipelines-dynamic-tables`
-4. Select an API Integration for GitHub ([create one if needed](https://docs.snowflake.com/en/user-guide/ui-snowsight/workspaces-git#label-create-a-git-workspace)).
-5. Select **Public repository**.
-
-![Creating a Workspace from a Git repository](./assets/create_workspace.png)
+Now that the pipeline is running, let's visualize the data with a Streamlit app. Open your workspace (created in the first step), and open `tasty_bytes_dashboard.py`.
 
 ### Run the Dashboard
 
-Once the workspace is created, open `tasty_bytes_dashboard.py`. This Streamlit app:
+This Streamlit app:
 
 - Displays the **top 10 products by revenue** as a bar chart colored by profit margin
 - Shows **today's key metrics** (orders, revenue, profit, margin, customers, items sold) pulled from `daily_business_metrics` and `product_performance_metrics`
