@@ -1,4 +1,4 @@
-author: Gilberto Hernandez
+author: Yoav Ostrinsky
 id: snowflake-dynamic-tables-data-pipeline
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/transformation
 language: en
