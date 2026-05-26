@@ -58,14 +58,14 @@ All setup runs in a **SQL Worksheet** in Snowsight. Navigate to **Left Pane > Cr
 --Find your USER IDENTIFIER. Paste this value in the CURRENT_USER field.
 SELECT CURRENT_USER();
 
--- Enable secondary roles for permission inheritance
+-- Enable secondary roles for permission inheritance. Replace CURRENT_USER in the script with the USER IDENTIFIER from the previous step.
 ALTER USER CURRENT_USER SET DEFAULT_SECONDARY_ROLES = ('ALL');
 
 -- Activate secondary roles in the current session
 USE SECONDARY ROLES ALL;
 
 -- Enable a Personal Database for Private Notebooks
-ALTER USER CURRENT_USER SET ENABLE_PERSONAL_DATABASE = TRUE;
+ALTER ACCOUNT SET ENABLE_PERSONAL_DATABASE = TRUE;
 ```
 
 ### Step 2: Create the Workshop Database and Schemas
@@ -104,18 +104,15 @@ All Python steps in this lab run from a single pre-built Snowflake Notebook. Upl
 
 ### Step 1: Upload the Notebook
 
-1. In Snowsight, navigate to **Projects > Legacy Notebooks**
-2. Click the **⋮** menu (top right) and select **Import .ipynb file**
-3. Upload `building-ai-apps-snowflake-cortex.ipynb`
-4. Set **Database** to `AI_WORKSHOP_DB` and **Schema** to `RAG_DATA`
-5. Set **Warehouse** to `WORKSHOP_WH`
-6. Click **Create**
+1. In Snowsight, navigate to **Projects > Workspaces**
+2. Click on **+ Add new > Upload files** and the select the downloaded [`accelerate-app-dev-cortex-code.ipynb`](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/accelerate-app-dev-cortex-code/assets/accelerate-app-dev-cortex-code.ipynb)
+3. Click on **Connect** next to the **Run** button and select **Create and connect**
+4. Wait for connection to commplete
+6. Set **Warehouse** to `WORKSHOP_WH`
 
 ### Step 2: Run the Setup Cell
 
-Before you run the setup cell, from the 'Packages' drop down on the top right, install the following: 'snowflake.core'. You will be prompted to restart the session. 
-
-Now run The setup code cell in the notebook imports all libraries and sets the active database, schema, and warehouse. **Run this cell before any other.** You should see:
+Now run the setup code cell in the notebook imports all libraries and sets the active database, schema, and warehouse. **Run this cell before any other.** You should see:
 
 ```
 Session ready.
@@ -146,7 +143,7 @@ Navigate back to your SQL Worksheet, look for the icon (sparkle ✦) in the righ
 In the Cortex Code chat panel, type the following prompt exactly:
 
 ```
-Create an internal stage in the RAG_DATA schema called DOCS_STAGE with directory
+Create an internal stage in the AI_WORKSHOP_DB database and RAG_DATA schema called DOCS_STAGE with directory
 tables enabled and Snowflake SSE encryption.
 ```
 
@@ -203,7 +200,7 @@ print(cortex.complete(model, prompt))
 
 You just called a hosted LLM running inside your Snowflake account. No API key, no data leaving your security perimeter.
 
-Run the **model comparison cell** below it to contrast `mistral-7b`, `snowflake-arctic`, and `llama3-70b` side by side.
+Run the **model comparison cell** below it to contrast `mistral-7b` and `llama3-70b` side by side.
 
 ### Step 2: The Hallucination Problem
 
@@ -277,12 +274,12 @@ FEATURE_DOCS table
 
 ### Step 1: Chunk the Text
 
-Real documents are too long to fit in a single LLM prompt. We break them into overlapping chunks so the search index can return the most relevant piece. Cortex Search indexes chucnks, not the whole document. The search service finds the most relevant chunk for a question. If you indexed full documents, you'd retrieve a wall of text (much of it irrelevant) and would send it all to the LLM. Precision in this case improves answer quality and provides you a higher groundedness score (covered later in this lab).
+Real documents are too long to fit in a single LLM prompt. We break them into overlapping chunks so the search index can return the most relevant piece. Cortex Search indexes chunks, not the whole document. The search service finds the most relevant chunk for a question. If you indexed full documents, you'd retrieve a wall of text (much of it irrelevant) and would send it all to the LLM. Precision in this case improves answer quality and provides you a higher groundedness score (covered later in this lab).
 
 > **Cortex Code prompt to try first:**  
 > *"Chunk the content column in FEATURE_DOCS into 1500-character pieces with 200-character overlap using SPLIT_TEXT_RECURSIVE_CHARACTER and store in CHUNKED_DOCS"*
 
-Click to run the command provided by Cortex Code. You should see it created 15 chunks across 15 features with each each at most 1500 characters and a 200-character overlap between consecutive chunks.
+Click to run the command provided by Cortex Code. You should see it created 15 chunks across 15 features with each at most 1500 characters and a 200-character overlap between consecutive chunks.
 
 
 > Our documents are short so most produce a single chunk. With real PDFs or long articles, you would see many more chunks per source document.
@@ -294,7 +291,7 @@ A single DDL statement creates a fully managed hybrid search index — Snowflake
 > **Cortex Code prompt to try first:**  
 > *"Create a Cortex Search Service called FEATURE_SEARCH_SERVICE on CHUNKED_DOCS.chunk_text, with feature_name as an attribute, using snowflake-arctic-embed-l-v2.0 and a 1-minute target lag"*
 
-Click to run the command provided by Cortex Code. The FEATURE_SEARCH_SERVICE is created. The service will index automaticall, but may take a few minutes to become active. 
+Click to run the command provided by Cortex Code. The FEATURE_SEARCH_SERVICE is created. The service will index automatically, but may take a few minutes to become active. 
 
 Ask Cortex Code after a few minutes: 
 > *"Is the service active and ready to query?"*
@@ -313,7 +310,7 @@ Run the **Step 4 cell** in the notebook. It asks 5 test questions against your R
 
 Run the **Evaluate Response Quality** quality step in the notebook. 
 
-This uses Cortex LLM to score the quality of the your RAG app's answers. For each test question, the service calls retrieve_context() to fetch the top 3 matching chunks from Cortex Search. Then, it calls generate_answer() to send those chunks and the question to mistral-large2 to product an answer. It score on three metrics: groundedness, context relevance, and answer relevance on a scale from 0.0 to 1.0 asking the LLM to judge. 
+This uses Cortex LLM to score the quality of your RAG app's answers. For each test question, the service calls retrieve_context() to fetch the top 3 matching chunks from Cortex Search. Then, it calls generate_answer() to send those chunks and the question to mistral-large2 to produce an answer. It scores on three metrics: groundedness, context relevance, and answer relevance on a scale from 0.0 to 1.0 asking the LLM to judge. 
 
 A well-tuned RAG app should score **> 0.8 on all metrics**. If Groundedness is low, tighten the prompt instructions. If Context Relevance is low, your search service or chunking needs improvement. If groundedness is low, your prompt isn't constraining the model tightly enough. If answer relevance is low, the model is retrieving the right context, but generating poor answers. 
 
@@ -328,7 +325,15 @@ Run the **schema exploration cell** in the Module 3 section of the notebook. It 
 
 ```
 Tables in SNOWFLAKE_SAMPLE_DATA.TPCH_SF1:
- CUSTOMER, LINEITEM, NATION, ORDERS, PART, PARTSUPP, REGION, SUPPLIER
+TABLE_NAME    ROW_COUNT
+  CUSTOMER      150,000
+  LINEITEM    6,001,215
+    NATION           25
+    ORDERS    1,500,000
+      PART      200,000
+  PARTSUPP      800,000
+    REGION            5
+  SUPPLIER       10,000
 ```
 
 ### Step 2: Build and Run Text-to-SQL
