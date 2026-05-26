@@ -1,6 +1,6 @@
 author: Elizabeth Christensen
 id: snowflake-postgres-monitoring-grafana
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/snowflake-feature/postgres
 language: en
 summary: Monitor Snowflake Postgres with Grafana dashboards using the Snowflake data source plugin and the native event table
 environments: web
@@ -279,18 +279,23 @@ CREATE DATABASE IF NOT EXISTS GRAFANA_DB;
 CREATE SCHEMA IF NOT EXISTS GRAFANA_DB.MONITORING;
 
 -- Create a view that filters to Postgres syslog events
+CREATE OR REPLACE VIEW GRAFANA_DB.MONITORING.POSTGRES_LOGS AS
+SELECT *
+FROM SNOWFLAKE.TELEMETRY.EVENTS
+WHERE RECORD_TYPE = 'LOG'
+  AND RESOURCE_ATTRIBUTES['service.name']::STRING = 'postgres_syslog';
+
+-- Create a view that filters to Postgres metrics
 CREATE OR REPLACE VIEW GRAFANA_DB.MONITORING.POSTGRES_METRICS AS
 SELECT *
 FROM OBSERVABILITY.PUBLIC.EVENTS
 WHERE RECORD_TYPE = 'METRIC';
 
-USE ROLE SECURITYADMIN;
-GRANT SELECT ON VIEW GRAFANA_DB.MONITORING.POSTGRES_METRICS TO ROLE GRAFANA;
-
 -- Grant access to the Grafana role
 GRANT USAGE ON DATABASE GRAFANA_DB TO ROLE GRAFANA;
 GRANT USAGE ON SCHEMA GRAFANA_DB.MONITORING TO ROLE GRAFANA;
 GRANT SELECT ON VIEW GRAFANA_DB.MONITORING.POSTGRES_LOGS TO ROLE GRAFANA;
+GRANT SELECT ON VIEW GRAFANA_DB.MONITORING.POSTGRES_METRICS TO ROLE GRAFANA;
 ```
 
 This view also simplifies your Grafana queries — you won't need to repeat the `RECORD_TYPE` and `service.name` filters in every panel.
