@@ -83,6 +83,13 @@ and CREATE DATABASE privileges on the account. Then switch to lab_role and:
 
 CoCo will create all infrastructure and load ~1 billion rows from S3. The data load takes a few minutes due to the volume.
 
+> **Note**: When CoCo asks for permission to execute SQL, you'll see an approval prompt with three options:
+> - **Allow Once** — approves only this specific statement
+> - **Allow CREATE** — approves all CREATE statements for the current session
+> - **Always Allow CREATE** — permanently allows CREATE statements without prompting in future sessions
+>
+> ![Cortex Code permission prompt](./assets/coco_allow.png)
+
 > **Note**: If you encounter permission errors, ensure you're running as ACCOUNTADMIN when creating the role and granting privileges.
 
 <!-- ------------------------ -->
@@ -113,7 +120,11 @@ Now let's tell Cortex Code to build a three-tier pipeline using these concepts.
 <!-- ------------------------ -->
 ## Build the Pipeline
 
-This is the core of the quickstart — you'll describe an entire three-tier data pipeline to Cortex Code, and it will generate all the Dynamic Table DDL. Give CoCo the following prompt:
+This is the core of the quickstart — you'll describe an entire three-tier data pipeline to Cortex Code, and it will generate all the Dynamic Table DDL.
+
+Before submitting the prompt, switch CoCo to **Plan mode** by pressing **Shift+Tab**. In Plan mode, CoCo will show you exactly what it intends to do before executing anything — useful for reviewing a large DDL change like this before it runs. Once you've reviewed the plan and are happy with it, switch back to normal mode and execute.
+
+Give CoCo the following prompt:
 
 ```
 Build a 3-tier dynamic table pipeline in tasty_bytes_db.analytics using
