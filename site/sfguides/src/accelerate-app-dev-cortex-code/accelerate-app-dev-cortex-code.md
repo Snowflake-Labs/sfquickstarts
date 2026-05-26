@@ -325,7 +325,15 @@ Run the **schema exploration cell** in the Module 3 section of the notebook. It 
 
 ```
 Tables in SNOWFLAKE_SAMPLE_DATA.TPCH_SF1:
- CUSTOMER, LINEITEM, NATION, ORDERS, PART, PARTSUPP, REGION, SUPPLIER
+TABLE_NAME    ROW_COUNT
+  CUSTOMER      150,000
+  LINEITEM    6,001,215
+    NATION           25
+    ORDERS    1,500,000
+      PART      200,000
+  PARTSUPP      800,000
+    REGION            5
+  SUPPLIER       10,000
 ```
 
 ### Step 2: Build and Run Text-to-SQL
