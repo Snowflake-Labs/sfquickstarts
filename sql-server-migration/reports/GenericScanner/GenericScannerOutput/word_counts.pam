@@ -1,0 +1,338 @@
+FileId,Keyword,Count
+/database/tastybytesdb.sql,collate,1
+/database/tastybytesdb.sql,create database,1
+/tastybytesdb/tastybytes/function/fn_formatphonenumber.sql,=,7
+/tastybytesdb/tastybytes/function/fn_formatphonenumber.sql,as,1
+/tastybytesdb/tastybytes/function/fn_formatphonenumber.sql,begin,1
+/tastybytesdb/tastybytes/function/fn_formatphonenumber.sql,create function,1
+/tastybytesdb/tastybytes/function/fn_formatphonenumber.sql,declare,2
+/tastybytesdb/tastybytes/function/fn_formatphonenumber.sql,else,2
+/tastybytesdb/tastybytes/function/fn_formatphonenumber.sql,end,1
+/tastybytesdb/tastybytes/function/fn_formatphonenumber.sql,go,1
+/tastybytesdb/tastybytes/function/fn_formatphonenumber.sql,if,2
+/tastybytesdb/tastybytes/function/fn_formatphonenumber.sql,left,2
+/tastybytesdb/tastybytes/function/fn_formatphonenumber.sql,len,2
+/tastybytesdb/tastybytes/function/fn_formatphonenumber.sql,return,1
+/tastybytesdb/tastybytes/function/fn_formatphonenumber.sql,returns,1
+/tastybytesdb/tastybytes/function/fn_formatphonenumber.sql,right,2
+/tastybytesdb/tastybytes/function/fn_formatphonenumber.sql,set,5
+/tastybytesdb/tastybytes/function/fn_formatphonenumber.sql,stuff,1
+/tastybytesdb/tastybytes/function/fn_formatphonenumber.sql,substring,3
+/tastybytesdb/tastybytes/function/fn_formatphonenumber.sql,use,1
+/tastybytesdb/tastybytes/function/fn_formatphonenumber.sql,varchar,4
+/tastybytesdb/tastybytes/function/fn_formatphonenumber.sql,while,1
+/tastybytesdb/tastybytes/function/fn_formatphonenumber.sql,+,12
+/tastybytesdb/tastybytes/function/fn_formatphonenumber.sql,>,1
+/tastybytesdb/tastybytes/function/fn_parsetruckconfigjson.sql,=,3
+/tastybytesdb/tastybytes/function/fn_parsetruckconfigjson.sql,and,2
+/tastybytesdb/tastybytes/function/fn_parsetruckconfigjson.sql,apply,1
+/tastybytesdb/tastybytes/function/fn_parsetruckconfigjson.sql,as,2
+/tastybytesdb/tastybytes/function/fn_parsetruckconfigjson.sql,begin,1
+/tastybytesdb/tastybytes/function/fn_parsetruckconfigjson.sql,bit,1
+/tastybytesdb/tastybytes/function/fn_parsetruckconfigjson.sql,cast,1
+/tastybytesdb/tastybytes/function/fn_parsetruckconfigjson.sql,count,1
+/tastybytesdb/tastybytes/function/fn_parsetruckconfigjson.sql,create function,1
+/tastybytesdb/tastybytes/function/fn_parsetruckconfigjson.sql,cross,1
+/tastybytesdb/tastybytes/function/fn_parsetruckconfigjson.sql,declare,1
+/tastybytesdb/tastybytes/function/fn_parsetruckconfigjson.sql,end,1
+/tastybytesdb/tastybytes/function/fn_parsetruckconfigjson.sql,from,1
+/tastybytesdb/tastybytes/function/fn_parsetruckconfigjson.sql,go,1
+/tastybytesdb/tastybytes/function/fn_parsetruckconfigjson.sql,int,3
+/tastybytesdb/tastybytes/function/fn_parsetruckconfigjson.sql,is not null,1
+/tastybytesdb/tastybytes/function/fn_parsetruckconfigjson.sql,isnull,1
+/tastybytesdb/tastybytes/function/fn_parsetruckconfigjson.sql,json_value,1
+/tastybytesdb/tastybytes/function/fn_parsetruckconfigjson.sql,openjson,1
+/tastybytesdb/tastybytes/function/fn_parsetruckconfigjson.sql,return,1
+/tastybytesdb/tastybytes/function/fn_parsetruckconfigjson.sql,returns,1
+/tastybytesdb/tastybytes/function/fn_parsetruckconfigjson.sql,select,1
+/tastybytesdb/tastybytes/function/fn_parsetruckconfigjson.sql,use,1
+/tastybytesdb/tastybytes/function/fn_parsetruckconfigjson.sql,value,1
+/tastybytesdb/tastybytes/function/fn_parsetruckconfigjson.sql,where,1
+/tastybytesdb/tastybytes/function/fn_parsetruckconfigjson.sql,*,1
+/tastybytesdb/tastybytes/procedure/sp_updateinventory.sql,=,7
+/tastybytesdb/tastybytes/procedure/sp_updateinventory.sql,@@rowcount,1
+/tastybytesdb/tastybytes/procedure/sp_updateinventory.sql,and,1
+/tastybytesdb/tastybytes/procedure/sp_updateinventory.sql,as,3
+/tastybytesdb/tastybytes/procedure/sp_updateinventory.sql,begin,2
+/tastybytesdb/tastybytes/procedure/sp_updateinventory.sql,coalesce,1
+/tastybytesdb/tastybytes/procedure/sp_updateinventory.sql,create procedure,1
+/tastybytesdb/tastybytes/procedure/sp_updateinventory.sql,datetime,1
+/tastybytesdb/tastybytes/procedure/sp_updateinventory.sql,declare,1
+/tastybytesdb/tastybytes/procedure/sp_updateinventory.sql,end,2
+/tastybytesdb/tastybytes/procedure/sp_updateinventory.sql,getdate,1
+/tastybytesdb/tastybytes/procedure/sp_updateinventory.sql,go,1
+/tastybytesdb/tastybytes/procedure/sp_updateinventory.sql,if,1
+/tastybytesdb/tastybytes/procedure/sp_updateinventory.sql,int,2
+/tastybytesdb/tastybytes/procedure/sp_updateinventory.sql,is null,1
+/tastybytesdb/tastybytes/procedure/sp_updateinventory.sql,null,2
+/tastybytesdb/tastybytes/procedure/sp_updateinventory.sql,on,1
+/tastybytesdb/tastybytes/procedure/sp_updateinventory.sql,return,1
+/tastybytesdb/tastybytes/procedure/sp_updateinventory.sql,select,2
+/tastybytesdb/tastybytes/procedure/sp_updateinventory.sql,set,3
+/tastybytesdb/tastybytes/procedure/sp_updateinventory.sql,update,1
+/tastybytesdb/tastybytes/procedure/sp_updateinventory.sql,use,1
+/tastybytesdb/tastybytes/procedure/sp_updateinventory.sql,where,1
+/tastybytesdb/tastybytes/procedure/sp_updateinventory.sql,*,1
+/tastybytesdb/tastybytes/procedure/sp_updateinventory.sql,<=,1
+/tastybytesdb/tastybytes/table/customer.sql,bit,1
+/tastybytesdb/tastybytes/table/customer.sql,collate,4
+/tastybytesdb/tastybytes/table/customer.sql,constraint,5
+/tastybytesdb/tastybytes/table/customer.sql,create table,1
+/tastybytesdb/tastybytes/table/customer.sql,date,1
+/tastybytesdb/tastybytes/table/customer.sql,datetime,2
+/tastybytesdb/tastybytes/table/customer.sql,default,5
+/tastybytesdb/tastybytes/table/customer.sql,getdate,2
+/tastybytesdb/tastybytes/table/customer.sql,go,1
+/tastybytesdb/tastybytes/table/customer.sql,identity,1
+/tastybytesdb/tastybytes/table/customer.sql,int,3
+/tastybytesdb/tastybytes/table/customer.sql,newid,1
+/tastybytesdb/tastybytes/table/customer.sql,not null,8
+/tastybytesdb/tastybytes/table/customer.sql,null,4
+/tastybytesdb/tastybytes/table/customer.sql,nvarchar,2
+/tastybytesdb/tastybytes/table/customer.sql,uniqueidentifier,1
+/tastybytesdb/tastybytes/table/customer.sql,use,1
+/tastybytesdb/tastybytes/table/customer.sql,varchar,2
+/tastybytesdb/tastybytes/table/foodtruck.sql,bit,1
+/tastybytesdb/tastybytes/table/foodtruck.sql,collate,3
+/tastybytesdb/tastybytes/table/foodtruck.sql,constraint,4
+/tastybytesdb/tastybytes/table/foodtruck.sql,create table,1
+/tastybytesdb/tastybytes/table/foodtruck.sql,datetime,2
+/tastybytesdb/tastybytes/table/foodtruck.sql,default,4
+/tastybytesdb/tastybytes/table/foodtruck.sql,getdate,1
+/tastybytesdb/tastybytes/table/foodtruck.sql,go,1
+/tastybytesdb/tastybytes/table/foodtruck.sql,identity,1
+/tastybytesdb/tastybytes/table/foodtruck.sql,int,4
+/tastybytesdb/tastybytes/table/foodtruck.sql,max,1
+/tastybytesdb/tastybytes/table/foodtruck.sql,newid,1
+/tastybytesdb/tastybytes/table/foodtruck.sql,not null,8
+/tastybytesdb/tastybytes/table/foodtruck.sql,null,3
+/tastybytesdb/tastybytes/table/foodtruck.sql,nvarchar,2
+/tastybytesdb/tastybytes/table/foodtruck.sql,uniqueidentifier,1
+/tastybytesdb/tastybytes/table/foodtruck.sql,use,1
+/tastybytesdb/tastybytes/table/foodtruck.sql,varchar,1
+/tastybytesdb/tastybytes/table/menu.sql,bit,1
+/tastybytesdb/tastybytes/table/menu.sql,collate,3
+/tastybytesdb/tastybytes/table/menu.sql,constraint,4
+/tastybytesdb/tastybytes/table/menu.sql,create table,1
+/tastybytesdb/tastybytes/table/menu.sql,date,2
+/tastybytesdb/tastybytes/table/menu.sql,datetime,1
+/tastybytesdb/tastybytes/table/menu.sql,default,4
+/tastybytesdb/tastybytes/table/menu.sql,getdate,2
+/tastybytesdb/tastybytes/table/menu.sql,go,1
+/tastybytesdb/tastybytes/table/menu.sql,identity,1
+/tastybytesdb/tastybytes/table/menu.sql,int,2
+/tastybytesdb/tastybytes/table/menu.sql,money,1
+/tastybytesdb/tastybytes/table/menu.sql,not null,8
+/tastybytesdb/tastybytes/table/menu.sql,ntext,1
+/tastybytesdb/tastybytes/table/menu.sql,null,2
+/tastybytesdb/tastybytes/table/menu.sql,nvarchar,2
+/tastybytesdb/tastybytes/table/menu.sql,use,1
+/tastybytesdb/tastybytes/table/menuitem.sql,bit,3
+/tastybytesdb/tastybytes/table/menuitem.sql,collate,2
+/tastybytesdb/tastybytes/table/menuitem.sql,constraint,4
+/tastybytesdb/tastybytes/table/menuitem.sql,create table,1
+/tastybytesdb/tastybytes/table/menuitem.sql,datetime,1
+/tastybytesdb/tastybytes/table/menuitem.sql,decimal,1
+/tastybytesdb/tastybytes/table/menuitem.sql,default,4
+/tastybytesdb/tastybytes/table/menuitem.sql,getdate,1
+/tastybytesdb/tastybytes/table/menuitem.sql,go,1
+/tastybytesdb/tastybytes/table/menuitem.sql,identity,1
+/tastybytesdb/tastybytes/table/menuitem.sql,int,3
+/tastybytesdb/tastybytes/table/menuitem.sql,max,1
+/tastybytesdb/tastybytes/table/menuitem.sql,money,1
+/tastybytesdb/tastybytes/table/menuitem.sql,not null,9
+/tastybytesdb/tastybytes/table/menuitem.sql,null,3
+/tastybytesdb/tastybytes/table/menuitem.sql,nvarchar,2
+/tastybytesdb/tastybytes/table/menuitem.sql,timestamp,1
+/tastybytesdb/tastybytes/table/menuitem.sql,use,1
+/tastybytesdb/tastybytes/table/employeeshift.sql,collate,2
+/tastybytesdb/tastybytes/table/employeeshift.sql,constraint,2
+/tastybytesdb/tastybytes/table/employeeshift.sql,create table,1
+/tastybytesdb/tastybytes/table/employeeshift.sql,date,1
+/tastybytesdb/tastybytes/table/employeeshift.sql,datetime,3
+/tastybytesdb/tastybytes/table/employeeshift.sql,default,2
+/tastybytesdb/tastybytes/table/employeeshift.sql,getdate,1
+/tastybytesdb/tastybytes/table/employeeshift.sql,go,1
+/tastybytesdb/tastybytes/table/employeeshift.sql,identity,1
+/tastybytesdb/tastybytes/table/employeeshift.sql,int,2
+/tastybytesdb/tastybytes/table/employeeshift.sql,not null,9
+/tastybytesdb/tastybytes/table/employeeshift.sql,null,1
+/tastybytesdb/tastybytes/table/employeeshift.sql,numeric,1
+/tastybytesdb/tastybytes/table/employeeshift.sql,nvarchar,1
+/tastybytesdb/tastybytes/table/employeeshift.sql,role,1
+/tastybytesdb/tastybytes/table/employeeshift.sql,smallmoney,1
+/tastybytesdb/tastybytes/table/employeeshift.sql,use,1
+/tastybytesdb/tastybytes/table/employeeshift.sql,varchar,1
+/tastybytesdb/tastybytes/table/orderdetail.sql,collate,1
+/tastybytesdb/tastybytes/table/orderdetail.sql,constraint,2
+/tastybytesdb/tastybytes/table/orderdetail.sql,create table,1
+/tastybytesdb/tastybytes/table/orderdetail.sql,decimal,1
+/tastybytesdb/tastybytes/table/orderdetail.sql,default,2
+/tastybytesdb/tastybytes/table/orderdetail.sql,go,1
+/tastybytesdb/tastybytes/table/orderdetail.sql,int,4
+/tastybytesdb/tastybytes/table/orderdetail.sql,not null,6
+/tastybytesdb/tastybytes/table/orderdetail.sql,null,2
+/tastybytesdb/tastybytes/table/orderdetail.sql,nvarchar,1
+/tastybytesdb/tastybytes/table/orderdetail.sql,smallmoney,2
+/tastybytesdb/tastybytes/table/orderdetail.sql,use,1
+/tastybytesdb/tastybytes/table/inventory.sql,collate,3
+/tastybytesdb/tastybytes/table/inventory.sql,constraint,2
+/tastybytesdb/tastybytes/table/inventory.sql,create table,1
+/tastybytesdb/tastybytes/table/inventory.sql,date,1
+/tastybytesdb/tastybytes/table/inventory.sql,datetime,1
+/tastybytesdb/tastybytes/table/inventory.sql,decimal,2
+/tastybytesdb/tastybytes/table/inventory.sql,default,2
+/tastybytesdb/tastybytes/table/inventory.sql,go,1
+/tastybytesdb/tastybytes/table/inventory.sql,identity,1
+/tastybytesdb/tastybytes/table/inventory.sql,int,2
+/tastybytesdb/tastybytes/table/inventory.sql,not null,6
+/tastybytesdb/tastybytes/table/inventory.sql,null,3
+/tastybytesdb/tastybytes/table/inventory.sql,nvarchar,2
+/tastybytesdb/tastybytes/table/inventory.sql,use,1
+/tastybytesdb/tastybytes/table/inventory.sql,varchar,1
+/tastybytesdb/tastybytes/table/city.sql,collate,2
+/tastybytesdb/tastybytes/table/city.sql,constraint,1
+/tastybytesdb/tastybytes/table/city.sql,create table,1
+/tastybytesdb/tastybytes/table/city.sql,datetime,1
+/tastybytesdb/tastybytes/table/city.sql,decimal,2
+/tastybytesdb/tastybytes/table/city.sql,default,1
+/tastybytesdb/tastybytes/table/city.sql,getdate,1
+/tastybytesdb/tastybytes/table/city.sql,go,1
+/tastybytesdb/tastybytes/table/city.sql,identity,1
+/tastybytesdb/tastybytes/table/city.sql,int,3
+/tastybytesdb/tastybytes/table/city.sql,not null,4
+/tastybytesdb/tastybytes/table/city.sql,null,4
+/tastybytesdb/tastybytes/table/city.sql,nvarchar,2
+/tastybytesdb/tastybytes/table/city.sql,use,1
+/tastybytesdb/tastybytes/table/country.sql,bit,1
+/tastybytesdb/tastybytes/table/country.sql,char,2
+/tastybytesdb/tastybytes/table/country.sql,collate,4
+/tastybytesdb/tastybytes/table/country.sql,constraint,3
+/tastybytesdb/tastybytes/table/country.sql,create table,1
+/tastybytesdb/tastybytes/table/country.sql,datetime,2
+/tastybytesdb/tastybytes/table/country.sql,decimal,1
+/tastybytesdb/tastybytes/table/country.sql,default,3
+/tastybytesdb/tastybytes/table/country.sql,getdate,1
+/tastybytesdb/tastybytes/table/country.sql,go,1
+/tastybytesdb/tastybytes/table/country.sql,identity,1
+/tastybytesdb/tastybytes/table/country.sql,int,1
+/tastybytesdb/tastybytes/table/country.sql,not null,8
+/tastybytesdb/tastybytes/table/country.sql,null,1
+/tastybytesdb/tastybytes/table/country.sql,nvarchar,2
+/tastybytesdb/tastybytes/table/country.sql,use,1
+/tastybytesdb/tastybytes/table/orderheader.sql,collate,3
+/tastybytesdb/tastybytes/table/orderheader.sql,constraint,5
+/tastybytesdb/tastybytes/table/orderheader.sql,create table,1
+/tastybytesdb/tastybytes/table/orderheader.sql,datetime,4
+/tastybytesdb/tastybytes/table/orderheader.sql,default,5
+/tastybytesdb/tastybytes/table/orderheader.sql,getdate,2
+/tastybytesdb/tastybytes/table/orderheader.sql,go,1
+/tastybytesdb/tastybytes/table/orderheader.sql,identity,1
+/tastybytesdb/tastybytes/table/orderheader.sql,int,3
+/tastybytesdb/tastybytes/table/orderheader.sql,money,2
+/tastybytesdb/tastybytes/table/orderheader.sql,not null,7
+/tastybytesdb/tastybytes/table/orderheader.sql,null,5
+/tastybytesdb/tastybytes/table/orderheader.sql,nvarchar,1
+/tastybytesdb/tastybytes/table/orderheader.sql,use,1
+/tastybytesdb/tastybytes/table/orderheader.sql,varchar,2
+/tastybytesdb/tastybytes/view/vw_customerorderhistory.sql,=,2
+/tastybytesdb/tastybytes/view/vw_customerorderhistory.sql,as,2
+/tastybytesdb/tastybytes/view/vw_customerorderhistory.sql,create view,1
+/tastybytesdb/tastybytes/view/vw_customerorderhistory.sql,desc,1
+/tastybytesdb/tastybytes/view/vw_customerorderhistory.sql,from,1
+/tastybytesdb/tastybytes/view/vw_customerorderhistory.sql,go,1
+/tastybytesdb/tastybytes/view/vw_customerorderhistory.sql,inner join,2
+/tastybytesdb/tastybytes/view/vw_customerorderhistory.sql,on,2
+/tastybytesdb/tastybytes/view/vw_customerorderhistory.sql,order by,1
+/tastybytesdb/tastybytes/view/vw_customerorderhistory.sql,select,1
+/tastybytesdb/tastybytes/view/vw_customerorderhistory.sql,top,1
+/tastybytesdb/tastybytes/view/vw_customerorderhistory.sql,use,1
+/tastybytesdb/tastybytes/view/vw_customerorderhistory.sql,+,2
+/tastybytesdb/tastybytes/view/vw_menupricing.sql,=,1
+/tastybytesdb/tastybytes/view/vw_menupricing.sql,as,7
+/tastybytesdb/tastybytes/view/vw_menupricing.sql,avg,1
+/tastybytesdb/tastybytes/view/vw_menupricing.sql,count,1
+/tastybytesdb/tastybytes/view/vw_menupricing.sql,create view,1
+/tastybytesdb/tastybytes/view/vw_menupricing.sql,from,2
+/tastybytesdb/tastybytes/view/vw_menupricing.sql,go,1
+/tastybytesdb/tastybytes/view/vw_menupricing.sql,group by,1
+/tastybytesdb/tastybytes/view/vw_menupricing.sql,inner join,1
+/tastybytesdb/tastybytes/view/vw_menupricing.sql,max,1
+/tastybytesdb/tastybytes/view/vw_menupricing.sql,min,1
+/tastybytesdb/tastybytes/view/vw_menupricing.sql,on,1
+/tastybytesdb/tastybytes/view/vw_menupricing.sql,select,2
+/tastybytesdb/tastybytes/view/vw_menupricing.sql,use,1
+/tastybytesdb/tastybytes/view/vw_menupricing.sql,with,1
+/tastybytesdb/tastybytes/view/vw_menupricing.sql,-,1
+/tastybytesdb/tastybytes/view/vw_activetrucks.sql,=,3
+/tastybytesdb/tastybytes/view/vw_activetrucks.sql,as,1
+/tastybytesdb/tastybytes/view/vw_activetrucks.sql,create view,1
+/tastybytesdb/tastybytes/view/vw_activetrucks.sql,from,1
+/tastybytesdb/tastybytes/view/vw_activetrucks.sql,go,1
+/tastybytesdb/tastybytes/view/vw_activetrucks.sql,inner join,2
+/tastybytesdb/tastybytes/view/vw_activetrucks.sql,on,2
+/tastybytesdb/tastybytes/view/vw_activetrucks.sql,select,1
+/tastybytesdb/tastybytes/view/vw_activetrucks.sql,use,1
+/tastybytesdb/tastybytes/view/vw_activetrucks.sql,where,1
+/tastybytesdb/tastybytes/view/vw_activetrucks.sql,with,3
+/tastybytesdb/tastybytes/view/vw_topsellingitems.sql,=,4
+/tastybytesdb/tastybytes/view/vw_topsellingitems.sql,and,1
+/tastybytesdb/tastybytes/view/vw_topsellingitems.sql,apply,1
+/tastybytesdb/tastybytes/view/vw_topsellingitems.sql,as,3
+/tastybytesdb/tastybytes/view/vw_topsellingitems.sql,create view,1
+/tastybytesdb/tastybytes/view/vw_topsellingitems.sql,cross,1
+/tastybytesdb/tastybytes/view/vw_topsellingitems.sql,desc,1
+/tastybytesdb/tastybytes/view/vw_topsellingitems.sql,from,2
+/tastybytesdb/tastybytes/view/vw_topsellingitems.sql,go,1
+/tastybytesdb/tastybytes/view/vw_topsellingitems.sql,group by,1
+/tastybytesdb/tastybytes/view/vw_topsellingitems.sql,inner join,2
+/tastybytesdb/tastybytes/view/vw_topsellingitems.sql,on,2
+/tastybytesdb/tastybytes/view/vw_topsellingitems.sql,order by,1
+/tastybytesdb/tastybytes/view/vw_topsellingitems.sql,select,2
+/tastybytesdb/tastybytes/view/vw_topsellingitems.sql,sum,3
+/tastybytesdb/tastybytes/view/vw_topsellingitems.sql,top,1
+/tastybytesdb/tastybytes/view/vw_topsellingitems.sql,use,1
+/tastybytesdb/tastybytes/view/vw_topsellingitems.sql,where,1
+/tastybytesdb/tastybytes/view/vw_topsellingitems.sql,*,1
+/tastybytesdb/tastybytes/view/vw_dailysalessummary.sql,=,3
+/tastybytesdb/tastybytes/view/vw_dailysalessummary.sql,as,8
+/tastybytesdb/tastybytes/view/vw_dailysalessummary.sql,avg,1
+/tastybytesdb/tastybytes/view/vw_dailysalessummary.sql,cast,2
+/tastybytesdb/tastybytes/view/vw_dailysalessummary.sql,count,1
+/tastybytesdb/tastybytes/view/vw_dailysalessummary.sql,create view,1
+/tastybytesdb/tastybytes/view/vw_dailysalessummary.sql,date,2
+/tastybytesdb/tastybytes/view/vw_dailysalessummary.sql,from,1
+/tastybytesdb/tastybytes/view/vw_dailysalessummary.sql,go,1
+/tastybytesdb/tastybytes/view/vw_dailysalessummary.sql,group by,1
+/tastybytesdb/tastybytes/view/vw_dailysalessummary.sql,inner join,2
+/tastybytesdb/tastybytes/view/vw_dailysalessummary.sql,on,2
+/tastybytesdb/tastybytes/view/vw_dailysalessummary.sql,select,1
+/tastybytesdb/tastybytes/view/vw_dailysalessummary.sql,sum,2
+/tastybytesdb/tastybytes/view/vw_dailysalessummary.sql,use,1
+/tastybytesdb/tastybytes/view/vw_dailysalessummary.sql,where,1
+/tastybytesdb/tastybytes/view/vw_dailysalessummary.sql,with,2
+/tastybytesdb/tastybytes/view/vw_dailysalessummary.sql,*,1
+/tastybytesdb/schema/tastybytes.sql,admin,1
+/tastybytesdb/schema/tastybytes.sql,authorization,1
+/tastybytesdb/schema/tastybytes.sql,create schema,1
+/tastybytesdb/schema/tastybytes.sql,go,1
+/tastybytesdb/schema/tastybytes.sql,use,1
+/tastybytesdb/schema/dbo.sql,authorization,1
+/tastybytesdb/schema/dbo.sql,create schema,1
+/tastybytesdb/schema/dbo.sql,go,1
+/tastybytesdb/schema/dbo.sql,use,1
+/tastybytesdb/schema/etl_results.sql,admin,1
+/tastybytesdb/schema/etl_results.sql,authorization,1
+/tastybytesdb/schema/etl_results.sql,create schema,1
+/tastybytesdb/schema/etl_results.sql,go,1
+/tastybytesdb/schema/etl_results.sql,use,1
+/tastybytesdb/etl_results/table/etl_logs.sql,collate,1
+/tastybytesdb/etl_results/table/etl_logs.sql,create table,1
+/tastybytesdb/etl_results/table/etl_logs.sql,datetime,1
+/tastybytesdb/etl_results/table/etl_logs.sql,go,1
+/tastybytesdb/etl_results/table/etl_logs.sql,identity,1
+/tastybytesdb/etl_results/table/etl_logs.sql,int,1
+/tastybytesdb/etl_results/table/etl_logs.sql,name,1
+/tastybytesdb/etl_results/table/etl_logs.sql,not null,3
+/tastybytesdb/etl_results/table/etl_logs.sql,nvarchar,1
+/tastybytesdb/etl_results/table/etl_logs.sql,use,1
