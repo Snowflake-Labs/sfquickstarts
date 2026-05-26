@@ -33,7 +33,7 @@ A production lakehouse workflow: bronze Iceberg tables accessed via a Catalog-Li
 - A [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) with **ACCOUNTADMIN** access
 - A warehouse available for compute (you will create one in the next step if needed)
 
-> **Note:** The bronze Iceberg data and catalog integration (`glue_rest_catalog_int`) are pre-provisioned for this lab. You do not need an AWS account or any local CLI tools.
+> **Note:** The bronze Iceberg data and AWS infrastructure for this lab are pre-provisioned. You will be given the `CATALOG_NAME` and `SIGV4_IAM_ROLE` values needed to create the catalog integration. You do not need an AWS account or any local CLI tools.
 
 <!-- ------------------------ -->
 ## Use Case and Architecture
@@ -70,7 +70,7 @@ Events land as raw JSON strings in a single **event** column in the bronze Icebe
 <!-- ------------------------ -->
 ## Catalog-Linked Database
 
-A **Catalog-Linked Database** (CLD) connects Snowflake to an external Iceberg catalog and mirrors its namespaces and tables as Snowflake schemas — without copying any data. In this lab, the catalog integration has been pre-provisioned for you.
+A **Catalog-Linked Database** (CLD) connects Snowflake to an external Iceberg catalog and mirrors its namespaces and tables as Snowflake schemas — without copying any data. In this step you will create the catalog integration that connects Snowflake to the external Glue Iceberg REST catalog, then create the CLD on top of it.
 
 ### Easy Path — Interactive Notebook
 
@@ -94,9 +94,34 @@ CREATE WAREHOUSE IF NOT EXISTS BALLOON_WH
 USE WAREHOUSE BALLOON_WH;
 ```
 
+#### Create the Catalog Integration
+
+The catalog integration tells Snowflake how to connect to the external Iceberg REST catalog. Replace `<PLACEHOLDER>` values with the ones provided for this lab:
+
+```sql
+CREATE OR REPLACE CATALOG INTEGRATION glue_rest_catalog_int
+  CATALOG_SOURCE = ICEBERG_REST
+  TABLE_FORMAT = ICEBERG
+  CATALOG_NAMESPACE = 'balloon_pops'
+  REST_CONFIG = (
+    CATALOG_URI = 'https://glue.us-west-2.amazonaws.com/iceberg'
+    CATALOG_API_TYPE = AWS_GLUE
+    CATALOG_NAME = '<PLACEHOLDER>'
+    ACCESS_DELEGATION_MODE = VENDED_CREDENTIALS
+  )
+  REST_AUTHENTICATION = (
+    TYPE = SIGV4
+    SIGV4_IAM_ROLE = '<PLACEHOLDER>'
+    SIGV4_SIGNING_REGION = 'us-west-2'
+  )
+  ENABLED = TRUE;
+```
+
+> **What this does:** Snowflake connects to the AWS Glue Iceberg REST endpoint using SigV4 authentication. `VENDED_CREDENTIALS` means Lake Formation issues short-lived S3 credentials for reading the underlying Iceberg files — no external volume needed.
+
 #### Create the Catalog-Linked Database
 
-Create a database linked to the pre-provisioned catalog integration:
+With the integration in place, create a database that mirrors the remote catalog:
 
 ```sql
 CREATE OR REPLACE DATABASE balloon_game_events
