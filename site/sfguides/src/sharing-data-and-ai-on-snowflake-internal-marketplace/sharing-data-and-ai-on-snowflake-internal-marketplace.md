@@ -474,7 +474,11 @@ Next:
 - Issue the following prompt to create and publish a new data product: 
 
    ```code
-   Please publish the supplier, part, anad partsupp tables as a data product. Please generate suitable metadata to describe the data product, including a data dictionary with data preview for all tables. Also generate and include a semantic view. The new data product should be visible to the entire organization, but noone has access unless requested. Please append my account locator to the title of the listing.
+   Please publish the supplier, part, anad partsupp tables as a data product. Please 
+   generate suitable metadata to describe the data product, including a data dictionary 
+   with data preview for all tables. Also generate and include a semantic view. The new 
+   data product should be visible to the entire organization, but noone has access 
+   unless requested. Please append my account locator to the title of the listing.
    ```
 - Respond to any questions that Coco will ask you to perform this request
 - Click **Allow** to permit Coco to create a semantic view and a share.
@@ -495,7 +499,9 @@ Next, let's ask Coco to implement a new governance requirement.
 Issue the following prompt:
 
    ```code
-   Please add a masking policy so that the supplier address and supplier phone is only visible to the provider_role role within my account but not visible to the consumer_role and not to any other accounts in this organization.
+   Please add a masking policy so that the supplier address and supplier phone is 
+   only visible to the provider_role role within my account but not visible to the 
+   consumer_role and not to any other accounts in this organization.
    ```
 
 Coco may ask you a series of questions to get this done. 
