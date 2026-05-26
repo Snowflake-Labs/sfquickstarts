@@ -41,7 +41,6 @@ You'll work with the Tasty Bytes dataset (a fictitious food truck company) to bu
 - Monitoring queries for pipeline observability
 - A semantic view for natural language querying
 - A Cortex Agent for conversational data exploration
-- A Streamlit dashboard visualizing pipeline metrics
 
 <!-- ------------------------ -->
 ## Create a Workspace from Git
@@ -322,20 +321,6 @@ Once created, navigate to **AI & ML → Snowflake Intelligence** in Snowsight, s
 The agent translates natural language into SQL queries against your Dynamic Tables and returns results with visualizations.
 
 ![agent](./assets/gent.png)
-
-<!-- ------------------------ -->
-## Streamlit Dashboard (Bonus)
-
-Now that the pipeline is running, let's visualize the data with a Streamlit app. Open your workspace (created in the first step), and open `tasty_bytes_dashboard.py`.
-
-### Run the Dashboard
-
-This Streamlit app:
-
-- Displays the **top 10 products by revenue** as a bar chart colored by profit margin
-- Shows **today's key metrics** (orders, revenue, profit, margin, customers, items sold) pulled from `daily_business_metrics` and `product_performance_metrics`
-
-Click **Run** to launch the dashboard.
 
 <!-- ------------------------ -->
 ## Clean up
