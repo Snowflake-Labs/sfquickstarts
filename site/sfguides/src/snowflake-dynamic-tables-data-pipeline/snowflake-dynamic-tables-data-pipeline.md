@@ -191,7 +191,7 @@ tasty_bytes_db.analytics. Snowflake will handle the upstream dependencies.
 
 Snowflake automatically tracks dependencies between your Dynamic Tables. Let's visualize this.
 
-1. Navigate to your `tasty_bytes_db` database in the Snowflake UI
+1. Navigate to **Catalog > Database Explorer** in Snowsight and open `tasty_bytes_db`
 2. Click on the `analytics` schema
 3. Click on any Dynamic Table (e.g., `order_fact`)
 4. Look for the **Graph** tab
