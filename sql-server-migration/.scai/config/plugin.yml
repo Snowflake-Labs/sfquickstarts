@@ -1,8 +1,8 @@
 entry_mode: fresh
 git_main_branch: feat/scai-etl-quickstart
-snowflake_database: TASTYBYTESDB
 git_remote_url: https://github.com/sfc-gh-aaguilarmoya/sfquickstarts.git
 git_remote_name: origin
-dashboard_port: -1
+snowflake_database: TASTYBYTESDB
 cortex_safe_tools_acknowledged: 'true'
-committed_setup_tasks: registerCode
+committed_setup_tasks: registerCode,convertCode
+dashboard_port: -1
