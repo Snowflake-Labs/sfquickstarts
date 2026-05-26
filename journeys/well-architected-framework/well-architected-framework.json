@@ -65,24 +65,24 @@
           "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/reliability/",
           "topics": [
             {
-              "id": "strategy-governance",
-              "label": "Strategy & Governance",
-              "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/reliability/strategy-governance/"
+              "id": "reliability-strategy-governance",
+              "label": "Reliability Strategy & Governance",
+              "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/reliability/reliability-strategy-governance/"
             },
             {
-              "id": "high-availability",
-              "label": "High Availability",
-              "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/reliability/high-availability/"
+              "id": "high-availability-fault-tolerance",
+              "label": "High Availability & Fault Tolerance",
+              "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/reliability/high-availability-fault-tolerance/"
             },
             {
-              "id": "data-resiliency",
-              "label": "Data Resiliency",
-              "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/reliability/data-resiliency/"
+              "id": "data-object-resiliency",
+              "label": "Data & Object Resiliency",
+              "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/reliability/data-object-resiliency/"
             },
             {
-              "id": "resilient-pipelines",
-              "label": "Resilient Pipelines",
-              "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/reliability/resilient-pipelines/"
+              "id": "resilient-data-pipelines",
+              "label": "Resilient Data Pipelines",
+              "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/reliability/resilient-data-pipelines/"
             },
             {
               "id": "monitoring-operations",
@@ -102,9 +102,9 @@
           "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/performance/",
           "topics": [
             {
-              "id": "performance-objectives",
-              "label": "Performance Objectives",
-              "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/performance/performance-objectives/"
+              "id": "establish-and-validate-performance-objectives",
+              "label": "Establish and Validate Performance Objectives",
+              "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/performance/establish-and-validate-performance-objectives/"
             },
             {
               "id": "foundational-first-steps",
@@ -112,19 +112,19 @@
               "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/performance/foundational-first-steps/"
             },
             {
-              "id": "elasticity",
-              "label": "Leveraging Elasticity",
-              "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/performance/elasticity/"
+              "id": "leveraging-elasticity-for-performance",
+              "label": "Leveraging Elasticity for Performance",
+              "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/performance/leveraging-elasticity-for-performance/"
             },
             {
-              "id": "test-first-design",
-              "label": "Test-First Design",
-              "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/performance/test-first-design/"
+              "id": "test-first-design-building-performance-into-every-stage",
+              "label": "Test-First Design: Building Performance into Every Stage",
+              "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/performance/test-first-design-building-performance-into-every-stage/"
             },
             {
-              "id": "data-architecture",
-              "label": "Data Architecture",
-              "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/performance/data-architecture/"
+              "id": "optimize-data-architecture-and-access",
+              "label": "Optimize Data Architecture and Access",
+              "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/performance/optimize-data-architecture-and-access/"
             },
             {
               "id": "data-access",
@@ -132,34 +132,34 @@
               "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/performance/data-access/"
             },
             {
-              "id": "scalability",
-              "label": "Scalability",
-              "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/performance/scalability/"
+              "id": "architect-for-scalability-and-workload-partitioning",
+              "label": "Architect for Scalability and Workload Partitioning",
+              "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/performance/architect-for-scalability-and-workload-partitioning/"
             },
             {
-              "id": "warehouses",
-              "label": "Warehouse Optimization",
-              "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/performance/warehouses/"
+              "id": "optimize-virtual-warehouses-for-cost-and-performance",
+              "label": "Optimize Virtual Warehouses for Cost and Performance",
+              "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/performance/optimize-virtual-warehouses-for-cost-and-performance/"
             },
             {
-              "id": "concurrency",
-              "label": "Concurrency",
-              "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/performance/concurrency/"
+              "id": "implement-strategies-for-handling-concurrent-queries",
+              "label": "Implement Strategies for Handling Concurrent Queries",
+              "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/performance/implement-strategies-for-handling-concurrent-queries/"
             },
             {
-              "id": "serverless",
-              "label": "Serverless Features",
-              "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/performance/serverless/"
+              "id": "utilize-snowflakes-serverless-features",
+              "label": "Utilize Snowflake's Serverless Features",
+              "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/performance/utilize-snowflakes-serverless-features/"
             },
             {
-              "id": "dynamic-tables",
-              "label": "Dynamic Tables",
-              "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/performance/dynamic-tables/"
+              "id": "leverage-dynamic-tables-for-data-engineering-pipelines",
+              "label": "Leverage Dynamic Tables for Data Engineering Pipelines",
+              "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/performance/leverage-dynamic-tables-for-data-engineering-pipelines/"
             },
             {
-              "id": "monitoring",
-              "label": "Performance Monitoring",
-              "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/performance/monitoring/"
+              "id": "implement-continuous-performance-monitoring-and-optimization",
+              "label": "Implement Continuous Performance Monitoring and Optimization",
+              "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/performance/implement-continuous-performance-monitoring-and-optimization/"
             }
           ]
         },
@@ -169,43 +169,43 @@
           "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/operational-excellence/",
           "topics": [
             {
-              "id": "operational-readiness",
-              "label": "Operational Readiness",
-              "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/operational-excellence/operational-readiness/"
+              "id": "ensure-operational-readiness-performance",
+              "label": "Ensure Operational Readiness & Performance",
+              "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/operational-excellence/ensure-operational-readiness-performance/"
             },
             {
-              "id": "automation",
-              "label": "Automation",
-              "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/operational-excellence/automation/"
+              "id": "automate-infrastructure-maintenance",
+              "label": "Automate Infrastructure & Maintenance",
+              "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/operational-excellence/automate-infrastructure-maintenance/"
             },
             {
-              "id": "observability",
-              "label": "Observability",
-              "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/operational-excellence/observability/"
+              "id": "enhance-observability-issue-resolution",
+              "label": "Enhance Observability & Issue Resolution",
+              "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/operational-excellence/enhance-observability-issue-resolution/"
             },
             {
-              "id": "incident-management",
-              "label": "Incident Management",
-              "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/operational-excellence/incident-management/"
+              "id": "manage-incidents-problems",
+              "label": "Manage Incidents & Problems",
+              "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/operational-excellence/manage-incidents-problems/"
             },
             {
-              "id": "collaboration",
-              "label": "Collaboration & Sharing",
-              "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/operational-excellence/collaboration/"
+              "id": "enable-collaboration-secure-sharing",
+              "label": "Enable Collaboration & Secure Sharing",
+              "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/operational-excellence/enable-collaboration-secure-sharing/"
             },
             {
-              "id": "sdlc",
-              "label": "SDLC Management",
-              "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/operational-excellence/sdlc/"
+              "id": "manage-the-software-development-lifecycle-sdlc",
+              "label": "Manage the Software Development Lifecycle (SDLC)",
+              "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/operational-excellence/manage-the-software-development-lifecycle-sdlc/"
             },
             {
-              "id": "continuous-improvement",
-              "label": "Continuous Improvement",
-              "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/operational-excellence/continuous-improvement/"
+              "id": "continuously-improve-performance-practices",
+              "label": "Continuously Improve Performance & Practices",
+              "url": "https://www.snowflake.com/en/developers/guides/well-architected-framework/operational-excellence/continuously-improve-performance-practices/"
             }
           ]
         }
       ]
     }
-  ] 
+  ]
 }
