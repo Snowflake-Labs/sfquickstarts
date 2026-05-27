@@ -146,28 +146,6 @@ snow connection test -c hol
 
 You should see `Status: OK`.
 
-### Generate RSA Key Pair (Optional)
-
-> **Note:** This step is only required if you plan to complete **Section 2: Streaming Ingestion**. If you want to skip streaming and jump to the CoCo-driven sections, you can skip this step.
-
-Generate keys for Snowpipe Streaming authentication:
-
-```bash
-# Generate private key (unencrypted PEM)
-openssl genrsa 2048 | openssl pkcs8 -topk8 -inform PEM -out rsa_key.p8 -nocrypt
-
-# Generate public key
-openssl rsa -in rsa_key.p8 -pubout -out rsa_key.pub
-
-# Upload public key to your Snowflake user (replace <your-username>)
-snow sql -q "ALTER USER <your-username> SET RSA_PUBLIC_KEY='$(grep -v -- '-----' rsa_key.pub | tr -d '\n')'" -c hol
-
-# Verify
-snow sql -q "DESC USER <your-username>" -c hol | grep RSA_PUBLIC_KEY_FP
-```
-
-Keep `rsa_key.p8` in this directory — you'll use it in Section 2.
-
 ### Clone the Lab Repository
 
 ```bash
@@ -192,35 +170,6 @@ snow sql -f setup.sql -c hol
 ```
 
 This creates the database, schemas, warehouses, tables, Dynamic Tables pipeline, Interactive Tables, Cortex Search Services, Semantic View, seed data (50M orders, 161M order items, 2M customers), and Row Access Policy.
-
-<!-- ------------------------ -->
-## Streaming Ingestion
-
-Stream orders into the STAGING schema using the Snowpipe Streaming Python SDK:
-
-```bash
-cd snowpipe-streaming-python
-pip install -r requirements.txt
-
-# Copy and configure profile
-cp profile.json.template profile.json
-```
-
-Edit `profile.json` and set your `account`, `user`, `private_key` (contents of rsa_key.p8), and `role`.
-
-```bash
-# Stream 10,000 orders
-python src/automated_intelligence_streaming.py 10000
-```
-
-### Verify Data Landed
-
-```sql
-SELECT COUNT(*) FROM dash_automated_intelligence_db.staging.orders_staging;
-SELECT COUNT(*) FROM dash_automated_intelligence_db.staging.order_items_staging;
-```
-
-You should see 10,000 orders and ~50,000 order items in staging.
 
 <!-- ------------------------ -->
 ## Gen2 Warehouse and MERGE
@@ -492,6 +441,61 @@ cortex mcp add business-insights https://<account_url>/api/v2/databases/DASH_AUT
 ```
 
 Now any MCP-compatible client (CoCo, Claude Desktop, custom apps) can discover and call these tools via the standard MCP protocol.
+
+<!-- ------------------------ -->
+## Optional: Streaming Ingestion
+
+> **Note:** This section is optional. The `setup.sql` script already loads all 50M orders directly. This section demonstrates how you *would* stream data in production using the Snowpipe Streaming Python SDK.
+
+### Generate RSA Key Pair
+
+Generate keys for Snowpipe Streaming authentication:
+
+```bash
+# Generate private key (unencrypted PEM)
+openssl genrsa 2048 | openssl pkcs8 -topk8 -inform PEM -out rsa_key.p8 -nocrypt
+
+# Generate public key
+openssl rsa -in rsa_key.p8 -pubout -out rsa_key.pub
+
+# Upload public key to your Snowflake user (replace <your-username>)
+snow sql -q "ALTER USER <your-username> SET RSA_PUBLIC_KEY='$(grep -v -- '-----' rsa_key.pub | tr -d '\n')'" -c hol
+
+# Verify
+snow sql -q "DESC USER <your-username>" -c hol | grep RSA_PUBLIC_KEY_FP
+```
+
+### Stream Data
+
+```bash
+cd snowpipe-streaming-python
+pip install -r requirements.txt
+
+# Copy and configure profile
+cp profile.json.template profile.json
+```
+
+Edit `profile.json` and set your `account`, `user`, `private_key` (contents of rsa_key.p8), and `role`.
+
+```bash
+# Stream 10,000 orders
+python src/automated_intelligence_streaming.py 10000
+```
+
+### Verify Data Landed
+
+```sql
+SELECT COUNT(*) FROM dash_automated_intelligence_db.staging.orders_staging;
+SELECT COUNT(*) FROM dash_automated_intelligence_db.staging.order_items_staging;
+```
+
+You should see 10,000 orders and ~50,000 order items in staging.
+
+### Merge into Production
+
+Use CoCo to merge the streamed data:
+
+> *"Switch to the Gen2 warehouse, check how many rows are in staging, then merge them into RAW and show me the results"*
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
