@@ -294,7 +294,7 @@ This demonstrates the real-world workflow: monitor, discover gaps, fix coverage.
 
 CoCo runs `dbt deps` then `dbt build` to create all staging views and mart tables (9+ models). CoCo automatically injects your active Snowflake connection into the dbt profile — no manual configuration needed.
 
-> **Expected output:** 50 tests pass, 1 test fails (intentional — the `source_not_null_raw_orders_total_amount` test detects the 200 NULLs we injected for the Data Quality exercise). This is working as designed.
+> **Expected output:** 71 tests pass, 1 warning (the `source_not_null_raw_orders_total_amount` test detects the 200 NULLs we injected for the Data Quality exercise — this is working as designed).
 
 ### Explore Results
 
