@@ -31,29 +31,7 @@ You'll build analytical models with dbt, monitor data quality with Data Metric F
 
 ### What You'll Build
 
-A production-grade AI-powered retail analytics platform featuring a streaming data pipeline, dynamic transformations, interactive serving layer, conversational AI agent (text-to-SQL + unstructured search), data quality monitoring, row-level security, and an MCP server — all running natively on Snowflake.
-
-```
-Snowpipe Streaming (Python SDK)
-        |
-        v
-STAGING tables (append-only landing zone)
-        |
-        v
-Gen2 Warehouse MERGE (dedup + upsert into RAW)
-        |
-        v
-Dynamic Tables (3-tier incremental pipeline)
-        |
-        v
-Interactive Tables (low-latency point lookups)
-        |
-        v
-Cortex Agent + Semantic View (natural language queries)
-        |
-        v
-Row Access Policies (transparent security)
-```
+A production-grade AI-powered retail analytics platform on Snowflake — from raw data to conversational AI insights, entirely within a single platform. You'll create dynamic transformation pipelines, interactive low-latency tables, dbt analytical models, a Cortex Agent that answers questions across structured and unstructured data, row-level security that works transparently through AI, and an MCP server that exposes your agent to external clients.
 
 ### Prerequisites
 - Access to a [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)
