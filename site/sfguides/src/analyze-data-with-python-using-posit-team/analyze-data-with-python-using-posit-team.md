@@ -19,6 +19,8 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 ## Overview
 
+> Learn more about the Posit Package Manager that just entered Public Preview at [this blog](https://posit.co/preview-link/node/14816/976bf2ac-6506-4ae1-99d7-62a19524b94b) and more about the Posit & Snowflake partnership [here](https://posit.co/preview-link/node/14811/6e8fefc5-a12f-40bc-8257-e141d80ae49f).
+
 In this guide, we'll use Python to analyze data in Snowflake using the Posit
 Team Native App. You'll learn how to launch the Posit Team Native App, access Posit Workbench, and use the available Positron Pro IDE. You'll also learn how to use the Ibis library to translate Python code into SQL, allowing you to run data operations directly in Snowflake's high-performance computing environment.
 

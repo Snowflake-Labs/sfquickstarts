@@ -1,4 +1,4 @@
-author: Chanin Nantasenamat, Sumit Kumar, Lucy Zhu
+author: Chanin Nantasenamat, Sho Tanaka, Sumit Kumar, Lucy Zhu
 id: build-real-time-fraud-detection-model-with-natural-language-in-snowflake-ml
 summary: Learn how to build a production-ready fraud detection system with real-time inference using Cortex Code and natural language prompts in Snowflake ML
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/industry/public-sector
