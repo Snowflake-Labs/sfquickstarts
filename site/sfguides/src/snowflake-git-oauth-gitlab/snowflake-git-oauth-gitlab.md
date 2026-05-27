@@ -15,9 +15,9 @@ Snowflake's Git integration lets you create workspaces backed by a Git repositor
 
 This guide walks through configuring OAuth2 between Snowflake and GitLab and creating your first OAuth-backed Git workspace.
 
-> aside negative
-> 
->  For **GitHub**, prefer the [Snowflake GitHub App](https://docs.snowflake.com/en/developer-guide/git/git-setting-up-public) — it is simpler than registering an OAuth application yourself.
+aside negative
+
+For **GitHub**, prefer the [Snowflake GitHub App](https://docs.snowflake.com/en/developer-guide/git/git-setting-up-public) — it is simpler than registering an OAuth application yourself.
 
 ### Prerequisites
 - A Snowflake account with the `ACCOUNTADMIN` role (or a role with the `CREATE INTEGRATION` privilege).
@@ -58,9 +58,9 @@ Examples:
 | Azure East US 2 | `https://apps-api.c1.eastus2.azure.app.snowflake.com/oauth/complete-secret` |
 | GCP US Central1 | `https://apps-api.c1.us-central1.gcp.app.snowflake.com/oauth/complete-secret` |
 
-> aside positive
-> 
->  To find your account's region and cloud platform, run `SELECT CURRENT_REGION();` in a Snowflake worksheet.
+aside positive
+
+To find your account's region and cloud platform, run `SELECT CURRENT_REGION();` in a Snowflake worksheet.
 
 Keep this URI handy — you'll paste it into GitLab in the next step.
 
@@ -74,11 +74,11 @@ Keep this URI handy — you'll paste it into GitLab in the next step.
 
    ![GitLab Applications section](assets/02-gitlab-applications-section.png)
 
-   > aside positive
-   > 
-   >  If you want the OAuth application to be available to all users in your GitLab group (rather than tied to your personal account), navigate to your group's **Settings** > **Applications** instead.
-   >
-   >  ![GitLab group Applications settings](assets/03-gitlab-group-applications.png)
+aside positive
+
+If you want the OAuth application to be available to all users in your GitLab group (rather than tied to your personal account), navigate to your group's **Settings** > **Applications** instead.
+
+![GitLab group Applications settings](assets/03-gitlab-group-applications.png)
 
 3. Select **Add new application** and fill in the fields:
    - **Name**: A descriptive name, for example `Snowflake Git Integration`.
@@ -96,9 +96,9 @@ Keep this URI handy — you'll paste it into GitLab in the next step.
 
    ![GitLab Application ID and Secret](assets/05-gitlab-app-credentials.png)
 
-   > aside negative
-   > 
-   >  If you lose the secret, you must select **Renew secret** to generate a new one and update the Snowflake API integration accordingly.
+aside negative
+
+If you lose the secret, you must select **Renew secret** to generate a new one and update the Snowflake API integration accordingly.
 
 <!-- ------------------------ -->
 ## Create an API integration in Snowflake
@@ -126,9 +126,9 @@ CREATE OR REPLACE API INTEGRATION gitlab_oauth_integration
   ENABLED = TRUE;
 ```
 
-> aside positive
-> 
->  For self-managed GitLab instances, replace `gitlab.com` in `API_ALLOWED_PREFIXES`, `OAUTH_AUTHORIZATION_ENDPOINT`, and `OAUTH_TOKEN_ENDPOINT` with your instance's domain.
+aside positive
+
+For self-managed GitLab instances, replace `gitlab.com` in `API_ALLOWED_PREFIXES`, `OAUTH_AUTHORIZATION_ENDPOINT`, and `OAUTH_TOKEN_ENDPOINT` with your instance's domain.
 
 ### Option B: Snowsight UI
 
