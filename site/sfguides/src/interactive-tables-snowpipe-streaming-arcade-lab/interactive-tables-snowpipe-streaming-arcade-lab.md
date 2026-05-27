@@ -755,7 +755,7 @@ Use skill `developing-with-streamlit` to create a real-time arcade scores dashbo
 - Deploy as Streamlit in Snowflake named `ARCADE_SCORES_DASHBOARD` in `ARCADE_DB.PUBLIC`
 - Use compute pool `ARCADE_REPORTING_POOL` (already provisioned)
 - Add external access integration and network rule for PyPI access
-- Add a pyproject.toml file to manage packages and add package: "streamlit[snowflake]==1.50.0"
+- Add a pyproject.toml file to manage packages and add packages: "streamlit[snowflake]==1.50.0", "pandas>=2.0.0", "snowflake-snowpark-python"
 
 **Dashboard Features:**
 1. Global Leaderboard - Highest scores in last 24 hours
