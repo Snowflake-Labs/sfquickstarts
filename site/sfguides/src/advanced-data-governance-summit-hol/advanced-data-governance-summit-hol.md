@@ -149,7 +149,7 @@ After completing this step you will observe that the CUSTOMER table exposes 15 c
 
 ### AI-Powered Classification with the BYOT Pattern
 
-The **BYOT (Bring Your Own Tags)** pattern maps AI-detected categories to your organization's custom taxonomy. Create the enterprise `DATA_CLASSIFICATION` tag with propagation enabled:
+The **BYOT (Bring Your Own Tags)** pattern maps AI-detected categories to your organization's custom taxonomy. Create the enterprise DATA_CLASSIFICATION tag with propagation enabled:
 
 ```sql
 CREATE OR REPLACE TAG HRZN_DB.TAG_SCHEMA.DATA_CLASSIFICATION
@@ -157,7 +157,7 @@ CREATE OR REPLACE TAG HRZN_DB.TAG_SCHEMA.DATA_CLASSIFICATION
     PROPAGATE = ON_DEPENDENCY_AND_DATA_MOVEMENT;
 ```
 
-> **`PROPAGATE = ON_DEPENDENCY_AND_DATA_MOVEMENT`** automatically flows this tag to tables created via `CTAS`, `INSERT ... SELECT`, and views — downstream tables inherit governance automatically.
+> **PROPAGATE = ON_DEPENDENCY_AND_DATA_MOVEMENT** automatically flows this tag to tables created via CTAS, INSERT...SELECT, and views — downstream tables inherit governance automatically.
 
 Create a Classification Profile mapping AI-detected categories to your custom tag values:
 
@@ -188,7 +188,7 @@ CALL SYSTEM$CLASSIFY(
 
 ### Tag-Based Masking Policies (Multi-Type)
 
-Create one masking policy per data type and attach all to the `DATA_CLASSIFICATION` tag. Any column tagged automatically gets the correct masking applied:
+Create one masking policy per data type and attach all to the DATA_CLASSIFICATION tag. Any column tagged automatically gets the correct masking applied:
 
 | Policy | Data Type | PII | RESTRICTED | SENSITIVE |
 |--------|-----------|-----|------------|-----------|
@@ -292,7 +292,7 @@ The dashboard shows:
 
 ### Verify Classification Results via SQL
 
-These queries read from `SNOWFLAKE.ACCOUNT_USAGE.DATA_CLASSIFICATION_LATEST` — the same view the dashboard reads:
+These queries read from SNOWFLAKE.ACCOUNT_USAGE.DATA_CLASSIFICATION_LATEST — the same view the dashboard reads:
 
 ```sql
 -- Mirror the dashboard breakdown tiles
@@ -304,7 +304,7 @@ WHERE TABLE_DATABASE = 'HRZN_DB'
 GROUP BY TAG_VALUE ORDER BY COLUMN_COUNT DESC;
 ```
 
-> **Note:** `ACCOUNT_USAGE` has up to 3-hour latency. Use `INFORMATION_SCHEMA.TAG_REFERENCES_ALL_COLUMNS` for immediate verification (demonstrated in Step 2).
+> **Note:** ACCOUNT_USAGE has up to 3-hour latency. Use INFORMATION_SCHEMA.TAG_REFERENCES_ALL_COLUMNS for immediate verification (demonstrated in Step 2).
 
 ### Objects That Need Review (UI Walkthrough)
 
@@ -353,7 +353,7 @@ WHERE dc.TABLE_DATABASE = 'HRZN_DB';
 
 **Script:** [4-audit-trail.sql](https://github.com/sfc-gh-ankgupta/sfguide-advanced-data-governance-summit-hol/blob/main/hol-lab/4-audit-trail.sql) | Role: `HRZN_IT_ADMIN`
 
-Access History (`SNOWFLAKE.ACCOUNT_USAGE.ACCESS_HISTORY`) tracks every query that touched your data — what was read, what was written, when, and by whom.
+Access History (SNOWFLAKE.ACCOUNT_USAGE.ACCESS_HISTORY) tracks every query that touched your data — what was read, what was written, when, and by whom.
 
 > **Important:** Access History has up to 3-hour latency. Some queries may return empty results immediately after lab steps. This is expected; plan for this latency in production compliance reporting.
 
@@ -420,7 +420,7 @@ ORIGINAL: "Customer John Smith called from 555-123-4567. Email: john.smith@email
 REDACTED: "Customer [NAME] called from [PHONE_NUMBER]. Email: [EMAIL]"
 ```
 
-AI_REDACT detects and replaces 50+ PII types including `[NAME]`, `[EMAIL]`, `[PHONE_NUMBER]`, `[US_SOCIAL_SECURITY_NUMBER]`, `[STREET_ADDRESS]` — no regex patterns required.
+AI_REDACT detects and replaces 50+ PII types including [NAME], [EMAIL], [PHONE_NUMBER], [US_SOCIAL_SECURITY_NUMBER], [STREET_ADDRESS] — no regex patterns required.
 
 ### Selective Redaction
 
@@ -458,14 +458,14 @@ SELECT redacted_feedback,
 FROM HRZN_DB.HRZN_SCH.CUSTOMER_FEEDBACK_REDACTED;
 ```
 
-> **Tag Propagation:** `CUSTOMER_FEEDBACK_REDACTED` automatically inherits `DATA_CLASSIFICATION` tags from `CUSTOMER_ORDERS` because of the propagation setting from Step 2.
+> **Tag Propagation:** CUSTOMER_FEEDBACK_REDACTED automatically inherits DATA_CLASSIFICATION tags from CUSTOMER_ORDERS because of the propagation setting from Step 2.
 
 **Key Takeaways:**
 
 | Data Type | Governance Approach |
 |-----------|-------------------|
 | Structured columns (email, SSN, phone) | Classification + tag-based masking (Steps 2–3) |
-| Unstructured text (feedback, notes) | `AI_REDACT` (Step 5) |
+| Unstructured text (feedback, notes) | AI_REDACT (Step 5) |
 
 Both approaches are complementary — together they provide complete PII coverage.
 
@@ -496,7 +496,7 @@ Cortex Code is Snowflake's AI-powered coding assistant. Its built-in data govern
  Include: tables with sensitive data, policy coverage percentage, and top risks."
 ```
 
-Cortex Code queries `DATA_CLASSIFICATION_LATEST` and `POLICY_REFERENCES` and returns a synthesized health summary with a governance maturity grade.
+Cortex Code queries DATA_CLASSIFICATION_LATEST and POLICY_REFERENCES and returns a synthesized health summary with a governance maturity grade.
 
 ### 6.2 — AI Classification via Skills
 
@@ -508,7 +508,7 @@ Cortex Code queries `DATA_CLASSIFICATION_LATEST` and `POLICY_REFERENCES` and ret
 "Help me create a custom classifier for employee IDs matching the pattern EMP-XXXXX."
 ```
 
-Cortex Code generates and executes `SYSTEM$CLASSIFY` calls automatically, then explains the results in plain English.
+Cortex Code generates and executes SYSTEM$CLASSIFY calls automatically, then explains the results in plain English.
 
 ### 6.3 — Policy Creation and Audit
 
@@ -536,7 +536,7 @@ Cortex Code generates and executes `SYSTEM$CLASSIFY` calls automatically, then e
 "Show the role hierarchy for HRZN_DATA_GOVERNOR."
 ```
 
-Each prompt generates SQL that queries `ACCOUNT_USAGE` automatically.
+Each prompt generates SQL that queries ACCOUNT_USAGE automatically.
 
 **Key Takeaways:**
 
@@ -544,8 +544,8 @@ Each prompt generates SQL that queries `ACCOUNT_USAGE` automatically.
 |-------|-----------|
 | Maturity Assessment | Scores governance coverage without SQL expertise |
 | Classification | Runs `SYSTEM$CLASSIFY`, explains detections in plain English |
-| Policy Creation | Generates best-practice policies; flags `CURRENT_ROLE()` anti-pattern |
-| Compliance Audit | Answers access audit questions from `ACCOUNT_USAGE` via natural language |
+| Policy Creation | Generates best-practice policies; flags CURRENT_ROLE() anti-pattern |
+| Compliance Audit | Answers access audit questions from ACCOUNT_USAGE via natural language |
 
 **Cortex Code Tips:**
 - Use fully-qualified names: `DATABASE.SCHEMA.TABLE` for the most accurate results
