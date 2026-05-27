@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Connect Snowflake to Bitbucket with OAuth2
 <!-- ------------------------ -->
 ## Overview
-Duration: 2
 
 Snowflake's Git integration lets you create workspaces backed by a Git repository so you can edit, commit, and push files directly from Snowsight. By default, the integration authenticates with a personal access token stored in a Snowflake secret. With **OAuth2**, each Snowflake user authenticates individually with Bitbucket through a browser-based flow — no shared tokens, no secrets to rotate per user.
 
@@ -42,7 +41,6 @@ This guide walks through configuring OAuth2 between Snowflake and Bitbucket Clou
 
 <!-- ------------------------ -->
 ## Determine your Snowflake redirect URI
-Duration: 1
 
 Bitbucket requires a callback URL when you create an OAuth consumer. This tells Bitbucket where to send users after they authorize access.
 
@@ -69,7 +67,6 @@ Keep this URI handy — you'll paste it into Bitbucket in the next step.
 
 <!-- ------------------------ -->
 ## Create an OAuth consumer in Bitbucket
-Duration: 5
 
 1. Sign in to [Bitbucket Cloud](https://bitbucket.org) and navigate to your workspace's **Settings**.
 2. Under **Apps and features**, select **OAuth consumers**, then select **Add consumer**.
@@ -90,7 +87,6 @@ Duration: 5
 
 <!-- ------------------------ -->
 ## Create an API integration in Snowflake
-Duration: 3
 
 Run the following SQL, replacing the placeholder values with the **Key** and **Secret** from the previous step. Replace `my-org` in `API_ALLOWED_PREFIXES` with your Bitbucket workspace name.
 
@@ -118,7 +114,6 @@ CREATE OR REPLACE API INTEGRATION bitbucket_oauth_integration
 
 <!-- ------------------------ -->
 ## Create a workspace from your Bitbucket repository
-Duration: 3
 
 1. In Snowsight, open the workspace selector and select **From Git repository**.
 
@@ -143,7 +138,6 @@ You can now push, pull, and work with files in your Bitbucket repository directl
 
 <!-- ------------------------ -->
 ## Troubleshooting
-Duration: 2
 
 ### "Invalid redirect URI" error during authorization
 Verify that the callback URL on the Bitbucket consumer exactly matches the Snowflake redirect URI for your account's region (see [Determine your Snowflake redirect URI](#determine-your-snowflake-redirect-uri)).
@@ -161,7 +155,6 @@ OAuth authentication is not supported with outbound Private Link connections to 
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 1
 
 You configured OAuth2 between Snowflake and Bitbucket, and your team can now sign in to Bitbucket from Snowsight without sharing personal access tokens.
 
