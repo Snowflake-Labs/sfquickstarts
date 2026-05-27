@@ -323,15 +323,35 @@ This is the capstone moment — the agent routes across structured data (text-to
 <!-- ------------------------ -->
 ## Security and Governance
 
-The Row Access Policy and WEST_COAST_MANAGER role were created by `setup.sql`. Demonstrate the contrast using Snowflake CoWork:
+The Row Access Policy and WEST_COAST_MANAGER role were created by `setup.sql`. Demonstrate how row-level security transparently filters data based on role:
 
-1. Open **Snowflake CoWork** in Snowsight
-2. Ask the Business Insights Agent: *"What is our total revenue and customer count by state?"*
-3. Note the result — all 10 states visible as ACCOUNTADMIN
-4. Switch role to `WEST_COAST_MANAGER` and ask the same question
-5. Only CA, OR, WA appear — the Row Access Policy transparently filters data
+**As ACCOUNTADMIN (full access):**
 
-Key insight: Same agent, same question — different results based on who's asking. Row-level security works transparently through AI agents.
+```sql
+USE ROLE ACCOUNTADMIN;
+USE WAREHOUSE HOL_WH;
+SELECT c.state, SUM(o.total_amount) AS total_revenue, COUNT(DISTINCT c.customer_id) AS customer_count
+FROM dash_automated_intelligence_db.raw.orders o
+JOIN dash_automated_intelligence_db.raw.customers c ON o.customer_id = c.customer_id
+GROUP BY c.state ORDER BY total_revenue DESC;
+```
+
+Result: all 10 states visible.
+
+**As WEST_COAST_MANAGER (restricted):**
+
+```sql
+USE ROLE WEST_COAST_MANAGER;
+USE WAREHOUSE HOL_WH;
+SELECT c.state, SUM(o.total_amount) AS total_revenue, COUNT(DISTINCT c.customer_id) AS customer_count
+FROM dash_automated_intelligence_db.raw.orders o
+JOIN dash_automated_intelligence_db.raw.customers c ON o.customer_id = c.customer_id
+GROUP BY c.state ORDER BY total_revenue DESC;
+```
+
+Result: only CA, OR, WA appear — the Row Access Policy transparently filters data.
+
+Key insight: Same query, same tables — different results based on who's asking. Row-level security enforces data boundaries without changing application logic.
 
 <!-- ------------------------ -->
 ## Streamlit Dashboard
