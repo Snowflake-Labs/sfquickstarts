@@ -172,19 +172,11 @@ snow sql -f setup.sql -c hol
 This creates the database, schemas, warehouses, tables, Dynamic Tables pipeline, Interactive Tables, Cortex Search Services, Semantic View, seed data (50M orders, 161M order items, 2M customers), and Row Access Policy.
 
 <!-- ------------------------ -->
-## Gen2 Warehouse and MERGE
+## Gen2 Warehouse: Optima Indexing
 
-Use Snowflake CoCo to merge staged data into production:
+Demonstrate Gen2's Optima Indexing — automatic partition pruning without explicit clustering keys:
 
 **Prompt CoCo:**
-
-> *"Switch to the Gen2 warehouse, check how many rows are in staging, then merge them into RAW and show me the results"*
-
-CoCo will switch to `hol_gen2_wh`, check staging row counts, call `staging.merge_staging_to_raw(TRUE)`, and display timing results.
-
-### Demonstrate Optima Indexing
-
-Ask CoCo:
 
 > *"Run a point lookup for customer_id 5000 on the Gen2 warehouse"*
 
