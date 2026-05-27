@@ -543,7 +543,7 @@ Each prompt generates SQL that queries ACCOUNT_USAGE automatically.
 | Skill | Key Value |
 |-------|-----------|
 | Maturity Assessment | Scores governance coverage without SQL expertise |
-| Classification | Runs `SYSTEM$CLASSIFY`, explains detections in plain English |
+| Classification | Runs SYSTEM$CLASSIFY, explains detections in plain English |
 | Policy Creation | Generates best-practice policies; flags CURRENT_ROLE() anti-pattern |
 | Compliance Audit | Answers access audit questions from ACCOUNT_USAGE via natural language |
 
