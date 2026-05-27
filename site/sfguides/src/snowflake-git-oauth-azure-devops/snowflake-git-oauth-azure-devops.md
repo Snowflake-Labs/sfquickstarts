@@ -15,9 +15,9 @@ Snowflake's Git integration lets you create workspaces backed by a Git repositor
 
 This guide walks through configuring OAuth2 between Snowflake and Azure DevOps and creating your first OAuth-backed Git workspace.
 
-aside negative
-
+<aside class="negative">
 Azure DevOps OAuth uses **Microsoft Entra ID** (formerly Azure Active Directory) endpoints — `login.microsoftonline.com` — and *not* the older `app.vssps.visualstudio.com` endpoints.
+</aside>
 
 ### Prerequisites
 - A Snowflake account with the `ACCOUNTADMIN` role (or a role with the `CREATE INTEGRATION` privilege).
@@ -61,9 +61,9 @@ Examples:
 | Azure East US 2 | `https://apps-api.c1.eastus2.azure.app.snowflake.com/oauth/complete-secret` |
 | GCP US Central1 | `https://apps-api.c1.us-central1.gcp.app.snowflake.com/oauth/complete-secret` |
 
-aside positive
-
+<aside class="positive">
 To find your account's region and cloud platform, run `SELECT CURRENT_REGION();` in a Snowflake worksheet.
+</aside>
 
 Keep this URI handy — you'll paste it into Microsoft Entra ID in the next step.
 
@@ -119,13 +119,13 @@ CREATE OR REPLACE API INTEGRATION azdo_oauth_integration
   ENABLED = TRUE;
 ```
 
-aside negative
-
+<aside class="negative">
 Azure DevOps requires `OAUTH_USERNAME = 'oauth2'`. Without this, Git operations will fail with authentication errors.
+</aside>
 
-aside positive
-
+<aside class="positive">
 The two `<tenant-id>` placeholders in the authorization and token endpoints must both be replaced with your Entra **Directory (tenant) ID**.
+</aside>
 
 <!-- ------------------------ -->
 ## Create a workspace from your Azure DevOps repository
