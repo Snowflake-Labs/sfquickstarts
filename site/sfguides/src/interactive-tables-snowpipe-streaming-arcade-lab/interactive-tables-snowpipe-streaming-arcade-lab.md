@@ -748,7 +748,7 @@ Use skill `developing-with-streamlit` to create a real-time arcade scores dashbo
 **Data Source:**
 - Table: `ARCADE_DB.PUBLIC.ARCADE_SCORES`
 - Warehouse: `SUMMIT_INT_WH` (Interactive Warehouse)
-- Connection: Use default connection with programmatic token
+- Connection: Use default connection with programmatic token, connection should be made with st.connection("snowflake")
 - Columns: All columns and tables are uppercase in Snowflake
 
 **Deployment:**
@@ -756,6 +756,8 @@ Use skill `developing-with-streamlit` to create a real-time arcade scores dashbo
 - Use compute pool `ARCADE_REPORTING_POOL` (already provisioned)
 - Add external access integration and network rule for PyPI access
 - Add a pyproject.toml file to manage packages and add packages: "streamlit[snowflake]==1.50.0", "pandas>=2.0.0", "snowflake-snowpark-python"
+- Use SUMMIT_INT_WH by setting that in Streamlit application settings
+- Do not do any USE Warehouse queries in python
 
 **Dashboard Features:**
 1. Global Leaderboard - Highest scores in last 24 hours
