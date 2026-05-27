@@ -1,12 +1,12 @@
-authors: Ankit Gupta
+authors: Ankit Gupta (sfc-gh-ankgupta)
 id: advanced-data-governance-summit-hol
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/community-sourced, snowflake-site:taxonomy/product/data-governance, snowflake-site:taxonomy/product/cortex-ai, snowflake-site:taxonomy/snowflake-feature/horizon
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/community-sourced, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/compliance-security-discovery-governance, snowflake-site:taxonomy/snowflake-feature/horizon
 language: en
 summary: Master automated sensitive data discovery and protection at scale — AI-powered classification, Trust Center Data Security UI, AI_REDACT for unstructured PII, and Cortex Code governance skills. 90-minute Snowflake Summit hands-on lab.
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-fork repo link: https://github.com/Snowflake-Labs/sfguide-advanced-data-governance-summit-hol
+fork repo link: https://github.com/sfc-gh-ankgupta/sfguide-advanced-data-governance-summit-hol
 
 # Advanced Data Governance: AI-Powered Sensitive Data Discovery and Protection at Scale
 <!-- ------------------------ -->
@@ -70,11 +70,11 @@ You'll work through a step-by-step guide using a synthetic customer dataset cont
 <!-- ------------------------ -->
 ## Setup
 
-> **Source of Truth:** The full SQL scripts for this lab are in the [GitHub repository](https://github.com/Snowflake-Labs/sfguide-advanced-data-governance-summit-hol). This guide provides narrative context; the SQL files are the canonical source for execution.
+> **Source of Truth:** The full SQL scripts for this lab are in the [GitHub repository](https://github.com/sfc-gh-ankgupta/sfguide-advanced-data-governance-summit-hol). This guide provides narrative context; the SQL files are the canonical source for execution.
 
 ### Run the Setup Script
 
-**Script:** [0-lab-setup.sql](https://github.com/Snowflake-Labs/sfguide-advanced-data-governance-summit-hol/blob/main/0-lab-setup.sql)
+**Script:** [0-lab-setup.sql](https://github.com/sfc-gh-ankgupta/sfguide-advanced-data-governance-summit-hol/blob/main/0-lab-setup.sql)
 
 1. In Snowsight, create a new SQL worksheet named `0_lab_setup`
 2. Copy the contents of `0-lab-setup.sql` into your worksheet
@@ -104,9 +104,9 @@ The setup script demonstrates Snowflake's **Role-Based Access Control (RBAC)**:
 - `APPLY TAG`, `APPLY MASKING POLICY`, `APPLY ROW ACCESS POLICY` on account allow the governor to define and attach policies without object ownership
 
 <!-- ------------------------ -->
-## Step 1: Access Control and Role-Based Security
+## Access Control
 
-**Script:** [1-access-control.sql](https://github.com/Snowflake-Labs/sfguide-advanced-data-governance-summit-hol/blob/main/hol-lab/1-access-control.sql) | Role: `HRZN_DATA_ENGINEER`
+**Script:** [1-access-control.sql](https://github.com/sfc-gh-ankgupta/sfguide-advanced-data-governance-summit-hol/blob/main/hol-lab/1-access-control.sql) | Role: `HRZN_DATA_ENGINEER`
 
 ### RBAC and DAC Fundamentals
 
@@ -143,9 +143,9 @@ After completing this step you will observe that the CUSTOMER table exposes 15 c
 - The raw CUSTOMER table exposes PII to anyone with SELECT — Step 2 fixes this
 
 <!-- ------------------------ -->
-## Step 2: Know and Protect Your Data
+## Know and Protect Your Data
 
-**Script:** [2-classification-and-policies.sql](https://github.com/Snowflake-Labs/sfguide-advanced-data-governance-summit-hol/blob/main/hol-lab/2-classification-and-policies.sql) | Role: `HRZN_DATA_GOVERNOR`
+**Script:** [2-classification-and-policies.sql](https://github.com/sfc-gh-ankgupta/sfguide-advanced-data-governance-summit-hol/blob/main/hol-lab/2-classification-and-policies.sql) | Role: `HRZN_DATA_GOVERNOR`
 
 ### AI-Powered Classification with the BYOT Pattern
 
@@ -274,9 +274,9 @@ SELECT * FROM HRZN_DB.HRZN_SCH.CUSTOMER;
 - Tag-based masking scales better than per-column policies — add a table, just tag the columns
 
 <!-- ------------------------ -->
-## Step 3: Verifying Sensitive Data in Trust Center
+## Trust Center Verification
 
-**Script:** [3-trust-center-data-security.sql](https://github.com/Snowflake-Labs/sfguide-advanced-data-governance-summit-hol/blob/main/hol-lab/3-trust-center-data-security.sql) | Role: `HRZN_DATA_GOVERNOR`
+**Script:** [3-trust-center-data-security.sql](https://github.com/sfc-gh-ankgupta/sfguide-advanced-data-governance-summit-hol/blob/main/hol-lab/3-trust-center-data-security.sql) | Role: `HRZN_DATA_GOVERNOR`
 
 The Trust Center **Data Security** tab (GA: April 2026) provides a consolidated, no-SQL view of your sensitive data posture.
 
@@ -349,9 +349,9 @@ WHERE dc.TABLE_DATABASE = 'HRZN_DB';
 - Gap analysis bridges classification and protection — find classified-but-unmasked columns instantly
 
 <!-- ------------------------ -->
-## Step 4: Access and Audit Trail
+## Access and Audit Trail
 
-**Script:** [4-audit-trail.sql](https://github.com/Snowflake-Labs/sfguide-advanced-data-governance-summit-hol/blob/main/hol-lab/4-audit-trail.sql) | Role: `HRZN_IT_ADMIN`
+**Script:** [4-audit-trail.sql](https://github.com/sfc-gh-ankgupta/sfguide-advanced-data-governance-summit-hol/blob/main/hol-lab/4-audit-trail.sql) | Role: `HRZN_IT_ADMIN`
 
 Access History (`SNOWFLAKE.ACCOUNT_USAGE.ACCESS_HISTORY`) tracks every query that touched your data — what was read, what was written, when, and by whom.
 
@@ -390,9 +390,9 @@ The script includes a column-level lineage query that traces how tagged columns 
 - Access History is the foundation for GDPR data subject access reports, SOX audit logs, and HIPAA access audits
 
 <!-- ------------------------ -->
-## Step 5: AI_REDACT for Unstructured PII
+## AI_REDACT for Unstructured PII
 
-**Script:** [5-ai-redact.sql](https://github.com/Snowflake-Labs/sfguide-advanced-data-governance-summit-hol/blob/main/hol-lab/5-ai-redact.sql) | Role: `HRZN_DATA_GOVERNOR`
+**Script:** [5-ai-redact.sql](https://github.com/sfc-gh-ankgupta/sfguide-advanced-data-governance-summit-hol/blob/main/hol-lab/5-ai-redact.sql) | Role: `HRZN_DATA_GOVERNOR`
 
 Steps 1–4 protect **structured columns**. But customer feedback, support tickets, and survey responses are free-form text with PII embedded anywhere. `SNOWFLAKE.CORTEX.AI_REDACT` handles this automatically.
 
@@ -470,9 +470,9 @@ FROM HRZN_DB.HRZN_SCH.CUSTOMER_FEEDBACK_REDACTED;
 Both approaches are complementary — together they provide complete PII coverage.
 
 <!-- ------------------------ -->
-## Step 6: Cortex Code Governance Skills
+## Cortex Code Skills
 
-**Script:** [6-cortex-code-governance-skills.sql](https://github.com/Snowflake-Labs/sfguide-advanced-data-governance-summit-hol/blob/main/hol-lab/6-cortex-code-governance-skills.sql) | Role: `HRZN_DATA_GOVERNOR`
+**Script:** [6-cortex-code-governance-skills.sql](https://github.com/sfc-gh-ankgupta/sfguide-advanced-data-governance-summit-hol/blob/main/hol-lab/6-cortex-code-governance-skills.sql) | Role: `HRZN_DATA_GOVERNOR`
 
 Cortex Code is Snowflake's AI-powered coding assistant. Its built-in data governance skills let you accomplish governance tasks in plain English — no SQL required.
 
@@ -573,7 +573,7 @@ Congratulations! You've completed the Advanced Data Governance Summit HOL.
 
 ### Clean Up
 
-Run [99-teardown.sql](https://github.com/Snowflake-Labs/sfguide-advanced-data-governance-summit-hol/blob/main/99-teardown.sql) to remove all lab objects from your account.
+Run [99-teardown.sql](https://github.com/sfc-gh-ankgupta/sfguide-advanced-data-governance-summit-hol/blob/main/99-teardown.sql) to remove all lab objects from your account.
 
 ### Related Resources
 - [Snowflake Horizon Catalog](https://docs.snowflake.com/en/user-guide/snowflake-horizon)
@@ -584,4 +584,4 @@ Run [99-teardown.sql](https://github.com/Snowflake-Labs/sfguide-advanced-data-go
 - [AI_REDACT Function](https://docs.snowflake.com/en/sql-reference/functions/ai_redact)
 - [Cortex Code Governance Skills](https://docs.snowflake.com/en/user-guide/governance-skills)
 - [Sensitive Data Entitlement Report](https://docs.snowflake.com/en/user-guide/classify-ui-trust-center#sensitive-data-entitlement-report)
-- [Lab GitHub Repository](https://github.com/Snowflake-Labs/sfguide-advanced-data-governance-summit-hol)
+- [Lab GitHub Repository](https://github.com/sfc-gh-ankgupta/sfguide-advanced-data-governance-summit-hol)
