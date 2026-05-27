@@ -277,11 +277,11 @@ This will use metadata context to generate column descriptions that can be surfa
 
 We can use the Coalesce Node Marketplace to install more node types into your environment. We have over 80 node types that embody Snowflake best practises and standards built in.  We are going to install a Semantic view node.  
 
-1. Open the Build Settings at the bottom left of your screen:
+1. Open the **Build Settings** at the bottom left of your screen:
 
    ![Build settings](assets/image81.png)
 
-2. Select Packages and press the Browse button (in the middle or top right)
+2. Select **Packages** and press the **Browse** button (in the middle or top right)
 
    ![Package Browse](assets/image82.png)
 
