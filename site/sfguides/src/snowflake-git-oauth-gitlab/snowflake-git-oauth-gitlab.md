@@ -10,7 +10,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Connect Snowflake to GitLab with OAuth2
 <!-- ------------------------ -->
 ## Overview
-Duration: 2
 
 Snowflake's Git integration lets you create workspaces backed by a Git repository so you can edit, commit, and push files directly from Snowsight. By default, the integration authenticates with a personal access token stored in a Snowflake secret. With **OAuth2**, each Snowflake user authenticates individually with GitLab through a browser-based flow — no shared tokens, no secrets to rotate per user.
 
@@ -41,7 +40,6 @@ This guide walks through configuring OAuth2 between Snowflake and GitLab and cre
 
 <!-- ------------------------ -->
 ## Determine your Snowflake redirect URI
-Duration: 1
 
 Every Git provider requires a redirect URI (sometimes called a callback URL) when you register an OAuth application. This tells the provider where to send users after they authorize access.
 
@@ -68,7 +66,6 @@ Keep this URI handy — you'll paste it into GitLab in the next step.
 
 <!-- ------------------------ -->
 ## Register an OAuth application in GitLab
-Duration: 5
 
 1. Sign in to GitLab as an administrator or a user with permission to create applications.
 2. Go to **User Settings** > **Preferences**, expand the **Access** section, and select **Applications**.
@@ -105,7 +102,6 @@ Duration: 5
 
 <!-- ------------------------ -->
 ## Create an API integration in Snowflake
-Duration: 3
 
 You can create the API integration with SQL or through the Snowsight UI.
 
@@ -157,7 +153,6 @@ Select **Create**.
 
 <!-- ------------------------ -->
 ## Create a workspace from your GitLab repository
-Duration: 3
 
 1. In Snowsight, open the workspace selector and select **From Git repository**.
 
@@ -186,7 +181,6 @@ You can now push, pull, and work with files in your GitLab repository directly f
 
 <!-- ------------------------ -->
 ## Troubleshooting
-Duration: 2
 
 ### "Invalid redirect URI" error during authorization
 Verify that the redirect URI registered with GitLab exactly matches the Snowflake redirect URI for your account's region (see [Determine your Snowflake redirect URI](#determine-your-snowflake-redirect-uri)).
@@ -202,7 +196,6 @@ OAuth authentication is not supported with outbound Private Link connections to 
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 1
 
 You configured OAuth2 between Snowflake and GitLab, and your team can now sign in to GitLab from Snowsight without sharing personal access tokens.
 
