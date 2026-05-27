@@ -8,7 +8,7 @@ environments: web
 
 
 
-# **Build Supportable Data Pipelines with AI in Coalesce** 
+# Build Supportable Data Pipelines with AI in Coalesce
 
 ## Overview
 
