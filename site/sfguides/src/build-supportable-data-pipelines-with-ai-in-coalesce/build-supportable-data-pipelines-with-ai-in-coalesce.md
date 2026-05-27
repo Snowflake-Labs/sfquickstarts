@@ -235,7 +235,7 @@ We can see what we have built \- and make changes in the UI.  We are going to ad
 
 1. Open and review DIM\_VENDOR by selecting **Edit** on the DIM\_VENDOR table and view sampled data in the Preview pane at the bottom of the screen.
 
-2. Right click on COUNTRY column and choose **View Column Lineage** to see graphical lineage. 
+2. Right click on COUNTRY column (or any column if COUNTRY is not there) and choose **View Column Lineage** to see graphical lineage. 
 
    ![Column lineage](assets/image72.png)
 
