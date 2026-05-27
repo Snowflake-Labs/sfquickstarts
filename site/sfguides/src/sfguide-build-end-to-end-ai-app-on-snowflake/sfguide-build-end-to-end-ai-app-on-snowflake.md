@@ -64,41 +64,91 @@ Row Access Policies (transparent security)
 <!-- ------------------------ -->
 ## Setup
 
-### Install Snowflake CLI and Snowflake CoCo
+### Install Snowflake CLI
 
-Run the installer script for your platform:
+The Snowflake CLI (`snow`) lets you run SQL, deploy apps, and manage Snowflake objects from your terminal.
 
-**macOS / Linux:**
+**macOS (using Homebrew):**
+
+If you don't have Homebrew installed, first install it by opening Terminal and running:
 ```bash
-bash install.sh
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 ```
 
-**Windows (PowerShell):**
+Then install Snowflake CLI:
+```bash
+brew install snowflake-cli
+```
+
+**Windows:**
 ```powershell
-.\install.ps1
+pip install snowflake-cli
 ```
 
-This installs:
-- **Snowflake CLI** (`snow`) — for SQL execution and deployments
-- **Snowflake CoCo CLI** (`cortex`) — AI-powered coding assistant for Snowflake
+**Linux:**
+```bash
+pip install snowflake-cli
+```
 
 Verify the installation:
 ```bash
 snow --version
+```
+
+You should see output like `Snowflake CLI version: 3.x.x`.
+
+### Install Snowflake CoCo
+
+Snowflake CoCo is an AI-powered coding assistant that runs in your terminal. It helps you write SQL, build pipelines, deploy apps, and explore your data using natural language prompts.
+
+**macOS (using Homebrew):**
+```bash
+brew install cortex-code
+```
+
+**Windows / Linux:**
+```bash
+pip install cortex-code
+```
+
+Verify the installation:
+```bash
 cortex --version
 ```
 
 ### Configure Snowflake Connection
 
+Before you can run any commands against Snowflake, you need to configure a connection. This tells the CLI which Snowflake account to connect to and how to authenticate.
+
+Run the interactive connection wizard:
 ```bash
 snow connection add
-# Enter: account identifier, username, password
-# Set role: ACCOUNTADMIN
-# Set warehouse: HOL_WH
-# Set database: DASH_AUTOMATED_INTELLIGENCE_DB
 ```
 
-### Generate RSA Key Pair
+You'll be prompted for the following values (enter them one at a time):
+
+| Prompt | What to enter | Example |
+|--------|---------------|---------|
+| Connection name | A short name for this connection | `hol` |
+| Account identifier | Your Snowflake account URL (without `.snowflakecomputing.com`) | `myorg-myaccount` |
+| User | Your Snowflake username | `jsmith` |
+| Password | Your Snowflake password | *(hidden)* |
+| Role | `ACCOUNTADMIN` | `ACCOUNTADMIN` |
+| Warehouse | `HOL_WH` (will be created by setup) | `HOL_WH` |
+| Database | `DASH_AUTOMATED_INTELLIGENCE_DB` (will be created by setup) | `DASH_AUTOMATED_INTELLIGENCE_DB` |
+
+> **Tip:** Your account identifier is the part before `.snowflakecomputing.com` in your Snowflake URL. For example, if you log in at `https://myorg-myaccount.snowflakecomputing.com`, your account identifier is `myorg-myaccount`.
+
+Test that your connection works:
+```bash
+snow connection test -c hol
+```
+
+You should see `Status: OK`.
+
+### Generate RSA Key Pair (Optional)
+
+> **Note:** This step is only required if you plan to complete **Section 2: Streaming Ingestion**. If you want to skip streaming and jump to the CoCo-driven sections, you can skip this step.
 
 Generate keys for Snowpipe Streaming authentication:
 
@@ -109,14 +159,14 @@ openssl genrsa 2048 | openssl pkcs8 -topk8 -inform PEM -out rsa_key.p8 -nocrypt
 # Generate public key
 openssl rsa -in rsa_key.p8 -pubout -out rsa_key.pub
 
-# Upload public key to your Snowflake user
-snow sql -q "ALTER USER <your-username> SET RSA_PUBLIC_KEY='$(grep -v -- '-----' rsa_key.pub | tr -d '\n')'"
+# Upload public key to your Snowflake user (replace <your-username>)
+snow sql -q "ALTER USER <your-username> SET RSA_PUBLIC_KEY='$(grep -v -- '-----' rsa_key.pub | tr -d '\n')'" -c hol
 
 # Verify
-snow sql -q "DESC USER <your-username>" | grep RSA_PUBLIC_KEY_FP
+snow sql -q "DESC USER <your-username>" -c hol | grep RSA_PUBLIC_KEY_FP
 ```
 
-Keep `rsa_key.p8` — you'll use it in Section 4.
+Keep `rsa_key.p8` in this directory — you'll use it in Section 2.
 
 ### Clone the Lab Repository
 
@@ -133,10 +183,12 @@ Launch Snowflake CoCo and verify your connection:
 cortex
 ```
 
-Then run the core infrastructure script:
+> **What to expect:** CoCo will start an interactive session in your terminal. You'll see your active connection, role, and warehouse displayed. You can type natural language prompts and CoCo will translate them into SQL or actions.
+
+Then run the core infrastructure script (this takes ~10-15 minutes):
 
 ```bash
-snow sql -f setup.sql -c <your-connection>
+snow sql -f setup.sql -c hol
 ```
 
 This creates the database, schemas, warehouses, tables, Dynamic Tables pipeline, Interactive Tables, Cortex Search Services, Semantic View, seed data (50M orders, 161M order items, 2M customers), and Row Access Policy.
