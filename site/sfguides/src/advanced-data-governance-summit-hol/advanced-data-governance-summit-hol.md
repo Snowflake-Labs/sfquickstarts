@@ -31,7 +31,7 @@ You'll work through a step-by-step guide using a synthetic customer dataset cont
 ### What You'll Learn
 
 **Core Governance:**
-- Automate PII discovery with AI-powered `CLASSIFICATION_PROFILE` and custom tag mapping (BYOT pattern)
+- Automate PII discovery with AI-powered CLASSIFICATION_PROFILE and custom tag mapping (BYOT pattern)
 - Protect sensitive data with multi-type tag-based masking policies that scale automatically to derived tables
 - Apply consent-based and geographic row access policies for defense-in-depth
 - Use aggregation and projection policies to prevent individual record access
@@ -39,7 +39,7 @@ You'll work through a step-by-step guide using a synthetic customer dataset cont
 
 **AI-Powered Governance:**
 - Use the Trust Center Data Security UI to verify classification results and generate Sensitive Data Entitlement Reports — no SQL required
-- Redact PII from free-form text with `SNOWFLAKE.CORTEX.AI_REDACT`
+- Redact PII from free-form text with AI_REDACT
 - Use Cortex Code governance skills to assess governance maturity, create best-practice policies, and run compliance audits in plain English
 
 ### What You'll Need
@@ -59,12 +59,12 @@ You'll work through a step-by-step guide using a synthetic customer dataset cont
 
 | Feature | Description |
 |---------|-------------|
-| `CLASSIFICATION_PROFILE` with `tag_map` | Auto-tag 50+ PII types using your custom taxonomy |
-| `DATA_CLASSIFICATION` tag with `PROPAGATE` | Tags flow automatically to all derived tables |
+| **CLASSIFICATION_PROFILE** with tag_map | Auto-tag 50+ PII types using your custom taxonomy |
+| **DATA_CLASSIFICATION** tag with PROPAGATE | Tags flow automatically to all derived tables |
 | Multi-type tag-based masking | One policy per data type; auto-applied to all tagged columns |
 | Row access policies | Consent-based and geographic row filtering |
 | Trust Center Data Security | No-SQL dashboard for classification results and entitlement reporting |
-| `SNOWFLAKE.CORTEX.AI_REDACT` | Remove PII from free-form text for safe ML and analytics |
+| **AI_REDACT** | Remove PII from free-form text for safe ML and analytics |
 | Cortex Code governance skills | Plain-English governance: maturity scoring, policy creation, audit |
 
 <!-- ------------------------ -->
@@ -394,7 +394,7 @@ The script includes a column-level lineage query that traces how tagged columns 
 
 **Script:** [5-ai-redact.sql](https://github.com/sfc-gh-ankgupta/sfguide-advanced-data-governance-summit-hol/blob/main/hol-lab/5-ai-redact.sql) | Role: `HRZN_DATA_GOVERNOR`
 
-Steps 1–4 protect **structured columns**. But customer feedback, support tickets, and survey responses are free-form text with PII embedded anywhere. `SNOWFLAKE.CORTEX.AI_REDACT` handles this automatically.
+Steps 1–4 protect **structured columns**. But customer feedback, support tickets, and survey responses are free-form text with PII embedded anywhere. AI_REDACT handles this automatically.
 
 ### The Problem: PII in Free-Form Text
 
@@ -562,13 +562,13 @@ Congratulations! You've completed the Advanced Data Governance Summit HOL.
 | Topic | Feature | Step |
 |-------|---------|------|
 | Access Control | RBAC, privilege grants, deny-by-default | Step 1 |
-| AI Classification | `CLASSIFICATION_PROFILE`, BYOT tag_map, custom classifiers | Step 2 |
+| AI Classification | CLASSIFICATION_PROFILE, BYOT tag_map, custom classifiers | Step 2 |
 | Masking | Multi-type tag-based masking with auto-propagation | Step 2 |
 | Row Access | Consent-based and geographic row filtering | Step 2 |
 | Advanced Policies | Aggregation and projection policies | Step 2 |
 | Trust Center UI | Data Security dashboard, Entitlement Report | Step 3 |
 | Audit Trail | Access History, column-level PII lineage | Step 4 |
-| Unstructured PII | `AI_REDACT`, pre-compute + secure view pattern | Step 5 |
+| Unstructured PII | AI_REDACT, pre-compute + secure view pattern | Step 5 |
 | Cortex Code Skills | Maturity score, policy creation, compliance audit | Step 6 |
 
 ### Clean Up
