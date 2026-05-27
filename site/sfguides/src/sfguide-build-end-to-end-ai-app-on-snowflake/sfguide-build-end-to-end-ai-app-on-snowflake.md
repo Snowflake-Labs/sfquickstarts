@@ -259,9 +259,9 @@ WHERE order_id = '<any-order-uuid>';
 
 > *"Run the interactive tables load test at interactive/load_test.py"*
 
-This fires 200 concurrent sessions (1000 queries total) against both Interactive and Standard warehouses, then compares P50/P90/P99 latencies. Expected: ~10x faster P50 on Interactive.
+This fires 200 concurrent sessions (1000 queries total) against both Interactive and Standard warehouses, then compares P50/P90/P99 latencies. You should see notably lower latency and higher throughput on the Interactive warehouse.
 
-Run the load test a second time for the full speedup (~10-12x) after the cache warms.
+Run the load test a second time to observe the effect of warm caches. Results may vary depending on account, region, and data scale.
 
 <!-- ------------------------ -->
 ## Data Quality
