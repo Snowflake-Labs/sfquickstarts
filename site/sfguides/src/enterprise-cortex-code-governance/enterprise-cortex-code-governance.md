@@ -1,5 +1,6 @@
 author: Ramkumar Chandrasekaran
 id: enterprise-cortex-code-governance
+language: en
 summary: Build an enterprise governance layer for Snowflake Cortex Code — manage token credits, model access tiers, and intelligent auto-rebalancing natively inside Snowflake.
 categories: snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/cortex-code
 environments: web
