@@ -17,11 +17,8 @@ A unified cost reporting dashboard for all Snowflake Cortex AI services, with dy
 
 This dashboard aggregates usage data from Cortex AI service views in `SNOWFLAKE.ACCOUNT_USAGE` into local tables for fast querying, computes dollar costs using a **service-tier and region-based pricing model**, then visualizes the data in a Streamlit app with an integrated Cortex Analyst chatbot.
 
-> aside negative
-> You must hard code your customer's credit rate in the `MERGE INTO CREDIT_BASE_RATES tgt` statement and the `INSERT INTO {{DATABASE}}.{{SCHEMA}}.CREDIT_BASE_RATES` statement (command in lines 269 to 282 of `setup.sql`).
-
 ### Prerequisites
-- Snowflake account with `SYSADMIN` role (or equivalent with `ACCOUNT_USAGE` access)
+- Snowflake account with `ACCOUNTADMIN` role (or equivalent with `ACCOUNT_USAGE` access)
 - A warehouse for query execution
 - Streamlit in Snowflake (SiS) enabled
 
