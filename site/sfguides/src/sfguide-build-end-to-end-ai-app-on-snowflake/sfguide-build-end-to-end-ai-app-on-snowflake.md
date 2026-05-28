@@ -223,6 +223,7 @@ SELECT * FROM dash_automated_intelligence_db.interactive.customer_order_analytic
 WHERE customer_id = 1;
 
 -- Point lookup by order ID
+-- Run: SELECT order_id FROM dash_automated_intelligence_db.interactive.order_lookup LIMIT 5; to get UUIDs to use
 SELECT * FROM dash_automated_intelligence_db.interactive.order_lookup
 WHERE order_id = '<any-order-uuid>';
 ```
