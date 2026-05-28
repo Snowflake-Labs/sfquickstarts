@@ -1,5 +1,7 @@
 author: Colin Mattimore
 id: ai-cost-dashboard
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/community-sourced, snowflake-site:taxonomy/product/ai
+language: en
 summary: Build a unified cost reporting dashboard for all Snowflake Cortex AI services with dynamic tiered pricing and a Cortex Analyst chatbot.
 categories: getting-started,data-science-&-ml,app-development
 environments: web
