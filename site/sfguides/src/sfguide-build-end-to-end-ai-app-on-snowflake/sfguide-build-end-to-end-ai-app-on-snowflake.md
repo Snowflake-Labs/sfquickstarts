@@ -81,12 +81,12 @@ Snowflake CoCo is an AI-powered coding assistant that runs in your terminal. It 
 
 **macOS (using Homebrew):**
 ```bash
-brew install cortex-code
+brew install cortex
 ```
 
 **Windows / Linux:**
 ```bash
-pip install cortex-code
+pip install cortex
 ```
 
 Verify the installation:
@@ -112,8 +112,8 @@ You'll be prompted for the following values (enter them one at a time):
 | User | Your Snowflake username | `jsmith` |
 | Password | Your Snowflake password | *(hidden)* |
 | Role | `ACCOUNTADMIN` | `ACCOUNTADMIN` |
-| Warehouse | `HOL_WH` (will be created by setup) | `HOL_WH` |
-| Database | `DASH_AUTOMATED_INTELLIGENCE_DB` (will be created by setup) | `DASH_AUTOMATED_INTELLIGENCE_DB` |
+| Warehouse | Leave blank (will be created by setup) | *(leave empty)* |
+| Database | Leave blank (will be created by setup) | *(leave empty)* |
 
 > **Tip:** Your account identifier is the part before `.snowflakecomputing.com` in your Snowflake URL. For example, if you log in at `https://myorg-myaccount.snowflakecomputing.com`, your account identifier is `myorg-myaccount`.
 
@@ -147,7 +147,7 @@ Then run the core infrastructure script (this takes ~10-15 minutes):
 snow sql -f setup.sql -c hol
 ```
 
-This creates the database, schemas, warehouses, tables, Dynamic Tables pipeline, Interactive Tables, Cortex Search Services, Semantic View, seed data (50M orders, 161M order items, 2M customers), and Row Access Policy.
+This creates the database, schemas, warehouses, tables, Dynamic Tables pipeline, Interactive Tables, Cortex Search Services, Semantic View, seed data (10M orders, 25M order items, 2M customers), and Row Access Policy.
 
 <!-- ------------------------ -->
 ## Gen2 Warehouse: Optima Indexing
@@ -168,9 +168,11 @@ Open the query profile in Snowsight to see partition pruning — only a fraction
 > *"Show me the Dynamic Tables pipeline status — names, target lag, last refresh time, and row counts for each tier"*
 
 CoCo displays the 3-tier pipeline:
-- **Tier 1** (1-min lag): `enriched_orders` (50M rows), `enriched_order_items` (161M rows)
-- **Tier 2** (DOWNSTREAM): `fact_orders` (161M rows)
-- **Tier 3** (DOWNSTREAM): `daily_business_metrics` (365 rows), `product_performance_metrics` (4 rows)
+- **Tier 1** (1-min lag): `enriched_orders` (10M rows), `enriched_order_items` (25M rows)
+- **Tier 2** (DOWNSTREAM): `fact_orders` (25M rows)
+- **Tier 3** (DOWNSTREAM): `daily_business_metrics` (118 rows), `product_performance_metrics` (4 rows)
+
+> **Note:** Row counts shown are for the default `data_scale = '10M'`. If you chose `'50M'` in `setup.sql`, expect ~50M enriched_orders, ~161M order_items, and 365 daily metrics rows.
 
 ### Explore Results
 
@@ -178,10 +180,12 @@ Ask CoCo:
 
 > *"Show me a sample of the daily business metrics — top 5 days by revenue"*
 
-Expected: Top-5 days are in December 2025 (holiday peak), each with ~$755M revenue and ~258K orders.
+Expected: Top-5 days are in September 2025 (back-to-season peak), each with ~$183M revenue and ~117K orders.
 
 <!-- ------------------------ -->
 ## Iceberg V3 Features
+
+> **Note:** CoCo may take a few attempts to generate correct SQL for Iceberg V3 features (these are newer APIs). If you see "error executing SQL," let CoCo retry — it will self-correct and the end result will work.
 
 ### Create a Managed Iceberg Table
 
@@ -289,6 +293,8 @@ Create a reusable skill that automates table profiling:
 
 CoCo creates `.cortex/skills/profile-table/SKILL.md` with the skill definition, triggers, and step-by-step instructions.
 
+> **Note:** After creating the skill, restart CoCo (type `/quit` then `cortex`) for the new skill to become active.
+
 ### Test It
 
 > *"$profile-table DASH_AUTOMATED_INTELLIGENCE_DB.RAW.ORDERS"*
@@ -306,16 +312,16 @@ This demonstrates how teams package repeatable workflows as shareable CoCo skill
 
 ### Test Agent Routing
 
-Each question demonstrates different tool routing:
+Open the **Snowflake CoWork** interface in Snowsight: navigate to **AI & ML → CoWork** (or search "CoWork" in the global search bar). Select the `BUSINESS_INSIGHTS_AGENT` agent. Then try each question to demonstrate different tool routing:
 
 | Question | Tools Used |
 |----------|-----------|
-| "Show me monthly revenue trend from June 2025 to April 2026" | Cortex Analyst (text-to-SQL) |
-| "Revenue dropped in February — what caused it and what do reviews say?" | Cortex Analyst + Agentic Search |
+| "Show me monthly revenue trend from June to September 2025" | Cortex Analyst (text-to-SQL) |
+| "Which month had the lowest revenue, and what do customer reviews say about that period?" | Cortex Analyst + Agentic Search |
 | "Find reviews mentioning wrong size with a rating below 3" | Agentic Search (filtered) |
 | "Why are customers returning ski boots?" | Agentic Search (reviews + tickets) |
 | "What is our total revenue and customer count by state?" | Cortex Analyst (text-to-SQL) |
-| "What are the top complaint themes in support tickets from February 2026?" | Agentic Search (filter + AI_AGG) |
+| "What are the top complaint themes in support tickets?" | Agentic Search (filter + AI_AGG) |
 | "How many reviews mention sizing issues, and which products are most affected?" | Agentic Search (search + breakdown) |
 
 This is the capstone moment — the agent routes across structured data (text-to-SQL) and unstructured data (Cortex Search) to answer "what happened" and "why."
@@ -353,6 +359,14 @@ Result: only CA, OR, WA appear — the Row Access Policy transparently filters d
 
 Key insight: Same query, same tables — different results based on who's asking. Row-level security enforces data boundaries without changing application logic.
 
+### Verify Through CoWork
+
+Switch to the **WEST_COAST_MANAGER** role in Snowsight, then open CoWork and ask the agent:
+
+> *"What is our total revenue and customer count by state?"*
+
+The agent returns results for only CA, OR, and WA — the Row Access Policy filters data transparently, even through AI-generated SQL.
+
 <!-- ------------------------ -->
 ## Streamlit Dashboard
 
@@ -371,13 +385,17 @@ The evaluation dataset (7 questions + ground truth) was created by `setup.sql`. 
 
 ### Run via Snowsight UI
 
-1. Navigate to **AI and ML > Agents > BUSINESS_INSIGHTS_AGENT > Evaluations** tab
-2. Click **New evaluation run**
-3. Name it (e.g. `hol-eval-run-1`)
-4. Select **Create new dataset** with source table: `DASH_AUTOMATED_INTELLIGENCE_DB.SEMANTIC.AGENT_EVALUATION_DATA`
-5. Map columns: `INPUT_QUERY` to query_text, `GROUND_TRUTH` to ground_truth
-6. Toggle on **Answer Correctness** and **Logical Consistency**
-7. Click **Create** — evaluation starts automatically (~3 min)
+1. Switch to the **ACCOUNTADMIN** role in Snowsight (top-left role selector)
+2. Navigate to **AI and ML > Agents > BUSINESS_INSIGHTS_AGENT > Evaluations** tab
+3. Click **Use existing dataset**
+4. Name it (e.g. `hol-eval-run-1`)
+5. Set **New dataset location**: Database = `DASH_AUTOMATED_INTELLIGENCE_DB`, Schema = `SEMANTIC`
+6. Set **Dataset name**: `hol_eval_dataset`
+7. Select source table: `AGENT_EVALUATION_DATA`
+8. Under **Define metrics**, confirm **Input query** = `INPUT_QUERY`
+9. Toggle on **Answer Correctness**, set **Expected answer** = `GROUND_TRUTH`
+10. Toggle on **Logical Consistency**
+11. Click **Create** — evaluation starts automatically (~3 min)
 
 ### Interpret Results
 
@@ -403,6 +421,8 @@ Expose the Business Insights Agent as a managed MCP server:
 > *"Create a Snowflake-managed MCP server that exposes our Business Insights Agent, semantic view, and customer feedback search as tools"*
 
 CoCo creates the MCP server:
+
+> **Note:** CoCo generates tool names (like `revenue-analytics`, `customer-feedback-search`) based on your prompt. Your names may differ — what matters is that the `type` and `identifier` point to the correct objects.
 
 ```sql
 CREATE MCP SERVER business_insights_mcp
