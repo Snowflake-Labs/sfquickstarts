@@ -31,14 +31,14 @@ You'll work through a step-by-step guide using a synthetic customer dataset cont
 ### What You'll Learn
 
 **Core Governance:**
-- Automate PII discovery with AI-powered CLASSIFICATION_PROFILE and custom tag mapping (BYOT pattern)
+- Automate PII discovery by setting up Automatic Sensitive Data Classification using a CLASSIFICATION_PROFILE and custom tag mapping
+- Use the Trust Center Data Security UI to verify classification results and generate Sensitive Data Entitlement Reports — no SQL required
 - Protect sensitive data with multi-type tag-based masking policies that scale automatically to derived tables
-- Apply consent-based and geographic row access policies for defense-in-depth
+- Apply geographic row access policies for defense-in-depth
 - Use aggregation and projection policies to prevent individual record access
 - Establish a complete audit trail with Access History and column-level lineage
 
 **AI-Powered Governance:**
-- Use the Trust Center Data Security UI to verify classification results and generate Sensitive Data Entitlement Reports — no SQL required
 - Redact PII from free-form text with AI_REDACT
 - Use Cortex Code governance skills to assess governance maturity, create best-practice policies, and run compliance audits in plain English
 
@@ -48,7 +48,7 @@ You'll work through a step-by-step guide using a synthetic customer dataset cont
 
 ### What You'll Build
 - A complete data governance framework with RBAC roles for three personas
-- AI-powered classification with a custom 5-tier taxonomy (PII → RESTRICTED → SENSITIVE → INTERNAL → PUBLIC)
+- A custom 5-tier data classification taxonomy (PII → RESTRICTED → SENSITIVE → INTERNAL → PUBLIC)
 - Tag-based masking policies (STRING, NUMBER, DATE, TIMESTAMP) that auto-apply to all tagged columns
 - Consent-based and geographic row access policies
 - Trust Center Data Security dashboard with Sensitive Data Entitlement reporting
