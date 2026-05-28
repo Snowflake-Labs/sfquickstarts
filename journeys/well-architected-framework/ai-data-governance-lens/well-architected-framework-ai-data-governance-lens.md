@@ -299,13 +299,13 @@ The AI and data governance workload follows a seven-stage ML pipeline lifecycle.
 
 | Resource | Type | Link |
 |----------|------|------|
-| Snowflake Horizon Trust Center | Documentation | https://docs.snowflake.com/en/user-guide/trust-center |
+| Snowflake Horizon Trust Center | Documentation | https://docs.snowflake.com/en/user-guide/trust-center/overview |
 | Auto-Classification Profile | Documentation | https://docs.snowflake.com/en/user-guide/classify-auto |
 | Dynamic Data Masking | Documentation | https://docs.snowflake.com/en/user-guide/security-column-ddm |
-| Row Access Policies | Documentation | https://docs.snowflake.com/en/user-guide/security-row-row-access-policies |
-| Tri-Secret Secure | Documentation | https://docs.snowflake.com/en/user-guide/security-encryption-manage-tss |
+| Row Access Policies | Documentation | https://docs.snowflake.com/en/user-guide/security-row-intro |
+| Tri-Secret Secure | Documentation | https://docs.snowflake.com/en/user-guide/security-encryption-tss |
 | Account Replication | Documentation | https://docs.snowflake.com/en/user-guide/account-replication-config |
-| Snowflake Intelligence (Cortex Agents) | Documentation | https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agent |
-| NIST AI Risk Management Framework | External | https://www.nist.gov/system/files/documents/2023/01/26/AI%20RMF%201.0.pdf |
+| Snowflake Intelligence (Cortex Agents) | Documentation | https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents |
+| NIST AI Risk Management Framework | External | https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.100-1.pdf |
 | EU AI Act | External | https://www.europarl.europa.eu/doceo/document/TA-9-2024-0138_EN.html |
 | ISO/IEC 42001 | External | https://www.iso.org/standard/81230.html |
