@@ -4,7 +4,7 @@ categories: snowflake-site:taxonomy/solution-center/certification/quickstart,sno
 language: en
 summary: Build a complete AI-powered retail analytics platform on Snowflake — from streaming ingestion through Cortex Agents, Semantic Views, and MCP Servers.
 environments: web
-status: Published
+status: Draft
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 
@@ -14,7 +14,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 In this hands-on lab, you'll build a complete AI-powered retail analytics platform entirely within Snowflake — no external infrastructure required. Using Snowflake CoCo as your AI-assisted development environment, you'll work through the full data lifecycle: stream real-time orders via Snowpipe Streaming, MERGE them into production tables with Gen2 Warehouses, transform them through a 3-tier Dynamic Tables pipeline, and serve them with Interactive Tables for low-latency point lookups.
 
-You'll build analytical models with dbt, monitor data quality with Data Metric Functions, explore Iceberg V3 features, and create custom CoCo skills for reusable workflows. Tie it all together with Snowflake CoWork — a conversational AI interface where a Cortex Agent orchestrates Cortex Analyst and Agentic Search to answer "what happened" and "why" from both structured and unstructured data. Finally, evaluate your agent with ground-truth datasets, implement row-level security, and expose your agent as a managed MCP server for external AI clients.
+You'll build analytical models with dbt, monitor data quality with Data Metric Functions, and create custom CoCo skills for reusable workflows. Tie it all together with Snowflake CoWork — a conversational AI interface where a Cortex Agent orchestrates Cortex Analyst and Agentic Search to answer "what happened" and "why" from both structured and unstructured data. Finally, evaluate your agent with ground-truth datasets, implement row-level security, and expose your agent as a managed MCP server for external AI clients.
 
 ### What You'll Learn
 - Accelerate development with Snowflake CoCo (AI-assisted SQL, deployment, and data exploration)
@@ -22,7 +22,7 @@ You'll build analytical models with dbt, monitor data quality with Data Metric F
 - Serve low-latency queries with Interactive Tables and Gen2 Warehouses
 - Build analytical models with dbt
 - Monitor data quality automatically with Data Metric Functions
-- Create and query managed Iceberg V3 tables (deletion vectors, row lineage)
+- Create and query managed Iceberg V3 tables (deletion vectors, row lineage) *(optional)*
 - Create custom CoCo skills for reusable team workflows
 - Build a Cortex Agent with Cortex Analyst (semantic view + verified queries) and Agentic Search (multi-index Cortex Search)
 - Evaluate agent quality with ground-truth datasets and LLM judges
@@ -181,31 +181,6 @@ Ask CoCo:
 > *"Show me a sample of the daily business metrics — top 5 days by revenue"*
 
 Expected: Top-5 days are in September 2025 (back-to-season peak), each with ~$183M revenue and ~117K orders.
-
-<!-- ------------------------ -->
-## Iceberg V3 Features
-
-> **Note:** CoCo may take a few attempts to generate correct SQL for Iceberg V3 features (these are newer APIs). If you see "error executing SQL," let CoCo retry — it will self-correct and the end result will work.
-
-### Create a Managed Iceberg Table
-
-**Prompt CoCo:**
-
-> *"Create a managed Iceberg table from RAW.ORDERS with clustering by year and month, then query it to show partition pruning"*
-
-CoCo creates the table with `CATALOG='SNOWFLAKE'` (no external volume needed) and demonstrates partition pruning on filtered queries.
-
-### Explore V3: Deletion Vectors
-
-> *"Create an Iceberg V3 table from RAW.ORDERS (ICEBERG_VERSION=3) with merge-on-read enabled, insert 1000 rows, then update 10 of them to demonstrate deletion vectors"*
-
-CoCo creates a V3 table with `ENABLE_ICEBERG_MERGE_ON_READ = TRUE`, inserts data, then runs an UPDATE that uses deletion vectors instead of full file rewrites.
-
-### Explore V3: Default Values
-
-> *"Add a new column 'priority' with default value 'STANDARD' to the V3 table and show that existing rows get the default without a backfill"*
-
-This demonstrates V3 schema evolution without rewriting data files.
 
 <!-- ------------------------ -->
 ## Interactive Tables
@@ -456,6 +431,33 @@ cortex mcp add business-insights https://<account_url>/api/v2/databases/DASH_AUT
 ```
 
 Now any MCP-compatible client (CoCo, Claude Desktop, custom apps) can discover and call these tools via the standard MCP protocol.
+
+<!-- ------------------------ -->
+## Optional: Iceberg V3 Features
+
+> **Note:** This section is optional. It demonstrates Iceberg V3 capabilities (deletion vectors, default values) using CoCo-generated SQL. No other sections depend on it.
+
+> **Note:** CoCo may take a few attempts to generate correct SQL for Iceberg V3 features (these are newer APIs). If you see "error executing SQL," let CoCo retry — it will self-correct and the end result will work.
+
+### Create a Managed Iceberg Table
+
+**Prompt CoCo:**
+
+> *"Create a managed Iceberg table from RAW.ORDERS with clustering by year and month, then query it to show partition pruning"*
+
+CoCo creates the table with `CATALOG='SNOWFLAKE'` (no external volume needed) and demonstrates partition pruning on filtered queries.
+
+### Explore V3: Deletion Vectors
+
+> *"Create an Iceberg V3 table from RAW.ORDERS (ICEBERG_VERSION=3) with merge-on-read enabled, insert 1000 rows, then update 10 of them to demonstrate deletion vectors"*
+
+CoCo creates a V3 table with `ENABLE_ICEBERG_MERGE_ON_READ = TRUE`, inserts data, then runs an UPDATE that uses deletion vectors instead of full file rewrites.
+
+### Explore V3: Default Values
+
+> *"Add a new column 'priority' with default value 'STANDARD' to the V3 table and show that existing rows get the default without a backfill"*
+
+This demonstrates V3 schema evolution without rewriting data files.
 
 <!-- ------------------------ -->
 ## Optional: Streaming Ingestion
