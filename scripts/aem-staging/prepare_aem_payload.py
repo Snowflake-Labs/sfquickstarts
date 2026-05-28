@@ -15,6 +15,7 @@ import sys
 import urllib.parse
 from datetime import datetime, timezone
 
+DAM_NAVIGATION_PATH = "/content/dam/snowflake-site/developers/technical/guides-navigation"
 TAG_REGEX = re.compile(r"^snowflake-site:taxonomy(?:/[A-Za-z0-9_-]+)+$")
 
 
@@ -51,7 +52,9 @@ def build_content_fragment_payload(
     quickstart_authors: str,
     fork_repo_link: str,
     open_in_snowflake_link: str,
-    tags: list[str]
+    tags: list[str],
+    has_journey_sidebar: bool = False,
+    journey_sidebar_path: str = ""
 ) -> str:
     """
     Build URL-encoded form data for AEM content fragment Sling POST.
@@ -84,6 +87,11 @@ def build_content_fragment_payload(
     
     custom_last_modified = f"{datetime.now(timezone.utc).strftime('%Y-%m-%d')}T00:00:00.000Z"
     form_data.append(("./jcr:lastModified", custom_last_modified))
+    
+    form_data.append(("./data/master/hasJourneySidebar", str(has_journey_sidebar).lower()))
+    form_data.append(("./data/master/hasJourneySidebar@TypeHint", "Boolean"))
+    if has_journey_sidebar and journey_sidebar_path:
+        form_data.append(("./data/master/journeySidebarPath", journey_sidebar_path))
     
     return urllib.parse.urlencode(form_data, safe=":/")
 
@@ -136,6 +144,13 @@ def prepare_aem_payload(
     if not fork_repo_link and parsed_markdown.get("id"):
         fork_repo_link = f"https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/{parsed_markdown['id']}"
     
+    sidebar = parsed_markdown.get("sidebar", False)
+    sidebar_json = parsed_markdown.get("sidebar_json", "").strip()
+    has_journey_sidebar = bool(sidebar)
+    journey_sidebar_path = ""
+    if has_journey_sidebar and sidebar_json:
+        journey_sidebar_path = f"{DAM_NAVIGATION_PATH}/{sidebar_json}.json"
+
     content_fragment_payload = build_content_fragment_payload(
         jcr_title=parsed_markdown.get("title", ""),
         quickstart_title=parsed_markdown.get("title", ""),
@@ -146,7 +161,9 @@ def prepare_aem_payload(
         quickstart_authors=parsed_markdown.get("authors", ""),
         fork_repo_link=fork_repo_link,
         open_in_snowflake_link=parsed_markdown.get("open_in_snowflake_link", ""),
-        tags=tags
+        tags=tags,
+        has_journey_sidebar=has_journey_sidebar,
+        journey_sidebar_path=journey_sidebar_path
     )
     
     page_payload = build_page_payload(

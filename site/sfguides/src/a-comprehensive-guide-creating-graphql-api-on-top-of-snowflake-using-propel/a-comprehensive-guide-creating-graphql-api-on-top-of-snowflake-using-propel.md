@@ -4,7 +4,7 @@ categories: snowflake-site:taxonomy/solution-center/certification/quickstart, sn
 language: en
 summary: Create high-performance GraphQL APIs on Snowflake using Propel for real-time analytics, data applications, and developer access.
 environments: web
-status: Published 
+status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 # A Comprehensive Guide: Creating GraphQL API on Top of Snowflake Using Propel
