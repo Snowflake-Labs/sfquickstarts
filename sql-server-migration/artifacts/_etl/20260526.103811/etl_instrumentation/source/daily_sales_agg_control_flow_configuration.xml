@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<ControlFlowInstrumentation>
-  <TaskConfig TaskName="df_load_daily_sales" TaskRefId="Package\df_load_daily_sales" TaskGuid="{424A58A2-17F8-4116-BE08-DCDBC76D04F0}">
-    <TableToMonitor Name="[DailySalesAgg]" Schema="[TastyBytes]" ConnectionManagerId="{E62D94E7-E01F-4AF6-BB80-BE17D2B087A9}:external" />
-  </TaskConfig>
-  <TaskConfig TaskName="insert_end_log" TaskRefId="Package\insert_end_log" TaskGuid="{3e7c77db-7540-4549-888c-8aa57afc04d2}" />
-  <TaskConfig TaskName="insert_start_log" TaskRefId="Package\insert_start_log" TaskGuid="{C33B779E-C0F0-4378-A86C-847C86B14A1F}" />
-</ControlFlowInstrumentation>

@@ -1,3 +1,0 @@
-USE TastyBytesDB;
-GO
-CREATE SCHEMA TastyBytes AUTHORIZATION admin;
