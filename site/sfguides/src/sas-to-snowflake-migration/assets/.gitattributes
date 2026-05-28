@@ -1,0 +1,4 @@
+# Source locks hash raw bytes, so keep SAS line endings stable across platforms.
+*.sas text eol=lf
+*.egp binary
+*.spk binary
