@@ -567,7 +567,7 @@ CALL SNOWFLAKE.CORTEX.CREATE_AI_FUNCTION(
 
 Example output from the AI Function Studio CREATE workflow in Cortex Code:
 
-![AI Function Studio Create Function](assets/ai_function_studio_create_function.jpg)
+![AI Function Studio Create Function](assets/create_ai_function_studio.jpg)
 
 ### Test the Function
 
@@ -640,7 +640,7 @@ CALL SNOWFLAKE.CORTEX.EVALUATE_AI_FUNCTION(
 
 Example output from the AI Function Studio EVALUATE workflow in Cortex Code:
 
-![AI Function Studio Evaluate Function](assets/ai_function_studio_evaluate_function.jpg)
+![AI Function Studio Evaluate Function](assets/evaluate_ai_function_studio.jpg)
 
 The evaluation returns an overall score between 0.0 and 1.0. A score above 0.8 indicates good extraction quality. If the score is lower, the optimize step can help improve it.
 
@@ -748,7 +748,7 @@ Cortex Code will add candidate models to the optimization, run them concurrently
 
 Example output from the multi-model optimization workflow in Cortex Code:
 
-![AI Function Studio Multi-Model Optimization](assets/ai_function_studio_multi_model_optimization.jpg)
+![AI Function Studio Multi-Model Optimization](assets/optimize_cost_ai_function_studio.jpg)
 
 ### Resources
 
