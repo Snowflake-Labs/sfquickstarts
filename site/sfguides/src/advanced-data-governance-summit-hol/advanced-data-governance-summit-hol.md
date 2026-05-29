@@ -149,7 +149,7 @@ After completing this step you will observe that the CUSTOMER table exposes 15 c
 
 ### Classification with the BYOT Pattern
 
-The **BYOT (Bring Your Own Tags)** pattern maps detected categories to your organization's custom taxonomy. Create the enterprise DATA_CLASSIFICATION tag with propagation enabled:
+The **BYOT (Bring Your Own Tags)** pattern maps detected system categories to your organization's custom taxonomy. Create the enterprise DATA_CLASSIFICATION tag with propagation enabled:
 
 ```sql
 CREATE OR REPLACE TAG HRZN_DB.TAG_SCHEMA.DATA_CLASSIFICATION
@@ -178,12 +178,18 @@ CREATE SNOWFLAKE.DATA_PRIVACY.CLASSIFICATION_PROFILE
 });
 ```
 
-Run classification:
+Run classification and test the profile before enabling auto-classification:
 ```sql
 CALL SYSTEM$CLASSIFY(
     'HRZN_DB.HRZN_SCH.CUSTOMER',
     'HRZN_DB.HRZN_SCH.HRZN_STANDARD_CLASSIFICATION_PROFILE'
 );
+```
+
+Enable auto-classification by attaching classification profile at the database level:
+```sql
+ALTER DATABASE HRZN_DB
+    SET CLASSIFICATION_PROFILE = 'HRZN_DB.HRZN_SCH.HRZN_STANDARD_CLASSIFICATION_PROFILE';
 ```
 
 ### Tag-Based Masking Policies (Multi-Type)
@@ -562,7 +568,7 @@ Congratulations! You've completed the Advanced Data Governance Summit HOL.
 | Topic | Feature | Step |
 |-------|---------|------|
 | Access Control | RBAC, privilege grants, deny-by-default | Step 1 |
-| AI Classification | CLASSIFICATION_PROFILE, BYOT tag_map, custom classifiers | Step 2 |
+| Classification | CLASSIFICATION_PROFILE, BYOT tag_map | Step 2 |
 | Masking | Multi-type tag-based masking with auto-propagation | Step 2 |
 | Row Access | Consent-based and geographic row filtering | Step 2 |
 | Advanced Policies | Aggregation and projection policies | Step 2 |

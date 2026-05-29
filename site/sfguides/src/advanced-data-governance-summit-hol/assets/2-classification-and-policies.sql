@@ -25,13 +25,12 @@ Overview — What This Step Covers
   2. Create an enterprise DATA_CLASSIFICATION tag with propagation
   3. Create a Classification Profile with tag_map (BYOT pattern)
   4. Run classification on the CUSTOMER table
-  5. Create a custom classifier for credit card formats
-  6. Create multi-type tag-based masking policies
-  7. Create a consent-based row access policy (opt-in)
-  8. Create a state-based row access policy (geographic filtering)
-  9. Create an aggregation policy on CUSTOMER_ORDERS
- 10. Create a projection policy on ZIP
- 11. Verify tag propagation to derived tables
+  5. Create multi-type tag-based masking policies
+  6. Create a consent-based row access policy (opt-in)
+  7. Create a state-based row access policy (geographic filtering)
+  8. Create an aggregation policy on CUSTOMER_ORDERS
+  9. Create a projection policy on ZIP
+ 10. Verify tag propagation to derived tables
 ----------------------------------------------------------------------------------*/
 
 
@@ -212,43 +211,7 @@ ORDER BY
 
 
 /*----------------------------------------------------------------------------------
-Step 2.5 — Custom Classifier for Credit Cards
-
-Snowflake's built-in classifier detects CREDIT_CARD_NUMBER generically.
-A custom classifier using regex can detect specific card network formats
-(Mastercard, AmEx) for fine-grained control.
-----------------------------------------------------------------------------------*/
-
-USE SCHEMA HRZN_DB.CLASSIFIERS;
-
-CREATE OR REPLACE SNOWFLAKE.DATA_PRIVACY.CUSTOM_CLASSIFIER CREDITCARD();
-
-SHOW SNOWFLAKE.DATA_PRIVACY.CUSTOM_CLASSIFIER;
-
--- Add regex patterns for different credit card networks
-CALL creditcard!add_regex('MC_PAYMENT_CARD',  'IDENTIFIER', '^(?:5[1-5][0-9]{2}|222[1-9]|22[3-9][0-9]|2[3-6][0-9]{2}|27[01][0-9]|2720)[0-9]{12}$');
-CALL creditcard!add_regex('AMX_PAYMENT_CARD', 'IDENTIFIER', '^3[4-7][0-9]{13}$');
-
-SELECT creditcard!list();
-
--- Verify AmEx card data exists in the table
-SELECT CREDITCARD
-FROM HRZN_DB.HRZN_SCH.CUSTOMER
-WHERE CREDITCARD REGEXP '^3[4-7][0-9]{13}$'
-LIMIT 5;
-
--- Re-classify using the custom classifier (without re-running the full profile)
-CALL SYSTEM$CLASSIFY(
-    'HRZN_DB.HRZN_SCH.CUSTOMER',
-    {'custom_classifiers': ['HRZN_DB.CLASSIFIERS.CREDITCARD'], 'auto_tag': true}
-);
-
--- Confirm the CREDITCARD column now has a semantic category
-SELECT SYSTEM$GET_TAG('snowflake.core.semantic_category', 'HRZN_DB.HRZN_SCH.CUSTOMER.CREDITCARD', 'column');
-
-
-/*----------------------------------------------------------------------------------
-Step 2.6 — Tag-Based Masking Policies (Multi-Type)
+Step 2.5 — Tag-Based Masking Policies (Multi-Type)
 
 Instead of creating one masking policy per column, we attach policies to the
 DATA_CLASSIFICATION tag. Any column tagged PII, RESTRICTED, or SENSITIVE
@@ -374,7 +337,7 @@ ALTER TAG HRZN_DB.TAG_SCHEMA.DATA_CLASSIFICATION
 
 
 /*----------------------------------------------------------------------------------
-Step 2.7 — Consent-Based Row Access Policy (Opt-In)
+Step 2.6 — Consent-Based Row Access Policy (Opt-In)
 
 Customers who have not opted in (OPTIN='N') have NOT consented to data use.
 The HRZN_DATA_USER role should only see opted-in customer records.
@@ -435,7 +398,7 @@ USE ROLE HRZN_DATA_GOVERNOR;
 
 
 /*----------------------------------------------------------------------------------
-Step 2.8 — State-Based Row Access Policy (Geographic Filtering)
+Step 2.7 — State-Based Row Access Policy (Geographic Filtering)
 
 HRZN_DATA_USER should only see customers in Massachusetts (MA).
 The ROW_POLICY_MAP table (created in setup) holds the role-to-state mapping,
@@ -490,7 +453,7 @@ USE ROLE HRZN_DATA_GOVERNOR;
 
 
 /*----------------------------------------------------------------------------------
-Step 2.9 — Aggregation Policy on CUSTOMER_ORDERS
+Step 2.8 — Aggregation Policy on CUSTOMER_ORDERS
 
 An Aggregation Policy controls what type of query can access data from a table.
 Non-admin users must aggregate data into groups of at least 100 rows, preventing
@@ -532,7 +495,7 @@ USE ROLE HRZN_DATA_GOVERNOR;
 
 
 /*----------------------------------------------------------------------------------
-Step 2.10 — Projection Policy on ZIP Column
+Step 2.9 — Projection Policy on ZIP Column
 
 A Projection Policy prevents a column from appearing in SELECT output.
 The column can still be used in WHERE clauses (for filtering) but cannot
@@ -578,7 +541,7 @@ ALTER TABLE HRZN_DB.HRZN_SCH.CUSTOMER
 
 
 /*----------------------------------------------------------------------------------
-Step 2.11 — Verify Tag Propagation to Derived Tables
+Step 2.10 — Verify Tag Propagation to Derived Tables
 
 When a table is created from a tagged source (CTAS), the DATA_CLASSIFICATION tags
 propagate automatically because we set PROPAGATE = ON_DEPENDENCY_AND_DATA_MOVEMENT.
