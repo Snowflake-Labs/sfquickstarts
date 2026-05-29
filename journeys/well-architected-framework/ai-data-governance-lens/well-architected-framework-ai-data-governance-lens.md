@@ -241,11 +241,11 @@ The AI and data governance workload follows a seven-stage ML pipeline lifecycle.
 
 ## Maturity Model
 
-| Level | Description |
-|-------|-------------|
-| **1 — Foundational** | Manual, ad-hoc data classification; some sensitive columns untagged; password-based authentication still present for some service accounts; Trust Center not enabled; no documented incident response plan for AI threats; model registry in use but no tagging or lineage; no formal DSAR/RTBF procedures |
-| **2 — Managed** | Auto-classification profile deployed on all sensitive schemas with auto_tag: true; federated SSO enforced for all human users; key pair/PAT enforced for programmatic users; Dynamic Data Masking on IDENTIFIER columns; Trust Center Security Essentials enabled with High-severity findings remediated; structured IR plan documented covering AI-specific threats; model registry with versioning and tagging; DSAR/RTBF procedures documented |
-| **3 — Optimized** | Continuous classify-tag-protect automation across all schemas with scheduled re-evaluation; Tri-Secret Secure (BYOK) enabled for highest-sensitivity data; private connectivity enforced for all AI agent workloads; CORTEX_USER grants limited to approved roles with monitored usage; EU AI Act risk tier classification completed and mapped to Snowflake controls; ISO/IEC 42001 alignment documented; NIST AI RMF Map/Measure/Manage/Govern functions operationalized; DSAR and RTBF workflows automated and tested; Client Redirect configured with tested RTO of seconds; Account Replication verified to include all governance objects |
+<table><thead><tr><th width="40%">Level</th><th width="60%">Description</th></tr></thead><tbody>
+<tr><td><strong>1 — Foundational</strong></td><td>Manual, ad-hoc data classification; some sensitive columns untagged; password-based authentication still present for some service accounts; Trust Center not enabled; no documented incident response plan for AI threats; model registry in use but no tagging or lineage; no formal DSAR/RTBF procedures</td></tr>
+<tr><td><strong>2 — Managed</strong></td><td>Auto-classification profile deployed on all sensitive schemas with auto_tag: true; federated SSO enforced for all human users; key pair/PAT enforced for programmatic users; Dynamic Data Masking on IDENTIFIER columns; Trust Center Security Essentials enabled with High-severity findings remediated; structured IR plan documented covering AI-specific threats; model registry with versioning and tagging; DSAR/RTBF procedures documented</td></tr>
+<tr><td><strong>3 — Optimized</strong></td><td>Continuous classify-tag-protect automation across all schemas with scheduled re-evaluation; Tri-Secret Secure (BYOK) enabled for highest-sensitivity data; private connectivity enforced for all AI agent workloads; CORTEX_USER grants limited to approved roles with monitored usage; EU AI Act risk tier classification completed and mapped to Snowflake controls; ISO/IEC 42001 alignment documented; NIST AI RMF Map/Measure/Manage/Govern functions operationalized; DSAR and RTBF workflows automated and tested; Client Redirect configured with tested RTO of seconds; Account Replication verified to include all governance objects</td></tr>
+</tbody></table>
 
 ## Assessment Checklist
 
