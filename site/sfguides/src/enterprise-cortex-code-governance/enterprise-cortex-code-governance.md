@@ -40,7 +40,7 @@ CoCo Control Hub provides all of this in a single Streamlit app — no external 
 - How TTL-based locking prevents concurrency issues in credit rebalancing
 
 ### Source Code
-**GitHub:** https://github.com/sfc-gh-rchandrasekaran/snowbox-rchandrasekaran/tree/main/streamlit-apps/cortex-code-credit-manager
+**GitHub (Snowflake-Labs):** https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/enterprise-cortex-code-governance/assets/code
 
 <!-- ------------------------ -->
 ## Architecture
@@ -95,8 +95,11 @@ Duration: 10
 ### Step 1: Clone and Configure
 
 ```bash
-git clone https://github.com/sfc-gh-rchandrasekaran/snowbox-rchandrasekaran.git
-cd snowbox-rchandrasekaran/streamlit-apps/cortex-code-credit-manager
+# Download the source files from the Snowflake-Labs sfquickstarts repo:
+# https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/enterprise-cortex-code-governance/assets/code
+# Or clone the full sfquickstarts repo and navigate to the assets/code folder:
+git clone https://github.com/Snowflake-Labs/sfquickstarts.git
+cd sfquickstarts/site/sfguides/src/enterprise-cortex-code-governance/assets/code
 ```
 
 Edit `config.yaml` with your database and schema:
@@ -247,6 +250,7 @@ The governance-as-code approach used in this app is reusable beyond Cortex Code.
 
 ### Resources
 
-- **Source Code:** https://github.com/sfc-gh-rchandrasekaran/snowbox-rchandrasekaran/tree/main/streamlit-apps/cortex-code-credit-manager
+- **Source Code (Snowflake-Labs):** https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/enterprise-cortex-code-governance/assets/code
 - **Cortex Code Docs:** https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code
 - **Streamlit in Snowflake:** https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit
+
