@@ -15,8 +15,6 @@ Snowflake's Git integration lets you create workspaces backed by a Git repositor
 
 This guide walks through configuring OAuth2 between Snowflake and GitLab and creating your first OAuth-backed Git workspace.
 
-> **Important:** For **GitHub**, prefer the [Snowflake GitHub App](https://docs.snowflake.com/en/developer-guide/git/git-setting-up-public) — it is simpler than registering an OAuth application yourself.
-
 ### Prerequisites
 - A Snowflake account with the `ACCOUNTADMIN` role (or a role with the `CREATE INTEGRATION` privilege).
 - An administrator account on GitLab (or a user permitted to create applications in your GitLab group).
