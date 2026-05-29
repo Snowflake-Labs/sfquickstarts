@@ -128,9 +128,9 @@ Tell the assistant exactly what you want, including how the data infrastructure 
 > SQL Server database using the `tastybytesdb` connection registered
 > already in `scai` to extract my SQL code and migrate the data from my
 > tables. Make sure to setup data migration infrastructure locally and
-> also do not do ETL stabilization. When the data is migrated, do not
-> validate data of the tables, skip to the deploy/test/fix loop for SQL
-> functions, views, and stored procedures.
+> also do not do ETL stabilization. When the tables are deployed and
+> their data is migrated, do not validate their data, 
+> skip to deployment and validation of the views, functions, and procedures.
 > ```
 
 This prompt does four important things in one shot:
