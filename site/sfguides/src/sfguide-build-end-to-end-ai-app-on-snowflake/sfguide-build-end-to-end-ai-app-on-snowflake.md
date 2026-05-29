@@ -346,13 +346,17 @@ The agent returns results for only CA, OR, and WA — the Row Access Policy filt
 <!-- ------------------------ -->
 ## Streamlit Dashboard
 
+> **Prerequisites:** The dbt models must be built first (previous section). The dashboard queries `DBT_ANALYTICS` and `DBT_STAGING` tables.
+
 **Prompt CoCo:**
 
 > *"Deploy the Streamlit dashboard to Snowflake"*
 
-CoCo runs `snow streamlit deploy` from the `streamlit-dashboard/` directory.
+CoCo runs `snow streamlit deploy` from the `streamlit-dashboard/` directory. Once deployed, open the app URL in Snowsight to explore:
 
-Open in Snowsight to see the data pipeline in action — staging ingestion, Gen2 MERGE to production, pipeline health, and product analytics.
+- **Summary** — Revenue KPIs, order trends, customer counts
+- **Customer & Product Analytics** — Lifetime value segments, product performance
+- **Pipeline Health** — Dynamic Tables refresh status, data freshness monitoring
 
 <!-- ------------------------ -->
 ## Agent Evaluation
@@ -363,15 +367,16 @@ The evaluation dataset (7 questions + ground truth) was created by `setup.sql`. 
 
 1. Switch to the **ACCOUNTADMIN** role in Snowsight (top-left role selector)
 2. Navigate to **AI and ML > Agents > BUSINESS_INSIGHTS_AGENT > Evaluations** tab
-3. Click **Use existing dataset**
-4. Name it (e.g. `hol-eval-run-1`)
-5. Set **New dataset location**: Database = `DASH_AUTOMATED_INTELLIGENCE_DB`, Schema = `SEMANTIC`
-6. Set **Dataset name**: `hol_eval_dataset`
-7. Select source table: `AGENT_EVALUATION_DATA`
-8. Under **Define metrics**, confirm **Input query** = `INPUT_QUERY`
-9. Toggle on **Answer Correctness**, set **Expected answer** = `GROUND_TRUTH`
-10. Toggle on **Logical Consistency**
-11. Click **Create** — evaluation starts automatically (~3 min)
+3. Click **New evaluation run**, name it (e.g. `hol-eval-run-1`), click **Next**
+4. Select **Create new dataset from table**
+5. Under **Source table**, set Database and schema to `DASH_AUTOMATED_INTELLIGENCE_DB.SEMANTIC`, then select `AGENT_EVALUATION_DATA`
+6. Under **New dataset location**, keep `DASH_AUTOMATED_INTELLIGENCE_DB.SEMANTIC`
+7. Set **Dataset name**: `hol_eval_dataset`
+8. Click **Next**
+9. Under **Define metrics**, confirm **Input query** = `INPUT_QUERY`
+10. Toggle on **Answer Correctness**, set **Expected answer** = `GROUND_TRUTH`
+11. Toggle on **Logical Consistency**
+12. Click **Create** — evaluation starts automatically (~3 min)
 
 ### Interpret Results
 
