@@ -190,6 +190,63 @@ WHERE extracted:issue_type::VARCHAR != 'none'
 LIMIT 20;
 ```
 
+### When to Use AI_COMPLETE Instead
+
+AI_EXTRACT is optimized for structured field extraction — it handles schema definition, output parsing, and confidence scoring automatically. However, some text extraction tasks require **reasoning**, **multi-step logic**, or **contextual interpretation** that go beyond direct field extraction. In these cases, [AI_COMPLETE](https://docs.snowflake.com/en/sql-reference/functions/ai_complete) gives you full control over the prompt and model behavior.
+
+**AI_COMPLETE enables:**
+- **Reasoning over context** — e.g., inferring root cause from multiple complaint signals
+- **Conditional logic** — e.g., "If the issue is food-related AND the customer mentions illness, escalate to urgent"
+- **Summarization with judgment** — e.g., generating a one-sentence action item for each review
+- **Custom output formats** — e.g., generating a severity score (1–5) with justification text
+
+```sql
+-- Example: AI_COMPLETE for reasoning-based extraction
+SELECT
+    REVIEW,
+    AI_COMPLETE(
+        'claude-sonnet-4-6',
+        CONCAT(
+            'Analyze this food truck review and determine:\n',
+            '1. The root cause of any dissatisfaction\n',
+            '2. A priority score (1-5) based on severity and business impact\n',
+            '3. A recommended next action for the operations team\n\n',
+            'Review: ', REVIEW
+        ),
+        {},
+        {
+            'type': 'json',
+            'schema': {
+                'type': 'object',
+                'properties': {
+                    'root_cause': {'type': 'string'},
+                    'priority_score': {'type': 'integer'},
+                    'recommended_action': {'type': 'string'},
+                    'reasoning': {'type': 'string'}
+                },
+                'required': ['root_cause', 'priority_score', 'recommended_action', 'reasoning']
+            }
+        }
+    ) AS analysis
+FROM TRUCK_REVIEWS_V
+LIMIT 5;
+```
+
+### Decision Flowchart: AI_EXTRACT vs AI_COMPLETE
+
+Use the following flowchart to determine which function to use for your text extraction task:
+
+![AI_EXTRACT vs AI_COMPLETE Decision Flowchart](assets/ai_extract_vs_ai_complete_flowchart.png)
+
+| Aspect | AI_EXTRACT | AI_COMPLETE |
+|--------|-----------|-------------|
+| Purpose | Extract predefined fields | Reasoning, generation, complex extraction |
+| Input definition | Schema via `responseFormat` | Free-form prompt instructions |
+| Output format | Automatically structured JSON | JSON via `structured_output` option |
+| Confidence scores | Available with `scores => TRUE` | Not built-in (can be prompted manually) |
+| Model selection | Automatic (arctic-extract) | Explicitly specified |
+| Best use cases | Names, dates, categories — clear values | Judgment, reasoning, summarization, action generation |
+
 <!-- ------------------------ -->
 ## Image Extraction with AI_EXTRACT
 
@@ -449,7 +506,7 @@ WHERE extracted_data:urgency::VARCHAR = 'high'
 <!-- ------------------------ -->
 ## AI Function Studio: Create
 
-In this phase, you will use [Cortex AI Function Studio](https://docs.snowflake.com/en/LIMITEDACCESS/snowflake-cortex/cortex-ai-function-studio) to create a reusable custom AI function that encapsulates the text extraction logic from earlier. This allows you to call extraction as a simple SQL function across any table without rewriting prompts.
+In this phase, you will use [Cortex AI Function Studio](https://docs.snowflake.com/en/LIMITEDACCESS/snowflake-cortex/cortex-ai-function-studio), Public Preview, to create a reusable custom AI function that encapsulates the text extraction logic from earlier. This allows you to call extraction as a simple SQL function across any table without rewriting prompts.
 
 AI Function Studio provides a managed workflow to create, evaluate, and optimize custom AI functions. The function you create here uses AI_COMPLETE under the hood but is deployed as a standard SQL UDF that can be called from any query.
 
