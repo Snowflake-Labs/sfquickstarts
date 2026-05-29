@@ -471,10 +471,10 @@ def _render_mapping(session):
     for i, tier_name in enumerate(tiers):
         with tier_cols[i % len(tier_cols)]:
             if st.button(tier_name, key=f"preset_{tier_name}",
-                         help=f"Select all models assigned to {tier_name}."):
-                st.session_state["_model_preset"] = [
-                    m for m, m_tiers in assignments.items() if tier_name in m_tiers
-                ]
+                         help=f"Add all {tier_name} models to current selection."):
+                tier_models = [m for m, m_tiers in assignments.items() if tier_name in m_tiers]
+                current = st.session_state.get("_model_preset", role_models if role_models else [])
+                st.session_state["_model_preset"] = sorted(set(current) | set(tier_models))
                 st.rerun()
     with tier_cols[len(tiers) % len(tier_cols)]:
         if st.button("All models", key="btn_all",
