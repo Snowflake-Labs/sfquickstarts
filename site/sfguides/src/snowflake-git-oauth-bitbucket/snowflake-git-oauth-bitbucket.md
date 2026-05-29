@@ -15,8 +15,6 @@ Snowflake's Git integration lets you create workspaces backed by a Git repositor
 
 This guide walks through configuring OAuth2 between Snowflake and Bitbucket Cloud and creating your first OAuth-backed Git workspace.
 
-> **Important:** Bitbucket requires a specific username (`x-token-auth`) on the Snowflake side. Skipping this is the most common cause of failed Git operations after a successful sign-in — the SQL block in this guide includes it.
-
 ### Prerequisites
 - A Snowflake account with the `ACCOUNTADMIN` role (or a role with the `CREATE INTEGRATION` privilege).
 - A Bitbucket Cloud workspace where you can create OAuth consumers (workspace admin permission).
