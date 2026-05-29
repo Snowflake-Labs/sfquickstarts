@@ -32,7 +32,7 @@ Regulatory pressure adds urgency. The EU AI Act defines four risk tiers, with si
 
 ### Design Principles
 
-<table><colgroup><col style="width:30%"><col style="width:70%"></colgroup><thead><tr><th>Principle</th><th>Description</th></tr></thead><tbody>
+<table><thead><tr><th width="30%">Principle</th><th width="70%">Description</th></tr></thead><tbody>
 <tr><td>Defense-in-Depth</td><td>Layer security controls from the network perimeter inward: Network Policies → Authentication Policies → Identity & Access Management → RBAC → Classification & Tagging → Data Quality Policies → Column and Row Level Policies, with HA/DR, Auditing/Monitoring, and Encryption as cross-cutting foundations, Data Movement Policies</td></tr>
 <tr><td>Shift-Left Governance</td><td>Classify and protect sensitive data before it enters any ML pipeline stage; never allow unclassified data to reach training, fine-tuning, or inference workloads</td></tr>
 <tr><td>Policy Follows Data</td><td>Tags and associated protection policies travel with the data — automatically applied on classification and preserved through all data movement and sharing operations</td></tr>
@@ -59,7 +59,7 @@ AI and data governance workloads extend the Security & Governance pillar in two 
 
 #### Recommendations
 
-<table><colgroup><col style="width:25%"><col style="width:55%"><col style="width:20%"></colgroup><thead><tr><th>Recommendation</th><th>Description</th><th>Risk Level</th></tr></thead><tbody>
+<table><thead><tr><th width="30%">Recommendation</th><th width="40%">Description</th><th width="30%">Risk Level</th></tr></thead><tbody>
 <tr><td>Deploy Snowflake Horizon Defense-in-Depth</td><td>Implement all seven security layers in order. For inbound: configure network policies restricting allowed IP ranges and/or enable private connectivity (AWS PrivateLink, Azure Private Link, GCP Private Service Connect for Business Critical Edition). For outbound: control egress to external models (Azure OpenAI, Amazon Bedrock) via External Access Integrations. Connections must be Protected, Encrypted, Resilient, and Authenticated.</td><td>High</td></tr>
 <tr><td>Enforce Authentication Decision Tree</td><td>Require SAML/OAuth/MFA for all human users; enforce OAuth or Key Pair authentication for programmatic service accounts; Deprecate any password only authentication - use PAT with network policies as fallback; restrict Snowflake MFA to break-glass scenarios only. Enforce client type via Authentication Policies. Use SCIM for automated user/role lifecycle management. Deploy Workload Identity Federation (WIF) for AI pipeline service identities.</td><td>High</td></tr>
 <tr><td>Enable Trust Center Scanners</td><td>Activate the free Security Essentials scanner package to detect MFA non-compliance and users without network policies. Enable the CIS Snowflake Foundations Benchmark scanner for expanded best-practice coverage. Enable the Threat Intelligence scanner to monitor for risky users. Trust Center provides cross-cloud security monitoring in a single pane to lower TCO and minimize escalation risk.</td><td>High</td></tr>
@@ -106,7 +106,7 @@ AI governance operations require MLOps lifecycle management, continuous automate
 
 #### Recommendations
 
-<table><colgroup><col style="width:25%"><col style="width:55%"><col style="width:20%"></colgroup><thead><tr><th>Recommendation</th><th>Description</th><th>Risk Level</th></tr></thead><tbody>
+<table><thead><tr><th width="30%">Recommendation</th><th width="40%">Description</th><th width="30%">Risk Level</th></tr></thead><tbody>
 <tr><td>Schedule Auto-Classification Re-evaluation</td><td>Configure CLASSIFICATION_PROFILE with max_validity_days: 30 on all sensitive schemas. This ensures that new tables are automatically classified within one day (min_age_for_classification: 0), and previously classified tables are re-evaluated monthly. Monitor classification results via SQL or the Snowsight governance UI.</td><td>High</td></tr>
 <tr><td>Enable Account Usage Audit Views</td><td>Activate and query LOGIN_HISTORY for failed logins and unusual session activity; QUERY_HISTORY for sensitive data access patterns; ACCESS_HISTORY for column-level access tracking against tagged sensitive columns; OBJECT_DEPENDENCIES for tracking model registry and data pipeline lineage. Use ACCOUNT_USAGE views rather than INFORMATION_SCHEMA for complete historical retention.</td><td>High</td></tr>
 <tr><td>Implement NIST 6-Phase Incident Response</td><td>Document and test: (1) Prepare — assign IR roles, establish runbooks for session/user/data/account containment; (2) Identify — use LOGIN_HISTORY and ACCESS_HISTORY to detect anomalous access; (3) Contain — suspend sessions/users, modify network policies, disable model endpoints as appropriate to the scope; (4) Eradicate — remove unauthorized access grants, retire compromised models; (5) Recover — validate that governance controls are reinstated; (6) Lesson Learned — update runbooks and classification profiles.</td><td>High</td></tr>
@@ -144,7 +144,7 @@ Governance controls must replicate alongside data — an account failover that l
 
 #### Recommendations
 
-<table><colgroup><col style="width:25%"><col style="width:55%"><col style="width:20%"></colgroup><thead><tr><th>Recommendation</th><th>Description</th><th>Risk Level</th></tr></thead><tbody>
+<table><thead><tr><th width="30%">Recommendation</th><th width="40%">Description</th><th width="30%">Risk Level</th></tr></thead><tbody>
 <tr><td>Configure Account Replication Including Governance Objects</td><td>Enable Account Replication to include: network policies, SAML configuration, roles and users, and SCIM configuration. This ensures that the DR account immediately enforces the same security posture as the primary account without requiring manual policy reconstruction post-failover.</td><td>High</td></tr>
 <tr><td>Implement Client Redirect for Near-Zero RTO</td><td>Configure Client Redirect to point Snowflake driver and connector URLs to the current primary account. During failover, Client Redirect switches the active account in seconds — compared to hours or days required for manual DNS and application reconfiguration. This is critical for governance-sensitive workloads where prolonged access without enforced policies is unacceptable.</td><td>High</td></tr>
 <tr><td>Design DSAR/RTBF Workflows with Time Travel and Fail-safe Awareness</td><td>Time Travel is configurable from 0 to 90 days (Enterprise Edition); Fail-safe provides an additional 7 days non-configurable. Data that must be deleted to satisfy RTBF requests remains recoverable during these windows. Crypto Deletion of the encryption key is the recommended RTBF mechanism for immediate effective deletion — physical deletion completes when Time Travel and Fail-safe windows expire. Document this time frame in DSAR procedures.</td><td>Medium</td></tr>
@@ -175,7 +175,7 @@ AI workloads introduce inference latency, throughput, and compute sizing conside
 
 #### Recommendations
 
-<table><colgroup><col style="width:25%"><col style="width:55%"><col style="width:20%"></colgroup><thead><tr><th>Recommendation</th><th>Description</th><th>Risk Level</th></tr></thead><tbody>
+<table><thead><tr><th width="30%">Recommendation</th><th width="40%">Description</th><th width="30%">Risk Level</th></tr></thead><tbody>
 <tr><td>Dedicate Warehouses for ML Inference vs. Training</td><td>Inference requires low-latency, consistent compute; training requires high-throughput burst compute. Separate these into dedicated virtual warehouses to prevent resource contention. Tag warehouses by workload type to enable cost attribution and governance of compute resources.</td><td>Medium</td></tr>
 <tr><td>Optimize Classification Pipeline Performance</td><td>Use the serverless CLASSIFICATION_PROFILE rather than running SYSTEM$CLASSIFY manually in a large warehouse. Schedule classification during off-peak hours using Tasks. Avoid triggering re-classification on every table access — use the max_validity_days parameter to control re-evaluation frequency.</td><td>Medium</td></tr>
 <tr><td>Use Cortex Analyst's SELECT-Only Query Path for Performant AI Data Access</td><td>Cortex Analyst generates SELECT-only SQL queries and automatically applies the querying user's masking policies, Row Access Policies, and tokenization — without requiring any special query construction. This provides both performance predictability (no ad-hoc DML) and security enforcement (governance controls applied transparently).</td><td>Low</td></tr>
@@ -207,7 +207,7 @@ AI governance costs include classification compute, masking policy evaluation, L
 
 #### Recommendations
 
-<table><colgroup><col style="width:25%"><col style="width:55%"><col style="width:20%"></colgroup><thead><tr><th>Recommendation</th><th>Description</th><th>Risk Level</th></tr></thead><tbody>
+<table><thead><tr><th width="30%">Recommendation</th><th width="40%">Description</th><th width="30%">Risk Level</th></tr></thead><tbody>
 <tr><td>Use Serverless Auto-Classification</td><td>CLASSIFICATION_PROFILE uses serverless compute — no virtual warehouse is required. This eliminates warehouse idle costs for governance operations and allows classification to run on a schedule without pre-provisioning compute.</td><td>Low</td></tr>
 <tr><td>Control Cortex LLM Access to Prevent Runaway Spend</td><td>Grant CORTEX_USER, CORTEX_EMBED_USER, and CORTEX_AGENT_USER roles only to roles that have a documented, approved AI use case. Use the account-level LLM allowlist to restrict which models are accessible. Monitor Cortex AI token usage via QUERY_HISTORY. Uncontrolled CORTEX_USER grants create unpredictable AI inference spend — a cost harvesting attack vector identified in the ML pipeline threat model.</td><td>Medium</td></tr>
 <tr><td>Start with Trust Center Security Essentials Before Purchasing Premium Packages</td><td>Trust Center Security Essentials is free and covers MFA compliance and network policy usage — the two most common High-severity findings in Snowflake accounts. Enable Security Essentials first, remediate all findings, then evaluate whether CIS Benchmarks or Threat Intelligence scanner packages provide incremental value for your risk profile.</td><td>Low</td></tr>
@@ -229,7 +229,7 @@ AI governance costs include classification compute, masking policy evaluation, L
 
 The AI and data governance workload follows a seven-stage ML pipeline lifecycle. Each stage has a distinct threat surface and requires stage-appropriate governance controls.
 
-<table><colgroup><col style="width:20%"><col style="width:55%"><col style="width:25%"></colgroup><thead><tr><th>Phase</th><th>Key Activities</th><th>Pillar Intersections</th></tr></thead><tbody>
+<table><thead><tr><th width="30%">Phase</th><th width="40%">Key Activities</th><th width="30%">Pillar Intersections</th></tr></thead><tbody>
 <tr><td>Source Data Sets</td><td>Classify all training data using auto-classification profile before ingestion. Redact sensitive columns. Use Synthetic Data for training and fine-tuning to avoid exposing PII. Control who and what can update training data via RBAC and network policies.</td><td>Security &amp; Governance, Operational Excellence</td></tr>
 <tr><td>Enrichment</td><td>Validate lineage for all enrichment feeds (Marketplace, third-party datasets). Run data quality checks using Data Metric Functions. Verify no new sensitive data has been introduced without classification.</td><td>Security &amp; Governance, Reliability</td></tr>
 <tr><td>Model Development</td><td>Apply SecDevOps practices; scan code for vulnerabilities. Restrict who can push to the Model Registry via RBAC. Use synthetic data for training and fine-tuning. Apply Differential Privacy where available.</td><td>Security &amp; Governance, Operational Excellence</td></tr>
@@ -298,15 +298,15 @@ The AI and data governance workload follows a seven-stage ML pipeline lifecycle.
 
 ## References & Resources
 
-| Resource | Type | Link |
-|----------|------|------|
-| Snowflake Horizon Trust Center | Documentation | https://docs.snowflake.com/en/user-guide/trust-center/overview |
-| Auto-Classification Profile | Documentation | https://docs.snowflake.com/en/user-guide/classify-auto |
-| Dynamic Data Masking | Documentation | https://docs.snowflake.com/en/user-guide/security-column-ddm |
-| Row Access Policies | Documentation | https://docs.snowflake.com/en/user-guide/security-row-intro |
-| Tri-Secret Secure | Documentation | https://docs.snowflake.com/en/user-guide/security-encryption-tss |
-| Account Replication | Documentation | https://docs.snowflake.com/en/user-guide/account-replication-config |
-| Snowflake Intelligence (Cortex Agents) | Documentation | https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents |
-| NIST AI Risk Management Framework | External | https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.100-1.pdf |
-| EU AI Act | External | https://www.europarl.europa.eu/doceo/document/TA-9-2024-0138_EN.html |
-| ISO/IEC 42001 | External | https://www.iso.org/standard/81230.html |
+<table><thead><tr><th width="25%">Resource</th><th width="25%">Type</th><th width="50%">Link</th></tr></thead><tbody>
+<tr><td>Snowflake Horizon Trust Center</td><td>Documentation</td><td>https://docs.snowflake.com/en/user-guide/trust-center/overview</td></tr>
+<tr><td>Auto-Classification Profile</td><td>Documentation</td><td>https://docs.snowflake.com/en/user-guide/classify-auto</td></tr>
+<tr><td>Dynamic Data Masking</td><td>Documentation</td><td>https://docs.snowflake.com/en/user-guide/security-column-ddm</td></tr>
+<tr><td>Row Access Policies</td><td>Documentation</td><td>https://docs.snowflake.com/en/user-guide/security-row-intro</td></tr>
+<tr><td>Tri-Secret Secure</td><td>Documentation</td><td>https://docs.snowflake.com/en/user-guide/security-encryption-tss</td></tr>
+<tr><td>Account Replication</td><td>Documentation</td><td>https://docs.snowflake.com/en/user-guide/account-replication-config</td></tr>
+<tr><td>Snowflake Intelligence (Cortex Agents)</td><td>Documentation</td><td>https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents</td></tr>
+<tr><td>NIST AI Risk Management Framework</td><td>External</td><td>https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.100-1.pdf</td></tr>
+<tr><td>EU AI Act</td><td>External</td><td>https://www.europarl.europa.eu/doceo/document/TA-9-2024-0138_EN.html</td></tr>
+<tr><td>ISO/IEC 42001</td><td>External</td><td>https://www.iso.org/standard/81230.html</td></tr>
+</tbody></table>
