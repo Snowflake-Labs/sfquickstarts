@@ -59,7 +59,6 @@ DROP DATABASE IF EXISTS HRZN_DB;
 --              CUSTOMER_OPTIN_POLICY, CUSTOMER_STATE_RESTRICTIONS,
 --              AGGREGATION_POLICY, PROJECTION_POLICY
 --   Tags:      DATA_CLASSIFICATION (with propagation)
---   Classifiers: CREDITCARD
 
 -- ============================================================================
 -- STEP 3: Drop custom roles
