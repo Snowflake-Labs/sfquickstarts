@@ -70,7 +70,7 @@ A Snowflake Notebook (`inference_time_distillation_kl_clipping.ipynb`) shipped w
 
 The notebook is included as an asset of this guide:
 
-[Download `inference_time_distillation_kl_clipping.ipynb`](https://github.com/Snowflake-Labs/sfguides/blob/master/site/sfguides/src/inference-time-distillation-kl-clipping/inference_time_distillation_kl_clipping.ipynb)
+[Download `inference_time_distillation_kl_clipping.ipynb`](https://github.com/Snowflake-Labs/sfguides/blob/master/site/sfguides/src/inference-time-distillation-kl-clipping/assets/inference_time_distillation_kl_clipping.ipynb)
 
 <!-- ------------------------ -->
 ## Setup the Notebook
