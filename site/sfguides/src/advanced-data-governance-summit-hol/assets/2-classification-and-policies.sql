@@ -1,6 +1,6 @@
 
 /***************************************************************************************************
- Advanced Data Governance: AI-Powered Sensitive Data Discovery and Protection at Scale
+ Advanced Data Governance: Sensitive Data Discovery and Protection at Scale
  Snowflake Summit Hands-on Lab
 
  Script:      Step 2 — Know and Protect Your Data (Data Governor Persona)
@@ -24,7 +24,7 @@ Overview — What This Step Covers
   1. View unprotected PII as a Data User (no masking yet)
   2. Create an enterprise DATA_CLASSIFICATION tag with propagation
   3. Create a Classification Profile with tag_map (BYOT pattern)
-  4. Run AI classification on the CUSTOMER table
+  4. Run classification on the CUSTOMER table
   5. Create a custom classifier for credit card formats
   6. Create multi-type tag-based masking policies
   7. Create a consent-based row access policy (opt-in)
@@ -152,23 +152,23 @@ CREATE OR REPLACE SNOWFLAKE.DATA_PRIVACY.CLASSIFICATION_PROFILE
 
 
 /*----------------------------------------------------------------------------------
-Step 2.4 — Run AI Classification on the CUSTOMER Table
+Step 2.4 — Run Classification on the CUSTOMER Table
 
-Apply the classification profile to the database, then run SYSTEM$CLASSIFY to
-scan the CUSTOMER table and tag columns automatically.
+Run SYSTEM$CLASSIFY manually on the CUSTOMER table to test the profile,
+then attach the profile at the database level to enable auto-classification.
 ----------------------------------------------------------------------------------*/
 
 USE ROLE HRZN_DATA_GOVERNOR;
 
--- Attach classification profile at the database level
-ALTER DATABASE HRZN_DB
-    SET CLASSIFICATION_PROFILE = 'HRZN_DB.HRZN_SCH.HRZN_STANDARD_CLASSIFICATION_PROFILE';
-
--- Run AI classification
+-- Run classification manually on a single table to test the profile.
 CALL SYSTEM$CLASSIFY(
     'HRZN_DB.HRZN_SCH.CUSTOMER',
     'HRZN_DB.HRZN_SCH.HRZN_STANDARD_CLASSIFICATION_PROFILE'
 );
+
+-- Enable auto-classification by attaching classification profile at the database level.
+ALTER DATABASE HRZN_DB
+    SET CLASSIFICATION_PROFILE = 'HRZN_DB.HRZN_SCH.HRZN_STANDARD_CLASSIFICATION_PROFILE';
 
 -- View all tags applied (system tags + our custom DATA_CLASSIFICATION tag)
 SELECT TAG_DATABASE, TAG_SCHEMA, OBJECT_NAME, COLUMN_NAME, TAG_NAME, TAG_VALUE

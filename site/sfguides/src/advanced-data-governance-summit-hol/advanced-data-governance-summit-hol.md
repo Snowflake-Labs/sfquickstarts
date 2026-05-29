@@ -76,7 +76,7 @@ You'll work through a step-by-step guide using a synthetic customer dataset cont
 
 **Script:** [0-lab-setup.sql](https://github.com/sfc-gh-ankgupta/sfguide-advanced-data-governance-summit-hol/blob/main/0-lab-setup.sql)
 
-1. In Snowsight, create a new SQL worksheet named `0_lab_setup`
+1. In Snowsight, navigate to **Projects > Workspaces**, create a new SQL worksheet named `0_lab_setup`
 2. Copy the contents of `0-lab-setup.sql` into your worksheet
 3. Run all statements as `ACCOUNTADMIN`
 
@@ -147,9 +147,9 @@ After completing this step you will observe that the CUSTOMER table exposes 15 c
 
 **Script:** [2-classification-and-policies.sql](https://github.com/sfc-gh-ankgupta/sfguide-advanced-data-governance-summit-hol/blob/main/hol-lab/2-classification-and-policies.sql) | Role: `HRZN_DATA_GOVERNOR`
 
-### AI-Powered Classification with the BYOT Pattern
+### Classification with the BYOT Pattern
 
-The **BYOT (Bring Your Own Tags)** pattern maps AI-detected categories to your organization's custom taxonomy. Create the enterprise DATA_CLASSIFICATION tag with propagation enabled:
+The **BYOT (Bring Your Own Tags)** pattern maps detected categories to your organization's custom taxonomy. Create the enterprise DATA_CLASSIFICATION tag with propagation enabled:
 
 ```sql
 CREATE OR REPLACE TAG HRZN_DB.TAG_SCHEMA.DATA_CLASSIFICATION
@@ -159,7 +159,7 @@ CREATE OR REPLACE TAG HRZN_DB.TAG_SCHEMA.DATA_CLASSIFICATION
 
 > **PROPAGATE = ON_DEPENDENCY_AND_DATA_MOVEMENT** automatically flows this tag to tables created via CTAS, INSERT...SELECT, and views — downstream tables inherit governance automatically.
 
-Create a Classification Profile mapping AI-detected categories to your custom tag values:
+Create a Classification Profile mapping detected categories to your custom tag values:
 
 ```sql
 CREATE SNOWFLAKE.DATA_PRIVACY.CLASSIFICATION_PROFILE
