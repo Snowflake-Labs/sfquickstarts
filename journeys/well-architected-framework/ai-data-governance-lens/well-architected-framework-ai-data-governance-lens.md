@@ -54,7 +54,7 @@ AI and data governance workloads extend the Security & Governance pillar in two 
 - Deploy all seven layers of Snowflake's defense-in-depth in order: Network Policies → Authentication Policies → Identity & Access Management → RBAC → Classification & Tagging → Data Quality Policies → Column and Row Level Policies; supplement with HA/DR, Auditing/Monitoring, and Encryption as cross-cutting foundations
 - Authenticate based on identity type: Human users → Federated SSO (SAML/OAuth); Programmatic service users → Key Pair with Network Policies; Fallback programmatic → PAT with Network Policies; Break-glass → Snowflake MFA; AI pipeline workloads → Workload Identity Federation (WIF)
 - Use centralized user management system via SCIM to automatically provision and de-provision users and roles
-- Classify and tag every sensitive data asset before it enters any ML pipeline; use SNOWFLAKE.DATA_PRIVACY.CUSTOM_CLASSIFIER for domain-specific categories (employee IDs, industry codes such as ICD-10)
+- Classify and tag every sensitive data asset before it enters any ML pipeline; use CUSTOM_CLASSIFIER for domain-specific categories (employee IDs, industry codes such as ICD-10)
 - Apply stage-appropriate controls at every one of the seven ML pipeline stages based on its documented attack surface
 
 #### Recommendations
@@ -63,7 +63,7 @@ AI and data governance workloads extend the Security & Governance pillar in two 
 <tr><td>Deploy Snowflake Horizon Defense-in-Depth</td><td>Implement all seven security layers in order. For inbound: configure network policies restricting allowed IP ranges and/or enable private connectivity (AWS PrivateLink, Azure Private Link, GCP Private Service Connect for Business Critical Edition). For outbound: control egress to external models (Azure OpenAI, Amazon Bedrock) via External Access Integrations. Connections must be Protected, Encrypted, Resilient, and Authenticated.</td><td>High</td></tr>
 <tr><td>Enforce Authentication Decision Tree</td><td>Require SAML/OAuth/MFA for all human users; enforce OAuth or Key Pair authentication for programmatic service accounts; Deprecate any password only authentication - use PAT with network policies as fallback; restrict Snowflake MFA to break-glass scenarios only. Enforce client type via Authentication Policies. Use SCIM for automated user/role lifecycle management. Deploy Workload Identity Federation (WIF) for AI pipeline service identities.</td><td>High</td></tr>
 <tr><td>Enable Trust Center Scanners</td><td>Activate the free Security Essentials scanner package to detect MFA non-compliance and users without network policies. Enable the CIS Snowflake Foundations Benchmark scanner for expanded best-practice coverage. Enable the Threat Intelligence scanner to monitor for risky users. Trust Center provides cross-cloud security monitoring in a single pane to lower TCO and minimize escalation risk.</td><td>High</td></tr>
-<tr><td>Deploy Auto-Classification Profile with auto_tag: true</td><td>Create a SNOWFLAKE.DATA_PRIVACY.CLASSIFICATION_PROFILE with auto_tag: true, maximum_classification_validity_days: 30, and minimum_object_age_for_classification_days: 0. Associate the profile with all schemas containing sensitive data. This serverless capability automatically detects, tags (PII, PCI, PHI), and protects sensitive columns without manual orchestration. Tags and associated policies travel with the data.</td><td>High</td></tr>
+<tr><td>Deploy Auto-Classification Profile with auto_tag: true</td><td>Create a CLASSIFICATION_PROFILE with auto_tag: true, max_validity_days: 30, and min_age_for_classification: 0. Associate the profile with all schemas containing sensitive data. This serverless capability automatically detects, tags (PII, PCI, PHI), and protects sensitive columns without manual orchestration. Tags and associated policies travel with the data.</td><td>High</td></tr>
 <tr><td>Apply Column-Level Security and Row Access Policies</td><td>Implement Dynamic Data Masking (DDM) on all columns classified as IDENTIFIER or QUASI_IDENTIFIER. Use Row Access Policies (RAPs) for attribute-based access control (ABAC) on sensitive datasets. Apply tag-based policies so that masking follows classification tags automatically.</td><td>High</td></tr>
 <tr><td>Enable Tri-Secret Secure (TSS/BYOK) on accounts with Highest-Sensitivity Data</td><td>For data requiring BYOK, configure Tri-Secret Secure using AWS KMS, Azure Key Vault, or GCP KMS. Snowflake's default encryption is AES-256 at rest with 30-day key rotation and TLS in transit — TSS adds a customer-managed encryption key as the third secret, so Snowflake cannot decrypt data without customer key participation.</td><td>High</td></tr>
 <tr><td>Protect the ML Pipeline at Every Stage</td><td>Source Data Sets: classify and tag before ingestion; redact sensitive columns; control who/what can update training data. Enrichment: validate lineage; detect data poisoning via quality policies. Model Development: apply SecDevOps practices; use synthetic data for training and fine-tuning to avoid PII exposure. Model Registry: log models with tagging and versioning; restrict USAGE and OWNERSHIP privileges. Model Deployment: enable Cortex Guard (Llama Guard) for input validation and output encoding. Auditing &amp; Monitoring: monitor for model poisoning, jailbreak attempts, and obsolete models. Update/Retire: retire models via Time Travel and crypto deletion.</td><td>High</td></tr>
@@ -84,7 +84,7 @@ AI and data governance workloads extend the Security & Governance pillar in two 
 - Are all seven layers of the Horizon defense-in-depth stack configured and validated?
 - Is federated SSO (SAML/OAuth) enforced for every human user, with no active password-only accounts?
 - Do you use secretless authentication for service users, or have a defined strategy for secret rotation if using key pair and PAT?
-- Is an auto-classification profile deployed on all sensitive schemas with auto_tag: true and a maximum_classification_validity_days threshold set?
+- Is an auto-classification profile deployed on all sensitive schemas with auto_tag: true and a max_validity_days threshold set?
 - Are all IDENTIFIER and QUASI_IDENTIFIER columns protected with Dynamic Data Masking or Row Access Policies?
 - Is Tri-Secret Secure enabled for data classified as requiring BYOK/customer-managed encryption?
 - Are Snowflake Intelligence agent sessions confirmed to operate within the inheriting user's RBAC perimeter?
@@ -107,7 +107,7 @@ AI governance operations require MLOps lifecycle management, continuous automate
 #### Recommendations
 
 <table><colgroup><col style="width:25%"><col style="width:55%"><col style="width:20%"></colgroup><thead><tr><th>Recommendation</th><th>Description</th><th>Risk Level</th></tr></thead><tbody>
-<tr><td>Schedule Auto-Classification Re-evaluation</td><td>Configure CLASSIFICATION_PROFILE with maximum_classification_validity_days: 30 on all sensitive schemas. This ensures that new tables are automatically classified within one day (minimum_object_age_for_classification_days: 0), and previously classified tables are re-evaluated monthly. Monitor classification results via SQL or the Snowsight governance UI.</td><td>High</td></tr>
+<tr><td>Schedule Auto-Classification Re-evaluation</td><td>Configure CLASSIFICATION_PROFILE with max_validity_days: 30 on all sensitive schemas. This ensures that new tables are automatically classified within one day (min_age_for_classification: 0), and previously classified tables are re-evaluated monthly. Monitor classification results via SQL or the Snowsight governance UI.</td><td>High</td></tr>
 <tr><td>Enable Account Usage Audit Views</td><td>Activate and query LOGIN_HISTORY for failed logins and unusual session activity; QUERY_HISTORY for sensitive data access patterns; ACCESS_HISTORY for column-level access tracking against tagged sensitive columns; OBJECT_DEPENDENCIES for tracking model registry and data pipeline lineage. Use ACCOUNT_USAGE views rather than INFORMATION_SCHEMA for complete historical retention.</td><td>High</td></tr>
 <tr><td>Implement NIST 6-Phase Incident Response</td><td>Document and test: (1) Prepare — assign IR roles, establish runbooks for session/user/data/account containment; (2) Identify — use LOGIN_HISTORY and ACCESS_HISTORY to detect anomalous access; (3) Contain — suspend sessions/users, modify network policies, disable model endpoints as appropriate to the scope; (4) Eradicate — remove unauthorized access grants, retire compromised models; (5) Recover — validate that governance controls are reinstated; (6) Lesson Learned — update runbooks and classification profiles.</td><td>High</td></tr>
 <tr><td>Establish Model Registry Governance</td><td>Log every model to the Model Registry with tagging (sensitivity level, data lineage, owner), versioning, and ML lineage tracking. Restrict USAGE to authorized roles and OWNERSHIP to designated model owners. Document retirement schedules. Monitor for obsolete models using OBJECT_DEPENDENCIES and ACCESS_HISTORY.</td><td>Medium</td></tr>
@@ -124,7 +124,7 @@ AI governance operations require MLOps lifecycle management, continuous automate
 
 #### Assessment Questions
 
-- Is the auto-classification profile configured with a maximum_classification_validity_days threshold and verified to be running on schedule?
+- Is the auto-classification profile configured with a max_validity_days threshold and verified to be running on schedule?
 - Are Account Usage audit views being queried for anomaly detection, and are alerts configured for sensitive column access?
 - Has a NIST-based incident response playbook been documented and tested for AI-specific threat scenarios?
 - Are model registry artifacts versioned, tagged, and traceable through ML lineage?
@@ -177,7 +177,7 @@ AI workloads introduce inference latency, throughput, and compute sizing conside
 
 <table><colgroup><col style="width:25%"><col style="width:55%"><col style="width:20%"></colgroup><thead><tr><th>Recommendation</th><th>Description</th><th>Risk Level</th></tr></thead><tbody>
 <tr><td>Dedicate Warehouses for ML Inference vs. Training</td><td>Inference requires low-latency, consistent compute; training requires high-throughput burst compute. Separate these into dedicated virtual warehouses to prevent resource contention. Tag warehouses by workload type to enable cost attribution and governance of compute resources.</td><td>Medium</td></tr>
-<tr><td>Optimize Classification Pipeline Performance</td><td>Use the serverless CLASSIFICATION_PROFILE rather than running SYSTEM$CLASSIFY manually in a large warehouse. Schedule classification during off-peak hours using Tasks. Avoid triggering re-classification on every table access — use the maximum_classification_validity_days parameter to control re-evaluation frequency.</td><td>Medium</td></tr>
+<tr><td>Optimize Classification Pipeline Performance</td><td>Use the serverless CLASSIFICATION_PROFILE rather than running SYSTEM$CLASSIFY manually in a large warehouse. Schedule classification during off-peak hours using Tasks. Avoid triggering re-classification on every table access — use the max_validity_days parameter to control re-evaluation frequency.</td><td>Medium</td></tr>
 <tr><td>Use Cortex Analyst's SELECT-Only Query Path for Performant AI Data Access</td><td>Cortex Analyst generates SELECT-only SQL queries and automatically applies the querying user's masking policies, Row Access Policies, and tokenization — without requiring any special query construction. This provides both performance predictability (no ad-hoc DML) and security enforcement (governance controls applied transparently).</td><td>Low</td></tr>
 <tr><td>Monitor AI Inference Latency and Data Quality Together</td><td>Use Data Metric Functions (DMFs) to continuously monitor training data quality metrics (freshness, null rates, row count anomalies) alongside inference latency. Configure the EXPECTATION clause to alert when data quality thresholds are breached — degraded input data quality directly impacts model output reliability.</td><td>Medium</td></tr>
 </tbody></table>
@@ -208,7 +208,7 @@ AI governance costs include classification compute, masking policy evaluation, L
 #### Recommendations
 
 <table><colgroup><col style="width:25%"><col style="width:55%"><col style="width:20%"></colgroup><thead><tr><th>Recommendation</th><th>Description</th><th>Risk Level</th></tr></thead><tbody>
-<tr><td>Use Serverless Auto-Classification</td><td>SNOWFLAKE.DATA_PRIVACY.CLASSIFICATION_PROFILE uses serverless compute — no virtual warehouse is required. This eliminates warehouse idle costs for governance operations and allows classification to run on a schedule without pre-provisioning compute.</td><td>Low</td></tr>
+<tr><td>Use Serverless Auto-Classification</td><td>CLASSIFICATION_PROFILE uses serverless compute — no virtual warehouse is required. This eliminates warehouse idle costs for governance operations and allows classification to run on a schedule without pre-provisioning compute.</td><td>Low</td></tr>
 <tr><td>Control Cortex LLM Access to Prevent Runaway Spend</td><td>Grant CORTEX_USER, CORTEX_EMBED_USER, and CORTEX_AGENT_USER roles only to roles that have a documented, approved AI use case. Use the account-level LLM allowlist to restrict which models are accessible. Monitor Cortex AI token usage via QUERY_HISTORY. Uncontrolled CORTEX_USER grants create unpredictable AI inference spend — a cost harvesting attack vector identified in the ML pipeline threat model.</td><td>Medium</td></tr>
 <tr><td>Start with Trust Center Security Essentials Before Purchasing Premium Packages</td><td>Trust Center Security Essentials is free and covers MFA compliance and network policy usage — the two most common High-severity findings in Snowflake accounts. Enable Security Essentials first, remediate all findings, then evaluate whether CIS Benchmarks or Threat Intelligence scanner packages provide incremental value for your risk profile.</td><td>Low</td></tr>
 <tr><td>Set Data Retention Periods Aligned with RTBF Obligations</td><td>Configure TIME_TRAVEL retention to the minimum period required for operational needs. For data with RTBF obligations, use Crypto Deletion to satisfy immediate deletion requirements rather than relying on short Time Travel windows. Avoid retaining data beyond regulatory requirements — storage for data that should have been deleted is both a cost and a compliance risk.</td><td>Low</td></tr>
@@ -259,7 +259,7 @@ The AI and data governance workload follows a seven-stage ML pipeline lifecycle.
 - SCIM configured for automated user and role provisioning/de-provisioning
 - Workload Identity Federation (WIF) deployed for AI pipeline service identities
 - Trust Center Security Essentials enabled; all High-severity findings remediated
-- SNOWFLAKE.DATA_PRIVACY.CLASSIFICATION_PROFILE deployed with auto_tag: true on all sensitive schemas
+- CLASSIFICATION_PROFILE deployed with auto_tag: true on all sensitive schemas
 - Dynamic Data Masking applied to all IDENTIFIER and QUASI_IDENTIFIER classified columns
 - Row Access Policies deployed for ABAC on sensitive datasets
 - CORTEX_USER, CORTEX_EMBED_USER, CORTEX_AGENT_USER granted only to approved roles
@@ -269,7 +269,7 @@ The AI and data governance workload follows a seven-stage ML pipeline lifecycle.
 
 ### Operational Excellence
 
-- Auto-classification profile scheduled with maximum_classification_validity_days: 30
+- Auto-classification profile scheduled with max_validity_days: 30
 - Account Usage audit views activated: LOGIN_HISTORY, QUERY_HISTORY, ACCESS_HISTORY, OBJECT_DEPENDENCIES
 - Alerts configured for access to IDENTIFIER-classified columns by unexpected roles
 - NIST 6-phase IR process documented and tested for AI-specific threat scenarios
