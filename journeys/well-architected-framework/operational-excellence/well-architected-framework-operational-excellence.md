@@ -307,9 +307,7 @@ users report them.
       statement. For instance, a task can run every five minutes to look
       for failed tasks.
 
-  4.  **Trigger alerts:** From the task, use an **External Function** to
-      send a notification directly to your team's incident management
-      tool, like PagerDuty or Slack.
+  4.  **Trigger alerts:** From the task, use a **Notification Integration** (webhook-based, supporting Slack, PagerDuty, email, and more) to send a notification directly to your team's incident management tool. This is the recommended approach — it requires no additional infrastructure, unlike External Functions.
 
 Build your automated alert system by following the guide [Introduction to
 Tasks](https://docs.snowflake.com/en/user-guide/tasks-intro).
@@ -582,7 +580,7 @@ preparation to start collecting and visualizing observability data.
 |---|---|
 | Cost & performance intelligence | - **Configure resource monitors:** set up warehouse-level monitors to prevent budget overruns by suspending warehouses or sending notifications at defined credit thresholds.<br>- **Build foundational dashboards:** create Snowsight dashboards to visualize credit usage by warehouse/tag, identify long-running queries (`QUERY_HISTORY`), and monitor warehouse queuing. |
 | Workload health & reliability | - **Implement error notifications:** configure notifications for failed tasks (`SYSTEM$SEND_EMAIL`) or Snowpipe copy errors to immediately alert the responsible teams.<br>- **Monitor data ingestion:** use the `COPY_HISTORY` and `PIPE_USAGE_HISTORY` views to track the latency and health of data loading processes. |
-| Security & access analytics | - **Enable access monitoring:** build dashboards on top of the `ACCESS_HISTORY` and `LOGIN_HISTORY` views to visualize user login patterns, query activity on sensitive tables, and privilege grants.<br>- **Set up security alerts:**** implement Snowflake alerts to trigger notifications for defined security events, such as a user being granted the `ACCOUNTADMIN` role. |
+| Security & access analytics | - **Enable access monitoring:** build dashboards on top of the `ACCESS_HISTORY` and `LOGIN_HISTORY` views to visualize user login patterns, query activity on sensitive tables, and privilege grants.<br>- **Set up security alerts:** implement Snowflake alerts to trigger notifications for defined security events, such as a user being granted the `ACCOUNTADMIN` role. |
 | Data integrity & lineage | - **Deploy data quality tests:** implement data quality checks as part of your data transformation pipeline (e.g., using dbt tests) that run on a schedule.<br>- **Utilize object tagging for lineage:** apply tags to tables and columns to create a basic, searchable framework for tracking data lineage. |
 
 
@@ -988,6 +986,8 @@ initial investigation using Snowflake's comprehensive metadata logs to
 shorten the time from detection to diagnosis.
 
 Centralize incident detection with ACCOUNT_USAGE views
+
+> **Note:** ACCOUNT_USAGE views have up to 45 minutes of latency. They are best suited for trend analysis, dashboards, and scheduled alerting — not real-time incident detection. For zero-latency detection of active events, use **INFORMATION_SCHEMA** table functions (e.g., `INFORMATION_SCHEMA.QUERY_HISTORY()`, `INFORMATION_SCHEMA.LOGIN_HISTORY()`) which reflect data immediately.
 
 - **Action**: Your on-call SRE and Engineering teams should treat the
   SNOWFLAKE.ACCOUNT_USAGE schema as the definitive event log. Build
