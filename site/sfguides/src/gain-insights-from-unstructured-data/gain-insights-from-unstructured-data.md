@@ -1,4 +1,4 @@
-author: James Cha-Earley, Sho Tanaka
+author: James Cha-Earley, Sho Tanaka, Anh Kieu
 id: gain-insights-from-unstructured-data
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions, snowflake-site:taxonomy/snowflake-feature/unstructured-data-analysis
 language: en
@@ -733,6 +733,22 @@ With the completion of this quickstart, you have now:
   * Used AI_TRANSCRIBE combined with AI_COMPLETE to extract actionable data from audio
   * Built a unified batch pipeline across all four modalities using the FILE data type
   * Created, evaluated, and optimized a custom AI function using AI Function Studio
+
+### Appendix 1: Multi-Model Cost Optimization
+
+The optimization in the previous section used a single model (`openai-gpt-5-mini`). In production, you may want to compare your current model against additional cheaper alternatives to find the best cost/quality tradeoff. AI Function Studio supports passing multiple models in a single optimization call — it evaluates them concurrently and returns the Pareto-optimal result.
+
+To extend the optimization you already ran, type the following prompt in Cortex Code's chat panel:
+
+```
+Optimize my function for more models, current model claude-sonnet-4-6 and a cheaper model
+```
+
+Cortex Code will add candidate models to the optimization, run them concurrently against your evaluation data, and present a comparison showing quality scores and cost for each model. You can then choose whether to deploy the cheaper variant or keep the original.
+
+Example output from the multi-model optimization workflow in Cortex Code:
+
+![AI Function Studio Multi-Model Optimization](assets/ai_function_studio_multi_model_optimization.jpg)
 
 ### Resources
 
