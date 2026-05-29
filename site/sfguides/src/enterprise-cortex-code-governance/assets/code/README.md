@@ -143,8 +143,8 @@ For each potential donor in the cohort:
 
 1. Deploy the Streamlit app:
    ```bash
-   git clone https://github.com/sfc-gh-rchandrasekaran/RCHANDRASEKARAN_COCO.git
-   cd streamlit-apps/cortex-code-credit-manager
+   git clone https://github.com/Snowflake-Labs/sfquickstarts.git
+   cd sfquickstarts/site/sfguides/src/enterprise-cortex-code-governance/assets/code
    ```
 
 2. Edit `config.yaml`:
