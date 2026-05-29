@@ -1,5 +1,5 @@
 author: Andres Aguilar Moya
-id: scai-e2e-ssis-migration
+id: snowflake-aim-e2e-ssis-migration
 language: en
 summary: End-to-end migration of a Microsoft SQL Server database and SSIS workflows to Snowflake using SnowConvert AI, Cortex Code, and the Snowflake CLI.
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/snowflake-feature/migrations
