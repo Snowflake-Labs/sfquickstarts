@@ -9,9 +9,11 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 fork repo link: https://github.com/Snowflake-Labs/sfguide-scai-e2e-ssis-migration
 tags: Quickstart, Migrations, SnowConvert, SQL Server, SSIS, Cortex Code, dbt
 
-# SnowConvert AI End-to-End SQL Server and SSIS Migration
+# Snowflake AIM End-to-End SQL Server and SSIS Migration
 
 <!-- ------------------------ -->
+
+Snowflake AIM unifies the proven capabilities of SnowConvert AI, Snowpark Migration Accelerator, and Datometry into a single AI-powered platform for assessing, modernizing, and migrating enterprise data and code workloads to Snowflake. Designed to reduce the complexity, risk, and operational overhead traditionally associated with large-scale migrations, Snowflake AIM enables organizations to define their target state while the platform orchestrates the migration process end to end. From analyzing Spark code and converting APIs to Snowpark, to modernizing warehouses, tables, views, ETL pipelines, reporting assets, and stored procedures across major platforms, Snowflake AIM combines intelligent assessment, automated code conversion, dependency mapping, orchestration, and virtualization into a unified migration experience. By eliminating the need to rebuild workloads from scratch or maintain parallel legacy environments, Snowflake AIM dramatically accelerates modernization timelines while minimizing disruption to ongoing business operations.
 
 ## Overview
 
@@ -127,7 +129,8 @@ Tell the assistant exactly what you want, including how the data infrastructure 
 > already in `scai` to extract my SQL code and migrate the data from my
 > tables. Make sure to setup data migration infrastructure locally and
 > also do not do ETL stabilization. When the data is migrated, do not
-> validate, skip to the deploy/test/fix loop
+> validate data of the tables, skip to the deploy/test/fix loop for SQL
+> functions, views, and stored procedures.
 > ```
 
 This prompt does four important things in one shot:
@@ -296,61 +299,56 @@ loadedPartitions:    11/11
 Cortex Code runs:
 
 ```bash
-scai test seed --where "source.canonicalName ILIKE '%fn_FormatPhoneNumber%'" --append
+scai test seed --where "source.canonicalName ILIKE '%fn_FormatCustomerName%'" --append
 ```
 
-This produces `artifacts/tastybytesdb/tastybytes/function/fn_formatphonenumber/test/fn_FormatPhoneNumber.yml` with the step-based template. Because this is a simple 1-parameter scalar UDF (3 branches: 10-digit / 11-digit / fallthrough), Cortex Code fills `test_cases:` directly with 20 hand-crafted rows covering each branch, plus NULL and empty-string boundary cases:
+This produces `artifacts/tastybytesdb/tastybytes/function/fn_formatcustomername/test/fn_FormatCustomerName.yml` with the step-based template. Because this is a simple 1-parameter scalar UDF that looks up a customer row and returns `"LASTNAME, Firstname"`, Cortex Code fills `test_cases:` directly with 13 hand-crafted rows covering valid IDs, the lower boundary, and the not-found path:
 
 ```yaml
 validation:
   steps:
-    - source_query: SELECT TastyBytesDB.TastyBytes.fn_FormatPhoneNumber({0}) AS "fn_FormatPhoneNumber"
-      target_query: SELECT TastyBytesDB.TastyBytes.fn_FormatPhoneNumber({0}) AS "fn_FormatPhoneNumber"
+    - source_query: SELECT TastyBytesDB.TastyBytes.fn_FormatCustomerName({0}) AS "fn_FormatCustomerName"
+      target_query: SELECT TastyBytesDB.TastyBytes.fn_FormatCustomerName({0}) AS "fn_FormatCustomerName"
   test_cases:
-    # 10-digit branch
-    - ["5551234567"]
-    - ["555-123-4567"]
-    - ["(555) 123-4567"]
-    # ... 17 more cases
+    # Valid customer IDs
+    - [1]
+    - [2]
+    - [3]
+    # ... 7 more valid IDs
+    # Boundary / not-found cases
+    - [0]
+    - [-1]
+    - [999999]
 ```
 
-### Step 5 — Deploy the Function (Hand-Fix the Critical EWI)
+### Step 5 — Deploy the Function
 
-The first deploy attempt fails:
-
-```
-Unsupported expression for Snowscript UDF: CASE(LEN(null), 10, ...) ...
-```
-
-SnowConvert produced a Snowflake Scripting block (`DECLARE … BEGIN … END`) inside a `LANGUAGE SQL` UDF — Snowflake's SQL UDFs only accept a single scalar expression. Rewrite the file at `sqlserver-migration/snowflake/tastybytesdb/tastybytes/function/fn_formatphonenumber.sql` as a pure scalar SQL UDF:
+SnowConvert produced a clean Snowflake SQL UDF for this scalar function — no manual rewrites required. The converted file at `sqlserver-migration/snowflake/tastybytesdb/tastybytes/function/fn_formatcustomername.sql` deploys directly:
 
 ```sql
-CREATE OR REPLACE FUNCTION TastyBytes.fn_FormatPhoneNumber (RAWPHONE STRING)
-RETURNS VARCHAR(20)
+CREATE OR REPLACE FUNCTION TastyBytes.fn_FormatCustomerName (P_CUSTOMERID INT)
+RETURNS VARCHAR(402)
 LANGUAGE SQL
 AS
 $$
-    CASE LEN(REPLACE(TRANSLATE(NVL(RAWPHONE, ''),
-                ' ()-.+abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ',
-                '                                                          '
-            ), ' ', ''))
-        WHEN 10 THEN '(' || LEFT(...) || ') ' || SUBSTRING(...) || '-' || RIGHT(...)
-        WHEN 11 THEN '+' || LEFT(...) || ' (' || SUBSTRING(...) || ') ' || ...
-        ELSE REPLACE(TRANSLATE(...), ' ', '')
-    END
+    SELECT
+        UPPER(RTRIM(LTRIM(NVL(LastName, '')))) ||
+        ', ' || RTRIM(LTRIM(NVL(FirstName, '')))
+    FROM TastyBytes.Customer
+    WHERE CustomerID = P_CUSTOMERID
 $$;
 ```
 
-Redeploy and the function compiles. A quick smoke test confirms each branch:
+A quick smoke test confirms each branch:
 
 ```sql
 SELECT
-  TASTYBYTESDB.TASTYBYTES.fn_FormatPhoneNumber('5551234567')        AS ten_digit,
-  TASTYBYTESDB.TASTYBYTES.fn_FormatPhoneNumber('15551234567')       AS eleven_digit,
-  TASTYBYTESDB.TASTYBYTES.fn_FormatPhoneNumber('+1 (555) 123-4567') AS formatted_input,
-  TASTYBYTESDB.TASTYBYTES.fn_FormatPhoneNumber('123')               AS short,
-  TASTYBYTESDB.TASTYBYTES.fn_FormatPhoneNumber(NULL)                AS null_input;
--- → (555) 123-4567 | +1 (555) 123-4567 | +1 (555) 123-4567 | 123 | NULL
+  TASTYBYTESDB.TASTYBYTES.fn_FormatCustomerName(1)      AS valid_customer,
+  TASTYBYTESDB.TASTYBYTES.fn_FormatCustomerName(2)      AS another_customer,
+  TASTYBYTESDB.TASTYBYTES.fn_FormatCustomerName(0)      AS not_found_zero,
+  TASTYBYTESDB.TASTYBYTES.fn_FormatCustomerName(-1)     AS not_found_negative,
+  TASTYBYTESDB.TASTYBYTES.fn_FormatCustomerName(999999) AS not_found_high;
+-- → JOHNSON, Alice | SMITH, Bob | NULL | NULL | NULL
 ```
 
 ### Step 6 — Capture Baselines and Run Functional Tests
@@ -358,18 +356,18 @@ SELECT
 Now that the function is deployed, Cortex Code captures the source baselines and runs the cross-DB test:
 
 ```bash
-scai test capture  --where "source.canonicalName ILIKE '%fn_FormatPhoneNumber%'"
-scai test validate --where "source.canonicalName ILIKE '%fn_FormatPhoneNumber%'"
+scai test capture  --where "source.canonicalName ILIKE '%fn_FormatCustomerName%'"
+scai test validate --where "source.canonicalName ILIKE '%fn_FormatCustomerName%'"
 ```
 
 Result:
 
 ```
-SUMMARY: 20 test cases
-Passed: 20  Failed: 0  Errors: 0
+SUMMARY: 13 test cases
+Passed: 13  Failed: 0  Errors: 0
 ```
 
-All 20 cases match SQL Server output exactly.
+All 13 cases match SQL Server output exactly on the first run.
 
 ### Step 7 — Claim and Deploy Wave 1 Remainder
 
@@ -418,12 +416,11 @@ Cortex Code seeds tests for `sp_UpdateInventory` (a procedure that updates `Inve
 scai test seed --where "source.canonicalName ILIKE '%sp_UpdateInventory%'" --append
 ```
 
-Cortex Code fills `test_cases:` with 10 rows covering:
+Cortex Code fills `test_cases:` with 6 rows covering:
 
-- Override = 1 (absolute set) for valid truck IDs.
-- Override = 0 (increment) for valid truck IDs.
-- NULL `TruckID` (early-return path).
-- Non-existent `TruckID` (no rows match).
+- Override = 1 (absolute set) for valid truck IDs (1, 3, 5).
+- Override = 0 (increment) for valid truck IDs (1, 2, 4).
+- A zero-stock-count case (`StockCount = 0.00, Override = 1`).
 
 Deploy the procedure:
 
@@ -438,23 +435,27 @@ scai test capture  --where "source.canonicalName ILIKE '%sp_UpdateInventory%'"
 scai test validate --where "source.canonicalName ILIKE '%sp_UpdateInventory%'"
 ```
 
-Manual smoke tests confirm the procedure's behavior matches SQL Server semantics on all three branches:
+Inspect the validation results from the framework's stored output:
 
 ```sql
--- Override = 1 sets QuantityOnHand absolutely
-CALL TASTYBYTESDB.TASTYBYTES.sp_UpdateInventory(1, 999.00, 1);
-SELECT INVENTORYID, QUANTITYONHAND
-FROM TASTYBYTESDB.TASTYBYTES.INVENTORY WHERE TRUCKID = 1;
--- → all 3 rows: 999.00
-
--- Override = 0 increments
-CALL TASTYBYTESDB.TASTYBYTES.sp_UpdateInventory(1, 50.00, 0);
--- → all 3 rows: 1049.00 (= 999 + 50)
-
--- NULL TruckID → no rows changed
-CALL TASTYBYTESDB.TASTYBYTES.sp_UpdateInventory(NULL, 100.00, 1);
--- → 0 rows updated
+SELECT TEST_NAME, PARAMETERS, STATUS, ERROR_MESSAGE
+FROM TASTYBYTESDB.VALIDATION.LATEST
+WHERE PROCEDURE_NAME ILIKE '%UpdateInventory%'
+ORDER BY ID;
 ```
+
+All 6 cases come back as **PASS**:
+
+| Case                                | Status | Notes |
+| ----------------------------------- | ------ | ----- |
+| `TruckID = 1, StockCount = 100.00, Override = 1` | PASS   | Absolute-set on truck 1. |
+| `TruckID = 2, StockCount = 50.50,  Override = 0` | PASS   | Increment on truck 2. |
+| `TruckID = 3, StockCount = 200.00, Override = 1` | PASS   | Absolute-set on truck 3. |
+| `TruckID = 4, StockCount = 25.00,  Override = 0` | PASS   | Increment on truck 4. |
+| `TruckID = 5, StockCount = 0.00,   Override = 1` | PASS   | Absolute-set with zero stock count. |
+| `TruckID = 1, StockCount = 999.99, Override = 0` | PASS   | Large increment on truck 1. |
+
+The procedure produces identical post-run state on SQL Server and Snowflake across every test case, confirming the converted Snowflake Scripting body matches the original T-SQL semantics exactly.
 
 ### Verify the Code Deployment
 
@@ -505,200 +506,36 @@ With the database workload migrated, the last phase is to deploy the SSIS-derive
 - A **task-graph SQL file** (`daily_sales_agg.sql`) defining a 4-task chain: a root task → an `_insert_start_log` task → a `_df_load_daily_sales` task that calls `EXECUTE DBT PROJECT …` → an `_insert_end_log` task. The root task has **no warehouse** and the children all use `WAREHOUSE=DUMMY_WAREHOUSE` placeholders.
 - A **dbt project** (`df_load_daily_sales/`) with two staging views, four ephemeral intermediate models, an incremental mart (`ole_db_destination` → materializes as `DAILYSALESAGG`), `dbt_project.yml`, and `profiles.yml` — but with placeholder values like `YOUR_PROJECT_NAME` and `YOUR_PROFILE_NAME`.
 
-### Prompt 2 — Deploy the dbt Project and the Task Graph
+### Prompt 2 — Deploy and Run Everything
 
 Tell Cortex Code:
 
 > ```
 > Now I want to deploy my generated dbt project and my Snowflake task graph
-> to Snowflake. Make sure to deploy my task graph using the `XSMALL_WH`
-> warehouse for each task.
+> to Snowflake in the `snowflake` directory and using the `snow dbt deploy`
+> command, the dbt project should be deployed in the PUBLIC schema to match
+> with the task graph code.
+> Make sure to deploy my task graph using the `XSMALL_WH` warehouse
+> for each task. Once the dbt project and the task graph are both deployed
+> execute the task graph and show me the rows of the materialized mart model
+> in the dbt project.
 > ```
 
-Cortex Code loads the `dbt-projects-on-snowflake` skill and starts patching the placeholders.
+Cortex Code loads the `dbt-projects-on-snowflake` skill and works through three high-level steps before triggering the run:
 
-### Step 1 — Patch the dbt Project Files
+1. **Patch the dbt project files.** SnowConvert wrote `dbt_project.yml`, `profiles.yml`, and `models/sources.yml` with placeholders (`YOUR_PROJECT_NAME`, `YOUR_PROFILE_NAME`, `YOUR_DB`, `YOUR_SCHEMA`). Cortex Code rewrites them with the concrete project name `df_load_daily_sales`, target `dev`, role `ACCOUNTADMIN`, warehouse `XSMALL_WH`, database `TASTYBYTESDB`, sources at `TASTYBYTESDB.TASTYBYTES`, and drops the `account` / `user` / `password` fields (dbt runs *inside* Snowflake, so those aren't needed).
+2. **Deploy the dbt project with `snow dbt deploy`:**
 
-Cortex Code rewrites the three files with concrete values pulled from the active session config:
+   ```bash
+   snow dbt deploy df_load_daily_sales \
+       --source <PATH>/snowflake/_etl/daily_sales_agg/df_load_daily_sales \
+       --database TASTYBYTESDB --schema PUBLIC
+   ```
 
-`dbt_project.yml`:
+   `snow dbt deploy` honors the connection's default schema over `--schema`, so the project actually lands at **`TASTYBYTESDB.TASTYBYTES.DF_LOAD_DAILY_SALES`** (matching the connection's `schema = "TASTYBYTES"`). Cortex Code re-points the task graph at the actual location.
+3. **Deploy the 4-task graph and run it.** Cortex Code rewrites `daily_sales_agg.sql`: every `WAREHOUSE=DUMMY_WAREHOUSE` becomes `WAREHOUSE = XSMALL_WH`, the root task gets `WAREHOUSE = XSMALL_WH` added, the `INSERT INTO etl_results.etl_logs` calls get fully qualified to `TASTYBYTESDB.ETL_RESULTS.ETL_LOGS`, and the `EXECUTE DBT PROJECT` call points at `TASTYBYTESDB.TASTYBYTES.DF_LOAD_DAILY_SALES`. Cortex Code applies the four `CREATE OR REPLACE TASK` statements, resumes the three child tasks, and triggers the root with `EXECUTE TASK TASTYBYTESDB.PUBLIC.daily_sales_agg`.
 
-```yaml
-name: df_load_daily_sales
-version: 1.0.0
-config-version: 2
-profile: df_load_daily_sales
-model-paths:   [models]
-macro-paths:   [macros]
-seed-paths:    [seeds]
-test-paths:    [tests]
-analysis-paths:[analyses]
-snapshot-paths:[snapshots]
-models:
-  df_load_daily_sales:
-    staging:      { +materialized: view }
-    intermediate: { +materialized: ephemeral }
-    marts:        { +materialized: incremental }
-```
-
-`profiles.yml` (the `snow dbt deploy` validator requires `role`; `account` and `user` are not needed because dbt runs **inside** Snowflake):
-
-```yaml
-df_load_daily_sales:
-  target: dev
-  outputs:
-    dev:
-      type: snowflake
-      role: ACCOUNTADMIN
-      database: TASTYBYTESDB
-      schema: PUBLIC
-      threads: 4
-```
-
-`models/sources.yml`:
-
-```yaml
-version: 2
-sources:
-  - name: raw
-    database: TASTYBYTESDB
-    schema: TASTYBYTES
-    tables:
-      - name: OrderDetail
-      - name: OrderHeader
-```
-
-### Step 2 — Deploy dbt project with the Snowflake CLI
-
-Cortex Code runs:
-
-```bash
-snow dbt deploy df_load_daily_sales \
-    --source <PATH>/sqlserver-migration/snowflake/_etl/daily_sales_agg/df_load_daily_sales \
-    --database TASTYBYTESDB \
-    --schema PUBLIC
-```
-
-The successful run looks like:
-
-```
-Creating temporary stage
-Copying project files to stage
-  Copied 13 files
-Creating DBT project
-+-------------------------------------------+
-| status                                    |
-|-------------------------------------------|
-| DF_LOAD_DAILY_SALES successfully created. |
-+-------------------------------------------+
-```
-
-> **Heads-up — schema resolution.** `snow dbt deploy` honors the connection's default schema over the `--schema` flag, so the dbt project actually lands at **`TASTYBYTESDB.TASTYBYTES.DF_LOAD_DAILY_SALES`** (matching the connection's `schema = "TASTYBYTES"`), not `TASTYBYTESDB.PUBLIC`. We'll use the actual location when wiring up the task graph below.
-
-Verify with SQL:
-
-```sql
-SHOW DBT PROJECTS;
-```
-
-You should see `DF_LOAD_DAILY_SALES` at version `VERSION$1` running dbt 1.9.4.
-
-### Step 3 — Deploy the Task Graph (XSMALL_WH per Task)
-
-Cortex Code rewrites the task-graph file to:
-
-- Replace every `WAREHOUSE=DUMMY_WAREHOUSE` with `WAREHOUSE = XSMALL_WH`.
-- Add `WAREHOUSE = XSMALL_WH` to the root task `daily_sales_agg` (which SnowConvert left without a warehouse).
-- Re-point the `EXECUTE DBT PROJECT` call from the placeholder `public.df_load_daily_sales` to the actual location `TASTYBYTESDB.TASTYBYTES.DF_LOAD_DAILY_SALES`.
-- Qualify the `INSERT INTO etl_results.etl_logs` calls with the database (`TASTYBYTESDB.ETL_RESULTS.ETL_LOGS`).
-
-The final file:
-
-```sql
-USE DATABASE TASTYBYTESDB;
-USE SCHEMA PUBLIC;
-
-CREATE OR REPLACE TASK PUBLIC.daily_sales_agg
-  WAREHOUSE = XSMALL_WH
-AS SELECT 1;
-
-CREATE OR REPLACE TASK PUBLIC.daily_sales_agg_insert_start_log
-  WAREHOUSE = XSMALL_WH
-  AFTER PUBLIC.daily_sales_agg
-AS
-BEGIN
-  INSERT INTO TASTYBYTESDB.ETL_RESULTS.ETL_LOGS (name, execution_date)
-  VALUES ('pkg_daily_sales_aggregate start', CURRENT_TIMESTAMP());
-END;
-
-CREATE OR REPLACE TASK PUBLIC.daily_sales_agg_df_load_daily_sales
-  WAREHOUSE = XSMALL_WH
-  AFTER PUBLIC.daily_sales_agg_insert_start_log
-AS
-BEGIN
-  EXECUTE DBT PROJECT TASTYBYTESDB.TASTYBYTES.DF_LOAD_DAILY_SALES
-    ARGS='build --target dev';
-END;
-
-CREATE OR REPLACE TASK PUBLIC.daily_sales_agg_insert_end_log
-  WAREHOUSE = XSMALL_WH
-  AFTER PUBLIC.daily_sales_agg_df_load_daily_sales
-AS
-BEGIN
-  INSERT INTO TASTYBYTESDB.ETL_RESULTS.ETL_LOGS (name, execution_date)
-  VALUES ('pkg_daily_sales_aggregate end', CURRENT_TIMESTAMP());
-END;
-```
-
-Cortex Code applies the file via `sql_execute` for each `CREATE OR REPLACE TASK` statement. Verify:
-
-```sql
-SHOW TASKS IN SCHEMA TASTYBYTESDB.PUBLIC;
-```
-
-All 4 tasks should appear with `XSMALL_WH`. Three children (`_insert_start_log`, `_df_load_daily_sales`, `_insert_end_log`) come up `started` automatically; the root `daily_sales_agg` is `suspended` (correct — root tasks without a SCHEDULE stay suspended and are triggered on-demand).
-
-### Prompt 3 — Resume and Run the Task Graph
-
-Tell Cortex Code:
-
-> ```
-> now resume and deploy the task graph
-> ```
-
-Trying to `ALTER TASK ... RESUME` on the root will fail with:
-
-```
-Task TASTYBYTESDB.PUBLIC.DAILY_SALES_AGG should have a SCHEDULE, AFTER, FINALIZE
-or WHEN to be resumed.
-```
-
-That's expected — the root has no SCHEDULE. Cortex Code asks how to proceed:
-
-| Question | Answer |
-| --- | --- |
-| The root task `daily_sales_agg` needs a SCHEDULE before it can be resumed. What should I do? | **Execute once now** |
-
-Cortex Code triggers it on-demand:
-
-```sql
-EXECUTE TASK TASTYBYTESDB.PUBLIC.daily_sales_agg;
-```
-
-### Step 4 — Verify the Run
-
-Poll the run history a minute later:
-
-```sql
-SELECT NAME, STATE, ERROR_CODE, QUERY_START_TIME, COMPLETED_TIME
-FROM TABLE(TASTYBYTESDB.INFORMATION_SCHEMA.TASK_HISTORY(
-    SCHEDULED_TIME_RANGE_START => DATEADD('minute', -10, CURRENT_TIMESTAMP()),
-    RESULT_LIMIT => 50))
-WHERE NAME LIKE 'DAILY_SALES_AGG%'
-ORDER BY QUERY_START_TIME;
-```
-
-All 4 tasks should be `SUCCEEDED`. End-to-end execution is roughly 19 seconds:
+Once `EXECUTE TASK` is dispatched, Cortex Code polls `TASK_HISTORY` until all four tasks land at `SUCCEEDED`:
 
 ```
 DAILY_SALES_AGG                       SUCCEEDED  ~1s
@@ -707,39 +544,29 @@ DAILY_SALES_AGG                       SUCCEEDED  ~1s
               └─→ DAILY_SALES_AGG_INSERT_END_LOG SUCCEEDED  ~1s
 ```
 
-### Step 5 — Inspect the Side-Effects
+The `EXECUTE DBT PROJECT` call ran `dbt build --target dev` inside Snowflake: 2 staging views, 4 ephemeral intermediate models (inlined as CTEs and not visible in `INFORMATION_SCHEMA.TABLES`), and 1 incremental mart materialized as `TASTYBYTESDB.PUBLIC.DAILYSALESAGG`. The two `_insert_*_log` tasks wrote start/end markers to `TASTYBYTESDB.ETL_RESULTS.ETL_LOGS`, exactly the side-effect SnowConvert lifted from the original SSIS package.
+
+Finally, Cortex Code shows the materialized mart:
 
 ```sql
--- Logs written by the start/end log tasks
-SELECT NAME, EXECUTION_DATE
-FROM TASTYBYTESDB.ETL_RESULTS.ETL_LOGS
-ORDER BY EXECUTION_DATE DESC LIMIT 5;
--- → 'pkg_daily_sales_aggregate end'   <ts>
--- → 'pkg_daily_sales_aggregate start' <ts>
-
--- Tables and views the dbt project materialized in TASTYBYTESDB.PUBLIC
-SELECT TABLE_NAME, TABLE_TYPE
-FROM TASTYBYTESDB.INFORMATION_SCHEMA.TABLES
-WHERE TABLE_SCHEMA = 'PUBLIC'
-ORDER BY TABLE_NAME;
--- → DAILYSALESAGG               BASE TABLE   (the incremental mart)
--- → STG_RAW__ORDERDETAILSOURCE  VIEW         (staging view)
--- → STG_RAW__ORDERHEADER        VIEW         (staging view)
+SELECT * FROM TASTYBYTESDB.PUBLIC.DAILYSALESAGG ORDER BY TRUCKID, SALEDATE;
 ```
 
-### Prompt 4 — Inspect the Mart
+22 rows, one per `(TruckID, SaleDate)` pair from completed orders, aggregating `OrderCount`, `GrossRevenue`, `TotalTips`, and `ItemsSold` per truck-day. A sample of the output:
 
-> ```
-> show me the mart model rows.
-> ```
+| TRUCKID | SALEDATE   | ORDERCOUNT | GROSSREVENUE | TOTALTIPS | ITEMSSOLD |
+| ------- | ---------- | ---------- | ------------ | --------- | --------- |
+| 1       | 2024-07-10 | 1          | 59.96        | 10.00     | 2         |
+| 1       | 2024-08-15 | 1          | 16.99        | 2.50      | 1         |
+| 1       | 2024-09-01 | 1          | 10.99        | 2.00      | 1         |
+| 1       | 2024-09-12 | 1          | 55.96        | 8.00      | 2         |
+| 2       | 2024-07-15 | 1          | 25.98        | 4.00      | 3         |
+| 2       | 2024-09-15 | 1          | 4.50         | 1.00      | 1         |
+| 3       | 2024-07-23 | 1          | 128.91       | 18.00     | 3         |
+| …       | …          | …          | …            | …         | …         |
+| 11      | 2024-10-05 | 1          | 12.99        | 2.00      | 1         |
 
-```sql
-SELECT * FROM TASTYBYTESDB.PUBLIC.DAILYSALESAGG ORDER BY SALEDATE, TRUCKID;
-```
-
-Expected: 22 rows, one per `(TruckID, SaleDate)` pair from completed orders, with `OrderCount`, `GrossRevenue`, `TotalTips`, and `ItemsSold` aggregated per truck-day. Totals across the mart: 22 truck-day rows, 22 orders, $1,015.31 gross revenue, $139.50 tips, 39 items sold.
-
-The intermediate models stay ephemeral (inlined as CTEs) — they don't appear in `INFORMATION_SCHEMA.TABLES`.
+Totals across the mart: 22 truck-day rows, 22 orders, $1,015.31 gross revenue, $139.50 tips, 39 items sold. Cross-checking against `TASTYBYTESDB.ETL_RESULTS.ETL_LOGS` shows the two markers `pkg_daily_sales_aggregate start` and `pkg_daily_sales_aggregate end` written one task apart, confirming the full task graph executed end-to-end.
 
 At this point all four phases are complete:
 
@@ -762,13 +589,13 @@ At this point all four phases are complete:
 
 Congratulations! You've taken a Microsoft SQL Server database and an SSIS pipeline all the way from source extraction to a fully deployed, populated, and *running* workload in Snowflake — driven end-to-end by the Cortex Code CLI and its `snowflake-migration:migration` skill, plus the `snow dbt deploy` workflow for the SnowConvert-generated dbt project.
 
-You started from a blank project, set up **local** data-migration infrastructure (no SPCS / compute pool needed), registered 19 SQL Server objects and 1 SSIS package, converted them with SnowConvert AI, generated a deployment plan with a classified SSIS assessment, deployed every in-scope database object using a deploy/test/fix loop (hand-fixing 2 conversion artifacts — a SQL UDF that needed to be turned into a pure scalar UDF, and a `CROSS APPLY` view rewritten with window functions), migrated 185 rows of data via the locally-run orchestrator + worker, and finally hand-patched and deployed both the SnowConvert-generated dbt project (`snow dbt deploy`) and the SnowConvert-generated Snowflake task graph (with `XSMALL_WH` per task), executing the full graph end-to-end on demand.
+You started from a blank project, set up **local** data-migration infrastructure (no SPCS / compute pool needed), registered 19 SQL Server objects and 1 SSIS package, converted them with SnowConvert AI, generated a deployment plan with a classified SSIS assessment, deployed every in-scope database object using a deploy/test/fix loop (hand-fixing 1 conversion artifact — a `CROSS APPLY` view rewritten with window functions), migrated 185 rows of data via the locally-run orchestrator + worker, and finally hand-patched and deployed both the SnowConvert-generated dbt project (`snow dbt deploy`) and the SnowConvert-generated Snowflake task graph (with `XSMALL_WH` per task), executing the full graph end-to-end on demand.
 
 ### What You Learned
 
 - How to drive an end-to-end SQL Server + SSIS migration with **Cortex Code** and the bundled `snowflake-migration:migration` skill, using just five chat prompts.
 - How **SnowConvert AI** extracts, converts, and deploys a SQL Server workload to Snowflake, and how to read its EWIs, FDMs, and PRFs.
-- How to triage and hand-fix common SnowConvert outputs — turning a procedural Snowflake Scripting block into a pure scalar SQL UDF, and rewriting a SQL Server `CROSS APPLY ... TOP` with `ROW_NUMBER() OVER (PARTITION BY ...)`.
+- How to triage and hand-fix common SnowConvert outputs — rewriting a SQL Server `CROSS APPLY ... TOP` with `ROW_NUMBER() OVER (PARTITION BY ...)`.
 - How to run the data-migration orchestrator and Data Exchange Worker **locally** for SQL Server → Snowflake table loads, without provisioning SPCS.
 - How to use the seed → capture → validate testing framework against your source database to verify the migrated function produces identical output to the SQL Server original.
 - How to deploy a SnowConvert-generated dbt project to Snowflake via `snow dbt deploy`, then point a Snowflake task graph at it with `EXECUTE DBT PROJECT`.
