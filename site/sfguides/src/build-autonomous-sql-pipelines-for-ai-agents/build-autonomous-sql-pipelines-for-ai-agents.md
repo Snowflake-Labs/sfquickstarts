@@ -468,7 +468,7 @@ Now let's configure Openflow to continuously stream data from Kafka into the **R
 
 Using the `SUMMIT_ADMIN` Role, Open the Openflow runtime in Snowsight, by Nagivating to **Ingestion > OPENFLOW > Launch Openflow > Login to Control Plane**). You should see the Runtime that was created by the DCM project post-deploy script:
 
-<img src="assets/openflow_runtimes.png" width="50%">
+![Openflow Runtimes](assets/openflow_runtimes.png)
 
 Click on the `Summit Runtime` to open the canvas.
 
@@ -476,13 +476,13 @@ Click on the `Summit Runtime` to open the canvas.
 
 In the canvas drag-and-drop **Import from Registry** → and choose the flow **kafka-json-sasl-topic2table-schemaev**, and Click Import.
 
-<img src="assets/openflow_import_from_registry.png" width="50%">
+![Openflow Import from Registry](assets/openflow_import_from_registry.png)
 
 ### Configure Flow Parameters
 
 Right-click on the `Process Group` and update the 3 parameter contexts:
 
-<img src="assets/openflow_processor.png" width="50%">
+![Openflow Processor](assets/openflow_processor.png)
 
 **Source Parameters:**
 
@@ -496,7 +496,7 @@ Right-click on the `Process Group` and update the 3 parameter contexts:
 
 **The Source parameters**: add your Kafka broker, SASL username/password, use SASL_SSL as security protocol - these are all inside your `.env` file
 
-<img src="assets/openflow_source_params.png" width="50%">
+![Openflow Source Params](assets/openflow_source_params.png)
 
 **Destination Parameters:**
 
@@ -509,7 +509,7 @@ Right-click on the `Process Group` and update the 3 parameter contexts:
 
 **The Destination parameters**: Database `SUMMIT_DB_DEV`, schema `RAW`, role `SUMMIT_INGEST_ROLE_DEV`, use `SNOWFLAKE_MANAGED` authentication
 
-<img src="assets/openflow_destination_params.png" width="50%">
+![Openflow Destination Params](assets/openflow_destination_params.png)
 
 **Ingestion Parameters:**
 
@@ -524,7 +524,7 @@ Right-click on the `Process Group` and update the 3 parameter contexts:
 
 Deselect **Show Inherited Parameters** to show only the Ingestion parameters.
 
-<img src="assets/openflow_ingestion_params.png" width="50%">
+![Openflow Ingestion Params](assets/openflow_ingestion_params.png)
 
 
 **Map Topic to Table names:** Update the Topic to Table mapping processor, by double chicking on the **main processor group**, and navigate to `Map Topic to Table` processor, the regex will remove the topic prefix and transform topic names to snowflake table names. For example the data from topic `order-items` will be mapped to snowflake table `ORDER_ITEMS`.
@@ -533,9 +533,9 @@ Deselect **Show Inherited Parameters** to show only the Ingestion parameters.
 ${kafka.topic:substringAfter('tms-'):replace('-', '_'):toUpper()}
 ```
 
-<img src="assets/openflow_map_topic_1.png" width="50%">
+![Openflow Map Topic 1](assets/openflow_map_topic_1.png)
 
-<img src="assets/openflow_map_topic_2.png" width="50%">
+![Openflow Map Topic 2](assets/openflow_map_topic_2.png)
 
 ### Check flow parameters fits the Kafka cluster endpoint
 
@@ -582,15 +582,15 @@ Now that we have the flow configured, let's start streaming.
 
 1. Enable all controller services by right-click on the main process group
 
-<img src="assets/openflow_enable_controller_services.png" width="50%">
+![Openflow Enable Controller Services](assets/openflow_enable_controller_services.png)
 
 2. Right-click again on the main processor group and click **Start**
 
-<img src="assets/openflow_start_flow.png" width="50%">
+![Openflow Start Flow](assets/openflow_start_flow.png)
 
 You should see data flowing through the connector. The flow counters in the Openflow UI will show bytes and records being processed.
 
-<img src="assets/openflow_streaming.png" width="50%">
+![Openflow Streaming](assets/openflow_streaming.png)
 
 ### (Optionally) Import an existing Flow
 
@@ -600,7 +600,7 @@ You drag-and-drop a new `Processor Group` in the main canvas, and import the fil
 
 This flow already has all parameters pre-configured. You only need to set the Kafka related parameters in the source parameter group (`KAFKA_USERNAME`, `KAFKA_PASSWORD`, `KAFKA_BROKERS`) and the ingestion parameter group (`KAFKA_USERNAME-GROUP`).
 
-<img src="assets/openflow_import_flow.png" width="50%">
+![Openflow Import Flow](assets/openflow_import_flow.png)
 
 Now you can **Enable Controller Services** and **Start** the Flow.
 
