@@ -1,6 +1,6 @@
 
 /***************************************************************************************************
- Advanced Data Governance: AI-Powered Sensitive Data Discovery and Protection at Scale
+ Advanced Data Governance: Sensitive Data Discovery and Protection at Scale
  Snowflake Summit Hands-on Lab
 
  Script:      Lab Teardown
@@ -77,5 +77,25 @@ DROP ROLE IF EXISTS HRZN_DATA_ANALYST;
 
 USE ROLE SYSADMIN;
 DROP WAREHOUSE IF EXISTS HRZN_WH;
+
+-- ============================================================================
+-- STEP 5: Manual cleanup (UI) — Sensitive Data Entitlement Report
+-- ============================================================================
+--
+--   The Sensitive Data Entitlement Report enabled in Step 3.4 is an account-level
+--   configuration that runs on its own schedule (Daily) and is not removed by
+--   dropping HRZN_DB. To fully clean up:
+--
+--     1. Snowsight → Governance & Security → Trust Center
+--     2. Select the Data Security tab → Settings
+--     3. In the Reporting section, locate Sensitive Data Entitlement Report
+--     4. Disable the report
+--
+--   To delete historical report data:
+--     CALL SNOWFLAKE.DATA_SECURITY.DELETE_REPORT_DATA(
+--         'entitlement_report',
+--         TO_TIMESTAMP_LTZ('2026-01-01'),
+--         TO_TIMESTAMP_LTZ('2027-01-01')
+--     );
 
 SELECT 'Teardown complete. All lab objects have been removed.' AS status;
