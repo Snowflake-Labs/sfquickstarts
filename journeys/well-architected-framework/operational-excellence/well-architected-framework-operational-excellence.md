@@ -6,7 +6,8 @@ categories: snowflake-site:taxonomy/solution-center/certification/well-architect
 language: en
 summary: Operational Excellence in the Snowflake AI Data Cloud is the practice of running and monitoring systems to deliver business value and continuously improve supporting processes and procedures. 
 environments: web
-status: Published 
+status: Published
+fork_repo_link: https://github.com/Snowflake-Labs/cortex-code-skills/tree/main/skills/well-architected-framework-assessment
 
 
 # Operational Excellence
