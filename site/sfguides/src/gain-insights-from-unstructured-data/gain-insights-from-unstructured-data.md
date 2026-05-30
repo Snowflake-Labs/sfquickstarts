@@ -524,11 +524,13 @@ WHERE
 ```
 
 <!-- ------------------------ -->
-## AI Function Studio: Create
+## Cortex AI Function Studio: Create
 
 In this phase, you will use [Cortex AI Function Studio](https://docs.snowflake.com/en/user-guide/snowflake-cortex/ai-function-studio), Public Preview, to create a reusable custom AI function that encapsulates the text extraction logic from earlier. This allows you to call extraction as a simple SQL function across any table without rewriting prompts.
 
 AI Function Studio provides a managed workflow to create, evaluate, and optimize custom AI functions. The function you create here uses AI_COMPLETE under the hood but is deployed as a standard SQL UDF that can be called from any query.
+
+> **Important:** Cortex AI Function Studio uses stored procedures internally to create, evaluate, and optimize functions. These procedures are not intended to be called directly — their signatures and behavior may change without notice. Use [Cortex Code](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code) as the primary interface for AI Function Studio workflows.
 
 ### Create the Extraction Function
 
@@ -657,10 +659,14 @@ If you're starting a fresh optimization session (or Cortex Code did not offer th
 
 ```
 /cortex-ai-function-studio　Optimize TB_VOC.ANALYTICS.EXTRACT_REVIEW against test table TB_VOC.ANALYTICS.EXTRACTION_EVAL_DATA 
-with input column REVIEW_TEXT and label column EXPECTED_OUTPUT by sysadmin role
+with input column REVIEW_TEXT and label column EXPECTED_OUTPUT for better accuracy using the same model claude-sonnet-4-6 with demo budget by sysadmin role
 ```
 
+NOTE: Snowflake Optimization offers different iteration budget, demo, light, medium and heavy. `demo budget` means the lightest iteration.
+
 Cortex Code uses an LLM under the hood, so its output is non-deterministic and may vary depending on your environment. Ideally, the optimization call should look like the following:
+
+
 
 ```sql
 USE TB_VOC.ANALYTICS;
@@ -671,7 +677,7 @@ CALL SNOWFLAKE.CORTEX.OPTIMIZE_AI_FUNCTION(
     'EXPECTED_OUTPUT',
     ARRAY_CONSTRUCT('REVIEW_TEXT'),
     'llm_judge',
-    ARRAY_CONSTRUCT('openai-gpt-5-mini'),
+    ARRAY_CONSTRUCT('claude-sonnet-4-6'),
     'claude-sonnet-4-6',
     NULL,
     'demo',
@@ -683,7 +689,7 @@ CALL SNOWFLAKE.CORTEX.OPTIMIZE_AI_FUNCTION(
     NULL,
     NULL,
     'body',
-    'ai_func_opt_EXTRACT_REVIEW_demo'
+    'ai_func_opt_EXTRACT_REVIEW_sonnet'
 );
 ```
 
@@ -703,7 +709,7 @@ SHOW RUN METRICS IN EXPERIMENT TB_VOC.ANALYTICS.AI_FUNC_OPT_EXTRACT_REVIEW_DEMO;
 
 Example output from the optimization in Cortex Code:
 
-![AI Function Studio Optimization Results](assets/ai_function_studio_optimization_results.png)
+![AI Function Studio Optimization Results](assets/ai_function_studio_optimize_result.jpg)
 
 ### Test the Optimized Function
 
