@@ -43,21 +43,7 @@ Step 3.1 — Navigate the Trust Center Data Security Tab
     Snowsight left navigation → Governance & Security → Trust Center
     Select the "Data Security" tab
 
-  WHAT YOU WILL SEE ON THE DASHBOARD:
-    ┌────────────────────────────────────────────────────────────────────┐
-    │  Data Security Dashboard                                          │
-    │                                                                   │
-    │  Sensitive Objects      PII       PCI       PHI                  │
-    │  ─────────────────      ─────     ─────     ─────                │
-    │  [total count]          [count]   [count]   [count]              │
-    │                                                                   │
-    │  Objects that need review: [N tables pending]                    │
-    │  Classification errors:    [0]                                   │
-    │                                                                   │
-    │  Policy Coverage: [% of sensitive objects with masking]          │
-    └────────────────────────────────────────────────────────────────────┘
-
-  The tiles count tables and columns where AI detected PII, PCI, or PHI data.
+  The tiles count tables and columns where Snowflake detected PII, PCI, or PHI data.
   After running Step 2, you should see the CUSTOMER table and its columns here.
 
   NOTE: Auto-Classification (attached profile) runs asynchronously. The Trust Center
@@ -145,7 +131,7 @@ Step 3.3 — UI: Objects That Need Review
     1. On the Data Security Dashboard, select the "Objects that need review" tile
     2. Use the search and Database filter to find CUSTOMER
     3. For each column, inspect:
-         CLASSIFICATION CATEGORY  — what AI detected
+         CLASSIFICATION CATEGORY  — what was detected
          TAGS                     — system tags + your DATA_CLASSIFICATION tag
          SAMPLE VALUES            — anonymized sample to verify the detection
     4. You can:
