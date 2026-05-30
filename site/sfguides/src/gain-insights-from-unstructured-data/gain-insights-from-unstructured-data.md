@@ -539,7 +539,7 @@ The easiest way to create a custom AI function is through [Cortex Code](https://
 In Cortex Code Snowsight's chat panel, type the following prompt:
 
 ```
-/cortex-ai-function-studio Create a function that taks in the review from tb_voc.analytics.truc_review_v_samples and extract review into the following fields: truck_name, dish, issue_type, would_recommend (yes/no/unclear) by sysadmin role
+/cortex-ai-function-studio Create a function that takes in the review from tb_voc.analytics.truck_review_v_samples and extract review into the following fields: truck_name, dish, issue_type, would_recommend (yes/no/unclear) by sysadmin role
 ```
 
 Cortex Code will:
@@ -742,7 +742,7 @@ With the completion of this quickstart, you have now:
 
 ### Appendix 1: Multi-Model Cost Optimization
 
-The optimization in the previous section used a single model (`openai-gpt-5-mini`). In production, you may want to compare your current model against additional cheaper alternatives to find the best cost/quality tradeoff. AI Function Studio supports passing multiple models in a single optimization call — it evaluates them concurrently and returns the Pareto-optimal result.
+The optimization in the previous section used a single model (`claude-sonnet-4-6`). In production, you may want to compare your current model against additional cheaper alternatives to find the best cost/quality tradeoff. AI Function Studio supports passing multiple models in a single optimization call — it evaluates them concurrently and returns the Pareto-optimal result.
 
 To extend the optimization you already ran, type the following prompt in Cortex Code's chat panel:
 
