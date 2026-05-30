@@ -266,7 +266,7 @@ ORDER BY sensitive_column_count DESC;
 SHOW MASKING POLICIES IN SCHEMA HRZN_DB.TAG_SCHEMA;
 
 -- Retrieve the DDL of the string masking policy
-SELECT GET_DDL('MASKING POLICY', 'HRZN_DB.TAG_SCHEMA.DATA_CLASSIFICATION_MASK_STRING');
+SELECT GET_DDL('POLICY', 'HRZN_DB.TAG_SCHEMA.DATA_CLASSIFICATION_MASK_STRING');
 
 /*
   After Cortex Code generates an improved policy, apply it with:
