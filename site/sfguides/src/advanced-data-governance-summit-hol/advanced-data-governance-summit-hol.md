@@ -298,19 +298,9 @@ The dashboard shows:
 
 ### Verify Classification Results via SQL
 
-These queries read from SNOWFLAKE.ACCOUNT_USAGE.DATA_CLASSIFICATION_LATEST — the same view the dashboard reads:
+Run the Information Schema query for immediate results (no ACCOUNT_USAGE latency). See the SQL script for the full set of queries including the ACCOUNT_USAGE alternative.
 
-```sql
--- Mirror the dashboard breakdown tiles
-SELECT TAG_VALUE AS CLASSIFICATION_LEVEL,
-    COUNT(DISTINCT COLUMN_NAME) AS COLUMN_COUNT,
-    COUNT(DISTINCT TABLE_NAME) AS TABLE_COUNT
-FROM SNOWFLAKE.ACCOUNT_USAGE.DATA_CLASSIFICATION_LATEST
-WHERE TABLE_DATABASE = 'HRZN_DB'
-GROUP BY TAG_VALUE ORDER BY COLUMN_COUNT DESC;
-```
-
-> **Note:** ACCOUNT_USAGE has up to 3-hour latency. Use INFORMATION_SCHEMA.TAG_REFERENCES_ALL_COLUMNS for immediate verification (demonstrated in Step 2).
+> **Note:** ACCOUNT_USAGE views have up to 3-hour latency. Use `INFORMATION_SCHEMA.TAG_REFERENCES_ALL_COLUMNS` for immediate verification.
 
 ### Objects That Need Review (UI Walkthrough)
 
@@ -335,24 +325,9 @@ FROM SNOWFLAKE.DATA_SECURITY.ENTITLEMENT_REPORT
 ORDER BY USER_NAME, TABLE_NAME, PRIVILEGE;
 ```
 
-### Governance Gap Analysis
-
-```sql
--- Sensitive columns WITHOUT an active masking policy
-SELECT dc.TABLE_NAME, dc.COLUMN_NAME, dc.TAG_VALUE AS SENSITIVITY_LEVEL,
-    CASE WHEN pr.REF_COLUMN_NAME IS NOT NULL THEN 'Protected' ELSE 'UNPROTECTED' END AS STATUS
-FROM SNOWFLAKE.ACCOUNT_USAGE.DATA_CLASSIFICATION_LATEST dc
-LEFT JOIN SNOWFLAKE.ACCOUNT_USAGE.POLICY_REFERENCES pr
-    ON dc.TABLE_NAME = SPLIT_PART(pr.REF_ENTITY_NAME, '.', 3)
-    AND dc.COLUMN_NAME = pr.REF_COLUMN_NAME
-    AND pr.POLICY_KIND = 'MASKING_POLICY'
-WHERE dc.TABLE_DATABASE = 'HRZN_DB';
-```
-
 **Key Takeaways:**
 - Trust Center provides a compliance dashboard without requiring SQL knowledge
 - The Entitlement Report is essential for "who has access" audits required by GDPR, HIPAA, and SOX
-- Gap analysis bridges classification and protection — find classified-but-unmasked columns instantly
 
 <!-- ------------------------ -->
 ## Access and Audit Trail
