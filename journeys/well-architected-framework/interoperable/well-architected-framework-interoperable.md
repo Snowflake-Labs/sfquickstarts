@@ -6,7 +6,8 @@ categories: snowflake-site:taxonomy/solution-center/certification/well-architect
 language: en
 summary: The Open and Interoperable Lens provides guidance for multi-engine data access via Apache Iceberg, external catalog integration, cross-organizational data sharing, and data portability across the Snowflake ecosystem.
 environments: web
-status: Published 
+status: Published
+fork_repo_link: https://github.com/Snowflake-Labs/cortex-code-skills/tree/main/skills/well-architected-framework-assessment
 
 
 
