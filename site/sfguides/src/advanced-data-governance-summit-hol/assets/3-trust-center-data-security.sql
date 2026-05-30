@@ -184,39 +184,37 @@ Step 3.4 — Sensitive Data Entitlement Report
 
 USE ROLE HRZN_DATA_GOVERNOR;
 
--- Who can access sensitive data tables and with what privilege?
-SELECT DISTINCT
-    USER_NAME,
-    TABLE_CATALOG,
-    TABLE_SCHEMA,
-    TABLE_NAME,
-    PRIVILEGE
-FROM SNOWFLAKE.DATA_SECURITY.ENTITLEMENT_REPORT
-ORDER BY USER_NAME, TABLE_NAME, PRIVILEGE;
-
--- Which roles have the broadest access to sensitive tables?
-SELECT
-    ROLE_NAME,
-    COUNT(DISTINCT TABLE_NAME)           AS sensitive_tables_accessible,
-    LISTAGG(DISTINCT PRIVILEGE, ', ')    AS privileges
-FROM SNOWFLAKE.DATA_SECURITY.ENTITLEMENT_REPORT
-GROUP BY ROLE_NAME
-ORDER BY sensitive_tables_accessible DESC;
-
--- Which sensitive tables have the most users with access?
-SELECT
-    TABLE_CATALOG || '.' || TABLE_SCHEMA || '.' || TABLE_NAME  AS full_table_name,
-    COUNT(DISTINCT USER_NAME)                                   AS user_count,
-    COUNT(DISTINCT ROLE_NAME)                                   AS role_count,
-    LISTAGG(DISTINCT PRIVILEGE, ', ')                           AS privileges
-FROM SNOWFLAKE.DATA_SECURITY.ENTITLEMENT_REPORT
-GROUP BY TABLE_CATALOG, TABLE_SCHEMA, TABLE_NAME
-ORDER BY user_count DESC;
-
--- List entitlement report runs
+-- Step 1: Confirm the report ran and get the latest run ID
 SELECT DISTINCT RUN_ID, CREATED_TIME
 FROM SNOWFLAKE.DATA_SECURITY.ENTITLEMENT_REPORT
 ORDER BY CREATED_TIME DESC;
+
+-- Step 2: Who can access sensitive data tables? (latest run)
+SELECT DISTINCT
+    USER_NAME,
+    ROLE_NAME,
+    TABLE_NAME,
+    PRIVILEGE
+FROM SNOWFLAKE.DATA_SECURITY.ENTITLEMENT_REPORT
+WHERE RUN_ID = (
+    SELECT RUN_ID FROM SNOWFLAKE.DATA_SECURITY.ENTITLEMENT_REPORT
+    ORDER BY CREATED_TIME DESC LIMIT 1
+)
+ORDER BY USER_NAME, TABLE_NAME;
+
+-- Step 3: Which roles have the broadest access to sensitive tables? (latest run)
+SELECT
+    ROLE_NAME,
+    ARRAY_AGG(DISTINCT PRIVILEGE) WITHIN GROUP (ORDER BY PRIVILEGE)  AS PRIVILEGES,
+    COUNT(DISTINCT USER_NAME)                                         AS NUMBER_OF_USERS,
+    COUNT(DISTINCT TABLE_NAME)                                        AS NUMBER_OF_OBJECTS
+FROM SNOWFLAKE.DATA_SECURITY.ENTITLEMENT_REPORT
+WHERE RUN_ID = (
+    SELECT RUN_ID FROM SNOWFLAKE.DATA_SECURITY.ENTITLEMENT_REPORT
+    ORDER BY CREATED_TIME DESC LIMIT 1
+)
+GROUP BY ROLE_NAME
+ORDER BY NUMBER_OF_OBJECTS DESC;
 
 
 /*
