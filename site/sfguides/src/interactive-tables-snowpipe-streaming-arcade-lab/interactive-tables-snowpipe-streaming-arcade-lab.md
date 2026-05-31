@@ -774,7 +774,7 @@ Use skill `developing-with-streamlit` to create a real-time arcade scores dashbo
 - Add external access integration and network rule for PyPI access
 - Add a pyproject.toml file to manage packages and add packages: "streamlit[snowflake]==1.50.0", "pandas>=2.0.0", "snowflake-snowpark-python"
 - Use SUMMIT_INT_WH by setting that in Streamlit application settings
-- Do not do any USE Warehouse queries in python
+- Do not perform any "USE Warehouse" queries in python
 
 **Dashboard Features:**
 1. Global Leaderboard - Highest scores in last 24 hours
@@ -790,6 +790,11 @@ Use skill `developing-with-streamlit` to create a real-time arcade scores dashbo
    - Current data freshness in decimal seconds: DATEDIFF('millisecond', MAX(GAME_ENDED_AT), CONVERT_TIMEZONE('UTC', CURRENT_TIMESTAMP())::TIMESTAMP_NTZ) / 1000.0
    - Freshness over last hour as a time-series line chart bucketed by DATE_TRUNC('minute', GAME_ENDED_AT)
    - Rows/sec over last hour: count per minute bucket divided by 60, as a time-series line chart
+
+**Additional Guidance:**
+- Validate all data types, units and calculations, in both SQL and Python layers
+- Ensure that all data presented is intuitive and informative
+- Ensure that the layout and design of the dashboard is sleek and appealing
 ```
 
 Cortex will write the Streamlit app file and deploy it to Snowflake. Once complete, open the dashboard from **Snowsight → Streamlit → ARCADE_SCORES_DASHBOARD**.
