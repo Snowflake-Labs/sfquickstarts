@@ -3,7 +3,7 @@ id: build-autonomous-sql-pipelines-for-ai-agents
 summary: Build a real-time logistics data platform using DCM Projects, Openflow, Dynamic Tables, and Cortex AI.
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/dynamic-tables, snowflake-site:taxonomy/snowflake-feature/cortex
 environments: web
-status: Hidden
+status: Published
 language: en
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 fork repo link: https://github.com/Snowflake-Labs/sfguide-build-autonomous-pipelines-for-ai-agents
