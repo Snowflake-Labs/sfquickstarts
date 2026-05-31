@@ -32,7 +32,7 @@ In this guide, you'll build that platform end to end. You'll define your entire 
 
 - A [Snowflake account](https://signup.snowflake.com/) with **ACCOUNTADMIN** access (Enterprise edition or higher for Openflow)
 - [Snowflake CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli/installation/installation) (`snow`) v3.16.0+ installed
-- Python 3.12+ with `pip`
+- Python 3.13+ with `pip`
 - [Redpanda CLI](https://docs.redpanda.com/current/get-started/rpk-install/) (`rpk`) for Kafka topic management
 - A Kafka/Redpanda cluster (we provide one for this lab, or bring your own)
 
@@ -54,6 +54,18 @@ In this guide, you'll build that platform end to end. You'll define your entire 
 The diagram below shows the end-to-end architecture you'll build in this lab:
 
 ![Lab Architecture](assets/lab_architecture.png)
+
+<!-- ------------------------ -->
+## Clone the Companion Git Repo
+
+This guide has a companion repository that contains all the code, configuration files, and scripts you'll need. Clone it to your local machine and use it as your working directory throughout the lab.
+
+```bash
+git clone https://github.com/Snowflake-Labs/sfguide-build-autonomous-pipelines-for-ai-agents
+cd sfguide-build-autonomous-pipelines-for-ai-agents
+```
+
+The repository includes the DCM project definitions, Kafka producer/consumer scripts, fraud detection notebook, Cortex Agent SQL, Streamlit app, and helper scripts referenced in each step.
 
 <!-- ------------------------ -->
 ## Bootstrap the Account
@@ -81,6 +93,19 @@ Here's what the script does:
 - Creates a network rule and external access integration for the Kafka broker
 
 > **Note:** The Openflow deployment provisioning runs asynchronously. You can continue with the next steps while it completes. The deployment must be ready before you configure the Openflow connector in Step 4.
+
+Sanity check the run of bootstrap, following objects should be available in the snowflake account:
+
+```sql
+show dcm projects in schema dcm_db.projects;
+-- DCM_PROJECT_DEV
+show openflow deployments like 'summit_deployment';
+-- SUMMIT_DEPLOYMENT
+show network rules in schema dcm_db.network;
+-- REDPANDA_NETWORK_RULE
+show integrations like 'summit_eai';
+-- SUMMIT_EAI
+```
 
 The final query in the script outputs your account identifier and username. You'll need these values for the DCM manifest in the next step:
 
@@ -122,7 +147,6 @@ Generate a PAT restricted to the `SUMMIT_ADMIN` role. Run this in Snowsight or a
 
 ```sql
 ALTER USER ADD PAT summit_admin_pat
-  ROLE_RESTRICTION = 'SUMMIT_ADMIN'
   DAYS_TO_EXPIRY = 7
   COMMENT = 'PAT for summit quickstart';
 ```
@@ -157,12 +181,14 @@ Run the helper script to set up a named `summit` snow-cli connection using your 
 ```bash
 source .env
 bash helpers/setup_snow_cli_connection.sh
+# if prompted for password or other parameters just hit Enter multiple times
 ```
 
-Verify the connection works:
+The connection was set as default, let's verify it works as expected:
 
 ```bash
-snow connection test
+snow connection list
+snow sql -q "SELECT CURRENT_ORGANIZATION_NAME() || '-' || CURRENT_ACCOUNT_NAME() AS account_identifier, CURRENT_USER() AS user_name"
 ```
 
 You should see a successful connection message with your account and role information. If the connection fails, you will need to run the `bootstrap` and `env setup` sections again.
@@ -182,7 +208,11 @@ If you didn't install rpk-cli yet, follow the instruction to set it up:
 brew install redpanda-data/tap/redpanda  # macOS
 ```
 
-Or for Linux: `curl -1sLf 'https://dl.redpanda.com/nzc4ZYQK3WRGd9sy/redpanda/cfg/setup/bash.deb.sh' | sudo -E bash && sudo apt install redpanda`
+Or for Linux: 
+
+```bash
+curl -1sLf 'https://dl.redpanda.com/nzc4ZYQK3WRGd9sy/redpanda/cfg/setup/bash.deb.sh' | sudo -E bash && sudo apt install redpanda
+```
 
 Set up an `rpk` profile so you can manage Kafka topics directly:
 
@@ -248,6 +278,8 @@ snow dcm plan --target DCM_DEV --from 2_dcm_project
 
 You should see planned CREATE operations for a database, 4 schemas, 9 raw tables, 14 dynamic tables, 5 views, a warehouse, 3 roles, and their associated grants. Review the output to confirm everything looks correct.
 
+>**Note**: you can save the output generated after dcm plan using the "--save-output" parameter.
+
 ### Deploy
 
 Once the plan looks good, deploy:
@@ -307,6 +339,9 @@ SHOW TABLES;
 
 SELECT * FROM CUSTOMERS ORDER BY 1;
 SELECT * FROM ORDERS ORDER BY 1;
+SELECT * FROM PAYMENTS ORDER BY 1;
+SELECT * FROM PACKAGES ORDER BY 1;
+SELECT * FROM TRACKING_EVENTS ORDER BY 1;
 ```
 
 In the RAW schema you will see the following data model:
@@ -428,6 +463,8 @@ python3 3_generate/tms_producer.py --dry-run --count 1
 
 You should see a single order printed to stdout with all its associated events (order items, payment, packages, tracking events, deliveries) as JSON messages.
 
+> **Note:** The Kafka cluster provided for this lab is already producing events — you do not need to run the producer yourself. If you are using your own cluster, run the producer script to generate events and publish them to the Kafka topics.
+
 ### Run the Producer
 
 Now push some orders to Kafka:
@@ -476,13 +513,13 @@ Click on the `Summit Runtime` to open the canvas.
 
 In the canvas drag-and-drop **Import from Registry** → and choose the flow **kafka-json-sasl-topic2table-schemaev**, and Click Import.
 
-![Openflow Import from Registry](assets/openflow_import_from_registry.png)
+![Openflow Runtimes](assets/openflow_import_from_registry.png)
 
 ### Configure Flow Parameters
 
 Right-click on the `Process Group` and update the 3 parameter contexts:
 
-![Openflow Processor](assets/openflow_processor.png)
+![Openflow Runtimes](assets/openflow_processor.png)
 
 **Source Parameters:**
 
@@ -496,7 +533,7 @@ Right-click on the `Process Group` and update the 3 parameter contexts:
 
 **The Source parameters**: add your Kafka broker, SASL username/password, use SASL_SSL as security protocol - these are all inside your `.env` file
 
-![Openflow Source Params](assets/openflow_source_params.png)
+![Openflow Runtimes](assets/openflow_source_params.png)
 
 **Destination Parameters:**
 
@@ -509,7 +546,7 @@ Right-click on the `Process Group` and update the 3 parameter contexts:
 
 **The Destination parameters**: Database `SUMMIT_DB_DEV`, schema `RAW`, role `SUMMIT_INGEST_ROLE_DEV`, use `SNOWFLAKE_MANAGED` authentication
 
-![Openflow Destination Params](assets/openflow_destination_params.png)
+![Openflow Runtimes](assets/openflow_destination_params.png)
 
 **Ingestion Parameters:**
 
@@ -524,7 +561,7 @@ Right-click on the `Process Group` and update the 3 parameter contexts:
 
 Deselect **Show Inherited Parameters** to show only the Ingestion parameters.
 
-![Openflow Ingestion Params](assets/openflow_ingestion_params.png)
+![Openflow Runtimes](assets/openflow_ingestion_params.png)
 
 
 **Map Topic to Table names:** Update the Topic to Table mapping processor, by double chicking on the **main processor group**, and navigate to `Map Topic to Table` processor, the regex will remove the topic prefix and transform topic names to snowflake table names. For example the data from topic `order-items` will be mapped to snowflake table `ORDER_ITEMS`.
@@ -533,9 +570,9 @@ Deselect **Show Inherited Parameters** to show only the Ingestion parameters.
 ${kafka.topic:substringAfter('tms-'):replace('-', '_'):toUpper()}
 ```
 
-![Openflow Map Topic 1](assets/openflow_map_topic_1.png)
+![Openflow Runtimes](assets/openflow_map_topic_1.png)
 
-![Openflow Map Topic 2](assets/openflow_map_topic_2.png)
+![Openflow Runtimes](assets/openflow_map_topic_2.png)
 
 ### Check flow parameters fits the Kafka cluster endpoint
 
@@ -582,15 +619,15 @@ Now that we have the flow configured, let's start streaming.
 
 1. Enable all controller services by right-click on the main process group
 
-![Openflow Enable Controller Services](assets/openflow_enable_controller_services.png)
+![Openflow Runtimes](assets/openflow_enable_controller_services.png)
 
 2. Right-click again on the main processor group and click **Start**
 
-![Openflow Start Flow](assets/openflow_start_flow.png)
+![Openflow Runtimes](assets/openflow_start_flow.png)
 
 You should see data flowing through the connector. The flow counters in the Openflow UI will show bytes and records being processed.
 
-![Openflow Streaming](assets/openflow_streaming.png)
+![Openflow Runtimes](assets/openflow_streaming.png)
 
 ### (Optionally) Import an existing Flow
 
@@ -600,7 +637,7 @@ You drag-and-drop a new `Processor Group` in the main canvas, and import the fil
 
 This flow already has all parameters pre-configured. You only need to set the Kafka related parameters in the source parameter group (`KAFKA_USERNAME`, `KAFKA_PASSWORD`, `KAFKA_BROKERS`) and the ingestion parameter group (`KAFKA_USERNAME-GROUP`).
 
-![Openflow Import Flow](assets/openflow_import_flow.png)
+![Openflow Runtimes](assets/openflow_import_flow.png)
 
 Now you can **Enable Controller Services** and **Start** the Flow.
 
@@ -737,7 +774,7 @@ The fraud detector evaluates 6 independent signals for each payment:
 
 A payment is flagged as fraudulent when its combined score reaches 0.30 or higher.
 
-### Run the Fraud Detector
+### Run the Fraud Producer
 
 >**Note:** We are generating fraud payments already in the provided Kafka Cluster. Run this only if you are using your own Kafka Cluster.
 
@@ -754,12 +791,26 @@ This generates 50 orders with a 10% fraud rate, meaning roughly 5 orders will ha
 
 Open the [`5_fraud_detection/fraud_detection_notebook.ipynb`](5_fraud_detection/fraud_detection_notebook.ipynb) notebook in Snowflake Notebooks or your local Jupyter environment.
 
-**Snowflake Notebooks setup:** When you create or import the notebook in Snowsight (Projects → Notebooks → Import .ipynb), you'll be prompted to configure compute:
+**Snowflake Notebooks setup:** When you create or import the notebook in Snowsight (Projects → Workspaces → Upload Files), you'll need to configure your default compute service:
 
+- **Service Name**: `USER_SERVICE`
+- **Service Settings**: `SYSTEM_COMPUTE_POOL_CPU (CPU_X64_S)`
+
+Click **Create and Connect**. Wait for Connection to be established, it should not take more than 1 minute.
+
+On the top right choose your running Role and Warehouse:
+
+- **Role**: `SUMMIT_DEVELOPER_ROLE_DEV`
 - **Warehouse**: Select `SUMMIT_WH_DEV`
-- **Database**: `SUMMIT_DB_DEV`
-- **Schema**: `TRANSFORM`
-- **Role**: `SUMMIT_ADMIN`
+
+Enable the current session credentials by updating the first Cell, comment lines 8-10 with Local setup, uncomment the lines 13-14 with snowsight setup.
+
+```python
+# If running in Snowsight Workspace, use the block below
+session = get_active_session()
+conn = session.connection
+```
+
 
 **Local Jupyter setup:** If you prefer to run the notebook locally:
 
@@ -767,15 +818,22 @@ Open the [`5_fraud_detection/fraud_detection_notebook.ipynb`](5_fraud_detection/
 source .venv/bin/activate
 ```
 
-Then open the notebook in VS Code or Jupyter Lab, select the **.venv/bin/python** kernel, and run all cells. The notebook connects to Snowflake using the `summit` named connection from your Snowflake CLI config:
+Update first Cell, and enable the line 8-10 with Local setup, comment the lines 13-14 with snowsight setup.
 
 ```python
-conn = snowflake.connector.connect(connection_name="summit")
+# If running locally, use the block below
+conn = snowflake.connector.connect(
+    connection_name="summit"
+)
 ```
+
+
+Then open the notebook in VS Code or Jupyter Lab, select the **.venv/bin/python** kernel, and run all cells. The notebook connects to Snowflake using the `summit` named connection from your Snowflake CLI config:
+
 
 Make sure you've already run `bash helpers/setup_snow_cli_connection.sh` (from the environment setup step) so the `summit` connection exists and is configured with your PAT.
 
-The notebook:
+#### What the notebook does
 
 1. Reads unscored payments from `SUMMIT_DB_DEV.TRANSFORM.DT_CLEAN_PAYMENTS`
 2. Joins with order and customer data for context
@@ -789,12 +847,13 @@ The notebook:
 After running the notebook, verify fraud detections:
 
 ```sql
-USE ROLE SUMMIT_ADMIN;
+USE ROLE SUMMIT_DEVELOPER_ROLE_DEV;
+USE SCHEMA SUMMIT_DB_DEV.TRANSFORM;
 
 SELECT COUNT(*) AS total_scored,
        SUM(CASE WHEN IS_FRAUD THEN 1 ELSE 0 END) AS flagged_fraud,
        ROUND(AVG(FRAUD_SCORE), 3) AS avg_score
-FROM SUMMIT_DB_DEV.TRANSFORM.FRAUD_DETECTION_RESULTS;
+FROM FRAUD_DETECTION_RESULTS;
 ```
 
 ### Explore the AI-Enriched Fraud Results
@@ -803,7 +862,7 @@ Check the AI-classified fraud types and explanations:
 
 ```sql
 SELECT PAYMENT_ID, FRAUD_SCORE, FRAUD_TYPE, EXPLANATION
-FROM SUMMIT_DB_DEV.TRANSFORM.FRAUD_DETECTION_RESULTS
+FROM FRAUD_DETECTION_RESULTS
 WHERE IS_FRAUD = TRUE
 ORDER BY FRAUD_SCORE DESC LIMIT 5;
 ```
@@ -832,7 +891,10 @@ You should see flagged payments with their triggered signals (e.g., `billing_cou
 The **ANALYTICS** schema provides clean views on top of the transform layer. These are the consumer-facing objects designed for dashboards, analysts, and Cortex Agents.
 
 ```sql
+USE ROLE SUMMIT_DEVELOPER_ROLE_DEV;
 USE SCHEMA SUMMIT_DB_DEV.ANALYTICS;
+
+SHOW VIEWS;
 ```
 
 ### Order Summary
@@ -899,7 +961,7 @@ We'll use **Cortex Code** to generate the semantic view SQL from a natural langu
 
 ### The Prompt
 
-Open Cortex Code (in Snowsight or the Desktop IDE) and paste the following prompt from [`6_cortex-agent/create_semantic_view_prompt.txt`](6_cortex-agent/create_semantic_view_prompt.txt):
+Open Cortex Code (in Snowsight or the Cortex Code CLI) and paste the following prompt from [`6_cortex-agent/create_semantic_view_prompt.txt`](6_cortex-agent/create_semantic_view_prompt.txt):
 
 ```text
 Create a semantic view named SUMMIT_DB_DEV.ANALYTICS.TMS_SEMANTIC_VIEW over the following views
@@ -972,6 +1034,14 @@ RELATIONSHIPS (
 
 **AI Hints** — `AI_SQL_GENERATION` and `AI_QUESTION_CATEGORIZATION` clauses that guide the LLM on date handling, status filtering, and topic boundaries.
 
+### Validate semantic view before execution
+
+You can ask Cortex Code to validate the semantic view before execution and fix errors if possible:
+
+```text
+Validate the semantic view SQL syntax by compiling it against Snowflake before execution
+```
+
 ### Deploy the Semantic View
 
 Run the SQL file:
@@ -993,6 +1063,12 @@ Verify the semantic view was created and inspect its structure:
 
 ```sql
 DESCRIBE SEMANTIC VIEW SUMMIT_DB_DEV.ANALYTICS.TMS_SEMANTIC_VIEW;
+```
+
+You can test it as well using Cortex Code:
+
+```text
+Test the 3 onboarding queries in TMS_SEMANTIC_VIEW to verify Cortex can resolve dimensions and metrics correctly
 ```
 
 To test it interactively, open **Snowflake Intelligence** in Snowsight (AI & ML → Cortex Agents) and create a new conversation using the `TMS_SEMANTIC_VIEW` as the data source. Try asking: "Which packages are currently in transit?"
@@ -1093,6 +1169,10 @@ Try these prompts to see the agent in action:
 
 The agent will use the semantic view to generate SQL, execute it, and return formatted results with context.
 
+![Openflow Runtimes](assets/cortex_agent.png)
+
+If you Click on **Show Traces** you can see detailed execution tracking, with performance metrics and tokens consumed.
+
 <!-- ------------------------ -->
 ## Build a Streamlit Dashboard with Cortex Code
 
@@ -1106,6 +1186,39 @@ The prompt file is already provided at [`7_streamlit/create_streamlit_app_prompt
 - **Package Tracking** — Searchable, filterable table of all packages
 - **Fraud Alerts** — Flagged payments with AI-generated explanations and a fraud score slider
 - **Location Performance** — Hub/warehouse metrics with P90 processing times
+
+The Prompt:
+
+```text
+Build a Streamlit in Snowflake (SiS) app for the EuroShip Logistics TMS system.
+
+The app should connect to SUMMIT_DB_DEV.ANALYTICS and provide:
+
+1. **Dashboard page** — Key KPIs at the top (total orders, packages in transit, fraud alerts, avg transit hours), followed by charts showing:
+   - Orders over time (line chart)
+   - Package status distribution (bar chart)
+   - Top 10 busiest hubs by package volume (horizontal bar chart)
+
+2. **Package Tracking page** — A searchable table of all packages with filters for status (IN_TRANSIT, DELIVERED, etc.) and carrier. Show tracking number, customer, destination, status, hubs visited, and transit hours.
+
+3. **Fraud Alerts page** — A table of flagged fraudulent payments with fraud score, fraud type, triggered signals, and the AI-generated explanation. Add a filter for minimum fraud score threshold (slider from 0.3 to 1.0).
+
+4. **Location Performance page** — A table and bar chart of hub/warehouse performance metrics: location name, type, city, country, number of packages processed, and P90 processing time in minutes. Add date filter.
+
+Requirements:
+- Use the role SUMMIT_ADMIN and warehouse SUMMIT_WH_DEV.
+- Query these views: ORDER_SUMMARY, PACKAGE_TRACKING, FRAUD_DETECTION, LOCATION_ACTIVITY.
+- Use st.connection("snowflake") for the Snowflake connection.
+- Use Streamlit's built-in charting (st.bar_chart, st.line_chart) or st.altair_chart for more control.
+- Add a sidebar with page navigation using st.navigation and st.Page.
+- Apply clean formatting with st.metric for KPIs.
+- The app title should be "EuroShip Logistics — TMS Operations".
+
+Rules:
+- Create only the Python app file and save it locally as `7_streamlit/tms_app.py`.
+- Do not deploy the app yet.
+- Use the local repository to get information about schema objects and column names.
+```
 
 ### Generate the App with Cortex Code
 
@@ -1123,33 +1236,7 @@ The prompt file is already provided at [`7_streamlit/create_streamlit_app_prompt
 
 5. Save the generated file to `7_streamlit/tms_app.py`.
 
-### Deploy to Snowflake (Optional)
-
-Once you're happy with the generated app, deploy it as a Streamlit in Snowflake app:
-
-```bash
-snow streamlit deploy 7_streamlit/tms_app.py \
-  --database SUMMIT_DB_DEV \
-  --schema ANALYTICS \
-  --warehouse SUMMIT_WH_DEV \
-  --role SUMMIT_ADMIN \
-  --name TMS_OPERATIONS_APP
-```
-
-Or create it via SQL in a worksheet:
-
-```sql
-USE ROLE SUMMIT_ADMIN;
-USE WAREHOUSE SUMMIT_WH_DEV;
-
-CREATE OR REPLACE STREAMLIT SUMMIT_DB_DEV.ANALYTICS.TMS_OPERATIONS_APP
-  ROOT_LOCATION = '@SUMMIT_DB_DEV.ANALYTICS.STREAMLIT_STAGE/tms_app'
-  MAIN_FILE = 'tms_app.py'
-  QUERY_WAREHOUSE = 'SUMMIT_WH_DEV'
-  TITLE = 'EuroShip Logistics — TMS Operations';
-```
-
-### Run Locally (Alternative)
+### Run Locally
 
 To test the app locally before deploying:
 
@@ -1160,10 +1247,37 @@ streamlit run 7_streamlit/tms_app.py
 
 This uses your local `summit` Snowflake CLI connection via `st.connection("snowflake")`.
 
+### Deploy to Snowflake (Optional)
+
+Once you're happy with the generated app, let's update the connection and deploy it as a Streamlit in Snowflake app:
+
+Cortex Code:
+
+```text
+Update the streamlit app to use streamlit snowflake connection
+```
+
+Deploy using snow cli:
+
+```bash
+snow streamlit deploy tms_operations_app \
+  --replace \
+  --database SUMMIT_DB_DEV \
+  --role SUMMIT_ADMIN \
+  --project 7_streamlit
+```
+
+Now Open the Link printed after deploy:
+
+`Streamlit successfully deployed and available under https://app.snowflake.com/...`
+
+Still get errors? Cortex Code is your friend. Just paste the error in the prompt and ask to fix.
+
 ### Iterate with Cortex Code
 
 The power of this approach is iteration. If you want to add features or change the layout, simply ask Cortex Code:
 
+- "Provide a date selector for the Dashboard, with default to last 7 days"
 - "Add a map visualization showing package locations across Europe"
 - "Add a real-time refresh button that re-queries the data"
 - "Change the fraud alerts page to highlight critical scores in red"
@@ -1192,7 +1306,6 @@ You will need a Github account for this, where you will upload the dcm project.
 See these 2 Quickstarts for reference:
  - https://www.snowflake.com/en/developers/guides/get-started-snowflake-dcm-projects/
  - https://www.snowflake.com/en/developers/guides/build-data-pipelines-with-snowflake-dcm-projects/
-
 
 <!-- ------------------------ -->
 ## Cleanup
