@@ -61,7 +61,7 @@ The diagram below shows the end-to-end architecture you'll build in this lab:
 This guide has a companion repository that contains all the code, configuration files, and scripts you'll need. Clone it to your local machine and use it as your working directory throughout the lab.
 
 ```bash
-git clone https://github.com/Snowflake-Labs/sfguide-build-autonomous-pipelines-for-ai-agents
+git clone https://github.com/Snowflake-Labs/sfguide-build-autonomous-pipelines-for-ai-agents.git
 cd sfguide-build-autonomous-pipelines-for-ai-agents
 ```
 
