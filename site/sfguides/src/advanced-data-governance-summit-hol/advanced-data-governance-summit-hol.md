@@ -76,7 +76,7 @@ You'll work through a step-by-step guide using a synthetic customer dataset cont
 
 **Script:** [0-lab-setup.sql](https://github.com/sfc-gh-ankgupta/sfguide-advanced-data-governance-summit-hol/blob/main/0-lab-setup.sql)
 
-1. In Snowsight, create a new SQL worksheet named `0_lab_setup`
+1. In Snowsight, navigate to **Projects > Workspaces**, create a new SQL worksheet named `0_lab_setup`
 2. Copy the contents of `0-lab-setup.sql` into your worksheet
 3. Run all statements as `ACCOUNTADMIN`
 
@@ -147,9 +147,9 @@ After completing this step you will observe that the CUSTOMER table exposes 15 c
 
 **Script:** [2-classification-and-policies.sql](https://github.com/sfc-gh-ankgupta/sfguide-advanced-data-governance-summit-hol/blob/main/hol-lab/2-classification-and-policies.sql) | Role: `HRZN_DATA_GOVERNOR`
 
-### AI-Powered Classification with the BYOT Pattern
+### Classification with the BYOT Pattern
 
-The **BYOT (Bring Your Own Tags)** pattern maps AI-detected categories to your organization's custom taxonomy. Create the enterprise DATA_CLASSIFICATION tag with propagation enabled:
+The **BYOT (Bring Your Own Tags)** pattern maps detected system categories to your organization's custom taxonomy. Create the enterprise DATA_CLASSIFICATION tag with propagation enabled:
 
 ```sql
 CREATE OR REPLACE TAG HRZN_DB.TAG_SCHEMA.DATA_CLASSIFICATION
@@ -159,7 +159,7 @@ CREATE OR REPLACE TAG HRZN_DB.TAG_SCHEMA.DATA_CLASSIFICATION
 
 > **PROPAGATE = ON_DEPENDENCY_AND_DATA_MOVEMENT** automatically flows this tag to tables created via CTAS, INSERT...SELECT, and views — downstream tables inherit governance automatically.
 
-Create a Classification Profile mapping AI-detected categories to your custom tag values:
+Create a Classification Profile mapping detected categories to your custom tag values:
 
 ```sql
 CREATE SNOWFLAKE.DATA_PRIVACY.CLASSIFICATION_PROFILE
@@ -178,12 +178,18 @@ CREATE SNOWFLAKE.DATA_PRIVACY.CLASSIFICATION_PROFILE
 });
 ```
 
-Run classification:
+Run classification and test the profile before enabling auto-classification:
 ```sql
 CALL SYSTEM$CLASSIFY(
     'HRZN_DB.HRZN_SCH.CUSTOMER',
     'HRZN_DB.HRZN_SCH.HRZN_STANDARD_CLASSIFICATION_PROFILE'
 );
+```
+
+Enable auto-classification by attaching classification profile at the database level:
+```sql
+ALTER DATABASE HRZN_DB
+    SET CLASSIFICATION_PROFILE = 'HRZN_DB.HRZN_SCH.HRZN_STANDARD_CLASSIFICATION_PROFILE';
 ```
 
 ### Tag-Based Masking Policies (Multi-Type)
@@ -292,19 +298,9 @@ The dashboard shows:
 
 ### Verify Classification Results via SQL
 
-These queries read from SNOWFLAKE.ACCOUNT_USAGE.DATA_CLASSIFICATION_LATEST — the same view the dashboard reads:
+Run the Information Schema query for immediate results (no ACCOUNT_USAGE latency). See the SQL script for the full set of queries including the ACCOUNT_USAGE alternative.
 
-```sql
--- Mirror the dashboard breakdown tiles
-SELECT TAG_VALUE AS CLASSIFICATION_LEVEL,
-    COUNT(DISTINCT COLUMN_NAME) AS COLUMN_COUNT,
-    COUNT(DISTINCT TABLE_NAME) AS TABLE_COUNT
-FROM SNOWFLAKE.ACCOUNT_USAGE.DATA_CLASSIFICATION_LATEST
-WHERE TABLE_DATABASE = 'HRZN_DB'
-GROUP BY TAG_VALUE ORDER BY COLUMN_COUNT DESC;
-```
-
-> **Note:** ACCOUNT_USAGE has up to 3-hour latency. Use INFORMATION_SCHEMA.TAG_REFERENCES_ALL_COLUMNS for immediate verification (demonstrated in Step 2).
+> **Note:** ACCOUNT_USAGE views have up to 3-hour latency. Use `INFORMATION_SCHEMA.TAG_REFERENCES_ALL_COLUMNS` for immediate verification.
 
 ### Objects That Need Review (UI Walkthrough)
 
@@ -324,29 +320,18 @@ The Entitlement Report answers: **"Who can access my sensitive data?"**
 
 **Query the results:**
 ```sql
-SELECT DISTINCT USER_NAME, TABLE_CATALOG, TABLE_SCHEMA, TABLE_NAME, PRIVILEGE
+SELECT DISTINCT USER_NAME, ROLE_NAME, TABLE_NAME, PRIVILEGE
 FROM SNOWFLAKE.DATA_SECURITY.ENTITLEMENT_REPORT
-ORDER BY USER_NAME, TABLE_NAME, PRIVILEGE;
-```
-
-### Governance Gap Analysis
-
-```sql
--- Sensitive columns WITHOUT an active masking policy
-SELECT dc.TABLE_NAME, dc.COLUMN_NAME, dc.TAG_VALUE AS SENSITIVITY_LEVEL,
-    CASE WHEN pr.REF_COLUMN_NAME IS NOT NULL THEN 'Protected' ELSE 'UNPROTECTED' END AS STATUS
-FROM SNOWFLAKE.ACCOUNT_USAGE.DATA_CLASSIFICATION_LATEST dc
-LEFT JOIN SNOWFLAKE.ACCOUNT_USAGE.POLICY_REFERENCES pr
-    ON dc.TABLE_NAME = SPLIT_PART(pr.REF_ENTITY_NAME, '.', 3)
-    AND dc.COLUMN_NAME = pr.REF_COLUMN_NAME
-    AND pr.POLICY_KIND = 'MASKING_POLICY'
-WHERE dc.TABLE_DATABASE = 'HRZN_DB';
+WHERE RUN_ID = (
+    SELECT RUN_ID FROM SNOWFLAKE.DATA_SECURITY.ENTITLEMENT_REPORT
+    ORDER BY CREATED_ON DESC LIMIT 1
+)
+ORDER BY USER_NAME, TABLE_NAME;
 ```
 
 **Key Takeaways:**
 - Trust Center provides a compliance dashboard without requiring SQL knowledge
 - The Entitlement Report is essential for "who has access" audits required by GDPR, HIPAA, and SOX
-- Gap analysis bridges classification and protection — find classified-but-unmasked columns instantly
 
 <!-- ------------------------ -->
 ## Access and Audit Trail
@@ -562,7 +547,7 @@ Congratulations! You've completed the Advanced Data Governance Summit HOL.
 | Topic | Feature | Step |
 |-------|---------|------|
 | Access Control | RBAC, privilege grants, deny-by-default | Step 1 |
-| AI Classification | CLASSIFICATION_PROFILE, BYOT tag_map, custom classifiers | Step 2 |
+| Classification | CLASSIFICATION_PROFILE, BYOT tag_map | Step 2 |
 | Masking | Multi-type tag-based masking with auto-propagation | Step 2 |
 | Row Access | Consent-based and geographic row filtering | Step 2 |
 | Advanced Policies | Aggregation and projection policies | Step 2 |

@@ -1,6 +1,6 @@
 
 /***************************************************************************************************
- Advanced Data Governance: AI-Powered Sensitive Data Discovery and Protection at Scale
+ Advanced Data Governance: Sensitive Data Discovery and Protection at Scale
  Snowflake Summit Hands-on Lab
 
  Script:      Step 4 — Access and Audit Trail (IT Admin Persona)
