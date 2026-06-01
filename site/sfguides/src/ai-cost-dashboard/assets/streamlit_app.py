@@ -15,34 +15,41 @@ st.set_page_config(
 st.markdown("""
 <style>
     .block-container {
-        padding-top: 1rem;
-        padding-bottom: 1rem;
+        padding-top: 1rem !important;
+        padding-bottom: 1rem !important;
     }
-    div[data-testid="stMetric"],
-    div[data-testid="metric-container"],
-    .stMetric,
-    div[data-testid="column"] > div > div > div > div[data-testid] {
+    [data-testid="stMetric"],
+    [data-testid="metric-container"] {
         background-color: #ffffff !important;
         padding: 15px 20px !important;
         border-radius: 10px !important;
         border: 1px solid #e0e0e0 !important;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05) !important;
     }
-    div[data-testid="stMetric"] label,
-    div[data-testid="metric-container"] label,
-    .stMetric label {
-        color: #6b7280 !important;
-        font-size: 0.75rem !important;
-        font-weight: 600 !important;
-        text-transform: uppercase;
-        letter-spacing: 0.3px;
+    [data-testid="stMetric"] > div {
+        width: 100% !important;
     }
-    div[data-testid="stMetric"] [data-testid="stMetricValue"],
-    div[data-testid="metric-container"] [data-testid="stMetricValue"],
-    .stMetric [data-testid="stMetricValue"] {
-        font-size: 1.25rem !important;
-        font-weight: 700 !important;
+    [data-testid="stMetric"] label,
+    [data-testid="stMetricLabel"] {
+        color: #6b7280 !important;
+        font-size: 0.65rem !important;
+        font-weight: 600 !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.3px !important;
+        white-space: nowrap !important;
+        overflow: visible !important;
+    }
+    [data-testid="stMetricValue"] {
         color: #1f2937 !important;
+        font-size: 0.95rem !important;
+        font-weight: 700 !important;
+    }
+    [data-testid="stMetricDelta"] {
+        color: #10b981 !important;
+        font-weight: 600 !important;
+    }
+    [data-testid="stMetricDelta"] svg {
+        display: none !important;
     }
     .stTabs [data-baseweb="tab-list"] {
         gap: 8px;
@@ -63,8 +70,8 @@ st.markdown("""
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     }
     section[data-testid="stSidebar"] {
-        background-color: #f8fafc;
-        border-right: 1px solid #e2e8f0;
+        background-color: #f8fafc !important;
+        border-right: 1px solid #e2e8f0 !important;
     }
     section[data-testid="stSidebar"] h3 {
         color: #1e293b !important;
@@ -81,33 +88,58 @@ st.markdown("""
         margin-bottom: 16px !important;
     }
     .stDataFrame {
-        border-radius: 10px;
-        overflow: hidden;
-        border: 1px solid #e5e7eb;
+        border-radius: 10px !important;
+        overflow: hidden !important;
+        border: 1px solid #e5e7eb !important;
     }
-    .styled-table {
-        width: 100%;
-        border-collapse: collapse;
-        font-size: 0.85rem;
-    }
-    .styled-table th {
-        background-color: #f8fafc;
-        color: #374151;
-        font-weight: 600;
-        padding: 8px 12px;
-        text-align: left;
-        border-bottom: 2px solid #e5e7eb;
-    }
-    .styled-table td {
-        padding: 6px 12px;
-        border-bottom: 1px solid #f0f0f0;
-        color: #1f2937;
-    }
-    .styled-table tr:hover {
-        background-color: #f9fafb;
-    }
+
     div[data-testid="column"] {
-        padding: 0 5px;
+        padding: 0 5px !important;
+    }
+    [data-testid="stDataFrame"] div[data-testid="glideDataEditor"] div.dvn-scroller div[role="rowheader"],
+    [data-testid="stDataFrame"] div[data-testid="glideDataEditor"] div.dvn-scroller div[aria-colindex="1"]:first-child,
+    [data-testid="stDataFrame"] canvas + div div[role="rowheader"],
+    div[data-testid="stDataFrameResizable"] div[role="rowheader"],
+    [data-testid="stDataFrame"] .row-number,
+    [data-testid="stDataFrame"] div[data-testid="glideDataEditor"] header div:first-child,
+    div.stDataFrame div[role="gridcell"][aria-colindex="0"],
+    div.stDataFrame div[role="columnheader"][aria-colindex="0"] {
+        display: none !important;
+        width: 0 !important;
+        min-width: 0 !important;
+        max-width: 0 !important;
+        overflow: hidden !important;
+    }
+    [data-testid="stRadio"] label span[data-checked="true"],
+    [data-testid="stRadio"] label div[role="radio"][aria-checked="true"] {
+        background-color: #2563eb !important;
+        border-color: #2563eb !important;
+    }
+    span[data-baseweb="tag"] {
+        background-color: #2563eb !important;
+        color: white !important;
+    }
+    span[data-baseweb="tag"] span {
+        color: white !important;
+    }
+    .stMultiSelect [data-baseweb="tag"] {
+        background-color: #2563eb !important;
+    }
+    button[kind="primary"],
+    .stButton button[kind="primary"],
+    [data-testid="stBaseButton-primary"] {
+        background-color: #2563eb !important;
+        border-color: #2563eb !important;
+        color: white !important;
+    }
+    button[kind="primary"]:hover,
+    [data-testid="stBaseButton-primary"]:hover {
+        background-color: #1d4ed8 !important;
+        border-color: #1d4ed8 !important;
+    }
+    [data-testid="stRadio"] div[role="radiogroup"] label:has(input:checked) div:first-child {
+        background-color: #2563eb !important;
+        border-color: #2563eb !important;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -131,26 +163,24 @@ def run_query(sql):
     else:
         return st.connection("snowflake").query(sql)
 
-def fmt_df(df):
-    out = df.copy()
-    for col in out.columns:
+def show_df(df, **kwargs):
+    fmt = {}
+    for col in df.columns:
         cl = col.upper()
-        if cl in ("COST ($)", "COST_USD"):
-            out[col] = out[col].apply(lambda x: f"${x:,.2f}" if pd.notnull(x) else "")
+        if cl in ("COST ($)", "COST_USD", "RATE ($/CREDIT)"):
+            fmt[col] = "${:,.2f}"
         elif cl in ("CREDITS",):
-            out[col] = out[col].apply(lambda x: f"{x:,.3f}" if pd.notnull(x) else "")
-        elif cl in ("TOKENS", "INPUT_TOKENS", "OUTPUT_TOKENS", "REQUESTS", "REQUEST_COUNT"):
-            out[col] = out[col].apply(lambda x: f"{int(x):,d}" if pd.notnull(x) else "")
-        elif cl in ("RATE ($/CREDIT)",):
-            out[col] = out[col].apply(lambda x: f"${x:,.2f}" if pd.notnull(x) else "")
-    return out
+            fmt[col] = "{:,.3f}"
+        elif cl in ("TOKENS", "INPUT_TOKENS", "OUTPUT_TOKENS", "REQUESTS", "REQUEST_COUNT", "CACHE_READ_TOKENS", "CACHE_WRITE_TOKENS"):
+            fmt[col] = "{:,.0f}"
+    numeric_cols = list(fmt.keys())
+    for c in numeric_cols:
+        if c in df.columns:
+            df[c] = pd.to_numeric(df[c], errors="coerce")
+    st.dataframe(df.style.format(fmt, na_rep=""), **kwargs)
 
-def show_df(df, height=400):
-    html = df.to_html(index=False, classes="styled-table", border=0, escape=False)
-    container = f'<div style="max-height:{height}px;overflow:auto;">{html}</div>'
-    st.markdown(container, unsafe_allow_html=True)
-
-
+def fmt_df(df):
+    return df
 
 def run_procedure(sql):
     if IS_SIS:
@@ -335,23 +365,23 @@ services_used = filtered_df["SERVICE_NAME"].nunique()
 active_days = filtered_df["USAGE_DATE"].nunique()
 active_users = user_summary_df["USER_NAME"].nunique()
 
-st.subheader("Key Metrics")
+st.subheader("📊 Key Metrics")
 kpi_row1 = st.columns(4)
 with kpi_row1[0]:
-    st.metric(label="💳 TOTAL CREDITS", value=f"{total_credits:,.2f}", help="Sum of all Cortex AI credits consumed")
+    st.metric("💳 Total Credits", f"{total_credits:,.2f}", help="Total Snowflake credits consumed by all selected Cortex AI services.")
 with kpi_row1[1]:
-    st.metric(label="💲 TOTAL COST", value=f"${total_cost:,.2f}", help="Total cost in dollars")
+    st.metric("💲 Total Cost", f"${total_cost:,.2f}", help="Estimated dollar cost based on dynamic credit rates.")
 with kpi_row1[2]:
-    st.metric(label="🔤 TOTAL TOKENS", value=f"{total_tokens:,.0f}", help="Total input + output tokens")
+    st.metric("🔤 Total Tokens", f"{total_tokens:,.0f}", help="Total tokens processed across all LLM-based services.")
 with kpi_row1[3]:
-    st.metric(label="📨 TOTAL REQUESTS", value=f"{total_requests:,.0f}", help="Total API requests")
+    st.metric("📨 Total Requests", f"{total_requests:,.0f}", help="Total number of API calls or queries made to Cortex AI services.")
 kpi_row2 = st.columns(4)
 with kpi_row2[0]:
-    st.metric(label="🔧 SERVICES USED", value=f"{services_used}", help="Distinct Cortex AI services")
+    st.metric("🔧 Services Used", f"{services_used}", help="Number of distinct Cortex AI services used.")
 with kpi_row2[1]:
-    st.metric(label="📆 ACTIVE DAYS", value=f"{active_days}", help="Days with AI usage")
+    st.metric("📆 Active Days", f"{active_days}", help="Number of days with recorded Cortex AI usage.")
 with kpi_row2[2]:
-    st.metric(label="👥 ACTIVE USERS", value=f"{active_users}", help="Distinct users")
+    st.metric("👥 Active Users", f"{active_users}", help="Number of distinct users who have executed Cortex AI queries.")
 st.markdown("")
 
 category_credits = filtered_df.groupby("SERVICE_CATEGORY").agg({"CREDITS": "sum", "COST_USD": "sum"}).sort_values("CREDITS", ascending=False).reset_index()
@@ -369,7 +399,13 @@ if not category_credits.empty and total_credits > 0:
             cat_cost = row["COST_USD"]
             cat_pct = (cat_credits / total_credits) * 100
             with cat_cols[col_idx]:
-                st.metric(label=f"{cat_name}", value=f"{cat_credits:,.2f} credits", delta=f"{cat_pct:.1f}% of total (${cat_cost:,.2f})", delta_color="off")
+                st.metric(
+                    cat_name,
+                    f"{cat_credits:,.2f} (${cat_cost:,.2f})",
+                    f"{cat_pct:.1f}%",
+                    delta_color="off",
+                    help=f"{cat_name}: {cat_pct:.1f}% of total credits"
+                )
 
 st.markdown("")
 
@@ -384,7 +420,7 @@ with col1:
         chart = alt.Chart(monthly_credits).mark_bar(
             cornerRadiusTopLeft=8,
             cornerRadiusTopRight=8,
-            color='#4f46e5'
+            color='#2563eb'
         ).encode(
             x=alt.X('MONTH:N', title='Month', sort=None),
             y=alt.Y('CREDITS:Q', title='Credits'),
@@ -456,7 +492,7 @@ tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs(["📄 Unified Summary", "�
 
 with tab1:
     display_df = filtered_df[["USAGE_DATE", "SERVICE_NAME", "MODEL_NAME", "CREDITS", "COST_USD", "TOKENS", "INPUT_TOKENS", "OUTPUT_TOKENS", "CACHE_READ_TOKENS", "CACHE_WRITE_TOKENS", "REQUEST_COUNT"]].rename(columns={"SERVICE_NAME": "SERVICE", "MODEL_NAME": "MODEL", "REQUEST_COUNT": "REQUESTS", "COST_USD": "COST ($)"}).sort_values(["USAGE_DATE", "CREDITS"], ascending=[False, False]).reset_index(drop=True)
-    show_df(fmt_df(display_df), height=400)
+    show_df(fmt_df(display_df), use_container_width=True, height=400)
     st.download_button("Download CSV", display_df.to_csv(index=False), "unified_summary.csv", "text/csv", key="dl_unified")
 
 with tab2:
@@ -470,7 +506,7 @@ with tab2:
         "CACHE_WRITE_TOKENS": "sum",
         "REQUEST_COUNT": "sum"
     }).reset_index().rename(columns={"REQUEST_COUNT": "REQUESTS", "COST_USD": "COST ($)"}).sort_values("CREDITS", ascending=False).reset_index(drop=True)
-    show_df(fmt_df(service_summary), height=400)
+    show_df(fmt_df(service_summary), use_container_width=True, height=400)
     st.download_button("Download CSV", service_summary.to_csv(index=False), "by_service.csv", "text/csv", key="dl_service")
 
 with tab3:
@@ -486,7 +522,7 @@ with tab3:
     }).reset_index().rename(columns={"REQUEST_COUNT": "REQUESTS", "COST_USD": "COST ($)"})
     model_summary["MODEL_NAME"] = model_summary["MODEL_NAME"].fillna("N/A")
     model_summary = model_summary.sort_values("CREDITS", ascending=False).reset_index(drop=True)
-    show_df(fmt_df(model_summary), height=400)
+    show_df(fmt_df(model_summary), use_container_width=True, height=400)
     st.download_button("Download CSV", model_summary.to_csv(index=False), "by_model.csv", "text/csv", key="dl_model")
 
 with tab4:
@@ -506,7 +542,7 @@ with tab4:
         ucol1, ucol2 = st.columns(2, gap="large")
         with ucol1:
             st.markdown("**👥 User Summary**")
-            show_df(fmt_df(user_summary[["FULL_NAME", "REQUESTS", "CREDITS", "COST ($)"]]))
+            show_df(fmt_df(user_summary[["FULL_NAME", "REQUESTS", "CREDITS", "COST ($)"]]), use_container_width=True)
             st.download_button("Download CSV", user_summary.to_csv(index=False), "user_summary.csv", "text/csv", key="dl_user_summary")
         with ucol2:
             st.markdown("**📊 Requests by User**")
@@ -521,14 +557,14 @@ with tab4:
     if not user_service.empty:
         user_service = user_service.rename(columns={"SERVICE_NAME": "SERVICE", "MODEL_NAME": "MODEL", "COST_USD": "COST ($)"})
         st.markdown("**🔧 Usage by Service & Model**")
-        show_df(fmt_df(user_service), height=300)
+        show_df(fmt_df(user_service), use_container_width=True, height=300)
         st.download_button("Download CSV", user_service.to_csv(index=False), "user_by_service.csv", "text/csv", key="dl_user_service")
     
     user_daily = load_user_daily(days_back, custom_start, custom_end, selected_user, selected_categories)
     if not user_daily.empty:
         user_daily = user_daily.rename(columns={"SERVICE_NAME": "SERVICE", "MODEL_NAME": "MODEL", "COST_USD": "COST ($)"})
         st.markdown("**📅 Daily Usage Detail**")
-        show_df(fmt_df(user_daily), height=300)
+        show_df(fmt_df(user_daily), use_container_width=True, height=300)
         st.download_button("Download CSV", user_daily.to_csv(index=False), "user_daily.csv", "text/csv", key="dl_user_daily")
     
     if selected_user is not None:
@@ -537,7 +573,7 @@ with tab4:
         user_queries = load_user_detail(days_back, custom_start, custom_end, selected_user, selected_categories)
         if not user_queries.empty:
             user_queries = user_queries.rename(columns={"USAGE_DATE": "DATE", "SERVICE_NAME": "SERVICE", "MODEL_NAME": "MODEL", "COST_USD": "COST ($)"})
-            show_df(fmt_df(user_queries), height=400)
+            show_df(fmt_df(user_queries), use_container_width=True, height=400)
             st.download_button("Download CSV", user_queries.to_csv(index=False), "user_query_detail.csv", "text/csv", key="dl_user_queries")
         else:
             st.info("No AI service usage found for this user.")
@@ -557,10 +593,10 @@ with tab5:
     """)
     if not agent_df.empty:
         agent_cost = agent_df.groupby(["AGENT_NAME", "AGENT_FQN", "MODEL_NAME"]).agg({"CREDITS": "sum", "COST ($)": "sum", "TOKENS": "sum", "REQUESTS": "sum"}).reset_index().sort_values("CREDITS", ascending=False).reset_index(drop=True)
-        show_df(fmt_df(agent_cost), height=300)
+        show_df(fmt_df(agent_cost), use_container_width=True, height=300)
         st.download_button("Download CSV", agent_cost.to_csv(index=False), "agent_costs.csv", "text/csv", key="dl_agent_cost")
         st.markdown("**Daily Detail**")
-        show_df(fmt_df(agent_df), height=400)
+        show_df(fmt_df(agent_df), use_container_width=True, height=400)
         st.download_button("Download CSV", agent_df.to_csv(index=False), "agent_daily.csv", "text/csv", key="dl_agent_daily")
     else:
         st.info("No Cortex Agent usage found.")
@@ -581,10 +617,10 @@ with tab6:
     if not si_df.empty:
         si_cost = si_df.groupby(["SI_NAME", "AGENT_FQN", "MODEL_NAME"]).agg({"CREDITS": "sum", "COST ($)": "sum", "TOKENS": "sum", "REQUESTS": "sum"}).reset_index().sort_values("CREDITS", ascending=False).reset_index(drop=True)
         st.markdown("**Cost by Snowflake Intelligence Name**")
-        show_df(fmt_df(si_cost), height=300)
+        show_df(fmt_df(si_cost), use_container_width=True, height=300)
         st.download_button("Download CSV", si_cost.to_csv(index=False), "si_costs.csv", "text/csv", key="dl_si_cost")
         st.markdown("**Daily Detail**")
-        show_df(fmt_df(si_df), height=400)
+        show_df(fmt_df(si_df), use_container_width=True, height=400)
         st.download_button("Download CSV", si_df.to_csv(index=False), "si_daily.csv", "text/csv", key="dl_si_daily")
     else:
         st.info("No Snowflake Intelligence usage found.")
@@ -610,7 +646,7 @@ with tab7:
         ss_pivot = ss_pivot.reindex(sorted(ss_pivot.columns, reverse=True), axis=1)
         ss_pivot.columns = [str(c) for c in ss_pivot.columns]
         ss_pivot = ss_pivot.round(2).reset_index().sort_values("USER_NAME").reset_index(drop=True)
-        show_df(fmt_df(ss_pivot), height=400)
+        show_df(fmt_df(ss_pivot), use_container_width=True, height=400)
         st.download_button("Download CSV", ss_pivot.to_csv(index=False), "coco_snowsight_credits.csv", "text/csv", key="dl_coco_ss")
     else:
         st.info("No Cortex Code Snowsight usage found.")
@@ -620,10 +656,27 @@ with tab7:
         cli_pivot = cli_pivot.reindex(sorted(cli_pivot.columns, reverse=True), axis=1)
         cli_pivot.columns = [str(c) for c in cli_pivot.columns]
         cli_pivot = cli_pivot.round(2).reset_index().sort_values("USER_NAME").reset_index(drop=True)
-        show_df(fmt_df(cli_pivot), height=400)
+        show_df(fmt_df(cli_pivot), use_container_width=True, height=400)
         st.download_button("Download CSV", cli_pivot.to_csv(index=False), "coco_cli_credits.csv", "text/csv", key="dl_coco_cli")
     else:
         st.info("No Cortex Code CLI usage found.")
+    coco_desktop_df = run_query(f"""
+        SELECT USAGE_DATE, FULL_NAME AS USER_NAME, SUM(CREDITS) AS CREDITS
+        FROM {SCHEMA_PREFIX}.USER_AI_COSTS
+        WHERE SERVICE_NAME = 'CORTEX_CODE_DESKTOP'
+          AND USAGE_DATE >= DATEADD('day', -30, CURRENT_DATE())
+        GROUP BY 1, 2
+    """)
+    st.markdown("**Cortex Code Desktop — Credits by Date & User**")
+    if not coco_desktop_df.empty:
+        desk_pivot = coco_desktop_df.pivot_table(index="USER_NAME", columns="USAGE_DATE", values="CREDITS", aggfunc="sum")
+        desk_pivot = desk_pivot.reindex(sorted(desk_pivot.columns, reverse=True), axis=1)
+        desk_pivot.columns = [str(c) for c in desk_pivot.columns]
+        desk_pivot = desk_pivot.round(2).reset_index().sort_values("USER_NAME").reset_index(drop=True)
+        show_df(fmt_df(desk_pivot), use_container_width=True, height=400)
+        st.download_button("Download CSV", desk_pivot.to_csv(index=False), "coco_desktop_credits.csv", "text/csv", key="dl_coco_desktop")
+    else:
+        st.info("No Cortex Code Desktop usage found.")
 
 st.markdown("")
 st.subheader("💬 Ask Questions About Your AI Costs")
@@ -698,12 +751,12 @@ def display_analyst_content(content, msg_idx=0):
                         if len(df) > 1:
                             data_tab, bar_tab = st.tabs(["Data", "Bar Chart"])
                             with data_tab:
-                                show_df(df)
+                                show_df(df, use_container_width=True)
                             with bar_tab:
                                 if len(df.columns) > 1:
                                     st.bar_chart(df.set_index(df.columns[0]))
                         else:
-                            show_df(df)
+                            show_df(df, use_container_width=True)
                     except Exception as e:
                         st.error(f"Query error: {e}")
 
