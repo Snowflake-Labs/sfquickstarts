@@ -1,6 +1,6 @@
 
 /***************************************************************************************************
- Advanced Data Governance: AI-Powered Sensitive Data Discovery and Protection at Scale
+ Advanced Data Governance: Sensitive Data Discovery and Protection at Scale
  Snowflake Summit Hands-on Lab
 
  Script:      Step 5 — AI_REDACT for Unstructured PII (Data Governor Persona)
@@ -20,7 +20,7 @@
 /*----------------------------------------------------------------------------------
 Overview — What This Step Covers
 
-  In Step 2 we used AI classification to protect STRUCTURED data — columns with
+  In Step 2 we used classification to protect STRUCTURED data — columns with
   well-defined types where classification can detect PII by analyzing column names
   and sample values.
 
