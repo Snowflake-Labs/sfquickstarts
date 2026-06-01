@@ -47,14 +47,14 @@ Services are classified into two tiers:
 | AI_SERVICES | Cortex Code CLI, Cortex Code Snowsight, Cortex Agent, Snowflake Intelligence |
 | STANDARD | All other services (AISQL, Analyst, Search, Document Processing, etc.) |
 
-### Credit Rates (`CREDIT_BASE_RATES` table) - Customize with your account pricing
+### Credit Rates (CREDIT_BASE_RATES table) - Customize with your account pricing
 
 | Service Tier | Region Type | Base Rate | Tier Discount | Effective Rate | Period |
 |--------------|-------------|-----------|---------------|----------------|--------|
-| AI_SERVICES | GLOBAL | $2.00 | 0% | $2.00/credit | 2026-04-01 onwards |
-| AI_SERVICES | REGIONAL | $2.20 | 0% | $2.20/credit | 2026-04-01 onwards |
-| STANDARD | ANY | $3.00 | 0% | $3.00/credit | 2026-04-01 onwards |
-| STANDARD | ANY | $3.00 | 0% | $3.00/credit | 2025-01-01 to 2026-03-31 |
+| AI_SERVICES | GLOBAL | $2.00 | `{{AI_TIER_DISCOUNT_PCT}}`% | varies | 2026-04-01 onwards |
+| AI_SERVICES | REGIONAL | $2.20 | `{{AI_TIER_DISCOUNT_PCT}}`% | varies | 2026-04-01 onwards |
+| TRADITIONAL | ANY | `{{CREDIT_RATE}}` | 0% | `{{CREDIT_RATE}}`/credit | 2026-04-01 onwards |
+| TRADITIONAL | ANY | `{{HISTORICAL_CREDIT_RATE}}` | 0% | `{{HISTORICAL_CREDIT_RATE}}`/credit | 2025-01-01 to 2026-03-31 |
 
 ### Region Detection
 
@@ -93,8 +93,14 @@ Duration: 1
 | SNOWFLAKE_INTELLIGENCE | Snowflake Intelligence queries | Credits (AI_SERVICES) |
 
 <!-- ------------------------ -->
-## Setup: Run the SQL Setup Script
-Duration: 5
+
+## Setup option A (via Cortex Code skill): 
+Duration: 15
+1. Download the repo from the FORK REPO link above. Open the repo in Cortex Code CLI or Cortex Code Desktop and give the following prompt, "Use the skill to deploy the ai cost dashboard." Follow the prompts to input your account specific parameters. Deploy.
+
+
+## Setup option B (manual): Run the SQL Setup Script
+Duration: 10
 
 1. Download [`setup.sql`](assets/setup.sql) from this guide's assets folder.
 2. Connect to your Snowflake account with `SYSADMIN` role (or `ACCOUNTADMIN`).
@@ -117,7 +123,7 @@ This will create:
 
 <!-- ------------------------ -->
 ## Setup: Deploy the Streamlit App
-Duration: 3
+Duration: 5
 
 Upload [`streamlit_app.py`](assets/streamlit_app.py) and [`cortex_ai_costs_model.yaml`](assets/cortex_ai_costs_model.yaml) and create the Streamlit object:
 
@@ -136,7 +142,7 @@ CREATE OR REPLACE STREAMLIT {{DATABASE}}.{{SCHEMA}}.CORTEX_AI_COST_DASHBOARD
 
 <!-- ------------------------ -->
 ## Using the Dashboard
-Duration: 3
+Duration: 5
 
 ### Dashboard Features
 
@@ -174,7 +180,7 @@ The dashboard includes an integrated Cortex Analyst chatbot at the bottom, power
 
 <!-- ------------------------ -->
 ## Refreshing Data
-Duration: 1
+Duration: 5
 
 ```sql
 CALL {{DATABASE}}.{{SCHEMA}}.REFRESH_CORTEX_AI_COSTS(N); -- # of days
