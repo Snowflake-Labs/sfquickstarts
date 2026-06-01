@@ -350,8 +350,11 @@ SELECT
     ROUND(COUNT(*) / 60.0, 1) AS ROWS_PER_SECOND,
     COUNT(DISTINCT PLAYER_ID)  AS ACTIVE_PLAYERS
 FROM ARCADE_SCORES
-WHERE GAME_ENDED_AT >= DATEADD('second', -60, CURRENT_TIMESTAMP());
+WHERE GAME_ENDED_AT >= DATEADD('second', -60,
+          CONVERT_TIMEZONE('UTC', CURRENT_TIMESTAMP())::TIMESTAMP_NTZ);
 ```
+
+> **`CONVERT_TIMEZONE('UTC', CURRENT_TIMESTAMP())::TIMESTAMP_NTZ`** normalises the session-local `CURRENT_TIMESTAMP()` to UTC so it compares correctly against the UTC `TIMESTAMP_NTZ` values in `GAME_ENDED_AT`. You'll see this pattern in every time-filtered query throughout the lab.
 
 ### 1c — Throughput by 10-second bucket (last 3 minutes)
 
@@ -362,7 +365,8 @@ SELECT
         '2000-01-01'::TIMESTAMP_NTZ)   AS TIME_BUCKET,
     COUNT(*)                           AS SCORES
 FROM ARCADE_SCORES
-WHERE GAME_ENDED_AT >= DATEADD('minute', -3, CURRENT_TIMESTAMP())
+WHERE GAME_ENDED_AT >= DATEADD('minute', -3,
+          CONVERT_TIMEZONE('UTC', CURRENT_TIMESTAMP())::TIMESTAMP_NTZ)
 GROUP BY TIME_BUCKET
 ORDER BY TIME_BUCKET DESC
 LIMIT 18;
@@ -390,7 +394,7 @@ WHERE GAME_ENDED_AT >= DATEADD('minute', -5,
 
 `GAME_ENDED_AT` is the UTC timestamp when the Python generator emitted the row. `FRESHNESS_SEC` is how many seconds ago that was — the end-to-end pipeline latency from the Python process to a queryable row in Snowflake.
 
-> **`CONVERT_TIMEZONE('UTC', CURRENT_TIMESTAMP())::TIMESTAMP_NTZ`** normalises the session-local `CURRENT_TIMESTAMP()` to UTC so it compares correctly against the UTC `TIMESTAMP_NTZ` values in `GAME_ENDED_AT`.
+> This query uses the same `CONVERT_TIMEZONE('UTC', ...)` pattern introduced in Exercise 1.
 
 With a healthy streamer you should see freshness values in the range of **0.3 – 2 seconds**, depending on Snowflake region and network latency.
 
@@ -414,7 +418,8 @@ SELECT
     COALESCE(ACHIEVEMENT, '—')         AS ACHIEVEMENT,
     GAME_ENDED_AT
 FROM ARCADE_SCORES
-WHERE GAME_ENDED_AT >= DATEADD('hour', -24, CURRENT_TIMESTAMP())
+WHERE GAME_ENDED_AT >= DATEADD('hour', -24,
+          CONVERT_TIMEZONE('UTC', CURRENT_TIMESTAMP())::TIMESTAMP_NTZ)
 ORDER BY SCORE DESC
 LIMIT 20;
 ```
@@ -442,7 +447,8 @@ SELECT
     LEVEL_REACHED,
     GAME_MODE
 FROM ARCADE_SCORES
-WHERE GAME_ENDED_AT >= DATEADD('hour', -1, CURRENT_TIMESTAMP())
+WHERE GAME_ENDED_AT >= DATEADD('hour', -1,
+          CONVERT_TIMEZONE('UTC', CURRENT_TIMESTAMP())::TIMESTAMP_NTZ)
 QUALIFY ROW_NUMBER() OVER (
     PARTITION BY GAME_NAME ORDER BY SCORE DESC
 ) <= 5
@@ -468,7 +474,8 @@ SELECT
     MAX(SCORE)                 AS HIGH_SCORE,
     COUNT(DISTINCT PLAYER_ID)  AS UNIQUE_PLAYERS
 FROM ARCADE_SCORES
-WHERE GAME_ENDED_AT >= DATEADD('hour', -1, CURRENT_TIMESTAMP())
+WHERE GAME_ENDED_AT >= DATEADD('hour', -1,
+          CONVERT_TIMEZONE('UTC', CURRENT_TIMESTAMP())::TIMESTAMP_NTZ)
 GROUP BY PLAYER_COUNTRY
 ORDER BY GAMES_PLAYED DESC
 LIMIT 20;
@@ -490,7 +497,8 @@ SELECT
     ROUND(AVG(LEVEL_REACHED), 1)                    AS AVG_LEVEL,
     ROUND(AVG(DURATION_SECONDS) / 60.0, 1)          AS AVG_GAME_MIN
 FROM ARCADE_SCORES
-WHERE GAME_ENDED_AT >= DATEADD('hour', -1, CURRENT_TIMESTAMP())
+WHERE GAME_ENDED_AT >= DATEADD('hour', -1,
+          CONVERT_TIMEZONE('UTC', CURRENT_TIMESTAMP())::TIMESTAMP_NTZ)
 GROUP BY GAME_NAME
 ORDER BY SESSIONS DESC;
 ```
@@ -507,7 +515,8 @@ SELECT
     ROUND(AVG(ACCURACY_PCT), 1) AS AVG_ACCURACY_PCT,
     COUNT(DISTINCT PLAYER_ID)  AS UNIQUE_PLAYERS
 FROM ARCADE_SCORES
-WHERE GAME_ENDED_AT >= DATEADD('hour', -1, CURRENT_TIMESTAMP())
+WHERE GAME_ENDED_AT >= DATEADD('hour', -1,
+          CONVERT_TIMEZONE('UTC', CURRENT_TIMESTAMP())::TIMESTAMP_NTZ)
 GROUP BY PLATFORM
 ORDER BY SESSIONS DESC;
 ```
@@ -528,7 +537,8 @@ SELECT
     COALESCE(ACHIEVEMENT, '—')     AS ACHIEVEMENT,
     GAME_ENDED_AT
 FROM ARCADE_SCORES
-WHERE GAME_ENDED_AT >= DATEADD('minute', -5, CURRENT_TIMESTAMP())
+WHERE GAME_ENDED_AT >= DATEADD('minute', -5,
+          CONVERT_TIMEZONE('UTC', CURRENT_TIMESTAMP())::TIMESTAMP_NTZ)
 ORDER BY GAME_ENDED_AT DESC
 LIMIT 30;
 ```
@@ -546,7 +556,8 @@ SELECT
     ROUND(AVG(LEVEL_REACHED), 1) AS AVG_LEVEL
 FROM ARCADE_SCORES
 WHERE ACHIEVEMENT IS NOT NULL
-  AND GAME_ENDED_AT >= DATEADD('hour', -1, CURRENT_TIMESTAMP())
+  AND GAME_ENDED_AT >= DATEADD('hour', -1,
+          CONVERT_TIMEZONE('UTC', CURRENT_TIMESTAMP())::TIMESTAMP_NTZ)
 GROUP BY ACHIEVEMENT
 ORDER BY TIMES_EARNED ASC;
 ```
@@ -568,7 +579,8 @@ SELECT
     COUNT(*)    AS SESSIONS,
     MAX(SCORE)  AS HIGH_SCORE
 FROM ARCADE_SCORES
-WHERE GAME_ENDED_AT >= DATEADD('hour', -1, CURRENT_TIMESTAMP())
+WHERE GAME_ENDED_AT >= DATEADD('hour', -1,
+          CONVERT_TIMEZONE('UTC', CURRENT_TIMESTAMP())::TIMESTAMP_NTZ)
 GROUP BY PLAYER_COUNTRY
 ORDER BY SESSIONS DESC;
 ```
@@ -583,7 +595,8 @@ SELECT
     COUNT(*)    AS SESSIONS,
     MAX(SCORE)  AS HIGH_SCORE
 FROM ARCADE_SCORES
-WHERE GAME_ENDED_AT >= DATEADD('hour', -1, CURRENT_TIMESTAMP())
+WHERE GAME_ENDED_AT >= DATEADD('hour', -1,
+          CONVERT_TIMEZONE('UTC', CURRENT_TIMESTAMP())::TIMESTAMP_NTZ)
 GROUP BY PLAYER_COUNTRY
 ORDER BY SESSIONS DESC;
 ```
@@ -619,7 +632,8 @@ FROM ARCADE_SCORES AT(OFFSET => -300);
 -- How many rows were generated in the last 5 minutes?
 SELECT COUNT(*) AS NEW_ROWS_LAST_5_MIN
 FROM ARCADE_SCORES
-WHERE GAME_ENDED_AT >= DATEADD('minute', -5, CURRENT_TIMESTAMP());
+WHERE GAME_ENDED_AT >= DATEADD('minute', -5,
+          CONVERT_TIMEZONE('UTC', CURRENT_TIMESTAMP())::TIMESTAMP_NTZ);
 ```
 
 ### Bonus B — Rolling 1-Minute City Hotspot
@@ -632,7 +646,8 @@ SELECT
     PLAYER_COUNTRY,
     COUNT(*) AS GAMES_LAST_MINUTE
 FROM ARCADE_SCORES
-WHERE GAME_ENDED_AT >= DATEADD('minute', -1, CURRENT_TIMESTAMP())
+WHERE GAME_ENDED_AT >= DATEADD('minute', -1,
+          CONVERT_TIMEZONE('UTC', CURRENT_TIMESTAMP())::TIMESTAMP_NTZ)
 GROUP BY PLAYER_CITY, PLAYER_COUNTRY
 ORDER BY GAMES_LAST_MINUTE DESC
 LIMIT 15;
@@ -669,7 +684,8 @@ SELECT
     COUNT(*) AS SESSIONS_WITH_BADGE
 FROM ARCADE_SCORES
 WHERE ACHIEVEMENT IS NOT NULL
-  AND GAME_ENDED_AT >= DATEADD('hour', -24, CURRENT_TIMESTAMP())
+  AND GAME_ENDED_AT >= DATEADD('hour', -24,
+          CONVERT_TIMEZONE('UTC', CURRENT_TIMESTAMP())::TIMESTAMP_NTZ)
 GROUP BY ACHIEVEMENT
 ORDER BY SESSIONS_WITH_BADGE ASC, ACHIEVEMENT
 LIMIT 25;
@@ -688,7 +704,8 @@ SELECT
     ACHIEVEMENT
 FROM ARCADE_SCORES
 WHERE ACHIEVEMENT = 'Summit 2026'
-  AND GAME_ENDED_AT >= DATEADD('hour', -24, CURRENT_TIMESTAMP())
+  AND GAME_ENDED_AT >= DATEADD('hour', -24,
+          CONVERT_TIMEZONE('UTC', CURRENT_TIMESTAMP())::TIMESTAMP_NTZ)
 ORDER BY GAME_ENDED_AT DESC;
 ```
 
@@ -757,7 +774,7 @@ Use skill `developing-with-streamlit` to create a real-time arcade scores dashbo
 - Add external access integration and network rule for PyPI access
 - Add a pyproject.toml file to manage packages and add packages: "streamlit[snowflake]==1.50.0", "pandas>=2.0.0", "snowflake-snowpark-python"
 - Use SUMMIT_INT_WH by setting that in Streamlit application settings
-- Do not do any USE Warehouse queries in python
+- Do not perform any "USE Warehouse" queries in python
 
 **Dashboard Features:**
 1. Global Leaderboard - Highest scores in last 24 hours
@@ -773,6 +790,11 @@ Use skill `developing-with-streamlit` to create a real-time arcade scores dashbo
    - Current data freshness in decimal seconds: DATEDIFF('millisecond', MAX(GAME_ENDED_AT), CONVERT_TIMEZONE('UTC', CURRENT_TIMESTAMP())::TIMESTAMP_NTZ) / 1000.0
    - Freshness over last hour as a time-series line chart bucketed by DATE_TRUNC('minute', GAME_ENDED_AT)
    - Rows/sec over last hour: count per minute bucket divided by 60, as a time-series line chart
+
+**Additional Guidance:**
+- Validate all data types, units and calculations, in both SQL and Python layers
+- Ensure that all data presented is intuitive and informative
+- Ensure that the layout and design of the dashboard is sleek and appealing
 ```
 
 Cortex will write the Streamlit app file and deploy it to Snowflake. Once complete, open the dashboard from **Snowsight → Streamlit → ARCADE_SCORES_DASHBOARD**.
