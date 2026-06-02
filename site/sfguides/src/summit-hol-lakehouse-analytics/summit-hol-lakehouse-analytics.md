@@ -473,23 +473,23 @@ Open the agent in Snowsight: navigate to **AI & ML > Agents**, find **Insurance 
 
 Try these questions:
 
-```
+```text
 What are the top 5 insurance products by number of quotes?
 ```
 
-```
+```text
 What is the average premium for homeowners vs non-homeowners?
 ```
 
-```
+```text
 Which postcode district has the highest average risk premium?
 ```
 
-```
+```text
 Show me quote volume broken down by marital status and product type.
 ```
 
-```
+```text
 What is the total premium volume by previous insurer?
 ```
 
