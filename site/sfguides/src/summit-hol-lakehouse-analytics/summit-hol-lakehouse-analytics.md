@@ -348,62 +348,52 @@ LIMIT 5;
 
 A **Semantic View** defines the business meaning of your data — dimensions, metrics, and facts — so that Snowflake's AI can understand and answer questions about it in natural language. The semantic view respects masking policies automatically: an analyst querying via natural language sees the same masked values as they would in SQL.
 
+### Create a view wrapper
+
+Semantic views require a plain view reference in the same schema. Create a thin wrapper over the CLD Iceberg table first:
+
+```sql
+CREATE OR REPLACE VIEW iceberg_lab_db.analytics.quotes_vw AS
+SELECT * FROM my_iceberg_db."iceberg"."quotes";
+```
+
 ### Create the semantic view
 
 ```sql
-USE ROLE ACCOUNTADMIN;
 USE DATABASE iceberg_lab_db;
 USE SCHEMA analytics;
 
-CREATE OR REPLACE SEMANTIC VIEW iceberg_lab_db.analytics.quotes_sv
+CREATE OR REPLACE SEMANTIC VIEW quotes_sv
   TABLES (
-    my_iceberg_db."iceberg"."quotes" AS quotes
-      PRIMARY KEY (uuid)
-      WITH SYNONYMS = ('insurance quotes', 'quote requests', 'quotes data')
-      COMMENT = 'Insurance quote requests from the Iceberg data lake in AWS Glue'
+    quotes as quotes_vw
+      primary key (uuid)
+      comment='Insurance quote requests from the Iceberg data lake in AWS Glue'
   )
   FACTS (
-    quotes.newriskpremium      AS risk_premium   COMMENT = 'Calculated risk premium for this quote',
-    quotes.totalpremiumpayable AS total_premium  COMMENT = 'Total premium payable by the customer',
-    quotes.iptamount           AS ipt_amount     COMMENT = 'Insurance premium tax amount',
-    quotes.quote_record        AS 1              COMMENT = 'Count of quote records'
+    quotes.newriskpremium      as newriskpremium      comment='Calculated risk premium',
+    quotes.totalpremiumpayable as totalpremiumpayable comment='Total premium payable',
+    quotes.iptamount           as iptamount           comment='Insurance premium tax',
+    quotes.quote_record        as 1                   comment='One record per quote'
   )
   DIMENSIONS (
-    quotes.quote_product    AS product
-      WITH SYNONYMS = ('insurance product', 'product type', 'cover type')
-      COMMENT = 'Type of insurance product quoted',
-    quotes.quotedate        AS quote_date
-      WITH SYNONYMS = ('date', 'quote date', 'when')
-      COMMENT = 'Date the quote was requested',
-    quotes.creditscore      AS credit_score
-      WITH SYNONYMS = ('credit', 'credit rating', 'score')
-      COMMENT = 'Customer credit score at time of quote',
-    quotes.maritalstatus    AS marital_status
-      COMMENT = 'Customer marital status',
-    quotes.homeownerind     AS homeowner
-      WITH SYNONYMS = ('homeowner', 'owns home', 'property owner')
-      COMMENT = 'Whether the customer owns their home',
-    quotes.sex              AS gender
-      COMMENT = 'Customer gender',
-    quotes.postcodedistrict AS postcode_district
-      WITH SYNONYMS = ('district', 'location', 'area', 'region')
-      COMMENT = 'Customer postcode district',
-    quotes.previnsr         AS previous_insurer
-      WITH SYNONYMS = ('previous insurer', 'prior insurer', 'old insurer')
-      COMMENT = 'Customer previous insurance provider'
+    quotes.quote_product    as quote_product    with synonyms=('product type', 'insurance product', 'cover type') comment='Insurance product type',
+    quotes.quotedate        as quotedate        with synonyms=('quote date', 'date', 'when requested')             comment='Date the quote was requested',
+    quotes.maritalstatus    as maritalstatus    with synonyms=('marital status', 'married', 'single')              comment='Customer marital status',
+    quotes.homeownerind     as homeownerind     with synonyms=('homeowner', 'owns home', 'property owner')         comment='Whether customer owns home',
+    quotes.sex              as sex              with synonyms=('gender', 'customer gender')                         comment='Customer gender',
+    quotes.postcodedistrict as postcodedistrict with synonyms=('district', 'location', 'area', 'region')           comment='Customer postcode district',
+    quotes.previnsr         as previnsr         with synonyms=('previous insurer', 'prior insurer')                 comment='Previous insurance provider'
   )
   METRICS (
-    quotes.total_quotes          AS COUNT(quotes.quote_record)
-      COMMENT = 'Total number of insurance quote requests',
-    quotes.avg_premium           AS AVG(quotes.total_premium)
-      COMMENT = 'Average total premium payable across quotes',
-    quotes.avg_risk_premium      AS AVG(quotes.risk_premium)
-      COMMENT = 'Average calculated risk premium',
-    quotes.total_premium_volume  AS SUM(quotes.total_premium)
-      COMMENT = 'Total premium volume across all quotes'
+    quotes.total_quotes         as COUNT(quotes.quote_record)      comment='Total number of quote requests',
+    quotes.avg_total_premium    as AVG(quotes.totalpremiumpayable)  comment='Average total premium payable',
+    quotes.avg_risk_premium     as AVG(quotes.newriskpremium)       comment='Average risk premium',
+    quotes.total_premium_volume as SUM(quotes.totalpremiumpayable)  comment='Total premium volume'
   )
-  COMMENT = 'Insurance quote analytics — Iceberg data in AWS Glue via Catalog-Linked Database';
+  comment='Insurance quote analytics — Iceberg data in AWS Glue via Catalog-Linked Database';
 ```
+
+> **Note:** The semantic view uses a `quotes as quotes_vw` mapping where `quotes` is the internal reference name and `quotes_vw` is the physical view. Column references in FACTS, DIMENSIONS, and METRICS use the reference name `quotes`.
 
 ### Grant access to the semantic view
 
