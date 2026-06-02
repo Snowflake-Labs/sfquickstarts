@@ -6,7 +6,7 @@ language: en
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Machine Learning, Snowflake ML, Model Registry, SPCS, Fraud Detection, Cortex Code
+tags: Getting Started, Data Science, Machine Learning, Snowflake ML, Model Registry, SPCS, Fraud Detection, Cortex Code, Gateway
 
 # Build a Real-Time Fraud Detection Model with Natural Language in Snowflake ML
 <!-- ------------------------ -->
@@ -19,6 +19,7 @@ tags: Getting Started, Data Science, Machine Learning, Snowflake ML, Model Regis
 - Train an XGBoost machine learning model for fraud detection
 - Deploy models for scalable inference with one-click deployment
 - Create REST API endpoints for real-time online inference
+- Set up A/B testing between model versions using Gateways for traffic splitting
 
 ### What You'll Build
 A complete fraud detection pipeline featuring:
@@ -26,6 +27,7 @@ A complete fraud detection pipeline featuring:
 - Trained XGBoost classification model
 - Live REST API endpoint running on Snowpark Container Services (SPCS)
 - Performance benchmarking with latency profiling
+- Gateway for A/B testing across model versions with traffic splitting
 
 ![diagram](assets/diagram.png)
 
@@ -431,15 +433,15 @@ This single prompt triggers a complete deployment pipeline. First, the model is 
 ```
 MODEL REGISTRATION
 ============================================================
-Registering model as ML.PROJECTS.FRAUD_XGBOOST_MODEL version V2...
+Registering model as ML.PROJECTS.FRAUD_XGBOOST_MODEL version V1...
 
-✓  SNOWFLAKE_SQL_EXECUTE  Verify model V2 registration
+✓  SNOWFLAKE_SQL_EXECUTE  Verify model V1 registration
   SQL Result (2 rows × 10 cols)
   ┌─────┬───────────────┬──────────────┬───────────────────┐
   │   # │ name          │ version_name │ min_num_arguments │
   ├─────┼───────────────┼──────────────┼───────────────────┤
-  │   1 │ PREDICT       │ V2           │ 7                 │
-  │   2 │ PREDICT_PROBA │ V2           │ 7                 │
+  │   1 │ PREDICT       │ V1           │ 7                 │
+  │   2 │ PREDICT_PROBA │ V1           │ 7                 │
   └─────┴───────────────┴──────────────┴───────────────────┘
 ```
 
@@ -451,7 +453,7 @@ Then deployed to SPCS (this can take a few minutes as it builds the container):
   ┌─────┬─────────────────────────┬─────────┬───────────────┬─────────────┐
   │   # │ name                    │ status  │ database_name │ schema_name │
   ├─────┼─────────────────────────┼─────────┼───────────────┼─────────────┤
-  │   1 │ FRAUD_INFERENCE_SERVICE │ RUNNING │ ML            │ PROJECTS    │
+  │   1 │ FRAUD_INFERENCE_SERVICE_V1 │ RUNNING │ ML            │ PROJECTS    │
   │   2 │ MODEL_BUILD_4A237CD4    │ DONE    │ ML            │ PROJECTS    │
   └─────┴─────────────────────────┴─────────┴───────────────┴─────────────┘
 
@@ -563,6 +565,133 @@ It also breaks down the predictions by risk tier so you can verify the model beh
 ```
 
 <!-- ------------------------ -->
+## A/B Test with Gateways
+
+In production, you rarely swap a model overnight. Instead, you route a fraction of live traffic to the new version and compare results before committing. [SPCS Gateways](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/gateway) make this simple: a single stable hostname splits ingress requests across multiple service endpoints by percentage, so you can A/B test model versions without changing any client URLs.
+
+In this step we will deploy an improved V2 model as a second SPCS service, create a gateway that sends 80% of traffic to the proven V1 service and 20% to V2, then verify the split. Once the new version proves itself, we shift the gateway to 100% V2 with a single `ALTER GATEWAY` statement.
+
+### Prompt
+
+```
+Train an improved V2 fraud model (try a lower learning rate and more 
+estimators), log it to the Model Registry, deploy it as a second SPCS service 
+called FRAUD_INFERENCE_SERVICE_V2, then create a Gateway called 
+FRAUD_AB_GATEWAY that sends 80% of traffic to the original 
+FRAUD_INFERENCE_SERVICE_V1 and 20% to the new V2 service. Test the gateway 
+endpoint.
+```
+
+### What Gets Generated
+
+Cortex Code trains the updated model, registers it, and deploys a second service:
+
+```
+MODEL REGISTRATION
+============================================================
+Registering model as ML.PROJECTS.FRAUD_XGBOOST_MODEL version V2...
+  learning_rate: 0.05 (was 0.1)
+  n_estimators: 500 (was 200)
+
+✓  SNOWFLAKE_SQL_EXECUTE  Verify model V2 registration
+  SQL Result (2 rows × 10 cols)
+  ┌─────┬───────────────┬──────────────┬───────────────────┐
+  │   # │ name          │ version_name │ min_num_arguments │
+  ├─────┼───────────────┼──────────────┼───────────────────┤
+  │   1 │ PREDICT       │ V2           │ 7                 │
+  │   2 │ PREDICT_PROBA │ V2           │ 7                 │
+  └─────┴───────────────┴──────────────┴───────────────────┘
+```
+
+Once the V2 service is running alongside the original:
+
+```
+✓  SNOWFLAKE_SQL_EXECUTE  Check running services
+  SQL Result (2 rows × 4 cols)
+  ┌─────┬────────────────────────────────┬─────────┬─────────────┐
+  │   # │ name                           │ status  │ schema_name │
+  ├─────┼────────────────────────────────┼─────────┼─────────────┤
+  │   1 │ FRAUD_INFERENCE_SERVICE_V1        │ RUNNING │ PROJECTS    │
+  │   2 │ FRAUD_INFERENCE_SERVICE_V2     │ RUNNING │ PROJECTS    │
+  └─────┴────────────────────────────────┴─────────┴─────────────┘
+```
+
+Next, the gateway is created with an 80/20 traffic split:
+
+```
+✓  SNOWFLAKE_SQL_EXECUTE  Create A/B testing gateway
+  CREATE OR REPLACE GATEWAY ML.PROJECTS.FRAUD_AB_GATEWAY
+  FROM SPECIFICATION $$
+  spec:
+    type: traffic_split
+    split_type: custom
+    targets:
+      - type: endpoint
+        value: ML.PROJECTS.FRAUD_INFERENCE_SERVICE_V1!inference
+        weight: 80
+      - type: endpoint
+        value: ML.PROJECTS.FRAUD_INFERENCE_SERVICE_V2!inference
+        weight: 20
+  $$;
+
+  SQL Result (1 rows × 1 cols)
+  ┌─────┬──────────────────────────────────────────────┐
+  │   # │ status                                       │
+  ├─────┼──────────────────────────────────────────────┤
+  │   1 │ FRAUD_AB_GATEWAY successfully created.       │
+  └─────┴──────────────────────────────────────────────┘
+```
+
+Cortex Code retrieves the stable gateway URL:
+
+```
+✓  SNOWFLAKE_SQL_EXECUTE  Get gateway endpoint
+  DESC GATEWAY ML.PROJECTS.FRAUD_AB_GATEWAY
+    ->> SELECT "name", "ingress_url" FROM $1;
+
+  SQL Result (1 rows × 2 cols)
+  ┌─────┬──────────────────┬─────────────────────────────────────────────────┐
+  │   # │ name             │ ingress_url                                     │
+  ├─────┼──────────────────┼─────────────────────────────────────────────────┤
+  │   1 │ FRAUD_AB_GATEWAY │ ab-gw-ml-proj-aws-us-west-2.snowflakecomputing.app │
+  └─────┴──────────────────┴─────────────────────────────────────────────────┘
+```
+
+It then sends 100 test requests through the gateway and confirms the split:
+
+```
+GATEWAY A/B TEST RESULTS
+============================================================
+Endpoint: https://ab-gw-ml-proj-aws-us-west-2.snowflakecomputing.app/predict-proba
+Total requests: 100 | Errors: 0
+
+Traffic Split Observed
+┌──────────────────────────────────┬──────────┬──────────┐
+│ Service                          │ Expected │ Observed │
+├──────────────────────────────────┼──────────┼──────────┤
+│ FRAUD_INFERENCE_SERVICE_V1       │ 80%      │ 78%      │
+├──────────────────────────────────┼──────────┼──────────┤
+│ FRAUD_INFERENCE_SERVICE_V2       │ 20%      │ 22%      │
+└──────────────────────────────────┴──────────┴──────────┘
+
+Prediction Agreement: 96% (both versions agree on fraud/legit label)
+V2-only catches: 2 additional fraud cases flagged by V2 but missed by V1
+```
+
+### Shifting Traffic
+
+Once you are confident in V2, shift all traffic to the new version:
+
+```
+Shift the FRAUD_AB_GATEWAY to send 100% of traffic to 
+FRAUD_INFERENCE_SERVICE_V2. Confirm the change took effect.
+```
+
+The gateway hostname stays the same, so no client changes are needed. You can also use this pattern for high availability by splitting traffic across services running on different compute pools.
+
+> Note: Gateway routing automatically fails over to healthy endpoints. If one service becomes unavailable, traffic is redirected to the remaining endpoints proportionally. See the [gateway failover documentation](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/gateway) for details.
+
+<!-- ------------------------ -->
 ## Debug and Recover from Errors
 
 During any natural language coding session, errors are inevitable. The great thing about Cortex Code is its ability to self-correct by assessing the situation, environment, and error to fix issues automatically.
@@ -663,6 +792,7 @@ Congratulations! You've successfully built a complete real-time fraud detection 
 - Train an XGBoost model optimized for imbalanced fraud detection
 - Deploy models to SPCS with automatic containerization
 - Create and test REST API endpoints for real-time inference
+- Use Gateways to A/B test model versions with traffic splitting behind a stable URL
 
 ### Related Resources
 
@@ -676,3 +806,5 @@ Technical Documentation:
 - [Cortex Code Documentation](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code) - Getting started with Cortex Code
 - [Snowpark Container Services](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview) - Deploy and manage containerized workloads
 - [Snowflake Model Registry](https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/overview) - Register, version, and deploy ML models
+- [SPCS Gateways](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/gateway) - Route ingress traffic to multiple service endpoints
+- [CREATE GATEWAY](https://docs.snowflake.com/en/sql-reference/sql/create-gateway) - SQL reference for creating and configuring gateways

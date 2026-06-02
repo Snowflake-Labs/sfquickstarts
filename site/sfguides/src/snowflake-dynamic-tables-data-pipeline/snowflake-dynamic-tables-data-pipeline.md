@@ -107,11 +107,11 @@ Before we build the pipeline, let's understand the key concepts.
 
 - **DOWNSTREAM**: A special TARGET_LAG value meaning "refresh only when downstream consumers need it." Creates an efficient pull-based refresh model.
 
-- **Incremental Refresh**: Dynamic Tables process only changed data rather than recomputing everything. Processing 500 new orders out of 1 billion is nearly instant.
+- **Incremental Refresh**: Dynamic Tables process only changed data rather than recomputing everything. Processing 1,000 new orders out of 1 billion is nearly instant.
 
 - **Dependency Graph**: Snowflake tracks dependencies between Dynamic Tables and determines refresh order automatically.
 
-- **INITIALIZE = 'ON_REFRESH'**: By default (`ON_CREATE`), a Dynamic Table performs an immediate full refresh the moment it's created — processing all source data before returning. With `ON_REFRESH`, the table is created instantly (empty) and populated on the first scheduled or manual refresh. This is the recommended approach for production and lab pipelines because it separates **definition** from **execution**: you can create the entire pipeline structure quickly, then trigger the initial load when you're ready. It also avoids long-running CREATE statements and makes deployments faster and more predictable.
+- **INITIALIZE = 'ON_SCHEDULE'**: By default (`ON_CREATE`), a Dynamic Table performs an immediate full refresh the moment it's created — processing all source data before returning. With `ON_SCHEDULE`, the table is created instantly (empty) and populated on the first scheduled or manual refresh. This is the recommended approach for production and lab pipelines because it separates **definition** from **execution**: you can create the entire pipeline structure quickly, then trigger the initial load when you're ready. It also avoids long-running CREATE statements and makes deployments faster and more predictable.
 
 Now let's tell Cortex Code to build a three-tier pipeline using these concepts.
 
@@ -128,7 +128,7 @@ Give CoCo the following prompt:
 Build a 3-tier dynamic table pipeline in tasty_bytes_db.analytics using
 warehouse tasty_bytes_wh:
 
-Use INITIALIZE = 'ON_REFRESH' for all dynamic tables.
+Use INITIALIZE = 'ON_SCHEDULE' for all dynamic tables.
 
 Tier 1 - Enrichment (TARGET_LAG = DOWNSTREAM):
 - orders_enriched: From tasty_bytes_db.raw.order_header. Include order_id,
@@ -171,9 +171,9 @@ Tier 3 - Aggregated Metrics (TARGET_LAG = 1 hour):
   (standard_sale_price), revenue_per_unit, profit_per_unit.
 ```
 
-> **Review before executing**: Verify that TARGET_LAG values match (DOWNSTREAM for Tier 1-2, 1 hour for Tier 3), `INITIALIZE = 'ON_REFRESH'` is set on all tables, join conditions are correct, and the dependency flows raw → Tier 1 → Tier 2 → Tier 3.
+> **Review before executing**: Verify that TARGET_LAG values match (DOWNSTREAM for Tier 1-2, 1 hour for Tier 3), `INITIALIZE = 'ON_SCHEDULE'` is set on all tables, join conditions are correct, and the dependency flows raw → Tier 1 → Tier 2 → Tier 3.
 
-> **Why ON_REFRESH?** With `INITIALIZE = 'ON_REFRESH'`, all 5 CREATE statements return immediately — no waiting for an initial full scan of 1 billion rows. The pipeline is defined but empty. You'll trigger the first load manually in the next step, giving you full control over when the expensive initial refresh happens.
+> **Why ON_SCHEDULE?** With `INITIALIZE = 'ON_SCHEDULE'`, all 5 CREATE statements return immediately — no waiting for an initial full scan of 1 billion rows. The pipeline is defined but empty. You'll trigger the first load manually in the next step, giving you full control over when the expensive initial refresh happens.
 
 Now trigger the initial load by refreshing only the top-tier tables. Snowflake will automatically cascade through the dependency graph — refreshing Tier 1 and Tier 2 first, then Tier 3:
 
@@ -243,7 +243,7 @@ tasty_bytes_db.raw.order_detail?
 
 **Prompt 2** — Generate new data:
 ```
-Call tasty_bytes_db.raw.generate_demo_orders(500)
+Call tasty_bytes_db.raw.generate_demo_orders(1000)
 ```
 
 **Prompt 3** — Trigger refresh (top tier only):
@@ -261,9 +261,9 @@ of the 5 dynamic tables in tasty_bytes_db.analytics. Show the most recent
 refresh_action, state, refresh_trigger, and duration in seconds for each.
 ```
 
-> **Key insight**: The `refresh_action` column should show **INCREMENTAL** — Snowflake processed only the 500 new orders through the entire pipeline, not the full billion-row dataset. This is what makes Dynamic Tables efficient at scale.
+> **Key insight**: The `refresh_action` column should show **INCREMENTAL** — Snowflake processed only the 1,000 new orders through the entire pipeline, not the full billion-row dataset. This is what makes Dynamic Tables efficient at scale.
 
-> **Discussion**: Notice that `product_performance_metrics` shows a **FULL** refresh. Why? This table aggregates across all products — when a new order arrives for an existing product (e.g., "The King Combo"), the aggregate row for that product must be updated. Snowflake rewrites the affected group rather than appending a new row. Does a full rewrite make sense here? Consider: with 500 new rows out of 1 billion, the rewrite only touches the affected product groups — it's still far more efficient than processing all source data.
+> **Discussion**: Notice that `product_performance_metrics` shows a **FULL** refresh. Why? This table aggregates across all products — when a new order arrives for an existing product (e.g., "The King Combo"), the aggregate row for that product must be updated. Snowflake rewrites the affected group rather than appending a new row. Does a full rewrite make sense here? Consider: with 1,000 new rows out of 1 billion, the rewrite only touches the affected product groups — it's still far more efficient than processing all source data.
 
 **Prompt 5** — View updated results:
 ```

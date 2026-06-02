@@ -1,4 +1,4 @@
-author: James Cha-Earley, Sho Tanaka
+author: James Cha-Earley, Sho Tanaka, Anh Kieu
 id: gain-insights-from-unstructured-data
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions, snowflake-site:taxonomy/snowflake-feature/unstructured-data-analysis
 language: en
@@ -132,7 +132,8 @@ SELECT
             'would_recommend': 'Would the customer recommend this food truck (yes, no, unclear)?'
         }
     ) AS extracted_fields
-FROM TRUCK_REVIEWS_V
+FROM
+    TB_VOC.ANALYTICS.TRUCK_REVIEWS_V_SAMPLE
 LIMIT 10;
 ```
 
@@ -152,7 +153,8 @@ SELECT
         },
         scores => TRUE
     ) AS extraction_with_scores
-FROM TRUCK_REVIEWS_V
+FROM
+    TB_VOC.ANALYTICS.TRUCK_REVIEWS_V_SAMPLE
 LIMIT 5;
 ```
 
@@ -164,19 +166,22 @@ To run extraction across the entire dataset and flatten results into queryable c
 
 ```sql
 CREATE OR REPLACE TABLE TB_VOC.ANALYTICS.EXTRACTED_REVIEWS AS
-SELECT
-    TRUCK_BRAND_NAME,
-    REVIEW,
-    AI_EXTRACT(
-        text => REVIEW,
-        responseFormat => {
-            'truck_name': 'What food truck or brand is mentioned?',
-            'dish': 'What specific dish or menu item is mentioned?',
-            'issue_type': 'What type of issue did the customer experience (food quality, service, wait time, cleanliness, none)?',
-            'would_recommend': 'Would the customer recommend this food truck (yes, no, unclear)?'
-        }
-    ):response AS extracted
-FROM TRUCK_REVIEWS_V;
+(
+    SELECT
+        TRUCK_BRAND_NAME,
+        REVIEW,
+        AI_EXTRACT(
+            text => REVIEW,
+            responseFormat => {
+                'truck_name': 'What food truck or brand is mentioned?',
+                'dish': 'What specific dish or menu item is mentioned?',
+                'issue_type': 'What type of issue did the customer experience (food quality, service, wait time, cleanliness, none)?',
+                'would_recommend': 'Would the customer recommend this food truck (yes, no, unclear)?'
+            }
+        ):response AS extracted
+    FROM
+        TB_VOC.ANALYTICS.TRUCK_REVIEWS_V_SAMPLE
+);
 
 -- Query the flattened results
 SELECT 
@@ -185,10 +190,71 @@ SELECT
     extracted:dish::VARCHAR AS dish,
     extracted:issue_type::VARCHAR AS issue_type,
     extracted:would_recommend::VARCHAR AS would_recommend
-FROM TB_VOC.ANALYTICS.EXTRACTED_REVIEWS
-WHERE extracted:issue_type::VARCHAR != 'none'
-LIMIT 20;
+FROM
+    TB_VOC.ANALYTICS.EXTRACTED_REVIEWS
+WHERE
+    extracted:issue_type::VARCHAR != 'none'
+LIMIT 20
+;
 ```
+
+### When to Use AI_COMPLETE Instead
+
+AI_EXTRACT is optimized for structured field extraction — it handles schema definition, output parsing, and confidence scoring automatically. However, some text extraction tasks require **reasoning**, **multi-step logic**, or **contextual interpretation** that go beyond direct field extraction. In these cases, [AI_COMPLETE](https://docs.snowflake.com/en/sql-reference/functions/ai_complete) gives you full control over the prompt and model behavior.
+
+**AI_COMPLETE enables:**
+- **Reasoning over context** — e.g., inferring root cause from multiple complaint signals
+- **Conditional logic** — e.g., "If the issue is food-related AND the customer mentions illness, escalate to urgent"
+- **Summarization with judgment** — e.g., generating a one-sentence action item for each review
+- **Custom output formats** — e.g., generating a severity score (1–5) with justification text
+
+```sql
+-- Example: AI_COMPLETE for reasoning-based extraction
+SELECT
+    REVIEW,
+    AI_COMPLETE(
+        'claude-sonnet-4-6',
+        CONCAT(
+            'Analyze this food truck review and determine:\n',
+            '1. The root cause of any dissatisfaction\n',
+            '2. A priority score (1-5) based on severity and business impact\n',
+            '3. A recommended next action for the operations team\n\n',
+            'Review: ', REVIEW
+        ),
+        {},
+        {
+            'type': 'json',
+            'schema': {
+                'type': 'object',
+                'properties': {
+                    'root_cause': {'type': 'string'},
+                    'priority_score': {'type': 'integer'},
+                    'recommended_action': {'type': 'string'},
+                    'reasoning': {'type': 'string'}
+                },
+                'required': ['root_cause', 'priority_score', 'recommended_action', 'reasoning']
+            }
+        }
+    ) AS analysis
+FROM
+    TB_VOC.ANALYTICS.TRUCK_REVIEWS_V_SAMPLE
+LIMIT 5;
+```
+
+### Decision Flowchart: AI_EXTRACT vs AI_COMPLETE
+
+Use the following flowchart to determine which function to use for your text extraction task:
+
+![AI_EXTRACT vs AI_COMPLETE Decision Flowchart](assets/ai_extract_vs_ai_complete_flowchart.png)
+
+| Aspect | AI_EXTRACT | AI_COMPLETE |
+|--------|-----------|-------------|
+| Purpose | Extract predefined fields | Reasoning, generation, complex extraction |
+| Input definition | Schema via `responseFormat` | Free-form prompt instructions |
+| Output format | Automatically structured JSON | JSON via `structured_output` option |
+| Confidence scores | Available with `scores => TRUE` | Not built-in (can be prompted manually) |
+| Model selection | Automatic (arctic-extract) | Explicitly specified |
+| Best use cases | Names, dates, categories — clear values | Judgment, reasoning, summarization, action generation |
 
 <!-- ------------------------ -->
 ## Image Extraction with AI_EXTRACT
@@ -211,7 +277,8 @@ SELECT
             'location_clues': 'What location indicators are visible (street signs, landmarks)?'
         }
     ) AS extracted_data
-FROM TB_VOC.MEDIA.IMAGE_TABLE
+FROM
+    TB_VOC.MEDIA.IMAGE_TABLE
 LIMIT 5;
 ```
 
@@ -230,7 +297,8 @@ SELECT
             'prices': 'What prices are shown?'
         }
     ) AS extracted_data
-FROM DIRECTORY(@TB_VOC.MEDIA.IMAGES);
+FROM
+    DIRECTORY(@TB_VOC.MEDIA.IMAGES);
 ```
 
 <!-- ------------------------ -->
@@ -266,7 +334,8 @@ SELECT
             }
         }
     ) AS video_metadata
-FROM TB_VOC.MEDIA.VIDEO_TABLE
+FROM
+    TB_VOC.MEDIA.VIDEO_TABLE
 LIMIT 3;
 ```
 
@@ -299,7 +368,8 @@ SELECT
             }
         }
     ) AS video_metadata
-FROM TB_VOC.MEDIA.VIDEO_TABLE;
+FROM
+    TB_VOC.MEDIA.VIDEO_TABLE;
 ```
 
 <!-- ------------------------ -->
@@ -317,7 +387,8 @@ SELECT
     AI_TRANSCRIBE(
         TO_FILE('@TB_VOC.MEDIA.AUDIO', AUDIO_PATH)
     ) AS transcription_result
-FROM TB_VOC.MEDIA.AUDIO_TABLE
+FROM
+    TB_VOC.MEDIA.AUDIO_TABLE
 LIMIT 3;
 ```
 
@@ -349,7 +420,8 @@ SELECT
             }
         }
     ) AS extracted_issue
-FROM TB_VOC.MEDIA.AUDIO_TABLE
+FROM
+    TB_VOC.MEDIA.AUDIO_TABLE
 LIMIT 3;
 ```
 
@@ -362,22 +434,17 @@ In this phase, you will combine all modalities into a single extraction pipeline
 
 ```sql
 CREATE OR REPLACE TABLE TB_VOC.ANALYTICS.UNIFIED_EXTRACTIONS AS
-
 -- Text reviews
 SELECT
     'text' AS modality,
     REVIEW AS source_content,
     NULL AS file_path,
     AI_EXTRACT(
-        text => REVIEW,
-        responseFormat => {
-            'truck_name': 'What food truck is mentioned?',
-            'issue_type': 'What issue did the customer experience?',
-            'dish': 'What dish is mentioned?'
-        }
+        REVIEW,
+        {'truck_name': 'What food truck is mentioned?', 'issue_type': 'What issue did the customer experience?', 'dish': 'What dish is mentioned?'}
     ):response AS extracted_data
-FROM TRUCK_REVIEWS_V
-LIMIT 100
+FROM
+    TB_VOC.ANALYTICS.TRUCK_REVIEWS_V_SAMPLE
 
 UNION ALL
 
@@ -387,14 +454,11 @@ SELECT
     NULL AS source_content,
     RELATIVE_PATH AS file_path,
     AI_EXTRACT(
-        file => TO_FILE('@TB_VOC.MEDIA.IMAGES', RELATIVE_PATH),
-        responseFormat => {
-            'brand_name': 'What is the food truck brand name?',
-            'menu_items': 'What menu items are visible?',
-            'prices': 'What prices are shown?'
-        }
+        TO_FILE('@TB_VOC.MEDIA.IMAGES', RELATIVE_PATH),
+        {'brand_name': 'What is the food truck brand name?', 'menu_items': 'What menu items are visible?', 'prices': 'What prices are shown?'}
     ):response AS extracted_data
-FROM DIRECTORY(@TB_VOC.MEDIA.IMAGES)
+FROM
+    DIRECTORY(@TB_VOC.MEDIA.IMAGES)
 
 UNION ALL
 
@@ -404,13 +468,18 @@ SELECT
     NULL AS source_content,
     VIDEO_PATH AS file_path,
     PARSE_JSON(
-        AI_COMPLETE(
-            'gemini-3.1-pro',
-            'Extract brand names and dishes shown from this food truck video. Return JSON with keys: brand_name, dishes_shown, sentiment.',
-            TO_FILE('@TB_VOC.MEDIA.VIDEO', VIDEO_PATH)
+        REGEXP_REPLACE(
+            AI_COMPLETE(
+                'gemini-3.1-pro',
+                'Extract brand names and dishes shown from this food truck video. Return JSON with keys: brand_name, dishes_shown, sentiment. Return ONLY raw JSON, no markdown.',
+                TO_FILE('@TB_VOC.MEDIA.VIDEO', VIDEO_PATH)
+            ),
+            '```(json)?\\n?|```',
+            ''
         )
     ) AS extracted_data
-FROM TB_VOC.MEDIA.VIDEO_TABLE
+FROM
+    TB_VOC.MEDIA.VIDEO_TABLE
 
 UNION ALL
 
@@ -420,15 +489,20 @@ SELECT
     NULL AS source_content,
     AUDIO_PATH AS file_path,
     PARSE_JSON(
-        AI_COMPLETE(
-            'claude-sonnet-4-6',
-            CONCAT(
-                'Extract: caller_issue, truck_name, urgency from this voicemail: ',
-                AI_TRANSCRIBE(TO_FILE('@TB_VOC.MEDIA.AUDIO', AUDIO_PATH)):text::VARCHAR
-            )
+        REGEXP_REPLACE(
+            AI_COMPLETE(
+                'claude-sonnet-4-6',
+                CONCAT(
+                    'Extract: caller_issue, truck_name, urgency from this voicemail. Return ONLY raw JSON, no markdown: ',
+                    AI_TRANSCRIBE(TO_FILE('@TB_VOC.MEDIA.AUDIO', AUDIO_PATH)):text::VARCHAR
+                )
+            ),
+            '```(json)?\\n?|```',
+            ''
         )
     ) AS extracted_data
-FROM TB_VOC.MEDIA.AUDIO_TABLE;
+FROM
+    TB_VOC.MEDIA.AUDIO_TABLE;
 ```
 
 ### Query Unified Results
@@ -441,64 +515,74 @@ SELECT
     extracted_data:truck_name::VARCHAR AS truck_name,
     extracted_data:issue_type::VARCHAR AS issue_type,
     extracted_data:urgency::VARCHAR AS urgency
-FROM TB_VOC.ANALYTICS.UNIFIED_EXTRACTIONS
-WHERE extracted_data:urgency::VARCHAR = 'high'
-   OR extracted_data:issue_type::VARCHAR NOT IN ('none', 'null');
+FROM
+    TB_VOC.ANALYTICS.UNIFIED_EXTRACTIONS
+WHERE
+    extracted_data:urgency::VARCHAR = 'high'
+    OR extracted_data:issue_type::VARCHAR NOT IN ('none', 'null')
+;
 ```
 
 <!-- ------------------------ -->
-## AI Function Studio: Create
+## Cortex AI Function Studio: Create
 
-In this phase, you will use [Cortex AI Function Studio](https://docs.snowflake.com/en/LIMITEDACCESS/snowflake-cortex/cortex-ai-function-studio) to create a reusable custom AI function that encapsulates the text extraction logic from earlier. This allows you to call extraction as a simple SQL function across any table without rewriting prompts.
+In this phase, you will use [Cortex AI Function Studio](https://docs.snowflake.com/en/user-guide/snowflake-cortex/ai-function-studio), Public Preview, to create a reusable custom AI function that encapsulates the text extraction logic from earlier. This allows you to call extraction as a simple SQL function across any table without rewriting prompts.
 
 AI Function Studio provides a managed workflow to create, evaluate, and optimize custom AI functions. The function you create here uses AI_COMPLETE under the hood but is deployed as a standard SQL UDF that can be called from any query.
 
+> **Important:** Cortex AI Function Studio uses stored procedures internally to create, evaluate, and optimize functions. These procedures are not intended to be called directly — their signatures and behavior may change without notice. Use [Cortex Code](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code) as the primary interface for AI Function Studio workflows.
+
 ### Create the Extraction Function
 
-Use the `CREATE_AI_FUNCTION` stored procedure to deploy a custom function that extracts structured fields from customer reviews:
+The easiest way to create a custom AI function is through [Cortex Code](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code), Snowflake Coding Agent. Cortex Code includes a built-in AI Function Studio skill that lets you describe what you want in natural language and handles the function creation automatically.
 
+In Cortex Code Snowsight's chat panel, type the following prompt:
+
+```
+/cortex-ai-function-studio Create a function that takes in the review from tb_voc.analytics.truck_review_v_samples and extract review into the following fields: truck_name, dish, issue_type, would_recommend (yes/no/unclear) by sysadmin role
+```
+
+Cortex Code will:
+1. **Detect your intent** — It recognizes this as a CREATE workflow for a custom AI function
+2. **Check prerequisites** — It verifies your Snowflake connection, role privileges, and target schema
+3. **Inspect the source table** — It reads the schema of `TB_VOC.ANALYTICS.TRUCK_REVIEWS_V_SAMPLE` to understand the input column
+4. **Configure the function** — It determines the appropriate model, prompt template, input/output schema, and deploys the function using `SNOWFLAKE.CORTEX.CREATE_AI_FUNCTION`
+
+Once complete, Cortex Code will confirm the function was created and show you a sample query to test it.
+
+Cortex Code uses an LLM under the hood, so its output is non-deterministic and may vary depending on your environment. Ideally, the function created should look like the following:
+
+Example
 ```sql
-USE TB_VOC.ANALYTICS;
-
 CALL SNOWFLAKE.CORTEX.CREATE_AI_FUNCTION(
-    'TB_VOC.ANALYTICS.EXTRACT_REVIEW_FIELDS',        -- 1. FUNCTION_NAME
-    'Extract structured fields from food truck customer reviews including the truck name, dish mentioned, issue type, and recommendation intent.',  -- 2. TASK_DESCRIPTION
-    'claude-sonnet-4-6',                              -- 3. MODEL
-    'You are a data extraction specialist for a food truck company. Extract structured information from customer reviews accurately and concisely. If a field cannot be determined from the review, return null for that field.',  -- 4. SYSTEM_PROMPT
-    'Extract the following fields from this customer review:\n\nReview: {REVIEW_TEXT}\n\nExtract: truck_name, dish_mentioned, issue_type (food quality/service/wait time/cleanliness/none), would_recommend (yes/no/unclear)',  -- 5. USER_PROMPT_TEMPLATE
-    ARRAY_CONSTRUCT(                                  -- 6. INPUTS
-        OBJECT_CONSTRUCT('name', 'REVIEW_TEXT', 'sql_type', 'VARCHAR', 'description', 'The customer review text')
-    ),
-    ARRAY_CONSTRUCT(                                  -- 7. OUTPUTS
-        OBJECT_CONSTRUCT('name', 'truck_name', 'json_type', 'string', 'description', 'Food truck brand name'),
-        OBJECT_CONSTRUCT('name', 'dish_mentioned', 'json_type', 'string', 'description', 'Specific dish or menu item'),
-        OBJECT_CONSTRUCT('name', 'issue_type', 'json_type', 'string', 'description', 'Type of issue: food quality, service, wait time, cleanliness, or none'),
-        OBJECT_CONSTRUCT('name', 'would_recommend', 'json_type', 'string', 'description', 'Would recommend: yes, no, or unclear')
-    ),
-    NULL,                                             -- 8. STAGE_NAME (NULL for text-only)
-    NULL                                              -- 9. OPTIONS
+  'TB_VOC.ANALYTICS.EXTRACT_REVIEW',
+  'claude-sonnet-4-6',
+  'You are a review extraction assistant. Extract structured information from food truck reviews. Be concise and accurate. If information is not clearly stated, use "unknown" for text fields and "unclear" for would_recommend.',
+  'Extract the following from this review:\n- truck_name: the name of the food truck\n- dish: the specific dish mentioned (if multiple, pick the primary one discussed)\n- issue_type: the type of complaint or issue (use "none" if no issue)\n- would_recommend: whether the reviewer would recommend (yes/no/unclear)\n\nReview: {REVIEW}',
+  [{'name': 'REVIEW', 'type': 'VARCHAR'}],
+  [{'name': 'truck_name', 'type': 'VARCHAR'}, {'name': 'dish', 'type': 'VARCHAR'}, {'name': 'issue_type', 'type': 'VARCHAR'}, {'name': 'would_recommend', 'type': 'VARCHAR'}],
+  NULL,
+  NULL,
+  NULL
 );
 ```
+
+Example output from the AI Function Studio CREATE workflow in Cortex Code:
+
+![AI Function Studio Create Function](assets/create_ai_function_studio.jpg)
 
 ### Test the Function
 
 ```sql
-SELECT EXTRACT_REVIEW_FIELDS(REVIEW) AS result
-FROM TRUCK_REVIEWS_V
-LIMIT 5;
-```
+USE ROLE SYSADMIN;
+USE TB_VOC.ANALYTICS;
 
-The function returns a VARIANT object with the extracted fields. You can access individual fields using standard JSON notation:
-
-```sql
 SELECT
     REVIEW,
-    EXTRACT_REVIEW_FIELDS(REVIEW):truck_name::VARCHAR AS truck_name,
-    EXTRACT_REVIEW_FIELDS(REVIEW):dish_mentioned::VARCHAR AS dish,
-    EXTRACT_REVIEW_FIELDS(REVIEW):issue_type::VARCHAR AS issue_type,
-    EXTRACT_REVIEW_FIELDS(REVIEW):would_recommend::VARCHAR AS recommendation
-FROM TRUCK_REVIEWS_V
-LIMIT 10;
+    TB_VOC.ANALYTICS.EXTRACT_REVIEW(REVIEW) AS extracted
+FROM
+    TB_VOC.ANALYTICS.TRUCK_REVIEWS_V_SAMPLE
+LIMIT 5;
 ```
 
 <!-- ------------------------ -->
@@ -510,34 +594,55 @@ Now that you have a working extraction function, evaluate its accuracy against a
 
 The setup.sql script created a labeled evaluation table `TB_VOC.ANALYTICS.EXTRACTION_EVAL_DATA` with manually verified extractions. This table has columns: `REVIEW_TEXT` (input) and `EXPECTED_OUTPUT` (VARIANT with the correct extraction).
 
+
 Preview the evaluation data:
 
 ```sql
-SELECT * FROM TB_VOC.ANALYTICS.EXTRACTION_EVAL_DATA LIMIT 5;
+SELECT
+    *
+FROM
+    TB_VOC.ANALYTICS.EXTRACTION_EVAL_DATA
+LIMIT 5;
 ```
 
 ### Run the Evaluation
 
-Use the `EVALUATE_AI_FUNCTION` stored procedure to measure your function's accuracy:
+In Cortex Code's chat panel, type the following prompt:
+
+```
+/cortex-ai-faunction-studio Evaluate TB_VOC.ANALYTICS.EXTRACT_REVIEW against test table TB_VOC.ANALYTICS.EXTRACTION_EVAL_DATA with input column REVIEW_TEXT and label column EXPECTED_OUTPUT with llm-judge by sysadmin role
+```
+
+Cortex Code will:
+1. **Detect your intent** — It recognizes this as an EVALUATE workflow
+2. **Configure the evaluation** — It identifies the function, test table, input/label columns, and selects the appropriate metric
+3. **Run the evaluation** — It calls `SNOWFLAKE.CORTEX.EVALUATE_AI_FUNCTION` and returns the accuracy score
+
+Cortex Code uses an LLM under the hood, so its output is non-deterministic and may vary depending on your environment. Ideally, the evaluation call should look like the following:
 
 ```sql
 USE TB_VOC.ANALYTICS;
 
+
 CALL SNOWFLAKE.CORTEX.EVALUATE_AI_FUNCTION(
-    'TB_VOC.ANALYTICS.EXTRACT_REVIEW_FIELDS',    -- 1. FUNCTION_NAME
-    'TB_VOC.ANALYTICS.EXTRACTION_EVAL_DATA',     -- 2. TEST_TABLE
-    ARRAY_CONSTRUCT('REVIEW_TEXT'),               -- 3. INPUT_COLUMNS
-    'EXPECTED_OUTPUT',                            -- 4. LABEL_COLUMN
-    'llm_judge',                                 -- 5. METRIC_NAME
-    'claude-sonnet-4-6',                         -- 6. MODEL_NAME
-    NULL,                                        -- 7. SAMPLE_SIZE
-    NULL,                                        -- 8. EXPERIMENT_NAME
-    PARSE_JSON('{"task_description": "Evaluate whether the extracted fields (truck_name, dish_mentioned, issue_type, would_recommend) match the expected values. Focus on semantic equivalence rather than exact string matching."}'),  -- 9. METRIC_OPTIONS
-    500,                                         -- 10. MAX_LENGTH
-    NULL,                                        -- 11. CUSTOM_METRIC_UDF
-    NULL                                         -- 12. RUN_ID
+    'TB_VOC.ANALYTICS.EXTRACT_REVIEW',
+    'TB_VOC.ANALYTICS.EXTRACTION_EVAL_DATA',
+    ARRAY_CONSTRUCT('REVIEW_TEXT'),
+    'EXPECTED_OUTPUT',
+    'llm_judge',
+    'claude-sonnet-4-6',
+    NULL,
+    NULL,
+    PARSE_JSON('{"task_description": "Extract structured fields (truck_name, dish, issue_type, would_recommend) from food truck reviews"}'),
+    500,
+    NULL,
+    NULL
 );
 ```
+
+Example output from the AI Function Studio EVALUATE workflow in Cortex Code:
+
+![AI Function Studio Evaluate Function](assets/evaluate_ai_function_studio.jpg)
 
 The evaluation returns an overall score between 0.0 and 1.0. A score above 0.8 indicates good extraction quality. If the score is lower, the optimize step can help improve it.
 
@@ -548,28 +653,43 @@ In this final phase, you will optimize your extraction function to improve accur
 
 ### Run Optimization
 
+After running the evaluation prompt in the previous step, Cortex Code may automatically ask whether you'd like to proceed with optimization. If it does, go ahead and run it — select the models you want to compare and let the optimizer execute.
+
+If you're starting a fresh optimization session (or Cortex Code did not offer the follow-up), type the following prompt in Cortex Code's chat panel:
+
+```
+/cortex-ai-function-studio　Optimize TB_VOC.ANALYTICS.EXTRACT_REVIEW against test table TB_VOC.ANALYTICS.EXTRACTION_EVAL_DATA 
+with input column REVIEW_TEXT and label column EXPECTED_OUTPUT for better accuracy using the same model claude-sonnet-4-6 with demo budget by sysadmin role
+```
+
+NOTE: Snowflake Optimization offers different iteration budget, demo, light, medium and heavy. `demo budget` means the lightest iteration.
+
+Cortex Code uses an LLM under the hood, so its output is non-deterministic and may vary depending on your environment. Ideally, the optimization call should look like the following:
+
+
+
 ```sql
 USE TB_VOC.ANALYTICS;
 
 CALL SNOWFLAKE.CORTEX.OPTIMIZE_AI_FUNCTION(
-    'TB_VOC.ANALYTICS.EXTRACT_REVIEW_FIELDS',    -- 1. FUNCTION_NAME
-    'TB_VOC.ANALYTICS.EXTRACTION_EVAL_DATA',     -- 2. TRAINING_TABLE
-    'EXPECTED_OUTPUT',                           -- 3. LABEL_COLUMN
-    ARRAY_CONSTRUCT('REVIEW_TEXT'),              -- 4. INPUT_COLUMNS
-    'llm_judge',                                -- 5. METRIC_NAME
-    ARRAY_CONSTRUCT('claude-sonnet-4-6'),        -- 6. MODELS
-    'claude-sonnet-4-6',                        -- 7. REFLECTION_MODEL
-    NULL,                                       -- 8. TEST_TABLE
-    'demo',                                     -- 9. AUTO_BUDGET
-    0.5,                                        -- 10. VALIDATION_FRACTION
-    0.0,                                        -- 11. TEMPERATURE
-    8192,                                       -- 12. MAX_TOKENS
-    PARSE_JSON('{"task_description": "Evaluate whether the extracted fields (truck_name, dish_mentioned, issue_type, would_recommend) match the expected values. Focus on semantic equivalence."}'),  -- 13. METRIC_OPTIONS
-    NULL,                                       -- 14. CUSTOM_METRIC_UDF
-    NULL,                                       -- 15. RUN_ID
-    NULL,                                       -- 16. AGGREGATION_METRIC
-    'body',                                     -- 17. OPTIMIZE_MODE
-    'EXTRACT_REVIEW_FIELDS_OPT'                 -- 18. EXPERIMENT_NAME
+    'TB_VOC.ANALYTICS.EXTRACT_REVIEW',
+    'TB_VOC.ANALYTICS.EXTRACTION_EVAL_DATA',
+    'EXPECTED_OUTPUT',
+    ARRAY_CONSTRUCT('REVIEW_TEXT'),
+    'llm_judge',
+    ARRAY_CONSTRUCT('claude-sonnet-4-6'),
+    'claude-sonnet-4-6',
+    NULL,
+    'demo',
+    0.3,
+    0.0,
+    8192,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    'body',
+    'ai_func_opt_EXTRACT_REVIEW_sonnet'
 );
 ```
 
@@ -584,8 +704,12 @@ The optimizer will:
 After optimization completes, check the experiment for results:
 
 ```sql
-SHOW RUN METRICS IN EXPERIMENT TB_VOC.ANALYTICS.EXTRACT_REVIEW_FIELDS_OPT;
+SHOW RUN METRICS IN EXPERIMENT TB_VOC.ANALYTICS.AI_FUNC_OPT_EXTRACT_REVIEW_DEMO;
 ```
+
+Example output from the optimization in Cortex Code:
+
+![AI Function Studio Optimization Results](assets/ai_function_studio_optimize_result.jpg)
 
 ### Test the Optimized Function
 
@@ -598,7 +722,8 @@ SELECT
     EXTRACT_REVIEW_FIELDS(REVIEW):dish_mentioned::VARCHAR AS dish,
     EXTRACT_REVIEW_FIELDS(REVIEW):issue_type::VARCHAR AS issue_type,
     EXTRACT_REVIEW_FIELDS(REVIEW):would_recommend::VARCHAR AS recommendation
-FROM TRUCK_REVIEWS_V
+FROM
+    TB_VOC.ANALYTICS.TRUCK_REVIEWS_V_SAMPLE
 LIMIT 10;
 ```
 
@@ -614,6 +739,22 @@ With the completion of this quickstart, you have now:
   * Used AI_TRANSCRIBE combined with AI_COMPLETE to extract actionable data from audio
   * Built a unified batch pipeline across all four modalities using the FILE data type
   * Created, evaluated, and optimized a custom AI function using AI Function Studio
+
+### Appendix 1: Multi-Model Cost Optimization
+
+The optimization in the previous section used a single model (`claude-sonnet-4-6`). In production, you may want to compare your current model against additional cheaper alternatives to find the best cost/quality tradeoff. AI Function Studio supports passing multiple models in a single optimization call — it evaluates them concurrently and returns the Pareto-optimal result.
+
+To extend the optimization you already ran, type the following prompt in Cortex Code's chat panel:
+
+```
+Optimize my function for more models, current model claude-sonnet-4-6 and a cheaper model
+```
+
+Cortex Code will add candidate models to the optimization, run them concurrently against your evaluation data, and present a comparison showing quality scores and cost for each model. You can then choose whether to deploy the cheaper variant or keep the original.
+
+Example output from the multi-model optimization workflow in Cortex Code:
+
+![AI Function Studio Multi-Model Optimization](assets/optimize_cost_ai_function_studio.jpg)
 
 ### Resources
 
