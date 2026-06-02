@@ -32,6 +32,8 @@ The dataset is a Financial Services use case: insurance quote requests collected
 
 > **Don't have a Snowflake account?** Sign up for a free trial at [signup.snowflake.com/summit2026](https://signup.snowflake.com/summit2026). Select the **AI Data Cloud for Enterprise** option — this trial includes free access to Cortex Code CLI.
 
+> **Important:** When creating your trial account, select **Amazon Web Services** as the cloud provider and **US West (Oregon)** as the region. The lab infrastructure (S3 bucket, Glue catalog, IAM role) is deployed in AWS US West 2 — your Snowflake account must be in the same region to reach it.
+
 ### What You'll Build
 - A Snowflake **External Volume** connected to the lab's S3-backed Iceberg dataset
 - A **Catalog Integration** pointing to the AWS Glue Iceberg REST endpoint using SigV4 authentication
@@ -239,6 +241,11 @@ GRANT ROLE lab_analyst TO ROLE lab_data_engineer;
 -- Grant both roles to your user
 GRANT ROLE lab_data_engineer TO USER IDENTIFIER(CURRENT_USER());
 GRANT ROLE lab_analyst TO USER IDENTIFIER(CURRENT_USER());
+
+-- Grant warehouse access so roles can run queries
+-- Replace COMPUTE_WH with your warehouse name if different
+GRANT USAGE ON WAREHOUSE COMPUTE_WH TO ROLE lab_data_engineer;
+GRANT USAGE ON WAREHOUSE COMPUTE_WH TO ROLE lab_analyst;
 ```
 
 ### Grant Access
@@ -257,14 +264,23 @@ GRANT SELECT ON ALL ICEBERG TABLES IN SCHEMA my_iceberg_db."iceberg" TO ROLE lab
 GRANT SELECT ON ALL ICEBERG TABLES IN SCHEMA my_iceberg_db."iceberg" TO ROLE lab_analyst;
 ```
 
-### Masking Policies
+### View Wrapper
 
-Each policy partially masks a PII column. `LAB_DATA_ENGINEER` and `ACCOUNTADMIN` see the real value — all other roles see a redacted version.
+Before applying masking policies, create a thin view over the Iceberg table. Masking policies cannot be applied directly to tables in a Catalog-Linked Database — they must be attached to a view wrapper. This same view is also used by the Semantic View in the next section.
 
 ```sql
 CREATE DATABASE IF NOT EXISTS iceberg_lab_db;
 CREATE SCHEMA IF NOT EXISTS iceberg_lab_db.analytics;
 
+CREATE OR REPLACE VIEW iceberg_lab_db.analytics.quotes_vw AS
+SELECT * FROM my_iceberg_db."iceberg"."quotes";
+```
+
+### Masking Policies
+
+Each policy partially masks a PII column. `LAB_DATA_ENGINEER` and `ACCOUNTADMIN` see the real value — all other roles see a redacted version.
+
+```sql
 USE DATABASE iceberg_lab_db;
 USE SCHEMA analytics;
 
@@ -303,20 +319,22 @@ CREATE OR REPLACE MASKING POLICY mask_dob
 
 ### Apply Policies
 
+Apply each masking policy to the corresponding column on the view wrapper. Masking is enforced whenever the view is queried — directly in SQL, via the semantic view, or through the Cortex Agent.
+
 ```sql
 USE ROLE ACCOUNTADMIN;
 
-ALTER ICEBERG TABLE my_iceberg_db."iceberg"."quotes"
-  MODIFY COLUMN email SET MASKING POLICY iceberg_lab_db.analytics.mask_email;
+ALTER VIEW iceberg_lab_db.analytics.quotes_vw
+  ALTER COLUMN email SET MASKING POLICY iceberg_lab_db.analytics.mask_email;
 
-ALTER ICEBERG TABLE my_iceberg_db."iceberg"."quotes"
-  MODIFY COLUMN phonenumber SET MASKING POLICY iceberg_lab_db.analytics.mask_phone;
+ALTER VIEW iceberg_lab_db.analytics.quotes_vw
+  ALTER COLUMN phonenumber SET MASKING POLICY iceberg_lab_db.analytics.mask_phone;
 
-ALTER ICEBERG TABLE my_iceberg_db."iceberg"."quotes"
-  MODIFY COLUMN surname SET MASKING POLICY iceberg_lab_db.analytics.mask_surname;
+ALTER VIEW iceberg_lab_db.analytics.quotes_vw
+  ALTER COLUMN surname SET MASKING POLICY iceberg_lab_db.analytics.mask_surname;
 
-ALTER ICEBERG TABLE my_iceberg_db."iceberg"."quotes"
-  MODIFY COLUMN dateofbirth SET MASKING POLICY iceberg_lab_db.analytics.mask_dob;
+ALTER VIEW iceberg_lab_db.analytics.quotes_vw
+  ALTER COLUMN dateofbirth SET MASKING POLICY iceberg_lab_db.analytics.mask_dob;
 ```
 
 ### Verify Masking
@@ -327,7 +345,7 @@ Switch to the analyst role — PII is partially masked:
 USE ROLE lab_analyst;
 
 SELECT uuid, surname, email, phonenumber, dateofbirth, totalpremiumpayable
-FROM my_iceberg_db."iceberg"."quotes"
+FROM iceberg_lab_db.analytics.quotes_vw
 LIMIT 5;
 ```
 
@@ -337,7 +355,7 @@ Switch to the data engineer role — full values visible:
 USE ROLE lab_data_engineer;
 
 SELECT uuid, surname, email, phonenumber, dateofbirth, totalpremiumpayable
-FROM my_iceberg_db."iceberg"."quotes"
+FROM iceberg_lab_db.analytics.quotes_vw
 LIMIT 5;
 ```
 
@@ -350,12 +368,9 @@ A **Semantic View** defines the business meaning of your data — dimensions, me
 
 ### View Wrapper
 
-Semantic views require a plain view reference in the same schema. Create a thin wrapper over the CLD Iceberg table first:
+The `quotes_vw` view was created in the Data Governance section with masking policies already applied. Semantic views require a plain view reference in the same schema — this view serves that role here too.
 
-```sql
-CREATE OR REPLACE VIEW iceberg_lab_db.analytics.quotes_vw AS
-SELECT * FROM my_iceberg_db."iceberg"."quotes";
-```
+No additional SQL needed. The view `iceberg_lab_db.analytics.quotes_vw` is ready to use.
 
 ### Create View
 
@@ -466,6 +481,8 @@ GRANT USAGE ON SCHEMA iceberg_lab_db.analytics TO ROLE SNOWFLAKE;
 GRANT SELECT ON VIEW iceberg_lab_db.analytics.quotes_vw TO ROLE SNOWFLAKE;
 GRANT SELECT ON SEMANTIC VIEW iceberg_lab_db.analytics.quotes_sv TO ROLE SNOWFLAKE;
 ```
+
+> **Note:** The `SNOWFLAKE` service role is available in Snowflake Enterprise and Business Critical accounts. Trial accounts do not include this role — if you receive a "Role does not exist" error, skip this step. The agent is still fully accessible via **AI & ML > Agents** in Snowsight.
 
 ### Ask Questions
 
