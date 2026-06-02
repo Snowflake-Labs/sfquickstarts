@@ -454,9 +454,9 @@ FROM SPECIFICATION $$
 $$;
 ```
 
-### Cowork
+### Cortex CoWork
 
-To make the agent accessible via [Cowork](https://docs.snowflake.com/en/user-guide/snowflake-intelligence), grant the Snowflake service role access to the underlying objects:
+To make the agent accessible via [Cortex CoWork](https://docs.snowflake.com/en/user-guide/snowflake-intelligence), grant the Snowflake service role access to the underlying objects:
 
 ```sql
 USE ROLE ACCOUNTADMIN;
@@ -469,7 +469,7 @@ GRANT SELECT ON SEMANTIC VIEW iceberg_lab_db.analytics.quotes_sv TO ROLE SNOWFLA
 
 ### Ask Questions
 
-Open the agent in Snowsight: navigate to **AI & ML > Agents**, find **Insurance Quotes Analyst**, and click **Open**. The agent is also available in Cowork.
+Open the agent in Snowsight: navigate to **AI & ML > Agents**, find **Insurance Quotes Analyst**, and click **Open**. The agent is also available in Cortex CoWork.
 
 Try these questions:
 
@@ -524,5 +524,5 @@ Documentation:
 
 Related guides:
 - [Build Data Lakes using Apache Iceberg with Snowflake and AWS Glue](https://quickstarts.snowflake.com/guide/data-lake-using-apache-iceberg-with-snowflake-and-aws-glue) — Go deeper on the full AWS setup: CloudFormation, Lake Formation credential vending, and the complete Glue IRC integration with Cortex Code fast path
-- [Get Started with Snowflake-Managed Iceberg Tables](https://quickstarts.snowflake.com/guide/get-started-snowflake-managed-iceberg-tables) — Create Snowflake-managed Iceberg tables, stream and transform fleet data, query with Cowork, and read the same tables from DuckDB and Apache Spark
+- [Get Started with Snowflake-Managed Iceberg Tables](https://quickstarts.snowflake.com/guide/get-started-snowflake-managed-iceberg-tables) — Create Snowflake-managed Iceberg tables, stream and transform fleet data, query with Cortex CoWork, and read the same tables from DuckDB and Apache Spark
 - [Iceberg V3 Tables Comprehensive Guide](https://quickstarts.snowflake.com/guide/iceberg-v3-tables-comprehensive-guide) — Build an end-to-end enterprise lakehouse platform using Iceberg V3 tables with streaming, variant data, time-series, geospatial analytics, governance, and AI
