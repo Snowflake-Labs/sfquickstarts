@@ -84,16 +84,99 @@ The `quotes` dataset represents insurance quote requests with the following key 
 | `dateofbirth` | string | Customer date of birth (PII) |
 | `postcodedistrict` | string | Customer postcode district |
 
+### Running SQL in Snowsight
+
+All SQL in this lab runs in [Snowsight](https://app.snowflake.com), Snowflake's web interface. Here's how to run each block:
+
+1. Log in to [Snowsight](https://app.snowflake.com) and click **Projects → Worksheets** in the left nav
+2. Click **+** (top right) to create a new SQL worksheet
+3. Set your role to `ACCOUNTADMIN` using the role picker in the top-left corner of the worksheet
+4. Set your warehouse to `COMPUTE_WH` (or the warehouse available in your account)
+5. Paste a SQL block from the lab into the editor
+6. **Run all statements** in the block: press `Ctrl + Shift + Enter` (Windows/Linux) or `Cmd + Shift + Return` (Mac), or click the **Run All** button
+7. **Run a single statement**: place your cursor inside it and press `Ctrl + Enter` (Windows/Linux) or `Cmd + Return` (Mac)
+
+> **Tip:** Each section in this lab uses a separate SQL block. You can run everything in a single worksheet in order, or create one worksheet per section to keep things organized.
+
+<!-- ------------------------ -->
+## Build with Cortex Code
+
+[Cortex Code](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code) is Snowflake's AI coding assistant. It connects directly to your Snowflake account, reads schema context, and can execute SQL on your behalf — so you can complete this entire lab from the terminal with a single prompt instead of running each block manually.
+
+### Setup
+
+Install the Snowflake CLI and start a Cortex Code session connected to your trial account:
+
+```bash
+# Install Snowflake CLI (macOS/Linux)
+pip install snowflake-cli
+
+# Configure a connection to your trial account
+snow connection add
+
+# Start Cortex Code
+cortex code
+```
+
+### Starter Prompt
+
+Once inside Cortex Code, paste the following:
+
+```
+I want to complete the Summit HOL Lakehouse Analytics lab end to end.
+
+My Snowflake account is on AWS US West 2 (Oregon). I have ACCOUNTADMIN access
+and my warehouse is COMPUTE_WH.
+
+The lab has pre-configured AWS infrastructure:
+- S3 bucket: s3://sf-lab-iceberg-407539788379/iceberg/
+- IAM role: arn:aws:iam::407539788379:role/sf-lab-shared-role
+- Glue database: iceberg, table: quotes (~56K insurance quote records)
+
+Please run through all sections in order:
+
+1. Create External Volume my_iceberg_vol, Catalog Integration my_glue_int, and
+   Catalog-Linked Database my_iceberg_db. Verify the quotes table syncs.
+
+2. Query the quotes table — row count, product breakdown by volume, and premium
+   by credit score band.
+
+3. Set up governance:
+   - Create roles lab_analyst and lab_data_engineer with grants + warehouse access
+   - Create view iceberg_lab_db.analytics.quotes_vw over the Iceberg table
+   - Apply dynamic data masking to email, phonenumber, surname, and dateofbirth
+     columns on the view using ALTER VIEW
+   - Verify masking by querying as lab_analyst vs lab_data_engineer
+
+4. Create Semantic View iceberg_lab_db.analytics.quotes_sv on top of quotes_vw
+   with facts, dimensions, and metrics.
+
+5. Create Cortex Agent iceberg_lab_db.analytics.quotes_agent backed by quotes_sv.
+
+Run each SQL block, show me results, and explain what each step built.
+```
+
+Cortex Code will run each section end to end — including role switching for masking verification. To resume at any step, tell it where you left off.
+
+> **Note:** If you prefer to run the SQL manually, continue to the next section.
+
 <!-- ------------------------ -->
 ## Create Snowflake Objects
 
-In this section you will create three Snowflake objects that wire your Snowflake account to the pre-configured AWS infrastructure. All steps require `ACCOUNTADMIN`.
+In this section you will create three Snowflake objects that wire your Snowflake account to the pre-configured AWS infrastructure. All three steps require `ACCOUNTADMIN`.
 
-Open a new worksheet in [Snowsight](https://app.snowflake.com) and run each statement in order.
+**How to run:**
+1. Log in to [Snowsight](https://app.snowflake.com)
+2. Go to **Projects → Worksheets** and click **+** to open a new SQL worksheet
+3. Set your role to `ACCOUNTADMIN` and your warehouse to `COMPUTE_WH`
+4. Copy each SQL block below, paste it into the worksheet, and click **Run All** (or press `Ctrl + Shift + Enter`)
+5. Confirm the status message shows `successfully created` before moving to the next block
 
 ### External Volume
 
 An **External Volume** tells Snowflake where the Iceberg data files live in cloud storage and which IAM role to use to access them. It is the credential layer between Snowflake and S3.
+
+Copy and run in your Snowsight worksheet:
 
 ```sql
 CREATE OR REPLACE EXTERNAL VOLUME my_iceberg_vol
@@ -113,6 +196,8 @@ CREATE OR REPLACE EXTERNAL VOLUME my_iceberg_vol
 ### Catalog Integration
 
 A **Catalog Integration** tells Snowflake how to reach the external Iceberg catalog — in this case, the AWS Glue Iceberg REST Catalog (IRC) endpoint. It handles authentication (SigV4) and points to the correct AWS account and region.
+
+Copy and run in your Snowsight worksheet:
 
 ```sql
 CREATE OR REPLACE CATALOG INTEGRATION my_glue_int
@@ -135,6 +220,8 @@ CREATE OR REPLACE CATALOG INTEGRATION my_glue_int
 
 A **Catalog-Linked Database** connects to the Catalog Integration and automatically discovers every namespace and table registered in the Glue Data Catalog. Snowflake polls the catalog on the interval you specify and keeps its local view in sync — no manual `ALTER ICEBERG TABLE ... REFRESH` needed.
 
+Copy and run in your Snowsight worksheet:
+
 ```sql
 CREATE OR REPLACE DATABASE my_iceberg_db
   LINKED_CATALOG = (
@@ -149,13 +236,15 @@ CREATE OR REPLACE DATABASE my_iceberg_db
 
 ### Verify Sync
 
-After creating the database, Snowflake starts discovering tables from the Glue catalog. Run this to check the sync status:
+After creating the database, Snowflake starts discovering tables from the Glue catalog. Run this in your worksheet to check the sync status:
+
+1. Copy and run the statement below
+2. Look for `"failureDetails":[]` and `"executionState":"RUNNING"` or `"SUCCEEDED"` in the output
+3. If you see failures, wait 30 seconds and re-run
 
 ```sql
 SELECT SYSTEM$CATALOG_LINK_STATUS('my_iceberg_db');
 ```
-
-Look for `"failureDetails":[]` in the output. If you see failures, wait 30 seconds and re-run.
 
 > **Note:** The `quotes` table should appear within 60 seconds of creating the database.
 
@@ -164,9 +253,13 @@ Look for `"failureDetails":[]` in the output. If you see failures, wait 30 secon
 
 With the Catalog-Linked Database created, the `quotes` Iceberg table is available to query like any native Snowflake table. The data is read directly from S3 — nothing is copied into Snowflake storage.
 
+**How to run:** In your Snowsight worksheet, make sure your role is `ACCOUNTADMIN` and your warehouse is active. Copy each query below and run it with `Ctrl + Enter` (or `Cmd + Return` on Mac). You can run all queries in the same worksheet.
+
 > **Important:** AWS Glue uses case-insensitive, lowercase identifiers. Always wrap schema and table names in double quotes when querying a Catalog-Linked Database.
 
 ### Explore the table
+
+Run these two queries to confirm the table is accessible and check row count:
 
 ```sql
 SELECT * FROM my_iceberg_db."iceberg"."quotes" LIMIT 10;
@@ -227,7 +320,11 @@ Snowflake Horizon governance policies apply natively to Iceberg tables in a Cata
 
 In this section you will create two roles with different data access levels, then apply dynamic data masking to PII columns in the `quotes` table. Analysts see partially masked data; data engineers see the full values.
 
+**How to run:** Continue in your existing Snowsight worksheet (or open a new one). Each subsection below has its own SQL block — run them in order from top to bottom. The role must be `ACCOUNTADMIN` at the start of each block; the SQL includes `USE ROLE ACCOUNTADMIN` where needed.
+
 ### Create roles
+
+Run this block to create both roles, set up the role hierarchy, grant them to your user, and give them warehouse access:
 
 ```sql
 USE ROLE ACCOUNTADMIN;
@@ -250,6 +347,8 @@ GRANT USAGE ON WAREHOUSE COMPUTE_WH TO ROLE lab_analyst;
 
 ### Grant Access
 
+Run this block to give both roles access to the External Volume, Catalog Integration, and the Iceberg table in the CLD:
+
 ```sql
 -- External volume and catalog integration
 GRANT USAGE ON EXTERNAL VOLUME my_iceberg_vol TO ROLE lab_data_engineer;
@@ -268,6 +367,8 @@ GRANT SELECT ON ALL ICEBERG TABLES IN SCHEMA my_iceberg_db."iceberg" TO ROLE lab
 
 Before applying masking policies, create a thin view over the Iceberg table. Masking policies cannot be applied directly to tables in a Catalog-Linked Database — they must be attached to a view wrapper. This same view is also used by the Semantic View in the next section.
 
+Run this block to create the supporting database, schema, and view:
+
 ```sql
 CREATE DATABASE IF NOT EXISTS iceberg_lab_db;
 CREATE SCHEMA IF NOT EXISTS iceberg_lab_db.analytics;
@@ -279,6 +380,8 @@ SELECT * FROM my_iceberg_db."iceberg"."quotes";
 ### Masking Policies
 
 Each policy partially masks a PII column. `LAB_DATA_ENGINEER` and `ACCOUNTADMIN` see the real value — all other roles see a redacted version.
+
+Run this block to create all four masking policies:
 
 ```sql
 USE DATABASE iceberg_lab_db;
@@ -339,6 +442,10 @@ ALTER VIEW iceberg_lab_db.analytics.quotes_vw
 
 ### Verify Masking
 
+Switch to each role and run the same query to see the difference. You can switch roles two ways:
+- **In the SQL block:** run `USE ROLE lab_analyst;` before the SELECT (as shown below)
+- **In the Snowsight UI:** use the role picker at the top-left of the worksheet
+
 Switch to the analyst role — PII is partially masked:
 
 ```sql
@@ -366,6 +473,8 @@ LIMIT 5;
 
 A **Semantic View** defines the business meaning of your data — dimensions, metrics, and facts — so that Snowflake's AI can understand and answer questions about it in natural language. The semantic view respects masking policies automatically: an analyst querying via natural language sees the same masked values as they would in SQL.
 
+**How to run:** Continue in your Snowsight worksheet with `ACCOUNTADMIN`. Run the blocks below in order.
+
 ### View Wrapper
 
 The `quotes_vw` view was created in the Data Governance section with masking policies already applied. Semantic views require a plain view reference in the same schema — this view serves that role here too.
@@ -373,6 +482,8 @@ The `quotes_vw` view was created in the Data Governance section with masking pol
 No additional SQL needed. The view `iceberg_lab_db.analytics.quotes_vw` is ready to use.
 
 ### Create View
+
+Run this block to create the semantic view. It defines the table mapping, facts, dimensions, and metrics that Cortex Analyst will use to translate natural language into SQL:
 
 ```sql
 USE DATABASE iceberg_lab_db;
@@ -436,7 +547,11 @@ SHOW SEMANTIC DIMENSIONS IN iceberg_lab_db.analytics.quotes_sv;
 
 A **Cortex Agent** wraps the semantic view and exposes it as a natural language interface. Snowflake translates plain English questions into SQL against your Iceberg data — masking policies are enforced automatically based on the querying role.
 
+**How to run:** Run the SQL blocks below in your Snowsight worksheet with `ACCOUNTADMIN`. After creating the agent, open it directly in Snowsight (no SQL needed) to ask questions.
+
 ### Create the agent
+
+Run this block to create the agent backed by your semantic view:
 
 ```sql
 USE ROLE ACCOUNTADMIN;
@@ -486,7 +601,15 @@ GRANT SELECT ON SEMANTIC VIEW iceberg_lab_db.analytics.quotes_sv TO ROLE SNOWFLA
 
 ### Ask Questions
 
-Open the agent in Snowsight: navigate to **AI & ML > Agents**, find **Insurance Quotes Analyst**, and click **Open**. The agent is also available in Cortex CoWork.
+To open the agent in Snowsight:
+
+1. In the left nav, click **AI & ML → Agents**
+2. Find **Insurance Quotes Analyst** in the list and click **Open**
+3. Type a question in the chat input and press Enter
+4. The agent translates your question into SQL against `quotes_sv` and returns the result
+5. To test masking enforcement: change your active role (top-left role picker) to `lab_analyst` or `lab_data_engineer` and ask the same question — PII fields will be masked or unmasked based on your role
+
+The agent is also available in Cortex CoWork (enterprise accounts only).
 
 Try these questions:
 
