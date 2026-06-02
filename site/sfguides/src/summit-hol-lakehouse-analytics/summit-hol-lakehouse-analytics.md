@@ -454,9 +454,22 @@ FROM SPECIFICATION $$
 $$;
 ```
 
+### Make the agent available in Snowflake Intelligence
+
+To make the agent accessible via [Snowflake Intelligence](https://docs.snowflake.com/en/user-guide/snowflake-intelligence), grant the Snowflake service role access to the underlying objects:
+
+```sql
+USE ROLE ACCOUNTADMIN;
+
+GRANT USAGE ON DATABASE iceberg_lab_db TO ROLE SNOWFLAKE;
+GRANT USAGE ON SCHEMA iceberg_lab_db.analytics TO ROLE SNOWFLAKE;
+GRANT SELECT ON VIEW iceberg_lab_db.analytics.quotes_vw TO ROLE SNOWFLAKE;
+GRANT SELECT ON SEMANTIC VIEW iceberg_lab_db.analytics.quotes_sv TO ROLE SNOWFLAKE;
+```
+
 ### Ask questions in natural language
 
-Open the agent in Snowsight: navigate to **AI & ML > Agents**, find **Insurance Quotes Analyst**, and click **Open**.
+Open the agent in Snowsight: navigate to **AI & ML > Agents**, find **Insurance Quotes Analyst**, and click **Open**. The agent is also available in Snowflake Intelligence.
 
 Try these questions:
 
