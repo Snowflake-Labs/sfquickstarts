@@ -3,7 +3,7 @@
  Advanced Data Governance: Sensitive Data Discovery and Protection at Scale
  Snowflake Summit Hands-on Lab
 
- Script:      Step 6 — Cortex Code Governance Skills (Data Governor Persona)
+ Script:      Step 4 — Cortex Code Governance Skills (Data Governor Persona)
  Version:     Summit HOL v1.0
  Create Date: May 2026
  Author:      Ankit Gupta
@@ -66,7 +66,7 @@ LIMIT 10;
 
 
 /*===========================================================================
-  SECTION 6.1 — GOVERNANCE MATURITY ASSESSMENT
+  SECTION 4.1 — GOVERNANCE MATURITY ASSESSMENT
 
   Use Cortex Code to assess the overall governance posture of HRZN_DB.
   The General Data Governance skill queries ACCOUNT_USAGE to answer
@@ -151,7 +151,7 @@ GROUP BY p.OBJECT_DATABASE, p.OBJECT_SCHEMA, p.OBJECT_NAME;
 
 
 /*===========================================================================
-  SECTION 6.2 — AI CLASSIFICATION VIA CORTEX CODE SKILLS
+  SECTION 4.2 — AI CLASSIFICATION VIA CORTEX CODE SKILLS
 
   The sensitive data classification skill can scan tables for PII, analyze
   existing classification results, and even help create classification profiles
@@ -208,7 +208,7 @@ ORDER BY sensitive_column_count DESC;
 
 
 /*===========================================================================
-  SECTION 6.3 — POLICY CREATION AND AUDIT VIA CORTEX CODE SKILLS
+  SECTION 4.3 — POLICY CREATION AND AUDIT VIA CORTEX CODE SKILLS
 
   The data protection policies skill:
     - Creates masking policies using Snowflake best practices (IS_ROLE_IN_SESSION,
@@ -290,7 +290,7 @@ SELECT GET_DDL('POLICY', 'HRZN_DB.TAG_SCHEMA.DATA_CLASSIFICATION_MASK_STRING');
 
 
 /*===========================================================================
-  SECTION 6.4 — COMPLIANCE AUDIT VIA CORTEX CODE SKILLS
+  SECTION 4.4 — COMPLIANCE AUDIT VIA CORTEX CODE SKILLS
 
   The General Data Governance skill answers compliance and access audit questions
   by querying ACCOUNT_USAGE views. Instead of hand-crafting complex joins,
@@ -430,7 +430,7 @@ FROM table_inventory ti
 LEFT JOIN governance_stats gs ON ti.TABLE_SCHEMA = gs.OBJECT_SCHEMA;
 
 /*
-  KEY TAKEAWAYS — Step 6:
+  KEY TAKEAWAYS — Step 4:
 
   CORTEX CODE GOVERNANCE SKILLS:
     - Governance Maturity Skill: generates a health score and flags unprotected tables
@@ -457,6 +457,7 @@ LEFT JOIN governance_stats gs ON ti.TABLE_SCHEMA = gs.OBJECT_SCHEMA;
     - If ACCOUNT_USAGE is not yet populated, instruct Cortex Code:
       "Check INFORMATION_SCHEMA as ACCOUNT_USAGE may not be populated yet"
 
-  CONGRATULATIONS! You have completed the lab.
-  Run 99-teardown.sql to remove all lab objects from your account.
+  Proceed to Step 5 to verify your governance posture in the Trust Center UI
+  (ACCOUNT_USAGE latency should have passed by now), then to Step 6 for the
+  access history audit trail.
 */
