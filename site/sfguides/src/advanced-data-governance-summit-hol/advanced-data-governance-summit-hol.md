@@ -6,7 +6,7 @@ summary: Master automated sensitive data discovery and protection at scale — A
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-fork repo link: https://github.com/sfc-gh-ankgupta/sfguide-advanced-data-governance-summit-hol
+fork repo link: https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/advanced-data-governance-summit-hol
 
 # Advanced Data Governance: AI-Powered Sensitive Data Discovery and Protection at Scale
 <!-- ------------------------ -->
@@ -70,11 +70,11 @@ You'll work through a step-by-step guide using a synthetic customer dataset cont
 <!-- ------------------------ -->
 ## Setup
 
-> **Source of Truth:** The full SQL scripts for this lab are in the [GitHub repository](https://github.com/sfc-gh-ankgupta/sfguide-advanced-data-governance-summit-hol). This guide provides narrative context; the SQL files are the canonical source for execution.
+> **Source of Truth:** The full SQL scripts for this lab are in the [GitHub repository](https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/advanced-data-governance-summit-hol/assets). This guide provides narrative context; the SQL files are the canonical source for execution.
 
 ### Run the Setup Script
 
-**Script:** [0-lab-setup.sql](https://github.com/sfc-gh-ankgupta/sfguide-advanced-data-governance-summit-hol/blob/main/0-lab-setup.sql)
+**Script:** [0-lab-setup.sql](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/advanced-data-governance-summit-hol/assets/0-lab-setup.sql)
 
 1. In Snowsight, navigate to **Projects > Workspaces**, create a new SQL worksheet named `0_lab_setup`
 2. Copy the contents of `0-lab-setup.sql` into your worksheet
@@ -106,7 +106,7 @@ The setup script demonstrates Snowflake's **Role-Based Access Control (RBAC)**:
 <!-- ------------------------ -->
 ## Access Control
 
-**Script:** [1-access-control.sql](https://github.com/sfc-gh-ankgupta/sfguide-advanced-data-governance-summit-hol/blob/main/hol-lab/1-access-control.sql) | Role: `HRZN_DATA_ENGINEER`
+**Script:** [1-access-control.sql](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/advanced-data-governance-summit-hol/assets/1-access-control.sql) | Role: `HRZN_DATA_ENGINEER`
 
 ### RBAC and DAC Fundamentals
 
@@ -145,7 +145,7 @@ After completing this step you will observe that the CUSTOMER table exposes 15 c
 <!-- ------------------------ -->
 ## Know and Protect Your Data
 
-**Script:** [2-classification-and-policies.sql](https://github.com/sfc-gh-ankgupta/sfguide-advanced-data-governance-summit-hol/blob/main/hol-lab/2-classification-and-policies.sql) | Role: `HRZN_DATA_GOVERNOR`
+**Script:** [2-classification-and-policies.sql](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/advanced-data-governance-summit-hol/assets/2-classification-and-policies.sql) | Role: `HRZN_DATA_GOVERNOR`
 
 ### Classification with the BYOT Pattern
 
@@ -282,7 +282,7 @@ SELECT * FROM HRZN_DB.HRZN_SCH.CUSTOMER;
 <!-- ------------------------ -->
 ## Trust Center Verification
 
-**Script:** [3-trust-center-data-security.sql](https://github.com/sfc-gh-ankgupta/sfguide-advanced-data-governance-summit-hol/blob/main/hol-lab/3-trust-center-data-security.sql) | Role: `HRZN_DATA_GOVERNOR`
+**Script:** [3-trust-center-data-security.sql](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/advanced-data-governance-summit-hol/assets/3-trust-center-data-security.sql) | Role: `HRZN_DATA_GOVERNOR`
 
 The Trust Center **Data Security** tab (GA: April 2026) provides a consolidated, no-SQL view of your sensitive data posture.
 
@@ -336,7 +336,7 @@ ORDER BY USER_NAME, TABLE_NAME;
 <!-- ------------------------ -->
 ## Access and Audit Trail
 
-**Script:** [4-audit-trail.sql](https://github.com/sfc-gh-ankgupta/sfguide-advanced-data-governance-summit-hol/blob/main/hol-lab/4-audit-trail.sql) | Role: `HRZN_IT_ADMIN`
+**Script:** [4-audit-trail.sql](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/advanced-data-governance-summit-hol/assets/4-audit-trail.sql) | Role: `HRZN_IT_ADMIN`
 
 Access History (SNOWFLAKE.ACCOUNT_USAGE.ACCESS_HISTORY) tracks every query that touched your data — what was read, what was written, when, and by whom.
 
@@ -377,7 +377,7 @@ The script includes a column-level lineage query that traces how tagged columns 
 <!-- ------------------------ -->
 ## AI_REDACT for Unstructured PII
 
-**Script:** [5-ai-redact.sql](https://github.com/sfc-gh-ankgupta/sfguide-advanced-data-governance-summit-hol/blob/main/hol-lab/5-ai-redact.sql) | Role: `HRZN_DATA_GOVERNOR`
+**Script:** [5-ai-redact.sql](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/advanced-data-governance-summit-hol/assets/5-ai-redact.sql) | Role: `HRZN_DATA_GOVERNOR`
 
 Steps 1–4 protect **structured columns**. But customer feedback, support tickets, and survey responses are free-form text with PII embedded anywhere. AI_REDACT handles this automatically.
 
@@ -457,7 +457,7 @@ Both approaches are complementary — together they provide complete PII coverag
 <!-- ------------------------ -->
 ## Cortex Code Skills
 
-**Script:** [6-cortex-code-governance-skills.sql](https://github.com/sfc-gh-ankgupta/sfguide-advanced-data-governance-summit-hol/blob/main/hol-lab/6-cortex-code-governance-skills.sql) | Role: `HRZN_DATA_GOVERNOR`
+**Script:** [6-cortex-code-governance-skills.sql](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/advanced-data-governance-summit-hol/assets/6-cortex-code-governance-skills.sql) | Role: `HRZN_DATA_GOVERNOR`
 
 Cortex Code is Snowflake's AI-powered coding assistant. Its built-in data governance skills let you accomplish governance tasks in plain English — no SQL required.
 
@@ -558,7 +558,7 @@ Congratulations! You've completed the Advanced Data Governance Summit HOL.
 
 ### Clean Up
 
-Run [99-teardown.sql](https://github.com/sfc-gh-ankgupta/sfguide-advanced-data-governance-summit-hol/blob/main/99-teardown.sql) to remove all lab objects from your account.
+Run [99-teardown.sql](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/advanced-data-governance-summit-hol/assets/99-teardown.sql) to remove all lab objects from your account.
 
 ### Related Resources
 - [Snowflake Horizon Catalog](https://docs.snowflake.com/en/user-guide/snowflake-horizon)
@@ -569,4 +569,4 @@ Run [99-teardown.sql](https://github.com/sfc-gh-ankgupta/sfguide-advanced-data-g
 - [AI_REDACT Function](https://docs.snowflake.com/en/sql-reference/functions/ai_redact)
 - [Cortex Code Governance Skills](https://docs.snowflake.com/en/user-guide/governance-skills)
 - [Sensitive Data Entitlement Report](https://docs.snowflake.com/en/user-guide/classify-ui-trust-center#sensitive-data-entitlement-report)
-- [Lab GitHub Repository](https://github.com/sfc-gh-ankgupta/sfguide-advanced-data-governance-summit-hol)
+- [Lab GitHub Repository](https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/advanced-data-governance-summit-hol/assets)
