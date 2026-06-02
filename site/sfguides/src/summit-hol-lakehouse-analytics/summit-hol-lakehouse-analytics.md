@@ -518,5 +518,6 @@ Documentation:
 - [Cortex Agents](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agent)
 
 Related guides:
-- [Build Data Lakes using Apache Iceberg with Snowflake and AWS Glue](https://quickstarts.snowflake.com/guide/data-lake-using-apache-iceberg-with-snowflake-and-aws-glue)
-- [Getting Started with Iceberg Tables](https://quickstarts.snowflake.com/guide/getting-started-iceberg-tables)
+- [Build Data Lakes using Apache Iceberg with Snowflake and AWS Glue](https://quickstarts.snowflake.com/guide/data-lake-using-apache-iceberg-with-snowflake-and-aws-glue) — Go deeper on the full AWS setup: CloudFormation, Lake Formation credential vending, and the complete Glue IRC integration with Cortex Code fast path
+- [Get Started with Snowflake-Managed Iceberg Tables](https://quickstarts.snowflake.com/guide/get-started-snowflake-managed-iceberg-tables) — Create Snowflake-managed Iceberg tables, stream and transform fleet data, query with Snowflake Intelligence, and read the same tables from DuckDB and Apache Spark
+- [Iceberg V3 Tables Comprehensive Guide](https://quickstarts.snowflake.com/guide/iceberg-v3-tables-comprehensive-guide) — Build an end-to-end enterprise lakehouse platform using Iceberg V3 tables with streaming, variant data, time-series, geospatial analytics, governance, and AI
