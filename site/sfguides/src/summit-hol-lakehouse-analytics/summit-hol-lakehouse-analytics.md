@@ -89,7 +89,7 @@ In this section you will create three Snowflake objects that wire your Snowflake
 
 Open a new worksheet in [Snowsight](https://app.snowflake.com) and run each statement in order.
 
-### Step 1 — Create an External Volume
+### External Volume
 
 An **External Volume** tells Snowflake where the Iceberg data files live in cloud storage and which IAM role to use to access them. It is the credential layer between Snowflake and S3.
 
@@ -108,7 +108,7 @@ CREATE OR REPLACE EXTERNAL VOLUME my_iceberg_vol
 
 `ALLOW_WRITES = FALSE` marks this volume as read-only — Snowflake will not attempt to write metadata or data back to S3.
 
-### Step 2 — Create a Catalog Integration
+### Catalog Integration
 
 A **Catalog Integration** tells Snowflake how to reach the external Iceberg catalog — in this case, the AWS Glue Iceberg REST Catalog (IRC) endpoint. It handles authentication (SigV4) and points to the correct AWS account and region.
 
@@ -129,7 +129,7 @@ CREATE OR REPLACE CATALOG INTEGRATION my_glue_int
   ENABLED = TRUE;
 ```
 
-### Step 3 — Create a Catalog-Linked Database
+### Catalog-Linked Database
 
 A **Catalog-Linked Database** connects to the Catalog Integration and automatically discovers every namespace and table registered in the Glue Data Catalog. Snowflake polls the catalog on the interval you specify and keeps its local view in sync — no manual `ALTER ICEBERG TABLE ... REFRESH` needed.
 
@@ -145,7 +145,7 @@ CREATE OR REPLACE DATABASE my_iceberg_db
 
 `SYNC_INTERVAL_SECONDS = 3600` sets the catalog poll interval to 1 hour. `ALLOWED_WRITE_OPERATIONS = NONE` enforces read-only access at the database level.
 
-### Step 4 — Verify the Catalog Sync
+### Verify Sync
 
 After creating the database, Snowflake starts discovering tables from the Glue catalog. Run this to check the sync status:
 
@@ -158,7 +158,7 @@ Look for `"failureDetails":[]` in the output. If you see failures, wait 30 secon
 > **Note:** The `quotes` table should appear within 60 seconds of creating the database.
 
 <!-- ------------------------ -->
-## Query the Data
+## Query Data
 
 With the Catalog-Linked Database created, the `quotes` Iceberg table is available to query like any native Snowflake table. The data is read directly from S3 — nothing is copied into Snowflake storage.
 
@@ -184,7 +184,7 @@ GROUP BY quote_product
 ORDER BY total_quotes DESC;
 ```
 
-### High-frequency quote customers
+### High-Frequency Customers
 
 ```sql
 SELECT
@@ -201,7 +201,7 @@ ORDER BY quote_count DESC
 LIMIT 20;
 ```
 
-### Premium by credit score band
+### Premium by Credit Score
 
 ```sql
 SELECT
@@ -219,7 +219,7 @@ ORDER BY avg_risk_premium DESC;
 ```
 
 <!-- ------------------------ -->
-## Apply Data Governance
+## Data Governance
 
 Snowflake Horizon governance policies apply natively to Iceberg tables in a Catalog-Linked Database — the data never needs to move into Snowflake storage for policies to take effect.
 
@@ -241,7 +241,7 @@ GRANT ROLE lab_data_engineer TO USER IDENTIFIER(CURRENT_USER());
 GRANT ROLE lab_analyst TO USER IDENTIFIER(CURRENT_USER());
 ```
 
-### Grant access to the Iceberg data
+### Grant Access
 
 ```sql
 -- External volume and catalog integration
@@ -257,7 +257,7 @@ GRANT SELECT ON ALL ICEBERG TABLES IN SCHEMA my_iceberg_db."iceberg" TO ROLE lab
 GRANT SELECT ON ALL ICEBERG TABLES IN SCHEMA my_iceberg_db."iceberg" TO ROLE lab_analyst;
 ```
 
-### Create masking policies
+### Masking Policies
 
 Each policy partially masks a PII column. `LAB_DATA_ENGINEER` and `ACCOUNTADMIN` see the real value — all other roles see a redacted version.
 
@@ -301,7 +301,7 @@ CREATE OR REPLACE MASKING POLICY mask_dob
     END;
 ```
 
-### Apply policies to the Iceberg table
+### Apply Policies
 
 ```sql
 USE ROLE ACCOUNTADMIN;
@@ -319,7 +319,7 @@ ALTER ICEBERG TABLE my_iceberg_db."iceberg"."quotes"
   MODIFY COLUMN dateofbirth SET MASKING POLICY iceberg_lab_db.analytics.mask_dob;
 ```
 
-### Verify masking in action
+### Verify Masking
 
 Switch to the analyst role — PII is partially masked:
 
@@ -344,11 +344,11 @@ LIMIT 5;
 > The same Iceberg data in AWS Glue, governed entirely by Snowflake — no data movement, no copies, no AWS-side policy changes needed.
 
 <!-- ------------------------ -->
-## Create a Semantic View
+## Semantic View
 
 A **Semantic View** defines the business meaning of your data — dimensions, metrics, and facts — so that Snowflake's AI can understand and answer questions about it in natural language. The semantic view respects masking policies automatically: an analyst querying via natural language sees the same masked values as they would in SQL.
 
-### Create a view wrapper
+### View Wrapper
 
 Semantic views require a plain view reference in the same schema. Create a thin wrapper over the CLD Iceberg table first:
 
@@ -357,7 +357,7 @@ CREATE OR REPLACE VIEW iceberg_lab_db.analytics.quotes_vw AS
 SELECT * FROM my_iceberg_db."iceberg"."quotes";
 ```
 
-### Create the semantic view
+### Create View
 
 ```sql
 USE DATABASE iceberg_lab_db;
@@ -395,7 +395,7 @@ CREATE OR REPLACE SEMANTIC VIEW quotes_sv
 
 > **Note:** The semantic view uses a `quotes as quotes_vw` mapping where `quotes` is the internal reference name and `quotes_vw` is the physical view. Column references in FACTS, DIMENSIONS, and METRICS use the reference name `quotes`.
 
-### Grant access to the semantic view
+### Grant Access
 
 ```sql
 GRANT USAGE ON DATABASE iceberg_lab_db TO ROLE lab_analyst;
@@ -417,7 +417,7 @@ SHOW SEMANTIC DIMENSIONS IN iceberg_lab_db.analytics.quotes_sv;
 ```
 
 <!-- ------------------------ -->
-## Query with Natural Language
+## Natural Language Queries
 
 A **Cortex Agent** wraps the semantic view and exposes it as a natural language interface. Snowflake translates plain English questions into SQL against your Iceberg data — masking policies are enforced automatically based on the querying role.
 
@@ -454,7 +454,7 @@ FROM SPECIFICATION $$
 $$;
 ```
 
-### Make the agent available in Snowflake Intelligence
+### Snowflake Intelligence
 
 To make the agent accessible via [Snowflake Intelligence](https://docs.snowflake.com/en/user-guide/snowflake-intelligence), grant the Snowflake service role access to the underlying objects:
 
@@ -467,7 +467,7 @@ GRANT SELECT ON VIEW iceberg_lab_db.analytics.quotes_vw TO ROLE SNOWFLAKE;
 GRANT SELECT ON SEMANTIC VIEW iceberg_lab_db.analytics.quotes_sv TO ROLE SNOWFLAKE;
 ```
 
-### Ask questions in natural language
+### Ask Questions
 
 Open the agent in Snowsight: navigate to **AI & ML > Agents**, find **Insurance Quotes Analyst**, and click **Open**. The agent is also available in Snowflake Intelligence.
 
