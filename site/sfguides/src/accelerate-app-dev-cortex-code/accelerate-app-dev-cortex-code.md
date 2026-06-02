@@ -385,3 +385,4 @@ In this lab you built two fully functional AI applications from scratch on a Sno
 - [Cortex Code (Snowflake Copilot)](https://docs.snowflake.com/en/user-guide/snowflake-copilot)
 - [Getting Started with Cortex Agents — Quickstart](https://quickstarts.snowflake.com/guide/getting_started_with_cortex_agents)
 - [Streamlit in Snowflake](https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit)
+
