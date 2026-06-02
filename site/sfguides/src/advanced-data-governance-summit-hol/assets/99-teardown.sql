@@ -82,7 +82,7 @@ DROP WAREHOUSE IF EXISTS HRZN_WH;
 -- STEP 5: Manual cleanup (UI) — Sensitive Data Entitlement Report
 -- ============================================================================
 --
---   The Sensitive Data Entitlement Report enabled in Step 3.4 is an account-level
+--   The Sensitive Data Entitlement Report enabled in Step 5.4 is an account-level
 --   configuration that runs on its own schedule (Daily) and is not removed by
 --   dropping HRZN_DB. To fully clean up:
 --

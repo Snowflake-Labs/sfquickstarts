@@ -592,5 +592,5 @@ USE ROLE HRZN_DATA_GOVERNOR;
     - Aggregation policies prevent individual record access
     - Projection policies block column projection without blocking filtering
 
-  Proceed to Step 3 to verify everything you just built using the Trust Center UI.
+  Proceed to Step 3 to protect unstructured PII in free-form text using AI_REDACT.
 */

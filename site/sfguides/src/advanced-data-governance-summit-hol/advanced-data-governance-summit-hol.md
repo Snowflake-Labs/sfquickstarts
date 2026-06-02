@@ -279,107 +279,14 @@ SELECT * FROM HRZN_DB.HRZN_SCH.CUSTOMER;
 - Tag propagation scales governance to thousands of derived tables automatically
 - Tag-based masking scales better than per-column policies — add a table, just tag the columns
 
-<!-- ------------------------ -->
-## Trust Center Verification
-
-**Script:** [3-trust-center-data-security.sql](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/advanced-data-governance-summit-hol/assets/3-trust-center-data-security.sql) | Role: `HRZN_DATA_GOVERNOR`
-
-The Trust Center **Data Security** tab (GA: April 2026) provides a consolidated, no-SQL view of your sensitive data posture.
-
-### Navigate the Dashboard
-
-**Navigation:** Snowsight → **Governance & Security** → **Trust Center** → **Data Security** tab
-
-The dashboard shows:
-- **Sensitive Objects** count — tables and columns with detected PII, PCI, or PHI
-- **PII / PCI / PHI breakdown** tiles
-- **Objects that need review** — pending classification decisions
-- **Policy coverage** — percentage of sensitive objects with masking policies
-
-### Verify Classification Results via SQL
-
-Run the Information Schema query for immediate results (no ACCOUNT_USAGE latency). See the SQL script for the full set of queries including the ACCOUNT_USAGE alternative.
-
-> **Note:** ACCOUNT_USAGE views have up to 3-hour latency. Use `INFORMATION_SCHEMA.TAG_REFERENCES_ALL_COLUMNS` for immediate verification.
-
-### Objects That Need Review (UI Walkthrough)
-
-Select **"Objects that need review"** to open the review workflow:
-- Inspect each column's **CLASSIFICATION CATEGORY** | **TAGS** | **SAMPLE VALUES**
-- Accept, change, or remove AI-generated recommendations
-- Click **"Save and apply tags to selected tables"** to commit
-
-### Sensitive Data Entitlement Report
-
-The Entitlement Report answers: **"Who can access my sensitive data?"**
-
-**Enable in UI:**
-1. **Trust Center** → **Data Security** → **Settings** tab
-2. **Reporting** section → **Sensitive Data Entitlement Report** → **Enable**
-3. Select **Daily** cadence → **Enable report** → **Run now**
-
-**Query the results:**
-```sql
-SELECT DISTINCT USER_NAME, ROLE_NAME, TABLE_NAME, PRIVILEGE
-FROM SNOWFLAKE.DATA_SECURITY.ENTITLEMENT_REPORT
-WHERE RUN_ID = (
-    SELECT RUN_ID FROM SNOWFLAKE.DATA_SECURITY.ENTITLEMENT_REPORT
-    ORDER BY CREATED_ON DESC LIMIT 1
-)
-ORDER BY USER_NAME, TABLE_NAME;
-```
-
-**Key Takeaways:**
-- Trust Center provides a compliance dashboard without requiring SQL knowledge
-- The Entitlement Report is essential for "who has access" audits required by GDPR, HIPAA, and SOX
-
-<!-- ------------------------ -->
-## Access and Audit Trail
-
-**Script:** [4-audit-trail.sql](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/advanced-data-governance-summit-hol/assets/4-audit-trail.sql) | Role: `HRZN_IT_ADMIN`
-
-Access History (SNOWFLAKE.ACCOUNT_USAGE.ACCESS_HISTORY) tracks every query that touched your data — what was read, what was written, when, and by whom.
-
-> **Important:** Access History has up to 3-hour latency. Some queries may return empty results immediately after lab steps. This is expected; plan for this latency in production compliance reporting.
-
-### Query Count and Read/Write Patterns
-
-```sql
--- Access count by object
-SELECT value:"objectName"::STRING AS object_name,
-    COUNT(DISTINCT query_id) AS number_of_queries
-FROM SNOWFLAKE.ACCOUNT_USAGE.ACCESS_HISTORY,
-LATERAL FLATTEN(input => direct_objects_accessed)
-WHERE object_name ILIKE 'HRZN%'
-GROUP BY object_name ORDER BY number_of_queries DESC;
-
--- Read vs. write breakdown
-SELECT value:"objectName"::STRING AS object_name,
-    CASE WHEN object_modified_by_ddl IS NOT NULL THEN 'write' ELSE 'read' END AS query_type,
-    COUNT(DISTINCT query_id) AS number_of_queries,
-    MAX(query_start_time) AS last_access
-FROM SNOWFLAKE.ACCOUNT_USAGE.ACCESS_HISTORY,
-LATERAL FLATTEN(input => direct_objects_accessed)
-WHERE object_name ILIKE 'HRZN%'
-GROUP BY object_name, query_type;
-```
-
-### Sensitive Data Column-Level Lineage
-
-The script includes a column-level lineage query that traces how tagged columns (PII, RESTRICTED, SENSITIVE) flow from source tables through INSERT/CTAS operations into derived objects. This proves to auditors that PII was not copied to unauthorized locations and confirms tag propagation covered all derived paths.
-
-**Key Takeaways:**
-- `DIRECT_OBJECTS_ACCESSED`: objects named explicitly in the query
-- `BASE_OBJECTS_ACCESSED`: objects actually read (including through views)
-- `OBJECTS_MODIFIED`: objects written (INSERT, CTAS, DDL)
-- Access History is the foundation for GDPR data subject access reports, SOX audit logs, and HIPAA access audits
+> **Why we tackle redaction and Cortex Code Skills next:** The Trust Center Data Security dashboard (Step 5) and the Audit Trail step (Step 6) both rely on `SNOWFLAKE.ACCOUNT_USAGE` views, which can have up to a few hours of latency before newly-classified objects and recent queries appear. To use that wait time productively, the lab now explores AI_REDACT for unstructured PII (Step 3) and the Cortex Code governance skills (Step 4) first, then resumes Trust Center verification and the audit trail review afterward — by which point the `ACCOUNT_USAGE` data should be ready.
 
 <!-- ------------------------ -->
 ## AI_REDACT for Unstructured PII
 
-**Script:** [5-ai-redact.sql](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/advanced-data-governance-summit-hol/assets/5-ai-redact.sql) | Role: `HRZN_DATA_GOVERNOR`
+**Script:** [3-ai-redact.sql](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/advanced-data-governance-summit-hol/assets/3-ai-redact.sql) | Role: `HRZN_DATA_GOVERNOR`
 
-Steps 1–4 protect **structured columns**. But customer feedback, support tickets, and survey responses are free-form text with PII embedded anywhere. AI_REDACT handles this automatically.
+Steps 1–2 protect **structured columns**. But customer feedback, support tickets, and survey responses are free-form text with PII embedded anywhere. AI_REDACT handles this automatically.
 
 ### The Problem: PII in Free-Form Text
 
@@ -449,15 +356,15 @@ FROM HRZN_DB.HRZN_SCH.CUSTOMER_FEEDBACK_REDACTED;
 
 | Data Type | Governance Approach |
 |-----------|-------------------|
-| Structured columns (email, SSN, phone) | Classification + tag-based masking (Steps 2–3) |
-| Unstructured text (feedback, notes) | AI_REDACT (Step 5) |
+| Structured columns (email, SSN, phone) | Classification + tag-based masking (Step 2) |
+| Unstructured text (feedback, notes) | AI_REDACT (Step 3) |
 
 Both approaches are complementary — together they provide complete PII coverage.
 
 <!-- ------------------------ -->
 ## Cortex Code Skills
 
-**Script:** [6-cortex-code-governance-skills.sql](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/advanced-data-governance-summit-hol/assets/6-cortex-code-governance-skills.sql) | Role: `HRZN_DATA_GOVERNOR`
+**Script:** [4-cortex-code-governance-skills.sql](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/advanced-data-governance-summit-hol/assets/4-cortex-code-governance-skills.sql) | Role: `HRZN_DATA_GOVERNOR`
 
 Cortex Code is Snowflake's AI-powered coding assistant. Its built-in data governance skills let you accomplish governance tasks in plain English — no SQL required.
 
@@ -471,7 +378,7 @@ Cortex Code is Snowflake's AI-powered coding assistant. Its built-in data govern
 | Sensitive Data Classification | Scan for PII, analyze results, create profiles and custom classifiers |
 | Data Protection Policies | Create/audit masking and row access policies with best practices |
 
-### 6.1 — Governance Maturity Assessment
+### 4.1 — Governance Maturity Assessment
 
 ```
 "What is the governance coverage for HRZN_DB?
@@ -483,7 +390,7 @@ Cortex Code is Snowflake's AI-powered coding assistant. Its built-in data govern
 
 Cortex Code queries DATA_CLASSIFICATION_LATEST and POLICY_REFERENCES and returns a synthesized health summary with a governance maturity grade.
 
-### 6.2 — AI Classification via Skills
+### 4.2 — AI Classification via Skills
 
 ```
 "Scan HRZN_DB.HRZN_SCH.CUSTOMER_ORDERS for PII and sensitive data."
@@ -495,7 +402,7 @@ Cortex Code queries DATA_CLASSIFICATION_LATEST and POLICY_REFERENCES and returns
 
 Cortex Code generates and executes SYSTEM$CLASSIFY calls automatically, then explains the results in plain English.
 
-### 6.3 — Policy Creation and Audit
+### 4.3 — Policy Creation and Audit
 
 ```
 "Audit all masking policies in HRZN_DB.TAG_SCHEMA. Are there anti-patterns?"
@@ -509,7 +416,7 @@ Cortex Code generates and executes SYSTEM$CLASSIFY calls automatically, then exp
 
 > Cortex Code generates complete, runnable `CREATE MASKING POLICY` SQL using Snowflake best practices. Review the generated SQL before applying it to production tables.
 
-### 6.4 — Compliance Audit
+### 4.4 — Compliance Audit
 
 ```
 "Who has accessed HRZN_DB.HRZN_SCH.CUSTOMER in the last 30 days?"
@@ -538,6 +445,101 @@ Each prompt generates SQL that queries ACCOUNT_USAGE automatically.
 - If `ACCOUNT_USAGE` is not yet populated, tell Cortex Code: `"Check INFORMATION_SCHEMA as ACCOUNT_USAGE may not be populated yet"`
 
 <!-- ------------------------ -->
+## Trust Center Verification
+
+**Script:** [5-trust-center-data-security.sql](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/advanced-data-governance-summit-hol/assets/5-trust-center-data-security.sql) | Role: `HRZN_DATA_GOVERNOR`
+
+The Trust Center **Data Security** tab (GA: April 2026) provides a consolidated, no-SQL view of your sensitive data posture.
+
+### Navigate the Dashboard
+
+**Navigation:** Snowsight → **Governance & Security** → **Trust Center** → **Data Security** tab
+
+The dashboard shows:
+- **Sensitive Objects** count — tables and columns with detected PII, PCI, or PHI
+- **PII / PCI / PHI breakdown** tiles
+- **Objects that need review** — pending classification decisions
+- **Policy coverage** — percentage of sensitive objects with masking policies
+
+### Verify Classification Results via SQL
+
+Run the Information Schema query for immediate results (no ACCOUNT_USAGE latency). See the SQL script for the full set of queries including the ACCOUNT_USAGE alternative.
+
+> **Note:** ACCOUNT_USAGE views have up to 3-hour latency. Use `INFORMATION_SCHEMA.TAG_REFERENCES_ALL_COLUMNS` for immediate verification.
+
+### Objects That Need Review (UI Walkthrough)
+
+Select **"Objects that need review"** to open the review workflow:
+- Inspect each column's **CLASSIFICATION CATEGORY** | **TAGS** | **SAMPLE VALUES**
+- Accept, change, or remove AI-generated recommendations
+- Click **"Save and apply tags to selected tables"** to commit
+
+### Sensitive Data Entitlement Report
+
+The Entitlement Report answers: **"Who can access my sensitive data?"**
+
+**Enable in UI:**
+1. **Trust Center** → **Data Security** → **Settings** tab
+2. **Reporting** section → **Sensitive Data Entitlement Report** → **Enable**
+3. Select **Daily** cadence → **Enable report** → **Run now**
+
+**Query the results:**
+```sql
+SELECT DISTINCT USER_NAME, ROLE_NAME, TABLE_NAME, PRIVILEGE
+FROM SNOWFLAKE.DATA_SECURITY.ENTITLEMENT_REPORT
+WHERE RUN_ID = (
+    SELECT RUN_ID FROM SNOWFLAKE.DATA_SECURITY.ENTITLEMENT_REPORT
+    ORDER BY CREATED_ON DESC LIMIT 1
+)
+ORDER BY USER_NAME, TABLE_NAME;
+```
+
+**Key Takeaways:**
+- Trust Center provides a compliance dashboard without requiring SQL knowledge
+- The Entitlement Report is essential for "who has access" audits required by GDPR, HIPAA, and SOX
+
+<!-- ------------------------ -->
+## Access and Audit Trail
+
+**Script:** [6-audit-trail.sql](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/advanced-data-governance-summit-hol/assets/6-audit-trail.sql) | Role: `HRZN_IT_ADMIN`
+
+Access History (SNOWFLAKE.ACCOUNT_USAGE.ACCESS_HISTORY) tracks every query that touched your data — what was read, what was written, when, and by whom.
+
+> **Important:** Access History has up to 3-hour latency. Some queries may return empty results immediately after lab steps. This is expected; plan for this latency in production compliance reporting.
+
+### Query Count and Read/Write Patterns
+
+```sql
+-- Access count by object
+SELECT value:"objectName"::STRING AS object_name,
+    COUNT(DISTINCT query_id) AS number_of_queries
+FROM SNOWFLAKE.ACCOUNT_USAGE.ACCESS_HISTORY,
+LATERAL FLATTEN(input => direct_objects_accessed)
+WHERE object_name ILIKE 'HRZN%'
+GROUP BY object_name ORDER BY number_of_queries DESC;
+
+-- Read vs. write breakdown
+SELECT value:"objectName"::STRING AS object_name,
+    CASE WHEN object_modified_by_ddl IS NOT NULL THEN 'write' ELSE 'read' END AS query_type,
+    COUNT(DISTINCT query_id) AS number_of_queries,
+    MAX(query_start_time) AS last_access
+FROM SNOWFLAKE.ACCOUNT_USAGE.ACCESS_HISTORY,
+LATERAL FLATTEN(input => direct_objects_accessed)
+WHERE object_name ILIKE 'HRZN%'
+GROUP BY object_name, query_type;
+```
+
+### Sensitive Data Column-Level Lineage
+
+The script includes a column-level lineage query that traces how tagged columns (PII, RESTRICTED, SENSITIVE) flow from source tables through INSERT/CTAS operations into derived objects. This proves to auditors that PII was not copied to unauthorized locations and confirms tag propagation covered all derived paths.
+
+**Key Takeaways:**
+- `DIRECT_OBJECTS_ACCESSED`: objects named explicitly in the query
+- `BASE_OBJECTS_ACCESSED`: objects actually read (including through views)
+- `OBJECTS_MODIFIED`: objects written (INSERT, CTAS, DDL)
+- Access History is the foundation for GDPR data subject access reports, SOX audit logs, and HIPAA access audits
+
+<!-- ------------------------ -->
 ## Conclusion and Resources
 
 Congratulations! You've completed the Advanced Data Governance Summit HOL.
@@ -551,10 +553,10 @@ Congratulations! You've completed the Advanced Data Governance Summit HOL.
 | Masking | Multi-type tag-based masking with auto-propagation | Step 2 |
 | Row Access | Consent-based and geographic row filtering | Step 2 |
 | Advanced Policies | Aggregation and projection policies | Step 2 |
-| Trust Center UI | Data Security dashboard, Entitlement Report | Step 3 |
-| Audit Trail | Access History, column-level PII lineage | Step 4 |
-| Unstructured PII | AI_REDACT, pre-compute + secure view pattern | Step 5 |
-| Cortex Code Skills | Maturity score, policy creation, compliance audit | Step 6 |
+| Unstructured PII | AI_REDACT, pre-compute + secure view pattern | Step 3 |
+| Cortex Code Skills | Maturity score, policy creation, compliance audit | Step 4 |
+| Trust Center UI | Data Security dashboard, Entitlement Report | Step 5 |
+| Audit Trail | Access History, column-level PII lineage | Step 6 |
 
 ### Clean Up
 
