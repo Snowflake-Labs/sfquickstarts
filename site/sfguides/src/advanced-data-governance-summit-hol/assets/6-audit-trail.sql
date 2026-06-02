@@ -3,7 +3,7 @@
  Advanced Data Governance: Sensitive Data Discovery and Protection at Scale
  Snowflake Summit Hands-on Lab
 
- Script:      Step 4 — Access and Audit Trail (IT Admin Persona)
+ Script:      Step 6 — Access and Audit Trail (IT Admin Persona)
  Version:     Summit HOL v1.0
  Create Date: May 2026
  Author:      Ankit Gupta
@@ -47,7 +47,7 @@ USE WAREHOUSE HRZN_WH;
 
 
 /*----------------------------------------------------------------------------------
-Step 4.1 — Query Count by Object
+Step 6.1 — Query Count by Object
 
   How many distinct queries have directly accessed each HRZN table or view?
   Direct access means the object name appeared explicitly in the query.
@@ -64,7 +64,7 @@ ORDER BY number_of_queries DESC;
 
 
 /*----------------------------------------------------------------------------------
-Step 4.2 — Read vs. Write Breakdown
+Step 6.2 — Read vs. Write Breakdown
 
   Distinguish between SELECT (read) and DML/DDL (write) operations.
   When was each object last read? Last modified?
@@ -86,7 +86,7 @@ ORDER BY object_name, number_of_queries DESC;
 
 
 /*----------------------------------------------------------------------------------
-Step 4.3 — Recent Queries on the CUSTOMER Table
+Step 6.3 — Recent Queries on the CUSTOMER Table
 
   Who ran SELECT queries on the sensitive CUSTOMER table and when?
   What SQL did they execute?
@@ -142,7 +142,7 @@ LIMIT 10;
 
 
 /*----------------------------------------------------------------------------------
-Step 4.4 — Sensitive Data Column-Level Lineage
+Step 6.4 — Sensitive Data Column-Level Lineage
 
   This query traces how columns containing sensitive data (tagged with
   SEMANTIC_CATEGORY, PRIVACY_CATEGORY, or DATA_CLASSIFICATION) flow from
@@ -215,7 +215,7 @@ WHERE
 
 
 /*----------------------------------------------------------------------------------
-Step 4.5 — Indirect Access Patterns
+Step 6.5 — Indirect Access Patterns
 
   Some queries access tables through views or other intermediate objects.
   Base object access captures what was ultimately read, even if the query
@@ -235,7 +235,7 @@ GROUP BY object_name
 ORDER BY number_of_queries DESC;
 
 /*
-  KEY TAKEAWAYS — Step 4:
+  KEY TAKEAWAYS — Step 6:
 
   ACCESS HISTORY:
     - Comprehensive audit trail for compliance and security investigations
@@ -253,5 +253,8 @@ ORDER BY number_of_queries DESC;
     - Always check both DIRECT and BASE access for full coverage
     - Join ACCESS_HISTORY with QUERY_HISTORY to get query text
     - Filter on base_objects to catch indirect access through views
-    - Alert on access to sensitive tables outside business hours (Cortex Code can help — see Step 6)
+    - Alert on access to sensitive tables outside business hours (Cortex Code can help — see Step 4)
+
+  CONGRATULATIONS! You have completed the lab.
+  Run 99-teardown.sql to remove all lab objects from your account.
 */
