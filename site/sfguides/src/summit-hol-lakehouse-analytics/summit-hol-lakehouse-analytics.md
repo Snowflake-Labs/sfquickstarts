@@ -400,9 +400,11 @@ CREATE OR REPLACE SEMANTIC VIEW quotes_sv
 ```sql
 GRANT USAGE ON DATABASE iceberg_lab_db TO ROLE lab_analyst;
 GRANT USAGE ON SCHEMA iceberg_lab_db.analytics TO ROLE lab_analyst;
+GRANT SELECT ON VIEW iceberg_lab_db.analytics.quotes_vw TO ROLE lab_analyst;
 GRANT SELECT ON SEMANTIC VIEW iceberg_lab_db.analytics.quotes_sv TO ROLE lab_analyst;
 GRANT USAGE ON DATABASE iceberg_lab_db TO ROLE lab_data_engineer;
 GRANT USAGE ON SCHEMA iceberg_lab_db.analytics TO ROLE lab_data_engineer;
+GRANT SELECT ON VIEW iceberg_lab_db.analytics.quotes_vw TO ROLE lab_data_engineer;
 GRANT SELECT ON SEMANTIC VIEW iceberg_lab_db.analytics.quotes_sv TO ROLE lab_data_engineer;
 ```
 
@@ -432,14 +434,14 @@ CREATE OR REPLACE AGENT iceberg_lab_db.analytics.quotes_agent
 FROM SPECIFICATION $$
 {
   "instructions": {
-    "response": "Answer questions about insurance quote data. Use the quotes tool to query premium amounts, product types, credit scores, and customer demographics. Summarize results clearly and suggest follow-up questions."
+    "response": "Answer questions about insurance quote data. Use the quotes tool to query premium amounts, product types, homeowner status, marital status, and postcode district. Summarize results clearly and suggest follow-up questions."
   },
   "tools": [
     {
       "tool_spec": {
         "type": "cortex_analyst_text_to_sql",
         "name": "Query Insurance Quotes",
-        "description": "Query insurance quote data including premiums, products, credit scores, and customer demographics."
+        "description": "Query insurance quote data including premiums, product types, homeowner status, marital status, and postcode district."
       }
     }
   ],
@@ -471,11 +473,11 @@ Which postcode district has the highest average risk premium?
 ```
 
 ```
-How does credit score affect the total premium payable?
+Show me quote volume broken down by marital status and product type.
 ```
 
 ```
-Show me quote volume broken down by marital status and product type.
+What is the total premium volume by previous insurer?
 ```
 
 > Switch between the `lab_analyst` and `lab_data_engineer` roles to see how the same natural language question returns different results — masking policies are enforced end-to-end, from Iceberg through the semantic view to the agent response.
