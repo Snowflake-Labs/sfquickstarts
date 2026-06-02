@@ -489,3 +489,34 @@ Show me quote volume broken down by marital status and product type.
 ```
 
 > Switch between the `lab_analyst` and `lab_data_engineer` roles to see how the same natural language question returns different results — masking policies are enforced end-to-end, from Iceberg through the semantic view to the agent response.
+
+<!-- ------------------------ -->
+## Conclusion And Resources
+
+Congratulations! You've successfully connected Snowflake to an Apache Iceberg data lake in AWS Glue — querying, governing, and analyzing the data entirely from Snowflake without moving a single byte.
+
+In this lab you built a complete open lakehouse analytics stack:
+- Connected Snowflake to AWS Glue via a Catalog-Linked Database using the Iceberg REST Catalog API
+- Applied Snowflake Horizon governance — RBAC and dynamic data masking — to Iceberg tables in AWS
+- Created a Semantic View to define business metrics and dimensions on your Iceberg data
+- Built a Cortex Agent for natural language analytics, with masking enforced end-to-end
+
+### What You Learned
+- How External Volumes, Catalog Integrations, and Catalog-Linked Databases work together
+- How Snowflake Horizon governance applies natively to external Iceberg tables
+- How Semantic Views bridge raw Iceberg data and AI-powered analytics
+- How Cortex Agents translate natural language into governed SQL against your data lake
+
+### Related Resources
+
+Documentation:
+- [Apache Iceberg tables in Snowflake](https://docs.snowflake.com/en/user-guide/tables-iceberg)
+- [Catalog-Linked Databases](https://docs.snowflake.com/en/user-guide/tables-iceberg-catalog-linked-database)
+- [Configure a catalog integration for AWS Glue Iceberg REST](https://docs.snowflake.com/en/user-guide/tables-iceberg-configure-catalog-integration-rest-glue)
+- [Dynamic Data Masking](https://docs.snowflake.com/en/user-guide/security-column-ddm-intro)
+- [Semantic Views](https://docs.snowflake.com/en/user-guide/views-semantic)
+- [Cortex Agents](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agent)
+
+Related guides:
+- [Build Data Lakes using Apache Iceberg with Snowflake and AWS Glue](https://quickstarts.snowflake.com/guide/data-lake-using-apache-iceberg-with-snowflake-and-aws-glue)
+- [Getting Started with Iceberg Tables](https://quickstarts.snowflake.com/guide/getting-started-iceberg-tables)
