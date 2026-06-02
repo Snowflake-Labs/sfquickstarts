@@ -8,7 +8,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 
-# Query Apache Iceberg Tables from Snowflake using AWS Glue
+# Bring Snowflake to your data: Powering Analytics and AI on the Lakehouse
 <!-- ------------------------ -->
 ## Overview
 
@@ -584,9 +584,9 @@ FROM SPECIFICATION $$
 $$;
 ```
 
-### Cortex CoWork
+### Snowflake CoWork
 
-To make the agent accessible via [Cortex CoWork](https://docs.snowflake.com/en/user-guide/snowflake-intelligence), grant the Snowflake service role access to the underlying objects:
+To make the agent accessible via [Snowflake CoWork](https://docs.snowflake.com/en/user-guide/snowflake-intelligence), grant the Snowflake service role access to the underlying objects:
 
 ```sql
 USE ROLE ACCOUNTADMIN;
@@ -609,7 +609,7 @@ To open the agent in Snowsight:
 4. The agent translates your question into SQL against `quotes_sv` and returns the result
 5. To test masking enforcement: change your active role (top-left role picker) to `lab_analyst` or `lab_data_engineer` and ask the same question — PII fields will be masked or unmasked based on your role
 
-The agent is also available in Cortex CoWork (enterprise accounts only).
+The agent is also available in Snowflake CoWork (enterprise accounts only).
 
 Try these questions:
 
@@ -664,5 +664,5 @@ Documentation:
 
 Related guides:
 - [Build Data Lakes using Apache Iceberg with Snowflake and AWS Glue](https://quickstarts.snowflake.com/guide/data-lake-using-apache-iceberg-with-snowflake-and-aws-glue) — Go deeper on the full AWS setup: CloudFormation, Lake Formation credential vending, and the complete Glue IRC integration with Cortex Code fast path
-- [Get Started with Snowflake-Managed Iceberg Tables](https://quickstarts.snowflake.com/guide/get-started-snowflake-managed-iceberg-tables) — Create Snowflake-managed Iceberg tables, stream and transform fleet data, query with Cortex CoWork, and read the same tables from DuckDB and Apache Spark
+- [Get Started with Snowflake-Managed Iceberg Tables](https://quickstarts.snowflake.com/guide/get-started-snowflake-managed-iceberg-tables) — Create Snowflake-managed Iceberg tables, stream and transform fleet data, query with Snowflake CoWork, and read the same tables from DuckDB and Apache Spark
 - [Iceberg V3 Tables Comprehensive Guide](https://quickstarts.snowflake.com/guide/iceberg-v3-tables-comprehensive-guide) — Build an end-to-end enterprise lakehouse platform using Iceberg V3 tables with streaming, variant data, time-series, geospatial analytics, governance, and AI
