@@ -53,7 +53,7 @@ DROP DATABASE IF EXISTS HRZN_DB;
 -- HRZN_DB drop removes:
 --   Schemas:   HRZN_SCH, TAG_SCHEMA, CLASSIFIERS, SEC_POLICIES_SCHEMA
 --   Tables:    CUSTOMER, CUSTOMER_ORDERS, CUSTOMER_COPY, CUSTOMER_FEEDBACK_REDACTED,
---              ROW_POLICY_MAP, CUSTOMER_CONSENT_MAP
+--              ROW_POLICY_MAP
 --   Views:     CUSTOMER_FEEDBACK_SECURE
 --   Policies:  DATA_CLASSIFICATION_MASK_STRING/NUMBER/DATE/TIMESTAMP,
 --              CUSTOMER_OPTIN_POLICY, CUSTOMER_STATE_RESTRICTIONS,
@@ -82,7 +82,7 @@ DROP WAREHOUSE IF EXISTS HRZN_WH;
 -- STEP 5: Manual cleanup (UI) — Sensitive Data Entitlement Report
 -- ============================================================================
 --
---   The Sensitive Data Entitlement Report enabled in Step 3.4 is an account-level
+--   The Sensitive Data Entitlement Report enabled in Step 5.4 is an account-level
 --   configuration that runs on its own schedule (Daily) and is not removed by
 --   dropping HRZN_DB. To fully clean up:
 --

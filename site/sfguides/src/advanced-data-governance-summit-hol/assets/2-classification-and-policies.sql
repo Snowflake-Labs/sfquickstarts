@@ -231,14 +231,6 @@ Masking logic per classification level:
 USE ROLE HRZN_DATA_GOVERNOR;
 USE SCHEMA HRZN_DB.TAG_SCHEMA;
 
--- Create opt-in consent lookup table (used by masking and row access policies)
-CREATE OR REPLACE TABLE HRZN_DB.TAG_SCHEMA.CUSTOMER_CONSENT_MAP AS
-SELECT DISTINCT ID AS CUSTOMER_ID, OPTIN
-FROM HRZN_DB.HRZN_SCH.CUSTOMER;
-
-GRANT SELECT ON TABLE HRZN_DB.TAG_SCHEMA.CUSTOMER_CONSENT_MAP TO ROLE HRZN_DATA_USER;
-GRANT SELECT ON TABLE HRZN_DB.TAG_SCHEMA.CUSTOMER_CONSENT_MAP TO ROLE HRZN_IT_ADMIN;
-
 -- -----------------------------------------------------------------------
 -- STRING MASKING POLICY
 -- -----------------------------------------------------------------------
@@ -600,5 +592,5 @@ USE ROLE HRZN_DATA_GOVERNOR;
     - Aggregation policies prevent individual record access
     - Projection policies block column projection without blocking filtering
 
-  Proceed to Step 3 to verify everything you just built using the Trust Center UI.
+  Proceed to Step 3 to protect unstructured PII in free-form text using AI_REDACT.
 */

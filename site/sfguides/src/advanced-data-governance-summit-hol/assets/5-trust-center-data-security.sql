@@ -3,7 +3,7 @@
  Advanced Data Governance: Sensitive Data Discovery and Protection at Scale
  Snowflake Summit Hands-on Lab
 
- Script:      Step 3 — Verifying Sensitive Data in the Trust Center (Data Governor Persona)
+ Script:      Step 5 — Verifying Sensitive Data in the Trust Center (Data Governor Persona)
  Version:     Summit HOL v1.0
  Create Date: May 2026
  Author:      Ankit Gupta
@@ -37,7 +37,7 @@ Overview — What This Step Covers
 
 
 /*----------------------------------------------------------------------------------
-Step 3.1 — Navigate the Trust Center Data Security Tab
+Step 5.1 — Navigate the Trust Center Data Security Tab
 
   UI NAVIGATION:
     Snowsight left navigation → Governance & Security → Trust Center
@@ -53,7 +53,7 @@ Step 3.1 — Navigate the Trust Center Data Security Tab
 
 
 /*----------------------------------------------------------------------------------
-Step 3.2 — SQL: Verify Classification Results
+Step 5.2 — SQL: Verify Classification Results
 
   These queries read from INFORMATION_SCHEMA (immediate) and
   SNOWFLAKE.ACCOUNT_USAGE.DATA_CLASSIFICATION_LATEST (up to 3-hour latency).
@@ -64,7 +64,7 @@ USE WAREHOUSE HRZN_WH;
 USE DATABASE HRZN_DB;
 USE SCHEMA HRZN_SCH;
 
--- Step 3.2a — Verify using Information Schema (immediate — no latency)
+-- Step 5.2a — Verify using Information Schema (immediate — no latency)
 -- Shows custom DATA_CLASSIFICATION tag values applied by the classification profile
 SELECT
     COLUMN_NAME,
@@ -86,14 +86,14 @@ ORDER BY
     END, COLUMN_NAME;
 
 
--- Step 3.2b — Verify using ACCOUNT_USAGE (up to 3-hour latency)
+-- Step 5.2b — Verify using ACCOUNT_USAGE (up to 3-hour latency)
 -- NOTE: Results may be empty immediately after classification. Run later in the lab
 -- or after the session if the queries below return no rows.
 
 -- DATA_CLASSIFICATION_LATEST returns a table-level JSON payload (RESULT column).
 -- LATERAL FLATTEN pivots it to one row per column.
 -- This view shows Snowflake's classification recommendations (semantic/privacy category),
--- NOT the custom DATA_CLASSIFICATION tag values — use Step 3.2a for those.
+-- NOT the custom DATA_CLASSIFICATION tag values — use Step 5.2a for those.
 SELECT
     DATABASE_NAME,
     SCHEMA_NAME,
@@ -121,7 +121,7 @@ ORDER BY COLUMN_COUNT DESC;
 
 
 /*----------------------------------------------------------------------------------
-Step 3.3 — UI: Objects That Need Review
+Step 5.3 — UI: Objects That Need Review
 
   When classification runs with auto_tag=true (as in our profile), tags are
   applied automatically. However, Trust Center also shows any objects where
@@ -150,7 +150,7 @@ Step 3.3 — UI: Objects That Need Review
 
 
 /*----------------------------------------------------------------------------------
-Step 3.4 — Sensitive Data Entitlement Report
+Step 5.4 — Sensitive Data Entitlement Report
 
   The Entitlement Report generates a view (SNOWFLAKE.DATA_SECURITY.ENTITLEMENT_REPORT)
   that lists every user who has a role granting access to tables with sensitive data.
@@ -204,7 +204,7 @@ ORDER BY NUMBER_OF_OBJECTS DESC;
 
 
 /*
-  KEY TAKEAWAYS — Step 3:
+  KEY TAKEAWAYS — Step 5:
 
   TRUST CENTER DATA SECURITY:
     - Provides a no-SQL dashboard showing classified objects, PII/PCI/PHI breakdown,
@@ -220,5 +220,5 @@ ORDER BY NUMBER_OF_OBJECTS DESC;
     - Run on demand or on a schedule (daily, weekly, monthly, quarterly)
     - Supports deletion of historical report data for retention compliance
 
-  Proceed to Step 4 for the access history audit trail.
+  Proceed to Step 6 for the access history audit trail.
 */

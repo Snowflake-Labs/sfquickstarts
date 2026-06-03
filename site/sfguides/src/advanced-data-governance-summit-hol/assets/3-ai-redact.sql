@@ -3,7 +3,7 @@
  Advanced Data Governance: Sensitive Data Discovery and Protection at Scale
  Snowflake Summit Hands-on Lab
 
- Script:      Step 5 — AI_REDACT for Unstructured PII (Data Governor Persona)
+ Script:      Step 3 — AI_REDACT for Unstructured PII (Data Governor Persona)
  Version:     Summit HOL v1.0
  Create Date: May 2026
  Author:      Ankit Gupta
@@ -53,7 +53,7 @@ USE SCHEMA HRZN_SCH;
 
 
 /*----------------------------------------------------------------------------------
-Step 5.1 — Add Customer Feedback Data with Embedded PII
+Step 3.1 — Add Customer Feedback Data with Embedded PII
 
   We will add a CUSTOMER_FEEDBACK column to CUSTOMER_ORDERS and populate it with
   realistic feedback that contains various PII types mixed into free-form text.
@@ -114,7 +114,7 @@ LIMIT 10;
 
 
 /*----------------------------------------------------------------------------------
-Step 5.2 — AI_REDACT: Automated PII Removal
+Step 3.2 — AI_REDACT: Automated PII Removal
 
   SNOWFLAKE.CORTEX.AI_REDACT scans text for PII and replaces it with labeled
   placeholders. No regex patterns, no ML training, no configuration required.
@@ -152,7 +152,7 @@ FROM sample_feedback;
 
 
 /*----------------------------------------------------------------------------------
-Step 5.3 — Selective Redaction (Specific PII Types Only)
+Step 3.3 — Selective Redaction (Specific PII Types Only)
 
   AI_REDACT accepts an optional list of entity types to redact.
   This allows you to redact only the PII categories relevant to your use case.
@@ -176,7 +176,7 @@ FROM feedback_sample;
 
 
 /*----------------------------------------------------------------------------------
-Step 5.4 — Create a Pre-Computed Redacted Table
+Step 3.4 — Create a Pre-Computed Redacted Table
 
   Running AI_REDACT on every query is expensive. The recommended pattern is to
   pre-compute the redacted version once during table creation and store it.
@@ -212,7 +212,7 @@ LIMIT 10;
 
 
 /*----------------------------------------------------------------------------------
-Step 5.5 — Role-Based Secure View
+Step 3.5 — Role-Based Secure View
 
   Governors see original feedback (for governance and compliance reviews).
   Analysts and data users see the pre-computed redacted version.
@@ -260,7 +260,7 @@ USE ROLE HRZN_DATA_GOVERNOR;
 
 
 /*----------------------------------------------------------------------------------
-Step 5.6 — Privacy-Safe Sentiment Analysis
+Step 3.6 — Privacy-Safe Sentiment Analysis
 
   The redacted text preserves the semantic meaning of the feedback while removing
   PII. Sentiment analysis works perfectly because tone and context remain intact.
@@ -315,7 +315,7 @@ GROUP BY feedback_category
 ORDER BY feedback_count DESC;
 
 /*
-  KEY TAKEAWAYS — Step 5:
+  KEY TAKEAWAYS — Step 3:
 
   AI_REDACT USE CASES:
     - Customer feedback and reviews
@@ -332,10 +332,10 @@ ORDER BY feedback_count DESC;
 
   INTEGRATION WITH STEP 2:
     - Structured columns: protected by DATA_CLASSIFICATION tag masking (Step 2)
-    - Unstructured text: protected by AI_REDACT (Step 5)
+    - Unstructured text: protected by AI_REDACT (Step 3)
     - Tags propagate automatically from CUSTOMER to CUSTOMER_FEEDBACK_REDACTED
     - Complete coverage across all data formats
 
-  Proceed to Step 6 to use Cortex Code governance skills to audit and improve
+  Proceed to Step 4 to use Cortex Code governance skills to audit and improve
   the governance framework you've built.
 */

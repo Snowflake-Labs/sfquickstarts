@@ -6,7 +6,8 @@ categories: snowflake-site:taxonomy/solution-center/certification/well-architect
 language: en
 summary: The AI & Data Governance Lens provides prescriptive guidance for organizations deploying AI/ML pipelines, agentic AI workloads, and data sharing scenarios subject to regulatory obligations on Snowflake.
 environments: web
-status: Published 
+status: Published
+fork_repo_link: https://github.com/Snowflake-Labs/cortex-code-skills/tree/main/skills/well-architected-framework-assessment
 
 
 

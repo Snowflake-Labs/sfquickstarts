@@ -176,12 +176,12 @@ GRANT APPLY PROJECTION POLICY ON ACCOUNT TO ROLE HRZN_DATA_GOVERNOR;
 GRANT DATABASE ROLE SNOWFLAKE.CLASSIFICATION_ADMIN TO ROLE HRZN_DATA_GOVERNOR;
 
 -- ============================================================================
--- AI GOVERNANCE EXTENSION PRIVILEGES (Steps 5-6)
+-- AI GOVERNANCE EXTENSION PRIVILEGES (Steps 3-4)
 -- ============================================================================
 
 USE ROLE ACCOUNTADMIN;
 
--- Step 5: AI_REDACT and secure view creation
+-- Step 3: AI_REDACT and secure view creation
 GRANT CREATE FUNCTION ON SCHEMA HRZN_DB.HRZN_SCH TO ROLE HRZN_DATA_GOVERNOR;
 GRANT CREATE PROCEDURE ON SCHEMA HRZN_DB.HRZN_SCH TO ROLE HRZN_DATA_GOVERNOR;
 GRANT CREATE VIEW ON SCHEMA HRZN_DB.HRZN_SCH TO ROLE HRZN_DATA_GOVERNOR;
@@ -201,7 +201,7 @@ ALTER ACCOUNT SET CORTEX_MODELS_ALLOWLIST = 'All';
 ALTER ACCOUNT SET CORTEX_ENABLED_CROSS_REGION = 'ANY_REGION';
 
 -- ============================================================================
--- TRUST CENTER DATA SECURITY GRANTS (Step 3)
+-- TRUST CENTER DATA SECURITY GRANTS (Step 5)
 -- ============================================================================
 
 USE ROLE ACCOUNTADMIN;
@@ -216,7 +216,7 @@ GRANT APPLICATION ROLE SNOWFLAKE.TRUST_CENTER_VIEWER TO ROLE HRZN_IT_ADMIN;
 GRANT APPLICATION ROLE SNOWFLAKE.DATA_SECURITY_VIEWER TO ROLE HRZN_IT_ADMIN;
 
 -- ============================================================================
--- CORTEX CODE GOVERNANCE SKILLS ACCESS (Step 6)
+-- CORTEX CODE GOVERNANCE SKILLS ACCESS (Step 4)
 -- ============================================================================
 
 USE ROLE ACCOUNTADMIN;
