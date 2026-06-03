@@ -4,11 +4,11 @@ categories: snowflake-site:taxonomy/solution-center/certification/quickstart,sno
 language: en
 summary: Build a complete AI-powered retail analytics platform on Snowflake — from streaming ingestion through Cortex Agents, Semantic Views, and MCP Servers.
 environments: web
-status: Draft
+status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 
-# Build an End-to-End AI Application on Snowflake
+# Build an End-to-End Application Using CoCo on Snowflake
 <!-- ------------------------ -->
 ## Overview
 
@@ -152,7 +152,9 @@ This creates the database, schemas, warehouses, tables, Dynamic Tables pipeline,
 <!-- ------------------------ -->
 ## Gen2 Warehouse: Optima Indexing
 
-Demonstrate Gen2's Optima Indexing — automatic partition pruning without explicit clustering keys:
+[Gen2 Warehouses](https://docs.snowflake.com/en/user-guide/warehouses-gen2) introduce Optima Indexing — an automatic indexing layer that prunes partitions at query time without explicit clustering keys. Gen2 warehouses learn from your query patterns and build internal indices that accelerate point lookups and filtered scans.
+
+Demonstrate Optima Indexing in action:
 
 **Prompt CoCo:**
 
@@ -162,6 +164,8 @@ Open the query profile in Snowsight to see partition pruning — only a fraction
 
 <!-- ------------------------ -->
 ## Dynamic Tables Pipeline
+
+[Dynamic Tables](https://docs.snowflake.com/en/user-guide/dynamic-tables-about) are declarative data pipelines — you define the target state as a SQL query and Snowflake handles incremental refresh automatically. The `TARGET_LAG` parameter controls freshness: set a time-based lag (e.g., `1 minute`) for Tier 1 tables, or use `DOWNSTREAM` for tables that refresh only when their upstream sources change.
 
 **Prompt CoCo:**
 
@@ -184,6 +188,8 @@ Expected: Top-5 days are in September 2025 (back-to-season peak), each with ~$18
 
 <!-- ------------------------ -->
 ## Interactive Tables
+
+[Interactive Tables](https://docs.snowflake.com/en/user-guide/interactive) are purpose-built for low-latency, high-concurrency point lookups. They maintain pre-computed results with clustering optimized for equality predicates, delivering sub-second response times for dashboard filters and application queries that would otherwise require full table scans.
 
 ### Point Lookups
 
@@ -216,6 +222,8 @@ Run the load test a second time to observe the effect of warm caches. Results ma
 <!-- ------------------------ -->
 ## Data Quality
 
+[Data Metric Functions (DMFs)](https://docs.snowflake.com/en/user-guide/data-quality-intro) let you attach automated quality checks directly to table columns. Snowflake runs them on a schedule and stores results in `SNOWFLAKE.LOCAL.DATA_QUALITY_MONITORING_RESULTS`. Built-in DMFs include `NULL_COUNT`, `DUPLICATE_COUNT`, `UNIQUE_COUNT`, and `FRESHNESS` — or you can write custom ones.
+
 The setup script injected ~200 NULL values into `orders.total_amount` and `order_items.quantity`, plus ~150 NULLs into `order_items.product_name`. DMFs detect the first two — but there's a gap.
 
 ### Discover the Gap
@@ -244,6 +252,8 @@ This demonstrates the real-world workflow: monitor, discover gaps, fix coverage.
 <!-- ------------------------ -->
 ## dbt Analytics
 
+[dbt-snowflake](https://docs.snowflake.com/en/user-guide/data-engineering/dbt-projects-on-snowflake) transforms raw data into analytics-ready models using SQL SELECT statements. The dbt-snowflake adapter integrates natively with Snowflake, supporting incremental models, snapshots, and built-in testing. In this HOL, dbt creates staging views and mart tables for customer lifetime value, segmentation, product performance, and support analytics.
+
 > **Prerequisites:** `dbt-core` and `dbt-snowflake` must be installed (`pip install dbt-snowflake`). CoCo will handle this for you if not already installed.
 
 **Prompt CoCo:**
@@ -260,6 +270,8 @@ CoCo runs `dbt deps` then `dbt build` to create all staging views and mart table
 
 <!-- ------------------------ -->
 ## CoCo Custom Skill
+
+[CoCo Custom Skills](https://docs.snowflake.com/en/user-guide/cortex-code/extensibility#skills) let you package repeatable workflows into named commands that any team member can invoke. A skill is a Markdown file (`.cortex/skills/<name>/SKILL.md`) that defines triggers, parameters, and step-by-step instructions CoCo follows when the skill is activated.
 
 Create a reusable skill that automates table profiling:
 
@@ -279,6 +291,8 @@ This demonstrates how teams package repeatable workflows as shareable CoCo skill
 
 <!-- ------------------------ -->
 ## Snowflake CoWork
+
+[Cortex Agents](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents) are multi-tool AI orchestrators that route questions to the right data source. They combine [Cortex Analyst](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst) (text-to-SQL over [Semantic Views](https://docs.snowflake.com/en/sql-reference/sql/create-semantic-view)) with [Cortex Search](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview) (vector + keyword search over unstructured data) to answer both "what happened" and "why" from a single conversational interface.
 
 ### Create the Agent
 
@@ -304,6 +318,8 @@ This is the capstone moment — the agent routes across structured data (text-to
 
 <!-- ------------------------ -->
 ## Security and Governance
+
+[Row Access Policies](https://docs.snowflake.com/en/user-guide/security-row-intro) enforce row-level security declaratively — you define a boolean expression that determines which rows are visible to which roles, and Snowflake applies it transparently to every query (including those generated by AI agents). No application code changes required.
 
 The Row Access Policy and WEST_COAST_MANAGER role were created by `setup.sql`. Demonstrate how row-level security transparently filters data based on role:
 
@@ -346,6 +362,8 @@ The agent returns results for only CA, OR, and WA — the Row Access Policy filt
 <!-- ------------------------ -->
 ## Streamlit Dashboard
 
+[Streamlit in Snowflake](https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit) lets you build and deploy interactive data applications directly within your Snowflake account — no external infrastructure needed. Apps run securely inside Snowflake, with native access to your data and governed by the same role-based access control.
+
 > **Prerequisites:** The dbt models must be built first (previous section). The dashboard queries `DBT_ANALYTICS` and `DBT_STAGING` tables.
 
 **Prompt CoCo:**
@@ -360,6 +378,8 @@ CoCo runs `snow streamlit deploy` from the `streamlit-dashboard/` directory. Onc
 
 <!-- ------------------------ -->
 ## Agent Evaluation
+
+[Agent Evaluation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents#evaluating-agents) lets you measure agent quality using ground-truth datasets and LLM-as-judge scoring. You define input queries and expected answers, then Snowflake runs the agent against each question and scores responses on Answer Correctness (does the response match ground truth?) and Logical Consistency (are the reasoning steps internally coherent?).
 
 The evaluation dataset (7 questions + ground truth) was created by `setup.sql`. Run the evaluation in Snowsight:
 
@@ -394,6 +414,8 @@ If questions score low on logical consistency:
 
 <!-- ------------------------ -->
 ## MCP Server
+
+[Snowflake MCP Servers](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents#managed-mcp-servers) expose your Cortex Agents, Semantic Views, and Search Services as tools discoverable via the open Model Context Protocol (MCP). Any MCP-compatible client (CoCo CLI, Claude Desktop, custom apps) can connect to the server endpoint and invoke tools programmatically — turning your Snowflake AI stack into a reusable service layer.
 
 Expose the Business Insights Agent as a managed MCP server:
 
