@@ -1,4 +1,4 @@
-author: Colin Mattimore
+author: Colin Mattimore, Ashwin Proddutoor
 id: ai-cost-dashboard
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/community-sourced, snowflake-site:taxonomy/product/ai
 language: en
