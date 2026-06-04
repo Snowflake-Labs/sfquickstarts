@@ -63,10 +63,13 @@ You will build a foundational yet practical setup of a Snowflake Cortex Analyst,
   - Select **`Enterprise`** edition on **`AWS`** Cloud
   - Access to **`ACCOUNTADMIN`** role is required for creating semantic views
 - Familiarity with AWS. If you do not have an account, [signup for an AWS Account](https://docs.aws.amazon.com/quicksuite/latest/userguide/setting-up.html#sign-up-for-aws) and [Quick Suite](https://docs.aws.amazon.com/quicksuite/latest/userguide/signing-in.html)
+  - The two csv files can be downloaded from the Amazon S3 here as well: 
+  [movies.csv.gz][s3://sfquickstarts/vhol_aws_workshop/movies.csv.gz] and [ratings.csv.gz][s3://sfquickstarts/vhol_aws_workshop/ratings.csv.gz]
 
   **Ensure to sign up to both of the above in AWS `US West (Oregon)` or `US East (Virginia)`** 
   At launch, Quick is available in 4 Regions: US East (N. Virginia), US West (Oregon), Asia Pacific (Sydney), and Europe (Ireland).
-  Refer to [Amazon Quick documentation](https://docs.aws.amazon.com/quicksuite/latest/userguide/regions.html)
+  **Update: 5/Jun - Quick is now available in Asia Pacific (Tokyo), Europe (London) and Europe (Frankfurt) as well**
+  Refer to [Amazon Quick documentation](https://docs.aws.amazon.com/quicksuite/latest/userguide/regions.html) for the latest available region 
 - Basic knowledge of SQL and Python
 - Familiarity with data analysis concepts
 <br>
