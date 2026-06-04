@@ -94,6 +94,22 @@ Verify the installation:
 cortex --version
 ```
 
+### Alternative: Snowflake CoCo Desktop (Preview)
+
+If you prefer a visual IDE experience, [download CoCo Desktop](https://www.snowflake.com/en/product/limited-access/cortex-code/) instead of (or alongside) the CLI. It's a native Mac/Windows app with a file editor, integrated terminal, agentic browser, and the same AI capabilities.
+
+> **Note:** CoCo Desktop is currently a [Preview Feature](https://docs.snowflake.com/release-notes/preview-features) available to all accounts.
+
+On first launch, follow the onboarding wizard:
+1. Click **Next** on the Welcome screen
+2. Add your connection (same account identifier and credentials from above) or select an existing one detected from `connections.toml`
+3. Choose **Agent** mode
+4. Pick your theme, then click **Get Started**
+
+> **Tip:** If you already configured a connection with `snow connection add` (below), CoCo Desktop detects it automatically — just select it from the list.
+
+See [CoCo Desktop documentation](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-desktop/index) for full details.
+
 ### Configure Snowflake Connection
 
 Before you can run any commands against Snowflake, you need to configure a connection. This tells the CLI which Snowflake account to connect to and how to authenticate.
@@ -149,18 +165,60 @@ snow sql -f setup.sql -c hol
 
 This creates the database, schemas, warehouses, tables, Dynamic Tables pipeline, Interactive Tables, Cortex Search Services, Semantic View, seed data (10M orders, 25M order items, 2M customers), and Row Access Policy.
 
+> **Using CoCo Desktop?** All "Prompt CoCo" instructions below work identically in both CLI and Desktop — type the same text into the chat input. Anywhere you see `cortex` as a terminal command, use the Desktop's built-in terminal or chat instead.
+
 <!-- ------------------------ -->
-## Gen2 Warehouse: Optima Indexing
+## Explore Your Data
 
-[Gen2 Warehouses](https://docs.snowflake.com/en/user-guide/warehouses-gen2) introduce Optima Indexing — an automatic indexing layer that prunes partitions at query time without explicit clustering keys. Gen2 warehouses learn from your query patterns and build internal indices that accelerate point lookups and filtered scans.
-
-Demonstrate Optima Indexing in action:
+Now that setup is complete, let's get familiar with what was created. This is your first interaction with CoCo — try asking natural language questions about your data.
 
 **Prompt CoCo:**
 
-> *"Run a point lookup for customer_id 5000 on the Gen2 warehouse"*
+> *"What schemas and tables are in my database?"*
 
-Open the query profile in Snowsight to see partition pruning — only a fraction of partitions scanned despite no explicit clustering key. This is Gen2's Optima Indexing in action.
+CoCo queries `INFORMATION_SCHEMA` and shows the database structure: RAW (source tables), DYNAMIC_TABLES (pipeline), INTERACTIVE (low-latency), and SEMANTIC (AI layer).
+
+> *"Show me 5 sample rows from the orders table"*
+
+> *"How many orders, customers, and products do we have?"*
+
+Expected: ~10M orders, ~25M order items, 2M customers, 10 products, 1200 reviews, 1200 support tickets.
+
+> *"What's the date range of our order data?"*
+
+Expected: June 2025 to September 2025.
+
+This gives you a mental model of the dataset before we start transforming and analyzing it.
+
+<!-- ------------------------ -->
+## Data Quality
+
+[Data Metric Functions (DMFs)](https://docs.snowflake.com/en/user-guide/data-quality-intro) let you attach automated quality checks directly to table columns. Snowflake runs them on a schedule and stores results in `SNOWFLAKE.LOCAL.DATA_QUALITY_MONITORING_RESULTS`. Built-in DMFs include `NULL_COUNT`, `DUPLICATE_COUNT`, `UNIQUE_COUNT`, and `FRESHNESS` — or you can write custom ones.
+
+The setup script injected ~200 NULL values into `orders.total_amount` and `order_items.quantity`, plus ~150 NULLs into `order_items.product_name`. DMFs detect the first two — but there's a gap.
+
+### Discover the Gap
+
+**Prompt CoCo:**
+
+> *"Check the data quality monitoring results and show me which columns have NULL violations"*
+
+CoCo shows that `TOTAL_AMOUNT` (200 NULLs) and `QUANTITY` (200 NULLs) have violations — but `product_name` NULLs are going undetected.
+
+> *"Are there any NULL values in order_items.product_name? Is that column being monitored?"*
+
+CoCo finds ~150 NULLs and reveals the DMF is mis-attached to `product_category` instead of `product_name`.
+
+### Fix the Coverage
+
+> *"Fix the DMF — remove the NULL check from product_category and add it to product_name instead"*
+
+```sql
+ALTER TABLE order_items DROP DATA METRIC FUNCTION SNOWFLAKE.CORE.NULL_COUNT ON (product_category);
+ALTER TABLE order_items ADD DATA METRIC FUNCTION SNOWFLAKE.CORE.NULL_COUNT ON (product_name);
+```
+
+This demonstrates the real-world workflow: monitor, discover gaps, fix coverage.
 
 <!-- ------------------------ -->
 ## Dynamic Tables Pipeline
@@ -185,6 +243,38 @@ Ask CoCo:
 > *"Show me a sample of the daily business metrics — top 5 days by revenue"*
 
 Expected: Top-5 days are in September 2025 (back-to-season peak), each with ~$183M revenue and ~117K orders.
+
+<!-- ------------------------ -->
+## dbt Analytics
+
+[dbt-snowflake](https://docs.snowflake.com/en/user-guide/data-engineering/dbt-projects-on-snowflake) transforms raw data into analytics-ready models using SQL SELECT statements. The dbt-snowflake adapter integrates natively with Snowflake, supporting incremental models, snapshots, and built-in testing. In this HOL, dbt creates staging views and mart tables for customer lifetime value, segmentation, product performance, and support analytics.
+
+> **Prerequisites:** `dbt-core` and `dbt-snowflake` must be installed (`pip install dbt-snowflake`). CoCo will handle this for you if not already installed.
+
+**Prompt CoCo:**
+
+> *"Install dbt dependencies and build all models in the dbt-analytics project"*
+
+CoCo runs `dbt deps` then `dbt build` to create all staging views and mart tables (9+ models). CoCo automatically injects your active Snowflake connection into the dbt profile — no manual configuration needed.
+
+> **Expected output:** 71 tests pass, 1 warning (the `source_not_null_raw_orders_total_amount` test detects the 200 NULLs we injected for the Data Quality exercise — this is working as designed).
+
+### Explore Results
+
+> *"Show me the customer lifetime value segments — how many customers are in each value tier?"*
+
+<!-- ------------------------ -->
+## Gen2 Warehouse: Optima Indexing
+
+[Gen2 Warehouses](https://docs.snowflake.com/en/user-guide/warehouses-gen2) introduce Optima Indexing — an automatic indexing layer that prunes partitions at query time without explicit clustering keys. Gen2 warehouses learn from your query patterns and build internal indices that accelerate point lookups and filtered scans.
+
+Demonstrate Optima Indexing in action:
+
+**Prompt CoCo:**
+
+> *"Run a point lookup for customer_id 5000 on the Gen2 warehouse"*
+
+Open the query profile in Snowsight to see partition pruning — only a fraction of partitions scanned despite no explicit clustering key. This is Gen2's Optima Indexing in action.
 
 <!-- ------------------------ -->
 ## Interactive Tables
@@ -220,55 +310,6 @@ This fires 200 concurrent sessions (1000 queries total) against both Interactive
 Run the load test a second time to observe the effect of warm caches. Results may vary depending on account, region, and data scale.
 
 <!-- ------------------------ -->
-## Data Quality
-
-[Data Metric Functions (DMFs)](https://docs.snowflake.com/en/user-guide/data-quality-intro) let you attach automated quality checks directly to table columns. Snowflake runs them on a schedule and stores results in `SNOWFLAKE.LOCAL.DATA_QUALITY_MONITORING_RESULTS`. Built-in DMFs include `NULL_COUNT`, `DUPLICATE_COUNT`, `UNIQUE_COUNT`, and `FRESHNESS` — or you can write custom ones.
-
-The setup script injected ~200 NULL values into `orders.total_amount` and `order_items.quantity`, plus ~150 NULLs into `order_items.product_name`. DMFs detect the first two — but there's a gap.
-
-### Discover the Gap
-
-**Prompt CoCo:**
-
-> *"Check the data quality monitoring results and show me which columns have NULL violations"*
-
-CoCo shows that `TOTAL_AMOUNT` (200 NULLs) and `QUANTITY` (200 NULLs) have violations — but `product_name` NULLs are going undetected.
-
-> *"Are there any NULL values in order_items.product_name? Is that column being monitored?"*
-
-CoCo finds ~150 NULLs and reveals the DMF is mis-attached to `product_category` instead of `product_name`.
-
-### Fix the Coverage
-
-> *"Fix the DMF — remove the NULL check from product_category and add it to product_name instead"*
-
-```sql
-ALTER TABLE order_items DROP DATA METRIC FUNCTION SNOWFLAKE.CORE.NULL_COUNT ON (product_category);
-ALTER TABLE order_items ADD DATA METRIC FUNCTION SNOWFLAKE.CORE.NULL_COUNT ON (product_name);
-```
-
-This demonstrates the real-world workflow: monitor, discover gaps, fix coverage.
-
-<!-- ------------------------ -->
-## dbt Analytics
-
-[dbt-snowflake](https://docs.snowflake.com/en/user-guide/data-engineering/dbt-projects-on-snowflake) transforms raw data into analytics-ready models using SQL SELECT statements. The dbt-snowflake adapter integrates natively with Snowflake, supporting incremental models, snapshots, and built-in testing. In this HOL, dbt creates staging views and mart tables for customer lifetime value, segmentation, product performance, and support analytics.
-
-> **Prerequisites:** `dbt-core` and `dbt-snowflake` must be installed (`pip install dbt-snowflake`). CoCo will handle this for you if not already installed.
-
-**Prompt CoCo:**
-
-> *"Install dbt dependencies and build all models in the dbt-analytics project"*
-
-CoCo runs `dbt deps` then `dbt build` to create all staging views and mart tables (9+ models). CoCo automatically injects your active Snowflake connection into the dbt profile — no manual configuration needed.
-
-> **Expected output:** 71 tests pass, 1 warning (the `source_not_null_raw_orders_total_amount` test detects the 200 NULLs we injected for the Data Quality exercise — this is working as designed).
-
-### Explore Results
-
-> *"Show me the customer lifetime value segments — how many customers are in each value tier?"*
-
-<!-- ------------------------ -->
 ## CoCo Custom Skill
 
 [CoCo Custom Skills](https://docs.snowflake.com/en/user-guide/cortex-code/extensibility#skills) let you package repeatable workflows into named commands that any team member can invoke. A skill is a Markdown file (`.cortex/skills/<name>/SKILL.md`) that defines triggers, parameters, and step-by-step instructions CoCo follows when the skill is activated.
@@ -281,7 +322,7 @@ Create a reusable skill that automates table profiling:
 
 CoCo creates `.cortex/skills/profile-table/SKILL.md` with the skill definition, triggers, and step-by-step instructions.
 
-> **Note:** After creating the skill, restart CoCo (type `/quit` then `cortex`) for the new skill to become active.
+> **Note:** After creating the skill, restart your CoCo session for the new skill to become active. **CLI:** type `/quit` then `cortex`. **Desktop:** open a new session from the sidebar.
 
 ### Test It
 
@@ -364,7 +405,7 @@ The agent returns results for only CA, OR, and WA — the Row Access Policy filt
 
 [Streamlit in Snowflake](https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit) lets you build and deploy interactive data applications directly within your Snowflake account — no external infrastructure needed. Apps run securely inside Snowflake, with native access to your data and governed by the same role-based access control.
 
-> **Prerequisites:** The dbt models must be built first (previous section). The dashboard queries `DBT_ANALYTICS` and `DBT_STAGING` tables.
+> **Prerequisites:** The dbt models must be built first (see the **dbt Analytics** section). The dashboard queries `DBT_ANALYTICS` and `DBT_STAGING` tables.
 
 **Prompt CoCo:**
 
@@ -456,6 +497,8 @@ CREATE MCP SERVER business_insights_mcp
 ```bash
 cortex mcp add business-insights https://<account_url>/api/v2/databases/DASH_AUTOMATED_INTELLIGENCE_DB/schemas/SEMANTIC/mcp-servers/BUSINESS-INSIGHTS-MCP --type http
 ```
+
+> **Desktop:** To add the MCP server in CoCo Desktop, go to **Settings → MCP** and add a new HTTP server with the endpoint URL above. Or type `/mcp` in the chat.
 
 Now any MCP-compatible client (CoCo, Claude Desktop, custom apps) can discover and call these tools via the standard MCP protocol.
 
