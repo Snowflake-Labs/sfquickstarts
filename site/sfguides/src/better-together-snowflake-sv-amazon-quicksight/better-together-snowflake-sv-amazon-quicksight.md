@@ -23,7 +23,7 @@ You can use semantic views in Cortex Analyst and query these views in a SELECT s
 
 <br>
 
-![Semantic View diagram](assets/semantic-views-diagram.png)
+![Semantic View diagram](assets/semantic-views.png)
 
 ## Use Case
 
