@@ -66,8 +66,10 @@ You will build a foundational yet practical setup of a Snowflake Cortex Analyst,
   - The two csv files used for data loading can be found in the attached notebook, as well as in the `assets` folder or can be downloaded from the Amazon S3 bucket: 
   [movies.csv.gz](https://sfquickstarts.s3.amazonaws.com/vhol_aws_workshop/movies.csv.gz)) and [ratings.csv.gz](https://sfquickstarts.s3.amazonaws.com/vhol_aws_workshop/ratings.csv.gz))
 
-  **Ensure to sign up to both of the above in AWS `US West (Oregon)` or `US East (Virginia)`** 
+  **Ensure to sign up to both of the above in AWS `US West (Oregon)` or `US East (Virginia)`**
+  
   At launch, Quick is available in 4 Regions: US East (N. Virginia), US West (Oregon), Asia Pacific (Sydney), and Europe (Ireland).
+  
   **Update: 5/Jun - Quick is now available in Asia Pacific (Tokyo), Europe (London) and Europe (Frankfurt) as well**
   Refer to [Amazon Quick documentation](https://docs.aws.amazon.com/quicksuite/latest/userguide/regions.html) for the latest available region 
 - Basic knowledge of SQL and Python
