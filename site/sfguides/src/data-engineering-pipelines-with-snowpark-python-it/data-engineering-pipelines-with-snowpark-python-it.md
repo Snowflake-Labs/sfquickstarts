@@ -22,10 +22,6 @@ Questo quickstart tratterà molti argomenti e al termine avrai creato una solida
 
 Allaccia le cinture e preparati a partire!
 
-> 
-> 
-> **Nota**: al 1 febbraio 2023, sia l’[estensione Visual Studio Code di Snowflake](https://marketplace.visualstudio.com/items?itemName=snowflake.snowflake-vsc) che lo [strumento SnowCLI](https://github.com/Snowflake-Labs/snowcli) sono ancora in preview.
-
 
 ### Prerequisiti
 * Familiarità con Python
@@ -47,8 +43,8 @@ Nel corso di questo quickstart esplorerai le seguenti caratteristiche di Snowfla
 * Snowpark DataFrame API
 * Programmabilità di Snowpark Python
 * Elasticità dei warehouse (scalabilità dinamica)
-* Estensione nativa Visual Studio Code di Snowflake (public preview, integrazione Git)
-* SnowCLI (public preview)
+* Estensione nativa Visual Studio Code di Snowflake
+* SnowCLI
 * Task (con attivazione tramite stream)
 * Osservabilità dei task
 * Integrazione delle GitHub Actions (CI/CD)
@@ -392,10 +388,6 @@ Per questo quickstart ci concentreremo sui primi due. Nel caso delle UDF e delle
 * Creare l’oggetto funzione o stored procedure di Snowflake
 
 Questo ti consente anche di sviluppare e testare l’applicazione Python senza preoccuparti di incapsularla in un oggetto di database Snowflake corrispondente.
-
-> 
-> 
-> **Nota**: al 1 febbraio 2023 lo strumento SnowCLI è ancora in preview.
 
 ### Altre informazioni sulle UDF di Snowpark Python
 In questo passaggio abbiamo distribuito un’UDF Python molto semplice su Snowflake. In un passaggio futuro la aggiorneremo per utilizzare un pacchetto di terze parti. Inoltre, poiché l’hai distribuita su Snowflake con il comando SnowCLI, non hai dovuto preoccuparti della sintassi DDL SQL per creare l’oggetto in Snowflake. A scopo di riferimento, tuttavia, consulta la nostra guida per sviluppatori [Creare UDF Python](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python.html).
@@ -823,8 +815,8 @@ In questo quickstart abbiamo trattato molti argomenti, in particolare:
 * Snowpark DataFrame API
 * Programmabilità di Snowpark Python
 * Elasticità dei warehouse (scalabilità dinamica)
-* Estensione nativa Visual Studio Code di Snowflake (public preview, integrazione Git)
-* SnowCLI (public preview)
+* Estensione nativa Visual Studio Code di Snowflake
+* SnowCLI
 * Task (con attivazione tramite stream)
 * Osservabilità dei task
 * Integrazione delle GitHub Actions (CI/CD)

@@ -1,0 +1,54 @@
+[
+  {
+    "log_id": "ML-007",
+    "vehicle_id": "VH-0056",
+    "log_timestamp": "2025-01-21T09:00:00",
+    "event_type": "coolant_flush",
+    "severity": "routine",
+    "description": "Coolant system flush and refill. Inspected hoses and thermostat — all in good condition.",
+    "mileage_at_service": 74500,
+    "technician": "Tom H.",
+    "parts_replaced": ["coolant_50_50_2gal"],
+    "total_cost": 125.00,
+    "next_service_due": "2027-01-21"
+  },
+  {
+    "log_id": "ML-008",
+    "vehicle_id": "VH-0034",
+    "log_timestamp": "2025-01-22T15:30:00",
+    "event_type": "brake_replacement",
+    "severity": "critical",
+    "description": "Front brake pads and rotors replaced. Rear pads at 40% — monitoring.",
+    "mileage_at_service": 71000,
+    "technician": "Dave L.",
+    "parts_replaced": ["front_brake_pads", "front_rotors_pair"],
+    "total_cost": 562.00,
+    "next_service_due": "2025-07-22"
+  },
+  {
+    "log_id": "ML-009",
+    "vehicle_id": "VH-0072",
+    "log_timestamp": "2025-01-23T11:15:00",
+    "event_type": "air_filter_replacement",
+    "severity": "routine",
+    "description": "Engine and cabin air filter replacement during routine inspection.",
+    "mileage_at_service": 38900,
+    "technician": "Sarah K.",
+    "parts_replaced": ["engine_air_filter", "cabin_air_filter"],
+    "total_cost": 67.50,
+    "next_service_due": "2025-07-23"
+  },
+  {
+    "log_id": "ML-010",
+    "vehicle_id": "VH-0015",
+    "log_timestamp": "2025-01-24T08:00:00",
+    "event_type": "alignment",
+    "severity": "warning",
+    "description": "Four-wheel alignment after driver reported vehicle pulling to the right. Toe and camber corrected.",
+    "mileage_at_service": 55200,
+    "technician": "Tom H.",
+    "parts_replaced": [],
+    "total_cost": 120.00,
+    "next_service_due": "2025-07-24"
+  }
+]

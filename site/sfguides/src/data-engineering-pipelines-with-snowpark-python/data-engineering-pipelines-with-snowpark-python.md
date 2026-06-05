@@ -6,7 +6,6 @@ summary: Build robust data engineering pipelines with Snowpark Python for ELT, C
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-open in snowflake link: https://app.snowflake.com/templates?template=data_engineering_pipelines_snowpark_python&utm_source=build&utm_medium=templates&utm_campaign=guides&utm_content=nov25
 
 
 # Data Engineering Pipelines with Snowpark Python
@@ -23,9 +22,6 @@ This Quickstart will cover a lot of ground, and by the end you will have built a
 
 
 So buckle up and get ready!
-
-
-> **Note** - As of 3/7/2024, the [SnowCLI Tool](https://github.com/Snowflake-Labs/snowcli) is still in preview.
 
 
 ### Prerequisites
@@ -64,10 +60,6 @@ You will need the following things before beginning:
 * GitHub account
     * **A GitHub account**. If you don't already have a GitHub account you can create one for free. Visit the [Join GitHub](https://github.com/signup) page to get started.
 
-> Note: You can now run this entire quickstart as a Snowflake Notebook in your Snowsight UI. Download this [ipynb file](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/Data%20Engineering%20Pipelines%20with%20Snowpark%20Python/Data%20Engineering%20Pipelines%20with%20Snowpark%20Python.ipynb) and import it to your Snowflake account as shown below.
-
-![notebook_callout](assets/notebook.png)
-
 ### What You’ll Build
 During this Quickstart you will accomplish the following things:
 
@@ -82,10 +74,6 @@ During this Quickstart you will accomplish the following things:
 
 <!-- ------------------------ -->
 ## Quickstart Setup
-
-> Note: You can now run this entire quickstart as a Snowflake Notebook in your Snowsight UI. Download this [ipynb file](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/Data%20Engineering%20Pipelines%20with%20Snowpark%20Python/Data%20Engineering%20Pipelines%20with%20Snowpark%20Python.ipynb) and import it to your Snowflake account as shown below.
-
-![notebook_callout](assets/notebook.png)
 
 ### Fork the Quickstart Repository and Enable GitHub Actions
 You'll need to create a fork of the repository for this Quickstart in your GitHub account. Visit the [Data Engineering Pipelines with Snowpark Python associated GitHub Repository](https://github.com/Snowflake-Labs/sfguide-data-engineering-with-snowpark-python) and click on the "Fork" button near the top right. Complete any required fields and click "Create Fork".
@@ -383,8 +371,6 @@ For this Quickstart we will be focused on the first two. And for Snowpark Python
 * Creating the Snowflake function or stored procedure object
 
 This also allows you to develop and test your Python application without having to worry about wrapping it in a corresponding Snowflake database object.
-
-> **Note** -  As of 3/7/2024, the [SnowCLI Tool](https://github.com/Snowflake-Labs/snowcli) is still in preview.
 
 ### More on Snowpark Python UDFs
 In this step we deployed a very simple Python UDF to Snowflake. In a future step will update it to use a third-party package. And because we deployed it to Snowflake with the SnowCLI command you didn't have to worry about the SQL DDL Syntax to create the object in Snowflake. But for reference please check out our [Writing Python UDFs](https://docs.snowflake.com/en/developer-guide/udf/python/udf-python.html) developer guide.
