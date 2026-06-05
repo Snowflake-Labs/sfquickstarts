@@ -63,7 +63,7 @@ You will build a foundational yet practical setup of a Snowflake Cortex Analyst,
   - Select **`Enterprise`** edition on **`AWS`** Cloud
   - Access to **`ACCOUNTADMIN`** role is required for creating semantic views
 - Familiarity with AWS. If you do not have an account, [signup for an AWS Account](https://docs.aws.amazon.com/quicksuite/latest/userguide/setting-up.html#sign-up-for-aws) and [Quick Suite](https://docs.aws.amazon.com/quicksuite/latest/userguide/signing-in.html)
-  - The two csv files can be downloaded from the Amazon S3 here as well: 
+  - The two csv files used for data loading can be found in the attached notebook, as well as in the `assets` folder or can be downloaded from the Amazon S3 bucket: 
   [movies.csv.gz](https://sfquickstarts.s3.amazonaws.com/vhol_aws_workshop/movies.csv.gz)) and [ratings.csv.gz](https://sfquickstarts.s3.amazonaws.com/vhol_aws_workshop/ratings.csv.gz))
 
   **Ensure to sign up to both of the above in AWS `US West (Oregon)` or `US East (Virginia)`** 
