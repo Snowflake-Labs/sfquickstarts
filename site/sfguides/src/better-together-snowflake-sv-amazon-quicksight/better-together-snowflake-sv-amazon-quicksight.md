@@ -23,7 +23,7 @@ You can use semantic views in Cortex Analyst and query these views in a SELECT s
 
 <br>
 
-![Semantic View diagram](assets/semantic-views.png)
+![Semantic View diagram](assets/semantic-views-diagram.png)
 
 ## Use Case
 
@@ -39,7 +39,7 @@ This integration leverages Snowflake's native capabilities to ingest structured 
 **3. Amazon Quick Sight Integration**: Using the provided `QuickSight Dataset Generator` guide in the Notebook to create QuickSight datasets from Snowflake DDL, from setting up credentials to sharing datasets with users. Using the [AWS Cloudshell](https://aws.amazon.com/cloudshell/) to programmatically interact with [Amazon Quick Sight API](https://boto3.amazonaws.com/v1/documentation/api/1.12.0/reference/services/quicksight.html).  
 **4. Enhanced AI-powered BI**: This integration empowers the BI team to use natural language for creating interactive charts/dashboards, building calculated fields, developing data stories, and conducting what-if scenarios and significantly reducing the risk of AI hallucinations. The BI team can further incorporate this Snowflake sourced dashboard into the (Amazon Quick) Movies [Space](https://aws.amazon.com/quick/spaces/) and combine other files, dashboards, topics, knowledge bases, and application actions into a unified and customizable enterprise knowledge center. 
 
-![architecture diagram](assets/ref-arch.png)
+![architecture diagram](assets/semantic-views.png)
 
 <br>
 
