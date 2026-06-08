@@ -1,11 +1,12 @@
 author: Navnit Shukla
 id: getting-started-with-turbovec-on-spcs
 summary: Deploy TurboVec, a high-performance data-oblivious vector index, on Snowpark Container Services for privacy-preserving multi-tenant RAG with 8x memory compression and perfect recall.
-categories: Getting-Started, Data-Science-&-AI, Solution-Examples
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart,snowflake-site:taxonomy/product/ai,snowflake-site:taxonomy/snowflake-feature/snowpark-container-services
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfquickstarts/issues
 tags: Getting Started, Snowpark Container Services, Vector Search, RAG, AI, Machine Learning
+language: en
 
 # Getting Started with TurboVec on Snowpark Container Services
 <!-- ------------------------ -->
