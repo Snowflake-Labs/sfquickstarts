@@ -176,7 +176,7 @@ Now that setup is complete, let's get familiar with what was created. This is yo
 
 > *"What schemas and tables are in my database?"*
 
-CoCo queries `INFORMATION_SCHEMA` and shows the database structure: RAW (source tables), DYNAMIC_TABLES (pipeline), INTERACTIVE (low-latency), and SEMANTIC (AI layer).
+CoCo queries `INFORMATION_SCHEMA` and shows the database structure: RAW (source tables + views), STAGING (streaming landing zone), DYNAMIC_TABLES (pipeline), INTERACTIVE (low-latency), and SEMANTIC (AI layer).
 
 > *"Show me 5 sample rows from the orders table"*
 
