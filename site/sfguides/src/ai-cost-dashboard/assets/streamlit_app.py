@@ -280,6 +280,32 @@ def load_user_daily(days_back, start_date=None, end_date=None, user_name=None, c
     """)
 
 @st.cache_data(ttl=300, show_spinner=False)
+def load_unified_data_for_user(days_back, user_name, start_date=None, end_date=None):
+    if start_date and end_date:
+        date_filter = f"USAGE_DATE BETWEEN '{start_date}' AND '{end_date}'"
+    else:
+        date_filter = f"USAGE_DATE >= DATEADD('day', -{days_back}, CURRENT_DATE())"
+    return run_query(f"""
+        SELECT
+            USAGE_DATE,
+            SERVICE_CATEGORY,
+            SERVICE_NAME,
+            MODEL_NAME,
+            SUM(CREDITS) AS CREDITS,
+            SUM(COST_USD) AS COST_USD,
+            SUM(TOKENS) AS TOKENS,
+            SUM(INPUT_TOKENS) AS INPUT_TOKENS,
+            SUM(OUTPUT_TOKENS) AS OUTPUT_TOKENS,
+            SUM(CACHE_READ_TOKENS) AS CACHE_READ_TOKENS,
+            SUM(CACHE_WRITE_TOKENS) AS CACHE_WRITE_TOKENS,
+            COUNT(QUERY_ID) AS REQUEST_COUNT
+        FROM {SCHEMA_PREFIX}.USER_AI_COSTS
+        WHERE {date_filter}
+          AND USER_NAME = '{user_name}'
+        GROUP BY USAGE_DATE, SERVICE_CATEGORY, SERVICE_NAME, MODEL_NAME
+    """)
+
+@st.cache_data(ttl=300, show_spinner=False)
 def load_user_detail(days_back, start_date=None, end_date=None, user_name=None, categories=None):
     if start_date and end_date:
         date_filter = f"USAGE_DATE BETWEEN '{start_date}' AND '{end_date}'"
@@ -340,6 +366,13 @@ with st.sidebar:
     selected_categories = st.multiselect("Categories", all_categories, default=all_categories, label_visibility="collapsed")
     
     st.markdown("---")
+    st.markdown("**👤 User**")
+    all_users_sidebar = ["All Users"] + sorted(user_summary_df["FULL_NAME"].dropna().unique().tolist())
+    user_name_map = dict(zip(user_summary_df["FULL_NAME"], user_summary_df["USER_NAME"]))
+    selected_global_user_display = st.selectbox("User", all_users_sidebar, label_visibility="collapsed", key="global_user_filter")
+    selected_global_user = user_name_map.get(selected_global_user_display) if selected_global_user_display != "All Users" else None
+
+    st.markdown("---")
     if st.button("🔄 Refresh Data", type="primary", use_container_width=True):
         run_procedure(f"CALL {SCHEMA_PREFIX}.REFRESH_CORTEX_AI_COSTS({days_back})")
         run_procedure(f"CALL {SCHEMA_PREFIX}.REFRESH_USER_AI_COSTS({days_back})")
@@ -355,7 +388,12 @@ if not selected_categories:
     st.warning("⚠️ Please select at least one service category.")
     st.stop()
 
-filtered_df = unified_df[unified_df["SERVICE_CATEGORY"].isin(selected_categories)]
+if selected_global_user:
+    filtered_df = load_unified_data_for_user(days_back, selected_global_user, custom_start, custom_end)
+    if selected_categories:
+        filtered_df = filtered_df[filtered_df["SERVICE_CATEGORY"].isin(selected_categories)]
+else:
+    filtered_df = unified_df[unified_df["SERVICE_CATEGORY"].isin(selected_categories)]
 
 total_credits = float(filtered_df["CREDITS"].sum() or 0)
 total_cost = float(filtered_df["COST_USD"].sum() or 0)
@@ -363,7 +401,7 @@ total_tokens = float(filtered_df["TOKENS"].sum() or 0)
 total_requests = int(filtered_df["REQUEST_COUNT"].sum() or 0)
 services_used = filtered_df["SERVICE_NAME"].nunique()
 active_days = filtered_df["USAGE_DATE"].nunique()
-active_users = user_summary_df["USER_NAME"].nunique()
+active_users = 1 if selected_global_user else user_summary_df["USER_NAME"].nunique()
 
 st.subheader("📊 Key Metrics")
 kpi_row1 = st.columns(4)
@@ -528,7 +566,8 @@ with tab3:
 with tab4:
     user_map = dict(zip(user_summary_df["FULL_NAME"], user_summary_df["USER_NAME"]))
     all_users = ["All Users"] + sorted(user_summary_df["FULL_NAME"].dropna().unique().tolist())
-    selected_user_display = st.selectbox("🔍 Filter by User", all_users, key="user_filter")
+    default_user_idx = all_users.index(selected_global_user_display) if selected_global_user_display in all_users else 0
+    selected_user_display = st.selectbox("🔍 Filter by User", all_users, index=default_user_idx, key="user_filter")
     selected_user = user_map.get(selected_user_display, None) if selected_user_display != "All Users" else None
 
     filtered_summary_df = load_user_summary(days_back, custom_start, custom_end, selected_categories)
@@ -579,6 +618,7 @@ with tab4:
             st.info("No AI service usage found for this user.")
 
 with tab5:
+    agent_user_filter = f" AND USER_NAME = '{selected_global_user}'" if selected_global_user else ""
     agent_df = run_query(f"""
         SELECT COALESCE(AGENT_NAME, 'API CALL') AS AGENT_NAME,
                COALESCE(AGENT_DATABASE_NAME || '.' || AGENT_SCHEMA_NAME || '.' || AGENT_NAME, 'API CALL') AS AGENT_FQN,
@@ -587,7 +627,7 @@ with tab5:
                SUM(TOKEN_CREDITS) AS CREDITS, SUM(COST_USD) AS "COST ($)",
                SUM(TOKENS) AS TOKENS, COUNT(*) AS REQUESTS
         FROM {SCHEMA_PREFIX}.CORTEX_AGENT_USAGE
-        WHERE START_TIME >= DATEADD('day', -{days_back}, CURRENT_DATE())
+        WHERE START_TIME >= DATEADD('day', -{days_back}, CURRENT_DATE()){agent_user_filter}
         GROUP BY 1, 2, 3, 4, 5
         ORDER BY USAGE_DATE DESC, CREDITS DESC
     """)
@@ -602,6 +642,7 @@ with tab5:
         st.info("No Cortex Agent usage found.")
 
 with tab6:
+    si_user_filter = f" AND USER_NAME = '{selected_global_user}'" if selected_global_user else ""
     si_df = run_query(f"""
         SELECT COALESCE(SNOWFLAKE_INTELLIGENCE_NAME, 'API CALL') AS SI_NAME,
                COALESCE(AGENT_DATABASE_NAME || '.' || AGENT_SCHEMA_NAME || '.' || AGENT_NAME, 'API CALL') AS AGENT_FQN,
@@ -610,7 +651,7 @@ with tab6:
                SUM(TOKEN_CREDITS) AS CREDITS, SUM(COST_USD) AS "COST ($)",
                SUM(TOKENS) AS TOKENS, COUNT(*) AS REQUESTS
         FROM {SCHEMA_PREFIX}.SNOWFLAKE_INTELLIGENCE_USAGE
-        WHERE START_TIME >= DATEADD('day', -{days_back}, CURRENT_DATE())
+        WHERE START_TIME >= DATEADD('day', -{days_back}, CURRENT_DATE()){si_user_filter}
         GROUP BY 1, 2, 3, 4, 5
         ORDER BY USAGE_DATE DESC, CREDITS DESC
     """)
@@ -626,18 +667,19 @@ with tab6:
         st.info("No Snowflake Intelligence usage found.")
 
 with tab7:
+    coco_user_filter = f" AND USER_NAME = '{selected_global_user}'" if selected_global_user else ""
     coco_cli_df = run_query(f"""
         SELECT USAGE_DATE, FULL_NAME AS USER_NAME, SUM(CREDITS) AS CREDITS
         FROM {SCHEMA_PREFIX}.USER_AI_COSTS
         WHERE SERVICE_NAME = 'CORTEX_CODE_CLI'
-          AND USAGE_DATE >= DATEADD('day', -30, CURRENT_DATE())
+          AND USAGE_DATE >= DATEADD('day', -30, CURRENT_DATE()){coco_user_filter}
         GROUP BY 1, 2
     """)
     coco_ss_df = run_query(f"""
         SELECT USAGE_DATE, FULL_NAME AS USER_NAME, SUM(CREDITS) AS CREDITS
         FROM {SCHEMA_PREFIX}.USER_AI_COSTS
         WHERE SERVICE_NAME = 'CORTEX_CODE_SNOWSIGHT'
-          AND USAGE_DATE >= DATEADD('day', -30, CURRENT_DATE())
+          AND USAGE_DATE >= DATEADD('day', -30, CURRENT_DATE()){coco_user_filter}
         GROUP BY 1, 2
     """)
     st.markdown("**Cortex Code Snowsight — Credits by Date & User**")
@@ -664,7 +706,7 @@ with tab7:
         SELECT USAGE_DATE, FULL_NAME AS USER_NAME, SUM(CREDITS) AS CREDITS
         FROM {SCHEMA_PREFIX}.USER_AI_COSTS
         WHERE SERVICE_NAME = 'CORTEX_CODE_DESKTOP'
-          AND USAGE_DATE >= DATEADD('day', -30, CURRENT_DATE())
+          AND USAGE_DATE >= DATEADD('day', -30, CURRENT_DATE()){coco_user_filter}
         GROUP BY 1, 2
     """)
     st.markdown("**Cortex Code Desktop — Credits by Date & User**")
