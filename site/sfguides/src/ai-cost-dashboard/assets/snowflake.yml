@@ -1,0 +1,12 @@
+definition_version: 2
+entities:
+  cortex_ai_cost_dashboard:
+    type: streamlit
+    identifier:
+      name: CORTEX_AI_COST_DASHBOARD
+      database: "ADMIN_DB"
+      schema: "AI_COSTS"
+    query_warehouse: "app_wh"
+    main_file: streamlit_app.py
+    artifacts:
+      - streamlit_app.py
