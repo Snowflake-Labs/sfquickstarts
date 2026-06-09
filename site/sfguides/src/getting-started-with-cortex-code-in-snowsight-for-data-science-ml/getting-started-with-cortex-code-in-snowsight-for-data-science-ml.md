@@ -8,6 +8,8 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Machine Learning, Snowflake ML, Model Registry, SPCS, Cortex Code, LTV, Regression
 
+> 🎥 **Prefer a guided walkthrough?** Follow along in the [virtual hands-on lab](https://www.snowflake.com/en/webinars/virtual-hands-on-lab/build-your-first-agentic-ml-pipeline-with-natural-language-2026-05-28/).
+
 # Build Your First ML Model in Snowflake with Agentic ML
 <!-- ------------------------ -->
 ## 1. Overview
