@@ -137,7 +137,7 @@ CALL "PC_ALTR_DB"."PUBLIC"."SETUP_ALTR_SERVICE_ACCOUNT"(FALSE);
 ### Connect ALTR to the Sample Database
 
 > 
-> **NOTE**: Free tier ALTR accounts are limited to a single connected database. Disconnect your existing database before connecting this one, or use the database you already have connected (column names may differ from this guide).
+> **NOTE**: Free tier ALTR accounts are limited to 3 connected databases. If you are already at that limit, disconnect an existing database before connecting this one, or use a database you already have connected (column names may differ from this guide).
 >
 
 - [Log in to your ALTR portal](https://altrnet.live.altr.com/api/auth/organization_login?uiredirect=true)
@@ -147,6 +147,8 @@ CALL "PC_ALTR_DB"."PUBLIC"."SETUP_ALTR_SERVICE_ACCOUNT"(FALSE);
   - **Service User:** `PC_ALTR_USER`
   - **Database Name:** `ALTR_GETTING_STARTED_DB`
 - Click **Next**, then **Connect Data Source**
+
+![Connect Data Source](assets/connect_datasource.png)
 >
 
 <!-- ------------------------ -->
