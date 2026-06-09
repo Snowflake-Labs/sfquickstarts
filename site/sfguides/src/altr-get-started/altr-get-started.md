@@ -83,11 +83,13 @@ CREATE TABLE SAMPLE_CUSTOMER AS
 
 - Log in to your Snowflake instance and switch your role to **ACCOUNTADMIN**
 - Open the [ALTR listing in Snowflake Marketplace](https://app.snowflake.com/marketplace/listing/GZSTZ4652VTDT/altr-altr-data-security-and-posture-management) directly, or navigate there via **Data Products → Marketplace** and search for "ALTR"
-- Click **Try for Free** on the listing
-- Review the objects that will be created in your Snowflake account (`PC_ALTR_DB`, `PC_ALTR_WH`, `PC_ALTR_USER`, `PC_ALTR_ROLE`) and click **Get Started**
-- When prompted, click **Activate** — this takes you to the ALTR portal to finish setup
 
-![ALTR Account Created](assets/partner_account_created.png)
+![Snowflake Marketplace - ALTR](assets/partner_account_created.png)
+
+- Click **Get Started** on the listing
+- Review the information and objects that will be created in your Snowflake account (`PC_ALTR_DB`, `PC_ALTR_WH (X-Small)`, `PC_ALTR_USER`, `PC_ALTR_ROLE`) and click **Connect to ALTR** — this takes you to the ALTR portal to finish setup
+
+![Connect to ALTR](assets/marketplace_connect.png)
 
 ### Set your ALTR Password
 ![ALTR Setup Screen](assets/altr_setup_set_pw.png)
