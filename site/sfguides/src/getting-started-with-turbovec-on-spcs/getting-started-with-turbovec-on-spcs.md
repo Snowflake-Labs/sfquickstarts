@@ -73,7 +73,7 @@ Duration: 10
 Clone the quickstart repository:
 
 ```bash
-git clone https://github.com/navnitshukla/sfguide-getting-started-turbovec-on-spcs.git
+git clone https://github.com/sfc-gh-nashukla/sfguide-getting-started-turbovec-on-spcs.git
 cd sfguide-getting-started-turbovec-on-spcs
 ```
 
@@ -324,4 +324,4 @@ Duration: 2
 - [TurboQuant Paper (ICLR 2026)](https://arxiv.org/abs/2504.19874)
 - [Dataset: Qdrant/DBpedia OpenAI 1536-dim](https://huggingface.co/datasets/Qdrant/dbpedia-entities-openai3-text-embedding-3-large-1536-1M)
 - [Snowpark Container Services Docs](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview)
-- [Quickstart Source Code](https://github.com/navnitshukla/sfguide-getting-started-turbovec-on-spcs)
+- [Quickstart Source Code](https://github.com/sfc-gh-nashukla/sfguide-getting-started-turbovec-on-spcs)
