@@ -72,19 +72,20 @@ CREATE TABLE SAMPLE_CUSTOMER AS
 
 > 
 >**In This Step:** 
->We will create an ALTR account and connect it to Snowflake, all from within your browser. ALTR is a SaaS solution that integrates directly with Snowflake — no installation required on your premises. The process starts in Snowflake's Partner Connect portal.
+>We will create an ALTR account and connect it to Snowflake, all from within your browser. ALTR is a SaaS solution that integrates directly with Snowflake — no installation required on your premises. The process starts in the Snowflake Marketplace.
 >
 
 > 
 > **NOTE:** If you already have an ALTR account and want to use it instead of creating a new one, skip to Step 4 ***ALTR Setup for existing accounts*** 
 >
 
-### Connect to ALTR via Partner Connect
+### Connect to ALTR via Snowflake Marketplace
 
-- Log in to your Snowflake instance and navigate to **Data Products → Partner Connect**. If you need help finding it, see: [Connecting with a Snowflake Partner](https://docs.snowflake.com/en/user-guide/ecosystem-partner-connect#connecting-with-a-snowflake-partner).
-- Type "ALTR" in the search bar and click on the ALTR card
-- Review the objects that will be created in your Snowflake account (`PC_ALTR_DB`, `PC_ALTR_WH`, `PC_ALTR_USER`, `PC_ALTR_ROLE`) and click **Connect**
-- When you see the confirmation below, click **Activate** — this takes you to the ALTR portal to finish setup
+- Log in to your Snowflake instance and switch your role to **ACCOUNTADMIN**
+- Open the [ALTR listing in Snowflake Marketplace](https://app.snowflake.com/marketplace/listing/GZSTZ4652VTDT/altr-altr-data-security-and-posture-management) directly, or navigate there via **Data Products → Marketplace** and search for "ALTR"
+- Click **Try for Free** on the listing
+- Review the objects that will be created in your Snowflake account (`PC_ALTR_DB`, `PC_ALTR_WH`, `PC_ALTR_USER`, `PC_ALTR_ROLE`) and click **Get Started**
+- When prompted, click **Activate** — this takes you to the ALTR portal to finish setup
 
 ![ALTR Account Created](assets/partner_account_created.png)
 
