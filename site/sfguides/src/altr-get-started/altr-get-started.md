@@ -152,7 +152,6 @@ CALL "PC_ALTR_DB"."PUBLIC"."SETUP_ALTR_SERVICE_ACCOUNT"(FALSE);
 - Click **Next**, then **Connect Data Source**
 
 ![Connect Data Source](assets/connect_datasource.png)
->
 
 <!-- ------------------------ -->
 ## Run Data Classification
