@@ -2,7 +2,7 @@ author: Akhil Ramasagaram
 id: prefect-spcs-fraud-detection-mlops
 language: en
 summary: Run a Prefect worker on Snowpark Container Services — no Kubernetes, no separate infrastructure. Deploy a fraud detection retraining pipeline with drift monitoring and human approval gates, executing where your data lives.
-categories: snowflake-site:taxonomy/solution-center/certification/partner-solution,snowflake-site:taxonomy/product/ai,snowflake-site:taxonomy/snowflake-feature/marketplace-and-integrations,snowflake-site:taxonomy/snowflake-feature/snowpark-container-services
+categories: snowflake-site:taxonomy/solution-center/certification/partner-solution,snowflake-site:taxonomy/product/ai,snowflake-site:taxonomy/snowflake-feature/snowpark,snowflake-site:taxonomy/snowflake-feature/snowpark-container-services
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
@@ -215,8 +215,4 @@ The fraud detection workflow used in this guide is only one example of what can 
 
 The key takeaway is straightforward: by running Prefect workers on Snowpark Container Services, organizations can keep their workflow execution layer inside Snowflake while continuing to leverage Prefect Cloud as their orchestration control plane.
 
-For a complete, working example of the architecture described in this guide — including the Prefect worker configuration, deployment assets, and sample fraud detection workflow — see the companion repository:
-
-[github.com/sfc-gh-aramasagaram/sfguide-prefect-spcs-fraud-detection](https://github.com/sfc-gh-aramasagaram/sfguide-prefect-spcs-fraud-detection)
-
-The repository contains the full implementation and can be used as a starting point for adapting the pattern to your own workloads.
+For a complete, working example of the architecture described in this guide — including the Prefect worker configuration, deployment assets, and sample fraud detection workflow — see the [companion repository](https://github.com/sfc-gh-aramasagaram/sfguide-prefect-spcs-fraud-detection). It contains the full implementation and can be used as a starting point for adapting the pattern to your own workloads.
