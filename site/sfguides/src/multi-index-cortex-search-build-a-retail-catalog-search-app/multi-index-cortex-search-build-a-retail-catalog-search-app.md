@@ -662,7 +662,7 @@ The full SNOWFIELD PRO demo connects a FastAPI backend to a React frontend. The 
 
 ![Example app](assets/example_app.png)
 
-We will cover to options for running the app:
+We will cover two options for running the app:
 - Option 1: Running the App **Locally**
 - Option 2: Running the App **in Snowpark Container Services**
 
