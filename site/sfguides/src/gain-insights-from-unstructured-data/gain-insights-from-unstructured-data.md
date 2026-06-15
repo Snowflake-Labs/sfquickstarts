@@ -272,7 +272,8 @@ SELECT
         file => TO_FILE('@TB_VOC.MEDIA.IMAGES', IMAGE_PATH),
         responseFormat => {
             'brand_name': 'What is the food truck or restaurant brand name visible?',
-            'car_color': 'Identify the color of the car.'
+            'car_color': 'Identify the color of the car.',
+            'menu_items': 'What menu items or dishes are visible?'
         }
     ) AS extracted_data
 FROM
@@ -291,7 +292,8 @@ SELECT
         file => TO_FILE('@TB_VOC.MEDIA.IMAGES', RELATIVE_PATH),
         responseFormat => {
             'brand_name': 'What is the food truck or restaurant brand name visible?',
-            'car_color': 'Identify the color of the car.'
+            'car_color': 'Identify the color of the car.',
+            'menu_items': 'What menu items or dishes are visible?'
         }
     ) AS extracted_data
 FROM
@@ -452,7 +454,7 @@ SELECT
     RELATIVE_PATH AS file_path,
     AI_EXTRACT(
         TO_FILE('@TB_VOC.MEDIA.IMAGES', RELATIVE_PATH),
-        {'brand_name': 'What is the food truck brand name?', 'car_color': 'Identify the color of the car.'}
+        {'brand_name': 'What is the food truck brand name?', 'car_color': 'Identify the color of the car.', 'menu_items': 'What menu items or dishes are visible?'}
     ):response AS extracted_data
 FROM
     DIRECTORY(@TB_VOC.MEDIA.IMAGES)
