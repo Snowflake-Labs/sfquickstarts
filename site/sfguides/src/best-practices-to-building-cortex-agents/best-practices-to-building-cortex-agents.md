@@ -18,7 +18,7 @@ Agents represent a new paradigm for how work gets done with data. Instead of pre
 
 You can create, update, and deploy these high-quality agents directly inside your Snowflake environment. Snowflake Agents integrate directly with [Snowflake CoWork](https://ai.snowflake.com/) with governance, observability, and performance built in.
 
-This guide is your map to building agents for use with Snowflake CoWork, from idea to production, including links to deeper resources, examples, and tutorials along the way.
+This guide is your map to building high-quality Cortex Agents for use with Snowflake CoWork, from idea to production, including links to deeper resources, examples, and tutorials along the way.
 
 ### What you'll learn
 - How Snowflake CoWork and Cortex Agents work together.
