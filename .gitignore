@@ -2,6 +2,7 @@ bazel-*
 .DS_Store
 .drone.sec.yml
 .idea/
+.vscode/
 *.iml
 debug.test
 *pb.go
