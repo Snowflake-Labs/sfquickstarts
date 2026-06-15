@@ -17,7 +17,7 @@ open in snowflake link: https://app.snowflake.com/templates?template=get_started
 
 Snowflake CoWork is the personal work agent that brings deep analysis and automation to every knowledge worker. It acts across the systems users already rely on, with built-in RBAC and governance for secure and trusted answers, all inside Snowflake's perimeter. Unlike standalone AI tools, CoWork is grounded in your enterprise data from day one, combining AI reasoning with Snowflake's governance layer so every answer is trusted, cited, and secure.
 
-In this guide, you will configure the core building blocks of a CoWork agent: a semantic view for structured data queries, a Cortex Search service for document retrieval, and a custom tool for automated actions.
+By the end of this guide, you will have a working Cortex Agent connected to CoWork that can answer business questions across structured sales data and unstructured support tickets, generate charts, and take actions like sending summary emails.
 
 ### What is Snowflake CoWork?
 
