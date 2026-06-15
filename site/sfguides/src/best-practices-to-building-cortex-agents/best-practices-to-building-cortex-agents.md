@@ -49,7 +49,7 @@ Cortex Agents combine reasoning from large language models with Snowflake’s go
 5.  **Reflection & response:** The orchestrator reviews results, refines if needed, and generates the final answer (including summaries, tables, or charts) shown in the Snowflake CoWork UI.
 
 The following image describes this structure of Snowflake CoWork.
-<img src="assets/snowflake-cowork-architecture.png" />
+![Snowflake CoWork](assets/snowflake-cowork-architecture.png) 
 
 *👉 Read the blog to learn more about [how Snowflake CoWork orchestration works](https://www.snowflake.com/en/engineering-blog/inside-snowflake-intelligence-enterprise-agentic-ai/)*
 
