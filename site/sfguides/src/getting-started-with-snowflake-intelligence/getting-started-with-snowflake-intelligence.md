@@ -15,21 +15,17 @@ open in snowflake link: https://app.snowflake.com/templates?template=get_started
 
 ## Overview
 
+Snowflake CoWork is the personal work agent that brings deep analysis and automation to every knowledge worker. It acts across the systems users already rely on, with built-in RBAC and governance for secure and trusted answers, all inside Snowflake's perimeter. Unlike standalone AI tools, CoWork is grounded in your enterprise data from day one, combining AI reasoning with Snowflake's governance layer so every answer is trusted, cited, and secure.
 
-Snowflake CoWork is the personal work agent that brings deep analysis and automation to every knowledge worker. It understands your data and your work from day one, answers the hardest “why” questions with cited research, and runs the work — on demand, on schedule, and across the tools your business already uses. All inside Snowflake’s governance perimeter.
+In this guide, you will configure the core building blocks of a CoWork agent: a semantic view for structured data queries, a Cortex Search service for document retrieval, and a custom tool for automated actions.
 
-CoWork moves teams from reactive Q&A to proactive, context-aware intelligence that drives decisions and execution. It delivers governed, curated dashboards and shareable artifacts so insights become reusable team knowledge — turning everyday work into repeatable processes and enabling teams to share and build on each other’s insights.
+### What is Snowflake CoWork?
 
+- **Deep analysis, quick action:** Multi-agent workflows deliver cited, actionable answers across structured data, unstructured documents, and external systems.
+- **Verified, trusted answers:** Every answer traces back to its source. Codify validated queries as "golden" questions for consistent results.
+- **Enterprise-ready:** Built-in RBAC and governance keep data inside Snowflake's secure perimeter. MCP Connectors extend the agent across the tools your team already uses.
 
-### What is Snowflake CoWork? 
-
-The personal agent where you work smarter. Ask complex questions of all your data, analyze and get insights instantly with Snowflake CoWork as your always-on thought partner.
-- **Deep analysis, quick action:** Go beyond the “what” to quickly understand the critical “why,” accelerating action with AI agents that use natural language to analyze and reason across all your data, including third-party sources and market intelligence.
-- **Verified, trusted answers:** Trace every answer to its source. Codify "golden" questions for verified answers.
-- **Enterprise-ready:** Maintain peace of mind knowing that Snowflake CoWork scales with your enterprise data and application complexity — all within Snowflake’s secure perimeter and with the same robust governance policies.
-
-
-![Snowflake CoWork](assets/snowflake-cowork-home-page.png)
+<img src="assets/snowflake-cowork-home-page.png" alt="Snowflake CoWork" style="border: 1px solid #d1d5db; border-radius: 4px;" />
 
 ### Use Cases
 
@@ -53,7 +49,7 @@ How to create the building blocks (agents) for Snowflake CoWork.
 
 ### What You Will Build
 
-A personal work agent — Snowflake CoWork — that can respond to questions by reasoning over both structured and unstructured data.
+A personal work agent (Snowflake CoWork) that can respond to questions by reasoning over both structured and unstructured data.
 
 <!-- ------------------------ -->
 ## Setup
@@ -244,7 +240,7 @@ Here are some other questions you may ask.
 ## Conclusion And Resources
 
 
-Congratulations! You've successfully built a personal work agent — Snowflake CoWork — that can respond to questions by reasoning over both structured and unstructured data.
+Congratulations! You've successfully built a personal work agent (Snowflake CoWork) that can respond to questions by reasoning over both structured and unstructured data.
 
 ### What You Learned
 
