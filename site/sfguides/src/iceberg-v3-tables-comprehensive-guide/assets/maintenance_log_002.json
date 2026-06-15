@@ -1,0 +1,50 @@
+[
+  {
+    "log_id": "LOG-2026-002-001",
+    "vehicle_id": "VH-0078",
+    "log_timestamp": "2026-01-16T09:00:00",
+    "event_type": "BRAKE_SERVICE",
+    "severity": "CRITICAL",
+    "description": "Emergency brake service. Front brake pads worn below minimum threshold. Rotors resurfaced.",
+    "technician": "Carlos Martinez",
+    "service_center": "Los Angeles Fleet Center",
+    "parts_replaced": ["brake pads - front set", "brake fluid"],
+    "diagnostic_codes": [],
+    "labor_hours": 4.0,
+    "total_cost": 550.00,
+    "odometer_reading": 112340,
+    "next_service_date": "2026-03-16"
+  },
+  {
+    "log_id": "LOG-2026-002-002",
+    "vehicle_id": "VH-0023",
+    "log_timestamp": "2026-01-16T11:30:00",
+    "event_type": "BATTERY_REPLACEMENT",
+    "severity": "MEDIUM",
+    "description": "Battery failed load test. Replaced with new heavy-duty battery. Alternator output verified.",
+    "technician": "Lisa Park",
+    "service_center": "Los Angeles Fleet Center",
+    "parts_replaced": ["battery - 850 CCA"],
+    "diagnostic_codes": ["U0100"],
+    "labor_hours": 1.0,
+    "total_cost": 225.00,
+    "odometer_reading": 78560,
+    "next_service_date": "2026-07-16"
+  },
+  {
+    "log_id": "LOG-2026-002-003",
+    "vehicle_id": "VH-0045",
+    "log_timestamp": "2026-01-16T15:00:00",
+    "event_type": "TRANSMISSION_SERVICE",
+    "severity": "HIGH",
+    "description": "Transmission fluid flush and filter replacement. Noticed slight hesitation during shifts.",
+    "technician": "Robert Kim",
+    "service_center": "San Diego Fleet Hub",
+    "parts_replaced": ["transmission filter", "transmission fluid"],
+    "diagnostic_codes": ["P0730", "P0731"],
+    "labor_hours": 5.0,
+    "total_cost": 675.00,
+    "odometer_reading": 134500,
+    "next_service_date": "2026-02-16"
+  }
+]

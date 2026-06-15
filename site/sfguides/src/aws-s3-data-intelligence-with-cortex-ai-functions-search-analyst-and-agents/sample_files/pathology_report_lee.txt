@@ -1,0 +1,55 @@
+YALE NEW HAVEN HOSPITAL -- PATHOLOGY DEPARTMENT
+PATHOLOGY REPORT
+
+Patient: Catherine Lee
+DOB: 10/03/1960
+MRN: MRN-20241001-CL
+Specimen Collection Date: 09/28/2024
+Report Date: 10/01/2024
+Referring Physician: Dr. Priya Sharma, MD -- Endocrinology
+Pathologist: Dr. Amanda Rivers, MD -- Pathology
+
+SPECIMEN:
+A. Thyroid, right lobe -- fine needle aspiration
+B. Thyroid, left lobe -- fine needle aspiration
+
+CLINICAL HISTORY:
+64-year-old female with type 2 diabetes mellitus and newly discovered thyroid nodules on routine ultrasound. Right lobe nodule measures 2.3 cm, left lobe nodule measures 1.1 cm. TI-RADS 4 (right), TI-RADS 3 (left). TSH: 3.8 mIU/L (normal). Patient has no history of neck radiation, no family history of thyroid cancer.
+
+GROSS DESCRIPTION:
+Specimen A: Two air-dried smears and two alcohol-fixed smears from ultrasound-guided FNA of right thyroid nodule. Two passes performed.
+Specimen B: Two air-dried smears and two alcohol-fixed smears from ultrasound-guided FNA of left thyroid nodule. Two passes performed.
+
+MICROSCOPIC FINDINGS:
+Specimen A (Right lobe, 2.3 cm nodule):
+- Moderately cellular specimen
+- Follicular cells arranged in microfollicular and trabecular patterns
+- Nuclear enlargement with irregular nuclear contours
+- Occasional nuclear grooves identified
+- No definitive papillary nuclear features (no intranuclear pseudoinclusions)
+- Scant colloid
+- No necrosis or mitotic figures
+
+Specimen B (Left lobe, 1.1 cm nodule):
+- Adequately cellular specimen
+- Follicular cells in macrofollicular arrangements
+- Uniform nuclei without atypia
+- Abundant colloid
+- Background consistent with benign thyroid tissue
+
+DIAGNOSIS:
+Specimen A: BETHESDA CATEGORY IV -- Follicular neoplasm / suspicious for follicular neoplasm
+- Recommendation: Diagnostic lobectomy (right) with intraoperative frozen section
+- Molecular testing (Afirma/ThyroSeq) may be considered prior to surgery
+
+Specimen B: BETHESDA CATEGORY II -- Benign
+- Consistent with benign colloid nodule
+- Recommendation: Follow-up ultrasound in 12-18 months
+
+COMMENT:
+The right thyroid nodule demonstrates features concerning for follicular neoplasm. Distinction between follicular adenoma and follicular carcinoma requires histological evaluation of the capsule and vascular invasion, which cannot be assessed on cytology. Surgical consultation is recommended. Molecular testing may help risk-stratify if the patient prefers to avoid surgery initially.
+
+Electronically signed by:
+Dr. Amanda Rivers, MD
+Department of Pathology
+Yale New Haven Hospital

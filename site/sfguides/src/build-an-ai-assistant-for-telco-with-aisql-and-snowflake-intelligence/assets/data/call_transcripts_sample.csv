@@ -1,0 +1,44 @@
+CALL_ID,SEGMENT_ID,SEGMENT_NUMBER,SPEAKER_ID,SPEAKER_ROLE,SEGMENT_TEXT,SENTIMENT_SCORE,SEGMENT_START_TIME,SEGMENT_END_TIME,CALL_TIMESTAMP,CALL_DURATION_SECONDS
+call_001,seg_001_001,1,0,Customer,"Hi I'm calling because my internet has been down for two days",-0.35,0,8,2025-01-15 09:23:00,450
+call_001,seg_001_002,2,1,Agent,"I'm sorry to hear that Let me pull up your account and see what's going on",0.45,8,18,2025-01-15 09:23:00,450
+call_001,seg_001_003,3,0,Customer,"I've already called twice and nothing has been fixed This is really frustrating",-0.75,18,28,2025-01-15 09:23:00,450
+call_001,seg_001_004,4,1,Agent,"I completely understand your frustration Let me check our network status in your area",0.55,28,38,2025-01-15 09:23:00,450
+call_001,seg_001_005,5,1,Agent,"I see there was a fiber cable cut in your neighborhood We have technicians working on it right now",0.25,38,50,2025-01-15 09:23:00,450
+call_001,seg_001_006,6,0,Customer,"When will it be fixed I work from home and this is costing me money",0.05,50,62,2025-01-15 09:23:00,450
+call_001,seg_001_007,7,1,Agent,"The repair should be completed within the next 2 hours And I'd like to credit your account for the downtime",0.75,62,75,2025-01-15 09:23:00,450
+call_001,seg_001_008,8,0,Customer,"That would be helpful Thank you for checking on that",0.65,75,85,2025-01-15 09:23:00,450
+call_002,seg_002_001,1,0,Customer,"Hello I have a question about my bill this month",0.45,0,8,2025-01-15 09:45:00,320
+call_002,seg_002_002,2,1,Agent,"Of course I'd be happy to help What's your question",0.70,8,15,2025-01-15 09:45:00,320
+call_002,seg_002_003,3,0,Customer,"There's a charge for equipment rental but I own my own modem",0.15,15,25,2025-01-15 09:45:00,320
+call_002,seg_002_004,4,1,Agent,"Let me check your account I can see you do have your own modem registered with us",0.50,25,35,2025-01-15 09:45:00,320
+call_002,seg_002_005,5,1,Agent,"This looks like a billing error I'll remove that charge right away and credit it back",0.85,35,48,2025-01-15 09:45:00,320
+call_002,seg_002_006,6,0,Customer,"Great thank you so much That was easier than I expected",0.90,48,58,2025-01-15 09:45:00,320
+call_003,seg_003_001,1,0,Customer,"I want to cancel my service",0.25,0,6,2025-01-15 10:15:00,540
+call_003,seg_003_002,2,1,Agent,"I'm sorry to hear you're considering canceling May I ask what prompted this decision",0.35,6,16,2025-01-15 10:15:00,540
+call_003,seg_003_003,3,0,Customer,"The service keeps going down and the price keeps going up I'm tired of dealing with it",-0.70,16,28,2025-01-15 10:15:00,540
+call_003,seg_003_004,4,1,Agent,"I understand your concerns Let me see what I can do to make this right for you",0.60,28,38,2025-01-15 10:15:00,540
+call_003,seg_003_005,5,1,Agent,"I can offer you a discount on your monthly rate and prioritize a technician visit to address the reliability",0.75,38,52,2025-01-15 10:15:00,540
+call_003,seg_003_006,6,0,Customer,"How much of a discount are we talking about",-0.15,52,60,2025-01-15 10:15:00,540
+call_003,seg_003_007,7,1,Agent,"I can reduce your bill by 20 dollars per month for the next 12 months",0.65,60,72,2025-01-15 10:15:00,540
+call_003,seg_003_008,8,0,Customer,"And you can send someone to fix the connection issues",0.15,72,82,2025-01-15 10:15:00,540
+call_003,seg_003_009,9,1,Agent,"Yes I'll schedule a technician for tomorrow morning Is 9 AM good for you",0.70,82,92,2025-01-15 10:15:00,540
+call_003,seg_003_010,10,0,Customer,"OK let's try that If it doesn't work out I'll call back to cancel",0.45,92,103,2025-01-15 10:15:00,540
+call_004,seg_004_001,1,0,Customer,"Hi I'm interested in upgrading my service plan",0.75,0,8,2025-01-15 11:30:00,280
+call_004,seg_004_002,2,1,Agent,"Excellent What are you looking to add to your current service",0.80,8,16,2025-01-15 11:30:00,280
+call_004,seg_004_003,3,0,Customer,"I want faster internet speed I currently have the 100 meg plan",0.65,16,26,2025-01-15 11:30:00,280
+call_004,seg_004_004,4,1,Agent,"Great We have a 500 megabit plan and a gigabit plan available in your area",0.75,26,38,2025-01-15 11:30:00,280
+call_004,seg_004_005,5,0,Customer,"What's the price difference",0.55,38,44,2025-01-15 11:30:00,280
+call_004,seg_004_006,6,1,Agent,"The 500 meg plan is 30 dollars more per month and the gig plan is 50 dollars more",0.60,44,56,2025-01-15 11:30:00,280
+call_004,seg_004_007,7,0,Customer,"I'll take the gigabit plan Can you set that up today",0.85,56,66,2025-01-15 11:30:00,280
+call_004,seg_004_008,8,1,Agent,"Absolutely I can activate that remotely right now You should see the new speeds within the hour",0.90,66,78,2025-01-15 11:30:00,280
+call_004,seg_004_009,9,0,Customer,"Perfect thank you",0.95,78,83,2025-01-15 11:30:00,280
+call_005,seg_005_001,1,0,Customer,"My TV service isn't working channels won't load",0.10,0,10,2025-01-15 14:00:00,420
+call_005,seg_005_002,2,1,Agent,"I can help you with that Let's do some troubleshooting Have you tried restarting your set-top box",0.55,10,22,2025-01-15 14:00:00,420
+call_005,seg_005_003,3,0,Customer,"Yes I unplugged it for a minute and plugged it back in Nothing changed",-0.25,22,34,2025-01-15 14:00:00,420
+call_005,seg_005_004,4,1,Agent,"OK let me send a refresh signal to your box This should take about 2 minutes",0.60,34,46,2025-01-15 14:00:00,420
+call_005,seg_005_005,5,0,Customer,"Alright I'm waiting",0.20,46,52,2025-01-15 14:00:00,420
+call_005,seg_005_006,6,1,Agent,"The signal has been sent Can you try changing channels now",0.50,52,62,2025-01-15 14:00:00,420
+call_005,seg_005_007,7,0,Customer,"Yes it's working now Great Thank you so much",0.85,62,72,2025-01-15 14:00:00,420
+call_005,seg_005_008,8,1,Agent,"You're welcome Is there anything else I can help you with today",0.75,72,80,2025-01-15 14:00:00,420
+call_005,seg_005_009,9,0,Customer,"No that's all Thanks again",0.80,80,87,2025-01-15 14:00:00,420
+

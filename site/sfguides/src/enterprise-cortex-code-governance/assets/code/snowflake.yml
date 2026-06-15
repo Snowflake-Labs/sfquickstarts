@@ -1,0 +1,30 @@
+definition_version: 2
+entities:
+  cortex_code_credit_manager:
+    type: streamlit
+    identifier:
+      name: CORTEX_CODE_CREDIT_MANAGER
+    title: "Cortex Code Credit Manager"
+    query_warehouse: COMPUTE_WH
+    main_file: streamlit_app.py
+    artifacts:
+      - config.py
+      - config.yaml
+      - audit.py
+      - utils.py
+      - intelligence.py
+      - sp_definitions.py
+      - prerequisites.sql
+      - environment.yml
+      - pages/__init__.py
+      - pages/home.py
+      - pages/access_management.py
+      - pages/credit_config.py
+      - pages/usage_trends.py
+      - pages/budget_forecast.py
+      - pages/model_access.py
+      - pages/credit_requests.py
+      - pages/settings.py
+      - pages/audit_logs.py
+      - pages/setup.py
+    stage: CORTEX_CODE_CREDIT_MANAGER_STAGE

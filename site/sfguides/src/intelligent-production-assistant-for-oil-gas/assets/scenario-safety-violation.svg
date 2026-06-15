@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 280">
+  <rect width="800" height="280" fill="#0F172A"/>
+  
+  <text x="400" y="30" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#F8FAFC" text-anchor="middle">Scenario 2: Safety Violation (H2S)</text>
+  
+  <rect x="50" y="55" width="200" height="80" rx="6" fill="#1E40AF"/>
+  <text x="150" y="80" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="white" text-anchor="middle">GUARDIAN AGENT</text>
+  <text x="150" y="98" font-family="Arial, sans-serif" font-size="9" fill="#93C5FD" text-anchor="middle">Stored Procedure</text>
+  <text x="150" y="115" font-family="Arial, sans-serif" font-size="9" fill="#93C5FD" text-anchor="middle">Live_Sensors JOIN Active_Permits</text>
+  
+  <line x1="250" y1="95" x2="290" y2="95" stroke="#64748B" stroke-width="2"/>
+  <polygon points="300,95 290,90 290,100" fill="#64748B"/>
+  
+  <rect x="310" y="55" width="200" height="80" rx="6" fill="#7C3AED"/>
+  <text x="410" y="80" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="white" text-anchor="middle">CONDITION CHECK</text>
+  <text x="410" y="100" font-family="Arial, sans-serif" font-size="9" fill="#C4B5FD" text-anchor="middle">S.Value &gt; P.Max_Limit</text>
+  <text x="410" y="118" font-family="Arial, sans-serif" font-size="9" fill="#C4B5FD" text-anchor="middle">15 ppm &gt; 10 ppm = TRUE</text>
+  
+  <line x1="510" y1="95" x2="550" y2="95" stroke="#64748B" stroke-width="2"/>
+  <polygon points="560,95 550,90 550,100" fill="#64748B"/>
+  
+  <rect x="570" y="55" width="180" height="80" rx="6" fill="#991B1B"/>
+  <text x="660" y="80" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="white" text-anchor="middle">VIOLATION DETECTED</text>
+  <text x="660" y="100" font-family="Arial, sans-serif" font-size="9" fill="#FCA5A5" text-anchor="middle">Work_Type = 'Hot Work'</text>
+  <text x="660" y="118" font-family="Arial, sans-serif" font-size="9" fill="#FCA5A5" text-anchor="middle">Zone B Active</text>
+  
+  <line x1="660" y1="135" x2="660" y2="165" stroke="#EF4444" stroke-width="3"/>
+  <polygon points="660,175 653,163 667,163" fill="#EF4444"/>
+  
+  <rect x="200" y="185" width="500" height="70" rx="8" fill="#450A0A" stroke="#EF4444" stroke-width="3"/>
+  <text x="450" y="210" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#EF4444" text-anchor="middle">CRITICAL ALERT: STOP WORK</text>
+  <text x="450" y="232" font-family="Arial, sans-serif" font-size="11" fill="#FCA5A5" text-anchor="middle">"Zone B H2S at 15 ppm. Active hot work permit requires STOP WORK above 10 ppm."</text>
+</svg>

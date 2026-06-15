@@ -1,0 +1,107 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 700">
+  <defs>
+    <linearGradient id="snowflakeBg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#29B5E8;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1E88C7;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="dataLayerGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#1E40AF;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1E3A8A;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="intellLayerGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#7C3AED;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#6D28D9;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="agentGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#8B5CF6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#7C3AED;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="presLayerGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#059669;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#047857;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <rect width="900" height="700" fill="#0F172A"/>
+  
+  <text x="450" y="35" font-family="Arial, sans-serif" font-size="22" font-weight="bold" fill="#F8FAFC" text-anchor="middle">IPA Technical Architecture</text>
+  
+  <rect x="30" y="55" width="840" height="620" rx="12" fill="none" stroke="url(#snowflakeBg)" stroke-width="3"/>
+  <rect x="30" y="55" width="840" height="40" rx="12" fill="url(#snowflakeBg)"/>
+  <rect x="30" y="83" width="840" height="12" fill="url(#snowflakeBg)"/>
+  <text x="450" y="82" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="white" text-anchor="middle">SNOWFLAKE DATA CLOUD</text>
+  
+  <rect x="50" y="110" width="800" height="150" rx="8" fill="#1E293B"/>
+  <text x="70" y="135" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#94A3B8">DATA LAYER</text>
+  
+  <rect x="70" y="150" width="230" height="95" rx="6" fill="url(#dataLayerGrad)"/>
+  <text x="185" y="175" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="white" text-anchor="middle">SCADA_CORE</text>
+  <text x="185" y="195" font-family="Arial, sans-serif" font-size="10" fill="#93C5FD" text-anchor="middle">ASSET_MASTER</text>
+  <text x="185" y="210" font-family="Arial, sans-serif" font-size="10" fill="#93C5FD" text-anchor="middle">TAG_REGISTRY</text>
+  <text x="185" y="225" font-family="Arial, sans-serif" font-size="10" fill="#93C5FD" text-anchor="middle">TAG_HISTORY | FINANCIAL_ACTUALS</text>
+  
+  <rect x="335" y="150" width="230" height="95" rx="6" fill="#065F46"/>
+  <text x="450" y="175" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="white" text-anchor="middle">KNOWLEDGE_BASE</text>
+  <text x="450" y="200" font-family="Arial, sans-serif" font-size="10" fill="#6EE7B7" text-anchor="middle">DOCUMENTS_CHUNKED</text>
+  <text x="450" y="220" font-family="Arial, sans-serif" font-size="10" fill="#6EE7B7" text-anchor="middle">(Vector Store)</text>
+  
+  <rect x="600" y="150" width="230" height="95" rx="6" fill="#92400E"/>
+  <text x="715" y="175" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="white" text-anchor="middle">APP</text>
+  <text x="715" y="200" font-family="Arial, sans-serif" font-size="10" fill="#FCD34D" text-anchor="middle">SEMANTIC_STAGE</text>
+  <text x="715" y="220" font-family="Arial, sans-serif" font-size="10" fill="#FCD34D" text-anchor="middle">ALERTS</text>
+  
+  <rect x="50" y="275" width="800" height="170" rx="8" fill="#1E293B"/>
+  <text x="70" y="300" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#94A3B8">INTELLIGENCE LAYER</text>
+  
+  <rect x="70" y="315" width="200" height="75" rx="6" fill="url(#intellLayerGrad)"/>
+  <text x="170" y="340" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="white" text-anchor="middle">CORTEX ANALYST</text>
+  <text x="170" y="358" font-family="Arial, sans-serif" font-size="10" fill="#C4B5FD" text-anchor="middle">Semantic Model</text>
+  <text x="170" y="375" font-family="Arial, sans-serif" font-size="10" fill="#C4B5FD" text-anchor="middle">Text-to-SQL</text>
+  
+  <rect x="300" y="315" width="200" height="75" rx="6" fill="#14532D"/>
+  <text x="400" y="340" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="white" text-anchor="middle">CORTEX SEARCH</text>
+  <text x="400" y="358" font-family="Arial, sans-serif" font-size="10" fill="#86EFAC" text-anchor="middle">DOCS_SEARCH_SVC</text>
+  <text x="400" y="375" font-family="Arial, sans-serif" font-size="10" fill="#86EFAC" text-anchor="middle">RAG Retrieval</text>
+  
+  <rect x="530" y="315" width="200" height="75" rx="6" fill="#78350F"/>
+  <text x="630" y="340" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="white" text-anchor="middle">AI_COMPLETE</text>
+  <text x="630" y="358" font-family="Arial, sans-serif" font-size="10" fill="#FDE68A" text-anchor="middle">Vision Analysis</text>
+  <text x="630" y="375" font-family="Arial, sans-serif" font-size="10" fill="#FDE68A" text-anchor="middle">Safety Inspection</text>
+  
+  <line x1="170" y1="390" x2="170" y2="410" stroke="#64748B" stroke-width="2"/>
+  <line x1="170" y1="410" x2="400" y2="410" stroke="#64748B" stroke-width="2"/>
+  <line x1="400" y1="390" x2="400" y2="420" stroke="#64748B" stroke-width="2"/>
+  <line x1="630" y1="390" x2="630" y2="410" stroke="#64748B" stroke-width="2"/>
+  <line x1="630" y1="410" x2="400" y2="410" stroke="#64748B" stroke-width="2"/>
+  <polygon points="400,430 395,420 405,420" fill="#64748B"/>
+  
+  <rect x="280" y="460" width="340" height="90" rx="8" fill="url(#agentGradient)" stroke="#A78BFA" stroke-width="2"/>
+  <text x="450" y="490" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="white" text-anchor="middle">CORTEX AGENT (IPA)</text>
+  
+  <rect x="310" y="505" width="90" height="35" rx="4" fill="#A78BFA"/>
+  <text x="355" y="528" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="#1E1B4B" text-anchor="middle">Analyst Tool</text>
+  
+  <rect x="500" y="505" width="90" height="35" rx="4" fill="#A78BFA"/>
+  <text x="545" y="528" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="#1E1B4B" text-anchor="middle">Search Tool</text>
+  
+  <rect x="50" y="575" width="800" height="85" rx="8" fill="#1E293B"/>
+  <text x="70" y="600" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#94A3B8">PRESENTATION LAYER (Native Streamlit)</text>
+  
+  <rect x="70" y="615" width="130" height="35" rx="4" fill="url(#presLayerGrad)"/>
+  <text x="135" y="637" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="white" text-anchor="middle">Mission Control</text>
+  
+  <rect x="215" y="615" width="130" height="35" rx="4" fill="url(#presLayerGrad)"/>
+  <text x="280" y="637" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="white" text-anchor="middle">Prod Sentinel</text>
+  
+  <rect x="360" y="615" width="130" height="35" rx="4" fill="url(#presLayerGrad)"/>
+  <text x="425" y="637" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="white" text-anchor="middle">HSE Guardian</text>
+  
+  <rect x="505" y="615" width="130" height="35" rx="4" fill="url(#presLayerGrad)"/>
+  <text x="570" y="637" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="white" text-anchor="middle">Visual Inspector</text>
+  
+  <rect x="650" y="615" width="130" height="35" rx="4" fill="url(#presLayerGrad)"/>
+  <text x="715" y="637" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="white" text-anchor="middle">Cortex Strategist</text>
+  
+  <line x1="450" y1="550" x2="450" y2="575" stroke="#10B981" stroke-width="2"/>
+  <polygon points="450,575 445,565 455,565" fill="#10B981"/>
+</svg>
