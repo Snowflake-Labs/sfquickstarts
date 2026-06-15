@@ -29,7 +29,7 @@ The personal agent where you work smarter. Ask complex questions of all your dat
 - **Enterprise-ready:** Maintain peace of mind knowing that Snowflake CoWork scales with your enterprise data and application complexity — all within Snowflake’s secure perimeter and with the same robust governance policies.
 
 
-![Snowflake CoWork](assets/si.png)
+![Snowflake CoWork](assets/snowflake-cowork-home-page.png)
 
 ### Use Cases
 
