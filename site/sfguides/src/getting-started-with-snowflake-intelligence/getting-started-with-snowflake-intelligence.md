@@ -226,11 +226,11 @@ Here are some other questions you may ask.
 <!-- ------------------------ -->
 ## Conclusion And Resources
 
-Congratulations! You've successfully built a personal work agent for Snowflake CoWork that can respond to questions by reasoning over both structured and unstructured data.
+Congratulations! You've successfully built a Cortex Agent for Snowflake CoWork that can respond to questions by reasoning over both structured and unstructured data.
 
 ### What You Learned
 
-You've learned how to create the fundamental building blocks for Snowflake CoWork. This agent is now a powerful asset, capable of combining deep analysis and automated tasks right from a single chat interface. 
+You've learned how to create the fundamental building blocks for Snowflake CoWork. This Cortex Agent is now a powerful asset, capable of combining deep analysis and automated tasks right from a single chat interface. 
 
 ### Related Resources
 
