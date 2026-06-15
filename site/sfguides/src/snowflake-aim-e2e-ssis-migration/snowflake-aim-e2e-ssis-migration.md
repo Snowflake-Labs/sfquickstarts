@@ -1,12 +1,12 @@
 author: Andres Aguilar Moya
 id: snowflake-aim-e2e-ssis-migration
 language: en
-summary: End-to-end migration of a Microsoft SQL Server database and SSIS workflows to Snowflake using SnowConvert AI, Cortex Code, and the Snowflake CLI.
+summary: End-to-end migration of a Microsoft SQL Server database and SSIS workflows to Snowflake using Snowflake AIM, Cortex Code, and the Snowflake CLI.
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/snowflake-feature/migrations
 environments: web
 status: Published
-feedback link: [https://github.com/Snowflake-Labs/sfguides/issues](https://github.com/Snowflake-Labs/sfguides/issues)
-fork repo link: [https://github.com/Snowflake-Labs/sfguide-scai-e2e-ssis-migration](https://github.com/Snowflake-Labs/sfguide-scai-e2e-ssis-migration)
+feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+fork repo link: https://github.com/Snowflake-Labs/sfguide-scai-e2e-ssis-migration
 tags: Quickstart, Migrations, SnowConvert, SQL Server, SSIS, Cortex Code, dbt
 
 # Snowflake AIM End-to-End SQL Server and SSIS Migration
@@ -17,7 +17,7 @@ tags: Quickstart, Migrations, SnowConvert, SQL Server, SSIS, Cortex Code, dbt
 
 Snowflake AIM unifies the proven capabilities of SnowConvert AI, Snowpark Migration Accelerator, and Datometry into a single AI-powered platform for assessing, modernizing, and migrating enterprise data and code workloads to Snowflake. Designed to reduce the complexity, risk, and operational overhead traditionally associated with large-scale migrations, Snowflake AIM enables organizations to define their target state while the platform orchestrates the migration process end to end. From analyzing Spark code and converting APIs to Snowpark, to modernizing warehouses, tables, views, ETL pipelines, reporting assets, and stored procedures across major platforms, Snowflake AIM combines intelligent assessment, automated code conversion, dependency mapping, orchestration, and virtualization into a unified migration experience. By eliminating the need to rebuild workloads from scratch or maintain parallel legacy environments, Snowflake AIM dramatically accelerates modernization timelines while minimizing disruption to ongoing business operations.
 
-Through this guide you will learn how to do an end-to-end migration of a Microsoft SQL Server environment with SSIS to Snowflake using SnowConvert AI, the Cortex Code CLI, and the Snowflake CLI. This guide walks you through project setup, extracting your source DDLs, converting them, leveraging AI to fix remaining issues in the converted code, deploying objects, migrating historical data with a **locally-run orchestrator + worker**, and finally replatforming your SSIS ETL pipelines into a Snowflake task graph plus a Snowflake-native dbt project.
+Through this guide you will learn how to do an end-to-end migration of a Microsoft SQL Server environment with SSIS to Snowflake using Snowflake AIM, the Cortex Code CLI, and the Snowflake CLI. This guide walks you through project setup, extracting your source DDLs, converting them, leveraging AI to fix remaining issues in the converted code, deploying objects, migrating historical data with a **locally-run orchestrator + worker**, and finally replatforming your SSIS ETL pipelines into a Snowflake task graph plus a Snowflake-native dbt project.
 
 The lab is driven entirely from a single Cortex Code session — at each step you tell the assistant what you want and the bundled `snowflake-migration:migration` skill orchestrates the underlying `scai` / `snow` / SQL calls.
 
@@ -624,4 +624,3 @@ You started from a blank project, set up **local** data-migration infrastructure
 - [dbt Projects on Snowflake](https://docs.snowflake.com/en/user-guide/data-engineering/dbt-projects/about-dbt-projects) — target pattern for the replatformed SSIS data flows produced by `migrate-etl-package`.
 - [Snowflake tasks](https://docs.snowflake.com/en/user-guide/tasks-intro) — background for the four-task graph with `EXECUTE DBT PROJECT` deployed in Phase 4.
 - [Snowflake Scripting reference](https://docs.snowflake.com/en/developer-guide/snowflake-scripting/index) — background for the procedure rewrites.
-
