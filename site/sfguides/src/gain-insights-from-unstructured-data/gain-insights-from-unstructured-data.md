@@ -1,4 +1,4 @@
-author: James Cha-Earley, Sho Tanaka, Anh Kieu
+author: James Cha-Earley, Sho Tanaka, Anh Kieu, Emre Oezdamarlar
 id: gain-insights-from-unstructured-data
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions, snowflake-site:taxonomy/snowflake-feature/unstructured-data-analysis
 language: en
