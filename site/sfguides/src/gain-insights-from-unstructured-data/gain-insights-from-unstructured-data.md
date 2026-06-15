@@ -89,7 +89,7 @@ Now upload the media files into the dedicated stages created by setup.sql:
 
 6. Run Post-Upload SQL:
    * After uploading all files, open a new SQL worksheet in [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#)
-   * Load and execute the **`setup-post-upload.sql`** file to register the uploaded files into the corresponding tables
+   * Load and execute the [**`setup-post-upload.sql`** file](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/gain-insights-from-unstructured-data/setup-post-upload.sql) to register the uploaded files into the corresponding tables
    * This step is required to make the uploaded audio, video, and image files available for processing in subsequent steps
 
 Your Snowflake environment now contains the complete set of data across all modalities.
