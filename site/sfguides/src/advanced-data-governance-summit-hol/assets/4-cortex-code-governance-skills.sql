@@ -1,9 +1,9 @@
 
 /***************************************************************************************************
- Advanced Data Governance: AI-Powered Sensitive Data Discovery and Protection at Scale
+ Advanced Data Governance: Sensitive Data Discovery and Protection at Scale
  Snowflake Summit Hands-on Lab
 
- Script:      Step 6 — Cortex Code Governance Skills (Data Governor Persona)
+ Script:      Step 4 — Cortex Code Governance Skills (Data Governor Persona)
  Version:     Summit HOL v1.0
  Create Date: May 2026
  Author:      Ankit Gupta
@@ -66,7 +66,7 @@ LIMIT 10;
 
 
 /*===========================================================================
-  SECTION 6.1 — GOVERNANCE MATURITY ASSESSMENT
+  SECTION 4.1 — GOVERNANCE MATURITY ASSESSMENT
 
   Use Cortex Code to assess the overall governance posture of HRZN_DB.
   The General Data Governance skill queries ACCOUNT_USAGE to answer
@@ -89,15 +89,16 @@ LIMIT 10;
   "Show me a governance maturity score for HRZN_DB. What is well-protected
    and what still needs attention?"
 
-  OBSERVE: Cortex Code queries DATA_CLASSIFICATION_LATEST and POLICY_REFERENCES
+  OBSERVE: Cortex Code queries TAG_REFERENCES and POLICY_REFERENCES
   and synthesizes the results into a readable governance health summary.
 */
 
 -- SQL EQUIVALENT: Governance maturity score (use to verify Cortex Code output)
 WITH sensitive_tables AS (
-    SELECT DISTINCT TABLE_NAME
-    FROM SNOWFLAKE.ACCOUNT_USAGE.DATA_CLASSIFICATION_LATEST
-    WHERE TABLE_DATABASE = 'HRZN_DB'
+    SELECT DISTINCT OBJECT_NAME AS TABLE_NAME
+    FROM SNOWFLAKE.ACCOUNT_USAGE.TAG_REFERENCES
+    WHERE OBJECT_DATABASE = 'HRZN_DB'
+      AND TAG_NAME  = 'DATA_CLASSIFICATION'
       AND TAG_VALUE IN ('PII', 'RESTRICTED', 'SENSITIVE')
 ),
 protected_tables AS (
@@ -150,7 +151,7 @@ GROUP BY p.OBJECT_DATABASE, p.OBJECT_SCHEMA, p.OBJECT_NAME;
 
 
 /*===========================================================================
-  SECTION 6.2 — AI CLASSIFICATION VIA CORTEX CODE SKILLS
+  SECTION 4.2 — AI CLASSIFICATION VIA CORTEX CODE SKILLS
 
   The sensitive data classification skill can scan tables for PII, analyze
   existing classification results, and even help create classification profiles
@@ -178,33 +179,36 @@ GROUP BY p.OBJECT_DATABASE, p.OBJECT_SCHEMA, p.OBJECT_NAME;
    pattern EMP-XXXXX and store it in HRZN_DB.CLASSIFIERS."
 
   OBSERVE: For Prompt 4, Cortex Code generates and executes a SYSTEM$CLASSIFY
-  call on CUSTOMER_ORDERS. For Prompt 5, it queries DATA_CLASSIFICATION_LATEST.
+  call on CUSTOMER_ORDERS. For Prompt 5, it queries TAG_REFERENCES.
 */
 
--- SQL VERIFICATION: After Cortex Code runs classification, confirm results
+-- After Cortex Code runs classification, check the custom DATA_CLASSIFICATION tags
 SELECT
-    TABLE_NAME,
+    OBJECT_NAME    AS TABLE_NAME,
     COLUMN_NAME,
-    TAG_VALUE AS SENSITIVITY
-FROM SNOWFLAKE.ACCOUNT_USAGE.DATA_CLASSIFICATION_LATEST
-WHERE TABLE_DATABASE = 'HRZN_DB'
-  AND TABLE_NAME      = 'CUSTOMER_ORDERS'
+    TAG_VALUE      AS SENSITIVITY
+FROM SNOWFLAKE.ACCOUNT_USAGE.TAG_REFERENCES
+WHERE OBJECT_DATABASE = 'HRZN_DB'
+  AND OBJECT_NAME     = 'CUSTOMER_ORDERS'
+  AND TAG_NAME        = 'DATA_CLASSIFICATION'
 ORDER BY COLUMN_NAME;
 
 -- Summary: which tables have the most sensitive columns?
 SELECT
-    TABLE_NAME,
-    COUNT(*)                                         AS sensitive_column_count,
-    LISTAGG(DISTINCT TAG_VALUE, ', ')               AS sensitivity_levels,
-    LISTAGG(COLUMN_NAME, ', ')                      AS sensitive_columns
-FROM SNOWFLAKE.ACCOUNT_USAGE.DATA_CLASSIFICATION_LATEST
-WHERE TABLE_DATABASE = 'HRZN_DB'
-GROUP BY TABLE_NAME
+    OBJECT_NAME                            AS TABLE_NAME,
+    COUNT(*)                               AS sensitive_column_count,
+    LISTAGG(DISTINCT TAG_VALUE, ', ')      AS sensitivity_levels,
+    LISTAGG(COLUMN_NAME, ', ')             AS sensitive_columns
+FROM SNOWFLAKE.ACCOUNT_USAGE.TAG_REFERENCES
+WHERE OBJECT_DATABASE = 'HRZN_DB'
+  AND TAG_NAME        = 'DATA_CLASSIFICATION'
+  AND DOMAIN          = 'COLUMN'
+GROUP BY OBJECT_NAME
 ORDER BY sensitive_column_count DESC;
 
 
 /*===========================================================================
-  SECTION 6.3 — POLICY CREATION AND AUDIT VIA CORTEX CODE SKILLS
+  SECTION 4.3 — POLICY CREATION AND AUDIT VIA CORTEX CODE SKILLS
 
   The data protection policies skill:
     - Creates masking policies using Snowflake best practices (IS_ROLE_IN_SESSION,
@@ -262,7 +266,7 @@ ORDER BY sensitive_column_count DESC;
 SHOW MASKING POLICIES IN SCHEMA HRZN_DB.TAG_SCHEMA;
 
 -- Retrieve the DDL of the string masking policy
-SELECT GET_DDL('MASKING POLICY', 'HRZN_DB.TAG_SCHEMA.DATA_CLASSIFICATION_MASK_STRING');
+SELECT GET_DDL('POLICY', 'HRZN_DB.TAG_SCHEMA.DATA_CLASSIFICATION_MASK_STRING');
 
 /*
   After Cortex Code generates an improved policy, apply it with:
@@ -286,7 +290,7 @@ SELECT GET_DDL('MASKING POLICY', 'HRZN_DB.TAG_SCHEMA.DATA_CLASSIFICATION_MASK_ST
 
 
 /*===========================================================================
-  SECTION 6.4 — COMPLIANCE AUDIT VIA CORTEX CODE SKILLS
+  SECTION 4.4 — COMPLIANCE AUDIT VIA CORTEX CODE SKILLS
 
   The General Data Governance skill answers compliance and access audit questions
   by querying ACCOUNT_USAGE views. Instead of hand-crafting complex joins,
@@ -426,11 +430,11 @@ FROM table_inventory ti
 LEFT JOIN governance_stats gs ON ti.TABLE_SCHEMA = gs.OBJECT_SCHEMA;
 
 /*
-  KEY TAKEAWAYS — Step 6:
+  KEY TAKEAWAYS — Step 4:
 
   CORTEX CODE GOVERNANCE SKILLS:
     - Governance Maturity Skill: generates a health score and flags unprotected tables
-      using DATA_CLASSIFICATION_LATEST and POLICY_REFERENCES
+      using TAG_REFERENCES and POLICY_REFERENCES
     - Classification Skill: runs SYSTEM$CLASSIFY, reads results, and explains detections
       in plain English — no SQL required
     - Data Protection Policies Skill: creates best-practice policies with
@@ -453,6 +457,7 @@ LEFT JOIN governance_stats gs ON ti.TABLE_SCHEMA = gs.OBJECT_SCHEMA;
     - If ACCOUNT_USAGE is not yet populated, instruct Cortex Code:
       "Check INFORMATION_SCHEMA as ACCOUNT_USAGE may not be populated yet"
 
-  CONGRATULATIONS! You have completed the lab.
-  Run 99-teardown.sql to remove all lab objects from your account.
+  Proceed to Step 5 to verify your governance posture in the Trust Center UI
+  (ACCOUNT_USAGE latency should have passed by now), then to Step 6 for the
+  access history audit trail.
 */

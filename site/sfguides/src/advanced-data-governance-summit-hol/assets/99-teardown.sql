@@ -1,6 +1,6 @@
 
 /***************************************************************************************************
- Advanced Data Governance: AI-Powered Sensitive Data Discovery and Protection at Scale
+ Advanced Data Governance: Sensitive Data Discovery and Protection at Scale
  Snowflake Summit Hands-on Lab
 
  Script:      Lab Teardown
@@ -53,13 +53,12 @@ DROP DATABASE IF EXISTS HRZN_DB;
 -- HRZN_DB drop removes:
 --   Schemas:   HRZN_SCH, TAG_SCHEMA, CLASSIFIERS, SEC_POLICIES_SCHEMA
 --   Tables:    CUSTOMER, CUSTOMER_ORDERS, CUSTOMER_COPY, CUSTOMER_FEEDBACK_REDACTED,
---              ROW_POLICY_MAP, CUSTOMER_CONSENT_MAP
+--              ROW_POLICY_MAP
 --   Views:     CUSTOMER_FEEDBACK_SECURE
 --   Policies:  DATA_CLASSIFICATION_MASK_STRING/NUMBER/DATE/TIMESTAMP,
 --              CUSTOMER_OPTIN_POLICY, CUSTOMER_STATE_RESTRICTIONS,
 --              AGGREGATION_POLICY, PROJECTION_POLICY
 --   Tags:      DATA_CLASSIFICATION (with propagation)
---   Classifiers: CREDITCARD
 
 -- ============================================================================
 -- STEP 3: Drop custom roles
@@ -78,5 +77,25 @@ DROP ROLE IF EXISTS HRZN_DATA_ANALYST;
 
 USE ROLE SYSADMIN;
 DROP WAREHOUSE IF EXISTS HRZN_WH;
+
+-- ============================================================================
+-- STEP 5: Manual cleanup (UI) — Sensitive Data Entitlement Report
+-- ============================================================================
+--
+--   The Sensitive Data Entitlement Report enabled in Step 5.4 is an account-level
+--   configuration that runs on its own schedule (Daily) and is not removed by
+--   dropping HRZN_DB. To fully clean up:
+--
+--     1. Snowsight → Governance & Security → Trust Center
+--     2. Select the Data Security tab → Settings
+--     3. In the Reporting section, locate Sensitive Data Entitlement Report
+--     4. Disable the report
+--
+--   To delete historical report data:
+--     CALL SNOWFLAKE.DATA_SECURITY.DELETE_REPORT_DATA(
+--         'entitlement_report',
+--         TO_TIMESTAMP_LTZ('2026-01-01'),
+--         TO_TIMESTAMP_LTZ('2027-01-01')
+--     );
 
 SELECT 'Teardown complete. All lab objects have been removed.' AS status;
