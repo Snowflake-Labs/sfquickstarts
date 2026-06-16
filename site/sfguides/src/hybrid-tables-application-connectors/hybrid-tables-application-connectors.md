@@ -606,7 +606,9 @@ You can now connect applications to Hybrid Tables correctly across all major Sno
 - [Node.js Driver Documentation](https://docs.snowflake.com/en/developer-guide/node-js/nodejs-driver)
 - [Snowpark Python Documentation](https://docs.snowflake.com/en/developer-guide/snowpark/python/index)
 - [Fresh, Fast, and Value-Effective: Kafka Ingestion with Hybrid Tables](https://medium.com/snowflake/fresh-fast-and-value-effective-using-snowflake-hybrid-tables-to-simplify-kafka-ingestion-2a4393c49a53) — Jon Osborn
-- [Architectural Patterns for Hybrid Table Workloads](https://www.snowflake.com/en/developers/guides/hybrid-tables-architectural-patterns/)
+- [Architectural Patterns Overview and Decision Matrix](https://www.snowflake.com/en/developers/guides/hybrid-tables-architectural-patterns/)
+- [Analytics Patterns for Hybrid Tables](https://www.snowflake.com/en/developers/guides/hybrid-tables-analytics-patterns/)
+- [Streaming and Change Detection Patterns for Hybrid Tables](https://www.snowflake.com/en/developers/guides/hybrid-tables-streaming-patterns/)
 - [Secondary Index Design for Hybrid Tables](https://www.snowflake.com/en/developers/guides/hybrid-tables-secondary-index-design/)
 
 <!-- ------------------------ -->
