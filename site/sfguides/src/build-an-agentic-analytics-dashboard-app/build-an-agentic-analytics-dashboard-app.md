@@ -22,7 +22,7 @@ The twist: you will not write the app by hand. You will build it with **Cortex C
 - **Snowflake Postgres**: a managed PostgreSQL database that runs inside your Snowflake account.
 - **Cortex AI**: Snowflake's built-in AI you call with SQL, with no infrastructure to manage. Its LLM inference function (`SNOWFLAKE.CORTEX.COMPLETE`) runs leading large language models right next to your data (including OpenAI's GPT, Anthropic's Claude, and open-source models like Meta's Llama), plus text embeddings for semantic search. This app uses it for the AI Agent, Charts, and search.
 - **Cortex Code**: an AI coding assistant you chat with; it writes the SQL and Python for you.
-`
+
 ### How this Quickstart works
 Each step gives you a **prompt** in a gray box. You paste that prompt into Cortex Code. Cortex Code reads a shared `AGENTS.md` file (which holds the exact database schema and rules), writes the SQL or Python, and you review and run it. You do not need to type code by hand, but you should read what it produces.
 
@@ -313,12 +313,19 @@ dependencies:
 **Checkpoint:** open the app from Snowsight under **Projects → Streamlit**; every page loads with no internet access required.
 
 <!-- ------------------------ -->
+## Debug and Recover from Errors
+
+As for any natural language coding session, errors are inevitable. However, the great thing about using Snowflake Cortex Code is its inherent ability to self-correct by assessing the situation, environment, and error to fix issues automatically. In spite of this, Streamlit apps may render properly but interacting with a widget or button may perform an LLM inference that in turn may produce errors. 
+
+To fix this, you can either copy the error or take a screenshot and relay these to Cortex Code along with a simple prompt instruction of `I got this error [paste error / screenshot], please fix." 
+
+<!-- ------------------------ -->
 ## Deploy to Streamlit Community Cloud (Optional)
 Duration: 10
 
 **What you'll do:** publish the original Postgres app to a public URL with Streamlit Community Cloud (free). It runs outside Snowflake and connects to your Postgres instance over the public ingress rule from Step 1, with no extra setup.
 
-**Note:** If using natural language prompts to create files for the GitHub repo, it is recommended to perform the following in a Cortex Code CLI session. Alternatively, this can easily be done manually by downloading the app files from the SiS app on Snowflake, then manually create a GitHub repo and upload the app files to the repo.
+**Note:** If using natural language prompts to create files for the GitHub repo, it is recommended to perform the following in a Cortex Code CLI session. Alternatively, this can easily be done manually by downloading the app files from the SiS app on Snowflake, then manually create a GitHub repo and upload the app files to the repo. An example repo for `tundra-analytics` is provided [here](https://github.com/dataprofessor/tundra-analytics) for your convenience.
 
 ```text
 Create a GitHub repo called tundra-analytics and copy my Tundra app into it.
