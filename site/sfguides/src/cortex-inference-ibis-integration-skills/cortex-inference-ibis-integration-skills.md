@@ -4,13 +4,13 @@ categories: snowflake-site:taxonomy/solution-center/certification/quickstart, sn
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-summary: Call Snowflake Cortex inference REST API directly from Python using PAT or JWT auth, with streaming, tool calling, and error handling.
+summary: Build AI-enriched data pipelines in Python using Snowflake Cortex AI functions via Ibis, compute vector embeddings with TurboPuffer ANN/hybrid search, analyze review category distributions with Shannon entropy, and install reusable Cortex Code (CoCo) skills — all without writing raw SQL but using Cortex Inference.
 language: en
 
 
-# Snowflake Cortex Inference REST API — Python Quickstart
+# Snowflake Cortex Inference, Cortex + Ibis: AI Enrichment, Vector Search & Distribution Analysis
 
-A practical guide to calling the **Snowflake Cortex REST inference endpoint** directly from Python, covering PAT and JWT authentication, streaming SSE, tool calling, and error handling.
+A hands-on guide to **Snowflake Cortex AI functions via Ibis**, covering the full pipeline from LLM enrichment and vector embeddings to TurboPuffer hybrid search, Shannon entropy distribution analysis, and installing reusable **Cortex Code (CoCo) skills**. Also includes direct Cortex Inference access with PAT/JWT auth, streaming SSE, and tool calling.
 
 All examples use the `cortex_rest.py` client included in this workspace.
 
