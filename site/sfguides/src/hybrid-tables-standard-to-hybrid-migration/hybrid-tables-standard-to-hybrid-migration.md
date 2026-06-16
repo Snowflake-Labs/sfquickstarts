@@ -169,7 +169,7 @@ Hybrid Tables do not support:
 - **Materialized Views**
 - **Clustering keys** (HT uses indexes instead)
 
-If your standard table has any of these attached, you will need to re-architect those components before migrating. A common pattern is to keep a Task-based snapshot from the Hybrid Table to a standard table for analytics and change-tracking purposes.
+If your standard table has any of these attached, you will need to re-architect those components before migrating. A common pattern is to keep a Task-based snapshot from the Hybrid Table to a standard table for analytics and change-tracking purposes. For step-by-step implementation of these patterns, see the [Architectural Patterns for Hybrid Table Workloads](https://www.snowflake.com/en/developers/guides/hybrid-tables-architectural-patterns/) quickstart.
 
 ### Identify Index Candidates
 
