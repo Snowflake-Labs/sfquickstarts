@@ -6492,17 +6492,6 @@
       "lastUpdatedAt": "2026-06-16"
     },
     {
-      "title": "Architectural Patterns for Hybrid Table Workloads",
-      "categories": [
-        "snowflake-site:taxonomy/solution-center/certification/quickstart",
-        "snowflake-site:taxonomy/product/data-engineering"
-      ],
-      "contentType": "quickstart",
-      "url": "https://www.snowflake.com/en/developers/guides/hybrid-tables-architectural-patterns/",
-      "summary": "Overview and decision matrix for all Hybrid Table architectural patterns — analytics, streaming, change detection, data management, and operations.",
-      "lastUpdatedAt": "2026-06-16"
-    },
-    {
       "title": "Analytics Patterns for Hybrid Tables",
       "categories": [
         "snowflake-site:taxonomy/solution-center/certification/quickstart",
