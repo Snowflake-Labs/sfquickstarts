@@ -1,0 +1,141 @@
+{
+  "guide_id": "hybrid-tables-standard-to-hybrid-migration",
+  "title": "Converting Standard Snowflake Tables to Hybrid Tables",
+  "version": "1.0.0",
+  "last_updated": "2026-06-16",
+  "author": "Adam Timm",
+  "description": "Complete migration guide for converting standard Snowflake tables to Hybrid Tables with zero-downtime swap pattern.",
+  "prerequisites": {
+    "snowflake_edition": "Standard, Enterprise, or Business Critical",
+    "cloud_providers": ["AWS", "Azure"],
+    "excluded_regions": ["GCP", "government", "trial"],
+    "required_privileges": ["CREATE TABLE on target schema", "ACCOUNTADMIN for role/warehouse setup"]
+  },
+  "migration_workflow": {
+    "steps": [
+      "Assess standard table for HT suitability",
+      "Verify PK uniqueness and check downstream dependencies",
+      "Create Hybrid Table with PRIMARY KEY (CTAS or explicit DDL + INSERT)",
+      "Validate row counts and data integrity",
+      "Add secondary indexes on populated table",
+      "Compare query profiles (COLUMN_BASED vs ROW_BASED)",
+      "Perform zero-downtime swap via ALTER TABLE RENAME",
+      "Keep backup for rollback period, then decommission"
+    ]
+  },
+  "assessment_criteria": {
+    "strong_ht_candidates": [
+      "Point lookups by ID (PK)",
+      "Mixed read/write with status updates",
+      "Low-latency writes + reads from application backend",
+      "No dependency on Streams, Dynamic Tables, or Materialized Views"
+    ],
+    "keep_as_standard_table": [
+      "Analytical aggregations, GROUP BY, window functions",
+      "Downstream Streams or Dynamic Tables required",
+      "Result cache critical for repeated identical queries",
+      "Full table scans for analytics or reporting"
+    ]
+  },
+  "ddl_reference": {
+    "ctas_with_pk": {
+      "syntax": "CREATE OR REPLACE HYBRID TABLE table_name (col1 TYPE, col2 TYPE, ..., PRIMARY KEY (pk_col)) AS SELECT * FROM source_table",
+      "notes": "Schema must be declared explicitly. CTAS does NOT support FOREIGN KEY constraints.",
+      "optimized_bulk_load": true
+    },
+    "explicit_ddl_then_insert": {
+      "syntax": "CREATE OR REPLACE HYBRID TABLE table_name (..., PRIMARY KEY (pk_col), FOREIGN KEY (fk_col) REFERENCES parent(pk)); INSERT INTO table_name SELECT * FROM source;",
+      "notes": "Required when FOREIGN KEY is needed. INSERT INTO empty table still uses optimized bulk load.",
+      "optimized_bulk_load": true
+    },
+    "zero_downtime_swap": {
+      "syntax": "ALTER TABLE old_name RENAME TO old_name_backup; ALTER TABLE new_ht RENAME TO old_name;",
+      "notes": "Applications using the original name see no change. Must be within same database.",
+      "rollback": "ALTER TABLE old_name RENAME TO new_ht; ALTER TABLE old_name_backup RENAME TO old_name;"
+    }
+  },
+  "hybrid_table_constraints": {
+    "primary_key": {
+      "required": true,
+      "notes": "Every Hybrid Table must have a PRIMARY KEY. Choose a column that uniquely identifies each row."
+    },
+    "foreign_key": {
+      "supported": true,
+      "ctas_support": false,
+      "notes": "FK is enforced on INSERT/UPDATE. Both tables must be in the same database. Use explicit DDL + INSERT for FK tables."
+    },
+    "unique": {
+      "supported": true,
+      "ctas_support": true
+    },
+    "not_null": {
+      "supported": true,
+      "ctas_support": true
+    }
+  },
+  "unsupported_downstream": [
+    "Streams (change tracking)",
+    "Dynamic Tables",
+    "Materialized Views",
+    "Clustering keys"
+  ],
+  "workaround_for_unsupported": "Task-based snapshot: HT serves OLTP reads/writes, scheduled Task snapshots data to standard table where Streams/DTs/MVs can be applied.",
+  "query_profile_patterns": {
+    "before_migration": {
+      "operator": "TableScan",
+      "scan_mode": "N/A (standard table)",
+      "behavior": "Full micro-partition scan, no row-level index"
+    },
+    "after_migration_pk_lookup": {
+      "operator": "TableScan",
+      "scan_mode": "ROW_BASED",
+      "rows_scanned": 1,
+      "behavior": "Direct primary key lookup in row store"
+    },
+    "after_migration_index_seek": {
+      "operator": "IndexScan",
+      "scan_mode": "ROW_BASED",
+      "rows_scanned": "Only matching rows",
+      "behavior": "Secondary index seek, proportional to selectivity"
+    },
+    "after_migration_no_index": {
+      "operator": "TableScan",
+      "scan_mode": "COLUMN_BASED",
+      "rows_scanned": "All rows",
+      "behavior": "Full scan of column store copy (no index covers this predicate)"
+    }
+  },
+  "bulk_load_performance": {
+    "optimized_path_conditions": "Table must be empty (CTAS or INSERT INTO empty table)",
+    "approximate_speed": "~1 million rows per minute (varies by row width and warehouse size)",
+    "non_optimized_path": "INSERT into populated table uses normal INSERT performance"
+  },
+  "related_guides": [
+    {
+      "title": "Getting Started with Hybrid Tables",
+      "url": "https://www.snowflake.com/en/developers/guides/getting-started-with-hybrid-tables/"
+    },
+    {
+      "title": "Secondary Index Design for Hybrid Tables",
+      "url": "https://www.snowflake.com/en/developers/guides/hybrid-tables-secondary-index-design/"
+    }
+  ],
+  "faq": [
+    {
+      "question": "Can I use CTAS to create a Hybrid Table with a FOREIGN KEY?",
+      "answer": "No. CTAS does not support FOREIGN KEY constraints. Create schema explicitly, then INSERT INTO ... SELECT."
+    },
+    {
+      "question": "Will my applications break after the RENAME swap?",
+      "answer": "No. ALTER TABLE RENAME is transparent. Applications using the original name hit the Hybrid Table without changes."
+    },
+    {
+      "question": "Should I create indexes before or after loading data?",
+      "answer": "After. Indexes on populated tables build concurrently without blocking reads/writes."
+    },
+    {
+      "question": "Can I migrate a table with Streams attached?",
+      "answer": "Hybrid Tables do not support Streams. Drop the Stream first. Use Task-based snapshot pattern for change tracking."
+    }
+  ]
+}
