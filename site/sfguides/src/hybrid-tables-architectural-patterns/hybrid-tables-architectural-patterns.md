@@ -291,6 +291,8 @@ WHEN NOT MATCHED
 
 For systems that need real-time event delivery (Kafka consumers, microservices, alerting), Snowflake can publish notifications to cloud queues and webhooks.
 
+> **Note:** This step covers *outbound* event delivery — publishing events from Snowflake to external systems. For *inbound* Kafka ingestion (streaming Kafka data into a Hybrid Table), see the [Connecting Applications to Hybrid Tables](https://www.snowflake.com/en/developers/guides/hybrid-tables-application-connectors/) quickstart, which covers the Spring Boot + JDBC micro-batch pattern.
+
 ### Architecture
 
 ```
@@ -854,6 +856,7 @@ You have completed the Hybrid Tables Architectural Patterns quickstart. You can 
 - [Notification Integrations](https://docs.snowflake.com/en/sql-reference/sql/create-notification-integration)
 - [Converting Standard Tables to Hybrid Tables Quickstart](https://www.snowflake.com/en/developers/guides/hybrid-tables-standard-to-hybrid-migration/)
 - [Secondary Index Design for Hybrid Tables Quickstart](https://www.snowflake.com/en/developers/guides/hybrid-tables-secondary-index-design/)
+- [Connecting Applications to Hybrid Tables Quickstart](https://www.snowflake.com/en/developers/guides/hybrid-tables-application-connectors/)
 
 <!-- ------------------------ -->
 ## FAQ and Troubleshooting
