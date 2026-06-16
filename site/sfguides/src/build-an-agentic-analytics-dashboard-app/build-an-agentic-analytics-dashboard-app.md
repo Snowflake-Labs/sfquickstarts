@@ -145,9 +145,7 @@ Duration: 10
 **What you'll do:** set up the project files and run a tiny version of the app on your laptop to confirm everything connects. Building locally first makes problems easy to spot.
 
 ```text
-Scaffold the local project for my Tundra Analytics app: a src/ Python
-package (empty src/__init__.py) and a top-level streamlit_app.py. We build
-and run locally first, then deploy later.
+Create a Streamlit app for me. Inside of which, scaffold the local project for my Tundra Analytics app: a src/ Python package (empty src/__init__.py) and a top-level streamlit_app.py.
 ```
 
 Next, ask Cortex Code to create `pyproject.toml` and `.streamlit/secrets.toml` for your app.
