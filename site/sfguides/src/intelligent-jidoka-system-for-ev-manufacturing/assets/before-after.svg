@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 500" width="900" height="500">
+  <!-- Background -->
+  <rect width="900" height="500" fill="#0f172a"/>
+  
+  <!-- Title -->
+  <text x="450" y="35" fill="#f8fafc" font-family="system-ui, -apple-system, sans-serif" font-size="20" font-weight="700" text-anchor="middle">The Transformation: From Reactive Firefighting to Proactive Jidoka</text>
+  
+  <!-- BEFORE Section -->
+  <rect x="30" y="60" width="410" height="400" rx="12" fill="#1e293b" stroke="#ef4444" stroke-width="2"/>
+  
+  <!-- Before Header -->
+  <rect x="30" y="60" width="410" height="50" rx="12" fill="#ef4444"/>
+  <rect x="30" y="90" width="410" height="20" fill="#ef4444"/>
+  <text x="235" y="95" fill="#ffffff" font-family="system-ui, sans-serif" font-size="18" font-weight="700" text-anchor="middle">BEFORE: Reactive Operations</text>
+  
+  <!-- Before Items -->
+  <!-- Item 1 -->
+  <text x="55" y="150" fill="#ef4444" font-family="system-ui, sans-serif" font-size="18">✗</text>
+  <text x="80" y="150" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="14" font-weight="600">Siloed Data Systems</text>
+  <text x="80" y="170" fill="#94a3b8" font-family="system-ui, sans-serif" font-size="12">ERP, MES, IoT in separate databases</text>
+  
+  <!-- Item 2 -->
+  <text x="55" y="210" fill="#ef4444" font-family="system-ui, sans-serif" font-size="18">✗</text>
+  <text x="80" y="210" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="14" font-weight="600">Post-Incident Analysis</text>
+  <text x="80" y="230" fill="#94a3b8" font-family="system-ui, sans-serif" font-size="12">Find root cause after production stops</text>
+  
+  <!-- Item 3 -->
+  <text x="55" y="270" fill="#ef4444" font-family="system-ui, sans-serif" font-size="18">✗</text>
+  <text x="80" y="270" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="14" font-weight="600">Manual Data Correlation</text>
+  <text x="80" y="290" fill="#94a3b8" font-family="system-ui, sans-serif" font-size="12">Engineers pull reports from 5+ systems</text>
+  
+  <!-- Item 4 -->
+  <text x="55" y="330" fill="#ef4444" font-family="system-ui, sans-serif" font-size="18">✗</text>
+  <text x="80" y="330" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="14" font-weight="600">Knowledge Trapped in PDFs</text>
+  <text x="80" y="350" fill="#94a3b8" font-family="system-ui, sans-serif" font-size="12">Maintenance manuals not searchable</text>
+  
+  <!-- Item 5 -->
+  <text x="55" y="390" fill="#ef4444" font-family="system-ui, sans-serif" font-size="18">✗</text>
+  <text x="80" y="390" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="14" font-weight="600">OEE Blindness</text>
+  <text x="80" y="410" fill="#94a3b8" font-family="system-ui, sans-serif" font-size="12">Metrics miss process flow losses</text>
+  
+  <!-- Before Response Time -->
+  <rect x="55" y="430" width="360" height="25" rx="4" fill="#ef444420"/>
+  <text x="235" y="448" fill="#ef4444" font-family="system-ui, sans-serif" font-size="12" font-weight="600" text-anchor="middle">Response Time: 4+ HOURS</text>
+  
+  <!-- Arrow -->
+  <path d="M450 260 L470 245 L470 255 L490 255 L490 265 L470 265 L470 275 Z" fill="#64748b"/>
+  
+  <!-- AFTER Section -->
+  <rect x="460" y="60" width="410" height="400" rx="12" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+  
+  <!-- After Header -->
+  <rect x="460" y="60" width="410" height="50" rx="12" fill="#10b981"/>
+  <rect x="460" y="90" width="410" height="20" fill="#10b981"/>
+  <text x="665" y="95" fill="#ffffff" font-family="system-ui, sans-serif" font-size="18" font-weight="700" text-anchor="middle">AFTER: Proactive Jidoka</text>
+  
+  <!-- After Items -->
+  <!-- Item 1 -->
+  <text x="485" y="150" fill="#10b981" font-family="system-ui, sans-serif" font-size="18">✓</text>
+  <text x="510" y="150" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="14" font-weight="600">Unified Data Foundation</text>
+  <text x="510" y="170" fill="#94a3b8" font-family="system-ui, sans-serif" font-size="12">IT + OT converged in Snowflake</text>
+  
+  <!-- Item 2 -->
+  <text x="485" y="210" fill="#10b981" font-family="system-ui, sans-serif" font-size="18">✓</text>
+  <text x="510" y="210" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="14" font-weight="600">Pre-Incident Prediction</text>
+  <text x="510" y="230" fill="#94a3b8" font-family="system-ui, sans-serif" font-size="12">ML detects failure patterns proactively</text>
+  
+  <!-- Item 3 -->
+  <text x="485" y="270" fill="#10b981" font-family="system-ui, sans-serif" font-size="18">✓</text>
+  <text x="510" y="270" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="14" font-weight="600">AI-Driven Correlation</text>
+  <text x="510" y="290" fill="#94a3b8" font-family="system-ui, sans-serif" font-size="12">Cortex Agent connects dots automatically</text>
+  
+  <!-- Item 4 -->
+  <text x="485" y="330" fill="#10b981" font-family="system-ui, sans-serif" font-size="18">✓</text>
+  <text x="510" y="330" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="14" font-weight="600">Knowledge Base RAG</text>
+  <text x="510" y="350" fill="#94a3b8" font-family="system-ui, sans-serif" font-size="12">Cortex Search over maintenance docs</text>
+  
+  <!-- Item 5 -->
+  <text x="485" y="390" fill="#10b981" font-family="system-ui, sans-serif" font-size="18">✓</text>
+  <text x="510" y="390" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="14" font-weight="600">OPE Visibility</text>
+  <text x="510" y="410" fill="#94a3b8" font-family="system-ui, sans-serif" font-size="12">Full process efficiency measurement</text>
+  
+  <!-- After Response Time -->
+  <rect x="485" y="430" width="360" height="25" rx="4" fill="#10b98120"/>
+  <text x="665" y="448" fill="#10b981" font-family="system-ui, sans-serif" font-size="12" font-weight="600" text-anchor="middle">Response Time: 5 MINUTES</text>
+</svg>
+

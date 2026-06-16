@@ -7,13 +7,9 @@ environments: web
 status: Published
 language: en
 
-
-
-
 # Getting Started with Snowflake Interactive Tables
 
 ## Overview
-
 
 When it comes to near real-time (or sub-second) analytics, the ideal scenario involves achieving consistent, rapid query performance and managing costs effectively, even with large datasets and high user demand. 
 
@@ -42,7 +38,6 @@ You will build a complete, functioning interactive data environment in Snowflake
 
 ## Understand Interactive Warehouses and Interactive Tables
 
-
 To boost query performance for interactive, sub-second analytics, Snowflake introduces two new, specialized objects that work together: interactive warehouses and interactive tables.
 
 Think of them as a high-performance pair. Interactive tables are structured for extremely fast data retrieval, and interactive warehouses are the specialized engines required to query them. Using them in tandem is the key to achieving the best possible query performance and lowest latency.
@@ -69,7 +64,7 @@ The queries that work best with interactive tables are usually `SELECT` statemen
 
 Here are some limitations of interactive warehouses and interactive tables:
 - An interactive warehouse is always up and running by design. You can manually suspend the warehouse, but expect significant query latency when you resume the warehouse.
-- Snowflake interactive tables don’t support ETL, long-running queries (more than 5 seconds), or data manipulation language (DML) commands such as `UPDATE` and `DELETE`.
+- Snowflake interactive tables don't support ETL, long-running queries (more than 5 seconds), or data manipulation language (DML) commands such as `UPDATE` and `DELETE`.
 - Do modify data, you should update the data in source tables and either fully replace an interative table with new version, or use a dynamic table style incremental refresh by setting TARGET_LAG
 - You can't query standard Snowflake tables from an interactive warehouse. To query both standard tables and interactive tables in the same session, run `USE WAREHOUSE` to switch to the appropriate warehouse type depending on the type of table.
 - You can't run `CALL` commands to call stored procedures through interactive warehouse
@@ -116,7 +111,7 @@ CREATE OR REPLACE STAGE my_csv_stage
 
 #### Step 3: Upload CSV to a stage
 
-1. In the Snowflake UI, navigate to the database you created (`MY_DEMO_DB`).
+1. In the Snowflake UI, navigate to the database/schema that you've created (`MY_DEMO_DB.BENCHMARK_FDN`).
 2. Go to the `my_csv_stage` stage
 3. Upload the [`synthetic_hits_data.csv`](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/Interactive_Tables/synthetic_hits_data.csv) file to this stage.
 
@@ -143,7 +138,7 @@ CREATE OR REPLACE TABLE HITS2_CSV (
 
 -- Copy the data from your stage into the table
 -- Make sure to replace 'my_csv_stage' with your stage name
-COPY INTO HITS2_CSV FROM  @my_csv_stage/synthetic_hits_data.csv
+COPY INTO HITS2_CSV FROM @my_csv_stage/synthetic_hits_data.csv
   FILE_FORMAT = (TYPE = 'CSV' SKIP_HEADER = 1);
 ```
 
@@ -163,7 +158,6 @@ This essentially retrieves data from the `MY_DEMO_DB` database, `BENCHMARK_FDN` 
 <!-- ------------------------ -->
 ## Performance Demo of Snowflake's Interactive Warehouses/Tables
 
-
 To proceed with carrying out this performance comparison of interactive warehouses/tables with standard ones, you can download notebook file [Getting_Started_with_Interactive_Tables.ipynb](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/Interactive_Tables/Getting_Started_with_Interactive_Tables.ipynb) provided in the repo.
 
 ### Load libraries and define custom functions
@@ -182,42 +176,41 @@ import statistics
 import tabulate
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
-conn_kwargs={}
+from snowflake.snowpark.context import get_active_session
+session = get_active_session()
+conn_kwargs = {"connection": session.connection}
 
 def execute_and_print(query):
     cursor.execute(query)
     print(tabulate.tabulate(cursor.fetchall()))
 
 def run_and_measure(count, mode):
-
-    if mode =="std":
+    if mode == "std":
         query = """
                 SELECT SearchEngineID, ClientIP, COUNT(*) AS c, SUM(IsRefresh), AVG(ResolutionWidth) FROM 
                 BENCHMARK_FDN.HITS2_CSV
                 WHERE SearchPhrase <> '' GROUP BY SearchEngineID, ClientIP ORDER BY c DESC LIMIT 10;
                 """
-        warehouse_query ="USE WAREHOUSE wh"
+        cursor.execute("USE WAREHOUSE wh")
     else:
         query = """
                 SELECT SearchEngineID, ClientIP, COUNT(*) AS c, SUM(IsRefresh), AVG(ResolutionWidth) FROM 
                 BENCHMARK_INTERACTIVE.CUSTOMERS
                 WHERE SearchPhrase <> '' GROUP BY SearchEngineID, ClientIP ORDER BY c DESC LIMIT 10;
                 """
-        warehouse_query ="USE WAREHOUSE interactive_demo_b"
-    timings = []
-    with snow.connect(**conn_kwargs) as conn:
-        with conn.cursor() as cur:
-            cur.execute(warehouse_query)
-            cursor.execute('ALTER SESSION SET USE_CACHED_RESULT = FALSE;')
-            for i in range(count+1):
-                t0 = time.time()
-                cur.execute(query).fetchall()
-                time_taken = time.time() - t0
-                timings.append(time_taken)
-                
-    return timings
+        cursor.execute("USE WAREHOUSE interactive_demo_b")
     
-def plot_data(data, title, time_taken, color='blue'):
+    timings = []
+    cursor.execute('ALTER SESSION SET USE_CACHED_RESULT = FALSE;')
+    for i in range(count + 1):
+        t0 = time.time()
+        cursor.execute(query).fetchall()
+        time_taken = time.time() - t0
+        timings.append(time_taken)
+                
+    return timings[1:]
+    
+def plot_data(data, title, time_taken, color='#29B5E8'):
     # Separate titles and counts
     titles = [item[0] for item in data]
     counts = [item[1] for item in data]
@@ -230,7 +223,10 @@ def plot_data(data, title, time_taken, color='blue'):
     plt.ylabel("Counts")
     plt.xlabel("Title")
     plt.title(title)
-    plt.text(6, 100, f'Time taken: {time_taken:.4f} seconds', ha='right',va='top', fontdict={'size': 16})
+    plt.text(0.5, 1.5, f'Time taken: {time_taken:.4f} seconds',
+         ha='center', va='top',
+         transform=plt.gca().transAxes,
+         fontdict={'size': 16})
     #plt.tight_layout()
     plt.show()
 
@@ -241,13 +237,19 @@ def plot_data(data, title, time_taken, color='blue'):
 Here, we'll connect to Snowflake and verify the version and confirm that key interactive features are enabled, before setting the active database and role for the session.
 
 ```python
-config = { }
-cursor = snow.connect(**config).cursor()
+cursor = session.connection.cursor()
 
-query = """ USE DATABASE MY_DEMO_DB; """
+execute_and_print('select current_version();')
+execute_and_print("show parameters like 'ENABLE_INTERACTIVE_WAREHOUSES' for account;")
+execute_and_print("show parameters like 'ENABLE_INTERACTIVE_TABLE_DDL' for account;")
+execute_and_print("show parameters like 'SHOW_INCLUDE_INTERACTIVE_TABLES' for account;")
+
+query = """ USE DATABASE MY_DEMO_DB;
+"""
 execute_and_print(query)
 
-query = """ USE ROLE SYSADMIN;  """
+query = """ USE ROLE SYSADMIN; 
+"""
 execute_and_print(query)
 ```
 
@@ -264,10 +266,6 @@ CREATE or REPLACE INTERACTIVE WAREHOUSE interactive_demo_b
                 MIN_CLUSTER_COUNT = 1
                 MAX_CLUSTER_COUNT = 1
                 COMMENT = 'Interactive warehouse demo';
-"""
-execute_and_print(query)
-query = """
-ALTER WAREHOUSE INTERACTIVE_DEMO_B RESUME;
 """
 execute_and_print(query)
 ```
@@ -293,6 +291,9 @@ print(cursor.execute("USE DATABASE MY_DEMO_DB").fetchall())
 print("Use a standard warehouse for creating the interactive table's data")
 print(cursor.execute("USE WAREHOUSE WH").fetchall())
 
+cursor.execute("USE ROLE ACCOUNTADMIN")
+cursor.execute("CREATE SCHEMA IF NOT EXISTS BENCHMARK_INTERACTIVE")
+
 query = """
 CREATE OR REPLACE INTERACTIVE TABLE 
 MY_DEMO_DB.BENCHMARK_INTERACTIVE.CUSTOMERS CLUSTER BY (ClientIP)
@@ -305,12 +306,12 @@ execute_and_print(query)
 
 This gives the following output:
 ```
-Switch to demo database  
+Switch to demo database 
 [('Statement executed successfully.',)]  
 Use a standard warehouse for creating the interactive table's data  
-[('Statement executed successfully.',)]  
+[('Statement executed successfully.',)] 
 -------------------------------------  
-Table CUSTOMERS successfully created.  
+Table CUSTOMERS successfully created. 
 -------------------------------------
 ```
 
@@ -334,7 +335,7 @@ execute_and_print(query)
 
 Running the above statement should yield the following:
 ```
---------------------------------  
+-------------------------------- 
 Statement executed successfully.  
 --------------------------------  
 ...
@@ -394,7 +395,7 @@ This gives the following plot:
 
 To establish a performance baseline, we'll run an identical page-view query on a standard warehouse to measure and plot its results for comparison.
 
-We'll start by preparing the session for a performance benchmark by selecting a standard `XSMALL` warehouse, disabling the result cache, and setting the active database:
+We'll start by preparing the session for a performance benchmark by selecting a standard `WH` warehouse, disabling the result cache, and setting the active database:
 
 ```python
 print("Use a standard warehouse for creating the interactive table's data")
@@ -429,7 +430,7 @@ result = cursor.execute(query).fetchall()
 end_time = time.time()
 time_taken = end_time - start_time
 
-plot_data(result, "Page visit analysis (Interactive)", time_taken, 'green')
+plot_data(result, "Page visit analysis (Standard)", time_taken, '#5B5B5B')
 ```
 
 ![](assets/py_std_iw_run_exec.png)
@@ -439,7 +440,7 @@ plot_data(result, "Page visit analysis (Interactive)", time_taken, 'green')
 To directly compare performance, we'll benchmark both the interactive and standard warehouses over several runs and then plot their latencies side-by-side in a grouped bar chart:
 
 ```python
-runs = 4
+runs = 5
 
 counts_iw = run_and_measure(runs,"iw")
 print(counts_iw)
@@ -453,8 +454,8 @@ x = np.arange(len(titles))  # the label locations
 width = 0.35  # bar width
 
 fig, ax = plt.subplots(figsize=(8, 5))
-ax.bar(x - width/2, counts_std, width, label="Standard", color="green")
-ax.bar(x + width/2, counts_iw, width, label="Interactive", color="blue")
+ax.bar(x - width/2, counts_std, width, label="Standard", color="#5B5B5B")
+ax.bar(x + width/2, counts_iw, width, label="Interactive", color="#29B5E8")
 
 ax.set_ylabel("Latency")
 ax.set_xlabel("Query run")
@@ -472,7 +473,6 @@ plt.show()
 ![](assets/py_run_queries.png)
 
 ## Conclusion And Resources
-
 
 In this guide, we explored how to address the challenge of low-latency, near real-time analytics using Snowflake's interactive warehouses and tables. We walked through the complete setup process, from creating the necessary database objects and loading data to configuring and attaching an interactive table to an interactive warehouse. The subsequent performance benchmark clearly demonstrated the substantial latency improvements these specialized features provide over standard configurations, especially under concurrent query loads. This confirms their value as a powerful solution for demanding use cases like live dashboards and high-throughput data APIs, where sub-second performance is critical.
 

@@ -235,8 +235,6 @@ The visualization app is a node.js front end. It is pre-built for mac and window
 
 Once the app is downloaded and open - You will have to connect to Snowflake via the app utilizing Snowflake SQL Apis.
 
-If you would like to skip the line and view the app via web please go here [a](https://appslications.s3.amazonaws.com/dota2analysis/snowflake/index.html).
-
 ## Connecting to Snowflake
 Click the **Token** button. This will bring a pop-up like below:
 ![alt text](assets/Token.png)

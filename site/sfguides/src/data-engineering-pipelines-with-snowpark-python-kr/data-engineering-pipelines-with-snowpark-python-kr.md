@@ -23,10 +23,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 마음의 준비를 하십시오!
 
-> 
-> 
-> **참고** - 2023년 2월 1일 기준으로 [Snowflake Visual Studio Code 확장 프로그램](https://marketplace.visualstudio.com/items?itemName=snowflake.snowflake-vsc) 및 [SnowCLI 도구](https://github.com/Snowflake-Labs/snowcli)는 아직 미리 보기 단계에 있습니다.
-
 ### 사전 필요 조건 및 지식
 
 * Python 사용 경험
@@ -49,8 +45,8 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 * Snowpark DataFrame API
 * Snowpark Python 프로그램 가능성
 * 웨어하우스 탄력성(동적 규모 조정)
-* Visual Studio Code Snowflake 네이티브 확장 프로그램(PuPr, Git 통합)
-* SnowCLI(PuPr)
+* Visual Studio Code Snowflake 네이티브 확장 프로그램
+* SnowCLI
 * 작업(스트림 트리거 포함)
 * 작업 관측 가능성
 * GitHub Actions(CI/CD) 통합
@@ -894,8 +890,8 @@ Quickstart를 완료하고 정리하고 싶다면 간단히 `steps/11_teardown.s
 * Snowpark DataFrame API
 * Snowpark Python 프로그램 가능성
 * 웨어하우스 탄력성(동적 규모 조정)
-* Visual Studio Code Snowflake 네이티브 확장 프로그램(PuPr, Git 통합)
-* SnowCLI(PuPr)
+* Visual Studio Code Snowflake 네이티브 확장 프로그램
+* SnowCLI
 * 작업(스트림 트리거 포함)
 * 작업 관측 가능성
 * GitHub Actions(CI/CD) 통합

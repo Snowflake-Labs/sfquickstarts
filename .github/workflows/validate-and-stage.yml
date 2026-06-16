@@ -3,7 +3,7 @@ name: Validate markdown and stage
 on:
   pull_request_target:
     types: [opened, synchronize, reopened, edited, ready_for_review]
-    branches: [master]
+    branches: [master123]
 
 jobs:
   validate_and_stage:
@@ -26,9 +26,11 @@ jobs:
         id: check_relevant
         env:
           GITHUB_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_REPO: ${{ github.repository }}
         run: |
-          pr_number=${{ github.event.pull_request.number }}
-          repo=${{ github.repository }}
+          pr_number=$PR_NUMBER
+          repo=$PR_REPO
           files_json=$(curl -sS -H "Authorization: Bearer $GITHUB_TOKEN" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/$repo/pulls/$pr_number/files?per_page=100")
 
           # Quick check if any files are under site/sfguides/src/ (excluding _* folders)
@@ -55,12 +57,16 @@ jobs:
         id: download
         env:
           GITHUB_TOKEN: ${{ github.token }}
+          PR_REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
+          PR_HEAD_REF: ${{ github.event.pull_request.head.ref }}
         run: |
           bash scripts/validate-and-stage/download-pr-files.sh \
-            "${{ github.repository }}" \
-            "${{ github.event.pull_request.number }}" \
-            "${{ github.event.pull_request.head.repo.full_name }}" \
-            "${{ github.event.pull_request.head.ref }}"
+            "$PR_REPO" \
+            "$PR_NUMBER" \
+            "$PR_HEAD_REPO" \
+            "$PR_HEAD_REF"
 
       - name: Check for renamed folders (blocking)
         if: steps.check_relevant.outputs.has_relevant_changes == 'true'
@@ -586,14 +592,18 @@ jobs:
         id: call_webhook_matrix
         env:
           WORKATO_STAGING_WEBHOOK_URL: ${{ secrets.WORKATO_STAGING_SINGLE_FILE_URL }}
+          QUICKSTART_NAME: ${{ matrix.quickstart.name }}
+          QUICKSTART_LANG: ${{ matrix.quickstart.language }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_SHA: ${{ github.event.pull_request.head.sha }}
         run: |
           if [ -z "$WORKATO_STAGING_WEBHOOK_URL" ]; then
             echo "❌ WORKATO_STAGING_WEBHOOK_URL is not set"
             exit 1
           fi
           
-          qname="${{ matrix.quickstart.name }}"
-          qlang="${{ matrix.quickstart.language }}"
+          qname="$QUICKSTART_NAME"
+          qlang="$QUICKSTART_LANG"
           
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
           echo "📦 Processing quickstart: $qname"
@@ -605,8 +615,8 @@ jobs:
           
           payload=$(jq -n \
             --arg repo "$GITHUB_REPOSITORY" \
-            --arg pr '${{ github.event.pull_request.number }}' \
-            --arg sha '${{ github.event.pull_request.head.sha }}' \
+            --arg pr "$PR_NUMBER" \
+            --arg sha "$PR_SHA" \
             --arg env "staging" \
             --arg qname "$qname" \
             --argjson qnames "$qnames_array" \
