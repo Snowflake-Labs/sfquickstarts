@@ -1,0 +1,98 @@
+{
+  "guide_id": "hybrid-tables-architectural-patterns",
+  "title": "Architectural Patterns for Hybrid Table Workloads",
+  "version": "1.0.0",
+  "last_updated": "2026-06-16",
+  "author": "Adam Timm",
+  "description": "Eight architectural patterns for integrating Hybrid Tables with analytics pipelines, change detection, event-driven architectures, and operational monitoring.",
+  "patterns": [
+    {
+      "id": "P1",
+      "name": "Task-Based Snapshot (MERGE)",
+      "problem": "BI dashboards cannot read HT efficiently (COLUMN_BASED scan, no result cache)",
+      "solution": "Scheduled Task runs MERGE from HT into standard table; BI reads the standard table",
+      "freshness": "Minutes (configurable via Task schedule)",
+      "complexity": "Low"
+    },
+    {
+      "id": "P2",
+      "name": "Watermark-Based Change Detection",
+      "problem": "Streams not supported on HT; need incremental change detection",
+      "solution": "Track last_sync_ts in a watermark table; filter MERGE source by updated_at > watermark",
+      "freshness": "Minutes",
+      "complexity": "Medium",
+      "requirement": "Application must set updated_at on every UPDATE"
+    },
+    {
+      "id": "P3",
+      "name": "Event-Driven CDC (External Notifications)",
+      "problem": "External systems need real-time event delivery from HT changes",
+      "solution": "Task polls for changes + Notification Integration publishes to SNS/PubSub/Webhook",
+      "freshness": "~1 minute",
+      "complexity": "Medium"
+    },
+    {
+      "id": "P4",
+      "name": "Dynamic Tables on Standard Table Copy",
+      "problem": "DTs cannot read from HT directly",
+      "solution": "HT -> Task -> Standard Table -> Dynamic Table for derived datasets",
+      "freshness": "TARGET_LAG of DT + Task schedule",
+      "complexity": "Low"
+    },
+    {
+      "id": "P5",
+      "name": "Materialized Views on Standard Table Copy",
+      "problem": "MVs cannot be created on HT",
+      "solution": "Create MV on the standard table mirror for precomputed aggregations",
+      "freshness": "Automatic (incremental refresh)",
+      "complexity": "Low"
+    },
+    {
+      "id": "P6",
+      "name": "Fan-In Aggregation",
+      "problem": "Analytics needs to join across multiple HTs from different domains",
+      "solution": "Task joins multiple HTs into a single denormalized standard table",
+      "freshness": "Minutes",
+      "complexity": "Medium"
+    },
+    {
+      "id": "P7",
+      "name": "Hot/Cold Data Tiering",
+      "problem": "HT storage grows unbounded; old data accessed infrequently",
+      "solution": "Scheduled Task archives rows older than N days to standard table; DELETE from HT",
+      "freshness": "Daily (archive runs on schedule)",
+      "complexity": "Low",
+      "storage_note": "HT has 2 TB per-database quota; tiering prevents hitting this limit"
+    },
+    {
+      "id": "P8",
+      "name": "Alert-Based Monitoring",
+      "problem": "Sub-second HT queries not in QUERY_HISTORY; throttling invisible without monitoring",
+      "solution": "Query AGGREGATE_QUERY_HISTORY for latency/throttling; CREATE ALERT for automated notification",
+      "freshness": "3-hour latency on AGGREGATE_QUERY_HISTORY",
+      "complexity": "Medium"
+    }
+  ],
+  "hybrid_table_limitations_addressed": [
+    "Streams not supported",
+    "Dynamic Tables cannot read from HT",
+    "Materialized Views cannot be created on HT",
+    "Result cache does not apply",
+    "Clustering keys not supported (indexes used instead)",
+    "AGGREGATE_QUERY_HISTORY needed for sub-second query monitoring"
+  ],
+  "key_sql_patterns": {
+    "merge_ht_to_st": "MERGE INTO standard_table USING hybrid_table ON pk = pk WHEN MATCHED THEN UPDATE WHEN NOT MATCHED THEN INSERT",
+    "watermark_filter": "WHERE updated_at > (SELECT last_sync_ts FROM watermarks WHERE table_name = 'orders')",
+    "task_schedule": "CREATE TASK ... SCHEDULE = '5 MINUTES' AS MERGE INTO ...",
+    "dt_on_st": "CREATE DYNAMIC TABLE ... TARGET_LAG = '10 MINUTES' AS SELECT ... FROM standard_table_copy",
+    "mv_on_st": "CREATE MATERIALIZED VIEW ... AS SELECT ... FROM standard_table_copy",
+    "archive_delete": "INSERT INTO archive SELECT * FROM ht WHERE created_at < cutoff; DELETE FROM ht WHERE created_at < cutoff;",
+    "alert_throttle": "CREATE ALERT ... IF(EXISTS(SELECT 1 FROM AGGREGATE_QUERY_HISTORY WHERE throttled > threshold)) THEN notify"
+  },
+  "reference_architecture": "Application -> Hybrid Table (OLTP) -> Task (MERGE/snapshot) -> Standard Table (analytics) -> [DT | MV | BI Tools]",
+  "related_guides": [
+    {"title": "Converting Standard Tables to Hybrid Tables", "url": "https://www.snowflake.com/en/developers/guides/hybrid-tables-standard-to-hybrid-migration/"},
+    {"title": "Secondary Index Design for Hybrid Tables", "url": "https://www.snowflake.com/en/developers/guides/hybrid-tables-secondary-index-design/"}
+  ]
+}
