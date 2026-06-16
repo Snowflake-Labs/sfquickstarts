@@ -8,9 +8,15 @@ summary: Build AI-enriched data pipelines in Python using Snowflake Cortex AI fu
 language: en
 
 
+<<<<<<< HEAD
 # Snowflake Cortex Inference, Cortex + Ibis: AI Enrichment, Vector Search & Distribution Analysis
 
 A hands-on guide to **Snowflake Cortex AI functions via Ibis**, covering the full pipeline from LLM enrichment and vector embeddings to TurboPuffer hybrid search, Shannon entropy distribution analysis, and installing reusable **Cortex Code (CoCo) skills**. Also includes direct Cortex Inference access with PAT/JWT auth, streaming SSE, and tool calling.
+=======
+# Snowflake Cortex Inference, Cortex + Ibis: AI Enrichment, TurboPuffer Vector Search & Distribution Analysis
+
+A hands-on guide to **Snowflake Cortex AI functions via Ibis**, covering the full pipeline from LLM enrichment and vector embeddings to TurboPuffer hybrid search, Shannon entropy distribution analysis, and installing reusable **Cortex Code (CoCo) skills**. Also includes direct Cortex Inference, REST API access with PAT/JWT auth, streaming SSE, and tool calling.
+>>>>>>> 45edc0888 (removed __pycache__)
 
 All examples use the `cortex_rest.py` client included in this workspace.
 

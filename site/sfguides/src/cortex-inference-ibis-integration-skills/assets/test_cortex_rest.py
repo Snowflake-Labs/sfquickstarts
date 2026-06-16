@@ -3,10 +3,10 @@ test_cortex_rest.py — Validation suite for cortex_rest.py
 
 Runs 7 test sections against the live Snowflake Cortex REST API,
 captures each section's output with rich, and exports an SVG screenshot
-to assets/section_N_<name>.svg.
+to the assets/ directory alongside this script.
 
 Run:
-  cd ~/.snowflake/cortex/playground/workspace/cortex_ibis
+  cd <guide-root>/assets
   python test_cortex_rest.py
 """
 
@@ -27,7 +27,7 @@ from rich import box
 
 from cortex_rest import CortexInferenceClient, _load_pat
 
-ASSETS = Path(__file__).parent / "assets"
+ASSETS = Path(__file__).parent
 ASSETS.mkdir(exist_ok=True)
 
 MODEL = "claude-4-sonnet"
