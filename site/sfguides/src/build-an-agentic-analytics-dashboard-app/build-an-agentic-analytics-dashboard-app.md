@@ -20,9 +20,9 @@ The twist: you will not write the app by hand. You will build it with **Cortex C
 ### New here? The 10-second glossary
 - **Streamlit**: a Python framework for building data apps with no front-end code.
 - **Snowflake Postgres**: a managed PostgreSQL database that runs inside your Snowflake account.
-- **Cortex AI**: Snowflake's built-in AI you call with SQL, with no infrastructure to manage. Its LLM inference function (`COMPLETE`) runs leading large language models right next to your data (including OpenAI's GPT, Anthropic's Claude, and open-source models like Meta's Llama), plus text embeddings for semantic search. This app uses it for the AI Agent, Charts, and search.
+- **Cortex AI**: Snowflake's built-in AI you call with SQL, with no infrastructure to manage. Its LLM inference function (`SNOWFLAKE.CORTEX.COMPLETE`) runs leading large language models right next to your data (including OpenAI's GPT, Anthropic's Claude, and open-source models like Meta's Llama), plus text embeddings for semantic search. This app uses it for the AI Agent, Charts, and search.
 - **Cortex Code**: an AI coding assistant you chat with; it writes the SQL and Python for you.
-
+`
 ### How this Quickstart works
 Each step gives you a **prompt** in a gray box. You paste that prompt into Cortex Code. Cortex Code reads a shared `AGENTS.md` file (which holds the exact database schema and rules), writes the SQL or Python, and you review and run it. You do not need to type code by hand, but you should read what it produces.
 
@@ -192,7 +192,7 @@ Create the data layer: src/db.py (psycopg2 with @st.cache_resource +
 auto-reconnect, run_query, run_query_df, get_schema_context, using
 st.secrets["postgres"] with sslmode=require) and src/cortex.py (a Snowpark
 session that works both inside Snowflake and locally via
-st.secrets["snowflake"]; cortex_complete using CORTEX.COMPLETE and
+st.secrets["snowflake"]; cortex_complete using SNOWFLAKE.CORTEX.COMPLETE and
 cortex_embed using EMBED_TEXT_1024 with snowflake-arctic-embed-l-v2.0).
 Follow AGENTS.md.
 ```
@@ -340,7 +340,7 @@ Congratulations! You've built **Tundra Analytics** with Cortex Code. This Stream
 ### What You Learned
 - Creating a Snowflake Postgres database and generating realistic sample data
 - Building a multipage Streamlit app with a world map, an AI agent, charts, and semantic search
-- Calling Cortex AI (`COMPLETE` and `EMBED_TEXT_1024`) from a Streamlit app
+- Calling Cortex AI (`SNOWFLAKE.CORTEX.COMPLETE(` and `SNOWFLAKE.CORTEX.EMBED_TEXT_1024`) from a Streamlit app
 - Deploying to Streamlit in Snowflake (warehouse runtime) and to Streamlit Community Cloud
 
 ### Related Resources
