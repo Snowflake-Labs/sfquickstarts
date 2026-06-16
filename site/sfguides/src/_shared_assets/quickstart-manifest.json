@@ -6490,6 +6490,17 @@
       "url": "https://www.snowflake.com/en/developers/guides/hybrid-tables-secondary-index-design/",
       "summary": "Learn how to design, create, and validate secondary indexes for Hybrid Tables to achieve low-latency point lookups and efficient range scans in your OLTP workloads.",
       "lastUpdatedAt": "2026-06-16"
+    },
+    {
+      "title": "Connecting Applications to Hybrid Tables",
+      "categories": [
+        "snowflake-site:taxonomy/solution-center/certification/quickstart",
+        "snowflake-site:taxonomy/product/data-engineering"
+      ],
+      "contentType": "quickstart",
+      "url": "https://www.snowflake.com/en/developers/guides/hybrid-tables-application-connectors/",
+      "summary": "Learn how to connect applications to Snowflake Hybrid Tables using JDBC, Python, Node.js, and Snowpark with bound variables, connection pooling, and Kafka ingest patterns.",
+      "lastUpdatedAt": "2026-06-16"
     }
   ]
 }
