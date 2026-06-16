@@ -86,6 +86,8 @@ USE SCHEMA ORDERS;
 
 You will start with a Hybrid Table that has **only a primary key**. The primary key creates an index automatically; all other columns will require full table scans until you add secondary indexes.
 
+> **Note:** In production, best practice is to define secondary indexes at table creation time using the `INDEX` clause in the CREATE HYBRID TABLE statement (e.g., `INDEX idx_customer (customer_id)`). This quickstart adds indexes separately after the table is created so you can observe the before/after effect in query profiles. See [Indexing Hybrid Tables](https://docs.snowflake.com/en/user-guide/tables-hybrid-index) for the inline syntax.
+
 ```sql
 CREATE OR REPLACE HYBRID TABLE orders (
     order_id     NUMBER        NOT NULL AUTOINCREMENT PRIMARY KEY,
@@ -113,7 +115,7 @@ SELECT
         [UNIFORM(0, 3, RANDOM())]::VARCHAR            AS region,
     DATEADD(SECOND,
         UNIFORM(0, 7776000, RANDOM()),
-        DATEADD(DAY, -90, CURRENT_TIMESTAMP()::TIMESTAMP_NTZ))  AS created_at,
+        DATEADD(DAY, -90, CURRENT_TIMESTAMP())::TIMESTAMP_NTZ)  AS created_at,
     NULL                                              AS updated_at,
     ROUND(UNIFORM(5.00, 2500.00, RANDOM()), 2)        AS total_amount,
     'user_' || UNIFORM(1, 500, RANDOM())::VARCHAR     AS created_by
@@ -244,7 +246,7 @@ SELECT order_id, customer_id, created_at, total_amount
 FROM orders
 WHERE status   = 'PENDING'
   AND region   = 'US-EAST'
-  AND created_at > DATEADD(DAY, -7, CURRENT_TIMESTAMP()::TIMESTAMP_NTZ)
+  AND created_at > DATEADD(DAY, -7, CURRENT_TIMESTAMP())::TIMESTAMP_NTZ
 ORDER BY created_at DESC;
 ```
 
@@ -319,7 +321,7 @@ SELECT order_id, customer_id, created_at, total_amount
 FROM orders
 WHERE status   = 'PENDING'
   AND region   = 'US-EAST'
-  AND created_at > DATEADD(DAY, -7, CURRENT_TIMESTAMP()::TIMESTAMP_NTZ)
+  AND created_at > DATEADD(DAY, -7, CURRENT_TIMESTAMP())::TIMESTAMP_NTZ
 ORDER BY created_at DESC;
 ```
 
@@ -464,7 +466,7 @@ SELECT * FROM orders WHERE region = 'EU';
 **Do this instead:** Use the dedicated `idx_orders_region_created` index, which has `region` as its leading column.
 
 ```sql
-SELECT * FROM orders WHERE region = 'EU' AND created_at > DATEADD(DAY, -30, CURRENT_TIMESTAMP()::TIMESTAMP_NTZ);
+SELECT * FROM orders WHERE region = 'EU' AND created_at > DATEADD(DAY, -30, CURRENT_TIMESTAMP())::TIMESTAMP_NTZ;
 ```
 
 ### Anti-Pattern 4: Range Predicate on a Non-Final Column
