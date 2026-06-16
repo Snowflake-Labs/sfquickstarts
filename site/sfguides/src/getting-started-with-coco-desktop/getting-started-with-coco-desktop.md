@@ -212,51 +212,29 @@ Every conversation is saved automatically. You can pick up exactly where you lef
 
 ### Resume a session
 
-In Agent Mode, sessions are listed in the navigation panel under each project. Click any session to reopen it. Sessions are also accessible from Editor Mode's Session panel.
+In Agent Mode, sessions are listed in the navigation panel under each project. Click any session to reopen it.
 
-You can also type in the chat input:
-
-```
-/resume
-```
+In Editor Mode, past sessions are listed in the **Session** panel on the right. Click **Recent sessions** to browse and reopen them.
 
 ### Start a new session
 
-```
-/new
-```
-
-Or click **New session** (⌘N / Ctrl+N) in the navigation panel.
+Click **New session** in the navigation panel, or press **⌘N** (macOS) / **Ctrl+N** (Windows).
 
 ### Rename a session
 
-Right-click a session in the navigation panel and select **Rename**, or type:
+Right-click a session in the navigation panel and select **Rename**.
 
-```
-/rename my-first-session
-```
+### Search and filter sessions
 
-### Rewind
+Use the customize control on the navigation panel header to search sessions by name, or filter to show only unread sessions.
 
-Made a wrong turn? Roll back to an earlier point in the conversation:
+### Switch between projects
 
-```
-/rewind
-```
-
-### Fork
-
-Want to try a different approach without losing your current progress?
-
-```
-/fork
-```
-
-This creates a new session branched from the current point, preserving the original session untouched.
+Each project in the navigation panel has its own set of sessions. Click a different project to switch context, or click the **+** button to add a new project folder.
 
 ### Private Mode
 
-For sensitive work, enable Private Mode from the connection menu in the top navigation bar. Private Mode disables conversation history for the session.
+For sensitive work, enable **Private Mode** from the connection menu in the top navigation bar. Private Mode disables conversation history for the session.
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
@@ -264,7 +242,7 @@ Duration: 2
 
 Congratulations! You've successfully installed Cortex Code Desktop, connected it to your Snowflake account, and run your first natural-language queries from a full AI-powered IDE.
 
-From here you can explore slash commands (`/help`), enable Plan Mode to review and approve each action before it runs, connect MCP servers for external tools, and add custom skills to tailor the assistant to your workflow.
+From here you can enable Plan Mode to review and approve each action before it runs, connect MCP servers for external tools via Agent Settings, and add custom skills to tailor the assistant to your workflow.
 
 ### What You Learned
 - How to download and install Cortex Code Desktop on macOS or Windows
@@ -272,7 +250,7 @@ From here you can explore slash commands (`/help`), enable Plan Mode to review a
 - How to navigate Agent Mode and Editor Mode
 - How to ask natural-language questions and run SQL
 - How to use the SQL Playground and `#` table references
-- How to manage, resume, fork, and rewind sessions
+- How to manage, resume, rename, and search sessions
 
 ### Related Resources
 
