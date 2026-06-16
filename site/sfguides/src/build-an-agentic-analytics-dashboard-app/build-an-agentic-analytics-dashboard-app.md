@@ -37,7 +37,11 @@ You can use [Cortex Code](https://docs.snowflake.com/en/user-guide/cortex-code/c
 - How to deploy your app two ways: inside Snowflake and to Streamlit Community Cloud
 
 ### What You Will Build
-A role-aware Streamlit app with an interactive **dark world map**, an adaptive KPI row, an **AI Agent** (ask questions in plain English), **Charts on Demand** (describe a chart and get it), and **semantic search** over your accounts.
+A role-aware Streamlit app with an interactive **world map**, an adaptive KPI row, an **AI Agent** (ask questions in plain English), **Charts on Demand** (describe a chart and get it), and **semantic search** over your accounts.
+
+The role-based access control (RBAC) functionality of the app is provided in the drop-down menu. In a practical setting, one can have the role be determined automatically based on the current roles of the logged in user.
+
+![](assets/roles.jpg)
 
 ### Prerequisites
 - A **Snowflake account** (trial or paid). Start free at [signup.snowflake.com](https://signup.snowflake.com?utm_source=snowflake-devrel&utm_medium=developer-guides). Everything here works on a trial.
@@ -216,6 +220,8 @@ scoped to the selection and parameterized.
 
 **Checkpoint:** the dashboard shows the world map with global numbers; clicking a country changes the metric cards, the table, and both charts.
 
+![](assets/app-01-dashboard.png)
+
 <!-- ------------------------ -->
 ## Add AI Agent, Charts, and Semantic Search
 Duration: 15
@@ -258,6 +264,17 @@ numbers for the USA.
 ```
 
 **Checkpoint:** the app has a top navigation bar (Dashboard, AI Agent, Charts, Semantic Search), the AI Agent answers a question like "What is the total MRR?", and search returns ranked accounts.
+
+Here's how the created AI-powered pages would look like:
+
+1. The AI agent page - ask the AI agent any question you'd like
+![](assets/app-02-ai-agent.png)
+
+2. The charts page - provide a description of the chart that you want to render
+![](assets/app-03-charts.png)
+
+3. The semantic search page - enter a description of the desired results
+![](assets/app-04-search.png)
 
 <!-- ------------------------ -->
 ## Deploy to Streamlit in Snowflake (Warehouse Runtime)
