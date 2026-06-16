@@ -210,7 +210,226 @@ ALTER TASK snapshot_orders_to_analytics SUSPEND;
 ```
 
 <!-- ------------------------ -->
-## Step 3: Change Detection Without Streams
+## Step 3: HT as Ingest Buffer with Real-Time Rollup and Data Share Delivery
+
+This pattern is common in high-frequency streaming workloads (financial data, IoT, clickstreams) where an external system writes to a Hybrid Table continuously and a downstream consumer needs a fresh aggregated view delivered in real time.
+
+The key insight: **the Hybrid Table is not the permanent store**. Its PRIMARY KEY enforces exactly-once deduplication on ingest. A fast serverless Task flushes new rows to a clustered standard table every 30 seconds, computes the rollup there (where columnar GROUP BY is 50-100x faster than KV storage), and the HT is intentionally kept small via a rolling retention window.
+
+### The Problem This Solves
+
+A naive approach uses the Hybrid Table for both ingest and aggregation. As rows accumulate through the day, the cumulative GROUP BY must scan an ever-growing dataset through FoundationDB's KV storage. At 500K rows the scan takes ~17 seconds; at 2.35M rows (mid-session) it takes 35 seconds; by end of day it can reach 2 minutes — well past any reasonable SLA.
+
+The fix is separating the two concerns: **HT handles ingest and dedup, standard table handles aggregation**.
+
+### Architecture
+
+```
+[External Source]                   [Hybrid Table]
+(Kafka / app)   -- JDBC INSERT -->  PK: dedup guarantee
+                                    Retention: 2-4 hours only
+                                         |
+                                    Task (30s serverless)
+                                    1. Delta INSERT → ST
+                                    2. GROUP BY on ST (columnar)
+                                    3. INSERT OVERWRITE rollup
+                                    4. Advance checkpoint
+                                         |
+                              +----------+----------+
+                              |                     |
+                      [raw_events_st]       [events_rollup]
+                      Permanent record      TRANSIENT, 0-day retention
+                      Clustered columnar    INSERT OVERWRITE (no churn)
+                              |                     |
+                              └──── Data Share ──────┘
+                                    Consumer queries live SQL
+                                    No CSV, no file polling
+```
+
+### Create the Tables
+
+The Hybrid Table serves as the ingest buffer. Its PRIMARY KEY enforces exactly-once delivery — duplicate writes from the producer are silently rejected:
+
+```sql
+CREATE OR REPLACE HYBRID TABLE events_ht (
+    event_id      VARCHAR       NOT NULL,
+    source_id     VARCHAR       NOT NULL,
+    event_type    VARCHAR       NOT NULL,
+    region        VARCHAR(10)   NOT NULL,
+    value         NUMBER(12,4)  NOT NULL,
+    event_ts      TIMESTAMP_NTZ NOT NULL,
+    PRIMARY KEY (event_id),
+    INDEX idx_events_source_ts (source_id, event_ts)
+);
+```
+
+The standard table is the permanent columnar record, clustered for fast range scans:
+
+```sql
+CREATE OR REPLACE TABLE raw_events_st (
+    event_id      VARCHAR       NOT NULL,
+    source_id     VARCHAR       NOT NULL,
+    event_type    VARCHAR       NOT NULL,
+    region        VARCHAR(10)   NOT NULL,
+    value         NUMBER(12,4)  NOT NULL,
+    event_ts      TIMESTAMP_NTZ NOT NULL,
+    ingested_at   TIMESTAMP_NTZ DEFAULT CURRENT_TIMESTAMP()
+)
+CLUSTER BY (event_type, event_ts);
+```
+
+The rollup table is TRANSIENT with zero retention — it is a derived artifact, always recomputable from `raw_events_st`:
+
+```sql
+CREATE OR REPLACE TRANSIENT TABLE events_rollup (
+    event_type    VARCHAR       NOT NULL,
+    region        VARCHAR(10)   NOT NULL,
+    event_count   NUMBER        NOT NULL,
+    total_value   NUMBER(12,4)  NOT NULL,
+    min_value     NUMBER(12,4)  NOT NULL,
+    max_value     NUMBER(12,4)  NOT NULL,
+    window_start  TIMESTAMP_NTZ NOT NULL,
+    last_updated  TIMESTAMP_NTZ NOT NULL
+)
+DATA_RETENTION_TIME_IN_DAYS = 0;
+```
+
+The checkpoint table tracks the last flushed timestamp per window:
+
+```sql
+CREATE OR REPLACE TABLE events_checkpoint (
+    window_date    DATE          NOT NULL,
+    last_flush_ts  TIMESTAMP_NTZ NOT NULL,
+    PRIMARY KEY (window_date)
+);
+
+INSERT INTO events_checkpoint VALUES (CURRENT_DATE(), '1970-01-01'::TIMESTAMP_NTZ);
+```
+
+### Load Sample Data into the HT Buffer
+
+```sql
+INSERT INTO events_ht (event_id, source_id, event_type, region, value, event_ts)
+SELECT
+    'evt_' || SEQ4()::VARCHAR,
+    'src_' || UNIFORM(1, 100, RANDOM())::VARCHAR,
+    ARRAY_CONSTRUCT('CLICK','VIEW','PURCHASE','CANCEL')[UNIFORM(0,3,RANDOM())]::VARCHAR,
+    ARRAY_CONSTRUCT('US-EAST','US-WEST','EU','APAC')[UNIFORM(0,3,RANDOM())]::VARCHAR,
+    ROUND(UNIFORM(0.01, 999.99, RANDOM()), 4),
+    DATEADD(SECOND, UNIFORM(0, 3600, RANDOM()),
+        DATEADD(HOUR, -2, CURRENT_TIMESTAMP()))::TIMESTAMP_NTZ
+FROM TABLE(GENERATOR(ROWCOUNT => 100000));
+```
+
+### Create the 30-Second Serverless Task
+
+```sql
+CREATE OR REPLACE TASK events_pipeline_30s
+  SCHEDULE = '30 SECONDS'
+  USER_TASK_MANAGED_INITIAL_WAREHOUSE_SIZE = 'XSMALL'
+AS
+DECLARE
+  v_today      DATE          := CURRENT_DATE();
+  v_now        TIMESTAMP_NTZ := CURRENT_TIMESTAMP()::TIMESTAMP_NTZ;
+  v_checkpoint TIMESTAMP_NTZ;
+BEGIN
+  SELECT last_flush_ts INTO v_checkpoint
+  FROM events_checkpoint WHERE window_date = :v_today;
+
+  -- Step 1: Delta flush — only new rows since last checkpoint
+  -- Uses the secondary index on (source_id, event_ts) for a fast seek
+  INSERT INTO raw_events_st (event_id, source_id, event_type, region, value, event_ts)
+  SELECT event_id, source_id, event_type, region, value, event_ts
+  FROM events_ht
+  WHERE event_ts > :v_checkpoint
+    AND event_ts <= :v_now;
+
+  -- Step 2: Cumulative rollup on the standard table (columnar GROUP BY, ~100ms at 500K rows)
+  -- INSERT OVERWRITE atomically replaces all rows — no DELETE + INSERT micro-partition churn
+  INSERT OVERWRITE INTO events_rollup
+  SELECT
+    event_type,
+    region,
+    COUNT(*)                    AS event_count,
+    SUM(value)                  AS total_value,
+    MIN(value)                  AS min_value,
+    MAX(value)                  AS max_value,
+    MIN(event_ts)               AS window_start,
+    :v_now                      AS last_updated
+  FROM raw_events_st
+  WHERE event_ts::DATE = :v_today
+  GROUP BY event_type, region;
+
+  -- Step 3: Advance checkpoint
+  MERGE INTO events_checkpoint AS tgt
+  USING (SELECT :v_today AS window_date, :v_now AS last_flush_ts) AS src
+  ON tgt.window_date = src.window_date
+  WHEN MATCHED THEN UPDATE SET tgt.last_flush_ts = src.last_flush_ts
+  WHEN NOT MATCHED THEN INSERT (window_date, last_flush_ts) VALUES (src.window_date, src.last_flush_ts);
+END;
+
+ALTER TASK events_pipeline_30s RESUME;
+```
+
+> **Note:** `INSERT OVERWRITE` is critical here. Refreshing a rollup table 2,880 times per day (30s interval) with `DELETE + INSERT` would accumulate deleted micro-partitions in Time Travel storage. `INSERT OVERWRITE` atomically replaces the data without creating Time Travel overhead. Combined with `DATA_RETENTION_TIME_IN_DAYS = 0` (TRANSIENT table), there is zero storage churn from the rollup refreshes.
+
+### Verify the Pipeline
+
+```sql
+-- Confirm delta flush populated the standard table
+SELECT COUNT(*) FROM raw_events_st;
+
+-- Check the rollup
+SELECT * FROM events_rollup ORDER BY total_value DESC;
+
+-- Confirm checkpoint advanced
+SELECT * FROM events_checkpoint;
+```
+
+### Maintain the HT Buffer Window
+
+Once `raw_events_st` is the permanent record, purge the HT periodically to keep it small. This is the key that makes the pattern sustainable: a small HT means fast ingest, fast dedup, and fast platform maintenance jobs.
+
+```sql
+CREATE OR REPLACE TASK purge_ht_buffer
+  SCHEDULE = 'USING CRON 0 * * * * UTC'
+  USER_TASK_MANAGED_INITIAL_WAREHOUSE_SIZE = 'XSMALL'
+AS
+  DELETE FROM events_ht
+  WHERE event_ts < DATEADD(HOUR, -4, CURRENT_TIMESTAMP())::TIMESTAMP_NTZ;
+
+ALTER TASK purge_ht_buffer RESUME;
+```
+
+### Deliver via Data Share (Optional)
+
+Replace file-based delivery with a live Data Share. Consumers query `events_rollup` directly as a standard Snowflake table — always current, no file management:
+
+```sql
+-- Run as ACCOUNTADMIN
+CREATE SHARE events_data_share;
+GRANT USAGE ON DATABASE HT_ARCH_QS_DB TO SHARE events_data_share;
+GRANT USAGE ON SCHEMA HT_ARCH_QS_DB.DATA TO SHARE events_data_share;
+GRANT SELECT ON TABLE HT_ARCH_QS_DB.DATA.events_rollup TO SHARE events_data_share;
+-- ALTER SHARE events_data_share ADD ACCOUNTS = <consumer_account>;
+```
+
+### Pause the Tasks (for this quickstart)
+
+```sql
+ALTER TASK events_pipeline_30s SUSPEND;
+ALTER TASK purge_ht_buffer SUSPEND;
+```
+
+### When to Use This Pattern
+
+- High-frequency streaming ingest (financial data, IoT sensors, clickstreams) where exactly-once delivery matters
+- Consumer needs a fresh aggregated view, not raw rows
+- Current pipeline uses Python + file export — replace with serverless Task + Data Share
+- HT is growing unboundedly because it's used for both ingest and long-term storage
+
+<!-- ------------------------ -->
+## Step 4: Change Detection Without Streams
 
 Since Streams are not supported on Hybrid Tables, you need an alternative to detect which rows changed since the last sync. The timestamp watermark pattern uses an `updated_at` column to track modifications.
 
@@ -287,7 +506,7 @@ WHEN NOT MATCHED
 ```
 
 <!-- ------------------------ -->
-## Step 4: Event-Driven CDC (External Notifications)
+## Step 5: Event-Driven CDC (External Notifications)
 
 For systems that need real-time event delivery (Kafka consumers, microservices, alerting), Snowflake can publish notifications to cloud queues and webhooks.
 
@@ -365,7 +584,7 @@ For simpler notifications, use a webhook integration:
 ```
 
 <!-- ------------------------ -->
-## Step 5: Dynamic Tables on the Standard Table Copy
+## Step 6: Dynamic Tables on the Standard Table Copy
 
 Now that `orders_analytics` is being maintained by the snapshot Task, you can layer Dynamic Tables on top for derived datasets.
 
@@ -415,7 +634,7 @@ SELECT * FROM customer_activity ORDER BY lifetime_value DESC LIMIT 10;
 The Dynamic Tables refresh automatically within 10 minutes of changes appearing in `orders_analytics`. BI dashboards can query these DTs directly with result cache enabled.
 
 <!-- ------------------------ -->
-## Step 6: Materialized Views on the Standard Table Copy
+## Step 7: Materialized Views on the Standard Table Copy
 
 For simpler precomputed aggregations that benefit from automatic incremental maintenance:
 
@@ -449,7 +668,7 @@ The Materialized View is refreshed incrementally as `orders_analytics` changes. 
 | Best for | Complex derived datasets | Simple aggregations on a single table |
 
 <!-- ------------------------ -->
-## Step 7: Precomputed Analytics Served from a Hybrid Table
+## Step 8: Precomputed Analytics Served from a Hybrid Table
 
 The previous patterns move data from HT to standard tables for analytics. This pattern goes the other direction: precompute analytics on standard tables and store the results in a Hybrid Table for fast point-lookup serving in dashboards.
 
@@ -553,7 +772,7 @@ This uses `IndexScan` on `idx_dck_region` — fast enough for paginated dashboar
 ```
 
 <!-- ------------------------ -->
-## Step 8: Fan-In Aggregation
+## Step 9: Fan-In Aggregation
 
 In production systems, multiple Hybrid Tables often serve different domains (orders, inventory, customers). Analytics often needs to join across these domains.
 
@@ -630,7 +849,7 @@ AS
 This provides a denormalized, analytics-ready table that joins data from multiple Hybrid Tables. The CTAS-based refresh is appropriate when the full dataset is small enough to rebuild (under a few million rows). For larger datasets, use the MERGE pattern from Step 2 on each source table.
 
 <!-- ------------------------ -->
-## Step 9: Hot/Cold Data Tiering
+## Step 10: Hot/Cold Data Tiering
 
 Hybrid Tables are optimized for recent, actively-queried data. Historical data that is rarely accessed should be moved to standard tables where it benefits from columnar compression and lower storage costs.
 
@@ -685,7 +904,7 @@ CREATE OR REPLACE VIEW orders_all AS
 - **Archive query performance:** Standard tables with clustering on `created_at` provide excellent range-scan performance for historical queries.
 
 <!-- ------------------------ -->
-## Step 10: Alert-Based Monitoring
+## Step 11: Alert-Based Monitoring
 
 Hybrid Table queries that complete in under 1 second do not appear in `QUERY_HISTORY`. Use `AGGREGATE_QUERY_HISTORY` for monitoring, and Snowflake Alerts for automated notifications.
 
@@ -766,14 +985,15 @@ CREATE OR REPLACE TABLE alert_log (
 | Need | Pattern | Freshness | Complexity |
 |------|---------|-----------|------------|
 | BI dashboards on HT data | Task + MERGE to ST (Step 2) | Minutes | Low |
-| Incremental change detection | Watermark polling (Step 3) | Minutes | Medium |
-| Real-time event delivery | Task + Notification Integration (Step 4) | ~1 minute | Medium |
-| Derived aggregations | DT on ST copy (Step 5) | TARGET_LAG | Low |
-| Simple precomputed rollups | MV on ST copy (Step 6) | Automatic | Low |
-| Fast dashboard point lookups | Precompute to HT (Step 7) | Minutes | Medium |
-| Cross-domain analytics | Fan-in to consolidated ST (Step 8) | Minutes | Medium |
-| Manage HT storage growth | Hot/cold tiering (Step 9) | Daily | Low |
-| Operational monitoring | AGGREGATE_QUERY_HISTORY + Alerts (Step 10) | Hours (view latency) | Medium |
+| High-freq ingest with real-time rollup | HT ingest buffer + 30s Task + Data Share (Step 3) | 30 seconds | Medium |
+| Incremental change detection | Watermark polling (Step 4) | Minutes | Medium |
+| Real-time event delivery | Task + Notification Integration (Step 5) | ~1 minute | Medium |
+| Derived aggregations | DT on ST copy (Step 6) | TARGET_LAG | Low |
+| Simple precomputed rollups | MV on ST copy (Step 7) | Automatic | Low |
+| Fast dashboard point lookups | Precompute to HT (Step 8) | Minutes | Medium |
+| Cross-domain analytics | Fan-in to consolidated ST (Step 9) | Minutes | Medium |
+| Manage HT storage growth | Hot/cold tiering (Step 10) | Daily | Low |
+| Operational monitoring | AGGREGATE_QUERY_HISTORY + Alerts (Step 11) | Hours (view latency) | Medium |
 
 ### Reference Architecture
 

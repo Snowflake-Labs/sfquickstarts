@@ -15,6 +15,22 @@
       "complexity": "Low"
     },
     {
+      "id": "P1b",
+      "name": "HT as Ingest Buffer with Real-Time Rollup and Data Share Delivery",
+      "problem": "High-frequency streaming ingest (Kafka/IoT/financial) needs exactly-once dedup AND a fresh aggregated view; cumulative GROUP BY on HT KV storage grows linearly through the day",
+      "solution": "HT serves as short-term ingest dedup buffer (PK = exactly-once); 30s serverless Task flushes delta to clustered ST, runs columnar GROUP BY, INSERT OVERWRITE into TRANSIENT rollup table; HT purged after rolling window; delivered via Data Share",
+      "freshness": "30 seconds",
+      "complexity": "Medium",
+      "key_sql_patterns": [
+        "INSERT OVERWRITE INTO rollup SELECT ... FROM raw_st GROUP BY ...",
+        "DATA_RETENTION_TIME_IN_DAYS = 0 on TRANSIENT rollup table",
+        "DELETE FROM ht WHERE event_ts < DATEADD(HOUR, -4, CURRENT_TIMESTAMP())",
+        "USER_TASK_MANAGED_INITIAL_WAREHOUSE_SIZE = XSMALL for serverless 30s task"
+      ],
+      "why_insert_overwrite": "Refreshing rollup 2880x/day with DELETE+INSERT creates Time Travel micro-partition churn; INSERT OVERWRITE atomically replaces data with zero churn",
+      "why_keep_ht_small": "HT retention window keeps row count low; platform maintenance jobs scale with HT size — small HT = fast maintenance, no random slowdowns"
+    },
+    {
       "id": "P2",
       "name": "Watermark-Based Change Detection",
       "problem": "Streams not supported on HT; need incremental change detection",
