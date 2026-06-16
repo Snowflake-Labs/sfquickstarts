@@ -39,9 +39,10 @@
   },
   "ddl_reference": {
     "ctas_with_pk": {
-      "syntax": "CREATE OR REPLACE HYBRID TABLE table_name (col1 TYPE, col2 TYPE, ..., PRIMARY KEY (pk_col)) AS SELECT * FROM source_table",
-      "notes": "Schema must be declared explicitly. CTAS does NOT support FOREIGN KEY constraints.",
-      "optimized_bulk_load": true
+      "syntax": "CREATE OR REPLACE HYBRID TABLE table_name (col1 TYPE, col2 TYPE, ..., PRIMARY KEY (pk_col), INDEX idx_name (col)) AS SELECT * FROM source_table",
+      "notes": "Schema must be declared explicitly. CTAS does NOT support FOREIGN KEY constraints. Best practice is to declare secondary indexes inline so they are populated during bulk load.",
+      "optimized_bulk_load": true,
+      "inline_index_support": true
     },
     "explicit_ddl_then_insert": {
       "syntax": "CREATE OR REPLACE HYBRID TABLE table_name (..., PRIMARY KEY (pk_col), FOREIGN KEY (fk_col) REFERENCES parent(pk)); INSERT INTO table_name SELECT * FROM source;",
