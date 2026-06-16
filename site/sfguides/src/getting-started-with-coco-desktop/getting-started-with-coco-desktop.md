@@ -116,7 +116,7 @@ Select **Light** or **Dark**, then click **Get Started** to launch the app.
 
 ### Verify the connection
 
-Once in the app, click the connection name in the top navigation bar and select **Manage Snowflake Connections** to confirm your account is connected. You can also type `/connections` in the chat input to open the connection manager.
+Once in the app, click the connection name in the top navigation bar and select **Manage Snowflake Connections** to confirm your account is connected.
 
 <!-- ------------------------ -->
 ## Explore the Interface
