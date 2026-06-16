@@ -313,10 +313,12 @@ dependencies:
 **Checkpoint:** open the app from Snowsight under **Projects → Streamlit**; every page loads with no internet access required.
 
 <!-- ------------------------ -->
-## Deploy to Streamlit Community Cloud
+## Deploy to Streamlit Community Cloud (Optional)
 Duration: 10
 
 **What you'll do:** publish the original Postgres app to a public URL with Streamlit Community Cloud (free). It runs outside Snowflake and connects to your Postgres instance over the public ingress rule from Step 1, with no extra setup.
+
+**Note:** If using natural language prompts to create files for the GitHub repo, it is recommended to perform the following in a Cortex Code CLI session. Alternatively, this can easily be done manually by downloading the app files from the SiS app on Snowflake, then manually create a GitHub repo and upload the app files to the repo.
 
 ```text
 Create a GitHub repo called tundra-analytics and copy my Tundra app into it.
