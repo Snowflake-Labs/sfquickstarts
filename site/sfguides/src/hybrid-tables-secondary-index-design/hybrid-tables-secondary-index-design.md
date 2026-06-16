@@ -35,10 +35,12 @@ You are building the order management backend for an e-commerce platform. Orders
 
 - A Snowflake paid account in an AWS or Azure commercial region (Hybrid Tables are not available in GCP, government regions, or trial accounts)
 - Familiarity with SQL and Snowflake Snowsight
-- ACCOUNTADMIN or a role with `CREATE DATABASE`, `CREATE WAREHOUSE`, and `CREATE HYBRID TABLE` privileges
+- ACCOUNTADMIN is used in this quickstart to set up the role, warehouse, and database. Hybrid Tables can be created on any existing database or schema as long as your role has `CREATE TABLE` privileges on that schema — ACCOUNTADMIN is not required for the Hybrid Table itself. Contact your Snowflake administrator if you need `CREATE TABLE` granted on an existing schema.
 - To add secondary indexes to an existing Hybrid Table, the role must also have `SELECT` on the table
 
 > **Note:** Queries executed in Snowsight carry additional overhead compared to driver-based access. The absolute latency numbers you observe here will be higher than what your application achieves via JDBC/Python/Node.js. The *relative* difference between indexed and unindexed queries is the key signal to observe.
+
+> **Note:** The SQL examples in this quickstart use string literals and session variables for clarity. Production OLTP workloads should use bound variables (parameterized queries) so Snowflake can cache and reuse query plans, which is critical for high-throughput workloads. See [Hybrid Tables Best Practices](https://docs.snowflake.com/en/user-guide/tables-hybrid-best-practices) and [Performance Testing for Hybrid Tables](https://docs.snowflake.com/en/user-guide/tables-hybrid-test).
 
 <!-- ------------------------ -->
 ## Setup
@@ -77,13 +79,14 @@ You will start with a Hybrid Table that has **only a primary key**. The primary 
 
 ```sql
 CREATE OR REPLACE HYBRID TABLE orders (
-    order_id     NUMBER       NOT NULL AUTOINCREMENT PRIMARY KEY,
-    customer_id  NUMBER       NOT NULL,
-    status       VARCHAR(20)  NOT NULL DEFAULT 'PENDING',
-    region       VARCHAR(10)  NOT NULL,
+    order_id     NUMBER        NOT NULL AUTOINCREMENT PRIMARY KEY,
+    customer_id  NUMBER        NOT NULL,
+    status       VARCHAR(20)   NOT NULL DEFAULT 'PENDING',
+    region       VARCHAR(10)   NOT NULL,
     created_at   TIMESTAMP_NTZ NOT NULL,
     updated_at   TIMESTAMP_NTZ,
-    total_amount NUMBER(12,2) NOT NULL
+    total_amount NUMBER(12,2)  NOT NULL,
+    created_by   VARCHAR(100)  NOT NULL
 );
 ```
 
@@ -92,7 +95,7 @@ CREATE OR REPLACE HYBRID TABLE orders (
 Insert 500,000 orders spread across 10,000 customers, four statuses, and four regions, spanning the past 90 days.
 
 ```sql
-INSERT INTO orders (customer_id, status, region, created_at, updated_at, total_amount)
+INSERT INTO orders (customer_id, status, region, created_at, updated_at, total_amount, created_by)
 SELECT
     UNIFORM(1, 10000, RANDOM())::NUMBER               AS customer_id,
     ARRAY_CONSTRUCT('PENDING','SHIPPED','DELIVERED','CANCELLED')
@@ -101,9 +104,10 @@ SELECT
         [UNIFORM(0, 3, RANDOM())]::VARCHAR            AS region,
     DATEADD(SECOND,
         UNIFORM(0, 7776000, RANDOM()),
-        DATEADD(DAY, -90, CURRENT_TIMESTAMP()))       AS created_at,
+        DATEADD(DAY, -90, CURRENT_TIMESTAMP()::TIMESTAMP_NTZ))  AS created_at,
     NULL                                              AS updated_at,
-    ROUND(UNIFORM(5.00, 2500.00, RANDOM()), 2)        AS total_amount
+    ROUND(UNIFORM(5.00, 2500.00, RANDOM()), 2)        AS total_amount,
+    'user_' || UNIFORM(1, 500, RANDOM())::VARCHAR     AS created_by
 FROM TABLE(GENERATOR(ROWCOUNT => 500000));
 ```
 
@@ -222,11 +226,13 @@ SELECT order_id, customer_id, created_at, total_amount
 FROM orders
 WHERE status   = 'PENDING'
   AND region   = 'US-EAST'
-  AND created_at > DATEADD(DAY, -7, CURRENT_TIMESTAMP())
+  AND created_at > DATEADD(DAY, -7, CURRENT_TIMESTAMP()::TIMESTAMP_NTZ)
 ORDER BY created_at DESC;
 ```
 
 The query profile will show an **IndexScan** on `IDX_ORDERS_STATUS_REGION_TS` with all three predicates pushed as access predicates.
+
+> **Note:** Predicate values must match the data type of the indexed column. `CURRENT_TIMESTAMP()` returns `TIMESTAMP_LTZ`. Since `created_at` is declared as `TIMESTAMP_NTZ`, the `::TIMESTAMP_NTZ` cast is required for the predicate to be pushed to the index. Without it, the implicit type conversion causes a full table scan.
 
 ### Why Column Order Matters
 
@@ -251,6 +257,16 @@ SELECT status, COUNT(*) FROM orders GROUP BY status ORDER BY 2 DESC;
 ```
 
 > **Note:** A single-column index on a low-cardinality column like `status` (only 4 values) is a poor standalone index because it still scans a large fraction of the table. It becomes more selective as the **leading** column of a composite index that also constrains `region` and `created_at`.
+
+**Ordering within equality columns:** Within the equality prefix of a composite index, higher-cardinality columns should generally lead. A boolean column like `is_active` (2 distinct values) as the leading key means every seek still touches roughly half the index. A higher-cardinality column like `region` (4 values) or `customer_id` (10,000 values) narrows the seek range considerably.
+
+```sql
+-- Less effective: boolean column leads, large fraction of index scanned on every seek
+CREATE INDEX idx_poor ON orders (is_active, region, created_at);
+
+-- Better: higher-cardinality column leads, much smaller seek range
+CREATE INDEX idx_better ON orders (region, is_active, created_at);
+```
 
 <!-- ------------------------ -->
 ## Step 4: Covering Indexes with INCLUDE
@@ -282,7 +298,7 @@ SELECT order_id, customer_id, created_at, total_amount
 FROM orders
 WHERE status   = 'PENDING'
   AND region   = 'US-EAST'
-  AND created_at > DATEADD(DAY, -7, CURRENT_TIMESTAMP())
+  AND created_at > DATEADD(DAY, -7, CURRENT_TIMESTAMP()::TIMESTAMP_NTZ)
 ORDER BY created_at DESC;
 ```
 
@@ -419,7 +435,7 @@ SELECT * FROM orders WHERE region = 'EU';
 **Do this instead:** Use the dedicated `idx_orders_region_created` index, which has `region` as its leading column.
 
 ```sql
-SELECT * FROM orders WHERE region = 'EU' AND created_at > DATEADD(DAY, -30, CURRENT_TIMESTAMP());
+SELECT * FROM orders WHERE region = 'EU' AND created_at > DATEADD(DAY, -30, CURRENT_TIMESTAMP()::TIMESTAMP_NTZ);
 ```
 
 ### Anti-Pattern 4: Range Predicate on a Non-Final Column
@@ -438,7 +454,7 @@ Only `region` (via the LIKE prefix) benefits from this index. The predicates on 
 
 ```sql
 -- idx_orders_status_region_ts (status, region, created_at) is the correct design
-SELECT * FROM orders WHERE status = 'PENDING' AND region = 'US-EAST' AND created_at > '2026-01-01';
+SELECT * FROM orders WHERE status = 'PENDING' AND region = 'US-EAST' AND created_at > '2026-01-01'::TIMESTAMP_NTZ;
 ```
 
 ### Anti-Pattern 5: Low-Cardinality Standalone Index
@@ -453,6 +469,27 @@ CREATE INDEX idx_status_only ON orders (status);
 
 ```sql
 CREATE INDEX idx_orders_status_region_ts ON orders (status, region, created_at);
+```
+
+### Anti-Pattern 6: Non-Deterministic Session Functions in Predicates
+
+Functions like `CURRENT_USER()`, `CURRENT_SESSION()`, `CURRENT_ACCOUNT()`, and `CURRENT_ROLE()` are evaluated at runtime and cannot be pushed to an index access predicate. A query filtering on one of these functions directly will produce a `COLUMN_BASED` full table scan regardless of whether an index exists on the column.
+
+**Avoid:** Using a session function directly in the predicate.
+
+```sql
+CREATE INDEX idx_orders_created_by ON orders (created_by);
+
+-- COLUMN_BASED scan even with the index, because CURRENT_USER() cannot
+-- be pushed to an index access predicate at compile time
+SELECT * FROM orders WHERE created_by = CURRENT_USER();
+```
+
+**Do this instead:** Capture the value in a session variable first, then use the variable as the predicate.
+
+```sql
+SET active_user = CURRENT_USER();
+SELECT * FROM orders WHERE created_by = $active_user;
 ```
 
 <!-- ------------------------ -->
