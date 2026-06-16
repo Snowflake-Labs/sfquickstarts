@@ -447,7 +447,111 @@ The Materialized View is refreshed incrementally as `orders_analytics` changes. 
 | Best for | Complex derived datasets | Simple aggregations on a single table |
 
 <!-- ------------------------ -->
-## Step 7: Fan-In Aggregation
+## Step 7: Precomputed Analytics Served from a Hybrid Table
+
+The previous patterns move data from HT to standard tables for analytics. This pattern goes the other direction: precompute analytics on standard tables and store the results in a Hybrid Table for fast point-lookup serving in dashboards.
+
+### Why This Pattern?
+
+Dashboards often display the same KPIs filtered by a single dimension (customer, region, product). If the underlying aggregation is expensive (joining large standard tables, window functions, complex rollups), you do not want the dashboard to recompute it on every page load. By materializing the results into a Hybrid Table, each dashboard filter becomes a single-digit millisecond indexed lookup instead of a multi-second analytical query.
+
+### Create the Dashboard-Serving Hybrid Table
+
+```sql
+CREATE OR REPLACE HYBRID TABLE dashboard_customer_kpis (
+    customer_id    NUMBER        NOT NULL,
+    total_orders   NUMBER        NOT NULL,
+    lifetime_value NUMBER(12,2)  NOT NULL,
+    avg_order_size NUMBER(12,2)  NOT NULL,
+    last_order_at  TIMESTAMP_NTZ,
+    pending_count  NUMBER        NOT NULL,
+    region         VARCHAR(10)   NOT NULL,
+    computed_at    TIMESTAMP_NTZ NOT NULL,
+    PRIMARY KEY (customer_id),
+    INDEX idx_dck_region (region)
+);
+```
+
+### Populate from Analytics Tables
+
+```sql
+INSERT INTO dashboard_customer_kpis
+SELECT
+    customer_id,
+    COUNT(*) AS total_orders,
+    SUM(total_amount) AS lifetime_value,
+    AVG(total_amount) AS avg_order_size,
+    MAX(created_at) AS last_order_at,
+    COUNT_IF(status = 'PENDING') AS pending_count,
+    (SELECT region FROM orders_analytics WHERE customer_id = oa.customer_id ORDER BY created_at DESC LIMIT 1) AS region,
+    CURRENT_TIMESTAMP()::TIMESTAMP_NTZ AS computed_at
+FROM orders_analytics oa
+GROUP BY customer_id;
+```
+
+### Refresh Task
+
+```sql
+CREATE OR REPLACE TASK refresh_dashboard_kpis
+  WAREHOUSE = HT_ARCH_QS_WH
+  SCHEDULE = '15 MINUTES'
+AS
+BEGIN
+  TRUNCATE TABLE dashboard_customer_kpis;
+  INSERT INTO dashboard_customer_kpis
+  SELECT
+    customer_id,
+    COUNT(*),
+    SUM(total_amount),
+    AVG(total_amount),
+    MAX(created_at),
+    COUNT_IF(status = 'PENDING'),
+    (SELECT region FROM orders_analytics WHERE customer_id = oa.customer_id ORDER BY created_at DESC LIMIT 1),
+    CURRENT_TIMESTAMP()::TIMESTAMP_NTZ
+  FROM orders_analytics oa
+  GROUP BY customer_id;
+END;
+```
+
+### Dashboard Query (Single-Digit ms)
+
+```sql
+SET DASHBOARD_CUSTOMER = (SELECT customer_id FROM dashboard_customer_kpis LIMIT 1);
+
+SELECT * FROM dashboard_customer_kpis WHERE customer_id = $DASHBOARD_CUSTOMER;
+```
+
+The Query Profile shows `TableScan` with `ROW_BASED` mode and 1 row scanned — a primary key lookup. The dashboard gets instant results regardless of how complex the underlying aggregation is.
+
+### Query by Region (Index Seek)
+
+```sql
+SELECT customer_id, lifetime_value, total_orders
+FROM dashboard_customer_kpis
+WHERE region = 'US-EAST'
+ORDER BY lifetime_value DESC
+LIMIT 20;
+```
+
+This uses `IndexScan` on `idx_dck_region` — fast enough for paginated dashboard panels.
+
+### When to Use This Pattern
+
+- Dashboard panels filtered by a single dimension (customer, region, product)
+- KPIs that require expensive joins or window functions to compute
+- High-concurrency dashboards where hundreds of users hit the same page
+- Latency requirement is single-digit ms (result cache on standard tables adds ~50-200ms overhead even on cache hit)
+
+### Architecture Flow
+
+```
+[Standard Tables / DW] → [Scheduled Task: aggregation SQL] → [Hybrid Table: KPIs]
+                                                                      ↑
+                                                              [Dashboard reads here]
+```
+
+<!-- ------------------------ -->
+## Step 8: Fan-In Aggregation
 
 In production systems, multiple Hybrid Tables often serve different domains (orders, inventory, customers). Analytics often needs to join across these domains.
 
@@ -524,7 +628,7 @@ AS
 This provides a denormalized, analytics-ready table that joins data from multiple Hybrid Tables. The CTAS-based refresh is appropriate when the full dataset is small enough to rebuild (under a few million rows). For larger datasets, use the MERGE pattern from Step 2 on each source table.
 
 <!-- ------------------------ -->
-## Step 8: Hot/Cold Data Tiering
+## Step 9: Hot/Cold Data Tiering
 
 Hybrid Tables are optimized for recent, actively-queried data. Historical data that is rarely accessed should be moved to standard tables where it benefits from columnar compression and lower storage costs.
 
@@ -579,7 +683,7 @@ CREATE OR REPLACE VIEW orders_all AS
 - **Archive query performance:** Standard tables with clustering on `created_at` provide excellent range-scan performance for historical queries.
 
 <!-- ------------------------ -->
-## Step 9: Alert-Based Monitoring
+## Step 10: Alert-Based Monitoring
 
 Hybrid Table queries that complete in under 1 second do not appear in `QUERY_HISTORY`. Use `AGGREGATE_QUERY_HISTORY` for monitoring, and Snowflake Alerts for automated notifications.
 
@@ -664,9 +768,10 @@ CREATE OR REPLACE TABLE alert_log (
 | Real-time event delivery | Task + Notification Integration (Step 4) | ~1 minute | Medium |
 | Derived aggregations | DT on ST copy (Step 5) | TARGET_LAG | Low |
 | Simple precomputed rollups | MV on ST copy (Step 6) | Automatic | Low |
-| Cross-domain analytics | Fan-in to consolidated ST (Step 7) | Minutes | Medium |
-| Manage HT storage growth | Hot/cold tiering (Step 8) | Daily | Low |
-| Operational monitoring | AGGREGATE_QUERY_HISTORY + Alerts (Step 9) | Hours (view latency) | Medium |
+| Fast dashboard point lookups | Precompute to HT (Step 7) | Minutes | Medium |
+| Cross-domain analytics | Fan-in to consolidated ST (Step 8) | Minutes | Medium |
+| Manage HT storage growth | Hot/cold tiering (Step 9) | Daily | Low |
+| Operational monitoring | AGGREGATE_QUERY_HISTORY + Alerts (Step 10) | Hours (view latency) | Medium |
 
 ### Reference Architecture
 
@@ -693,10 +798,16 @@ CREATE OR REPLACE TABLE alert_log (
          ┌────────────┼────────────┐
          │            │            │
          ▼            ▼            ▼
-  ┌──────────┐  ┌──────────┐  ┌──────────┐
-  │Dynamic   │  │Materialized│ │BI / Sigma│
-  │Tables    │  │Views      │  │/ Tableau │
-  └──────────┘  └──────────┘  └──────────┘
+  ┌──────────┐  ┌──────────┐  ┌──────────────────┐
+  │Dynamic   │  │Materialized│ │Task (aggregate)  │
+  │Tables    │  │Views      │  │      │           │
+  └──────────┘  └──────────┘  │      ▼           │
+                               │ ┌──────────────┐ │
+                               │ │ HT (KPIs)    │ │
+                               │ │ (dashboard   │ │
+                               │ │  serving)    │ │
+                               │ └──────────────┘ │
+                               └──────────────────┘
 ```
 
 <!-- ------------------------ -->

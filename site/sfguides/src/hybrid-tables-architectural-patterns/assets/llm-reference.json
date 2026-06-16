@@ -57,6 +57,15 @@
     },
     {
       "id": "P7",
+      "name": "Precomputed Analytics Served from HT",
+      "problem": "Dashboards need instant KPI lookups but aggregations are expensive to compute on every request",
+      "solution": "Precompute aggregations on standard tables via Task, store results in a Hybrid Table with PK/index for single-digit ms dashboard point lookups",
+      "freshness": "Minutes (configurable via Task schedule)",
+      "complexity": "Medium",
+      "use_when": "Dashboard panels filtered by single dimension, high-concurrency dashboards, latency requirement is single-digit ms"
+    },
+    {
+      "id": "P8",
       "name": "Hot/Cold Data Tiering",
       "problem": "HT storage grows unbounded; old data accessed infrequently",
       "solution": "Scheduled Task archives rows older than N days to standard table; DELETE from HT",
@@ -65,7 +74,7 @@
       "storage_note": "HT has 2 TB per-database quota; tiering prevents hitting this limit"
     },
     {
-      "id": "P8",
+      "id": "P9",
       "name": "Alert-Based Monitoring",
       "problem": "Sub-second HT queries not in QUERY_HISTORY; throttling invisible without monitoring",
       "solution": "Query AGGREGATE_QUERY_HISTORY for latency/throttling; CREATE ALERT for automated notification",
