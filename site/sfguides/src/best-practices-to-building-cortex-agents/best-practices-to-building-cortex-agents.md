@@ -1,7 +1,7 @@
 
 id: best-practices-to-building-cortex-agents
 language: en
-summary: Learn how to build, deploy, and monitor high-quality Cortex Agents in Snowflake Intelligence, following best practices for orchestration, tooling, and evaluation.
+summary: Learn how to build, deploy, and monitor high-quality Cortex Agents in Snowflake CoWork, following best practices for orchestration, tooling, and evaluation.
 author: Shen Wang, Tyler Richards, Krista Rockson, Josh Reini, James Cha-Earley
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart
 environments: web
@@ -16,12 +16,12 @@ status: Published
 
 Agents represent a new paradigm for how work gets done with data. Instead of pre-defined dashboards or static queries, agents reason through tasks, choose the right tools, and deliver results in natural language or take actions on your behalf.
 
-You can create, update, and deploy these high-quality agents directly inside your Snowflake environment. Snowflake Agents integrate directly with [Snowflake Intelligence](https://ai.snowflake.com/) with governance, observability, and performance built in.
+You can create, update, and deploy these high-quality agents directly inside your Snowflake environment. Snowflake Agents integrate directly with [Snowflake CoWork](https://ai.snowflake.com/) with governance, observability, and performance built in.
 
-This guide is your map to building agents for use with Snowflake Intelligence, from idea to production, including links to deeper resources, examples, and tutorials along the way.
+This guide is your map to building high-quality Cortex Agents for use with Snowflake CoWork, from idea to production, including links to deeper resources, examples, and tutorials along the way.
 
 ### What you'll learn
-- How Snowflake Intelligence and Cortex Agents work together.
+- How Snowflake CoWork and Cortex Agents work together.
 - How to define agent purpose and scope.
 - How to configure orchestration and response instructions.
 - How to design effective tools for Cortex Agents.
@@ -30,14 +30,14 @@ This guide is your map to building agents for use with Snowflake Intelligence, f
 
 **Important:** Before building Cortex Agents, [configure your permissions](https://docs.snowflake.com/en/user-guide/snowflake-cortex/snowflake-intelligence#set-up-sf-intelligence) and make sure that you have [access to the right models](https://docs.snowflake.com/en/user-guide/snowflake-cortex/snowflake-intelligence#supported-models-and-regions).
 
-## How Snowflake Intelligence works
+## How Snowflake CoWork works
 
-Cortex Agents power the reasoning behind Snowflake Intelligence, turning natural language into governed actions and answers.
+Cortex Agents power the reasoning behind Snowflake CoWork, turning natural language into governed actions and answers.
 
-Cortex Agents combine reasoning from large language models with Snowflake’s governance, data access, and observability layers to deliver accurate, explainable answers. When a user asks a question in Snowflake Intelligence, it uses [Cortex Agents](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents) under the hood with the following stages.
+Cortex Agents combine reasoning from large language models with Snowflake’s governance, data access, and observability layers to deliver accurate, explainable answers. When a user asks a question in Snowflake CoWork, it uses [Cortex Agents](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents) under the hood with the following stages.
 
 1.  **User input:** A user submits a natural-language question. For example, *“How are Q4 sales trending?”*.
-2.  [**Cortex Agent API**](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents-rest-api): The question is routed to the **Cortex Agent API**, which powers Snowflake Intelligence.
+2.  [**Cortex Agent API**](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents-rest-api): The question is routed to the **Cortex Agent API**, which powers Snowflake CoWork.
 3.  **Orchestration:** The orchestrator (an LLM) interprets intent, selects the right tools, and plans the sequence of actions. It may use one tool, chain several together, or decide that the question is out of scope.
 4.  **Tool execution:**
     -   [Cortex Analyst](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst): Write and run SQL on your semantic views for structured data.
@@ -46,12 +46,12 @@ Cortex Agents combine reasoning from large language models with Snowflake’s go
     -   [Web Search](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents#web-search): Query the web for real-time information.
     -   [MCP Connectors](https://docs.snowflake.com/en/LIMITEDACCESS/snowflake-cortex/mcp-connectors): Connect to external SaaS tools via the Model Context Protocol.
     -   Custom Tools: Execute user-defined functions or stored procedures for actions.
-5.  **Reflection & response:** The orchestrator reviews results, refines if needed, and generates the final answer (including summaries, tables, or charts) shown in the Snowflake Intelligence UI.
+5.  **Reflection & response:** The orchestrator reviews results, refines if needed, and generates the final answer (including summaries, tables, or charts) shown in the Snowflake CoWork UI.
 
-The following image describes this structure of Snowflake Intelligence.
-<img src="assets/snowflake-intelligence-agent-architecture.png" />
+The following image describes this structure of Snowflake CoWork.
+![Snowflake CoWork](assets/snowflake-cowork-architecture.png) 
 
-*👉 Read the blog to learn more about [how Snowflake Intelligence orchestration works](https://www.snowflake.com/en/engineering-blog/inside-snowflake-intelligence-enterprise-agentic-ai/)*
+*👉 Read the blog to learn more about [how Snowflake CoWork orchestration works](https://www.snowflake.com/en/engineering-blog/inside-snowflake-intelligence-enterprise-agentic-ai/)*
 
 
 ## Building Cortex Agents
@@ -584,7 +584,7 @@ The setup flow for MCP connectors is:
 2.  **API integration:** Create an API integration in Snowflake that stores the OAuth configuration.
 3.  **External MCP server:** Create an external MCP server object that references the API integration.
 4.  **Agent configuration:** Add the external MCP server to your agent.
-5.  **User authentication:** End users connect via OAuth in Snowflake Intelligence.
+5.  **User authentication:** End users connect via OAuth in Snowflake CoWork.
 
 **Best practices for MCP connectors:**
 -   **Follow least-privilege access.** Grant only the minimum required privileges for each role. Access to an MCP server doesn't automatically grant access to its tools.
@@ -603,7 +603,7 @@ These examples help users understand your agent’s purpose and how to engage wi
 
 <img src="assets/example-questions-snowflake-intelligence.png" />
 
-In Snowflake Intelligence, users can browse the **Agents** tab to view available agents. They’ll see your agent’s description and its example questions. A well-written description makes it easy for users to recognize when to use your agent and what to expect from it.
+In Snowflake CoWork, users can browse the **Agents** tab to view available agents. They’ll see your agent’s description and its example questions. A well-written description makes it easy for users to recognize when to use your agent and what to expect from it.
 
 <img src="assets/agent-tab-snowflake-intelligence.png" />
 
@@ -861,10 +861,10 @@ By following these best practices, you can confidently build **Cortex Agents** t
 
 
 ## Additional resources
-- [Snowflake Intelligence Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/snowflake-intelligence)
+- [Snowflake CoWork Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/snowflake-cowork)
 - Guide: [Best Practices for Evaluating Cortex Agents](https://www.snowflake.com/en/developers/guides/best-practices-to-evaluating-cortex-agents/)
-- Guide: [Getting started with Snowflake Intelligence](https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake-intelligence/)
-- Guide: [Getting started with Snowflake Intelligence and Cortex Knowledge Extensions (CKEs)](https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake-intelligence-and-cke/)
+- Guide: [Getting started with Snowflake CoWork](https://www.snowflake.com/en/developers/guides/getting-started-with-cowork/)
+- Guide: [Getting started with Snowflake CoWork and Cortex Knowledge Extensions (CKEs)](https://www.snowflake.com/en/developers/guides/getting-started-with-cowork-and-cke/)
 - Guide: [Getting Started with MCP Connectors](https://www.snowflake.com/en/developers/guides/getting-started-with-mcp-connectors/)
 - [Code execution tool documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents-code-execution-tool)
 - [MCP Connectors documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents-mcp-connectors)
