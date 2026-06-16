@@ -104,7 +104,7 @@ SELECT
         [UNIFORM(0, 3, RANDOM())]::VARCHAR               AS region,
     DATEADD(SECOND,
         UNIFORM(0, 7776000, RANDOM()),
-        DATEADD(DAY, -90, CURRENT_TIMESTAMP()::TIMESTAMP_NTZ))  AS created_at,
+        DATEADD(DAY, -90, CURRENT_TIMESTAMP()))::TIMESTAMP_NTZ  AS created_at,
     NULL                                                 AS updated_at,
     ROUND(UNIFORM(5.00, 2500.00, RANDOM()), 2)           AS total_amount
 FROM TABLE(GENERATOR(ROWCOUNT => 500000));
@@ -188,7 +188,7 @@ Expected results: customer_id has ~10,000 distinct values (high cardinality, exc
 <!-- ------------------------ -->
 ## Step 3: Create the Hybrid Table
 
-Create the Hybrid Table equivalent with a PRIMARY KEY. Since this table has no foreign keys, you can use CTAS (CREATE TABLE ... AS SELECT) with an explicit schema declaration.
+Create the Hybrid Table equivalent with a PRIMARY KEY and secondary indexes defined inline. Best practice is to declare indexes at table creation time so they are populated during the initial bulk load.
 
 ```sql
 CREATE OR REPLACE HYBRID TABLE orders_hybrid (
@@ -199,16 +199,21 @@ CREATE OR REPLACE HYBRID TABLE orders_hybrid (
     created_at   TIMESTAMP_NTZ NOT NULL,
     updated_at   TIMESTAMP_NTZ,
     total_amount NUMBER(12,2)  NOT NULL,
-    PRIMARY KEY (order_id)
+    PRIMARY KEY (order_id),
+    INDEX idx_orders_customer_id (customer_id),
+    INDEX idx_orders_status_region_ts (status, region, created_at)
 )
 AS SELECT * FROM orders_standard;
 ```
 
 This single statement:
 1. Defines the Hybrid Table schema with a PRIMARY KEY on `order_id`
-2. Loads all 500,000 rows using the optimized bulk load path (since the table is being created fresh)
+2. Declares two secondary indexes inline (customer lookup and composite status/region/timestamp)
+3. Loads all 500,000 rows and populates the indexes using the optimized bulk load path
 
 > **Note:** CTAS for Hybrid Tables requires you to declare the full column schema explicitly. Unlike standard table CTAS, the schema cannot be inferred from the SELECT. If your table requires FOREIGN KEY constraints, you must create the schema separately and use INSERT INTO ... SELECT to load (CTAS does not support FOREIGN KEY).
+
+> **Note:** You can also add secondary indexes after table creation using `CREATE INDEX`. This is useful when you discover new access patterns on a live table. For a full exploration of adding indexes to populated tables, composite index column ordering, INCLUDE columns, and anti-patterns, see the [Secondary Index Design for Hybrid Tables](https://www.snowflake.com/en/developers/guides/hybrid-tables-secondary-index-design/) quickstart.
 
 ### Validate Row Counts
 
@@ -231,35 +236,15 @@ SELECT * FROM orders_standard WHERE order_id = $SAMPLE_ORDER;
 
 Both should return identical results.
 
-<!-- ------------------------ -->
-## Step 4: Add Secondary Indexes
+### Verify Indexes
 
-The Hybrid Table now has data but only the primary key index on `order_id`. Add secondary indexes for the most common lookup patterns.
-
-### Customer Lookup Index
-
-```sql
-CREATE INDEX idx_orders_customer_id ON orders_hybrid (customer_id);
-```
-
-### Status + Region + Timestamp Composite Index
-
-For operational queries like "find all PENDING orders in US-EAST from the last 7 days":
-
-```sql
-CREATE INDEX idx_orders_status_region_ts ON orders_hybrid (status, region, created_at);
-```
-
-### Monitor Index Build Progress
-
-Only one index build runs at a time. Check status:
+Confirm the secondary indexes were created and are active:
 
 ```sql
 SHOW INDEXES IN TABLE orders_hybrid;
--- Wait until both indexes show status = ACTIVE
 ```
 
-The indexes build concurrently with reads and writes. Once complete, you should see:
+You should see:
 
 | Index Name | Columns | Is Unique | Status |
 |-----------|---------|-----------|--------|
@@ -267,10 +252,8 @@ The indexes build concurrently with reads and writes. Once complete, you should 
 | IDX_ORDERS_CUSTOMER_ID | CUSTOMER_ID | N | ACTIVE |
 | IDX_ORDERS_STATUS_REGION_TS | STATUS, REGION, CREATED_AT | N | ACTIVE |
 
-For a deeper exploration of index design patterns (composite column ordering, INCLUDE columns, anti-patterns), see the [Secondary Index Design for Hybrid Tables](https://www.snowflake.com/en/developers/guides/hybrid-tables-secondary-index-design/) quickstart.
-
 <!-- ------------------------ -->
-## Step 5: Validate with Query Profile Comparison
+## Step 4: Validate with Query Profile Comparison
 
 The key validation is comparing the same query against both the standard table and the Hybrid Table.
 
@@ -336,7 +319,7 @@ SELECT order_id, customer_id, created_at, total_amount
 FROM orders_hybrid
 WHERE status = 'PENDING'
   AND region = 'US-EAST'
-  AND created_at > DATEADD(DAY, -7, CURRENT_TIMESTAMP()::TIMESTAMP_NTZ)
+  AND created_at > DATEADD(DAY, -7, CURRENT_TIMESTAMP())::TIMESTAMP_NTZ
 ORDER BY created_at DESC;
 ```
 
@@ -345,7 +328,7 @@ The Query Profile should show `IndexScan` using `IDX_ORDERS_STATUS_REGION_TS` wi
 > **Note:** The `::TIMESTAMP_NTZ` cast on `CURRENT_TIMESTAMP()` is required. Without it, the implicit conversion from TIMESTAMP_LTZ prevents the predicate from being pushed to the index. This applies whenever comparing a TIMESTAMP_NTZ indexed column against CURRENT_TIMESTAMP().
 
 <!-- ------------------------ -->
-## Step 6: Zero-Downtime Swap
+## Step 5: Zero-Downtime Swap
 
 Once you have validated that the Hybrid Table performs correctly, swap it into the production name so applications see no change.
 
