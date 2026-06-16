@@ -150,9 +150,11 @@ package (empty src/__init__.py) and a top-level streamlit_app.py. We build
 and run locally first, then deploy later.
 ```
 
-Ask Cortex Code to create a `pyproject.toml` with `streamlit>=1.50`, `psycopg2-binary`, `snowflake-snowpark-python`, `pandas`, `plotly>=5.18`, and `pydeck>=0.9`. Then create `.streamlit/secrets.toml`, which holds your credentials and stays on your machine:
+Next, ask Cortex Code to create `pyproject.toml` and `.streamlit/secrets.toml` for your app.
 
-```toml
+```text
+Create a pyproject.toml with streamlit>=1.50, psycopg2-binary, snowflake-snowpark-python, pandas, plotly>=5.18, and pydeck>=0.9. Then create .streamlit/secrets.toml, which holds your credentials as follows:
+
 [postgres]
 host = "<your-instance-host>"
 port = 5432
