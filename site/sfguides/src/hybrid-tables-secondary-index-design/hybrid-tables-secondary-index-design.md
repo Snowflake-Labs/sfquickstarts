@@ -20,9 +20,7 @@ snowflake_features: hybrid_tables, secondary_indexes, include_columns, create_in
 <!-- ------------------------ -->
 ## Overview
 
-> aside negative
->
-> **Production workloads:** The SQL examples in this quickstart use string literals and session variables for clarity. Production OLTP workloads should use bound variables (parameterized queries) so Snowflake can cache and reuse query plans, which is critical for high-throughput workloads. See [Hybrid Tables Best Practices](https://docs.snowflake.com/en/user-guide/tables-hybrid-best-practices) and [Performance Testing for Hybrid Tables](https://docs.snowflake.com/en/user-guide/tables-hybrid-test).
+> **Note on Production Workloads:** The SQL examples in this quickstart use string literals and session variables for clarity. Production OLTP workloads should use bound variables (parameterized queries) so Snowflake can cache and reuse query plans, which is critical for high-throughput workloads. See [Hybrid Tables Best Practices](https://docs.snowflake.com/en/user-guide/tables-hybrid-best-practices) and [Performance Testing for Hybrid Tables](https://docs.snowflake.com/en/user-guide/tables-hybrid-test).
 
 A [Hybrid Table](https://docs.snowflake.com/en/user-guide/tables-hybrid) stores its data in a row-oriented store. Queries against a Hybrid Table typically resolve to one of three access patterns: row-based primary-key access, row-based secondary-index access, or column-based scans, depending on predicates, indexes, and query shape.
 
