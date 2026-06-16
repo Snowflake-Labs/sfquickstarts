@@ -423,6 +423,9 @@ You have completed the Standard-to-Hybrid Table migration quickstart. You can no
 - [Performance Testing for Hybrid Tables](https://docs.snowflake.com/en/user-guide/tables-hybrid-test)
 - [Getting Started with Hybrid Tables Quickstart](https://www.snowflake.com/en/developers/guides/getting-started-with-hybrid-tables/)
 - [Secondary Index Design for Hybrid Tables Quickstart](https://www.snowflake.com/en/developers/guides/hybrid-tables-secondary-index-design/)
+- [Analytics Patterns for Hybrid Tables](https://www.snowflake.com/en/developers/guides/hybrid-tables-analytics-patterns/)
+- [Streaming and Change Detection Patterns for Hybrid Tables](https://www.snowflake.com/en/developers/guides/hybrid-tables-streaming-patterns/)
+- [Data Management and Operations Patterns for Hybrid Tables](https://www.snowflake.com/en/developers/guides/hybrid-tables-operations-patterns/)
 
 <!-- ------------------------ -->
 ## FAQ and Troubleshooting
