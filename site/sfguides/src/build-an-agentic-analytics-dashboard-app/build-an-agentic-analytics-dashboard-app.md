@@ -1,9 +1,10 @@
 author: Chanin Nantasenamat, Elizabeth Christensen
-id: build_an_agentic_analytics_dashboard_app
+id: build-an-agentic-analytics-dashboard-app
 summary: Use Cortex Code to build an agentic analytics dashboard app with Streamlit, Snowflake Postgres, and Cortex AI, then deploy it to Streamlit in Snowflake and Streamlit Community Cloud. No prior app-building experience required.
-categories: getting-started, streamlit, gen-ai, data-engineering
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart,snowflake-site:taxonomy/product/ai,snowflake-site:taxonomy/product/applications-and-collaboration,snowflake-site:taxonomy/snowflake-feature/postgres
 environments: web
 status: Published
+language: en
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Streamlit, Snowflake Postgres, Cortex AI, Cortex Code
 
@@ -12,9 +13,9 @@ tags: Getting Started, Streamlit, Snowflake Postgres, Cortex AI, Cortex Code
 ## Overview
 Duration: 5
 
-In this Quickstart, you will build **Tundra Analytics**, an interactive web app backed by a **Snowflake Postgres** database and powered by **Snowflake Cortex AI**. The headline feature is a clickable **world map**: click any country and the whole page updates to that country's numbers.
+In this Quickstart, you will build an interactive web app backed by a **Snowflake Postgres** database powered by **Snowflake Cortex AI** and **Streamlit in Snowflake (SiS)**. The headline feature is a clickable world map: click any country and the whole page updates to that country's numbers.
 
-The twist: you will not write the app by hand. You will build it with **Cortex Code**, Snowflake's AI coding assistant, by giving it the plain English prompts in each step.
+The twist: you will not write the app by hand. You will build it with **Cortex Code**, Snowflake's AI coding assistant, by giving it plain English prompts in each step.
 
 ### New here? The 10-second glossary
 - **Streamlit**: a Python framework for building data apps with no front-end code.
@@ -33,7 +34,7 @@ You can use [Cortex Code](https://docs.snowflake.com/en/user-guide/cortex-code/c
 ### What You Will Learn
 - How to create a Snowflake Postgres database and fill it with realistic sample data
 - How to build a multipage Streamlit app: dashboard, AI chat, charts, and search
-- How to call Cortex AI from your app for natural-language features
+- How to call Cortex AI from your app for natural language features
 - How to deploy your app two ways: inside Snowflake and to Streamlit Community Cloud
 
 ### What You Will Build
@@ -44,17 +45,15 @@ The role-based access control (RBAC) functionality of the app is provided in the
 ![](assets/roles.jpg)
 
 ### Prerequisites
-- A **Snowflake account** (trial or paid). Start free at [signup.snowflake.com](https://signup.snowflake.com?utm_source=snowflake-devrel&utm_medium=developer-guides). Everything here works on a trial.
+- A **Snowflake account** (trial or paid). Start with a free trial account at [signup.snowflake.com](https://signup.snowflake.com?utm_source=snowflake-devrel&utm_medium=developer-guides).
 - The `ACCOUNTADMIN` role (the default on a new trial).
 - **Snowflake Postgres** available in your account's region.
 - **Cortex Code** installed and connected to your account (see [Cortex Code setup](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code)).
 - The **`AGENTS.md`** file from this Quickstart's repo, placed in your project folder. It tells Cortex Code the exact table names, allowed values, and gotchas so it generates correct code. Cortex Code loads it automatically.
 - Helpful but **not required**: a little Python and SQL. Cortex Code writes both for you.
 
-> aside positive
 > Estimated total time: about 70 minutes. You can stop after the app works locally (through Step 5) and come back for the deploy steps (6 and 7) later.
 
-> aside negative
 > External Access Integrations (the feature that lets an app inside Snowflake call the public internet) are not available on trial accounts. This Quickstart is designed around that: you run locally and on Community Cloud against Postgres, and the in-Snowflake deploy uses **warehouse runtime** with the data on Snowflake.
 
 <!-- ------------------------ -->
@@ -83,7 +82,6 @@ tundra_lab_policy. Then show me the connection details and the generated
 admin password, and save the connection details.
 ```
 
-> aside negative
 > Save the admin password now. Snowflake shows it only once, at creation time. You will paste it into a secrets file in Step 3. (If you lose it, you can reset it on the instance later.)
 
 Confirm the connection works:
@@ -128,7 +126,6 @@ months). Make invoice revenue realistic, not flat: a growth ramp
 noise. Add indexes on the foreign keys and country_code.
 ```
 
-> aside positive
 > A flat revenue line is the most common mistake here. The growth ramp + seasonality + noise above are what make the dashboard's trend chart look realistic.
 
 Verify the load:
@@ -170,10 +167,8 @@ password = "<password>"
 warehouse = "COMPUTE_WH"
 ```
 
-> aside positive
 > Where do these values come from? The `[postgres]` values are the connection details from Step 1. The `[snowflake]` values let the app call Cortex AI; for local testing you can copy `account`, `user`, and `password` from your Snowflake CLI connection file at `~/.snowflake/connections.toml`. If your account signs in with SSO (no password), use `authenticator = "PROGRAMMATIC_ACCESS_TOKEN"` and a `token` instead of `password`.
 
-> aside negative
 > Never commit `secrets.toml` to Git. The next steps add it to `.gitignore`. If the `[snowflake]` values are wrong, the AI pages later fail with error `250001 (08001)`.
 
 Now create a minimal `streamlit_app.py` that connects to Postgres and shows the customer count, then run it:
@@ -215,7 +210,6 @@ revenue line chart and a most-used plan features donut. Every query is
 scoped to the selection and parameterized.
 ```
 
-> aside positive
 > A "donut" is a pie chart with a hole. "MRR" is Monthly Recurring Revenue. The map uses **PyDeck** (a mapping library that ships with Streamlit), so it works without any extra setup.
 
 **Checkpoint:** the dashboard shows the world map with global numbers; clicking a country changes the metric cards, the table, and both charts.
@@ -233,7 +227,7 @@ Build src/ai_agent.py: a Cortex chat that answers questions about the
 Postgres data. Ground the system prompt in the AGENTS.md schema AND allowed
 values (status is 'churned', never 'cancelled'). Add example-question
 buttons rendered unconditionally; auto-run read SQL and require confirmation
-for writes. Build src/chart_agent.py: natural-language to a Plotly chart,
+for writes. Build src/chart_agent.py: natural language to a Plotly chart,
 injecting the live schema + a worked example so generated SQL uses real
 names. Then update streamlit_app.py to wire pages with st.navigation,
 giving every st.Page a unique url_path.
@@ -250,7 +244,6 @@ table with an HNSW index, and add src/semantic_search.py that embeds the
 user's query and ranks accounts by similarity. Add it to the analyst role.
 ```
 
-> aside positive
 > **Embeddings** turn text into a list of numbers that capture meaning, so "fast-growing healthcare companies" can match accounts even without exact keywords. **pgvector** is the Postgres extension that stores and searches them, and **HNSW** is just an index that makes that search fast. Generating embeddings for ~2000 accounts takes a few minutes, so run it once.
 
 Finally, confirm the headline interaction:
@@ -315,7 +308,6 @@ dependencies:
   - pydeck
 ```
 
-> aside negative
 > For warehouse runtime, use `environment.yml` and do NOT include a `pyproject.toml` (it would switch the app to container runtime). On `CREATE STREAMLIT`, leaving out `RUNTIME_NAME` and `COMPUTE_POOL` selects warehouse runtime.
 
 **Checkpoint:** open the app from Snowsight under **Projects → Streamlit**; every page loads with no internet access required.
