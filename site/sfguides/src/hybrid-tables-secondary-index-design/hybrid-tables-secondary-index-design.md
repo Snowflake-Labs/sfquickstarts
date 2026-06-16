@@ -7,6 +7,15 @@ environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
+<!--
+keywords: hybrid table, secondary index, CREATE INDEX, INCLUDE columns, covering index, composite index, index design, query profile, IndexScan, TableScan, ROW_BASED, COLUMN_BASED, OLTP, Unistore, point lookup, range scan, probe scan, bound variables, TIMESTAMP_NTZ
+related_concepts: primary key, B-tree index, predicate pushdown, plan cache, query optimization, data type matching, cardinality, selectivity
+prerequisite_guides: getting-started-with-hybrid-tables, hybrid-tables-performance-optimization-primer
+skill_level: intermediate
+estimated_time_minutes: 45
+snowflake_features: hybrid_tables, secondary_indexes, include_columns, create_index, show_indexes, query_profile
+-->
+
 # Secondary Index Design for Hybrid Tables
 <!-- ------------------------ -->
 ## Overview
@@ -126,6 +135,9 @@ SHOW INDEXES IN TABLE orders;
 ```
 
 <!-- ------------------------ -->
+<!-- INTENT: Show that queries without a matching index cause COLUMN_BASED full scans -->
+<!-- EXPECTED_BEHAVIOR: Query profile shows TableScan with Scan Mode = COLUMN_BASED -->
+<!-- COMMON_MISTAKE: Assuming Hybrid Tables use micro-partition pruning like standard tables -->
 ## Step 1: The Cost of a Missing Index
 
 Before adding any secondary indexes, run a query that is typical for a customer service lookup: **find all orders for a specific customer**.
@@ -155,6 +167,9 @@ You will see:
 > **Note:** Any query on a Hybrid Table that does not filter on the primary key or a secondary index column will produce a `COLUMN_BASED` scan. For an OLTP workload with thousands of queries per second, this is the primary cause of high latency (hundreds of milliseconds instead of single-digit milliseconds).
 
 <!-- ------------------------ -->
+<!-- INTENT: Demonstrate CREATE INDEX on a single column and confirm ROW_BASED IndexScan in profile -->
+<!-- EXPECTED_BEHAVIOR: IndexScan operator appears; Scan Mode = ROW_BASED; rows scanned proportional to matching rows only -->
+<!-- COMMON_MISTAKE: Not waiting for index build to complete (status must be ACTIVE before testing) -->
 ## Step 2: Single-Column Secondary Index
 
 Add a secondary index on `customer_id`, the most frequent lookup predicate in this workload.
@@ -197,6 +212,9 @@ Open the Query Profile again. The plan tree now shows an **IndexScan** operator 
 When you create `idx_orders_customer_id`, Hybrid Table storage builds a separate B-tree structure in the row store keyed by `customer_id`. When a query filters on `customer_id = <value>`, the query optimizer seeks directly to matching entries in this index B-tree, then fetches only those rows from the primary store. The number of rows scanned is proportional to how many orders that customer has, not the total table size.
 
 <!-- ------------------------ -->
+<!-- INTENT: Teach composite index column ordering — equality columns first, range column last -->
+<!-- EXPECTED_BEHAVIOR: All three predicates pushed as access predicates when order is correct -->
+<!-- COMMON_MISTAKE: Putting range predicate (timestamp) as leading column; putting low-cardinality boolean first -->
 ## Step 3: Composite Indexes: Equality First, Range Last
 
 A common operational query is: **find all PENDING orders in a specific region, created in the last 7 days**. This query has:
@@ -269,6 +287,9 @@ CREATE INDEX idx_better ON orders (region, is_active, created_at);
 ```
 
 <!-- ------------------------ -->
+<!-- INTENT: Show how INCLUDE columns create a covering index that eliminates the probe scan -->
+<!-- EXPECTED_BEHAVIOR: No probe scan in query profile; IndexScan returns all projected columns directly -->
+<!-- COMMON_MISTAKE: Including too many columns (increases storage and write overhead for marginal benefit) -->
 ## Step 4: Covering Indexes with INCLUDE
 
 When a query uses a secondary index, Snowflake performs two operations. First, it seeks through the index to find rows matching the WHERE clause. Second, it goes back to the main table to fetch the columns in the SELECT that are not part of the index key. That second step is called a **probe scan**, and it adds a row store round-trip for every row the index returns.
@@ -314,6 +335,9 @@ Use `INCLUDE` when:
 Be aware that `INCLUDE` columns increase the storage footprint of the index because those column values are stored twice (in the primary store and in the index). Do not use `INCLUDE` for wide rows or infrequently-queried paths.
 
 <!-- ------------------------ -->
+<!-- INTENT: Show that CREATE INDEX on existing tables is non-blocking (concurrent) -->
+<!-- EXPECTED_BEHAVIOR: SHOW INDEXES shows status transitioning from BUILD IN PROGRESS to ACTIVE -->
+<!-- COMMON_MISTAKE: Submitting multiple CREATE INDEX concurrently (only one build at a time) -->
 ## Step 5: Adding Indexes to a Live Table
 
 In production, you will often need to add an index to a Hybrid Table that is already serving traffic. The `CREATE INDEX` command builds the index concurrently, so reads and writes continue normally during the build.
@@ -341,6 +365,9 @@ Once all three builds complete, you should see three secondary indexes plus the 
 | IDX_ORDERS_REGION_CREATED | REGION, CREATED_AT | N | ACTIVE |
 
 <!-- ------------------------ -->
+<!-- INTENT: Teach how to diagnose index usage from query profile scan modes -->
+<!-- EXPECTED_BEHAVIOR: Users can identify ROW_BASED vs COLUMN_BASED and take corrective action -->
+<!-- COMMON_MISTAKE: Confusing TableScan ROW_BASED (PK access, good) with TableScan COLUMN_BASED (full scan, bad) -->
 ## Step 6: Reading Query Profiles for Index Diagnosis
 
 The most important skill for operating a Hybrid Table workload is knowing how to quickly determine whether a query is using an index or performing a full scan.
@@ -384,6 +411,8 @@ When a Hybrid Table query is slow, open the Query Profile and check the bottom-m
 Also check the **Profile Overview** panel (deselect all operators) for a **Hybrid Table Requests Throttling** percentage. A high throttling percentage indicates too many requests are being sent to the row store simultaneously, which is often a sign of non-selective index scans.
 
 <!-- ------------------------ -->
+<!-- INTENT: Catalog the patterns that prevent index usage so users can avoid them -->
+<!-- ANTI_PATTERNS: ILIKE, function_on_column, non_leading_column, range_before_equality, low_cardinality_standalone, non_deterministic_function -->
 ## Step 7: Index Anti-Patterns
 
 The following patterns look like they should use an index but do not. Each causes a `COLUMN_BASED` full table scan.
@@ -529,5 +558,41 @@ You have completed the Hybrid Tables Secondary Index Design quickstart. You can 
 - [Indexing Hybrid Tables](https://docs.snowflake.com/en/user-guide/tables-hybrid-index)
 - [Analyze Query Profiles for Hybrid Tables](https://docs.snowflake.com/en/user-guide/tables-hybrid-read-query-profiles)
 - [Best Practices for Hybrid Tables](https://docs.snowflake.com/en/user-guide/tables-hybrid-best-practices)
+- [Performance Testing for Hybrid Tables](https://docs.snowflake.com/en/user-guide/tables-hybrid-test)
 - [Getting Started with Hybrid Tables Quickstart](https://www.snowflake.com/en/developers/guides/getting-started-with-hybrid-tables/)
 - [Hybrid Tables Performance Optimization Primer](https://www.snowflake.com/en/developers/guides/hybrid-tables-performance-optimization-primer/)
+
+<!-- ------------------------ -->
+## FAQ and Troubleshooting
+
+**Q: My query still shows COLUMN_BASED scan even after I created an index. Why?**
+
+Check these common causes in order:
+1. The index build may not be complete. Run `SHOW INDEXES IN TABLE` and verify `status = ACTIVE`.
+2. The predicate column may not match the leading column(s) of the index.
+3. You may have a data type mismatch (e.g., comparing `TIMESTAMP_LTZ` against a `TIMESTAMP_NTZ` indexed column). Add an explicit cast.
+4. The predicate may use a disqualifying pattern: `ILIKE`, a function wrapping the column, or a non-deterministic session function.
+
+**Q: How many secondary indexes can I create on a single Hybrid Table?**
+
+There is no hard limit on the number of secondary indexes. However, each index adds write overhead (indexes are maintained synchronously on every INSERT/UPDATE/DELETE) and increases storage consumption. Balance read performance gains against write latency requirements.
+
+**Q: Should I use INCLUDE on every index?**
+
+No. INCLUDE columns duplicate data from the primary store into the index, increasing storage. Use INCLUDE only on hot query paths where the projected columns are stable and the latency savings justify the storage cost.
+
+**Q: Can I create an index on a VARIANT, ARRAY, OBJECT, or GEOGRAPHY column?**
+
+No. Geospatial data types (GEOGRAPHY, GEOMETRY), semi-structured types (ARRAY, OBJECT, VARIANT), and vector types (VECTOR) are not supported in indexed columns. These columns can exist in a Hybrid Table but cannot be part of a PRIMARY KEY or secondary index.
+
+**Q: What is the difference between IndexScan and TableScan with ROW_BASED mode?**
+
+`TableScan` with `ROW_BASED` indicates a primary key lookup. `IndexScan` with `ROW_BASED` indicates a secondary index was used. Both are efficient row store operations. `TableScan` with `COLUMN_BASED` indicates a full scan of the object storage copy of the data (equivalent to a full table scan).
+
+**Q: My index build is stuck at BUILD IN PROGRESS. What should I do?**
+
+Only one index build can run at a time per table. If you submitted multiple `CREATE INDEX` commands, they queue sequentially. Wait for each to complete before expecting the next to start. If a build appears stuck for an extended period, check for long-running transactions that may be blocking the build.
+
+**Q: Do bound variables affect index usage?**
+
+Bound variables (parameterized queries) do not change whether an index is used, but they are critical for performance. When you use bound variables, Snowflake can cache the compiled query plan and reuse it across executions. With string literals, each unique value produces a new plan compilation. For high-throughput OLTP workloads, always use bound variables.
