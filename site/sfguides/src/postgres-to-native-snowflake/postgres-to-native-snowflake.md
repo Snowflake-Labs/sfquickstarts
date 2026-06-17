@@ -32,9 +32,7 @@ The result is a fully unified architecture: one platform, one SQL interface, no 
 
 > aside positive
 > **Do you even need native tables? When querying `$live` directly is enough:**
-> If your workload is simple reads against mirrored data — small tables, low query volume, and you don't need custom indexes or analytics infrastructure — you can skip the routing layer entirely and just query `$live` views directly. They give you ~30-second freshness out of the box.
->
-> This guide adds native Hybrid + Standard Tables when you need: **(1)** sub-millisecond indexed point lookups, **(2)** secondary indexes on columns Postgres doesn't index, **(3)** clustered analytics with partition pruning, **(4)** Streams or Dynamic Tables (not supported on mirror targets), **(5)** custom denormalized schemas with pre-joined enrichment, or **(6)** data retention beyond the 7-day `$changes` window.
+> If your workload is simple reads against mirrored data — small tables, low query volume, and you don't need custom indexes or analytics infrastructure — you can skip the routing layer entirely and just query `$live` views directly. They give you ~30-second freshness out of the box. This guide adds native Hybrid + Standard Tables when you need: **(1)** sub-millisecond indexed point lookups, **(2)** secondary indexes on columns Postgres doesn't index, **(3)** clustered analytics with partition pruning, **(4)** Streams or Dynamic Tables (not supported on mirror targets), **(5)** custom denormalized schemas with pre-joined enrichment, or **(6)** data retention beyond the 7-day `$changes` window.
 
 ![Architecture overview](assets/architecture-overview.png)
 
@@ -63,10 +61,7 @@ The result is a fully unified architecture: one platform, one SQL interface, no 
 - Familiarity with basic SQL and Snowflake worksheets
 
 > aside negative
-> **Public Preview Feature:** Snowflake Postgres data mirroring is available in Public Preview. Availability depends on your account and region. Confirm with your Snowflake contact that the feature is enabled on your account before proceeding.
-
-> aside negative
-> **Known Issues (PuPr):** Mirror names must be lowercase. Role names with dashes (e.g. `data-eng`) fail on `CREATE_MIRROR` — switch to a role whose name uses only underscores before running mirror procedures.
+> **Public Preview Feature:** Snowflake Postgres data mirroring is available in Public Preview. Availability depends on your account and region. Confirm with your Snowflake contact that the feature is enabled on your account before proceeding. **Known Issues:** Mirror names must be lowercase. Role names with dashes (e.g. `data-eng`) fail on `CREATE_MIRROR` — switch to a role whose name uses only underscores before running mirror procedures.
 
 <!-- ------------------------ -->
 ## Setup
