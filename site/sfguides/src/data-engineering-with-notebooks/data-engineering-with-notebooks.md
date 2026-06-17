@@ -47,7 +47,7 @@ This Quickstart will focus on how to build Python data engineering pipelines usi
 You will need the following things before beginning:
 
 * Snowflake account
-    * **A Snowflake Account**. Visit the [Snowflake Account Sign In](https://app.snowflake.com/) page to log into your account or to sign up for a trial account.
+    * **A Snowflake Account**. Visit the [Snowflake Account Sign In](https://app.snowflake.com/) page to log into your account or to sign up for a trial account (we recommend Enterprise).
     * **A Snowflake user created with ACCOUNTADMIN permissions**. This user will be used to get things setup in Snowflake.
 * GitHub account
     * **A GitHub account**. If you don't already have a GitHub account you can create one for free. Visit the [Join GitHub](https://github.com/signup) page to get started.
@@ -94,12 +94,14 @@ Now let's create a Git-integrated workspace connected to your forked repository.
 
 1. In the left navigation menu, select **Projects → Workspaces**
 
-2. In the Workspaces menu at the top left, under "Create", select **From Git repository**
+2. In the Workspaces menu at the top left, under "+", select **Git workspace**
 
 3. In the "Create Workspace" dialog:
    - **Repository URL**: Paste the URL of your forked repository (e.g., `https://github.com/YOUR_USERNAME/sfguide-data-engineering-with-notebooks`)
    - **Workspace name**: Leave it as-is, or enter a name you prefer (e.g., `sfguide-data-engineering-with-notebooks`)
    - **API Integration**: Select the `GITHUB_API_INTEGRATION` we created from the dropdown
+   - **Authentication method**: Select `Personal access token`
+   - **Credentials secret**: Select your "USER$&lt;username&gt;" database and the "PUBLIC" schema
 
 4. For authentication, select **Personal access token** and then click **+ Secret** to create a new secret with your GitHub Personal Access Token
 
@@ -147,7 +149,7 @@ To create your notebook service:
 2. Click the **Connect** button at the top of the notebook
 3. Enter the following values in the "Connect your notebook" dialog (and expand "Service settings"):
    - **Service name**: Enter `NOTEBOOK_SERVICE`
-   - **External access integrations**: Select `PYPI_ACCESS_INTEGRATION`
+   - **Artifact repositories (optional)**: Select `SNOWFLAKE.SNOWPARK.PYPI_SHARED_REPOSITORY`
    - **Service settings**:
       - **Compute type**: Leave with default of `CPU`
       - **Python version**: Leave with default
@@ -158,23 +160,25 @@ To create your notebook service:
 
 The notebook service will start up, which may take a minute or two for the first time. Once connected, you'll see a green "Connected" indicator.
 
+The Snowflake Artifact Repository allows you to install third-party packages in your notebooks. And in this case we're using Snowflake’s default PyPI Artifact Repository to install PyPI packages. Check out [Using artifact repositories](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-in-workspaces/notebooks-in-workspaces-artifact-repositories) for more details.
+
 > **Tip** - Since notebook services can be shared across multiple notebooks, you only need to create one service. When you open other notebooks in your workspace, you can connect them to the same `NOTEBOOK_SERVICE` to share compute resources.
 
 
 <!-- ------------------------ -->
 ## Load Weather
 
-During this step we will be "loading" the raw weather data to Snowflake. But "loading" is really the wrong word here. Because we're using Snowflake's unique data sharing capability we don't actually need to copy the data to our Snowflake account with a custom ETL process. Instead we can directly access the weather data shared by Weather Source in the Snowflake Marketplace. To put this in context, we are on step **#2** in our data flow overview:
+During this step we will be "loading" the raw weather data to Snowflake. But "loading" is really the wrong word here. Because we're using Snowflake's unique data sharing capability we don't actually need to copy the data to our Snowflake account with a custom ETL process. Instead we can directly access the weather data shared by Pelmorex Weather Source in the Snowflake Marketplace. To put this in context, we are on step **#2** in our data flow overview:
 
 ![assets/quickstart_overview.png](assets/quickstart_overview.png)
 
 ### Load Weather Data from Snowflake Marketplace
-Weather Source is a leading provider of global weather and climate data and their OnPoint Product Suite provides businesses with the necessary weather and climate data to quickly generate meaningful and actionable insights for a wide range of use cases across industries. Let's connect to the `Weather Source LLC: frostbyte` feed from Weather Source in the Snowflake Marketplace by following these steps:
+Pelmorex Weather Source is a leading provider of global weather and climate data and their OnPoint Product Suite provides businesses with the necessary weather and climate data to quickly generate meaningful and actionable insights for a wide range of use cases across industries. Let's connect to the `Pelmorex Weather Source: Frostbyte` feed in the Snowflake Marketplace by following these steps:
 
 * Login to Snowsight
 * Click on the `Marketplace` -> `Snowflake Marketplace` link in the left navigation bar
-* Enter "Weather Source LLC: frostbyte" in the search box and click return
-* Click on the "Weather Source LLC: frostbyte" listing tile
+* Enter "Pelmorex Weather Source: Frostbyte" in the search box and click return
+* Click on the "Pelmorex Weather Source: Frostbyte" listing tile
 * Click the blue "Get" button
     * Expand the "Options" dialog
     * Change the "Database name" to read "FROSTBYTE_WEATHERSOURCE" (all capital letters)
