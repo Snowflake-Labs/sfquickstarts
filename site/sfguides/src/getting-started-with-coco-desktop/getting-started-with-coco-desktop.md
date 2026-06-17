@@ -2,35 +2,35 @@ author: James Cha-Earley
 id: getting-started-with-coco-desktop
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/platform
 language: en
-summary: Download Cortex Code Desktop, connect to your Snowflake account, and run your first natural-language queries from a full AI-powered IDE in under 15 minutes.
+summary: Download Snowflake CoCo Desktop, connect to your Snowflake account, and run your first natural-language queries from a full AI-powered IDE in under 15 minutes.
 environments: web
 status: Draft
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 
-# Get Started with Cortex Code Desktop
+# Get Started with Snowflake CoCo Desktop
 <!-- ------------------------ -->
 ## Overview
 
-Cortex Code is Snowflake's AI-powered coding agent. It is available in three interfaces: directly in [Snowsight](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-snowsight) for web-based use, as a [command-line interface (CLI)](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-cli) for developers who prefer the terminal, and as **Cortex Code Desktop** — a full AI-powered IDE built on VS Code that runs on your machine. This guide focuses on Desktop.
+Snowflake CoCo is Snowflake's data-native AI coding agent. It is available in four interfaces: directly in [Snowsight](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-snowsight) for web-based use, as a [CLI](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-cli) for developers who prefer the terminal, as **CoCo Desktop** — a full AI-powered IDE that runs on your machine — and as CoCo Extensions for your existing IDE. This guide focuses on CoCo Desktop.
 
-Cortex Code Desktop gives you a complete development environment where you can query data, build applications, and manage Snowflake resources using plain English — without leaving your editor. It has two modes: **Agent Mode** for driving and reviewing agent sessions across multiple projects, and **Editor Mode** for writing code with the agent at your side.
+Snowflake CoCo Desktop gives you a complete development environment where you can query data, build applications, and manage Snowflake resources using plain English — without leaving your editor. It has two modes: **Agent Mode** for driving and reviewing agent sessions across multiple projects, and **Editor Mode** for writing code with the agent at your side.
 
-In this guide you will download Desktop, connect it to a Snowflake account, learn the interface, and run a handful of queries to see what it can do.
+In this guide you will download CoCo Desktop, connect it to a Snowflake account, learn the interface, and run a handful of queries to see what it can do.
 
 ### What You'll Learn
-- How to download and install Cortex Code Desktop on macOS or Windows
+- How to download and install Snowflake CoCo Desktop on macOS or Windows
 - How to connect to a Snowflake account using Local OAuth or SSO
 - How to navigate Agent Mode and Editor Mode
 - How to ask natural-language questions and get SQL-backed answers
 - How to use the SQL Playground and `#` table references
-- How to manage, resume, and fork sessions
+- How to manage, resume, and rename sessions
 
 ### What You'll Build
-A working Cortex Code Desktop environment connected to your Snowflake account, ready for day-to-day development.
+A working Snowflake CoCo Desktop environment connected to your Snowflake account, ready for day-to-day development.
 
 ### Prerequisites
-- Access to a [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) (or [sign up for a free Cortex Code trial](https://signup.snowflake.com/cortex-code))
+- Access to a [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) (or [sign up for a free Snowflake CoCo trial](https://signup.snowflake.com/cortex-code))
 - A machine running macOS or Windows
 - The SNOWFLAKE.CORTEX_USER database role (granted to all users by default through the PUBLIC role)
 
@@ -40,18 +40,20 @@ Duration: 3
 
 ### Download
 
-Go to the [Cortex Code Desktop download page](https://www.snowflake.com/en/product/limited-access/cortex-code/) and download the installer for your platform.
+Go to the [Snowflake CoCo download page](https://www.snowflake.com/en/product/snowflake-coco/) and download the installer for your platform.
 
 | Platform | Installer |
 |----------|-----------|
-| macOS | `.dmg` disk image |
-| Windows | `.exe` installer |
+| macOS (Apple silicon) | `.dmg` disk image |
+| macOS (Intel) | `.dmg` disk image |
+| Windows (Intel/AMD) | `.exe` installer |
+| Windows (ARM) | `.exe` installer |
 
 ### macOS
 
 1. Open the downloaded `.dmg` file.
-2. Drag **Cortex Code** into your **Applications** folder.
-3. Launch Cortex Code from Applications or Spotlight.
+2. Drag **Snowflake CoCo** into your **Applications** folder.
+3. Launch CoCo Desktop from Applications or Spotlight.
 
 > **Note:** On first launch macOS may show a security prompt because the app was downloaded from the internet. Open **System Settings → Privacy & Security** and click **Open Anyway** if this appears. The macOS build is notarized by Apple.
 
@@ -59,17 +61,17 @@ Go to the [Cortex Code Desktop download page](https://www.snowflake.com/en/produ
 
 1. Run the downloaded `.exe` installer.
 2. Follow the setup wizard — the default install location is fine for most users.
-3. Launch Cortex Code from the Start menu or desktop shortcut.
+3. Launch CoCo Desktop from the Start menu or desktop shortcut.
 
 ### Verify the installation
 
-Cortex Code Desktop launches directly to the onboarding screen. If you see the welcome screen you're ready for the next step.
+CoCo Desktop launches directly to the onboarding screen. If you see the welcome screen you're ready for the next step.
 
 <!-- ------------------------ -->
 ## Connect to Snowflake
 Duration: 5
 
-On first launch, Cortex Code Desktop walks you through a four-step setup flow: **welcome → connect → mode → theme**.
+On first launch, CoCo Desktop walks you through a four-step setup flow: **welcome → connect → mode → theme**.
 
 ### Step 1 — Welcome
 
@@ -77,7 +79,7 @@ Click **Next** on the welcome screen to begin.
 
 ### Step 2 — Connect to Snowflake
 
-If you already have a `~/.snowflake/connections.toml` file (for example from Cortex Code CLI), your existing connections appear automatically. Select one and click **Next**.
+If you already have a `~/.snowflake/connections.toml` file (for example from Snowflake CoCo CLI), your existing connections appear automatically. Select one and click **Next**.
 
 To create a new connection, click **Add connection** and fill in the form:
 
@@ -122,7 +124,7 @@ Once in the app, click the connection name in the top navigation bar and select 
 ## Explore the Interface
 Duration: 5
 
-Cortex Code Desktop has two modes. Understanding them helps you get the most out of the app.
+CoCo Desktop has two modes. Understanding them helps you get the most out of the app.
 
 ### Agent Mode
 
@@ -160,7 +162,7 @@ With the session running, type a plain-English question in the chat input:
 What databases do I have access to?
 ```
 
-Cortex Code Desktop translates your request into SQL, runs it against Snowflake, and returns the results in the chat. You can see the SQL it generated and the reasoning steps as it works.
+CoCo Desktop translates your request into SQL, runs it against Snowflake, and returns the results in the chat. You can see the SQL it generated and the reasoning steps as it works.
 
 ### More examples
 
@@ -182,7 +184,7 @@ Explain what the SNOWFLAKE.ACCOUNT_USAGE.QUERY_HISTORY view contains
 Write a query to show my 5 most recent queries and run it
 ```
 
-Cortex Code Desktop displays its reasoning steps as it works. If it needs more information it will ask a follow-up question.
+CoCo Desktop displays its reasoning steps as it works. If it needs more information it will ask a follow-up question.
 
 ### Reference a table with #
 
@@ -192,7 +194,7 @@ Prefix a fully qualified table name with `#` to pull its schema and sample rows 
 Tell me about #SNOWFLAKE.ACCOUNT_USAGE.WAREHOUSE_METERING_HISTORY
 ```
 
-Cortex Code Desktop fetches the column definitions and a sample of rows so it can answer questions about the table without you having to describe the schema.
+CoCo Desktop fetches the column definitions and a sample of rows so it can answer questions about the table without you having to describe the schema.
 
 ### SQL Playground
 
@@ -240,12 +242,12 @@ For sensitive work, enable **Private Mode** from the connection menu in the top 
 ## Conclusion And Resources
 Duration: 2
 
-Congratulations! You've successfully installed Cortex Code Desktop, connected it to your Snowflake account, and run your first natural-language queries from a full AI-powered IDE.
+Congratulations! You've successfully installed Snowflake CoCo Desktop, connected it to your Snowflake account, and run your first natural-language queries from a full AI-powered IDE.
 
 From here you can enable Plan Mode to review and approve each action before it runs, connect MCP servers for external tools via Agent Settings, and add custom skills to tailor the assistant to your workflow.
 
 ### What You Learned
-- How to download and install Cortex Code Desktop on macOS or Windows
+- How to download and install Snowflake CoCo Desktop on macOS or Windows
 - How to connect to Snowflake using Local OAuth or SSO
 - How to navigate Agent Mode and Editor Mode
 - How to ask natural-language questions and run SQL
@@ -255,17 +257,17 @@ From here you can enable Plan Mode to review and approve each action before it r
 ### Related Resources
 
 Documentation:
-- [Cortex Code Desktop](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-desktop)
-- [Cortex Code CLI](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-cli)
-- [Cortex Code in Snowsight](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-snowsight)
+- [Snowflake CoCo Desktop](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-desktop)
+- [Snowflake CoCo CLI](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-cli)
+- [Snowflake CoCo in Snowsight](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-snowsight)
 - [Agent Mode and Editor Mode](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-desktop/agent-mode-and-editor-mode)
 - [Onboarding and Authentication](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-desktop/onboarding-and-authentication)
-- [Skills in Cortex Code Desktop](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-desktop/skills)
+- [Skills in Snowflake CoCo Desktop](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-desktop/skills)
 
 Guides:
-- [Get Started with Cortex Code CLI](https://quickstarts.snowflake.com/guide/getting-started-with-cortex-code-cli)
+- [Get Started with Snowflake CoCo CLI](https://quickstarts.snowflake.com/guide/getting-started-with-cortex-code-cli)
 - [Getting Started with Cortex Agents](https://quickstarts.snowflake.com/guide/getting-started-with-cortex-agents)
-- [Best Practices for Cortex Code CLI](https://quickstarts.snowflake.com/guide/best-practices-cortex-code-cli)
+- [Best Practices for Snowflake CoCo CLI](https://quickstarts.snowflake.com/guide/best-practices-cortex-code-cli)
 
 Additional Reading:
 - [Snowflake Developers Blog](https://developers.snowflake.com/blog/)
