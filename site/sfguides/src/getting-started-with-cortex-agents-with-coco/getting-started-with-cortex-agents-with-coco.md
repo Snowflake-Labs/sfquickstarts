@@ -8,7 +8,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 
-# Getting Started with Cortex Agents
+# Getting Started with Cortex Agents with Snowflake CoCo CLI
 
 ## Overview
 
