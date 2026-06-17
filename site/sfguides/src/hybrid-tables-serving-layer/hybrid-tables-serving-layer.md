@@ -8,7 +8,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 <!--
-keywords: hybrid table, serving layer, reverse ETL, email personalization, API backend, CTAS SWAP, low latency, point lookup, high concurrency, multi-cluster warehouse, compaction, Braze, REST API, entitlements, session state, Unistore
+keywords: hybrid table, serving layer, reverse ETL, email personalization, API backend, CTAS SWAP, low latency, point lookup, high concurrency, multi-cluster warehouse, compaction, REST API, entitlements, session state, Unistore
 related_concepts: CTAS, ALTER TABLE SWAP, CREATE OR REPLACE, compaction, plan cache, bound variables, multi-cluster warehouse, connection pooling
 prerequisite_guides: getting-started-with-hybrid-tables, hybrid-tables-write-optimization, hybrid-tables-application-connectors
 skill_level: intermediate
@@ -26,7 +26,7 @@ Many data teams maintain expensive reverse ETL pipelines that extract data from 
 
 This quickstart covers two common serving scenarios:
 
-1. **Email/Marketing Personalization** — precompute recommendations in a standard table, bulk-load into a Hybrid Table, serve to an email platform (Braze, SendGrid, Iterable) at 20,000+ requests per second
+1. **Email/Marketing Personalization** — precompute recommendations in a standard table, bulk-load into a Hybrid Table, serve to a downstream application or service at high concurrency
 2. **API Backend** — use a Hybrid Table as the backing store for a REST API serving entitlements, session state, or configuration data via primary key lookups
 
 Both scenarios use the same core pattern: **compute in columnar, serve from row store**.
@@ -37,7 +37,7 @@ Standard Snowflake tables are optimized for analytical workloads. They provide e
 
 - **Result cache** helps only for identical repeated queries (not per-user lookups)
 - **No row-level index** means every point lookup scans micro-partitions
-- **Latency variability** is high (10ms-2000ms depending on cache state and partition layout)
+- **Latency variability** is high (varies widely depending on cache state and partition layout)
 
 Hybrid Tables provide deterministic low latency for point lookups via the primary key index and secondary indexes stored in the row store.
 
@@ -45,7 +45,7 @@ Hybrid Tables provide deterministic low latency for point lookups via the primar
 
 - How to design a Hybrid Table specifically for serving (schema, PK, indexes)
 - The CTAS+SWAP pattern for atomic bulk refresh without downtime
-- Why reads spike after a CTAS and how to mitigate compaction interference
+- Why reads spike after a CTAS and how to mitigate the warm-up window
 - How to size warehouses for high-concurrency serving workloads
 - Two complete worked scenarios with DDL, data generation, and query patterns
 
@@ -309,7 +309,7 @@ WHERE user_id = $API_USER
   AND (expires_at IS NULL OR expires_at > CURRENT_TIMESTAMP()::TIMESTAMP_NTZ);
 ```
 
-Query Profile: `TableScan`, `ROW_BASED`, 1 row scanned. Sub-5ms execution time.
+Query Profile: `TableScan`, `ROW_BASED`, 1 row scanned. Low double-digit millisecond execution time.
 
 **Get all active entitlements for a user:**
 
@@ -357,11 +357,11 @@ WHEN NOT MATCHED THEN INSERT VALUES (
 <!-- ------------------------ -->
 ## Step 2: Managing the Compaction Window
 
-After a CTAS+SWAP, Snowflake runs background compaction on the new Hybrid Table to optimize the row store layout. During this window (typically 1-5 minutes for tables under 1M rows), read latency may be elevated.
+After a CTAS+SWAP, the new table must warm up — plan cache, warehouse data cache, and row store layout all need to reach steady state. During this window (typically 1-5 minutes for tables under 1M rows), read latency may be elevated.
 
-### Why Compaction Happens
+### Why Latency Spikes After a Refresh
 
-CTAS bulk-loads data in an optimized format that may not immediately be in the ideal row store layout for point lookups. Background compaction reorganizes the data for optimal access patterns. This is transparent to the application but can temporarily increase read latency until compaction completes.
+After a CTAS+SWAP, the new table has no cached query plans or warm data in the warehouse. The first queries against the new table incur plan compilation and data loading overhead. This warm-up period is transparent to the application but can temporarily increase read latency until steady state is reached.
 
 ### Mitigation Strategies
 
@@ -390,9 +390,9 @@ Run a representative query immediately after the swap to trigger warehouse cache
 SELECT COUNT(*) FROM user_recommendations WHERE user_id = 1;
 ```
 
-**3. Size the serving warehouse to absorb the compaction spike:**
+**3. Size the serving warehouse to absorb the warm-up spike:**
 
-A multi-cluster warehouse absorbs the temporary latency increase by routing new requests to idle clusters while compaction completes on the affected cluster.
+A multi-cluster warehouse absorbs the temporary latency increase by routing new requests to idle clusters while the new table reaches steady state.
 
 <!-- ------------------------ -->
 ## Step 3: Warehouse Sizing for High-Concurrency Serving
@@ -416,7 +416,7 @@ ALTER WAREHOUSE HT_SERVE_QS_WH SET
 
 | Parameter | Recommendation | Why |
 |-----------|---------------|-----|
-| WAREHOUSE_SIZE | XSMALL or SMALL | Point lookups don't need compute power; XS handles thousands of QPS |
+| WAREHOUSE_SIZE | XSMALL or SMALL | Point lookups need minimal compute; start with XS and benchmark |
 | MAX_CLUSTER_COUNT | 3-10 (based on peak concurrency) | Horizontal scaling for burst traffic |
 | MIN_CLUSTER_COUNT | 1-2 | Keep 1-2 clusters warm to avoid cold-start latency |
 | SCALING_POLICY | STANDARD | Scales up aggressively; scales down conservatively (fewer cold restarts) |
@@ -424,7 +424,7 @@ ALTER WAREHOUSE HT_SERVE_QS_WH SET
 
 ### Why XSMALL?
 
-Each HT point lookup consumes minimal compute. A single XS cluster can handle 1,000-5,000 indexed point lookups per second. Adding more clusters (not larger size) is the correct way to handle higher concurrency. Larger warehouse sizes add compute power you do not need and increase cost without reducing latency.
+Each HT point lookup consumes minimal compute. An XS cluster is typically sufficient for many operational serving workloads. Benchmark your specific query patterns to determine throughput per cluster, then scale horizontally by adding more clusters (not larger size). Larger warehouse sizes add compute power you do not need for point lookups and increase cost without reducing latency.
 
 ### When to Go Bigger
 
@@ -447,7 +447,7 @@ Before deploying a Hybrid Table as a serving layer, validate these requirements:
 | Warehouse | XS, MAX_CLUSTER_COUNT=5-10 | XS, MAX_CLUSTER_COUNT=3-5 |
 | Driver | REST API or SDK with pooling | JDBC/Python with HikariCP/SQLAlchemy pool |
 | Bound variables | Required (plan cache) | Required (plan cache) |
-| Compaction concern | Yes (schedule refresh in low-traffic window) | No (incremental writes) |
+| Warm-up concern | Yes (schedule refresh in low-traffic window) | No (incremental writes) |
 
 <!-- ------------------------ -->
 ## Cleanup
@@ -468,14 +468,14 @@ You can now:
 - Replace reverse ETL pipelines with Hybrid Tables as a serving layer
 - Design serving tables with composite primary keys for efficient point lookups
 - Use CTAS+SWAP for atomic bulk refresh with zero application downtime
-- Manage compaction windows by scheduling refreshes during low-traffic periods
+- Manage warm-up windows by scheduling refreshes during low-traffic periods
 - Size multi-cluster warehouses for high-concurrency serving (XS + horizontal scaling)
 
 ### When to Use This Pattern vs External Cache
 
 | Use Hybrid Table Serving | Keep External Cache (Redis/DynamoDB) |
 |--------------------------|--------------------------------------|
-| Latency target: 5-30ms | Latency target: <1ms |
+| Latency target: double-digit ms | Latency target: <1ms |
 | Data already in Snowflake | Data originates outside Snowflake |
 | Want to eliminate pipeline complexity | Cache invalidation is simple for your use case |
 | Refresh frequency: minutes to hours | Refresh frequency: sub-second |
@@ -496,7 +496,7 @@ You can now:
 
 **Q: How does this compare to Snowflake's result cache?**
 
-Result cache returns identical results for the exact same query text within 24 hours. For serving workloads, each request has a different user_id — so result cache never applies. Hybrid Tables serve fresh indexed lookups for every unique parameter value.
+Hybrid Tables do not use the result cache. Every query against a Hybrid Table executes fresh — there is no cached result to return regardless of query text. This is by design: HT data changes frequently via DML, so cached results would be stale.
 
 **Q: What if my serving table has 100 million rows?**
 

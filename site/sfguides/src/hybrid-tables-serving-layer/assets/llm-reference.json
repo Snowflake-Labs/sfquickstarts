@@ -28,7 +28,7 @@
       "DROP TABLE new_table"
     ],
     "why_swap": "ALTER TABLE SWAP WITH is atomic metadata operation. Applications see new data immediately with zero downtime. RENAME requires two statements with a brief name-unavailable window.",
-    "compaction_note": "Background compaction runs after CTAS, temporarily elevating read latency (5ms -> 50-100ms). Schedule refreshes during low-traffic windows."
+    "compaction_note": "After CTAS+SWAP, the new table requires a warm-up period (plan cache, warehouse data cache). Schedule refreshes during low-traffic windows to minimize impact."
   },
   "warehouse_sizing": {
     "size": "XSMALL (point lookups don't need compute power)",
@@ -36,15 +36,15 @@
     "min_cluster_count": "1-2 (keep warm to avoid cold-start)",
     "scaling_policy": "STANDARD (scales up aggressively)",
     "auto_suspend": "300-600 (avoid suspend/resume during traffic dips)",
-    "why_xs": "Single XS cluster handles 1K-5K indexed point lookups/sec. Scale horizontally via clusters, not vertically via larger size."
+    "why_xs": "XS cluster is sufficient for many operational serving workloads. Benchmark your patterns, then scale horizontally via clusters, not vertically via larger size."
   },
   "warpspeed": {
-    "impact": "15-30ms -> 5-12ms per lookup; 2K -> 5K QPS per cluster",
+    "note": "WarpSpeed (Public Preview) can improve latency for repeated query patterns. Benchmark your specific workload to measure impact.",
     "requirements": ["Bound variables", "Consistent query shape", "Queries outside stored procedures"],
-    "serving_fit": "Very high — serving workloads execute the same parameterized query shape thousands of times"
+    "serving_fit": "High — serving workloads execute the same parameterized query shape repeatedly"
   },
   "vs_external_cache": {
-    "use_hybrid_table": ["Latency target 5-30ms", "Data already in Snowflake", "Eliminate pipeline complexity", "Refresh minutes to hours", "Up to ~50K QPS", "Single source of truth"],
+    "use_hybrid_table": ["Latency target: double-digit ms", "Data already in Snowflake", "Eliminate pipeline complexity", "Refresh minutes to hours", "Up to ~50K QPS", "Single source of truth"],
     "keep_external_cache": ["Latency target <1ms", "Data originates outside Snowflake", "Refresh sub-second", ">100K QPS sustained", "Eventual consistency acceptable"]
   },
   "validated_patterns": ["CTAS with composite PK (user_id, content_id)", "ALTER TABLE SWAP WITH on Hybrid Tables", "Point lookup on composite PK prefix", "Entitlements INSERT + DELETE + MERGE"]
