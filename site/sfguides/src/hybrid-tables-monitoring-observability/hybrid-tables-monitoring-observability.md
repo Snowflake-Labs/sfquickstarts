@@ -31,8 +31,8 @@ This guide builds a complete observability stack for Hybrid Table workloads:
 3. Building monitoring dashboards for ongoing visibility
 4. Tracking credits and storage against quotas
 5. Creating multi-signal alerts (throttling, latency regression, error spikes)
-6. Exporting metrics to external tools (Datadog, Grafana, Prometheus)
-7. Building custom monitoring apps (Streamlit, Snowflake Native Apps, OpenTelemetry)
+6. Building custom monitoring apps (Streamlit, Snowflake Native Apps, OpenTelemetry)
+7. Exporting metrics to external tools (Datadog, Grafana, Prometheus)
 
 ### What You Will Learn
 
@@ -268,7 +268,7 @@ ORDER BY interval_start_time DESC;
 <!-- ------------------------ -->
 ## Step 3: Monitoring Dashboard Queries
 
-These queries can be used in any visualization tool: Streamlit in Snowflake (see Step 7), Grafana (see Step 6), or any BI tool connected to your account.
+These queries can be used in any visualization tool: Streamlit in Snowflake (see Step 6), Grafana (see Step 7), or any BI tool connected to your account.
 
 ### Tile 1: Throughput Over Time (QPS)
 
@@ -587,55 +587,14 @@ SELECT * FROM HT_MON_QS_DB.DATA.alert_log ORDER BY alert_ts DESC LIMIT 20;
 ```
 
 <!-- ------------------------ -->
-## Step 6: External Observability Integration
-
-For teams using Datadog, Grafana, or Prometheus, export HT metrics from Snowflake on a schedule.
-
-### Datadog Integration
-
-With the [Snowflake Datadog integration](https://docs.datadoghq.com/integrations/snowflake/), you can query `AGGREGATE_QUERY_HISTORY` directly. Configure a custom query in the integration YAML:
-
-```yaml
-# Example Datadog custom query (datadog-agent snowflake.d/conf.yaml)
-custom_queries:
-  - query: >
-      SELECT
-        SUM(calls) / 60.0 AS qps,
-        AVG(total_elapsed_time:"p99"::FLOAT) AS p99_ms,
-        SUM(hybrid_table_requests_throttled_count) AS throttled
-      FROM SNOWFLAKE.ACCOUNT_USAGE.AGGREGATE_QUERY_HISTORY
-      WHERE interval_start_time > DATEADD(MINUTE, -5, CURRENT_TIMESTAMP())
-        AND database_name = 'YOUR_HT_DATABASE'
-    columns:
-      - name: snowflake.hybrid_table.qps
-        type: gauge
-      - name: snowflake.hybrid_table.p99_ms
-        type: gauge
-      - name: snowflake.hybrid_table.throttled
-        type: count
-    tags:
-      - service:hybrid-tables
-```
-
-### Grafana Integration
-
-Use the [Michelin Snowflake Grafana data source plugin](https://github.com/michelin/snowflake-grafana-datasource) (open-source, community-supported) to query `AGGREGATE_QUERY_HISTORY` directly. Configure the data source with your account identifier, warehouse, and credentials, then build panels using the same SQL from Step 3.
-
-> **Note:** The official Grafana Snowflake plugin requires a Grafana Enterprise license. The Michelin community plugin is free and supports password, key-pair, and OAuth authentication.
-
-![Grafana QPS Panel](assets/grafana-qps.png)
-
-![Grafana Read/Write Mix](assets/grafana-read-write-mix.png)
-
-<!-- ------------------------ -->
-## Step 7: Custom Dashboards and Observability Apps
+## Step 6: Custom Dashboards and Observability Apps
 Duration: 10
 
-Beyond Snowsight and external tools, you can build custom monitoring experiences using Snowflake-native application frameworks.
+Build custom monitoring experiences using Snowflake-native application frameworks — no external infrastructure required.
 
 ### Option A: Streamlit in Snowflake
 
-Build an interactive monitoring dashboard that runs entirely within your Snowflake account — no external infrastructure needed.
+Build an interactive monitoring dashboard that runs entirely within your Snowflake account.
 
 ![Streamlit Monitoring Dashboard](assets/streamlit-dashboard-overview.png)
 
@@ -710,7 +669,7 @@ For a packaged, shareable monitoring experience, build a [Snowflake Native App](
 
 This approach works well when you want to standardize HT monitoring across multiple teams or accounts.
 
-### Option C: Snowflake Observability with Snowpipe Streaming + OpenTelemetry
+### Option C: OpenTelemetry Export
 
 For teams already invested in OpenTelemetry, export HT metrics as OTLP data:
 
@@ -729,6 +688,47 @@ This integrates HT monitoring into your existing distributed tracing infrastruct
 | **Snowflake Native App** | Multi-account standardization | Shareable, versioned | More setup complexity |
 | **Grafana/Datadog** | Unified observability stack | Correlate with app metrics | External dependency |
 | **OTLP Export** | Distributed tracing teams | Fits existing pipelines | Custom integration work |
+
+<!-- ------------------------ -->
+## Step 7: External Observability Integration
+
+For teams using Datadog, Grafana, or Prometheus, export HT metrics from Snowflake on a schedule.
+
+### Datadog Integration
+
+With the [Snowflake Datadog integration](https://docs.datadoghq.com/integrations/snowflake/), you can query `AGGREGATE_QUERY_HISTORY` directly. Configure a custom query in the integration YAML:
+
+```yaml
+# Example Datadog custom query (datadog-agent snowflake.d/conf.yaml)
+custom_queries:
+  - query: >
+      SELECT
+        SUM(calls) / 60.0 AS qps,
+        AVG(total_elapsed_time:"p99"::FLOAT) AS p99_ms,
+        SUM(hybrid_table_requests_throttled_count) AS throttled
+      FROM SNOWFLAKE.ACCOUNT_USAGE.AGGREGATE_QUERY_HISTORY
+      WHERE interval_start_time > DATEADD(MINUTE, -5, CURRENT_TIMESTAMP())
+        AND database_name = 'YOUR_HT_DATABASE'
+    columns:
+      - name: snowflake.hybrid_table.qps
+        type: gauge
+      - name: snowflake.hybrid_table.p99_ms
+        type: gauge
+      - name: snowflake.hybrid_table.throttled
+        type: count
+    tags:
+      - service:hybrid-tables
+```
+
+### Grafana Integration
+
+Use the [Michelin Snowflake Grafana data source plugin](https://github.com/michelin/snowflake-grafana-datasource) (open-source, community-supported) to query `AGGREGATE_QUERY_HISTORY` directly. Configure the data source with your account identifier, warehouse, and credentials, then build panels using the same SQL from Step 3.
+
+> **Note:** The official Grafana Snowflake plugin requires a Grafana Enterprise license. The Michelin community plugin is free and supports password, key-pair, and OAuth authentication.
+
+![Grafana QPS Panel](assets/grafana-qps.png)
+
+![Grafana Read/Write Mix](assets/grafana-read-write-mix.png)
 
 <!-- ------------------------ -->
 ## Monitoring Playbook
