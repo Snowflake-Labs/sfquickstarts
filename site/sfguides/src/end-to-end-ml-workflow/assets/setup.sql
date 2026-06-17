@@ -1,0 +1,45 @@
+-- Using ACCOUNTADMIN, create a new role for this exercise 
+USE ROLE ACCOUNTADMIN;
+SET USERNAME = (SELECT CURRENT_USER());
+SET ALLOW_EXTERNAL_ACCESS_FOR_TRIAL_ACCOUNTS = TRUE;
+CREATE OR REPLACE ROLE E2E_SNOW_MLOPS_ROLE;
+
+-- Grant necessary permissions to create databases, compute pools, and service endpoints to new role
+GRANT CREATE DATABASE on ACCOUNT to ROLE E2E_SNOW_MLOPS_ROLE; 
+GRANT CREATE COMPUTE POOL on ACCOUNT to ROLE E2E_SNOW_MLOPS_ROLE;
+GRANT CREATE WAREHOUSE ON ACCOUNT to ROLE E2E_SNOW_MLOPS_ROLE;
+GRANT BIND SERVICE ENDPOINT on ACCOUNT to ROLE E2E_SNOW_MLOPS_ROLE;
+
+-- grant new role to user and switch to that role
+GRANT ROLE E2E_SNOW_MLOPS_ROLE to USER identifier($USERNAME);
+USE ROLE E2E_SNOW_MLOPS_ROLE;
+
+-- Create warehouse
+CREATE OR REPLACE WAREHOUSE E2E_SNOW_MLOPS_WH WITH WAREHOUSE_SIZE='MEDIUM';
+
+-- Create Database 
+CREATE OR REPLACE DATABASE E2E_SNOW_MLOPS_DB;
+
+-- Create Schema
+CREATE OR REPLACE SCHEMA MLOPS_SCHEMA;
+
+-- Create compute pool
+CREATE COMPUTE POOL IF NOT EXISTS MLOPS_COMPUTE_POOL 
+ MIN_NODES = 1
+ MAX_NODES = 3
+ INSTANCE_FAMILY = CPU_X64_M;
+
+-- Using accountadmin, grant privilege to create network rules and integrations on newly created db
+USE ROLE ACCOUNTADMIN;
+-- GRANT CREATE NETWORK RULE on SCHEMA MLOPS_SCHEMA to ROLE E2E_SNOW_MLOPS_ROLE;
+GRANT CREATE INTEGRATION on ACCOUNT to ROLE E2E_SNOW_MLOPS_ROLE;
+USE ROLE E2E_SNOW_MLOPS_ROLE;
+
+-- Create an API integration with Github
+CREATE OR REPLACE API INTEGRATION GITHUB_INTEGRATION_E2E_SNOW_MLOPS
+   api_provider = git_https_api
+   api_allowed_prefixes = ('https://github.com/Snowflake-Labs')
+   API_USER_AUTHENTICATION = (TYPE = SNOWFLAKE_GITHUB_APP)
+   enabled = true
+   comment='Git integration with Snowflake Demo Github Repository.';
+

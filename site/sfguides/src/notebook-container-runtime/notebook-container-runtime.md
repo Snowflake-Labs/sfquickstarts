@@ -1,24 +1,24 @@
 author: Charlie Hammond
 id: notebook-container-runtime
-summary: This guide will walk show you how to use Snowflake Notebooks with Container Runtime
-categories: data-science, data-science-&-ml, Getting-Started, Notebooks
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/certified-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/data-engineering
+language: en
+summary: This guide will walk show you how to use Snowflake Notebooks with Container Runtime 
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science
+fork repo link: https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-notebook-container-runtime
+
 
 # Getting Started with Snowflake Notebook Container Runtime
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
 
-You can run Snowflake Notebooks on Snowpark Container Services through Container Runtime. Snowpark Container Services gives you a flexible container infrastructure that supports building and operationalizing a wide variety of workflows entirely within Snowflake. Container Runtime provides software and hardware options to support advanced data science and machine learning workloads on Snowpark Container Services. Compared to Virtual warehouses, Container Runtime provides a more flexible compute environment where you can install packages from multiple sources and select compute resources, including GPU machine types, while still running SQL queries on warehouses for optimal performance.
+Snowflake Notebooks in the Container Runtime are a powerful IDE option for building ML models at scale in [Snowflake ML](/en/data-cloud/snowflake-ml/). Container Runtime (Public Preview) gives you a flexible container infrastructure that supports building and operationalizing a wide variety of resource-intensive ML workflows entirely within Snowflake. Using Snowflake Notebooks in Container Runtime gives you access to distributed processing on both CPUs and GPUs, optimized data loading from Snowflake, automatic lineage capture and Model Registry integration. Container Runtime also provides flexibility to leverage a set of preinstalled packages or the ability to pip install any open-source package of choice.  
 
-This Quickstart will take you through the steps of running Snowflake Notebooks with Container Runtime. We will install packages, train a model using pre-installed packages, and view logs.
+This introductory Quickstart will take you through the steps of running Snowflake Notebooks with Container Runtime. We will install packages, then train a model using pre-installed packages. 
 
 ### Prerequisites
-- Access to a Snowflake account with Accountadmin. 
-- Access to run Notebooks in Snowflake
+- A Snowflake Account. Sign up for a [30-day free trial](notebook-container-runtim) account, if required.
 - Foundational knowledge of Data Science workflows
 
 ### What You Will Learn 
@@ -28,20 +28,20 @@ This Quickstart will take you through the steps of running Snowflake Notebooks w
 - A [Snowflake](https://app.snowflake.com/) Account
 
 ### What You’ll Build 
-- A Snowflake Notebook that runs on Snowpark Container Services
+- A Snowflake Notebook that runs on scalable CPUs or GPUs using any Python package of choice
 
 <!-- ------------------------ -->
 ## Setup Your Account
-Duration: 2
 
 Complete the following steps to setup your account:
 - Navigate to Worksheets, click "+" in the top-right corner to create a new Worksheet, and choose "SQL Worksheet".
 - Paste and the following SQL in the worksheet 
-- Adjust <YOUR_USER> to your user
 - Run all commands to create Snowflake objects
 
 ```sql
+ALTER SESSION SET query_tag = '{"origin":"sf_sit-is", "name":"aiml_notebooks_container_runtime", "version":{"major":1, "minor":0}, "attributes":{"is_quickstart":1, "source":"sql"}}';
 USE ROLE accountadmin;
+
 CREATE OR REPLACE DATABASE container_runtime_lab;
 CREATE SCHEMA notebooks;
 
@@ -56,20 +56,6 @@ GRANT CREATE SERVICE ON SCHEMA container_runtime_lab.notebooks TO ROLE container
 
 CREATE OR REPLACE WAREHOUSE CONTAINER_RUNTIME_WH AUTO_SUSPEND = 60;
 GRANT ALL ON WAREHOUSE CONTAINER_RUNTIME_WH TO ROLE container_runtime_lab_user;
-
--- Create and grant access to compute pools
-CREATE COMPUTE POOL IF NOT EXISTS cpu_xs_5_nodes
-  MIN_NODES = 1
-  MAX_NODES = 5
-  INSTANCE_FAMILY = CPU_X64_XS;
-
-CREATE COMPUTE POOL IF NOT EXISTS gpu_s_5_nodes
-  MIN_NODES = 1
-  MAX_NODES = 5
-  INSTANCE_FAMILY = GPU_NV_S;
-
-GRANT USAGE ON COMPUTE POOL cpu_xs_5_nodes TO ROLE container_runtime_lab_user;
-GRANT USAGE ON COMPUTE POOL gpu_s_5_nodes TO ROLE container_runtime_lab_user;
 
 -- Create and grant access to EAIs
 -- Substep #1: create network rules (these are schema-level objects; end users do not need direct access to the network rules)
@@ -97,26 +83,39 @@ CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION pypi_access_integration
 GRANT USAGE ON INTEGRATION allow_all_integration TO ROLE container_runtime_lab_user;
 GRANT USAGE ON INTEGRATION pypi_access_integration TO ROLE container_runtime_lab_user;
 
+USE ROLE container_runtime_lab_user;
+
+CREATE FILE FORMAT IF NOT EXISTS container_runtime_lab.notebooks.csvformat 
+    SKIP_HEADER = 1 
+    TYPE = 'CSV';
+
+-- create external stage with the csv format to stage the diamonds dataset
+CREATE STAGE IF NOT EXISTS container_runtime_lab.notebooks.diamond_assets 
+    FILE_FORMAT = container_runtime_lab.notebooks.csvformat 
+    URL = 's3://sfquickstarts/intro-to-machine-learning-with-snowpark-ml-for-python/diamonds.csv';
+
+CREATE OR REPLACE TABLE CONTAINER_RUNTIME_LAB.NOTEBOOKS.DIAMONDS (
+	CARAT NUMBER(38,2),
+	CUT VARCHAR(16777216),
+	COLOR VARCHAR(16777216),
+	CLARITY VARCHAR(16777216),
+	DEPTH NUMBER(38,1),
+	"TABLE" NUMBER(38,1),
+	PRICE NUMBER(38,0),
+	X NUMBER(38,2),
+	Y NUMBER(38,2),
+	Z NUMBER(38,2)
+);
+
+COPY INTO CONTAINER_RUNTIME_LAB.NOTEBOOKS.DIAMONDS
+FROM @CONTAINER_RUNTIME_LAB.NOTEBOOKS.DIAMOND_ASSETS;
+
 ```
 
 <!-- ------------------------ -->
-## Import Data
-Next, we will upload the diamonds.csv dataset.
-
-- Download diamonds.csv [here](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-notebook-container-runtime/blob/main/diamonds.csv)
-- Change role to container_runtime_lab_user
-- In Snowsight, navigate to Data >> Databases and select container_runtime_lab.notebooks 
-- Select Create >> Table >> From File >> Standard in the top right, and upload the diamonds.csv dataset.
-- Add Name of `DIAMONDS`
-- Update columns `row` to `"ROW"` and `table` to `"TABLE"`
-
-![upload-diamonds](assets/upload-diamonds.png)
-
-<!-- ------------------------ -->
 ## Run the Notebook
-Duration: 15
 
-- Download the notebook from this [link](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-notebook-container-runtime/blob/main/getting_started_with_container_runtime.ipynb)
+- Download the notebook from this [link](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-notebook-container-runtime/blob/main/notebooks/0_start_here.ipynb)
 - Change role to CONTAINER_RUNTIME_LAB_USER
 - Navigate to Projects > Notebooks in Snowsight
 - Click Import .ipynb from the + Notebook dropdown
@@ -124,7 +123,7 @@ Duration: 15
   - Notebook Location: CONTAINER_RUNTIME_LAB, NOTEBOOKS
   - Run On Container
   - Snowflake ML Runtime GPU 1.0
-  - GPU_S_5_NODES
+  - [SYSTEM_COMPUTE_POOL_GPU](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/working-with-compute-pool#default-compute-pools-for-notebooks)
 
 ![create-notebooks](assets/import-container-notebook.png)
 
@@ -139,15 +138,29 @@ Duration: 15
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 1
 
-In conclusion, running Snowflake Notebooks on Snowpark Container Services through Container Runtime offers a robust and flexible infrastructure for managing advanced data science and machine learning workflows directly within Snowflake. With the ability to install external packages and choose optimal compute resources, including GPU machine types, Container Runtime provides a more versatile environment compared to Virtual Warehouses.
+In conclusion, running Snowflake Notebooks Container Runtime offers a robust and flexible infrastructure for managing large-scale, advanced data science and machine learning workflows directly within Snowflake. With the ability to install external packages and choose optimal compute resources, including GPU machine types, Container Runtime provides a more versatile environment suited to the needs of data science and ML teams. 
 
-Ready to get started? Follow this Quickstart to begin running Snowflake Notebooks with Container Runtime, install essential packages, train your models, and monitor your logs effectively.
+Ready for more? After you complete this quickstart, you can try one of the following more advanced quickstarts: 
+  - [Getting Started with Running Distributed PyTorch Models on Snowflake](/en/developers/guides/getting-started-with-running-distributed-pytorch-models-on-snowflake/)
+  - [Defect Detection Using Distributed PyTorch With Snowflake Notebooks](/en/developers/guides/defect-detection-using-distributed-pytorch-with-snowflake-notebooks/)
+  - [Scale Embeddings with Snowflake Notebooks](/en/developers/guides/scale-embeddings-with-snowflake-notebooks-on-container-runtime/)
+
 
 ### What You Learned
 - The key features of Snowflake Notebooks with Container Runtime
 
+### Related Quickstarts
+- [Train an XGBoost model with GPUs in Snowflake Notebooks](/en/developers/guides/train-an-xgboost-model-with-gpus-using-snowflake-notebooks/)
+- [Defect Detection Using Distributed PyTorch With Snowflake Notebooks](/en/developers/guides/defect-detection-using-distributed-pytorch-with-snowflake-notebooks/)
+- [Scale Embeddings with Snowflake Notebooks on Container Runtime](/en/developers/guides/scale-embeddings-with-snowflake-notebooks-on-container-runtime/)
+- [Getting Started with Running Distributed PyTorch Models on Snowflake](/en/developers/guides/getting-started-with-running-distributed-pytorch-models-on-snowflake/)
+- [Getting Started with Snowflake ML](/en/developers/guides/intro-to-machine-learning-with-snowpark-ml-for-python/)
+
 ### Related Resources
+- [Snowflake ML Webpage](/en/data-cloud/snowflake-ml/)
 - [Documentation](https://docs.snowflake.com/LIMITEDACCESS/snowsight-notebooks/ui-snowsight-notebooks-runtime)
-- [YouTube Tutorials](https://www.youtube.com/playlist?list=PLavJpcg8cl1Efw8x_fBKmfA2AMwjUaeBI)
+- [Fork Repo on GitHub](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-notebook-container-runtime/blob/main/notebooks/0_start_here.ipynb?_fsi=EwgOAmF4&_fsi=EwgOAmF4)
+- [Download Reference Architecture](https://drive.google.com/file/d/1GA_pt6Pdy76tWkxyPFKL2xH_YG3v5ZRM/view?usp=sharing)
+- [Read Engineering Blog](/en/engineering-blog/machine-learning-container-runtime/)
+- [Watch the Demo](https://youtu.be/zsMaLixJZpg?list=TLGGy3VbETdGc6wyNDA5MjAyNQ)

@@ -1,16 +1,15 @@
 author: nadithya-sf
-id: tasty_bytes_working_with_iceberg_tables
-summary: This tutorial is a guide built as an extention to the Tasty Bytes series, where we will go over how data from an external Data Lake is made available in Snowflake using External Tables & Iceberg Tables.
-categories: Getting-Started, Tasty-Bytes, Data-Engineering
+id: tasty-bytes-working-with-iceberg-tables
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/lakehouse-analytics, snowflake-site:taxonomy/snowflake-feature/apache-iceberg
+language: en
+summary: This tutorial is a guide built as an extention to the Tasty Bytes series, where we will go over how data from an external Data Lake is made available in Snowflake using External Tables & Iceberg Tables. 
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Engineering, Iceberg Tables, AWS, S3
 
 # Tasty Bytes - Working with Iceberg Tables
 <!-- ------------------------ -->
 ## Overview 
-Duration: 2
 
 ![banner](assets/banner.png)
 
@@ -22,7 +21,7 @@ Within this Quickstart we will walk through how we can use Iceberg Tables in com
 
 The Tasty Bytes team recognizes the critical importance of analyzing restaurant reviews for understanding customer satisfaction, enhancing service quality, and upholding a positive reputation. By leveraging insights from reviews, they aim to pinpoint strengths, weaknesses, and areas for improvement, thereby driving business success and gain customer loyalty.
 
-The Data Enginerring team has been tasked to make this data available to the Data Science team. To achieve these objectives, the team is establishing an environment where development teams can access and process data from their data lake concurrently, using a variety of tools. They prioritize several key factors:
+The Data Engineering team has been tasked to make this data available to the Data Science team. To achieve these objectives, the team is establishing an environment where development teams can access and process data from their data lake concurrently, using a variety of tools. They prioritize several key factors:
 
 - ACID compliance
 - Single source of truth
@@ -50,7 +49,6 @@ We will build an External Table that queries data stored in external storage. Th
 
 <!-- ------------------------ -->
 ## Setup
-Duration: 15
 
 Create a database, schema and warehouse in your Snowflake account
 
@@ -297,7 +295,6 @@ FROM @tasty_bytes_db.raw.s3load/raw_pos/order_header/;
 
 <!-- ------------------------ -->
 ## Create an External Table
-Duration: 5
 
 An external table is a Snowflake feature that allows you to query data stored in an external stage as if the data were inside a table in Snowflake. The external stage is not part of Snowflake, so Snowflake does not store or manage the stage. External tables let you store (within Snowflake) certain file-level metadata, including filenames, version identifiers, and related properties.
 
@@ -368,7 +365,8 @@ PARTITION BY (quarter, source)
 LOCATION = @tasty_bytes_db.raw.stg_truck_reviews/
 AUTO_REFRESH = TRUE
 FILE_FORMAT = tasty_bytes_db.raw.ff_csv
-PATTERN ='.*truck_reviews.*[.]csv';
+PATTERN ='.*truck_reviews.*[.]csv'
+COMMENT = '{"origin":"sf_sit-is", "name":"voc", "version":{"major":1, "minor":0}, "attributes":{"is_quickstart":0, "source":"sql", "vignette":"iceberg"}}';
 ````
 
 Let's take a look at the data in the external table
@@ -379,7 +377,6 @@ SELECT * FROM tasty_bytes_db.raw.ext_survey_data LIMIT 100;
 
 <!-- ------------------------ -->
 ## Configure External Table to Auto-Refresh
-Duration: 1
 
 Execute the SHOW EXTERNAL TABLES command. Tip: run the commands below together to get the **notication_channel** column.
 
@@ -415,7 +412,6 @@ When new or updated data files are added to the S3 bucket, the event notificatio
 
 <!-- ------------------------ -->
 ## Create Iceberg Table
-Duration: 5
 
 An Iceberg table uses the Apache Iceberg open table format specification, which provides an abstraction layer on data files stored in open formats and supports features such as:
 
@@ -466,7 +462,7 @@ Snowflake creates data and metadata files and manages them. The table state is m
 
 Data files refer to the physical files that store the actual data. These files typically contain data in formats such as Parquet or ORC. Iceberg tables organize data into multiple data files, each containing a subset of the table's data. These files are managed and optimized by the Iceberg table format to support efficient data storage, retrieval, and processing.
 
-### Querying Iceber Tables
+### Querying Iceberg Tables
 Now let's load some data into the Iceberg table. This query copies the data from the external table into our new iceberg table (in the `iceberg_table` directory of S3). 
 
 **Note:** You may load data directly into the S3 directory where your Iceberg table resides. We are loading data from the External Table here to show how you can interact with data inside Iceberg Tables. 

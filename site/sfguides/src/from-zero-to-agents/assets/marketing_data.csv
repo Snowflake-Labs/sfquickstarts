@@ -1,0 +1,106 @@
+date,category,campaign_name,impressions,clicks
+2025-01-05,UltraRunner Shoes,New Year Fitness Push,14230,412
+2025-01-05,HydraBottle 2L,New Year Fitness Push,8920,267
+2025-01-05,PowerYoga Mat,New Year Fitness Push,11540,389
+2025-01-05,Cyclone Helmet,New Year Fitness Push,6780,178
+2025-01-05,Fitness Wear,New Year Fitness Push,17650,523
+2025-01-12,UltraRunner Shoes,New Year Fitness Push,15890,478
+2025-01-12,HydraBottle 2L,New Year Fitness Push,9340,291
+2025-01-12,PowerYoga Mat,New Year Fitness Push,10870,342
+2025-01-12,Cyclone Helmet,New Year Fitness Push,7120,195
+2025-01-12,Fitness Wear,New Year Fitness Push,16430,487
+2025-01-19,UltraRunner Shoes,Gear Up Challenge,16450,502
+2025-01-19,HydraBottle 2L,Gear Up Challenge,10210,315
+2025-01-19,PowerYoga Mat,Gear Up Challenge,11230,367
+2025-01-19,Cyclone Helmet,Gear Up Challenge,8340,224
+2025-01-19,Fitness Wear,Gear Up Challenge,18920,561
+2025-02-02,UltraRunner Shoes,Gear Up Challenge,13780,398
+2025-02-02,HydraBottle 2L,Gear Up Challenge,9870,289
+2025-02-02,PowerYoga Mat,Gear Up Challenge,12640,421
+2025-02-02,Cyclone Helmet,Gear Up Challenge,7560,198
+2025-02-02,Fitness Wear,Gear Up Challenge,19340,587
+2025-02-16,UltraRunner Shoes,Spring Into Action,14120,415
+2025-02-16,HydraBottle 2L,Spring Into Action,11430,348
+2025-02-16,PowerYoga Mat,Spring Into Action,13210,445
+2025-02-16,Cyclone Helmet,Spring Into Action,8790,237
+2025-02-16,Fitness Wear,Spring Into Action,20150,612
+2025-03-01,UltraRunner Shoes,Spring Into Action,17890,534
+2025-03-01,HydraBottle 2L,Spring Into Action,12670,392
+2025-03-01,PowerYoga Mat,Spring Into Action,14530,468
+2025-03-01,Cyclone Helmet,Spring Into Action,9450,263
+2025-03-01,Fitness Wear,Spring Into Action,22340,678
+2025-03-15,UltraRunner Shoes,Spring Into Action,18340,556
+2025-03-15,HydraBottle 2L,Spring Into Action,13890,423
+2025-03-15,PowerYoga Mat,Spring Into Action,15120,489
+2025-03-15,Cyclone Helmet,Spring Into Action,10230,287
+2025-03-15,Fitness Wear,Spring Into Action,21870,652
+2025-04-01,UltraRunner Shoes,Trail Blazer Campaign,19670,589
+2025-04-01,HydraBottle 2L,Trail Blazer Campaign,15430,478
+2025-04-01,PowerYoga Mat,Trail Blazer Campaign,16780,541
+2025-04-01,Cyclone Helmet,Trail Blazer Campaign,11340,312
+2025-04-01,Fitness Wear,Trail Blazer Campaign,23450,714
+2025-04-15,UltraRunner Shoes,Trail Blazer Campaign,20120,614
+2025-04-15,HydraBottle 2L,Trail Blazer Campaign,14870,452
+2025-04-15,PowerYoga Mat,Trail Blazer Campaign,17230,558
+2025-04-15,Cyclone Helmet,Trail Blazer Campaign,12560,349
+2025-04-15,Fitness Wear,Trail Blazer Campaign,24120,738
+2025-05-01,UltraRunner Shoes,Beat the Heat,21450,643
+2025-05-01,HydraBottle 2L,Beat the Heat,16780,521
+2025-05-01,PowerYoga Mat,Beat the Heat,18340,592
+2025-05-01,Cyclone Helmet,Beat the Heat,13210,368
+2025-05-01,Fitness Wear,Beat the Heat,25670,782
+2025-05-15,UltraRunner Shoes,Beat the Heat,22130,671
+2025-05-15,HydraBottle 2L,Beat the Heat,17450,543
+2025-05-15,PowerYoga Mat,Beat the Heat,19120,618
+2025-05-15,Cyclone Helmet,Beat the Heat,14560,405
+2025-05-15,Fitness Wear,Beat the Heat,26340,801
+2025-06-01,UltraRunner Shoes,Summer Blitz,23890,718
+2025-06-01,HydraBottle 2L,Summer Blitz,19340,601
+2025-06-01,PowerYoga Mat,Summer Blitz,20450,661
+2025-06-01,Cyclone Helmet,Summer Blitz,15230,424
+2025-06-01,Fitness Wear,Summer Blitz,27890,849
+2025-06-15,UltraRunner Shoes,Summer Blitz,24560,742
+2025-06-15,HydraBottle 2L,Summer Blitz,20120,628
+2025-06-15,PowerYoga Mat,Summer Blitz,21230,687
+2025-06-15,Cyclone Helmet,Summer Blitz,16780,468
+2025-06-15,Fitness Wear,Summer Blitz,28450,871
+2025-07-01,UltraRunner Shoes,Summer Blitz,25340,765
+2025-07-01,HydraBottle 2L,Summer Blitz,21560,672
+2025-07-01,PowerYoga Mat,Summer Blitz,19870,641
+2025-07-01,Cyclone Helmet,Summer Blitz,17340,483
+2025-07-01,Fitness Wear,Summer Blitz,29120,889
+2025-07-15,UltraRunner Shoes,Back to Basics,24890,748
+2025-07-15,HydraBottle 2L,Back to Basics,22340,697
+2025-07-15,PowerYoga Mat,Back to Basics,18560,598
+2025-07-15,Cyclone Helmet,Back to Basics,16120,449
+2025-07-15,Fitness Wear,Back to Basics,28670,874
+2025-08-01,UltraRunner Shoes,Back to Basics,22670,681
+2025-08-01,HydraBottle 2L,Back to Basics,20890,651
+2025-08-01,PowerYoga Mat,Back to Basics,17230,556
+2025-08-01,Cyclone Helmet,Back to Basics,15670,437
+2025-08-01,Fitness Wear,Back to Basics,26780,816
+2025-08-15,UltraRunner Shoes,Back to Basics,21340,642
+2025-08-15,HydraBottle 2L,Back to Basics,19560,609
+2025-08-15,PowerYoga Mat,Back to Basics,16450,531
+2025-08-15,Cyclone Helmet,Back to Basics,14890,415
+2025-08-15,Fitness Wear,Back to Basics,25340,772
+2025-09-01,UltraRunner Shoes,Fall Hustle Series,23450,705
+2025-09-01,HydraBottle 2L,Fall Hustle Series,17890,557
+2025-09-01,PowerYoga Mat,Fall Hustle Series,18670,603
+2025-09-01,Cyclone Helmet,Fall Hustle Series,13560,378
+2025-09-01,Fitness Wear,Fall Hustle Series,24560,748
+2025-09-15,UltraRunner Shoes,Fall Hustle Series,24120,726
+2025-09-15,HydraBottle 2L,Fall Hustle Series,16340,509
+2025-09-15,PowerYoga Mat,Fall Hustle Series,19340,625
+2025-09-15,Cyclone Helmet,Fall Hustle Series,12890,359
+2025-09-15,Fitness Wear,Fall Hustle Series,23120,704
+2025-10-01,UltraRunner Shoes,Fall Hustle Series,20560,617
+2025-10-01,HydraBottle 2L,Fall Hustle Series,14230,443
+2025-10-01,PowerYoga Mat,Fall Hustle Series,16890,545
+2025-10-01,Cyclone Helmet,Fall Hustle Series,11670,325
+2025-10-01,Fitness Wear,Fall Hustle Series,21890,667
+2025-10-15,UltraRunner Shoes,Fall Hustle Series,19870,597
+2025-10-15,HydraBottle 2L,Fall Hustle Series,13560,422
+2025-10-15,PowerYoga Mat,Fall Hustle Series,15780,509
+2025-10-15,Cyclone Helmet,Fall Hustle Series,10890,304
+2025-10-15,Fitness Wear,Fall Hustle Series,20450,623

@@ -1,41 +1,40 @@
 author: Shriya Rai
 id: build-and-deploy-snowpark-ml-models-using-streamlit-snowflake-notebooks
-summary: This is a sample Snowflake Guide
-categories: data-science, data-science-&-ml, app-development
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/community-sourced, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/model-development, snowflake-site:taxonomy/snowflake-feature/snowpark
+language: en
+summary: Build and deploy Snowpark ML models with Streamlit apps using Snowflake Notebooks for end-to-end ML development.
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Data Science, Data Applications, Machine Learning, Streamlit, Snowpark, Notebook
+
 
 # Build and deploy Snowpark ML models using Streamlit and Notebooks in Snowflake
 <!-- ------------------------ -->
 ## Overview 
-Duration: 1
 
-In this quickstart, you will be introduced to  ML Sidekick, a no-code app built using Streamlit in Snowflake, designed for building and deploying machine learning models in Snowflake. This application aids both seasoned data scientists and business users with no coding experience by simplifying the machine learning process and making it accessible to a broader audience.
+In this quickstart, you will be introduced to ML Sidekick, a no-code app built using Streamlit in Snowflake, designed for building and deploying machine learning models in Snowflake. This application aids both seasoned data scientists and business users with no coding experience by simplifying the machine learning process and making it accessible to a broader audience.
 
 ### Prerequisites
-- A Snowflake account login. If not, you will need to register for a [free trial account](https://signup.snowflake.com/)
+- A Snowflake account login. If not, you will need to register for a [free trial account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)
 - Install [Anaconda](https://anaconda.com)
 
 ### What You’ll Learn 
-- How to deploy streamlit in Snowflake app via jupyter notebook  
-- How to navigate the deployed app and utilize its features effectively which include:   
-  - Selection and preprocessing of data to build machine learning models  
-  - Train and evaluate machine learning models within the Snowflake environment  
-  - Log models to Snowflake model registry  
-  - Generate python code for the pipeline in form a notebook   
+- How to deploy streamlit in Snowflake app via jupyter notebook
+- How to navigate the deployed app and utilize its features effectively which include:
+  - Selection and preprocessing of data to build machine learning models
+  - Train and evaluate machine learning models within the Snowflake environment
+  - Log models to Snowflake model registry
+  - Generate python code for the pipeline in form a notebook
   - Explore/compare different versions of registered models or different models
 
 ### What You’ll Build 
-- Streamlit in Snowflake application called ML_SIDEKICK which allows you to:   
-  - Create a streamlined pipeline that aids in data selection, preprocessing, model training, and performance evaluation.  
-  - Register the created model to Snowflake model registry for easy versioning and comparison.  
+- Streamlit in Snowflake application called ML_SIDEKICK which allows you to:
+  - Create a streamlined pipeline that aids in data selection, preprocessing, model training, and performance evaluation.
+  - Register the created model to Snowflake model registry for easy versioning and comparison.
   - Generate a Snowflake notebook that showcases the underlying Python code for further exploration and customization.
 
 <!-- ------------------------ -->
-## Setting up the Data in Snowflake
-Duration: 5
+## App creation and setting up the data in Snowflake
 
 ### Overview
 You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#), the Snowflake web interface, to:
@@ -43,8 +42,8 @@ You will use [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.h
 * Ingest data into raw tables
 
 ### Download datasets
-* You can download the required datasets from the [github repository](https://github.com/Snowflake-Labs/sfguide-build-and-deploy-snowpark-ml-models-using-streamlit-snowflake-notebooks/tree/main/data)
-* Alternatively, you can download the datasets from  from UC Irvine Dataset Repository
+* You can download the required datasets from the [GitHub repository](https://github.com/Snowflake-Labs/sfguide-build-and-deploy-snowpark-ml-models-using-streamlit-snowflake-notebooks/tree/main/data)
+* Alternatively, you can download the datasets from from UC Irvine Dataset Repository
   * [Abalone dataset](https://archive.ics.uci.edu/dataset/1/abalone) - This dataset will be used for the regression model (target - Rings)
 Abalone.data needs to be converted into a csv for it to work
   * [Diabetes dataset](https://archive.ics.uci.edu/dataset/891/cdc+diabetes+health+indicators) - This dataset will be used for the classification model (target - Diabetes_binary).
@@ -52,76 +51,10 @@ Abalone.data needs to be converted into a csv for it to work
 
 ### Creating Objects
 * Navigate to Worksheets, click "+" in the top-right corner to create a new Worksheet, and choose "SQL Worksheet".
-* Paste and run the following SQL in the worksheet to create Snowflake objects (warehouse, database, schema, raw tables).
+* Paste and run the SQL from (https://github.com/Snowflake-Labs/sfguide-build-and-deploy-snowpark-ml-models-using-streamlit-snowflake-notebooks/blob/main/deploy_sis_app.sql) in the worksheet to create Snowflake objects (Streamlit in Snowflake application, warehouse, database, schema, raw tables).
 
-```sql
-USE ROLE sysadmin;
+You will likely need a role with necessary [CREATE INTEGRATION](https://docs.snowflake.com/en/sql-reference/sql/create-api-integration#access-control-requirements) and [CREATE GIT REPOSITORY](https://docs.snowflake.com/sql-reference/sql/create-git-repository#access-control-requirements) privileges to create the Git integration and repository. If you do not have the necessary permissions, please reach out to your Snowflake administrator.
 
--- creating database and schema to for tables
--- creating warehouse for data ingestion
-
--- create database
-CREATE OR REPLACE DATABASE ML_SIDEKICK;
-
--- create schema
-CREATE OR REPLACE SCHEMA TEST_DATA;
-
--- create ml_sidekick_load_wh
-CREATE OR REPLACE WAREHOUSE ml_sidekick_load_wh
-	WAREHOUSE_SIZE = 'XSMALL'
-	WAREHOUSE_TYPE = 'standard'
-	AUTO_SUSPEND = 60
-	AUTO_RESUME = TRUE
-INITIALLY_SUSPENDED = TRUE
-COMMENT = 'ml-sidekick standard warehouse for data loading';
-
-USE WAREHOUSE ml_sidekick_load_wh;
-
--- create file format and tables 
--- Assuming the files are csv format if not please see this documentation here to create the correct file format https://docs.snowflake.com/en/sql-reference/sql/create-file-format#syntax
-
-
--- create abalone table
-CREATE OR REPLACE TABLE ML_SIDEKICK.TEST_DATA.ABALONE
-(
-SEX VARCHAR,
-LENGTH NUMBER,
-DIAMETER NUMBER,
-HEIGHT NUMBER,
-WHOLE_WEIGHT NUMBER,
-SHUCKED_WEIGHT NUMBER,
-VISCERA_WEIGHT NUMBER,
-SHELL_WEIGHT NUMBER,
-RINGS INTEGER
-);
-
--- create diabetes table
-CREATE OR REPLACE TABLE ML_SIDEKICK.TEST_DATA.DIABETES
-(
-Diabetes_binary INTEGER,
-HighBP INTEGER,
-HighChol INTEGER,
-CholCheck INTEGER,
-BMI INTEGER,
-Smoker INTEGER,
-Stroke INTEGER,
-HeartDiseaseorAttack INTEGER,
-PhysActivity INTEGER,
-Fruits INTEGER,
-Veggies INTEGER,
-HvyAlcoholConsump INTEGER,
-AnyHealthcare INTEGER,
-NoDocbcCost INTEGER,
-GenHlth INTEGER,
-MentHlth INTEGER,
-PhysHlth INTEGER,
-DiffWalk INTEGER,
-Sex INTEGER,
-Age INTEGER,
-Education INTEGER,
-Income INTEGER
-);
-```
 ### Loading Data through Snowflake UI
 
 * Navigate to the Data button on the far left column and click on the Data button to open up the databases. Find the ML_SIDEKICK you just created using the SQL syntax above.
@@ -139,36 +72,7 @@ Income INTEGER
   ![](./assets/image6.png)
 
 <!-- ------------------------ -->
-
-## Setting up the Notebook to automatically create the SiS app
-Duration: 5
-
-### Overview
-* You will use Snowsight, the Snowflake web interface to:
-Create a Snowflake Notebook that deploys your Streamlit in Snowflake application (ML_Sidekick)
-
-### Creating the ML_Sidekick application
-* Navigate to this [github repository](https://github.com/Snowflake-Labs/sfguide-build-and-deploy-snowpark-ml-models-using-streamlit-snowflake-notebooks/tree/main) and grab the following folders/files:
-  * SiS Deployment (folder and all files inside)
-  * streamlit_automl (folder and all files and folders inside)
-  * environment.yml
-  ![](./assets/repo_assets.png)
-* Open up the deploy_app.ipynb notebook in your IDE of choice and make sure you have the correct folder structure as seen on the left hand side of the image.  
-  * Create a virtual environment using the environment.yml.  [Here’s how to do it](https://stackoverflow.com/questions/68104229/how-to-create-a-virtual-environment-in-python-using-an-environment-yaml-file)
-  * Make sure you are using that virtual environment when running your notebook
-    ![](./assets/image7.png)
-* Follow the instructions in the Markdown cell to create the connection file or enter your credentials in the cell under OPTION 2 and uncomment the lines of code.
-  ![](./assets/image9.png)
-  ![](./assets/image1.png)
-* Change the query_warehouse line to a Snowflake warehouse you have access to in order to create the application.
-  ![](./assets/image4.png)
-* Hit the run all button and your application will be created inside your Snowflake instance.
-  ![](./assets/image8.png)
-
-
-<!-- ------------------------ -->
 ## Dataset selection
-Duration: 2
 
 ### Overview
 In this section, we will navigate the deployed app to select the dataset we would like to work with. 
@@ -180,7 +84,7 @@ In this section, we will navigate the deployed app to select the dataset we woul
 2. Select "ML Model". This would navigate you to the data selection section in the app. 
   ![](./assets/DataSelect_2.png)
 
-3. Click on  "Data Selection". This would give you options of the available datasets in your Snowflake account. 
+3. Click on "Data Selection". This would give you options of the available datasets in your Snowflake account. 
   ![](./assets/DataSelect_3.png)
 
 4. Select the appropriate database, schema and table as shown below. In this quickstart, we will go with the Abalone dataset that we previously loaded. However, we can also go through the same workflow for the Diabetes dataset. We can see a snapshot of the data we have selected come up on the right. Once we are satisfied with our selection, we can click on "Next" to begin pre-processing the data we have selected.
@@ -189,7 +93,6 @@ In this section, we will navigate the deployed app to select the dataset we woul
 
 <!-- ------------------------ -->
 ## Pre-processing data
-Duration: 4
 
 ### Overview
 
@@ -221,7 +124,6 @@ After dataset selection, we tackle data preprocessing—a critical step for mode
 
 <!-- ------------------------ -->
 ## Train & log machine learning model
-Duration: 7
 
 ### Overview 
 
@@ -263,7 +165,6 @@ After prepping our data, we go on to training our machine learning model. In thi
 
 <!-- ------------------------ -->
 ## Generate notebook for the pipeline
-Duration: 2
 ### Overview
 
 The ML Sidekick app automatically generates a jupyter notebook or Snowflake notebook that showcases the underlying Python code, making it easy to explore and customize the machine learning pipeline we went through so far. It enhances transparency, serves as an educational tool, and allows us to fine-tune models or adapt the code for future projects—all within the familiar Snowflake environment. 
@@ -285,7 +186,6 @@ The ML Sidekick app automatically generates a jupyter notebook or Snowflake note
 
 <!-- ------------------------ -->
 ## Explore and compare registered models
-Duration: 4
 ### Overview
 
 The ML Sidekick app offers another powerful feature that simplifies model management by facilitating automatic version control and streamlined model comparison. This means we can easily track different iterations of the models and evaluate their performance without any manual effort.
@@ -318,7 +218,6 @@ The ML Sidekick app offers another powerful feature that simplifies model manage
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 1
 
 Congratulations! You have successfully deployed and utilized ML_SIDEKICK application to: 
 
@@ -337,4 +236,8 @@ And you did all of it within the secure walls of Snowflake!
 * [Documentation for Snowflake ML](https://docs.snowflake.com/en/developer-guide/snowflake-ml/overview)   
 * [Documentation for Snowpark ML modeling](https://docs.snowflake.com/en/developer-guide/snowflake-ml/modeling)  
 * [Documentation for Snowflake Model Registry](https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/overview)  
-* [Documentation for Streamlit in Snowflake](https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit) 
+* [Documentation for Streamlit in Snowflake](https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit)
+* [Fork Repo on GitHub](https://github.com/Snowflake-Labs/sfguide-build-and-deploy-snowpark-ml-models-using-streamlit-snowflake-notebooks)
+* [Download Reference Architecture](/content/dam/snowflake-site/developers/2024/09/ML-SideKick-Reference-Architecture.pdf)
+* [Read Blog](https://medium.com/snowflake/ml-sidekick-your-ml-assistant-in-snowflake-4dba0ceee982)
+* [Watch Demo](https://youtu.be/9GwElsYDMQA?si=_JefVKAhWgnhCjr_)

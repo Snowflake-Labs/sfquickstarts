@@ -1,0 +1,23 @@
+deployment:
+  database: CORTEX_CODE_MGMT
+  schema: APP
+
+# Optional: configure role names used by the app.
+# Leave this section out (or remove individual keys) to use the CC_* defaults.
+# Use this to reuse existing org roles instead of creating new CC_* ones.
+#
+# roles:
+#   sp_owner:   CC_SP_OWNER_ROLE    # owns all SPs (EXECUTE AS OWNER); needs MANAGE GRANTS
+#   app_role:   CC_APP_ROLE         # Streamlit runtime; gets table + SP privileges
+#   admin_role: CC_ADMIN_ROLE       # optional; granted to human admins (not used for page auth)
+#   user_role:  CC_USER_ROLE        # optional; granted to end users (not used for page auth)
+#
+# Example — reuse existing org roles:
+#   sp_owner:   ACCOUNTADMIN
+#   app_role:   MY_STREAMLIT_RUNTIME_ROLE
+#   admin_role: PLATFORM_ADMIN
+#   user_role:  ALL_STAFF
+
+admin:
+  roles:
+    - ACCOUNTADMIN
