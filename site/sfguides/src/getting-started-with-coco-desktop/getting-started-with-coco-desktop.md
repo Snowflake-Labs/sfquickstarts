@@ -196,16 +196,6 @@ Tell me about #SNOWFLAKE.ACCOUNT_USAGE.WAREHOUSE_METERING_HISTORY
 
 CoCo Desktop fetches the column definitions and a sample of rows so it can answer questions about the table without you having to describe the schema.
 
-### SQL Playground
-
-Click the **SQL Playground** icon in the tool bar (or right-click any SQL block in the chat and select **Open in SQL Playground**) to run SQL directly against your account:
-
-```sql
-SELECT CURRENT_ROLE(), CURRENT_WAREHOUSE(), CURRENT_DATABASE();
-```
-
-The SQL Playground is a full editor with syntax highlighting, auto-complete, and inline results — useful when you want to iterate on a query without going through the chat.
-
 <!-- ------------------------ -->
 ## Manage Sessions
 Duration: 3
