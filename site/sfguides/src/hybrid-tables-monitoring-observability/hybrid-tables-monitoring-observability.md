@@ -811,8 +811,7 @@ You can now:
 - Export metrics to external observability platforms (Datadog, Grafana)
 - Build custom monitoring apps with Streamlit in Snowflake or Snowflake Native Apps
 
-aside positive
-**Need help with your Hybrid Table architecture?** Book a 30-minute session with our specialist team to discuss your use case, review your schema design, or troubleshoot performance: [Schedule a session](https://calendar.app.google/cGfVnKFe7xbeDqDo8)
+> **Need help with your Hybrid Table architecture?** Book a 30-minute session with our specialist team to discuss your use case, review your schema design, or troubleshoot performance: [Schedule a session](https://calendar.app.google/cGfVnKFe7xbeDqDo8)
 
 ### Related Resources
 

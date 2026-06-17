@@ -27,11 +27,9 @@ You have operational data in Snowflake Postgres. You want to run analytics on it
 
 The result is a fully unified architecture: one platform, one SQL interface, no external connectors.
 
-aside positive
-**Data mirroring vs Postgres for your data lake (pg_lake):** Snowflake offers two ways to connect Postgres and Snowflake. This guide uses **data mirroring** — continuous, automatic sync with seconds of latency and zero infrastructure. If you need more control over *when* and *how* data moves, or want to work with shared open-format Iceberg tables, see the [pg_lake quickstart](https://snowflake.com/en/developers/guides/sync-data-from-postgres-to-snowflake-with-iceberg-and-pg-lake/) instead.
+> **Data mirroring vs Postgres for your data lake (pg_lake):** Snowflake offers two ways to connect Postgres and Snowflake. This guide uses **data mirroring** — continuous, automatic sync with seconds of latency and zero infrastructure. If you need more control over *when* and *how* data moves, or want to work with shared open-format Iceberg tables, see the [pg_lake quickstart](https://snowflake.com/en/developers/guides/sync-data-from-postgres-to-snowflake-with-iceberg-and-pg-lake/) instead.
 
-aside positive
-**Do you even need native tables?** If your workload is simple reads against mirrored data — small tables, low query volume, no custom indexes needed — you can skip the routing layer and just query `$live` views directly (~30s freshness). This guide adds native HT + ST when you need: (1) sub-millisecond indexed lookups, (2) secondary indexes on non-PG-indexed columns, (3) clustered analytics with partition pruning, (4) Streams or Dynamic Tables, (5) custom denormalized schemas, or (6) data retention beyond the 7-day `$changes` window.
+> **Do you even need native tables?** If your workload is simple reads against mirrored data — small tables, low query volume, no custom indexes needed — you can skip the routing layer and just query `$live` views directly (~30s freshness). This guide adds native HT + ST when you need: (1) sub-millisecond indexed lookups, (2) secondary indexes on non-PG-indexed columns, (3) clustered analytics with partition pruning, (4) Streams or Dynamic Tables, (5) custom denormalized schemas, or (6) data retention beyond the 7-day `$changes` window.
 
 ![Architecture overview](assets/architecture-overview.png)
 
@@ -59,8 +57,7 @@ aside positive
 - `psql` or a compatible Postgres client to connect to the Postgres instance
 - Familiarity with basic SQL and Snowflake worksheets
 
-aside negative
-**Public Preview Feature:** Snowflake Postgres data mirroring is available in Public Preview. Availability depends on your account and region. Confirm with your Snowflake contact that the feature is enabled on your account before proceeding. **Known Issues:** Mirror names must be lowercase. Role names with dashes (e.g. `data-eng`) fail on `CREATE_MIRROR` — switch to a role whose name uses only underscores before running mirror procedures.
+> **Public Preview Feature:** Snowflake Postgres data mirroring is available in Public Preview. Availability depends on your account and region. Confirm with your Snowflake contact that the feature is enabled on your account before proceeding. **Known Issues:** Mirror names must be lowercase. Role names with dashes (e.g. `data-eng`) fail on `CREATE_MIRROR` — switch to a role whose name uses only underscores before running mirror procedures.
 
 <!-- ------------------------ -->
 ## Setup
@@ -111,8 +108,7 @@ Connect to your Postgres instance using `psql` or a compatible client and instal
 CREATE EXTENSION snowflake_cdc CASCADE;
 ```
 
-aside positive
-**Tip:** Run `\dx` in psql after the install to confirm both `snowflake_cdc` and `pg_lake` appear in the extension list.
+> **Tip:** Run `\dx` in psql after the install to confirm both `snowflake_cdc` and `pg_lake` appear in the extension list.
 
 ### Seed Demo Data
 
@@ -214,8 +210,7 @@ CALL SNOWFLAKE.POSTGRES.CREATE_MIRROR(
 );
 ```
 
-aside positive
-**`refresh_interval` trade-off:** A shorter interval keeps the materialized target table more current but increases apply task costs. The `$live` view always reflects changes within ~30 seconds regardless of this setting — so you can set a longer interval to reduce cost while still getting sub-minute lag from `$live`.
+> **`refresh_interval` trade-off:** A shorter interval keeps the materialized target table more current but increases apply task costs. The `$live` view always reflects changes within ~30 seconds regardless of this setting — so you can set a longer interval to reduce cost while still getting sub-minute lag from `$live`.
 
 ### Verify Mirror Status
 
@@ -263,8 +258,7 @@ GRANT SELECT ON TABLE IOT_MIRROR_DB.PUBLIC.DEVICES$CHANGES  TO ROLE PG_NATIVE_QS
 GRANT SELECT ON TABLE IOT_MIRROR_DB.PUBLIC.SENSORS$CHANGES  TO ROLE PG_NATIVE_QS_ROLE;
 ```
 
-aside positive
-**Why explicit `$CHANGES` grants?** The `$CHANGES` companion tables are reported as TABLE objects but are not enumerated by `GRANT SELECT ON ALL TABLES`. This is a known behavior in the current preview. Grant them by name after the mirror reaches REPLICATING state.
+> **Why explicit `$CHANGES` grants?** The `$CHANGES` companion tables are reported as TABLE objects but are not enumerated by `GRANT SELECT ON ALL TABLES`. This is a known behavior in the current preview. Grant them by name after the mirror reaches REPLICATING state.
 
 <!-- ------------------------ -->
 ## Explore the Mirror Output
@@ -339,8 +333,7 @@ WHERE _commit_time >= DATEADD('hour', -1, CURRENT_TIMESTAMP())
 GROUP BY _change_type;
 ```
 
-aside positive
-**Using `$changes` as a watermark:** The `_commit_lsn` and `_commit_time` columns make it easy to build an incremental pipeline that processes only rows newer than the last run — which is exactly how the routing tasks in the next step work.
+> **Using `$changes` as a watermark:** The `_commit_lsn` and `_commit_time` columns make it easy to build an incremental pipeline that processes only rows newer than the last run — which is exactly how the routing tasks in the next step work.
 
 <!-- ------------------------ -->
 ## Build the Native Snowflake Architecture
@@ -439,8 +432,7 @@ SELECT
 FROM IOT_MIRROR_DB.PUBLIC.sensors;
 ```
 
-aside positive
-**Keeping dimensions current:** For slowly changing dimension tables like `devices` and `sensors`, you can schedule a simple `CREATE OR REPLACE TABLE ... AS SELECT` task to refresh them on a daily or hourly cadence rather than building a full MERGE pipeline.
+> **Keeping dimensions current:** For slowly changing dimension tables like `devices` and `sensors`, you can schedule a simple `CREATE OR REPLACE TABLE ... AS SELECT` task to refresh them on a daily or hourly cadence rather than building a full MERGE pipeline.
 
 <!-- ------------------------ -->
 ## Route Mirror Data into Native Tables
@@ -530,8 +522,7 @@ WHERE c._change_type = 'I'
 ALTER TASK IOT_NATIVE_DB.IOT.ROUTE_HISTORY RESUME;
 ```
 
-aside positive
-**Why `$changes` for history, `$live` for latest state?** `$live` always reflects the most current committed value (~30s lag) — perfect for a MERGE that needs the current winner per sensor. `$changes` exposes every individual change event as a row with a `_commit_time` watermark, making incremental appends efficient even at high ingest rates.
+> **Why `$changes` for history, `$live` for latest state?** `$live` always reflects the most current committed value (~30s lag) — perfect for a MERGE that needs the current winner per sensor. `$changes` exposes every individual change event as a row with a `_commit_time` watermark, making incremental appends efficient even at high ingest rates.
 
 ### Perform an Initial Load
 
@@ -740,8 +731,7 @@ ORDER BY ABS(deviation_from_24h_avg) DESC;
 
 This query only invokes Cortex for anomalous or elevated sensors — minimising AI token cost while providing actionable natural-language summaries for the operations team.
 
-aside positive
-**Next steps with Cortex:** The same `SENSOR_HISTORY` table can feed `SNOWFLAKE.CORTEX.FORECAST` for predictive maintenance, or `SNOWFLAKE.CORTEX.COMPLETE` with a larger context window to analyse multi-day trends across correlated sensors.
+> **Next steps with Cortex:** The same `SENSOR_HISTORY` table can feed `SNOWFLAKE.CORTEX.FORECAST` for predictive maintenance, or `SNOWFLAKE.CORTEX.COMPLETE` with a larger context window to analyse multi-day trends across correlated sensors.
 
 <!-- ------------------------ -->
 ## How It All Fits Together
@@ -828,8 +818,7 @@ If you no longer need the CDC extension on your Postgres instance:
 DROP EXTENSION IF EXISTS snowflake_cdc CASCADE;
 ```
 
-aside negative
-**Note:** Dropping `snowflake_cdc` also removes `pg_lake` and all associated publication and replication slot objects. Only do this if you are no longer using Data Mirroring on this instance.
+> **Note:** Dropping `snowflake_cdc` also removes `pg_lake` and all associated publication and replication slot objects. Only do this if you are no longer using Data Mirroring on this instance.
 
 <!-- ------------------------ -->
 ## Conclusion
@@ -845,8 +834,7 @@ You have built a fully native Snowflake data architecture powered by a continuou
 - Two **Tasks** that route data from the mirror into the native tables using `$live` and `$changes` as the correct source for each pattern
 - Unified SQL queries joining both table types, and an optional Cortex AI layer for anomaly narratives
 
-aside positive
-**Need help with your Hybrid Table architecture?** Book a 30-minute session with our specialist team to discuss your use case, review your schema design, or troubleshoot performance: [Schedule a session](https://calendar.app.google/cGfVnKFe7xbeDqDo8)
+> **Need help with your Hybrid Table architecture?** Book a 30-minute session with our specialist team to discuss your use case, review your schema design, or troubleshoot performance: [Schedule a session](https://calendar.app.google/cGfVnKFe7xbeDqDo8)
 
 ### Related Resources
 
