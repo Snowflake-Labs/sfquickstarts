@@ -23,7 +23,7 @@ In this guide you will download CoCo Desktop, connect it to your Snowflake accou
 - How to connect to a Snowflake account using Local OAuth or SSO
 - How to navigate Agent Mode and Editor Mode
 - How to ask natural-language questions and get SQL-backed answers
-- How to use the SQL Playground and `#` table references
+- How to use `#` table references to give the agent schema context
 - How to manage, resume, and rename sessions
 
 ### What You'll Build
@@ -253,7 +253,7 @@ From here you can enable Plan Mode to review and approve each action before it r
 - How to connect to Snowflake using Local OAuth or SSO
 - How to navigate Agent Mode and Editor Mode
 - How to ask natural-language questions and run SQL
-- How to use the SQL Playground and `#` table references
+- How to use `#` table references to give the agent schema context
 - How to manage, resume, rename, and search sessions
 
 ### Related Resources
