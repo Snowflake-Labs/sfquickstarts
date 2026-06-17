@@ -256,7 +256,7 @@ END;
 
 ### The Use Case
 
-A REST API serves authorization decisions: given a user_id, return their entitlements (which portfolios, products, or resources they can access). The API needs sub-10ms responses at thousands of concurrent requests from multiple microservices.
+A REST API serves authorization decisions: given a user_id, return their entitlements (which portfolios, products, or resources they can access). The API needs double-digit millisecond responses at thousands of concurrent requests from multiple microservices.
 
 ### Design the Serving Table
 
