@@ -2,13 +2,13 @@ author: Adam Timm
 id: hybrid-tables-monitoring-observability
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
 language: en
-summary: Learn how to monitor Hybrid Table workloads using AGGREGATE_QUERY_HISTORY, track credits and storage, build latency dashboards, set up multi-signal alerts, and export metrics to external observability tools.
+summary: Learn how to monitor Hybrid Table workloads using AGGREGATE_QUERY_HISTORY, track credits and storage, build latency dashboards, set up multi-signal alerts, export metrics to external observability tools, and build custom monitoring apps.
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 <!--
-keywords: hybrid table, monitoring, observability, AGGREGATE_QUERY_HISTORY, latency, p99, throttling, credits, storage, quota, alert, dashboard, Datadog, Grafana, Unistore, OLTP
+keywords: hybrid table, monitoring, observability, AGGREGATE_QUERY_HISTORY, latency, p99, throttling, credits, storage, quota, alert, dashboard, Datadog, Grafana, Streamlit, Native App, Unistore, OLTP
 related_concepts: AGGREGATE_QUERY_HISTORY, HYBRID_TABLE_USAGE_HISTORY, TABLE_STORAGE_METRICS, query_parameterized_hash, hybrid_table_requests_throttled_count, CREATE ALERT, METERING_HISTORY
 prerequisite_guides: getting-started-with-hybrid-tables
 skill_level: intermediate
@@ -32,15 +32,17 @@ This guide builds a complete observability stack for Hybrid Table workloads:
 4. Tracking credits and storage against quotas
 5. Creating multi-signal alerts (throttling, latency regression, error spikes)
 6. Exporting metrics to external tools (Datadog, Grafana, Prometheus)
+7. Building custom monitoring apps (Streamlit, Snowflake Native Apps, OpenTelemetry)
 
 ### What You Will Learn
 
 - Why `QUERY_HISTORY` misses most HT activity and what to use instead
-- How to read OBJECT-typed columns (avg, p50, p90, p99, max) in AGGREGATE_QUERY_HISTORY
+- How to read OBJECT-typed columns (avg, median, p90, p99, max) in AGGREGATE_QUERY_HISTORY
 - How to build a Snowsight monitoring dashboard with latency trends and throughput
 - How to track HT credit consumption and storage against the 2 TB per-database quota
 - How to create alerts for throttling, latency regression, and error spikes
 - How to export HT metrics to external observability platforms
+- How to build custom monitoring dashboards with Streamlit in Snowflake
 
 ### Prerequisites
 
@@ -175,9 +177,10 @@ Most numeric columns in AGGREGATE_QUERY_HISTORY are **OBJECT** typed, containing
   "count": 150,
   "max": 89.0,
   "min": 12.0,
-  "p50": 21.0,
+  "median": 21.0,
   "p90": 45.0,
   "p99": 78.0,
+  "p99.9": 85.0,
   "sum": 3525.0
 }
 ```
@@ -191,7 +194,7 @@ SELECT
     ANY_VALUE(query_text) AS sample_query,
     SUM(calls) AS total_calls,
     AVG(total_elapsed_time:"avg"::FLOAT) AS avg_latency_ms,
-    MAX(total_elapsed_time:"p50"::FLOAT) AS p50_latency_ms,
+    MAX(total_elapsed_time:"median"::FLOAT) AS p50_latency_ms,
     MAX(total_elapsed_time:"p90"::FLOAT) AS p90_latency_ms,
     MAX(total_elapsed_time:"p99"::FLOAT) AS p99_latency_ms,
     MAX(total_elapsed_time:"max"::FLOAT) AS max_latency_ms
@@ -285,7 +288,7 @@ ORDER BY ts;
 ```sql
 SELECT
     interval_start_time AS ts,
-    AVG(total_elapsed_time:"p50"::FLOAT) AS p50_ms,
+    AVG(total_elapsed_time:"median"::FLOAT) AS p50_ms,
     AVG(total_elapsed_time:"p90"::FLOAT) AS p90_ms,
     AVG(total_elapsed_time:"p99"::FLOAT) AS p99_ms
 FROM SNOWFLAKE.ACCOUNT_USAGE.AGGREGATE_QUERY_HISTORY
@@ -357,6 +360,18 @@ ORDER BY ts;
 ```
 
 > **Building the Dashboard:** In Snowsight, go to Dashboards → New Dashboard. Add each query above as a tile. Use Line Chart for Tiles 1, 2, 4, 5, 6 and Table for Tile 3. Set auto-refresh to 3 hours (matching ACCOUNT_USAGE latency).
+
+Here is an example of the completed dashboard in Grafana, showing all six tiles with live data from a Snowflake account:
+
+![Dashboard Overview](assets/grafana-dashboard-overview.png)
+
+The latency percentiles panel clearly shows p99 spikes that may indicate cold cache hits or lock contention:
+
+![Latency Percentiles](assets/grafana-latency-percentiles.png)
+
+The top query shapes table identifies which parameterized queries dominate your workload:
+
+![Top Query Shapes](assets/grafana-top-query-shapes.png)
 
 <!-- ------------------------ -->
 ## Step 4: Credit and Storage Monitoring
@@ -681,7 +696,103 @@ custom_queries:
 
 ### Grafana Integration
 
-Use the [Snowflake Grafana data source plugin](https://grafana.com/grafana/plugins/snowflake/) to query `ht_metrics_export` directly, or read from the stage export via Grafana's JSON data source.
+Use the [Michelin Snowflake Grafana data source plugin](https://github.com/michelin/snowflake-grafana-datasource) (open-source, community-supported) to query `AGGREGATE_QUERY_HISTORY` directly. Configure the data source with your account identifier, warehouse, and credentials, then build panels using the same SQL from Step 3.
+
+> **Note:** The official Grafana Snowflake plugin requires a Grafana Enterprise license. The Michelin community plugin is free and supports password, key-pair, and OAuth authentication.
+
+![Grafana QPS Panel](assets/grafana-qps.png)
+
+![Grafana Read/Write Mix](assets/grafana-read-write-mix.png)
+
+<!-- ------------------------ -->
+## Step 7: Custom Dashboards and Observability Apps
+Duration: 10
+
+Beyond Snowsight and external tools, you can build custom monitoring experiences using Snowflake-native application frameworks.
+
+### Option A: Streamlit in Snowflake
+
+Build an interactive monitoring dashboard that runs entirely within your Snowflake account — no external infrastructure needed.
+
+```python
+import streamlit as st
+from snowflake.snowpark.context import get_active_session
+
+session = get_active_session()
+
+st.title("Hybrid Table Health Dashboard")
+
+lookback = st.selectbox("Lookback Window", ["1 hour", "6 hours", "24 hours", "7 days"])
+hours_map = {"1 hour": 1, "6 hours": 6, "24 hours": 24, "7 days": 168}
+hours = hours_map[lookback]
+
+qps_df = session.sql(f"""
+    SELECT interval_start_time AS ts,
+           SUM(calls) / 60.0 AS qps
+    FROM SNOWFLAKE.ACCOUNT_USAGE.AGGREGATE_QUERY_HISTORY
+    WHERE interval_start_time > DATEADD(HOUR, -{hours}, CURRENT_TIMESTAMP())
+    GROUP BY interval_start_time ORDER BY ts
+""").to_pandas()
+
+st.subheader("Throughput (QPS)")
+st.line_chart(qps_df.set_index("TS")["QPS"])
+
+latency_df = session.sql(f"""
+    SELECT interval_start_time AS ts,
+           AVG(total_elapsed_time:'median'::FLOAT) AS p50_ms,
+           AVG(total_elapsed_time:'p90'::FLOAT) AS p90_ms,
+           AVG(total_elapsed_time:'p99'::FLOAT) AS p99_ms
+    FROM SNOWFLAKE.ACCOUNT_USAGE.AGGREGATE_QUERY_HISTORY
+    WHERE interval_start_time > DATEADD(HOUR, -{hours}, CURRENT_TIMESTAMP())
+      AND calls > 0
+    GROUP BY interval_start_time ORDER BY ts
+""").to_pandas()
+
+st.subheader("Latency Percentiles (ms)")
+st.line_chart(latency_df.set_index("TS")[["P50_MS", "P90_MS", "P99_MS"]])
+
+throttle_df = session.sql(f"""
+    SELECT SUM(hybrid_table_requests_throttled_count) AS throttled
+    FROM SNOWFLAKE.ACCOUNT_USAGE.AGGREGATE_QUERY_HISTORY
+    WHERE interval_start_time > DATEADD(HOUR, -{hours}, CURRENT_TIMESTAMP())
+""").to_pandas()
+
+throttled = int(throttle_df["THROTTLED"].iloc[0] or 0)
+st.metric("Throttled Requests", throttled,
+           delta_color="inverse" if throttled > 0 else "off")
+```
+
+Deploy this as a Streamlit in Snowflake app for a zero-infrastructure monitoring solution that your team can access from the Snowsight UI.
+
+### Option B: Snowflake Apps (Snowflake Native App Framework)
+
+For a packaged, shareable monitoring experience, build a [Snowflake Native App](https://docs.snowflake.com/en/developer-guide/native-apps/native-apps-about) that:
+
+- Bundles the dashboard SQL, alerts, and tasks into a single installable package
+- Can be shared across accounts (e.g., from a central platform team to application teams)
+- Includes Streamlit pages for visualization and a setup wizard for configuring database filters
+
+This approach works well when you want to standardize HT monitoring across multiple teams or accounts.
+
+### Option C: Snowflake Observability with Snowpipe Streaming + OpenTelemetry
+
+For teams already invested in OpenTelemetry, export HT metrics as OTLP data:
+
+1. **Snowflake Task** exports metrics to a stage (see Step 6)
+2. **OpenTelemetry Collector** with the `filereceiver` reads staged JSON files
+3. **Your OTLP backend** (Jaeger, Honeycomb, Grafana Tempo) receives the traces/metrics
+
+This integrates HT monitoring into your existing distributed tracing infrastructure alongside application-level spans.
+
+### Choosing the Right Approach
+
+| Approach | Best For | Pros | Cons |
+|----------|----------|------|------|
+| **Snowsight Dashboard** | Quick setup, ad-hoc monitoring | Zero config, native | Limited customization |
+| **Streamlit in Snowflake** | Custom team dashboards | Rich interactivity, runs in SF | Requires SiS entitlement |
+| **Snowflake Native App** | Multi-account standardization | Shareable, versioned | More setup complexity |
+| **Grafana/Datadog** | Unified observability stack | Correlate with app metrics | External dependency |
+| **OTLP Export** | Distributed tracing teams | Fits existing pipelines | Custom integration work |
 
 <!-- ------------------------ -->
 ## Monitoring Playbook
@@ -712,16 +823,16 @@ ORDER BY total_calls DESC
 LIMIT 5;
 ```
 
-**Find queries with high tail latency (p99/p50 ratio > 5x):**
+**Find queries with high tail latency (p99/median ratio > 5x):**
 
 ```sql
 SELECT
     query_parameterized_hash,
     ANY_VALUE(LEFT(query_text, 100)) AS query_sample,
     SUM(calls) AS total_calls,
-    AVG(total_elapsed_time:"p50"::FLOAT) AS p50_ms,
+    AVG(total_elapsed_time:"median"::FLOAT) AS p50_ms,
     AVG(total_elapsed_time:"p99"::FLOAT) AS p99_ms,
-    ROUND(AVG(total_elapsed_time:"p99"::FLOAT) / NULLIF(AVG(total_elapsed_time:"p50"::FLOAT), 0), 1) AS tail_ratio
+    ROUND(AVG(total_elapsed_time:"p99"::FLOAT) / NULLIF(AVG(total_elapsed_time:"median"::FLOAT), 0), 1) AS tail_ratio
 FROM SNOWFLAKE.ACCOUNT_USAGE.AGGREGATE_QUERY_HISTORY
 WHERE interval_start_time > DATEADD(HOUR, -6, CURRENT_TIMESTAMP())
   AND calls > 10
@@ -759,11 +870,12 @@ DROP ROLE IF EXISTS HT_MON_QS_ROLE;
 You can now:
 
 - Find HT telemetry in AGGREGATE_QUERY_HISTORY (not QUERY_HISTORY)
-- Extract latency percentiles (p50, p90, p99) from OBJECT-typed columns
+- Extract latency percentiles (median, p90, p99) from OBJECT-typed columns
 - Build Snowsight dashboards with throughput, latency, read/write mix, and error rate tiles
 - Track HT credit consumption and storage against the 2 TB quota
 - Create multi-signal alerts (throttle, latency, errors, storage)
 - Export metrics to external observability platforms (Datadog, Grafana)
+- Build custom monitoring apps with Streamlit in Snowflake or Snowflake Native Apps
 
 ### Related Resources
 
@@ -773,3 +885,6 @@ You can now:
 - [Operations Patterns for Hybrid Tables](https://www.snowflake.com/en/developers/guides/hybrid-tables-operations-patterns/)
 - [Secondary Index Design for Hybrid Tables](https://www.snowflake.com/en/developers/guides/hybrid-tables-secondary-index-design/)
 - [Snowflake Alerts Documentation](https://docs.snowflake.com/en/user-guide/alerts)
+- [Streamlit in Snowflake](https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit)
+- [Snowflake Native App Framework](https://docs.snowflake.com/en/developer-guide/native-apps/native-apps-about)
+- [Michelin Snowflake Grafana Plugin](https://github.com/michelin/snowflake-grafana-datasource)
