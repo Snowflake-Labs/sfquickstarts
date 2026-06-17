@@ -83,6 +83,10 @@ CREATE OR REPLACE WAREHOUSE PG_NATIVE_QS_WH
   AUTO_RESUME    = TRUE;
 GRANT OWNERSHIP ON WAREHOUSE PG_NATIVE_QS_WH TO ROLE PG_NATIVE_QS_ROLE;
 
+-- Privileges the custom role needs for later steps
+GRANT CREATE DATABASE ON ACCOUNT TO ROLE PG_NATIVE_QS_ROLE;
+GRANT EXECUTE TASK    ON ACCOUNT TO ROLE PG_NATIVE_QS_ROLE;
+
 -- Grant mirror admin permissions (required for CREATE_MIRROR)
 GRANT APPLICATION ROLE snowflake.postgres_mirror_admin TO ROLE ACCOUNTADMIN;
 ```
@@ -234,6 +238,34 @@ You can also inspect mirror configuration:
 CALL SNOWFLAKE.POSTGRES.DESCRIBE_MIRROR('iot_mirror');
 ```
 
+### Grant Access to Mirror Objects
+
+The mirror database is owned by the `snowflake` application, and mirror objects are created asynchronously during the snapshot phase. You **must** wait until all tables show `REPLICATING` before granting access — grants issued earlier affect zero objects.
+
+Additionally, `GRANT SELECT ON ALL TABLES` does **not** include `$CHANGES` companion tables. You must grant those explicitly.
+
+```sql
+USE ROLE ACCOUNTADMIN;
+
+-- Usage on the mirror database
+GRANT USAGE ON DATABASE IOT_MIRROR_DB TO ROLE PG_NATIVE_QS_ROLE;
+GRANT USAGE ON SCHEMA IOT_MIRROR_DB.PUBLIC TO ROLE PG_NATIVE_QS_ROLE;
+
+-- Base tables (DEVICES, SENSORS, READINGS)
+GRANT SELECT ON ALL TABLES IN SCHEMA IOT_MIRROR_DB.PUBLIC TO ROLE PG_NATIVE_QS_ROLE;
+
+-- $LIVE views
+GRANT SELECT ON ALL VIEWS IN SCHEMA IOT_MIRROR_DB.PUBLIC TO ROLE PG_NATIVE_QS_ROLE;
+
+-- $CHANGES tables (not covered by ON ALL TABLES — must be granted explicitly)
+GRANT SELECT ON TABLE IOT_MIRROR_DB.PUBLIC.READINGS$CHANGES TO ROLE PG_NATIVE_QS_ROLE;
+GRANT SELECT ON TABLE IOT_MIRROR_DB.PUBLIC.DEVICES$CHANGES  TO ROLE PG_NATIVE_QS_ROLE;
+GRANT SELECT ON TABLE IOT_MIRROR_DB.PUBLIC.SENSORS$CHANGES  TO ROLE PG_NATIVE_QS_ROLE;
+```
+
+> aside positive
+> **Why explicit `$CHANGES` grants?** The `$CHANGES` companion tables are reported as TABLE objects but are not enumerated by `GRANT SELECT ON ALL TABLES`. This is a known behavior in the current preview. Grant them by name after the mirror reaches REPLICATING state.
+
 <!-- ------------------------ -->
 ## Explore the Mirror Output
 Duration: 10
@@ -260,7 +292,7 @@ The `$live` view combines the target table with changes not yet merged, giving y
 ```sql
 -- Latest 10 readings via $live
 SELECT sensor_id, recorded_at, value
-FROM IOT_MIRROR_DB.PUBLIC."readings$live"
+FROM IOT_MIRROR_DB.PUBLIC.READINGS$LIVE
 ORDER BY recorded_at DESC
 LIMIT 10;
 ```
@@ -276,7 +308,7 @@ VALUES ('SEN-001', NOW(), 1050.5);
 ```sql
 -- Run in Snowflake ~30 seconds later
 SELECT sensor_id, recorded_at, value
-FROM IOT_MIRROR_DB.PUBLIC."readings$live"
+FROM IOT_MIRROR_DB.PUBLIC.READINGS$LIVE
 ORDER BY recorded_at DESC
 LIMIT 5;
 ```
@@ -296,13 +328,13 @@ The `$changes` table exposes every insert, update, and delete as a row with syst
 ```sql
 -- Most recent changes
 SELECT _change_type, _commit_time, _is_update, sensor_id, value
-FROM IOT_MIRROR_DB.PUBLIC."readings$changes"
+FROM IOT_MIRROR_DB.PUBLIC.READINGS$CHANGES
 ORDER BY _commit_lsn DESC
 LIMIT 20;
 
 -- Count inserts vs deletes in the last hour
 SELECT _change_type, COUNT(*) AS n
-FROM IOT_MIRROR_DB.PUBLIC."readings$changes"
+FROM IOT_MIRROR_DB.PUBLIC.READINGS$CHANGES
 WHERE _commit_time >= DATEADD('hour', -1, CURRENT_TIMESTAMP())
 GROUP BY _change_type;
 ```
@@ -332,12 +364,12 @@ The key insight: Hybrid Tables shine when the access pattern is "give me one row
 
 ```sql
 USE ROLE ACCOUNTADMIN;
-GRANT OWNERSHIP ON DATABASE IOT_NATIVE_DB TO ROLE PG_NATIVE_QS_ROLE;
-
-USE ROLE PG_NATIVE_QS_ROLE;
 USE WAREHOUSE PG_NATIVE_QS_WH;
 
 CREATE OR REPLACE DATABASE IOT_NATIVE_DB;
+GRANT OWNERSHIP ON DATABASE IOT_NATIVE_DB TO ROLE PG_NATIVE_QS_ROLE;
+
+USE ROLE PG_NATIVE_QS_ROLE;
 USE DATABASE IOT_NATIVE_DB;
 CREATE OR REPLACE SCHEMA IOT;
 USE SCHEMA IOT;
@@ -440,7 +472,7 @@ USING (
     s.unit,
     r.value           AS latest_value,
     r.recorded_at     AS latest_recorded_at
-  FROM IOT_MIRROR_DB.PUBLIC."readings$live" r
+  FROM IOT_MIRROR_DB.PUBLIC.READINGS$LIVE r
   JOIN IOT_MIRROR_DB.PUBLIC.sensors s ON r.sensor_id = s.sensor_id
   JOIN IOT_MIRROR_DB.PUBLIC.devices d ON s.device_id = d.device_id
   QUALIFY ROW_NUMBER() OVER (PARTITION BY r.sensor_id ORDER BY r.recorded_at DESC) = 1
@@ -485,7 +517,7 @@ SELECT
   s.unit,
   c.recorded_at,
   c.value
-FROM IOT_MIRROR_DB.PUBLIC."readings$changes" c
+FROM IOT_MIRROR_DB.PUBLIC.READINGS$CHANGES c
 JOIN IOT_MIRROR_DB.PUBLIC.sensors s ON c.sensor_id = s.sensor_id
 JOIN IOT_MIRROR_DB.PUBLIC.devices d ON s.device_id = d.device_id
 WHERE c._change_type = 'I'
