@@ -582,8 +582,6 @@ ALTER ALERT ht_storage_alert RESUME;
 ### Review Alerts
 
 ```sql
-USE ROLE HT_MON_QS_ROLE;
-
 SHOW ALERTS;
 SELECT * FROM HT_MON_QS_DB.DATA.alert_log ORDER BY alert_ts DESC LIMIT 20;
 ```
@@ -716,7 +714,7 @@ This approach works well when you want to standardize HT monitoring across multi
 
 For teams already invested in OpenTelemetry, export HT metrics as OTLP data:
 
-1. **Snowflake Task** exports metrics to a stage (see Step 6)
+1. **Snowflake Task** exports metrics to a stage on a schedule (e.g., every 5 minutes)
 2. **OpenTelemetry Collector** with the `filereceiver` reads staged JSON files
 3. **Your OTLP backend** (Jaeger, Honeycomb, Grafana Tempo) receives the traces/metrics
 
@@ -795,7 +793,6 @@ DROP ALERT IF EXISTS ht_throttle_alert;
 DROP ALERT IF EXISTS ht_latency_alert;
 DROP ALERT IF EXISTS ht_error_alert;
 DROP ALERT IF EXISTS ht_storage_alert;
-ALTER TASK IF EXISTS export_ht_metrics SUSPEND;
 DROP DATABASE IF EXISTS HT_MON_QS_DB;
 DROP WAREHOUSE IF EXISTS HT_MON_QS_WH;
 DROP ROLE IF EXISTS HT_MON_QS_ROLE;
