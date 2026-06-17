@@ -583,4 +583,3 @@ In Demo 1, that means a Dynamic Table, a small runbook from a bundled skill, and
 - [Cortex Agents Overview](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agent)
 - [Get Started with Snowflake Guides](https://www.snowflake.com/en/developers/guides/get-started-with-guides)
 - [sfguides GitHub Issues](https://github.com/Snowflake-Labs/sfguides/issues)
-
