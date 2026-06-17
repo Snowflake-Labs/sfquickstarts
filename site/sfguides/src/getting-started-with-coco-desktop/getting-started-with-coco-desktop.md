@@ -12,11 +12,11 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 ## Overview
 
-Snowflake CoCo is Snowflake's data-native AI coding agent. It is available in four interfaces: directly in [Snowsight](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-snowsight) for web-based use, as a [CLI](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-cli) for developers who prefer the terminal, as **CoCo Desktop** — a full AI-powered IDE that runs on your machine — and as CoCo Extensions for your existing IDE. This guide focuses on CoCo Desktop.
+Snowflake CoCo Desktop is a Snowflake-native desktop IDE that gives you one governed surface to build across your entire data stack. It runs natively on macOS and Windows, connects directly to your Snowflake account, and lets you query data, build pipelines, write Snowpark code, and deploy apps — all in plain English.
 
-Snowflake CoCo Desktop gives you a complete development environment where you can query data, build applications, and manage Snowflake resources using plain English — without leaving your editor. It has two modes: **Agent Mode** for driving and reviewing agent sessions across multiple projects, and **Editor Mode** for writing code with the agent at your side.
+CoCo Desktop has two modes: **Agent Mode** puts the agent front and center so it can drive multi-step tasks across multiple projects, and **Editor Mode** gives you a full VS Code-style IDE with the agent in a side panel for when you're writing and reviewing code yourself.
 
-In this guide you will download CoCo Desktop, connect it to a Snowflake account, learn the interface, and run a handful of queries to see what it can do.
+In this guide you will download CoCo Desktop, connect it to your Snowflake account, learn the interface, and run your first queries.
 
 ### What You'll Learn
 - How to download and install Snowflake CoCo Desktop on macOS or Windows
@@ -258,16 +258,15 @@ From here you can enable Plan Mode to review and approve each action before it r
 
 Documentation:
 - [Snowflake CoCo Desktop](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-desktop)
-- [Snowflake CoCo CLI](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-cli)
-- [Snowflake CoCo in Snowsight](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-snowsight)
 - [Agent Mode and Editor Mode](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-desktop/agent-mode-and-editor-mode)
 - [Onboarding and Authentication](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-desktop/onboarding-and-authentication)
 - [Skills in Snowflake CoCo Desktop](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-desktop/skills)
+- [Agent Mode and Plan Mode](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-desktop/agent-mode-and-plan-mode)
+- [Security](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-desktop/security)
 
-Guides:
-- [Get Started with Snowflake CoCo CLI](https://quickstarts.snowflake.com/guide/getting-started-with-cortex-code-cli)
-- [Getting Started with Cortex Agents](https://quickstarts.snowflake.com/guide/getting-started-with-cortex-agents)
-- [Best Practices for Snowflake CoCo CLI](https://quickstarts.snowflake.com/guide/best-practices-cortex-code-cli)
+Other CoCo interfaces:
+- [Snowflake CoCo CLI](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-cli)
+- [Snowflake CoCo in Snowsight](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-snowsight)
 
 Additional Reading:
 - [Snowflake Developers Blog](https://developers.snowflake.com/blog/)
