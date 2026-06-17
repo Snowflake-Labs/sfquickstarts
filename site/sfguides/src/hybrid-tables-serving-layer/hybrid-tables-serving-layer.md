@@ -400,7 +400,7 @@ A multi-cluster warehouse absorbs the temporary latency increase by routing new 
 Hybrid Table serving workloads have different requirements than analytical workloads:
 
 - **Concurrency over throughput** — thousands of small queries, not a few large ones
-- **Latency over cost** — the goal is consistent sub-10ms, not maximum rows-per-credit
+- **Latency over cost** — the goal is consistent double-digit millisecond latency, not maximum rows-per-credit
 - **Horizontal scaling** — more clusters, not bigger clusters
 
 ### Recommended Configuration
