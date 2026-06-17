@@ -30,9 +30,9 @@ In this guide you will download CoCo Desktop, connect it to your Snowflake accou
 A working Snowflake CoCo Desktop environment connected to your Snowflake account, ready for day-to-day development.
 
 ### Prerequisites
-- Access to a [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) (or [sign up for a free Snowflake CoCo trial](https://signup.snowflake.com/cortex-code))
-- A machine running macOS or Windows
-- The SNOWFLAKE.CORTEX_USER database role (granted to all users by default through the PUBLIC role)
+- A [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) — or [sign up for a free Snowflake CoCo trial](https://signup.snowflake.com/cortex-code) if you don't have one yet
+- A machine running macOS 12+ or Windows 10/11
+- A web browser (required for OAuth sign-in during setup)
 
 <!-- ------------------------ -->
 ## Download and Install
@@ -48,6 +48,8 @@ Go to the [Snowflake CoCo download page](https://www.snowflake.com/en/product/sn
 | macOS (Intel) | `.dmg` disk image |
 | Windows (Intel/AMD) | `.exe` installer |
 | Windows (ARM) | `.exe` installer |
+
+> **Not sure which to download?** On macOS: Apple menu → **About This Mac** → Chip (M-series = Apple silicon, Intel = Intel). On Windows: Start → Settings → System → About → Device specifications → System type.
 
 ### macOS
 
@@ -83,7 +85,16 @@ Click **Next** on the welcome screen to begin.
 
 If you already have a `~/.snowflake/connections.toml` file (for example from Snowflake CoCo CLI), your existing connections appear automatically. Select one and click **Next**.
 
-To create a new connection, click **Add connection** and fill in the form:
+To create a new connection, click **Add connection**. Choose your authentication method first, then fill in the form:
+
+#### Authentication methods
+
+| Method | When to use |
+|--------|-------------|
+| Local OAuth (recommended) | Interactive use; tokens cached in your OS keychain — no password stored |
+| External Browser (SSO) | Accounts with Okta, Azure AD, or another Identity Provider |
+| Password | Direct username/password; MFA-prompted if enabled |
+| Key Pair (JWT) | Service accounts and automated workflows |
 
 | Field | Example |
 |-------|---------|
@@ -96,16 +107,7 @@ Click **Sign in**. For OAuth or SSO, complete sign-in in your browser when promp
 
 ![CoCo Desktop add connection form](assets/onboarding-connect.png)
 
-> **Tip:** To find your account identifier, sign in at [app.snowflake.com](https://app.snowflake.com), click your avatar in the bottom-left corner, and select **Connect a tool to Snowflake**. Your identifier is in `orgname-accountname` format.
-
-#### Authentication methods
-
-| Method | When to use |
-|--------|-------------|
-| Local OAuth (recommended) | Interactive use; tokens cached in your OS keychain |
-| External Browser (SSO) | Accounts with Okta, Azure AD, or another Identity Provider |
-| Password | Direct username/password; MFA-prompted if enabled |
-| Key Pair (JWT) | Service accounts and automated workflows |
+> **Tip:** To find your account identifier, sign in at [app.snowflake.com](https://app.snowflake.com), click your avatar in the bottom-left corner, and select **Connect a tool to Snowflake**. Your identifier is in `orgname-accountname` format. Older accounts may use a legacy format like `xy12345.us-east-1` — copy the exact value shown in Snowsight rather than typing it manually.
 
 ### Step 3 — Choose a mode
 
@@ -124,7 +126,7 @@ Select **Light** or **Dark**, then click **Get Started** to launch the app.
 
 ### Verify the connection
 
-Once in the app, click the connection name in the top navigation bar and select **Manage Snowflake Connections** to confirm your account is connected.
+Once in the app, your active connection name appears in the top navigation bar. A green status dot next to it confirms you're connected. If the connection failed, click the connection name, select **Manage Snowflake Connections**, and verify your account identifier and auth method.
 
 <!-- ------------------------ -->
 ## Explore the Interface
@@ -142,7 +144,7 @@ Agent Mode puts the conversation first. The window has three regions:
 | **Main chat area (center)** | Your conversation with the agent — messages, tool calls, SQL results, file diffs, and charts all appear here. |
 | **Tool bar (right)** | Icons for SQL Playground, Files, Files Changed, Terminal, Browser, Source Control, and more. |
 
-Use the chat input at the bottom: type your message, use `/` to invoke skills, and `@` to add context files or tables.
+Use the chat input at the bottom: type your message, use `/` to invoke skills (e.g. `/semantic-view`), and `@` to attach a file or paste its contents into context.
 
 ![CoCo Desktop in Agent Mode](assets/agent-mode.png)
 
@@ -181,29 +183,31 @@ CoCo Desktop translates your request into SQL, runs it against Snowflake, and re
 Try a few more requests to get a feel for what is possible:
 
 ```
-Show me the top 10 largest tables in my account by row count
+What is my current role and warehouse?
 ```
 
 ```
-What warehouses are available and what are their sizes?
+What schemas are in my default database?
 ```
 
 ```
-Explain what the SNOWFLAKE.ACCOUNT_USAGE.QUERY_HISTORY view contains
+Show me the warehouses available in my account
 ```
 
 ```
-Write a query to show my 5 most recent queries and run it
+Create a simple table called test_greetings with a name column and insert a few rows
 ```
 
 CoCo Desktop displays its reasoning steps as it works. If it needs more information it will ask a follow-up question.
 
+> **Note:** Some queries (like browsing query history or metering data) require the ACCOUNTADMIN role or a specific grant. If you hit a permission error, try switching your role via the connection menu or ask CoCo: "What role do I need to query warehouse metering history?"
+
 ### Reference a table with #
 
-Prefix a fully qualified table name with `#` to pull its schema and sample rows into the conversation:
+Prefix a fully qualified table name with `#` to pull its schema and sample rows into the conversation. Use a table you already have access to, for example:
 
 ```
-Tell me about #SNOWFLAKE.ACCOUNT_USAGE.WAREHOUSE_METERING_HISTORY
+Tell me about #<YOUR_DATABASE>.INFORMATION_SCHEMA.TABLES
 ```
 
 CoCo Desktop fetches the column definitions and a sample of rows so it can answer questions about the table without you having to describe the schema.
@@ -230,7 +234,7 @@ Right-click a session in the navigation panel and select **Rename**.
 
 ### Search and filter sessions
 
-Use the customize control on the navigation panel header to search sessions by name, or filter to show only unread sessions.
+Use the filter icon in the top-right corner of the navigation panel to search sessions by name, or filter to show only unread sessions.
 
 ### Switch between projects
 
@@ -238,7 +242,7 @@ Each project in the navigation panel has its own set of sessions. Click a differ
 
 ### Private Mode
 
-For sensitive work, enable **Private Mode** from the connection menu in the top navigation bar. Private Mode disables conversation history for the session.
+For sensitive work, enable **Private Mode** from the connection menu in the top navigation bar. Conversation history is stored locally on your machine; Private Mode turns off local persistence for that session so nothing is written to disk.
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
@@ -246,7 +250,7 @@ Duration: 2
 
 Congratulations! You've successfully installed Snowflake CoCo Desktop, connected it to your Snowflake account, and run your first natural-language queries from a full AI-powered IDE.
 
-From here you can enable Plan Mode to review and approve each action before it runs, connect MCP servers for external tools via Agent Settings, and add custom skills to tailor the assistant to your workflow.
+From here you can explore [Plan Mode](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-desktop/agent-mode-and-plan-mode) to have the agent show its approach before making changes, connect external tools via [MCP servers](https://docs.snowflake.com/en/user-guide/cortex-code/extensibility), and add [Skills](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-desktop/skills) to give the agent reusable workflows for your team.
 
 ### What You Learned
 - How to download and install Snowflake CoCo Desktop on macOS or Windows
