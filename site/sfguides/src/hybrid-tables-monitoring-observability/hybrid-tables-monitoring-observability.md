@@ -593,61 +593,6 @@ SELECT * FROM HT_MON_QS_DB.DATA.alert_log ORDER BY alert_ts DESC LIMIT 20;
 
 For teams using Datadog, Grafana, or Prometheus, export HT metrics from Snowflake on a schedule.
 
-### Pattern: Task-Based Metric Export to Stage
-
-Create a metrics table and populate it periodically. External tools pull from the stage.
-
-```sql
-CREATE OR REPLACE TABLE HT_MON_QS_DB.DATA.ht_metrics_export (
-    metric_ts       TIMESTAMP_NTZ,
-    metric_name     VARCHAR(100),
-    metric_value    FLOAT,
-    dimensions      VARIANT
-);
-
-CREATE OR REPLACE TASK export_ht_metrics
-  WAREHOUSE = HT_MON_QS_WH
-  SCHEDULE = 'USING CRON */5 * * * * UTC'
-AS
-BEGIN
-  INSERT INTO HT_MON_QS_DB.DATA.ht_metrics_export
-  SELECT
-      interval_start_time AS metric_ts,
-      'ht.throughput.qps' AS metric_name,
-      SUM(calls) / 60.0 AS metric_value,
-      OBJECT_CONSTRUCT('database', database_name, 'warehouse', warehouse_name) AS dimensions
-  FROM SNOWFLAKE.ACCOUNT_USAGE.AGGREGATE_QUERY_HISTORY
-  WHERE interval_start_time > DATEADD(MINUTE, -6, CURRENT_TIMESTAMP())
-    AND interval_start_time <= DATEADD(MINUTE, -1, CURRENT_TIMESTAMP())
-  GROUP BY interval_start_time, database_name, warehouse_name;
-
-  INSERT INTO HT_MON_QS_DB.DATA.ht_metrics_export
-  SELECT
-      interval_start_time AS metric_ts,
-      'ht.latency.p99_ms' AS metric_name,
-      MAX(total_elapsed_time:"p99"::FLOAT) AS metric_value,
-      OBJECT_CONSTRUCT('database', database_name, 'hash', query_parameterized_hash) AS dimensions
-  FROM SNOWFLAKE.ACCOUNT_USAGE.AGGREGATE_QUERY_HISTORY
-  WHERE interval_start_time > DATEADD(MINUTE, -6, CURRENT_TIMESTAMP())
-    AND interval_start_time <= DATEADD(MINUTE, -1, CURRENT_TIMESTAMP())
-    AND query_type IN ('SELECT', 'INSERT', 'UPDATE', 'DELETE')
-  GROUP BY interval_start_time, database_name, query_parameterized_hash;
-
-  INSERT INTO HT_MON_QS_DB.DATA.ht_metrics_export
-  SELECT
-      interval_start_time AS metric_ts,
-      'ht.throttle.count' AS metric_name,
-      SUM(hybrid_table_requests_throttled_count) AS metric_value,
-      OBJECT_CONSTRUCT('database', database_name) AS dimensions
-  FROM SNOWFLAKE.ACCOUNT_USAGE.AGGREGATE_QUERY_HISTORY
-  WHERE interval_start_time > DATEADD(MINUTE, -6, CURRENT_TIMESTAMP())
-    AND hybrid_table_requests_throttled_count > 0
-  GROUP BY interval_start_time, database_name;
-END;
-
-ALTER TASK export_ht_metrics RESUME;
-```
-
 ### Datadog Integration
 
 With the [Snowflake Datadog integration](https://docs.datadoghq.com/integrations/snowflake/), you can query `AGGREGATE_QUERY_HISTORY` directly. Configure a custom query in the integration YAML:
