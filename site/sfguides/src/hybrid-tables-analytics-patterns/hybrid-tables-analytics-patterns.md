@@ -356,8 +356,8 @@ You can now:
 - Layer Dynamic Tables and Materialized Views on the standard table copy
 - Serve precomputed KPIs from a Hybrid Table for millisecond dashboard response
 
-> aside positive
-> **Need help with your Hybrid Table architecture?** Book a 30-minute session with our specialist team to discuss your use case, review your schema design, or troubleshoot performance: [Schedule a session](https://calendar.app.google/cGfVnKFe7xbeDqDo8)
+aside positive
+**Need help with your Hybrid Table architecture?** Book a 30-minute session with our specialist team to discuss your use case, review your schema design, or troubleshoot performance: [Schedule a session](https://calendar.app.google/cGfVnKFe7xbeDqDo8)
 
 ### Related Resources
 
