@@ -30,6 +30,12 @@ The result is a fully unified architecture: one platform, one SQL interface, no 
 > aside positive
 > **Data mirroring vs Postgres for your data lake (pg_lake):** Snowflake offers two ways to connect Postgres and Snowflake. This guide uses **data mirroring** — continuous, automatic sync with seconds of latency and zero infrastructure. If you need more control over *when* and *how* data moves, or want to work with shared open-format Iceberg tables, see the [pg_lake quickstart](https://snowflake.com/en/developers/guides/sync-data-from-postgres-to-snowflake-with-iceberg-and-pg-lake/) instead.
 
+> aside positive
+> **Do you even need native tables? When querying `$live` directly is enough:**
+> If your workload is simple reads against mirrored data — small tables, low query volume, and you don't need custom indexes or analytics infrastructure — you can skip the routing layer entirely and just query `$live` views directly. They give you ~30-second freshness out of the box.
+>
+> This guide adds native Hybrid + Standard Tables when you need: **(1)** sub-millisecond indexed point lookups, **(2)** secondary indexes on columns Postgres doesn't index, **(3)** clustered analytics with partition pruning, **(4)** Streams or Dynamic Tables (not supported on mirror targets), **(5)** custom denormalized schemas with pre-joined enrichment, or **(6)** data retention beyond the 7-day `$changes` window.
+
 ![Architecture overview](assets/architecture-overview.png)
 
 ### What You Will Build
