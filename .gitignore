@@ -17,3 +17,4 @@ site/package-lock.json
 __pycache__/
 *.pyc
 plans/
+.obsidian/
