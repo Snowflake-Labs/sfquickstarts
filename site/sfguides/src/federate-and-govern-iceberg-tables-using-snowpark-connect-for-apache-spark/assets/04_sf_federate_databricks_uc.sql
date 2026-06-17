@@ -20,7 +20,7 @@
 -- !! REPLACE all <PLACEHOLDER> values before running:
 --      <SF_WAREHOUSE>           your warehouse name
 --      <DBX_WORKSPACE_HOST>     Databricks workspace hostname (no https://)
---      <DBX_UC_CATALOG>         Unity Catalog catalog name  (e.g. bny_demo)
+--      <DBX_UC_CATALOG>         Unity Catalog catalog name  (e.g. my_demo)
 --      <DBX_PAT_TOKEN>          Databricks PAT — NEVER commit to source control
 --      <SF_EXTERNAL_VOLUME>     external volume for S3 access (if not using vended creds)
 --      <SF_FEDERATED_DB>        Snowflake database for federated tables
@@ -41,7 +41,7 @@ USE WAREHOUSE <SF_WAREHOUSE>;
 --    Snowflake uses its own IAM role (via <SF_EXTERNAL_VOLUME>) to
 --    read S3 directly — no credential vending from Databricks needed.
 -- ----------------------------------------------------------------
-CREATE OR REPLACE CATALOG INTEGRATION BNY_DATABRICKS_UC_CI
+CREATE OR REPLACE CATALOG INTEGRATION MY_DATABRICKS_UC_CI
     CATALOG_SOURCE = ICEBERG_REST
     TABLE_FORMAT   = ICEBERG
     REST_CONFIG = (
@@ -62,17 +62,17 @@ CREATE OR REPLACE CATALOG INTEGRATION BNY_DATABRICKS_UC_CI
 -- ----------------------------------------------------------------
 
 -- Integration enabled
-SHOW CATALOG INTEGRATIONS LIKE 'BNY_DATABRICKS_UC_CI';
+SHOW CATALOG INTEGRATIONS LIKE 'MY_DATABRICKS_UC_CI';
 
 -- Test connection — must return {"success": true}
-SELECT SYSTEM$VERIFY_CATALOG_INTEGRATION('BNY_DATABRICKS_UC_CI');
+SELECT SYSTEM$VERIFY_CATALOG_INTEGRATION('MY_DATABRICKS_UC_CI');
 
 -- List schemas in the Databricks catalog
-SELECT SYSTEM$LIST_NAMESPACES_FROM_CATALOG('BNY_DATABRICKS_UC_CI');
+SELECT SYSTEM$LIST_NAMESPACES_FROM_CATALOG('MY_DATABRICKS_UC_CI');
 -- Expected: ["<DBX_UC_SCHEMA>", "default", "information_schema"]
 
 -- List Iceberg tables in the schema
-SELECT SYSTEM$LIST_ICEBERG_TABLES_FROM_CATALOG('BNY_DATABRICKS_UC_CI', '<DBX_UC_SCHEMA>');
+SELECT SYSTEM$LIST_ICEBERG_TABLES_FROM_CATALOG('MY_DATABRICKS_UC_CI', '<DBX_UC_SCHEMA>');
 -- Expected: customer_orders, sensitive_orders
 
 
@@ -86,9 +86,9 @@ SELECT SYSTEM$LIST_ICEBERG_TABLES_FROM_CATALOG('BNY_DATABRICKS_UC_CI', '<DBX_UC_
 CREATE DATABASE IF NOT EXISTS <SF_FEDERATED_DB>
     EXTERNAL_VOLUME = '<SF_EXTERNAL_VOLUME>'
     LINKED_CATALOG = (
-        CATALOG = 'BNY_DATABRICKS_UC_CI'
+        CATALOG = 'MY_DATABRICKS_UC_CI'
     )
-    COMMENT = 'BNY Demo — Federated from Databricks Unity Catalog';
+    COMMENT = 'Iceberg Federation Demo — Federated from Databricks Unity Catalog';
 
 -- Wait ~30 seconds for auto-discovery to complete, then verify:
 SHOW ICEBERG TABLES IN DATABASE <SF_FEDERATED_DB>;
@@ -177,6 +177,6 @@ SELECT SYSTEM$CATALOG_LINK_STATUS('<SF_FEDERATED_DB>');
 -- ----------------------------------------------------------------
 -- USE ROLE ACCOUNTADMIN;
 -- DROP DATABASE   IF EXISTS <SF_FEDERATED_DB>;
--- DROP CATALOG INTEGRATION IF EXISTS BNY_DATABRICKS_UC_CI;
+-- DROP CATALOG INTEGRATION IF EXISTS MY_DATABRICKS_UC_CI;
 -- DROP ROLE       IF EXISTS <SF_READER_ROLE>;
 -- DROP SCHEMA     IF EXISTS <SF_GOVERNANCE_DB>.GOVERNANCE_POLICIES CASCADE;

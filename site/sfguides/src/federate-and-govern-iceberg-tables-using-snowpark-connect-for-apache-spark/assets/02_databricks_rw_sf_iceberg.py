@@ -135,7 +135,7 @@ print("Governance is enforced ONLY via Snowflake SQL, not IRC vended-credential 
 print("=== WRITE: OPEN_TABLE ===")
 spark.sql(f"""
     INSERT INTO {CATALOG_NAME}.{SF_SCHEMA}.OPEN_TABLE
-    VALUES (99, 'BNY Demo Widget', 3, 19.99, current_timestamp())
+    VALUES (99, 'Demo Widget', 3, 19.99, current_timestamp())
 """)
 print("Write to OPEN_TABLE: SUCCESS")
 

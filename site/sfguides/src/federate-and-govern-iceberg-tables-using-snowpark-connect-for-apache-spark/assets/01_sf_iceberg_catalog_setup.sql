@@ -25,7 +25,7 @@
 --
 -- !! REPLACE the following before running:
 --      <SF_WAREHOUSE>           your warehouse name
---      <SF_MANAGED_ICEBERG_DB>  database to create (e.g. BNY_ICEBERG_DB)
+--      <SF_MANAGED_ICEBERG_DB>  database to create (e.g. MY_ICEBERG_DB)
 --      <SF_DEMO_SCHEMA>         schema name        (e.g. DEMO_SCHEMA)
 --      <SF_EXTERNAL_VOLUME>     your external volume name
 --      <SF_DATABRICKS_ROLE>     Snowflake role for Databricks (e.g. DATABRICKS_DEMO_ROLE)
@@ -41,7 +41,7 @@ USE WAREHOUSE <SF_WAREHOUSE>;
 -- ----------------------------------------------------------------
 CREATE DATABASE IF NOT EXISTS <SF_MANAGED_ICEBERG_DB>
     EXTERNAL_VOLUME = '<SF_EXTERNAL_VOLUME>'
-    COMMENT = 'BNY Demo — Snowflake-managed Iceberg catalog (Horizon IRC)';
+    COMMENT = 'Iceberg Federation Demo — Snowflake-managed Iceberg catalog (Horizon IRC)';
 
 CREATE SCHEMA IF NOT EXISTS <SF_MANAGED_ICEBERG_DB>.<SF_DEMO_SCHEMA>;
 
@@ -178,8 +178,8 @@ GRANT ROLE <SF_DATABRICKS_ROLE> TO USER <SF_USERNAME>;
 --    Paste it into 02_databricks_rw_sf_iceberg.py as SNOWFLAKE_PAT.
 -- ----------------------------------------------------------------
 ALTER USER <SF_USERNAME>
-    ADD PROGRAMMATIC ACCESS TOKEN BNY_DEMO_PAT
-    COMMENT = 'BNY Demo — Databricks Horizon IRC integration';
+    ADD PROGRAMMATIC ACCESS TOKEN MY_DEMO_PAT
+    COMMENT = 'Iceberg Federation Demo — Databricks Horizon IRC integration';
 
 
 -- ----------------------------------------------------------------
@@ -205,6 +205,6 @@ USE ROLE ACCOUNTADMIN;
 -- ----------------------------------------------------------------
 -- 10. Cleanup (run after demo)
 -- ----------------------------------------------------------------
--- ALTER USER <SF_USERNAME> REMOVE PROGRAMMATIC ACCESS TOKEN BNY_DEMO_PAT;
+-- ALTER USER <SF_USERNAME> REMOVE PROGRAMMATIC ACCESS TOKEN MY_DEMO_PAT;
 -- DROP DATABASE IF EXISTS <SF_MANAGED_ICEBERG_DB>;
 -- DROP ROLE   IF EXISTS   <SF_DATABRICKS_ROLE>;

@@ -31,10 +31,10 @@
 WORKSPACE_HOST = "<DBX_WORKSPACE_HOST>"
 
 # !! REPLACE: Unity Catalog catalog name to create
-CATALOG_NAME   = "<DBX_UC_CATALOG>"      # e.g. 'bny_demo'
+CATALOG_NAME   = "<DBX_UC_CATALOG>"      # e.g. 'my_demo'
 
 # !! REPLACE: Schema (namespace) inside the catalog
-SCHEMA_NAME    = "<DBX_UC_SCHEMA>"       # e.g. 'bny_demo_schema' — must be lowercase
+SCHEMA_NAME    = "<DBX_UC_SCHEMA>"       # e.g. 'my_demo_schema' — must be lowercase
 
 # !! REPLACE: Databricks service principal or user granted SELECT for Snowflake
 #    Create at: Workspace Settings → Identity & Access → Service Principals
