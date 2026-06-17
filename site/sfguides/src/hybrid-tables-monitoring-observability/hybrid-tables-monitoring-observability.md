@@ -46,8 +46,10 @@ This guide builds a complete observability stack for Hybrid Table workloads:
 
 - A Snowflake paid account in an AWS or Azure commercial region
 - Familiarity with [Hybrid Tables](https://docs.snowflake.com/en/user-guide/tables-hybrid) and basic SQL
-- ACCOUNTADMIN role (required for ACCOUNT_USAGE views)
+- ACCOUNTADMIN role (used in this guide for simplicity) or any role with access to `SNOWFLAKE.ACCOUNT_USAGE` views and the ability to create alerts
 - An existing Hybrid Table workload with some query activity (or run the setup below to simulate one)
+
+> **Note on Roles:** This quickstart uses ACCOUNTADMIN for simplicity. In production, grant `IMPORTED PRIVILEGES` on the `SNOWFLAKE` database to a custom role and use that instead. Any role with access to `SNOWFLAKE.ACCOUNT_USAGE` views can run the monitoring queries.
 
 <!-- ------------------------ -->
 ## Setup
