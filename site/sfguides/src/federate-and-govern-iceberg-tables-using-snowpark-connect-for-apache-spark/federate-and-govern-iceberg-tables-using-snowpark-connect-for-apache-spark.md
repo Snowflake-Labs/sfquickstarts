@@ -104,6 +104,21 @@ Snowflake Catalog-Linked Database
 
 <!-- ------------------------ -->
 
+
+## Download the Demo Files
+
+All scripts for this quickstart are available in the assets folder. Download them before starting:
+
+| File | Used in | Purpose |
+|------|---------|---------|
+| [01_sf_iceberg_catalog_setup.sql](assets/01_sf_iceberg_catalog_setup.sql) | Snowflake worksheet | Scenario 1 setup: managed Iceberg tables, governance policies, credential vending, PAT |
+| [02_databricks_rw_sf_iceberg.py](assets/02_databricks_rw_sf_iceberg.py) | Databricks — Cluster A | Scenario 1 demo: read and write Snowflake-managed tables via Horizon IRC |
+| [03_databricks_create_uc_tables.py](assets/03_databricks_create_uc_tables.py) | Databricks — Cluster B | Scenario 2 setup: create Delta + UniForm tables in Unity Catalog |
+| [04_sf_federate_databricks_uc.sql](assets/04_sf_federate_databricks_uc.sql) | Snowflake worksheet | Scenario 2 setup: catalog integration, catalog-linked database, masking |
+| [05_sf_notebook_query_databricks.ipynb](assets/05_sf_notebook_query_databricks.ipynb) | Snowflake Workspace | Scenario 2 demo: SCOS notebook with live role-based masking |
+
+> Fill in all `<PLACEHOLDER>` values in each file before running. Every parameter is documented in the header comment of each script.
+
 ## Databricks Cluster Configuration
 
 Two Databricks clusters are required. Create both before starting.
