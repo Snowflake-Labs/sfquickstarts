@@ -361,7 +361,7 @@ After a CTAS+SWAP, Snowflake runs background compaction on the new Hybrid Table 
 
 ### Why Compaction Happens
 
-CTAS bulk-loads data in an optimized format that may not immediately be in the ideal row store layout for point lookups. Background compaction reorganizes the data for optimal access patterns. This is transparent to the application but can temporarily increase P50 latency from 5ms to 50-100ms.
+CTAS bulk-loads data in an optimized format that may not immediately be in the ideal row store layout for point lookups. Background compaction reorganizes the data for optimal access patterns. This is transparent to the application but can temporarily increase read latency until compaction completes.
 
 ### Mitigation Strategies
 
