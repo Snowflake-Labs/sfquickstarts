@@ -8,12 +8,12 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 <!--
-keywords: hybrid table, serving layer, reverse ETL, email personalization, API backend, CTAS SWAP, low latency, point lookup, high concurrency, multi-cluster warehouse, WarpSpeed, compaction, Braze, REST API, entitlements, session state, Unistore
-related_concepts: CTAS, ALTER TABLE SWAP, CREATE OR REPLACE, compaction, plan cache, bound variables, multi-cluster warehouse, WarpSpeed, connection pooling
+keywords: hybrid table, serving layer, reverse ETL, email personalization, API backend, CTAS SWAP, low latency, point lookup, high concurrency, multi-cluster warehouse, compaction, Braze, REST API, entitlements, session state, Unistore
+related_concepts: CTAS, ALTER TABLE SWAP, CREATE OR REPLACE, compaction, plan cache, bound variables, multi-cluster warehouse, connection pooling
 prerequisite_guides: getting-started-with-hybrid-tables, hybrid-tables-write-optimization, hybrid-tables-application-connectors
 skill_level: intermediate
 estimated_time_minutes: 40
-snowflake_features: hybrid_tables, ctas, multi_cluster_warehouse, warpspeed, secondary_indexes
+snowflake_features: hybrid_tables, ctas, multi_cluster_warehouse, secondary_indexes
 -->
 
 # Serving Low-Latency Data with Hybrid Tables
@@ -47,7 +47,6 @@ Hybrid Tables provide deterministic low latency for point lookups via the primar
 - The CTAS+SWAP pattern for atomic bulk refresh without downtime
 - Why reads spike after a CTAS and how to mitigate compaction interference
 - How to size warehouses for high-concurrency serving workloads
-- How WarpSpeed reduces serving latency with zero code changes
 - Two complete worked scenarios with DDL, data generation, and query patterns
 
 ### Prerequisites
@@ -435,44 +434,6 @@ Increase warehouse size only if your serving queries involve:
 - Running post-read transformations (JSON parsing, UDFs)
 
 <!-- ------------------------ -->
-## Step 4: WarpSpeed for Serving Workloads
-
-WarpSpeed is a platform optimization (Public Preview) that automatically recognizes repeated query patterns and caches optimized execution plans at the execution layer. For serving workloads — where the same parameterized query shape executes thousands of times per second — WarpSpeed delivers significant latency reduction with no code changes.
-
-### Impact on Serving Workloads
-
-| Metric | Without WarpSpeed | With WarpSpeed |
-|--------|------------------|----------------|
-| Typical point lookup latency | 15-30ms | 5-12ms |
-| Throughput (XS single cluster) | ~2,000 QPS | ~5,000 QPS |
-| Plan compilation overhead | Present on cache miss | Eliminated for repeated patterns |
-
-### Requirements for WarpSpeed to Apply
-
-1. **Bound variables** — queries must use parameterized values, not string literals
-2. **Consistent query shape** — same SQL structure repeated (the exact pattern serving workloads already have)
-3. **Queries outside stored procedures** — WarpSpeed applies to direct DML/SELECT; for SP-wrapped queries, Inline Stored Procedures (Private Preview) provide equivalent optimization
-
-### How to Check Eligibility
-
-Contact your Snowflake account team to enable WarpSpeed on your account. Once enabled, it applies automatically to eligible queries. Monitor `AGGREGATE_QUERY_HISTORY` for latency improvements:
-
-```sql
-SELECT
-    query_parameterized_hash,
-    ANY_VALUE(query_text) AS sample_query,
-    SUM(calls) AS executions,
-    AVG(total_elapsed_time:"avg"::FLOAT) AS avg_latency_ms,
-    MAX(total_elapsed_time:"p99"::FLOAT) AS p99_latency_ms
-FROM SNOWFLAKE.ACCOUNT_USAGE.AGGREGATE_QUERY_HISTORY
-WHERE interval_start_time > DATEADD(HOUR, -1, CURRENT_TIMESTAMP())
-  AND warehouse_name = 'HT_SERVE_QS_WH'
-GROUP BY query_parameterized_hash
-ORDER BY executions DESC
-LIMIT 10;
-```
-
-<!-- ------------------------ -->
 ## Serving Design Checklist
 
 Before deploying a Hybrid Table as a serving layer, validate these requirements:
@@ -486,7 +447,6 @@ Before deploying a Hybrid Table as a serving layer, validate these requirements:
 | Warehouse | XS, MAX_CLUSTER_COUNT=5-10 | XS, MAX_CLUSTER_COUNT=3-5 |
 | Driver | REST API or SDK with pooling | JDBC/Python with HikariCP/SQLAlchemy pool |
 | Bound variables | Required (plan cache) | Required (plan cache) |
-| WarpSpeed | High impact (same query shape, extreme repetition) | High impact |
 | Compaction concern | Yes (schedule refresh in low-traffic window) | No (incremental writes) |
 
 <!-- ------------------------ -->
@@ -510,7 +470,6 @@ You can now:
 - Use CTAS+SWAP for atomic bulk refresh with zero application downtime
 - Manage compaction windows by scheduling refreshes during low-traffic periods
 - Size multi-cluster warehouses for high-concurrency serving (XS + horizontal scaling)
-- Leverage WarpSpeed for automatic latency reduction on repeated query patterns
 
 ### When to Use This Pattern vs External Cache
 
