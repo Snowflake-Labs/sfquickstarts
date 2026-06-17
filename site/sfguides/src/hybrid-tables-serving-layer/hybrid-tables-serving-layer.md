@@ -52,7 +52,7 @@ Hybrid Tables provide deterministic low latency for point lookups via the primar
 ### Prerequisites
 
 - A Snowflake paid account in an AWS or Azure commercial region
-- Familiarity with Hybrid Tables and secondary indexes
+- Familiarity with Hybrid Tables and [secondary indexes](https://www.snowflake.com/en/developers/guides/hybrid-tables-secondary-index-design/)
 - Understanding of bound variables and plan cache (see [Write Optimization](https://www.snowflake.com/en/developers/guides/hybrid-tables-write-optimization/) guide)
 
 <!-- ------------------------ -->
