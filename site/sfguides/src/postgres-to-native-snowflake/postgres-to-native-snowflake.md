@@ -813,6 +813,9 @@ You have built a fully native Snowflake data architecture powered by a continuou
 - Two **Tasks** that route data from the mirror into the native tables using `$live` and `$changes` as the correct source for each pattern
 - Unified SQL queries joining both table types, and an optional Cortex AI layer for anomaly narratives
 
+> aside positive
+> **Need help with your Hybrid Table architecture?** Book a 30-minute session with our specialist team to discuss your use case, review your schema design, or troubleshoot performance: [Schedule a session](https://calendar.app.google/cGfVnKFe7xbeDqDo8)
+
 ### Related Resources
 
 - [Getting Started with Snowflake Postgres](https://quickstarts.snowflake.com/guide/getting-started-with-snowflake-postgres)

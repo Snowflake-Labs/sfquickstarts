@@ -350,6 +350,9 @@ You can now:
 - Monitor HT workloads with AGGREGATE_QUERY_HISTORY for sub-second query visibility
 - Create automated throttling and latency alerts
 
+> aside positive
+> **Need help with your Hybrid Table architecture?** Book a 30-minute session with our specialist team to discuss your use case, review your schema design, or troubleshoot performance: [Schedule a session](https://calendar.app.google/cGfVnKFe7xbeDqDo8)
+
 ### Related Resources
 
 - [Analytics Patterns for Hybrid Tables](https://www.snowflake.com/en/developers/guides/hybrid-tables-analytics-patterns/)
