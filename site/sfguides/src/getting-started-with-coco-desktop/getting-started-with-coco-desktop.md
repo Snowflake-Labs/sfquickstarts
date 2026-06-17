@@ -77,6 +77,8 @@ On first launch, CoCo Desktop walks you through a four-step setup flow: **welcom
 
 Click **Next** on the welcome screen to begin.
 
+![CoCo Desktop welcome screen](assets/onboarding-welcome.png)
+
 ### Step 2 — Connect to Snowflake
 
 If you already have a `~/.snowflake/connections.toml` file (for example from Snowflake CoCo CLI), your existing connections appear automatically. Select one and click **Next**.
@@ -91,6 +93,8 @@ To create a new connection, click **Add connection** and fill in the form:
 | Authentication method | Local OAuth (recommended) |
 
 Click **Sign in**. For OAuth or SSO, complete sign-in in your browser when prompted, then return to the app.
+
+![CoCo Desktop add connection form](assets/onboarding-connect.png)
 
 > **Tip:** To find your account identifier, sign in at [app.snowflake.com](https://app.snowflake.com), click your avatar in the bottom-left corner, and select **Connect a tool to Snowflake**. Your identifier is in `orgname-accountname` format.
 
@@ -111,6 +115,8 @@ Pick your default startup layout:
 - **Editor** — VS Code-style file editor with the agent in a side panel
 
 You can switch between modes at any time with the toggle in the top-right corner (or **⌘E** / **Ctrl+E**).
+
+![CoCo Desktop mode picker](assets/onboarding-mode.png)
 
 ### Step 4 — Choose a theme
 
@@ -138,6 +144,8 @@ Agent Mode puts the conversation first. The window has three regions:
 
 Use the chat input at the bottom: type your message, use `/` to invoke skills, and `@` to add context files or tables.
 
+![CoCo Desktop in Agent Mode](assets/agent-mode.png)
+
 ### Editor Mode
 
 Editor Mode is a standard VS Code layout with the agent in a side panel:
@@ -152,6 +160,8 @@ Switch to Editor Mode when you're writing code, debugging, or using editor exten
 
 > **Tip:** The active mode is shown in the top-right corner. Click **Agent** or **Editor** to switch. Your open files and conversation follow you across the toggle.
 
+![CoCo Desktop in Editor Mode](assets/editor-mode.png)
+
 <!-- ------------------------ -->
 ## Run Your First Query
 Duration: 5
@@ -163,6 +173,8 @@ What databases do I have access to?
 ```
 
 CoCo Desktop translates your request into SQL, runs it against Snowflake, and returns the results in the chat. You can see the SQL it generated and the reasoning steps as it works.
+
+![CoCo Desktop first query result](assets/first-query.png)
 
 ### More examples
 
