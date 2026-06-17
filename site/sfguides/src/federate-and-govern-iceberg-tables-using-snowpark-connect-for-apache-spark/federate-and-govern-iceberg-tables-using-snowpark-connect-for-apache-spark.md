@@ -28,7 +28,7 @@ Through this quickstart, you will build a fully bidirectional Iceberg federation
 - How Snowflake catalog-linked databases auto-discover and federate Databricks Unity Catalog tables
 - How Snowflake Horizon governance policies (column masking, row access) apply independently to federated tables
 - How Snowpark Connect (SCOS) runs PySpark DataFrames on Snowflake's engine without Databricks compute
-- The key SCOS requirement for catalog-linked databases: lowercase identifiers and `caseSensitive=true`
+- The three setup rules for using SCOS with catalog-linked databases
 
 ### Key Capabilities
 
@@ -103,6 +103,21 @@ Snowflake Catalog-Linked Database
 ```
 
 <!-- ------------------------ -->
+
+
+## Download the Demo Files
+
+All scripts for this quickstart are available in the assets folder. Download them before starting:
+
+| File | Used in | Purpose |
+|------|---------|---------|
+| [01_sf_iceberg_catalog_setup.sql](assets/01_sf_iceberg_catalog_setup.sql) | Snowflake worksheet | Scenario 1 setup: managed Iceberg tables, governance policies, credential vending, PAT |
+| [02_databricks_rw_sf_iceberg.py](assets/02_databricks_rw_sf_iceberg.py) | Databricks — Cluster A | Scenario 1 demo: read and write Snowflake-managed tables via Horizon IRC |
+| [03_databricks_create_uc_tables.py](assets/03_databricks_create_uc_tables.py) | Databricks — Cluster B | Scenario 2 setup: create Delta + UniForm tables in Unity Catalog |
+| [04_sf_federate_databricks_uc.sql](assets/04_sf_federate_databricks_uc.sql) | Snowflake worksheet | Scenario 2 setup: catalog integration, catalog-linked database, masking |
+| [05_sf_notebook_query_databricks.ipynb](assets/05_sf_notebook_query_databricks.ipynb) | Snowflake Workspace | Scenario 2 demo: SCOS notebook with live role-based masking |
+
+> Fill in all `<PLACEHOLDER>` values in each file before running. Every parameter is documented in the header comment of each script.
 
 ## Databricks Cluster Configuration
 
@@ -237,7 +252,7 @@ GRANT DATABASE ROLE <SF_MANAGED_ICEBERG_DB>.PROTECTED_TABLE_RO TO ROLE <SF_DATAB
 ```sql
 -- ⚠ Copy the token value immediately — shown only once
 ALTER USER <SF_USERNAME>
-    ADD PROGRAMMATIC ACCESS TOKEN BNY_DEMO_PAT
+    ADD PROGRAMMATIC ACCESS TOKEN MY_DEMO_PAT
     COMMENT = 'Databricks Horizon IRC integration';
 ```
 
@@ -326,8 +341,8 @@ Attach `03_databricks_create_uc_tables.py` to **Cluster B** (with Unity Catalog)
 ### Create Catalog and Schema
 
 ```python
-CATALOG_NAME = "<DBX_UC_CATALOG>"    # e.g. bny_demo
-SCHEMA_NAME  = "<DBX_UC_SCHEMA>"     # e.g. bny_demo_schema (lowercase)
+CATALOG_NAME = "<DBX_UC_CATALOG>"    # e.g. my_demo
+SCHEMA_NAME  = "<DBX_UC_SCHEMA>"     # e.g. my_demo_schema (lowercase)
 
 spark.sql(f"CREATE CATALOG IF NOT EXISTS {CATALOG_NAME}")
 spark.sql(f"CREATE SCHEMA  IF NOT EXISTS {CATALOG_NAME}.{SCHEMA_NAME}")
@@ -406,7 +421,7 @@ Run `04_sf_federate_databricks_uc.sql` in Snowflake.
 ### Create Catalog Integration
 
 ```sql
-CREATE OR REPLACE CATALOG INTEGRATION BNY_DATABRICKS_UC_CI
+CREATE OR REPLACE CATALOG INTEGRATION MY_DATABRICKS_UC_CI
     CATALOG_SOURCE = ICEBERG_REST
     TABLE_FORMAT   = ICEBERG
     REST_CONFIG = (
@@ -421,11 +436,11 @@ CREATE OR REPLACE CATALOG INTEGRATION BNY_DATABRICKS_UC_CI
     ENABLED = TRUE;
 
 -- Verify connectivity — must return {"success": true}
-SELECT SYSTEM$VERIFY_CATALOG_INTEGRATION('BNY_DATABRICKS_UC_CI');
+SELECT SYSTEM$VERIFY_CATALOG_INTEGRATION('MY_DATABRICKS_UC_CI');
 
 -- List schemas and tables discovered
-SELECT SYSTEM$LIST_NAMESPACES_FROM_CATALOG('BNY_DATABRICKS_UC_CI');
-SELECT SYSTEM$LIST_ICEBERG_TABLES_FROM_CATALOG('BNY_DATABRICKS_UC_CI', '<DBX_UC_SCHEMA>');
+SELECT SYSTEM$LIST_NAMESPACES_FROM_CATALOG('MY_DATABRICKS_UC_CI');
+SELECT SYSTEM$LIST_ICEBERG_TABLES_FROM_CATALOG('MY_DATABRICKS_UC_CI', '<DBX_UC_SCHEMA>');
 ```
 
 ### Create Catalog-Linked Database
@@ -434,7 +449,7 @@ SELECT SYSTEM$LIST_ICEBERG_TABLES_FROM_CATALOG('BNY_DATABRICKS_UC_CI', '<DBX_UC_
 CREATE DATABASE IF NOT EXISTS <SF_FEDERATED_DB>
     EXTERNAL_VOLUME = '<SF_EXTERNAL_VOLUME>'
     LINKED_CATALOG = (
-        CATALOG = 'BNY_DATABRICKS_UC_CI'
+        CATALOG = 'MY_DATABRICKS_UC_CI'
     )
     COMMENT = 'Federated from Databricks Unity Catalog';
 
@@ -494,23 +509,24 @@ Upload `05_sf_notebook_query_databricks.ipynb` to your Snowflake workspace:
 
 Install the `snowpark-connect` package using the notebook package picker, then restart the session.
 
-### Why SCOS Works Differently for Catalog-Linked Databases
+### Session Setup for Catalog-Linked Databases
 
-SCOS (Snowpark Connect) uses sqlglot to translate Spark plans into Snowflake SQL. By default, it auto-uppercases and quotes identifiers — sending `"HORIZON_DEMO"` (quoted uppercase). For catalog-linked databases backed by Databricks Unity Catalog, schemas and tables are stored as lowercase (`horizon_demo`). Snowflake does exact-case matching on quoted identifiers, causing a TABLE_OR_VIEW_NOT_FOUND error.
+Three setup rules are required when using SCOS with a catalog-linked database:
 
-**Three requirements for SCOS to work with catalog-linked databases:**
+1. **Initialize SCOS on a regular Snowflake database** — set the session context before calling `init_spark_session`.
+2. **Enable `caseSensitive` mode** — external Iceberg catalogs use lowercase schema and table names; this ensures SCOS resolves them correctly.
+3. **Use fully-qualified lowercase names** in `spark.sql()` for catalog-linked tables.
 
 ```python
-# 1. Initialize SCOS on a regular (non-catalog-linked) database
+# Rule 1: session context must be a regular (non-catalog-linked) database
 sf_session.sql(f"USE DATABASE {SF_INIT_DB}").collect()
 
-# 2. Set caseSensitive=true to prevent auto-uppercasing of identifiers
+# Rule 2: preserve lowercase identifiers used by the external catalog
 conf = SparkConf().set("spark.sql.caseSensitive", "true")
 spark = snowpark_connect.init_spark_session(conf=conf)
 
-# 3. Use fully-qualified lowercase schema + table names in spark.sql()
+# Rule 3: fully-qualified reference with lowercase schema and table names
 df = spark.sql(f"SELECT * FROM {SF_FEDERATED_DB}.{DBX_SCHEMA}.customer_orders")
-#                                                 ^^^^^^^^^^^ lowercase
 ```
 
 ### Initialize Sessions
@@ -615,7 +631,7 @@ Congratulations — you have successfully built a bidirectional Iceberg federati
 - How Delta + Iceberg UniForm generates interoperable metadata with no data duplication
 - How Snowflake catalog-linked databases provide live federation with zero ETL
 - How Snowflake Horizon governance applies independently of the source platform's policies
-- The three requirements to use SCOS with catalog-linked databases (non-CLD init DB, `caseSensitive=true`, lowercase schema names)
+- The three setup rules for using SCOS with catalog-linked databases
 
 ### Governance Summary
 
