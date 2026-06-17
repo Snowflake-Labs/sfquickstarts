@@ -22,7 +22,7 @@ snowflake_features: hybrid_tables, ctas, multi_cluster_warehouse, warpspeed, sec
 
 > **Note on Production Workloads:** Production serving workloads should use bound variables (parameterized queries), private key authentication, and connection pooling. See [Hybrid Tables Best Practices](https://docs.snowflake.com/en/user-guide/tables-hybrid-best-practices) and [Connecting Applications to Hybrid Tables](https://www.snowflake.com/en/developers/guides/hybrid-tables-application-connectors/).
 
-Many data teams maintain expensive reverse ETL pipelines that extract data from Snowflake, transform it, and push it to external systems (Redis, DynamoDB, S3 JSON files) for low-latency serving. Hybrid Tables can eliminate this intermediate layer entirely by serving data directly from Snowflake at single-digit millisecond latency.
+Many data teams maintain expensive reverse ETL pipelines that extract data from Snowflake, transform it, and push it to external systems (Redis, DynamoDB, S3 JSON files) for low-latency serving. Hybrid Tables can eliminate this intermediate layer entirely by serving data directly from Snowflake at double-digit millisecond latency.
 
 This quickstart covers two common serving scenarios:
 
@@ -33,7 +33,7 @@ Both scenarios use the same core pattern: **compute in columnar, serve from row 
 
 ### Why Not Just Use a Standard Table?
 
-Standard Snowflake tables are optimized for analytical workloads. They provide excellent throughput for large scans but cannot deliver consistent single-digit millisecond latency for point lookups because:
+Standard Snowflake tables are optimized for analytical workloads. They provide excellent throughput for large scans but cannot deliver consistent double-digit millisecond latency for point lookups because:
 
 - **Result cache** helps only for identical repeated queries (not per-user lookups)
 - **No row-level index** means every point lookup scans micro-partitions
