@@ -118,7 +118,7 @@ One system. One copy. Deterministic freshness. No external cache.
 
 ### The Use Case
 
-A personalization engine scores users against content several times per day, producing millions of ranked recommendations. An email platform (Braze, SendGrid) needs to look up the top N recommendations for each user at send time, at 20,000+ requests per second during a campaign blast.
+A personalization engine scores users against content several times per day, producing millions of ranked recommendations. A downstream application or service needs to look up the top N recommendations for each user on demand, at high concurrency during peak traffic.
 
 ### Design the Serving Table
 
