@@ -56,6 +56,7 @@ Use this matrix to find the right pattern for your workload.
 | Monitor HT latency and throttling | AGGREGATE_QUERY_HISTORY + Alerts | [Operations](https://www.snowflake.com/en/developers/guides/hybrid-tables-operations-patterns/) | Hours (view latency) | Medium |
 
 <!-- ------------------------ -->
+
 aside positive
 **Need help with your Hybrid Table architecture?** Book a 30-minute session with our specialist team to discuss your use case, review your schema design, or troubleshoot performance: [Schedule a session](https://calendar.app.google/cGfVnKFe7xbeDqDo8)
 
