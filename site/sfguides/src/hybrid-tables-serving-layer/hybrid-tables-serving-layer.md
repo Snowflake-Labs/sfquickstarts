@@ -450,6 +450,18 @@ Before deploying a Hybrid Table as a serving layer, validate these requirements:
 | Warm-up concern | Yes (schedule refresh in low-traffic window) | No (incremental writes) |
 
 <!-- ------------------------ -->
+## Get Started Faster with Cortex Code
+Duration: 1
+
+Use these prompts in [Cortex Code](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code) to apply this guide to your own workload:
+
+> "I need to serve precomputed results from my analytical pipeline to a low-latency API. Design a serving layer using a Hybrid Table as the target. My source Standard Table schema is: [paste DDL]."
+
+> "Generate the Task SQL to snapshot my aggregated results into a Hybrid Table serving layer on an hourly schedule. My aggregation query is: [paste query]."
+
+> "My serving layer Hybrid Table is returning slow results on secondary index lookups. Review my DDL and query patterns and recommend index optimizations: [paste DDL and queries]."
+
+<!-- ------------------------ -->
 ## Cleanup
 
 ```sql
@@ -481,6 +493,8 @@ You can now:
 | Refresh frequency: minutes to hours | Refresh frequency: sub-second |
 | Concurrency: up to ~50K QPS | Concurrency: >100K QPS sustained |
 | Data consistency matters (single source of truth) | Eventual consistency acceptable |
+
+> **Need help with your Hybrid Table architecture?** Book a 30-minute session with our specialist team to discuss your use case, review your schema design, or troubleshoot performance: [Schedule a session](https://calendar.app.google/cGfVnKFe7xbeDqDo8)
 
 ### Related Resources
 
