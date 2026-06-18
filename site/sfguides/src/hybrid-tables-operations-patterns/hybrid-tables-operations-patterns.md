@@ -328,6 +328,18 @@ USE ROLE HT_OPS_QS_ROLE;
 - **Key columns:** `calls`, `total_elapsed_time` (with sub-fields `avg`, `p90`, `p99`, `max`), `hybrid_table_requests_throttled_count`, `errors`.
 
 <!-- ------------------------ -->
+## Get Started Faster with Cortex Code
+Duration: 1
+
+Use these prompts in [Cortex Code](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code) to apply this guide to your own workload:
+
+> "Assess my Hybrid Table for hot/cold data tiering opportunities. My schema is: [paste DDL]. Recommend a tiering strategy and generate the Task SQL to move cold rows to a Standard Table."
+
+> "Design a fan-in aggregation pipeline for my Hybrid Table. I have [N] source tables writing to a single HT. Generate the MERGE task that prevents lock contention."
+
+> "Generate Snowflake Alert SQL to notify me when my Hybrid Table p99 latency exceeds 100ms or my error rate exceeds 1% over the past hour."
+
+<!-- ------------------------ -->
 ## Cleanup
 
 ```sql

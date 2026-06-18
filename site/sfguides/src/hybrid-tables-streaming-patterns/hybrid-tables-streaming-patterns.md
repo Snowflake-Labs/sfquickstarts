@@ -390,6 +390,18 @@ END;
 ```
 
 <!-- ------------------------ -->
+## Get Started Faster with Cortex Code
+Duration: 1
+
+Use these prompts in [Cortex Code](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code) to apply this guide to your own workload:
+
+> "Build a watermark CDC Task for my Hybrid Table. My schema is: [paste DDL]. The updated_at column is TIMESTAMPTZ. Generate the Task SQL that reads only rows modified since the last run."
+
+> "I need to handle high-concurrency writes to my Hybrid Table from 1000+ parallel workers. Design an ingest buffer pattern using a Standard Table to absorb writes and batch-merge into the HT."
+
+> "Configure outbound event notifications from my Hybrid Table so that when a row matching [condition] is written, a message is sent to an SNS topic. Generate the alert and notification integration SQL."
+
+<!-- ------------------------ -->
 ## Cleanup
 
 ```sql

@@ -772,6 +772,18 @@ Snowflake Postgres Instance
 - **Unified SQL.** Because both tables live in the same Snowflake account, joins between HT and ST work with standard SQL, in a single query, with no federation overhead.
 
 <!-- ------------------------ -->
+## Get Started Faster with Cortex Code
+Duration: 1
+
+Use these prompts in [Cortex Code](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code) to apply this guide to your own Postgres instance:
+
+> "Set up data mirroring from my Snowflake Postgres instance to Snowflake. My Postgres tables are: [paste table names and schemas]. Generate the GRANT statements, CREATE_MIRROR call, and post-REPLICATING grant block."
+
+> "Design ROUTE_LATEST and ROUTE_HISTORY tasks for my mirrored schema. My source tables are: [paste DDL]. Recommend which columns should go into the Hybrid Table (latest state) vs Standard Table (history) and generate both Task definitions."
+
+> "Write a unified SQL query joining my Hybrid Table (latest sensor state) with my Standard Table (24-hour history) to show current value, 24h average, and deviation. My HT is [TABLE] and my ST is [TABLE]."
+
+<!-- ------------------------ -->
 ## Cleanup
 Duration: 5
 

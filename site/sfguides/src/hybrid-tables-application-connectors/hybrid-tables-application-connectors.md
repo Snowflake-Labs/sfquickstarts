@@ -579,6 +579,18 @@ Snowsight adds compilation and UI overhead that is not representative of driver 
 If some calls use `my_db.my_schema.orders` and others use just `orders`, Snowflake treats these as different parameterized query hashes and compiles separate plan cache entries for each. This splits your cache hit rate. Use a consistent naming convention across all queries in your application.
 
 <!-- ------------------------ -->
+## Get Started Faster with Cortex Code
+Duration: 1
+
+Use these prompts in [Cortex Code](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code) to apply this guide to your application:
+
+> "Review my JDBC connection configuration for Hybrid Table latency. I'm seeing [X]ms end-to-end but the query itself runs in [Y]ms. Diagnose the overhead and suggest fixes."
+
+> "Rewrite this Python loop that inserts one row at a time into my Hybrid Table as a proper batch insert with bound variables and connection pooling: [paste code]."
+
+> "Set up a Kafka Sink connector for my Hybrid Table. My HT schema is: [paste DDL]. My Kafka topic payload is: [paste schema]. Generate the connector config with appropriate batch size and error handling."
+
+<!-- ------------------------ -->
 ## Cleanup
 
 ```sql

@@ -336,6 +336,18 @@ SELECT * FROM dashboard_customer_kpis WHERE customer_id = $CUSTOMER;
 Query Profile: `TableScan`, `ROW_BASED`, 1 row scanned. The expensive GROUP BY ran once on the standard table during the Task refresh; the dashboard gets a primary key lookup.
 
 <!-- ------------------------ -->
+## Get Started Faster with Cortex Code
+Duration: 1
+
+Use these prompts in [Cortex Code](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code) to apply this guide to your own workload:
+
+> "I have a Hybrid Table with frequent GROUP BY queries that are slow. Help me design a Task-based snapshot pipeline to a Standard Table so analytics can run on columnar storage instead."
+
+> "Convert this GROUP BY query running on my Hybrid Table to use the precomputed KPI serving pattern with a Hybrid Table as the serving layer: [paste query]."
+
+> "Design a Dynamic Table layer on top of my Standard Table snapshot. My HT schema is: [paste DDL]. I need hourly refreshed aggregates for a BI dashboard."
+
+<!-- ------------------------ -->
 ## Cleanup
 
 ```sql

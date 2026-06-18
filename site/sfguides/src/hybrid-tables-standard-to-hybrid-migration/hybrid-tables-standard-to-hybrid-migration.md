@@ -380,6 +380,18 @@ DROP TABLE orders_standard_backup;
 ```
 
 <!-- ------------------------ -->
+## Get Started Faster with Cortex Code
+Duration: 1
+
+Use these prompts in [Cortex Code](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code) to apply this guide to your own migration:
+
+> "Assess this Standard Table DDL for Hybrid Table suitability. Identify the primary key candidate, recommended secondary indexes, and any incompatible column types: [paste DDL]."
+
+> "Generate the migration SQL to convert this Standard Table to a Hybrid Table, including CREATE HYBRID TABLE, COPY INTO for the initial load, and SWAP: [paste DDL and row count]."
+
+> "Write a validation query to confirm my Standard-to-Hybrid migration was successful. Compare row counts, sample row checksums, and verify all constraints are enforced on the new HT."
+
+<!-- ------------------------ -->
 ## Cleanup
 
 Remove all objects created by this quickstart:

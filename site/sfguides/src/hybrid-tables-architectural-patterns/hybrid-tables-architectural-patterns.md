@@ -59,6 +59,16 @@ Use this matrix to find the right pattern for your workload.
 
 > **Need help with your Hybrid Table architecture?** Book a 30-minute session with our specialist team to discuss your use case, review your schema design, or troubleshoot performance: [Schedule a session](https://calendar.app.google/cGfVnKFe7xbeDqDo8)
 
+<!-- ------------------------ -->
+## Get Started Faster with Cortex Code
+Duration: 1
+
+Use these prompts in [Cortex Code](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code) to find the right pattern for your workload:
+
+> "I have a Hybrid Table workload. Based on the architectural patterns guide, which pattern should I use? My use case is: [describe your access patterns, concurrency needs, and analytics requirements]."
+
+> "Review my Hybrid Table schema and query patterns and recommend which of the HT architectural patterns (analytics, streaming, or operations) best fits my workload: [paste DDL and sample queries]."
+
 ## Related Resources
 
 - [Analytics Patterns for Hybrid Tables](https://www.snowflake.com/en/developers/guides/hybrid-tables-analytics-patterns/)

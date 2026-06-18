@@ -781,6 +781,18 @@ LIMIT 10;
 > **High tail ratio** means inconsistent performance. Common causes: some lookups hit compacted data (fast) while others hit recently written data (slower), or intermittent lock contention from concurrent writes.
 
 <!-- ------------------------ -->
+## Get Started Faster with Cortex Code
+Duration: 1
+
+Use these prompts in [Cortex Code](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code) to apply this guide to your own workload:
+
+> "Run an AGGREGATE_QUERY_HISTORY analysis for my Hybrid Table workload over the past 7 days. Identify my top 3 performance issues and provide specific remediation steps."
+
+> "I have a Hybrid Table called [TABLE_NAME]. Adapt the 6 monitoring dashboard queries from the HT Monitoring quickstart to my schema and return ready-to-run SQL."
+
+> "My Hybrid Table queries have high compilation time. Diagnose the root cause and rewrite the top offending queries to use bound variables."
+
+<!-- ------------------------ -->
 ## Cleanup
 
 ```sql
