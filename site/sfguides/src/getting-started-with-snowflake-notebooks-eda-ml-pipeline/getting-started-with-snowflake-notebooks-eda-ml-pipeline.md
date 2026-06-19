@@ -29,7 +29,7 @@ The pipeline covers five sequential stages:
 ### Prerequisites
 
 - A [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides). Sign up for a [30-day free trial](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) if required.
-- Access to Snowflake Notebooks with **Container Runtime** enabled.
+- Access to Snowflake Notebooks with **Container Runtime** enabled. If Notebooks is not yet available in your account, ask your administrator to follow the [Snowflake Notebooks setup guide](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-setup).
 - Basic familiarity with Python and SQL.
 
 ### What You'll Learn
@@ -687,7 +687,7 @@ In this guide you built a complete end-to-end classification pipeline inside a s
 
 ### Resources
 
-- [Snowflake Notebooks documentation](https://docs.snowflake.com/user-guide/ui-snowsight/notebooks)
+- [Snowflake Notebooks documentation](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-in-workspaces/notebooks-in-workspaces-overview)
 - [Snowflake Notebooks on Container Runtime](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-on-spcs)
 - [Snowflake Model Registry](https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/overview)
 - [Snowpark Python API](https://docs.snowflake.com/en/developer-guide/snowpark/python/index)
