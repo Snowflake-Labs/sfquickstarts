@@ -60,7 +60,7 @@ from cortex_rest import _load_pat
 
 host, token = _load_pat()           # reads connections.myaccount.password
 print(host)                          # e.g. myorg-myaccount.snowflakecomputing.com
-print(token[:8] + "...")             # eyJraWQi...
+print(token[:8] + "...")             # ...
 ```
 
 ---
@@ -865,9 +865,31 @@ summary = distribution_summary(df)       # pivot with per-product counts + true_
 
 ## Miller–Madow Bias Note
 
-Sample entropy underestimates true entropy for small n. The gap shrinks as n grows:
-- n=30 → sample H can be 0.2–0.6 bits below true H
-- n=300+ → gap < 0.05 bits typically
+The plug-in (MLE) entropy estimator is **negatively biased in expectation** — it systematically underestimates true entropy for finite samples. The leading-order bias is given by the Miller–Madow correction:
+
+```
+Bias ≈ (K − 1) / (2N · ln 2)  bits
+```
+
+where K is the number of categories and N is the sample size.
+
+For **K = 4 categories**:
+
+| n | Expected bias (bits) |
+|---|---|
+| 10 | ~0.22 |
+| 30 | ~0.07 |
+| 40 | ~0.05 |
+| 300 | ~0.007 |
+
+The bias shrinks as 1/N and is negligible (< 0.01 bits) at n ≥ 300.
+
+**Important caveat:** the formula gives the *expected* bias. Individual realizations — especially with skewed or Dirichlet-sampled distributions at small n — can deviate substantially in either direction due to sampling variance. A product with n=40 reviews may show sample H above or below the true H depending on which reviews happened to be drawn.
+
+**References:**
+- Miller, G. A. (1955). Note on the bias of information estimates. *Information Theory in Psychology: Problems and Methods*, 95–100. *(Original derivation of the correction.)*
+- Paninski, L. (2003). Estimation of entropy and mutual information. *Neural Computation*, 15(6), 1191–1253. *(Proves no unbiased estimator exists; characterizes bias analytically.)*
+- De Gregorio et al. (2024). Entropy estimators for Markovian sequences: A comparative analysis. *arXiv:2310.07547.* *(Quantitative bias/variance comparison across estimators and sample sizes.)*
 
 Use `distribution_summary(df)` to compare true vs sample entropy on the synthetic dataset.
 
