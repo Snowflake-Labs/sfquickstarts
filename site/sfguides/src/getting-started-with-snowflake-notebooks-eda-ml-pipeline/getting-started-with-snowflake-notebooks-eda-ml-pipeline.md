@@ -34,7 +34,7 @@ The pipeline covers five sequential stages:
 
 ### What You'll Learn
 
-- How to load an in-memory Python dataset into a Snowflake session-scoped temp table using `session.write_pandas()`.
+- How to load an in-memory Python dataset into a pandas DataFrame and reference it from SQL cells using Jinja templating.
 - How to query a pandas DataFrame directly from SQL cells using Jinja templating (`{{df_snow}}`).
 - How to produce publication-quality EDA visualizations (box plots, heatmaps, pairplots) inside a Notebook.
 - How to train and evaluate a Random Forest classifier with interactive `ipywidgets` sliders for hyperparameters.
@@ -49,7 +49,7 @@ The pipeline covers five sequential stages:
 
 An end-to-end classification pipeline on the Wine dataset:
 
-- A session-scoped temp table (`WINE_TMP`) holding 178 samples and 13 chemical features.
+- An in-memory pandas DataFrame (`df_snow`) holding 178 samples and 13 chemical features, referenced directly from SQL cells via Jinja templating.
 - SQL EDA queries revealing class balance, alcohol statistics, and top samples by flavanoid content.
 - Python EDA charts including grouped box plots and a 13x13 correlation heatmap.
 - A trained `RandomForestClassifier` with interactive hyperparameter sliders, evaluated via 5-fold cross-validation.
@@ -88,7 +88,7 @@ This notebook uses packages such as `scikit-learn`, `seaborn`, and `ipywidgets` 
 <!-- ------------------------ -->
 ## Setup: Load the Wine Dataset
 
-The first section loads the scikit-learn Wine dataset into a pandas DataFrame, connects to Snowflake, and writes the data to a session-scoped temporary table called `WINE_TMP`. This table is used by every SQL cell in the notebook — uploading the data once avoids per-cell overhead.
+The first section loads the scikit-learn Wine dataset into a pandas DataFrame, connects to Snowflake, and prepares a SQL-safe copy of the DataFrame called `df_snow`. SQL cells in the notebook reference `df_snow` directly via Jinja templating (`{{df_snow}}`), so no explicit table upload is needed.
 
 ### Load the Wine Dataset
 
@@ -147,7 +147,7 @@ The notebook does **not** explicitly write `df_snow` to `WINE_TMP` in a separate
 
 ### Prompt
 
-Use this prompt with an AI coding assistant to reproduce this section:
+Use this prompt with an AI coding assistant to extend this section:
 
 ```
 Load the scikit-learn Wine dataset into a pandas DataFrame. Sanitise column names
@@ -164,7 +164,7 @@ Dataset shape: (178, 15)
 Features: ['alcohol', 'malic_acid', 'ash', 'alcalinity_of_ash', 'magnesium',
            'total_phenols', 'flavanoids', 'nonflavanoid_phenols', 'proanthocyanins',
            'color_intensity', 'hue', 'od280/od315_of_diluted_wines', 'proline']
-Classes: ['class_0' 'class_1' 'class_2']
+Classes: ['class_0', 'class_1', 'class_2']
 
 df_snow columns: ['alcohol', 'malic_acid', 'ash', 'alcalinity_of_ash', 'magnesium',
                   'total_phenols', 'flavanoids', 'nonflavanoid_phenols', 'proanthocyanins',
@@ -181,7 +181,14 @@ SF version: 8.x.x
 <!-- ------------------------ -->
 ## EDA with SQL
 
-With `df_snow` in memory, SQL cells can reference it directly using the `{{df_snow}}` Jinja syntax. Snowflake evaluates the template, uploads a snapshot, and executes the query against it — all transparently.
+With `df_snow` in memory, SQL cells can reference it directly using the `{{df_snow}}` Jinja syntax. Snowflake Notebooks evaluates the template at query time, serialises the DataFrame, and executes the query — all transparently.
+
+SQL cells use the `%%sql` cell magic. Adding `-r <variable_name>` captures the result as a pandas DataFrame for use in subsequent Python cells:
+
+```
+%%sql -r df_result
+SELECT ... FROM {{df_snow}}
+```
 
 ### Class Distribution
 
@@ -247,7 +254,7 @@ This reveals how the three cultivars differ on the features most commonly used i
 
 ### Prompt
 
-Use this prompt with an AI coding assistant to reproduce this section:
+Use this prompt with an AI coding assistant to extend this section with more advanced SQL patterns:
 
 ```
 Using a Snowpark session in a Snowflake Notebook, write four SQL cells that
@@ -342,7 +349,7 @@ plt.tight_layout()
 plt.show()
 ```
 
-The lower-triangle heatmap annotates every Pearson correlation coefficient. Notable strong correlations include **flavanoids** and **total_phenols** (r ≈ 0.86) — meaning these features carry similar information and one could be dropped to reduce multicollinearity before modeling.
+The 13x13 heatmap annotates every Pearson correlation coefficient. Notable strong correlations include **flavanoids** and **total_phenols** (r ≈ 0.86) — meaning these features carry similar information and one could be dropped to reduce multicollinearity before modeling.
 
 ### Descriptive Statistics
 
@@ -350,6 +357,8 @@ The lower-triangle heatmap annotates every Pearson correlation coefficient. Nota
 stats = df[list(wine.feature_names)].describe().T.round(3)
 print(stats.to_string())
 ```
+
+This prints count, mean, std, min, 25th/50th/75th percentile, and max for all 13 features in a single transposed table — useful for spotting scale differences before applying `StandardScaler`.
 
 ### Pairplot — Key Features by Cultivar
 
@@ -370,7 +379,7 @@ The pairplot of the 5 most discriminative features shows near-linear separabilit
 
 ### Prompt
 
-Use this prompt with an AI coding assistant to reproduce this section:
+Use this prompt with an AI coding assistant to extend this section:
 
 ```
 Using matplotlib and seaborn, produce three visualisations for the Wine dataset:
@@ -501,7 +510,7 @@ The per-class precision, recall, and F1-score confirm which cultivar classes (if
 
 ### Prompt
 
-Use this prompt with an AI coding assistant to reproduce this section:
+Use this prompt with an AI coding assistant to extend this section:
 
 ```
 Split the Wine dataset 80/20 with stratification and scale features using
@@ -623,7 +632,7 @@ The learning curve plots training accuracy and CV accuracy as a function of trai
 
 ### Prompt
 
-Use this prompt with an AI coding assistant to reproduce this section:
+Use this prompt with an AI coding assistant to extend this section:
 
 ```
 After training a Random Forest on the Wine dataset, produce four evaluation
