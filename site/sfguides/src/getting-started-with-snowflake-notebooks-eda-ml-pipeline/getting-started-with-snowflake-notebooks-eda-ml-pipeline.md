@@ -11,7 +11,6 @@ tags: Getting Started, Data Science, Machine Learning, Snowflake Notebooks, EDA,
 # Getting Started with Snowflake Notebooks: Build an EDA and ML Pipeline
 <!-- ------------------------ -->
 ## Overview
-Duration: 2
 
 [Snowflake Notebooks](https://docs.snowflake.com/user-guide/ui-snowsight/notebooks) offer an interactive, cell-based programming environment for Python and SQL. In this guide you will build a complete end-to-end classification pipeline on the [Wine dataset](https://scikit-learn.org/stable/datasets/toy_dataset.html#wine-recognition-dataset) entirely inside Snowflake Notebooks — combining SQL-based exploration, Python visualizations, and a scikit-learn Random Forest model.
 
@@ -58,7 +57,6 @@ An end-to-end classification pipeline on the Wine dataset:
 
 <!-- ------------------------ -->
 ## Import the Notebook into Snowflake
-Duration: 3
 
 The notebook file is available as a `.ipynb` in the [Snowflake Demo Notebooks](https://github.com/Snowflake-Labs/snowflake-demo-notebooks) repository.
 
@@ -89,7 +87,6 @@ This notebook uses packages such as `scikit-learn`, `seaborn`, and `ipywidgets` 
 
 <!-- ------------------------ -->
 ## Setup: Load the Wine Dataset
-Duration: 3
 
 The first section loads the scikit-learn Wine dataset into a pandas DataFrame, connects to Snowflake, and writes the data to a session-scoped temporary table called `WINE_TMP`. This table is used by every SQL cell in the notebook — uploading the data once avoids per-cell overhead.
 
@@ -150,7 +147,6 @@ The notebook does **not** explicitly write `df_snow` to `WINE_TMP` in a separate
 
 <!-- ------------------------ -->
 ## EDA with SQL
-Duration: 5
 
 With `df_snow` in memory, SQL cells can reference it directly using the `{{df_snow}}` Jinja syntax. Snowflake evaluates the template, uploads a snapshot, and executes the query against it — all transparently.
 
@@ -218,7 +214,6 @@ This reveals how the three cultivars differ on the features most commonly used i
 
 <!-- ------------------------ -->
 ## EDA with Python
-Duration: 5
 
 Python-based EDA focuses on the *shape* of the data — how features are distributed across cultivar classes and how strongly they correlate with each other.
 
@@ -307,7 +302,6 @@ The pairplot of the 5 most discriminative features shows near-linear separabilit
 
 <!-- ------------------------ -->
 ## Machine Learning Modeling
-Duration: 5
 
 This section preprocesses the data, visualizes the train/test split in PCA space, exposes interactive hyperparameter sliders, trains a Random Forest, and evaluates it with cross-validation.
 
@@ -411,7 +405,6 @@ The per-class precision, recall, and F1-score confirm which cultivar classes (if
 
 <!-- ------------------------ -->
 ## Post-ML Analysis
-Duration: 5
 
 Post-training diagnostics help you understand where the model makes mistakes, which features drive its predictions, how well it separates classes across all decision thresholds, and whether additional training data would improve performance.
 
@@ -503,7 +496,6 @@ The learning curve plots training accuracy and CV accuracy as a function of trai
 
 <!-- ------------------------ -->
 ## Summary and Next Steps
-Duration: 1
 
 ### What You Built
 
