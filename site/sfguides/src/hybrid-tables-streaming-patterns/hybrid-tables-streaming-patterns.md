@@ -2,18 +2,18 @@ author: Adam Timm
 id: hybrid-tables-streaming-patterns
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
 language: en
-summary: Learn streaming and change detection patterns for Hybrid Tables — real-time ingest with deduplication, watermark-based CDC without Streams, and outbound event notifications.
+summary: Learn streaming and change detection patterns for Hybrid Tables — real-time ingest with deduplication, watermark-based CDC without Streams, outbound event notifications, and sharded multi-database architectures with Interactive Analytics.
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 <!--
-keywords: hybrid table, streaming, Kafka, ingest buffer, change detection, CDC, watermark, notification, SNS, webhook, Unistore, INSERT OVERWRITE, TRANSIENT, Data Share, serverless task, 30 seconds
-related_concepts: Streams limitation, exactly-once delivery, watermark, checkpoint, NOTIFICATION INTEGRATION, SYSTEM$SEND_SNOWFLAKE_NOTIFICATION, INSERT OVERWRITE, TRANSIENT table
+keywords: hybrid table, streaming, Kafka, ingest buffer, change detection, CDC, watermark, notification, SNS, webhook, Unistore, INSERT OVERWRITE, TRANSIENT, Data Share, serverless task, 30 seconds, Interactive Analytics, Interactive Table, Interactive Warehouse, sharded buffer, multi-database, per-database quota
+related_concepts: Streams limitation, exactly-once delivery, watermark, checkpoint, NOTIFICATION INTEGRATION, SYSTEM$SEND_SNOWFLAKE_NOTIFICATION, INSERT OVERWRITE, TRANSIENT table, Interactive Table, TARGET_LAG, per-database ops quota
 prerequisite_guides: getting-started-with-hybrid-tables, hybrid-tables-standard-to-hybrid-migration
 skill_level: intermediate
-estimated_time_minutes: 40
-snowflake_features: hybrid_tables, tasks, notification_integrations, data_sharing
+estimated_time_minutes: 55
+snowflake_features: hybrid_tables, tasks, notification_integrations, data_sharing, interactive_tables, interactive_warehouses
 -->
 
 # Streaming and Change Detection Patterns for Hybrid Tables
@@ -22,11 +22,12 @@ snowflake_features: hybrid_tables, tasks, notification_integrations, data_sharin
 
 > **Note on Production Workloads:** The SQL in this quickstart uses string literals for clarity. Production OLTP workloads should use bound variables (parameterized queries). See [Hybrid Tables Best Practices](https://docs.snowflake.com/en/user-guide/tables-hybrid-best-practices).
 
-Hybrid Tables do not support Streams. If your workload needs change tracking, incremental processing, or real-time event delivery, you need alternative patterns. This guide covers three:
+Hybrid Tables do not support Streams. If your workload needs change tracking, incremental processing, or real-time event delivery, you need alternative patterns. This guide covers four:
 
 1. **HT as Ingest Buffer** — use the HT's PRIMARY KEY for exactly-once deduplication on high-frequency streaming ingest, then flush to a columnar standard table for aggregation and delivery
 2. **Watermark-Based Change Detection** — detect changed rows without Streams using an `updated_at` timestamp watermark
 3. **Outbound Event Notifications** — publish events from Hybrid Table data to external systems (SNS, webhooks)
+4. **Sharded Buffer + Interactive Analytics** — split writes across multiple databases to exceed the 16K ops/sec per-database quota, then serve via Interactive Tables for sub-100ms analytical queries
 
 ### Patterns in This Guide
 
@@ -35,6 +36,7 @@ Hybrid Tables do not support Streams. If your workload needs change tracking, in
 | HT Ingest Buffer + Real-Time Rollup | 30 seconds | Kafka/IoT/financial streaming where exactly-once and fresh aggregations matter |
 | Watermark CDC | Minutes | Incremental MERGE for downstream consumers |
 | Outbound Event Notifications | ~1 minute | Kafka consumers, microservices, alerting |
+| Sharded Buffer + Interactive Analytics | 30s write → 60s IA | High-throughput streaming (>16K ops/sec) with sub-100ms analytical serving |
 
 ### Other Guides in This Series
 
@@ -237,6 +239,58 @@ GRANT SELECT ON TABLE HT_STREAMING_QS_DB.DATA.events_rollup TO SHARE events_data
 
 > For the application-side Kafka ingest pattern (Spring Boot + JDBC batch inserts into HT), see the [Connecting Applications to Hybrid Tables](https://www.snowflake.com/en/developers/guides/hybrid-tables-application-connectors/) quickstart.
 
+### Optional: Add Interactive Analytics for Sub-100ms Analytical Serving
+
+If your consumers need sub-100ms analytical queries (GROUP BY, aggregations, time-range scans) at high concurrency — such as real-time dashboards, data APIs, or agentic AI workloads — add an **Interactive Analytics** layer on top of `raw_events_st`.
+
+Interactive Tables are Dynamic Tables optimized for low-latency serving. They auto-refresh from your Standard Table and are queried through a specialized Interactive Warehouse with pre-warmed caches.
+
+```sql
+-- Create an Interactive Warehouse (specialized for low-latency, high-concurrency)
+CREATE OR REPLACE INTERACTIVE WAREHOUSE events_ia_wh;
+
+-- Create an Interactive Table sourcing from the standard table
+-- TARGET_LAG = '1 minute' (minimum is 60 seconds)
+CREATE OR REPLACE INTERACTIVE TABLE events_rollup_it
+  CLUSTER BY (event_type, region)
+  TARGET_LAG = '1 minute'
+  WAREHOUSE = HT_STREAMING_QS_WH
+AS
+SELECT
+    event_type,
+    region,
+    COUNT(*)     AS event_count,
+    SUM(value)   AS total_value,
+    MIN(value)   AS min_value,
+    MAX(value)   AS max_value,
+    MIN(event_ts) AS window_start,
+    MAX(event_ts) AS window_end
+FROM raw_events_st
+WHERE event_ts::DATE = CURRENT_DATE()
+GROUP BY event_type, region;
+
+-- Add the Interactive Table to the Interactive Warehouse (warms the cache)
+ALTER WAREHOUSE events_ia_wh ADD TABLES (events_rollup_it);
+
+-- Query through the Interactive Warehouse for sub-100ms latency
+USE WAREHOUSE events_ia_wh;
+SELECT * FROM events_rollup_it WHERE event_type = 'PURCHASE' ORDER BY total_value DESC;
+```
+
+> **Key constraints:**
+> - Interactive Tables cannot source from Hybrid Tables — they must source from Standard Tables (which is why the HT → ST flush step is essential)
+> - `TARGET_LAG` minimum is 60 seconds
+> - Interactive Warehouses can **only** query Interactive Tables — you cannot mix table types in a single query
+> - The Interactive Warehouse is always-on with pre-warmed caches; size it based on concurrency requirements
+
+This gives you three query paths in the final architecture:
+
+| Path | Target | Latency | Use Case |
+|------|--------|---------|----------|
+| HT point lookup | `events_ht` | Sub-50ms | Get specific event by PK |
+| Interactive Analytics | `events_rollup_it` via IA Warehouse | Sub-100ms | Dashboards, APIs, aggregations |
+| Standard Warehouse | `raw_events_st` | 200ms–seconds | Ad-hoc analytics, heavy scans |
+
 <!-- ------------------------ -->
 ## Step 2: Change Detection Without Streams
 
@@ -390,6 +444,319 @@ END;
 ```
 
 <!-- ------------------------ -->
+## Step 4: Sharded Ingest Buffer with Interactive Analytics Serving
+
+This pattern extends Step 1 to handle workloads that exceed the **16,000 ops/sec per-database Hybrid Table quota** — such as high-frequency financial event streaming (25K+ events/sec). The key insight: split the write path across multiple databases (each with its own quota), use a serverless Task to consolidate into a serving layer, and optionally accelerate analytical reads with Interactive Analytics.
+
+### When You Need This Pattern
+
+- Write throughput exceeds 16,000 ops/sec (the per-database HT hard ceiling)
+- You need exactly-once deduplication AND fast analytical queries on the same data
+- Multiple event types or partitions can be routed independently
+- The serving layer must support both sub-50ms point lookups AND sub-100ms analytical queries
+
+### Architecture Overview
+
+```
+Kafka / Event Source (25K+ events/sec)
+  ↓ Application Router (route by event_type or partition key)
+  ↓              ↓              ↓
+┌──────────┐ ┌──────────┐ ┌──────────┐
+│ Buffer   │ │ Buffer   │ │ Buffer   │  ← 3 HT databases (DATA_RETENTION=0)
+│ DB 1     │ │ DB 2     │ │ DB 3     │    16K ops/sec quota each = 48K combined
+└────┬─────┘ └────┬─────┘ └────┬─────┘
+     └─────────────┼─────────────┘
+                   ↓
+         30s Serverless Task (cross-database read)
+                 ↙    ↘
+┌────────────────┐  ┌────────────────────┐
+│ Serving HT     │  │ History ST         │  ← Durable serving + columnar archive
+│ (current state)│  │ (18-month history) │
+└────────────────┘  └────────┬───────────┘
+                             ↓
+                   ┌────────────────────┐
+                   │ Interactive Tables  │  ← Auto-refresh (1 min TARGET_LAG)
+                   │ + IA Warehouse     │     Sub-100ms analytical serving
+                   └────────────────────┘
+```
+
+### Create the Sharded Buffer Databases
+
+Each database gets its own 16,000 ops/sec HT quota. The HT PRIMARY KEY enforces exactly-once deduplication within each buffer.
+
+```sql
+USE ROLE ACCOUNTADMIN;
+
+-- Three independent databases — each with its own ops/sec quota
+CREATE OR REPLACE DATABASE events_buffer_db_1
+  COMMENT = 'Ingest buffer: event_type_a (16K ops/sec quota)';
+CREATE OR REPLACE DATABASE events_buffer_db_2
+  COMMENT = 'Ingest buffer: event_type_b (16K ops/sec quota)';
+CREATE OR REPLACE DATABASE events_buffer_db_3
+  COMMENT = 'Ingest buffer: event_type_c (16K ops/sec quota)';
+
+-- Serving database: consolidated current state + history
+CREATE OR REPLACE DATABASE events_serving_db
+  COMMENT = 'Serving layer: current state (HT) + full history (ST) + Interactive Tables';
+
+-- Schemas
+CREATE SCHEMA events_buffer_db_1.ingest;
+CREATE SCHEMA events_buffer_db_2.ingest;
+CREATE SCHEMA events_buffer_db_3.ingest;
+CREATE SCHEMA events_serving_db.serving;
+```
+
+### Create Buffer Hybrid Tables
+
+Each buffer HT uses `DATA_RETENTION_TIME_IN_DAYS = 0` — these are ephemeral buffers, not permanent stores. The PK provides exactly-once deduplication.
+
+```sql
+-- Repeat for each buffer database (shown for DB 1)
+CREATE OR REPLACE HYBRID TABLE events_buffer_db_1.ingest.events_buffer (
+    event_id        VARCHAR(100)  NOT NULL,
+    partition_key   VARCHAR(50)   NOT NULL,
+    entity_id       VARCHAR(50)   NOT NULL,
+    event_type      VARCHAR(50)   NOT NULL,
+    event_ts        TIMESTAMP_NTZ NOT NULL DEFAULT CURRENT_TIMESTAMP(),
+    payload         VARIANT       NOT NULL,
+    PRIMARY KEY (event_id)
+)
+DATA_RETENTION_TIME_IN_DAYS = 0;
+
+-- Buffer DB 2
+CREATE OR REPLACE HYBRID TABLE events_buffer_db_2.ingest.events_buffer (
+    event_id        VARCHAR(100)  NOT NULL,
+    partition_key   VARCHAR(50)   NOT NULL,
+    entity_id       VARCHAR(50)   NOT NULL,
+    event_type      VARCHAR(50)   NOT NULL,
+    event_ts        TIMESTAMP_NTZ NOT NULL DEFAULT CURRENT_TIMESTAMP(),
+    payload         VARIANT       NOT NULL,
+    PRIMARY KEY (event_id)
+)
+DATA_RETENTION_TIME_IN_DAYS = 0;
+
+-- Buffer DB 3
+CREATE OR REPLACE HYBRID TABLE events_buffer_db_3.ingest.events_buffer (
+    event_id        VARCHAR(100)  NOT NULL,
+    partition_key   VARCHAR(50)   NOT NULL,
+    entity_id       VARCHAR(50)   NOT NULL,
+    event_type      VARCHAR(50)   NOT NULL,
+    event_ts        TIMESTAMP_NTZ NOT NULL DEFAULT CURRENT_TIMESTAMP(),
+    payload         VARIANT       NOT NULL,
+    PRIMARY KEY (event_id)
+)
+DATA_RETENTION_TIME_IN_DAYS = 0;
+```
+
+### Create the Serving Layer
+
+The serving layer has two tables:
+- **Current State HT** — one row per entity (INSERT OVERWRITE every 30s). Durable, supports sub-50ms point lookups.
+- **History ST** — append-only columnar record. Clustered for time-range analytics.
+
+```sql
+-- Current state: one row per entity per event_type (point-lookup serving)
+CREATE OR REPLACE HYBRID TABLE events_serving_db.serving.events_latest (
+    partition_key   VARCHAR(50)   NOT NULL,
+    entity_id       VARCHAR(50)   NOT NULL,
+    event_type      VARCHAR(50)   NOT NULL,
+    event_id        VARCHAR(100)  NOT NULL,
+    event_ts        TIMESTAMP_NTZ NOT NULL,
+    payload         VARIANT       NOT NULL,
+    updated_at      TIMESTAMP_NTZ NOT NULL DEFAULT CURRENT_TIMESTAMP(),
+    PRIMARY KEY (partition_key, entity_id, event_type)
+);
+
+-- Full history: columnar, clustered, analytics-ready
+CREATE OR REPLACE TABLE events_serving_db.serving.events_history (
+    event_id        VARCHAR(100)  NOT NULL,
+    partition_key   VARCHAR(50)   NOT NULL,
+    entity_id       VARCHAR(50)   NOT NULL,
+    event_type      VARCHAR(50)   NOT NULL,
+    event_ts        TIMESTAMP_NTZ NOT NULL,
+    payload         VARIANT       NOT NULL,
+    ingested_at     TIMESTAMP_NTZ NOT NULL DEFAULT CURRENT_TIMESTAMP()
+)
+CLUSTER BY (DATE_TRUNC('day', event_ts), event_type);
+
+-- Watermark checkpoint (one row per buffer database)
+CREATE OR REPLACE TABLE events_serving_db.serving.pipeline_checkpoint (
+    source_db       VARCHAR(100)  NOT NULL,
+    last_event_ts   TIMESTAMP_NTZ NOT NULL DEFAULT '1970-01-01'::TIMESTAMP_NTZ,
+    updated_at      TIMESTAMP_NTZ NOT NULL DEFAULT CURRENT_TIMESTAMP(),
+    PRIMARY KEY (source_db)
+);
+
+INSERT INTO events_serving_db.serving.pipeline_checkpoint (source_db)
+VALUES ('events_buffer_db_1'), ('events_buffer_db_2'), ('events_buffer_db_3');
+```
+
+### Create the 30-Second Consolidation Task
+
+This Task reads the delta from all three buffer databases, appends to history, and performs INSERT OVERWRITE to maintain current state:
+
+```sql
+CREATE OR REPLACE TASK events_serving_db.serving.consolidation_30s
+  SCHEDULE = '30 SECONDS'
+  USER_TASK_MANAGED_INITIAL_WAREHOUSE_SIZE = 'XSMALL'
+AS
+BEGIN
+  LET v_cp1 TIMESTAMP_NTZ := (SELECT last_event_ts FROM events_serving_db.serving.pipeline_checkpoint WHERE source_db = 'events_buffer_db_1');
+  LET v_cp2 TIMESTAMP_NTZ := (SELECT last_event_ts FROM events_serving_db.serving.pipeline_checkpoint WHERE source_db = 'events_buffer_db_2');
+  LET v_cp3 TIMESTAMP_NTZ := (SELECT last_event_ts FROM events_serving_db.serving.pipeline_checkpoint WHERE source_db = 'events_buffer_db_3');
+
+  -- Append delta to history (all events, append-only)
+  INSERT INTO events_serving_db.serving.events_history
+    (event_id, partition_key, entity_id, event_type, event_ts, payload)
+  SELECT event_id, partition_key, entity_id, event_type, event_ts, payload
+  FROM events_buffer_db_1.ingest.events_buffer WHERE event_ts > :v_cp1
+  UNION ALL
+  SELECT event_id, partition_key, entity_id, event_type, event_ts, payload
+  FROM events_buffer_db_2.ingest.events_buffer WHERE event_ts > :v_cp2
+  UNION ALL
+  SELECT event_id, partition_key, entity_id, event_type, event_ts, payload
+  FROM events_buffer_db_3.ingest.events_buffer WHERE event_ts > :v_cp3;
+
+  -- INSERT OVERWRITE: atomically replace current state with latest per entity
+  INSERT OVERWRITE INTO events_serving_db.serving.events_latest
+    (partition_key, entity_id, event_type, event_id, event_ts, payload, updated_at)
+  SELECT partition_key, entity_id, event_type, event_id, event_ts, payload, CURRENT_TIMESTAMP()
+  FROM (
+    SELECT *, ROW_NUMBER() OVER (
+      PARTITION BY partition_key, entity_id, event_type
+      ORDER BY event_ts DESC
+    ) AS rn
+    FROM (
+      SELECT partition_key, entity_id, event_type, event_id, event_ts, payload
+      FROM events_serving_db.serving.events_latest
+      UNION ALL
+      SELECT partition_key, entity_id, event_type, event_id, event_ts, payload
+      FROM events_buffer_db_1.ingest.events_buffer WHERE event_ts > :v_cp1
+      UNION ALL
+      SELECT partition_key, entity_id, event_type, event_id, event_ts, payload
+      FROM events_buffer_db_2.ingest.events_buffer WHERE event_ts > :v_cp2
+      UNION ALL
+      SELECT partition_key, entity_id, event_type, event_id, event_ts, payload
+      FROM events_buffer_db_3.ingest.events_buffer WHERE event_ts > :v_cp3
+    )
+  )
+  WHERE rn = 1;
+
+  -- Advance watermarks
+  UPDATE events_serving_db.serving.pipeline_checkpoint
+  SET last_event_ts = COALESCE((SELECT MAX(event_ts) FROM events_buffer_db_1.ingest.events_buffer), last_event_ts),
+      updated_at = CURRENT_TIMESTAMP()
+  WHERE source_db = 'events_buffer_db_1';
+
+  UPDATE events_serving_db.serving.pipeline_checkpoint
+  SET last_event_ts = COALESCE((SELECT MAX(event_ts) FROM events_buffer_db_2.ingest.events_buffer), last_event_ts),
+      updated_at = CURRENT_TIMESTAMP()
+  WHERE source_db = 'events_buffer_db_2';
+
+  UPDATE events_serving_db.serving.pipeline_checkpoint
+  SET last_event_ts = COALESCE((SELECT MAX(event_ts) FROM events_buffer_db_3.ingest.events_buffer), last_event_ts),
+      updated_at = CURRENT_TIMESTAMP()
+  WHERE source_db = 'events_buffer_db_3';
+END;
+
+ALTER TASK events_serving_db.serving.consolidation_30s RESUME;
+```
+
+### Purge Tasks (One Per Buffer Database)
+
+```sql
+CREATE OR REPLACE TASK events_buffer_db_1.ingest.purge_buffer
+  SCHEDULE = 'USING CRON 0 * * * * UTC'
+  USER_TASK_MANAGED_INITIAL_WAREHOUSE_SIZE = 'XSMALL'
+AS
+  DELETE FROM events_buffer_db_1.ingest.events_buffer
+  WHERE event_ts < DATEADD(HOUR, -4, CURRENT_TIMESTAMP());
+
+CREATE OR REPLACE TASK events_buffer_db_2.ingest.purge_buffer
+  SCHEDULE = 'USING CRON 0 * * * * UTC'
+  USER_TASK_MANAGED_INITIAL_WAREHOUSE_SIZE = 'XSMALL'
+AS
+  DELETE FROM events_buffer_db_2.ingest.events_buffer
+  WHERE event_ts < DATEADD(HOUR, -4, CURRENT_TIMESTAMP());
+
+CREATE OR REPLACE TASK events_buffer_db_3.ingest.purge_buffer
+  SCHEDULE = 'USING CRON 0 * * * * UTC'
+  USER_TASK_MANAGED_INITIAL_WAREHOUSE_SIZE = 'XSMALL'
+AS
+  DELETE FROM events_buffer_db_3.ingest.events_buffer
+  WHERE event_ts < DATEADD(HOUR, -4, CURRENT_TIMESTAMP());
+```
+
+### Optional: Add Interactive Analytics for Sub-100ms Serving
+
+For workloads requiring sub-100ms analytical queries at high concurrency (dashboards, data APIs, Cortex AI), add Interactive Tables sourced from the history Standard Table:
+
+```sql
+-- Interactive Warehouse: specialized for low-latency, high-concurrency queries
+CREATE OR REPLACE INTERACTIVE WAREHOUSE events_ia_wh;
+
+-- Interactive Table: auto-refreshed current state (sources from history ST)
+CREATE OR REPLACE INTERACTIVE TABLE events_serving_db.serving.events_latest_it
+  CLUSTER BY (partition_key, entity_id, event_type)
+  TARGET_LAG = '1 minute'
+  WAREHOUSE = HT_STREAMING_QS_WH
+AS
+SELECT partition_key, entity_id, event_type, event_id, event_ts, payload
+FROM (
+    SELECT *, ROW_NUMBER() OVER (
+      PARTITION BY partition_key, entity_id, event_type
+      ORDER BY event_ts DESC
+    ) AS rn
+    FROM events_serving_db.serving.events_history
+)
+WHERE rn = 1;
+
+-- Interactive Table: full history for time-range analytics
+CREATE OR REPLACE INTERACTIVE TABLE events_serving_db.serving.events_history_it
+  CLUSTER BY (event_type, DATE_TRUNC('day', event_ts))
+  TARGET_LAG = '1 minute'
+  WAREHOUSE = HT_STREAMING_QS_WH
+AS
+SELECT event_id, partition_key, entity_id, event_type, event_ts, payload, ingested_at
+FROM events_serving_db.serving.events_history;
+
+-- Add both to the Interactive Warehouse
+ALTER WAREHOUSE events_ia_wh ADD TABLES (
+    events_serving_db.serving.events_latest_it,
+    events_serving_db.serving.events_history_it
+);
+
+-- Query through IA warehouse for sub-100ms analytics
+USE WAREHOUSE events_ia_wh;
+SELECT event_type, COUNT(*) AS event_count, MAX(event_ts) AS latest
+FROM events_serving_db.serving.events_history_it
+WHERE event_ts > DATEADD(HOUR, -24, CURRENT_TIMESTAMP())
+GROUP BY event_type
+ORDER BY event_count DESC;
+```
+
+### Three Query Paths in the Final Architecture
+
+| Path | Target | Latency | Use Case |
+|------|--------|---------|----------|
+| HT point lookup | `events_latest` (Hybrid Table) | Sub-50ms | Get current state for entity X |
+| Interactive Analytics | `events_latest_it` / `events_history_it` via IA Warehouse | Sub-100ms | Dashboards, APIs, aggregations |
+| Standard Warehouse | `events_history` (Standard Table) | 200ms–seconds | Ad-hoc analytics, heavy full-table scans, Cortex AI |
+
+### Capacity Planning
+
+| Aspect | Formula | Example (25K events/sec) |
+|--------|---------|--------------------------|
+| Databases needed | `CEIL(target_ops / 16000)` | `CEIL(25000/16000)` = 2 (use 3 for headroom) |
+| Connections per DB | `target_ops / (databases × rows_per_sec_per_conn)` | `25000 / (3 × 250)` ≈ 33 |
+| Total connections | `connections_per_db × databases` | `33 × 3` = 99 |
+| Buffer retention | Based on recovery window + purge frequency | 4 hours |
+| Events_latest rows | `unique_entities × event_types` | 50K accounts × 3 types = 150K |
+| IA refresh lag | `TARGET_LAG` minimum | 60 seconds |
+
+> **When to use this pattern vs. Snowflake Postgres:** If the total connection requirement (e.g., 100 connections) is operationally challenging, or if you need sub-ms read-after-write latency, consider Snowflake Postgres + Data Mirroring as an alternative write path. It eliminates both the per-database quota ceiling and the connection requirement at ~8 total connections. The serving layer (HT + ST + IA) remains identical.
+
+<!-- ------------------------ -->
 ## Get Started Faster with Cortex Code
 Duration: 1
 
@@ -401,6 +768,8 @@ Use these prompts in [Cortex Code](https://docs.snowflake.com/en/user-guide/cort
 
 > "Configure outbound event notifications from my Hybrid Table so that when a row matching [condition] is written, a message is sent to an SNS topic. Generate the alert and notification integration SQL."
 
+> "My application writes 25K events/sec across 3 event types. Design a sharded buffer architecture with one HT database per event type, a 30-second consolidation Task, and an Interactive Analytics layer for sub-100ms dashboard queries. Include the capacity planning math."
+
 <!-- ------------------------ -->
 ## Cleanup
 
@@ -408,9 +777,18 @@ Use these prompts in [Cortex Code](https://docs.snowflake.com/en/user-guide/cort
 ALTER TASK IF EXISTS events_pipeline_30s SUSPEND;
 ALTER TASK IF EXISTS purge_ht_buffer SUSPEND;
 ALTER TASK IF EXISTS publish_order_events SUSPEND;
+ALTER TASK IF EXISTS events_serving_db.serving.consolidation_30s SUSPEND;
+ALTER TASK IF EXISTS events_buffer_db_1.ingest.purge_buffer SUSPEND;
+ALTER TASK IF EXISTS events_buffer_db_2.ingest.purge_buffer SUSPEND;
+ALTER TASK IF EXISTS events_buffer_db_3.ingest.purge_buffer SUSPEND;
 USE ROLE ACCOUNTADMIN;
 DROP DATABASE IF EXISTS HT_STREAMING_QS_DB;
+DROP DATABASE IF EXISTS events_buffer_db_1;
+DROP DATABASE IF EXISTS events_buffer_db_2;
+DROP DATABASE IF EXISTS events_buffer_db_3;
+DROP DATABASE IF EXISTS events_serving_db;
 DROP WAREHOUSE IF EXISTS HT_STREAMING_QS_WH;
+DROP WAREHOUSE IF EXISTS events_ia_wh;
 DROP ROLE IF EXISTS HT_STREAMING_QS_ROLE;
 ```
 
@@ -422,6 +800,8 @@ You can now:
 - Build 30-second serverless Task pipelines with `INSERT OVERWRITE` + TRANSIENT rollup tables
 - Detect changes without Streams using timestamp watermarks
 - Publish events to external systems via Notification Integrations
+- Scale beyond the 16K ops/sec per-database quota using sharded multi-database buffers
+- Accelerate analytical queries to sub-100ms using Interactive Tables and Interactive Warehouses
 
 > **Need help with your Hybrid Table architecture?** Book a 30-minute session with our specialist team to discuss your use case, review your schema design, or troubleshoot performance: [Schedule a session](https://calendar.app.google/cGfVnKFe7xbeDqDo8)
 
@@ -433,3 +813,5 @@ You can now:
 - [Connecting Applications to Hybrid Tables](https://www.snowflake.com/en/developers/guides/hybrid-tables-application-connectors/)
 - [Best Practices for Hybrid Tables](https://docs.snowflake.com/en/user-guide/tables-hybrid-best-practices)
 - [Notification Integrations](https://docs.snowflake.com/en/sql-reference/sql/create-notification-integration)
+- [Interactive Tables and Warehouses](https://docs.snowflake.com/en/user-guide/interactive)
+- [CREATE INTERACTIVE WAREHOUSE](https://docs.snowflake.com/en/sql-reference/sql/create-interactive-warehouse)
