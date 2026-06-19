@@ -2,7 +2,7 @@ author: Nagesh Cherukuri
 id: federate-and-govern-iceberg-tables-using-snowpark-connect-for-apache-spark
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/snowpark, snowflake-site:taxonomy/snowflake-feature/iceberg
 language: en
-summary: Use Snowpark Connect for Apache Spark to create, govern, and federate Iceberg tables — from Snowflake-managed storage to cross-platform open lakehouse access with Horizon governance enforced at every layer.
+summary: Use Snowpark Connect for Apache Spark to create, govern, and federate Iceberg tables — from Snowflake-managed storage to AI enrichment pipelines and cross-platform open lakehouse access with Horizon governance enforced at every layer.
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
@@ -14,16 +14,19 @@ open in snowflake: https://app.snowflake.com/developer-guides/snowpark-connect
 
 ## Overview
 
-Through this quickstart you will work through three progressive scenarios that show Snowflake as a first-class Iceberg platform — from native managed storage to bidirectional open lakehouse federation.
+Through this quickstart you will work through four progressive scenarios that show how Snowflake treats Apache Iceberg as a first-class citizen — from native managed storage to AI enrichment pipelines and bidirectional open lakehouse federation.
 
 **Scenario 1 — Snowflake-Managed Iceberg + SCOS:**
-Snowflake creates and owns the Iceberg tables on its managed storage. Snowflake Horizon governance policies (column masking and row access) are applied. Snowpark Connect (SCOS) queries those tables using PySpark DataFrames — and because SCOS routes through Snowflake's SQL engine, governance is fully enforced.
+Snowflake creates and owns the Iceberg tables on its managed storage. Snowflake Horizon governance policies (column masking and row access) are applied. Snowpark Connect on Snowflake (SCOS) queries those tables using PySpark DataFrames — and because SCOS routes through Snowflake's SQL engine, governance is fully enforced.
 
 **Scenario 2 — External Engine Reads Snowflake Tables:**
 An external Iceberg-compatible engine connects to the same Scenario 1 tables via Snowflake Horizon IRC (Iceberg REST Catalog). It reads data using vended S3 credentials. Write access to the protected table is automatically blocked by credential vending. This scenario also shows the governance contrast: the external engine reads raw Parquet and bypasses Snowflake's SQL-layer policies, while Scenario 1 enforced them.
 
 **Scenario 3 — Externally-Managed Iceberg Tables Read by Snowflake:**
 An external catalog creates Iceberg tables (Delta + UniForm) and publishes them via an Iceberg REST endpoint. Snowflake federates them into a catalog-linked database and applies its own independent Horizon governance. SCOS queries the federated tables with live role-based masking — demonstrating that Snowflake governance applies regardless of where the data originated.
+
+**Scenario 4 — AI Enrichment Pipeline on Iceberg:**
+SCOS reads the federated Scenario 3 tables, Snowflake Cortex enriches them with AI-generated risk classification and operational notes, and writes results to a new Snowflake-managed Iceberg table. Horizon governance applies to the AI-generated columns just as it does to raw data. A Cortex Analyst semantic view spans both the AI-enriched and federated tables — answering natural language questions with role-based masking enforced.
 
 ### What You'll Learn
 
@@ -35,6 +38,9 @@ An external catalog creates Iceberg tables (Delta + UniForm) and publishes them 
 - How Delta + Iceberg UniForm generates interoperable Iceberg metadata with no data duplication
 - How Snowflake catalog-linked databases auto-discover and federate externally-managed Iceberg tables
 - The three setup rules for using SCOS with catalog-linked databases
+- How Snowflake Cortex LLM functions enrich Iceberg data inline in SQL
+- How Horizon governance applies to AI-generated columns the same way it applies to raw data
+- How Cortex Analyst semantic views enable natural language queries across SF-managed and federated Iceberg tables
 
 ### Key Capabilities
 
@@ -43,6 +49,9 @@ An external catalog creates Iceberg tables (Delta + UniForm) and publishes them 
 - **Open interoperability**: Horizon IRC exposes Snowflake-managed tables to any Iceberg REST catalog client
 - **Credential-vending write control**: Snowflake controls which engines can write, enforced at S3 without any application-side code
 - **Live role-based masking**: Same query, same Parquet files — different results per Snowflake role
+- **AI enrichment on Iceberg**: Cortex LLM functions run inline in SQL on federated data, writing results to Snowflake-managed Iceberg
+- **Governed AI output**: Horizon masking policies apply to Cortex-generated columns exactly as they do to raw data
+- **Cortex Analyst semantic views**: Natural language querying across SF-managed and federated Iceberg tables with governance enforced
 
 ### What You'll Build
 
@@ -51,6 +60,8 @@ An external catalog creates Iceberg tables (Delta + UniForm) and publishes them 
 - An external engine read/write demo against those same tables via Horizon IRC
 - Externally-managed Iceberg tables federated into Snowflake via a catalog-linked database
 - A second SCOS notebook showing live role-based masking on federated tables
+- A Cortex AI pipeline that reads federated Iceberg data, enriches it with `CORTEX.COMPLETE`, and writes to a new Snowflake-managed Iceberg table
+- A Cortex Analyst semantic view enabling natural language queries across SF-managed and federated Iceberg tables with Horizon masking enforced
 
 ### What You'll Need
 
@@ -116,6 +127,27 @@ Snowflake Catalog-Linked Database
        → EU row filter, credit_card masked per role
 ```
 
+### Scenario 4 — AI Enrichment Pipeline on Iceberg
+
+```
+Catalog-Linked Database (Scenario 3 — read only)
+  DATABRICKS_DB.horizon_demo.customer_orders   ← Databricks-managed S3
+  DATABRICKS_DB.horizon_demo.sensitive_orders  ← Databricks-managed S3
+          ↓  SCOS reads via spark.sql() / spark.table()
+          ↓  sf_session.sql() CTAS + SNOWFLAKE.CORTEX.COMPLETE() for ops_note
+          ↓  ALTER ICEBERG TABLE re-applies MASK_RISK_LEVEL after CREATE OR REPLACE
+SF-Managed Iceberg (new table)
+  HORIZON_DEMO_SFDB.DEMO_SCHEMA.AI_ORDER_INSIGHTS  ← Snowflake-managed S3
+  ┌─ risk_level: HIGH (≥$500) / MEDIUM ($100-499) / LOW (<$100)
+  │              masked → *** RESTRICTED *** for non-admin roles
+  └─ ops_note:   Cortex-generated operational note
+          ↓  CREATE SEMANTIC VIEW ICEBERG_AI_SEMANTIC_VIEW
+  Cortex Analyst (Snowsight → AI & ML → Cortex Analyst)
+    "What is the total revenue by risk level?"
+    "Which HIGH risk orders need immediate attention?"
+    → Horizon masking enforced on risk_level per active role
+```
+
 <!-- ------------------------ -->
 
 ## Download the Demo Files
@@ -130,6 +162,8 @@ All scripts for this quickstart are in the assets folder:
 | [04_databricks_create_uc_tables.py](assets/04_databricks_create_uc_tables.py) | External Cluster with UC | Scenario 3 setup: create Delta + UniForm tables in external catalog |
 | [05_sf_federate_databricks_uc.sql](assets/05_sf_federate_databricks_uc.sql) | Snowflake worksheet | Scenario 3 setup: catalog integration, catalog-linked database, masking |
 | [06_sf_notebook_query_databricks.ipynb](assets/06_sf_notebook_query_databricks.ipynb) | Snowflake Notebook | Scenario 3: SCOS reads federated tables with live role-based masking |
+| [07_cortex_ai_pipeline.sql](assets/07_cortex_ai_pipeline.sql) | Snowflake worksheet | Scenario 4: Cortex enrichment CTAS, masking on AI output, semantic view DDL |
+| [08_scos_ai_pipeline.py](assets/08_scos_ai_pipeline.py) | Snowflake Notebook | Scenario 4: SCOS reads federated tables, Cortex enriches, writes to SF-managed Iceberg |
 
 > Fill in all `<PLACEHOLDER>` values in each file before running. Every parameter is documented in the header comment of each script.
 
@@ -639,9 +673,236 @@ print(combined.to_string(index=False))
 
 <!-- ------------------------ -->
 
+## Scenario 4 — AI Enrichment Pipeline Setup
+
+Run `07_cortex_ai_pipeline.sql` in a Snowflake worksheet as `ACCOUNTADMIN`.
+
+This creates an AI-enriched Iceberg table from the Scenario 3 federated data, applies Horizon governance to the AI-generated column, and creates a Cortex Analyst semantic view.
+
+### Step 1 — Verify Cortex Is Available
+
+```sql
+SELECT SNOWFLAKE.CORTEX.COMPLETE('llama3.1-8b', 'Reply with exactly one word: ready') AS cortex_status;
+```
+
+**Expected:** `Ready`. If this errors, your trial region does not support Cortex LLM functions — switch to `us-east-1` or `us-west-2`.
+
+> **Trial availability:** `SNOWFLAKE.CORTEX.COMPLETE` and `SNOWFLAKE.CORTEX.CLASSIFY_TEXT` are available in standard 30-day trial accounts on AWS us-east-1, us-west-2, and Azure eastus2. Cortex Analyst semantic views are available on the same regions.
+
+### Step 2 — Create AI_ORDER_INSIGHTS Iceberg Table
+
+```sql
+CREATE OR REPLACE ICEBERG TABLE <SF_MANAGED_ICEBERG_DB>.<SF_DEMO_SCHEMA>.AI_ORDER_INSIGHTS
+    CATALOG = 'SNOWFLAKE'
+    AS
+WITH deduped_orders AS (
+    SELECT order_id, customer_id, product, amount, order_date, status
+    FROM <SF_FEDERATED_DB>.<SF_FEDERATED_SCHEMA>.customer_orders
+    QUALIFY ROW_NUMBER() OVER (PARTITION BY order_id ORDER BY order_id) = 1
+),
+deduped_sensitive AS (
+    SELECT order_id, region
+    FROM <SF_FEDERATED_DB>.<SF_FEDERATED_SCHEMA>.sensitive_orders
+    QUALIFY ROW_NUMBER() OVER (PARTITION BY order_id ORDER BY order_id) = 1
+)
+SELECT
+    co.order_id, co.customer_id, co.product, co.amount, co.order_date, co.status,
+    COALESCE(so.region, 'UNKNOWN') AS region,
+    -- Deterministic risk tier (reliable for governance demo)
+    CASE
+        WHEN co.status = 'CANCELLED' THEN 'HIGH'
+        WHEN co.amount >= 500        THEN 'HIGH'
+        WHEN co.amount >= 100        THEN 'MEDIUM'
+        ELSE 'LOW'
+    END AS risk_level,
+    -- Cortex-generated operational note
+    SNOWFLAKE.CORTEX.COMPLETE(
+        'llama3.1-8b',
+        'Write one operational sentence (max 15 words) for logistics. Product: ' || co.product ||
+        ', Amount: $' || co.amount::STRING || ', Status: ' || co.status || '.'
+    )::VARCHAR AS ops_note,
+    CURRENT_TIMESTAMP()::TIMESTAMP_LTZ(6) AS enriched_at
+FROM deduped_orders co
+LEFT JOIN deduped_sensitive so ON co.order_id = so.order_id;
+```
+
+> **Why `QUALIFY ROW_NUMBER()`:** The source federated tables may contain duplicate rows from multiple Databricks INSERT runs. `QUALIFY` deduplicates per `order_id` before enrichment.
+
+> **Why deterministic `CASE WHEN` for `risk_level`:** LLMs produce inconsistent results for strict classification rules. Using `CASE WHEN` ensures reliable HIGH/MEDIUM/LOW splits for the governance demo. `CORTEX.COMPLETE` is used for `ops_note` where natural language generation excels.
+
+### Step 3 — Re-Apply Masking Policy
+
+```sql
+-- CREATE OR REPLACE drops all column policies — must re-apply every time
+ALTER ICEBERG TABLE <SF_MANAGED_ICEBERG_DB>.<SF_DEMO_SCHEMA>.AI_ORDER_INSIGHTS
+    MODIFY COLUMN risk_level
+    SET MASKING POLICY <SF_MANAGED_ICEBERG_DB>.<SF_DEMO_SCHEMA>.MASK_RISK_LEVEL;
+```
+
+> **Important:** `CREATE OR REPLACE ICEBERG TABLE` drops all column policies on the table. Always run this `ALTER ICEBERG TABLE` immediately after the CTAS. The `07_cortex_ai_pipeline.sql` script does this automatically.
+
+### Step 4 — Governance Comparison on AI Output
+
+```sql
+-- ACCOUNTADMIN: sees actual risk level including HIGH
+USE ROLE ACCOUNTADMIN;
+SELECT 'ACCOUNTADMIN' AS role_context, order_id, product, amount, region, risk_level
+FROM <SF_MANAGED_ICEBERG_DB>.<SF_DEMO_SCHEMA>.AI_ORDER_INSIGHTS ORDER BY order_id;
+
+-- Reader role: HIGH masked to *** RESTRICTED ***
+USE ROLE <SF_READER_ROLE>;
+SELECT '<SF_READER_ROLE>' AS role_context, order_id, product, amount, region, risk_level
+FROM <SF_MANAGED_ICEBERG_DB>.<SF_DEMO_SCHEMA>.AI_ORDER_INSIGHTS ORDER BY order_id;
+```
+
+**Expected:**
+
+| role | order_id | product | risk_level |
+|------|----------|---------|------------|
+| ACCOUNTADMIN | 1 | Laptop | HIGH |
+| ACCOUNTADMIN | 4 | Monitor | MEDIUM |
+| reader role | 1 | Laptop | *** RESTRICTED *** |
+| reader role | 4 | Monitor | MEDIUM |
+
+### Step 5 — Create Cortex Analyst Semantic View
+
+```sql
+CREATE OR REPLACE SEMANTIC VIEW <SF_MANAGED_ICEBERG_DB>.<SF_DEMO_SCHEMA>.ICEBERG_AI_SEMANTIC_VIEW
+TABLES (
+  orders     AS <SF_MANAGED_ICEBERG_DB>.<SF_DEMO_SCHEMA>.AI_ORDER_INSIGHTS
+               PRIMARY KEY (order_id)
+               WITH SYNONYMS = ('ai orders', 'enriched orders', 'risk orders'),
+  fed_orders AS <SF_FEDERATED_DB>.<SF_FEDERATED_SCHEMA>.customer_orders
+               PRIMARY KEY (order_id)
+               WITH SYNONYMS = ('federated orders', 'source orders')
+)
+RELATIONSHIPS (
+  orders(order_id) REFERENCES fed_orders
+)
+FACTS (
+  orders.amount AS amount WITH SYNONYMS = ('order value', 'revenue')
+)
+DIMENSIONS (
+  orders.product    AS product,
+  orders.status     AS status     WITH SYNONYMS = ('fulfillment status'),
+  orders.region     AS region,
+  orders.risk_level AS risk_level WITH SYNONYMS = ('risk', 'risk tier'),
+  orders.order_date AS order_date,
+  orders.ops_note   AS ops_note   WITH SYNONYMS = ('operational note', 'ai note')
+)
+METRICS (
+  orders.total_revenue   AS SUM(orders.amount)     WITH SYNONYMS = ('revenue', 'total sales'),
+  orders.order_count     AS COUNT(orders.order_id) WITH SYNONYMS = ('number of orders'),
+  orders.avg_order_value AS AVG(orders.amount)      WITH SYNONYMS = ('average order', 'AOV')
+);
+
+GRANT SELECT ON SEMANTIC VIEW <SF_MANAGED_ICEBERG_DB>.<SF_DEMO_SCHEMA>.ICEBERG_AI_SEMANTIC_VIEW
+    TO ROLE <SF_READER_ROLE>;
+```
+
+> **Semantic views** are the recommended path for Cortex Analyst — they replace legacy YAML files and appear automatically in Snowsight → AI & ML → Cortex Analyst. Note: the alias direction in TABLES is `alias AS db.schema.table` (not `table AS alias`).
+
+<!-- ------------------------ -->
+
+## Scenario 4 — SCOS AI Pipeline Notebook
+
+Upload `08_scos_ai_pipeline.py` to Snowflake:
+**Snowsight → Notebooks → + Notebook → Import**
+
+Install `snowpark-connect` via the package picker, then restart.
+
+### Initialize Session
+
+```python
+sf_session = get_active_session()
+sf_session.sql(f"USE DATABASE {SF_INIT_DB}").collect()
+
+conf = SparkConf().set("spark.sql.caseSensitive", "true")
+spark = snowpark_connect.init_spark_session(conf=conf)
+```
+
+> `caseSensitive=true` is required when reading catalog-linked (FDN) tables, which use lowercase identifiers. It is harmless when reading SF-managed tables.
+
+### Step 2 — SCOS Reads Federated Source Tables
+
+```python
+# Read from CLD — federated Databricks Iceberg (read only)
+df_orders = spark.sql(f"SELECT * FROM {TBL_ORDERS}")
+df_orders.select("order_id", "product", "amount", "status").orderBy("order_id").show()
+```
+
+### Step 4 — Cortex Enrichment + Write via sf_session
+
+```python
+sf_session.sql(f"""
+    CREATE OR REPLACE ICEBERG TABLE {TBL_INSIGHTS} CATALOG = 'SNOWFLAKE' AS
+    WITH deduped_orders AS ( ... ),
+         deduped_sensitive AS ( ... )
+    SELECT ..., SNOWFLAKE.CORTEX.COMPLETE('llama3.1-8b', ...) AS ops_note ...
+    FROM deduped_orders co LEFT JOIN deduped_sensitive so ON co.order_id = so.order_id
+""").collect()
+
+# Re-apply masking — CREATE OR REPLACE drops column policies
+sf_session.sql(f"""
+    ALTER ICEBERG TABLE {TBL_INSIGHTS}
+    MODIFY COLUMN risk_level
+    SET MASKING POLICY {SF_MANAGED_ICEBERG_DB}.{SF_DEMO_SCHEMA}.MASK_RISK_LEVEL
+""").collect()
+```
+
+### Step 5 — Governance Comparison via SCOS
+
+```python
+COLS = ["order_id", "product", "amount", "region", "risk_level"]
+
+switch_role("ACCOUNTADMIN")
+admin_df = sf_session.sql(f"SELECT {','.join(COLS)} FROM {TBL_INSIGHTS}").to_pandas()
+admin_df.columns = [c.lower() for c in admin_df.columns]
+
+switch_role(SF_READER_ROLE)
+reader_df = sf_session.sql(f"SELECT {','.join(COLS)} FROM {TBL_INSIGHTS}").to_pandas()
+reader_df.columns = [c.lower() for c in reader_df.columns]
+```
+
+> `sf_session.sql().to_pandas()` returns **uppercase** column names. Call `.columns = [c.lower() for c in df.columns]` immediately after `to_pandas()`.
+
+<!-- ------------------------ -->
+
+## Scenario 4 — Cortex Analyst Demo
+
+**Open:** Snowsight → AI & ML → Cortex Analyst
+
+**Select semantic view:** `<SF_MANAGED_ICEBERG_DB>.<SF_DEMO_SCHEMA>.ICEBERG_AI_SEMANTIC_VIEW`
+
+### Demo Prompt Sequence
+
+**Prompt 1 — Revenue overview**
+> *"What is the total revenue by risk level?"*
+
+Expected: HIGH = highest amount (Laptop $999.99), MEDIUM, LOW.
+
+**Prompt 2 — Governance live demo (key moment)**
+> *"Which orders are classified as HIGH risk and what are their operational notes?"*
+
+As ACCOUNTADMIN: Laptop, $999.99, `risk_level = HIGH` with Cortex ops note.
+Switch role to `<SF_READER_ROLE>` and ask again → `risk_level = *** RESTRICTED ***`.
+
+**Prompt 3 — Business intelligence**
+> *"Show me all SHIPPED orders in the US-WEST region"*
+
+**Prompt 4 — Cross-table (uses the RELATIONSHIP)**
+> *"Compare total revenue from enriched orders versus source federated orders"*
+
+The semantic view joins `AI_ORDER_INSIGHTS` (SF-managed) and `customer_orders` (Databricks-federated CLD) in a single query — Horizon masking applies throughout.
+
+**Prompt 5 — Analytics**
+> *"What is the average order value by fulfillment status?"*
+
+<!-- ------------------------ -->
+
 ## Conclusion And Resources
 
-Congratulations — you have completed all three scenarios!
+Congratulations — you have completed all four scenarios!
 
 ### What You Built
 
@@ -649,7 +910,9 @@ Congratulations — you have completed all three scenarios!
 - ✅ **SCOS governance demo** showing Horizon policies enforced through PySpark on Snowflake's engine
 - ✅ **External engine read/write demo** via Horizon IRC with credential-vending write control
 - ✅ **Catalog-linked database** auto-federating externally-managed Iceberg tables
-- ✅ **Second SCOS notebook** with live role-based masking on federated tables
+- ✅ **SCOS notebook** with live role-based masking on federated tables
+- ✅ **AI enrichment pipeline** — Cortex reads federated Iceberg, enriches with `CORTEX.COMPLETE`, writes to SF-managed Iceberg
+- ✅ **Cortex Analyst semantic view** spanning SF-managed and federated Iceberg tables with Horizon masking enforced
 
 ### What You Learned
 
@@ -660,6 +923,10 @@ Congratulations — you have completed all three scenarios!
 - The governance contrast: SCOS enforces policies; external engines read raw Parquet via vended credentials
 - How Delta + Iceberg UniForm generates interoperable metadata with no data duplication or ETL
 - The three setup rules for using SCOS with catalog-linked databases
+- How `SNOWFLAKE.CORTEX.COMPLETE` enriches federated Iceberg data inline in SQL
+- Why `CREATE OR REPLACE ICEBERG TABLE` drops masking policies and how to re-apply them immediately
+- How Horizon masking applies to AI-generated columns exactly as it does to raw data
+- How Cortex Analyst semantic views enable natural language querying across SF-managed and federated Iceberg tables
 
 ### Governance Summary
 
@@ -672,6 +939,10 @@ Congratulations — you have completed all three scenarios!
 | External engine write to PROTECTED_TABLE | PROTECTED_TABLE | ❌ S3 403 (read-only credentials vended) |
 | SCOS (ACCOUNTADMIN) | sensitive_orders | Real credit card numbers — Scenario 3 |
 | SCOS (reader role) | sensitive_orders | `****-****-****-XXXX` — Scenario 3 |
+| SCOS (ACCOUNTADMIN) | AI_ORDER_INSIGHTS | `risk_level = HIGH` visible — Scenario 4 |
+| SCOS (reader role) | AI_ORDER_INSIGHTS | `risk_level = *** RESTRICTED ***` — Scenario 4 |
+| Cortex Analyst (ACCOUNTADMIN) | ICEBERG_AI_SEMANTIC_VIEW | NL query → `HIGH` risk orders — Scenario 4 |
+| Cortex Analyst (reader role) | ICEBERG_AI_SEMANTIC_VIEW | NL query → `*** RESTRICTED ***` — Scenario 4 |
 
 ### Related Resources
 
@@ -679,5 +950,7 @@ Congratulations — you have completed all three scenarios!
 - [Snowflake Managed Iceberg Tables](https://docs.snowflake.com/en/user-guide/tables-iceberg-snowflake)
 - [Catalog-Linked Databases](https://docs.snowflake.com/en/user-guide/tables-iceberg-catalog-linked-database)
 - [Horizon IRC (Iceberg REST Catalog)](https://docs.snowflake.com/en/user-guide/tables-iceberg-catalog-integration-open-api)
+- [Snowflake Cortex LLM Functions](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions)
+- [Cortex Analyst Semantic Views](https://docs.snowflake.com/en/user-guide/views-semantic)
 - [Intro to Snowpark Connect](https://www.snowflake.com/en/developers/guides/getting-started-with-snowpark-connect-for-apache-spark/)
 - [Getting Started with Iceberg Tables in Snowflake](https://www.snowflake.com/en/developers/guides/getting-started-iceberg-tables/)
