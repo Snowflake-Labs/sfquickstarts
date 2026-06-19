@@ -249,6 +249,8 @@ plt.tight_layout()
 plt.show()
 ```
 
+![Grouped Box Plots by Cultivar](assets/grouped_box_plots.png)
+
 The 4x4 grid of box plots shows how each of the 13 chemical features is distributed across the three cultivar classes. Features such as **flavanoids** and **proline** show strong class separation — they are good candidates for classification.
 
 ### Correlation Heatmap
@@ -274,6 +276,8 @@ plt.tight_layout()
 plt.show()
 ```
 
+![Feature Correlation Matrix](assets/correlation_heatmap.png)
+
 The lower-triangle heatmap annotates every Pearson correlation coefficient. Notable strong correlations include **flavanoids** and **total_phenols** (r ≈ 0.86) — meaning these features carry similar information and one could be dropped to reduce multicollinearity before modeling.
 
 ### Descriptive Statistics
@@ -297,6 +301,8 @@ g.figure.suptitle('Pairplot — Key Features by Cultivar', y=1.02, fontsize=13, 
 plt.tight_layout()
 plt.show()
 ```
+
+![Pairplot Key Features by Cultivar](assets/pairplot_key_features.png)
 
 The pairplot of the 5 most discriminative features shows near-linear separability between cultivar classes in 2D projections — a strong signal that a linear or tree-based classifier should achieve high accuracy.
 
@@ -340,6 +346,8 @@ pca = PCA(n_components=2, random_state=42)
 X_pca = pca.fit_transform(X_full_scaled)
 var_explained = pca.explained_variance_ratio_ * 100
 ```
+
+![PCA Scores Panel Plot](assets/pca_scores_panel.png)
 
 The PCA scores plot has two panels:
 - **Left**: train samples (blue) and test samples (orange) overlaid in 2D PCA space — confirming the split is representative and not accidentally grouped in one region.
@@ -430,6 +438,8 @@ plt.tight_layout()
 plt.show()
 ```
 
+![Confusion Matrix](assets/confusion_matrix.png)
+
 Each cell shows the count of test samples with a given true label (row) and predicted label (column). Off-diagonal cells represent misclassifications.
 
 ### Feature Importances
@@ -446,6 +456,8 @@ ax.set_title('Random Forest Feature Importances', fontsize=13, fontweight='bold'
 plt.tight_layout()
 plt.show()
 ```
+
+![Random Forest Feature Importances](assets/feature_importances.png)
 
 Feature importances are measured by **mean decrease in impurity** across all trees. Typically, **proline**, **color_intensity**, and **flavanoids** rank highest for the Wine dataset — consistent with the EDA observations.
 
@@ -469,6 +481,8 @@ y_cv_score = cross_val_predict(
 )
 ```
 
+![ROC Curves One-vs-Rest](assets/roc_curves.png)
+
 Two ROC panels are plotted side by side:
 - **Left** — AUC on the held-out test set (20% of data).
 - **Right** — AUC from 5-fold CV out-of-fold predictions (all 178 samples used for evaluation without data leakage).
@@ -491,6 +505,8 @@ train_sizes, train_scores, val_scores = learning_curve(
 train_mean = train_scores.mean(axis=1)
 val_mean   = val_scores.mean(axis=1)
 ```
+
+![Learning Curve](assets/learning_curve.png)
 
 The learning curve plots training accuracy and CV accuracy as a function of training set size. A small gap between the two curves at the rightmost point indicates the model is not overfitting and is unlikely to benefit significantly from collecting more data.
 
