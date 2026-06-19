@@ -145,6 +145,39 @@ for row in result:
 
 The notebook does **not** explicitly write `df_snow` to `WINE_TMP` in a separate cell; instead, SQL cells reference the DataFrame directly via Jinja templating (`{{df_snow}}`), which Snowflake Notebooks evaluates at query time.
 
+### Prompt
+
+Use this prompt with an AI coding assistant to reproduce this section:
+
+```
+Load the scikit-learn Wine dataset into a pandas DataFrame. Sanitise column names
+by replacing / with _ so they are safe to use in SQL. Print the dataset shape,
+feature names, and class names.
+```
+
+### What Gets Generated
+
+Running this section prints the dataset dimensions, feature list, class names, and Snowflake session details:
+
+```
+Dataset shape: (178, 15)
+Features: ['alcohol', 'malic_acid', 'ash', 'alcalinity_of_ash', 'magnesium',
+           'total_phenols', 'flavanoids', 'nonflavanoid_phenols', 'proanthocyanins',
+           'color_intensity', 'hue', 'od280/od315_of_diluted_wines', 'proline']
+Classes: ['class_0' 'class_1' 'class_2']
+
+df_snow columns: ['alcohol', 'malic_acid', 'ash', 'alcalinity_of_ash', 'magnesium',
+                  'total_phenols', 'flavanoids', 'nonflavanoid_phenols', 'proanthocyanins',
+                  'color_intensity', 'hue', 'od280_od315_of_diluted_wines', 'proline',
+                  'cultivar', 'cultivar_name']
+
+Connected as : JANE_DOE
+Role         : SYSADMIN
+Warehouse    : COMPUTE_WH
+Timestamp : 2026-06-19 10:00:00.000
+SF version: 8.x.x
+```
+
 <!-- ------------------------ -->
 ## EDA with SQL
 
@@ -212,6 +245,41 @@ ORDER BY cultivar_name
 
 This reveals how the three cultivars differ on the features most commonly used in Wine classification tasks.
 
+### Prompt
+
+Use this prompt with an AI coding assistant to reproduce this section:
+
+```
+Using a Snowpark session in a Snowflake Notebook, write four SQL cells that
+reference a pandas DataFrame via Jinja templating ({{df_snow}}): (1) count
+samples per cultivar with percentage of total using a window function, (2)
+compute a five-number summary (min, Q1, median, Q3, max) of alcohol content
+grouped by cultivar using PERCENTILE_CONT, (3) rank the top 3 samples per
+cultivар by flavanoid content using RANK() OVER (PARTITION BY), and (4) compute
+per-feature average by cultivar using a single-scan UNPIVOT + PIVOT instead of
+multiple UNION ALL subqueries.
+```
+
+### What Gets Generated
+
+Each SQL cell returns a result table rendered inline in the notebook. For example, the class distribution query returns:
+
+```
+  cultivar  cultivar_name  sample_count
+0        0    Cultivar 0            59
+1        1    Cultivar 1            71
+2        2    Cultivar 2            48
+```
+
+And the alcohol stats query returns:
+
+```
+  cultivar_name  min_alcohol  avg_alcohol  max_alcohol
+0   Cultivar 0        11.45       13.745        14.83
+1   Cultivar 1        11.03       12.279        14.10
+2   Cultivar 2        11.03       13.153        14.34
+```
+
 <!-- ------------------------ -->
 ## EDA with Python
 
@@ -249,8 +317,6 @@ plt.tight_layout()
 plt.show()
 ```
 
-![Grouped Box Plots by Cultivar](assets/grouped_box_plots.png)
-
 The 4x4 grid of box plots shows how each of the 13 chemical features is distributed across the three cultivar classes. Features such as **flavanoids** and **proline** show strong class separation — they are good candidates for classification.
 
 ### Correlation Heatmap
@@ -276,8 +342,6 @@ plt.tight_layout()
 plt.show()
 ```
 
-![Feature Correlation Matrix](assets/correlation_heatmap.png)
-
 The lower-triangle heatmap annotates every Pearson correlation coefficient. Notable strong correlations include **flavanoids** and **total_phenols** (r ≈ 0.86) — meaning these features carry similar information and one could be dropped to reduce multicollinearity before modeling.
 
 ### Descriptive Statistics
@@ -302,9 +366,35 @@ plt.tight_layout()
 plt.show()
 ```
 
-![Pairplot Key Features by Cultivar](assets/pairplot_key_features.png)
-
 The pairplot of the 5 most discriminative features shows near-linear separability between cultivar classes in 2D projections — a strong signal that a linear or tree-based classifier should achieve high accuracy.
+
+### Prompt
+
+Use this prompt with an AI coding assistant to reproduce this section:
+
+```
+Using matplotlib and seaborn, produce three visualisations for the Wine dataset:
+(1) a grid of grouped box plots showing the distribution of every feature broken
+out by cultivar, (2) a lower-triangle 13x13 Pearson correlation heatmap with
+annotated coefficients, and (3) a pairplot of the five most discriminative
+features coloured by cultivar class.
+```
+
+### What Gets Generated
+
+Three figures are rendered inline in the notebook:
+
+**Grouped box plots** — a 4x4 grid showing the distribution of all 13 features split by cultivar class. Features like `flavanoids` and `proline` show clean separation between classes:
+
+![Grouped Box Plots by Cultivar](assets/grouped_box_plots.png)
+
+**Correlation heatmap** — a 13x13 annotated Pearson correlation matrix. Strong positive correlations appear between `flavanoids` and `total_phenols` (r ≈ 0.86):
+
+![Feature Correlation Matrix](assets/correlation_heatmap.png)
+
+**Pairplot** — scatter matrix of the 5 most discriminative features coloured by cultivar, showing near-linear separability:
+
+![Pairplot Key Features by Cultivar](assets/pairplot_key_features.png)
 
 <!-- ------------------------ -->
 ## Machine Learning Modeling
@@ -346,8 +436,6 @@ pca = PCA(n_components=2, random_state=42)
 X_pca = pca.fit_transform(X_full_scaled)
 var_explained = pca.explained_variance_ratio_ * 100
 ```
-
-![PCA Scores Panel Plot](assets/pca_scores_panel.png)
 
 The PCA scores plot has two panels:
 - **Left**: train samples (blue) and test samples (orange) overlaid in 2D PCA space — confirming the split is representative and not accidentally grouped in one region.
@@ -411,6 +499,37 @@ print(classification_report(y_test, y_pred, target_names=wine.target_names))
 
 The per-class precision, recall, and F1-score confirm which cultivar classes (if any) are harder for the model to distinguish.
 
+### Prompt
+
+Use this prompt with an AI coding assistant to reproduce this section:
+
+```
+Split the Wine dataset 80/20 with stratification and scale features using
+StandardScaler. Fit a PCA with 2 components and plot the scores coloured by
+(a) train/test split and (b) cultivar class in side-by-side scatter plots. Add
+ipywidgets IntSlider widgets for n_estimators (range 10-500, step 10) and
+max_depth (range 1-20), then train a RandomForestClassifier reading those slider
+values, report test-set accuracy, and run 5-fold cross-validation on the full
+dataset.
+```
+
+### What Gets Generated
+
+The PCA scores panel confirms the split is representative and that cultivars are linearly separable in 2D PCA space:
+
+![PCA Scores Panel Plot](assets/pca_scores_panel.png)
+
+The Random Forest training cell prints accuracy and cross-validation scores:
+
+```
+Training RandomForest with n_estimators=100, max_depth=5
+Test set accuracy: 0.9722 (97.2%)
+
+5-Fold Cross-Validation:
+  Scores: ['0.944', '0.944', '1.000', '1.000', '0.971']
+  Mean:   0.9722 +/- 0.0249
+```
+
 <!-- ------------------------ -->
 ## Post-ML Analysis
 
@@ -438,8 +557,6 @@ plt.tight_layout()
 plt.show()
 ```
 
-![Confusion Matrix](assets/confusion_matrix.png)
-
 Each cell shows the count of test samples with a given true label (row) and predicted label (column). Off-diagonal cells represent misclassifications.
 
 ### Feature Importances
@@ -456,8 +573,6 @@ ax.set_title('Random Forest Feature Importances', fontsize=13, fontweight='bold'
 plt.tight_layout()
 plt.show()
 ```
-
-![Random Forest Feature Importances](assets/feature_importances.png)
 
 Feature importances are measured by **mean decrease in impurity** across all trees. Typically, **proline**, **color_intensity**, and **flavanoids** rank highest for the Wine dataset — consistent with the EDA observations.
 
@@ -480,8 +595,6 @@ y_cv_score = cross_val_predict(
     X_scaled_all, y, cv=5, method='predict_proba'
 )
 ```
-
-![ROC Curves One-vs-Rest](assets/roc_curves.png)
 
 Two ROC panels are plotted side by side:
 - **Left** — AUC on the held-out test set (20% of data).
@@ -506,9 +619,41 @@ train_mean = train_scores.mean(axis=1)
 val_mean   = val_scores.mean(axis=1)
 ```
 
-![Learning Curve](assets/learning_curve.png)
-
 The learning curve plots training accuracy and CV accuracy as a function of training set size. A small gap between the two curves at the rightmost point indicates the model is not overfitting and is unlikely to benefit significantly from collecting more data.
+
+### Prompt
+
+Use this prompt with an AI coding assistant to reproduce this section:
+
+```
+After training a Random Forest on the Wine dataset, produce four evaluation
+plots: (1) a seaborn heatmap confusion matrix for the test set, (2) a horizontal
+bar chart of feature importances sorted ascending, (3) one-vs-rest ROC curves
+with AUC scores for all three cultivar classes on a single axes, and (4) a
+learning curve showing mean training and cross-validation accuracy with +/-1 std
+shading as training set size increases. The learning curve title should reflect
+the current n_estimators and max_depth values from the ipywidgets sliders.
+```
+
+### What Gets Generated
+
+Four diagnostic plots are rendered inline:
+
+**Confusion matrix** — true vs predicted labels on the test set. Diagonal cells are correctly classified samples; off-diagonal cells are misclassifications:
+
+![Confusion Matrix](assets/confusion_matrix.png)
+
+**Feature importances** — horizontal bar chart ranked by mean decrease in impurity. `proline`, `color_intensity`, and `flavanoids` are the top predictors:
+
+![Random Forest Feature Importances](assets/feature_importances.png)
+
+**ROC curves** — one-vs-rest AUC side by side for the test set and 5-fold CV out-of-fold predictions. All three cultivars achieve AUC > 0.99:
+
+![ROC Curves One-vs-Rest](assets/roc_curves.png)
+
+**Learning curve** — training and CV accuracy vs dataset size with ±1 std shading. The narrow gap at the right indicates no significant overfitting:
+
+![Learning Curve](assets/learning_curve.png)
 
 <!-- ------------------------ -->
 ## Summary and Next Steps
