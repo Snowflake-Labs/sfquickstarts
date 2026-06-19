@@ -62,9 +62,8 @@ The notebook file is available as a `.ipynb` in the [Snowflake Demo Notebooks](h
 
 ### Step 1 — Download the notebook
 
-1. Open the [Snowflake Demo Notebooks repo](https://github.com/Snowflake-Labs/snowflake-demo-notebooks) on GitHub.
-2. Navigate to the `getting-started-with-snowflake-notebooks-eda-ml-pipeline` folder.
-3. Click the `.ipynb` file, then click **Download raw file** (top-right icon).
+1. Click [getting-started-with-snowflake-notebooks-eda-ml-pipeline](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/tree/main/getting-started-with-snowflake-notebooks-eda-ml-pipeline) to open the folder directly.
+2. Click the `.ipynb` file, then click **Download raw file** (top-right icon).
 
 ### Step 2 — Import into Snowsight
 
