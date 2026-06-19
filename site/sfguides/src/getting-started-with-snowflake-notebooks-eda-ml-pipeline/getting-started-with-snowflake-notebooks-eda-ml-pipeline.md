@@ -89,6 +89,16 @@ This notebook uses packages such as `scikit-learn`, `seaborn`, and `ipywidgets` 
 
 The first section loads the scikit-learn Wine dataset into a pandas DataFrame, connects to Snowflake, and prepares a SQL-safe copy of the DataFrame called `df_snow`. SQL cells in the notebook reference `df_snow` directly via Jinja templating (`{{df_snow}}`), so no explicit table upload is needed.
 
+### Prompt
+
+Use this prompt with an AI coding assistant to extend this section:
+
+```
+Load the scikit-learn Wine dataset into a pandas DataFrame. Sanitise column names
+by replacing / with _ so they are safe to use in SQL. Print the dataset shape,
+feature names, and class names.
+```
+
 ### Load the Wine Dataset
 
 ```python
@@ -144,16 +154,6 @@ for row in result:
 
 The notebook does **not** explicitly write `df_snow` to `WINE_TMP` in a separate cell; instead, SQL cells reference the DataFrame directly via Jinja templating (`{{df_snow}}`), which Snowflake Notebooks evaluates at query time.
 
-### Prompt
-
-Use this prompt with an AI coding assistant to extend this section:
-
-```
-Load the scikit-learn Wine dataset into a pandas DataFrame. Sanitise column names
-by replacing / with _ so they are safe to use in SQL. Print the dataset shape,
-feature names, and class names.
-```
-
 ### What Gets Generated
 
 Running this section prints the dataset dimensions, feature list, class names, and Snowflake session details:
@@ -187,6 +187,21 @@ SQL cells use the `%%sql` cell magic. Adding `-r <variable_name>` captures the r
 ```
 %%sql -r df_result
 SELECT ... FROM {{df_snow}}
+```
+
+### Prompt
+
+Use this prompt with an AI coding assistant to extend this section with more advanced SQL patterns:
+
+```
+Using a Snowpark session in a Snowflake Notebook, write four SQL cells that
+reference a pandas DataFrame via Jinja templating ({{df_snow}}): (1) count
+samples per cultivar with percentage of total using a window function, (2)
+compute a five-number summary (min, Q1, median, Q3, max) of alcohol content
+grouped by cultivar using PERCENTILE_CONT, (3) rank the top 3 samples per
+cultivар by flavanoid content using RANK() OVER (PARTITION BY), and (4) compute
+per-feature average by cultivar using a single-scan UNPIVOT + PIVOT instead of
+multiple UNION ALL subqueries.
 ```
 
 ### Class Distribution
@@ -251,21 +266,6 @@ ORDER BY cultivar_name
 
 This reveals how the three cultivars differ on the features most commonly used in Wine classification tasks.
 
-### Prompt
-
-Use this prompt with an AI coding assistant to extend this section with more advanced SQL patterns:
-
-```
-Using a Snowpark session in a Snowflake Notebook, write four SQL cells that
-reference a pandas DataFrame via Jinja templating ({{df_snow}}): (1) count
-samples per cultivar with percentage of total using a window function, (2)
-compute a five-number summary (min, Q1, median, Q3, max) of alcohol content
-grouped by cultivar using PERCENTILE_CONT, (3) rank the top 3 samples per
-cultivар by flavanoid content using RANK() OVER (PARTITION BY), and (4) compute
-per-feature average by cultivar using a single-scan UNPIVOT + PIVOT instead of
-multiple UNION ALL subqueries.
-```
-
 ### What Gets Generated
 
 Each SQL cell returns a result table rendered inline in the notebook. For example, the class distribution query returns:
@@ -290,6 +290,18 @@ And the alcohol stats query returns:
 ## EDA with Python
 
 Python-based EDA focuses on the *shape* of the data — how features are distributed across cultivar classes and how strongly they correlate with each other.
+
+### Prompt
+
+Use this prompt with an AI coding assistant to extend this section:
+
+```
+Using matplotlib and seaborn, produce three visualisations for the Wine dataset:
+(1) a grid of grouped box plots showing the distribution of every feature broken
+out by cultivar, (2) a lower-triangle 13x13 Pearson correlation heatmap with
+annotated coefficients, and (3) a pairplot of the five most discriminative
+features coloured by cultivar class.
+```
 
 ### Grouped Box Plots
 
@@ -376,18 +388,6 @@ plt.show()
 
 The pairplot of the 5 most discriminative features shows near-linear separability between cultivar classes in 2D projections — a strong signal that a linear or tree-based classifier should achieve high accuracy.
 
-### Prompt
-
-Use this prompt with an AI coding assistant to extend this section:
-
-```
-Using matplotlib and seaborn, produce three visualisations for the Wine dataset:
-(1) a grid of grouped box plots showing the distribution of every feature broken
-out by cultivar, (2) a lower-triangle 13x13 Pearson correlation heatmap with
-annotated coefficients, and (3) a pairplot of the five most discriminative
-features coloured by cultivar class.
-```
-
 ### What Gets Generated
 
 Three figures are rendered inline in the notebook:
@@ -408,6 +408,20 @@ Three figures are rendered inline in the notebook:
 ## Machine Learning Modeling
 
 This section preprocesses the data, visualizes the train/test split in PCA space, exposes interactive hyperparameter sliders, trains a Random Forest, and evaluates it with cross-validation.
+
+### Prompt
+
+Use this prompt with an AI coding assistant to extend this section:
+
+```
+Split the Wine dataset 80/20 with stratification and scale features using
+StandardScaler. Fit a PCA with 2 components and plot the scores coloured by
+(a) train/test split and (b) cultivar class in side-by-side scatter plots. Add
+ipywidgets IntSlider widgets for n_estimators (range 10-500, step 10) and
+max_depth (range 1-20), then train a RandomForestClassifier reading those slider
+values, report test-set accuracy, and run 5-fold cross-validation on the full
+dataset.
+```
 
 ### Preprocessing: Train/Test Split and Scaling
 
@@ -507,20 +521,6 @@ print(classification_report(y_test, y_pred, target_names=wine.target_names))
 
 The per-class precision, recall, and F1-score confirm which cultivar classes (if any) are harder for the model to distinguish.
 
-### Prompt
-
-Use this prompt with an AI coding assistant to extend this section:
-
-```
-Split the Wine dataset 80/20 with stratification and scale features using
-StandardScaler. Fit a PCA with 2 components and plot the scores coloured by
-(a) train/test split and (b) cultivar class in side-by-side scatter plots. Add
-ipywidgets IntSlider widgets for n_estimators (range 10-500, step 10) and
-max_depth (range 1-20), then train a RandomForestClassifier reading those slider
-values, report test-set accuracy, and run 5-fold cross-validation on the full
-dataset.
-```
-
 ### What Gets Generated
 
 The PCA scores panel confirms the split is representative and that cultivars are linearly separable in 2D PCA space:
@@ -542,6 +542,20 @@ Test set accuracy: 0.9722 (97.2%)
 ## Post-ML Analysis
 
 Post-training diagnostics help you understand where the model makes mistakes, which features drive its predictions, how well it separates classes across all decision thresholds, and whether additional training data would improve performance.
+
+### Prompt
+
+Use this prompt with an AI coding assistant to extend this section:
+
+```
+After training a Random Forest on the Wine dataset, produce four evaluation
+plots: (1) a seaborn heatmap confusion matrix for the test set, (2) a horizontal
+bar chart of feature importances sorted ascending, (3) one-vs-rest ROC curves
+with AUC scores for all three cultivar classes on a single axes, and (4) a
+learning curve showing mean training and cross-validation accuracy with +/-1 std
+shading as training set size increases. The learning curve title should reflect
+the current n_estimators and max_depth values from the ipywidgets sliders.
+```
 
 ### Confusion Matrix
 
@@ -628,20 +642,6 @@ val_mean   = val_scores.mean(axis=1)
 ```
 
 The learning curve plots training accuracy and CV accuracy as a function of training set size. A small gap between the two curves at the rightmost point indicates the model is not overfitting and is unlikely to benefit significantly from collecting more data.
-
-### Prompt
-
-Use this prompt with an AI coding assistant to extend this section:
-
-```
-After training a Random Forest on the Wine dataset, produce four evaluation
-plots: (1) a seaborn heatmap confusion matrix for the test set, (2) a horizontal
-bar chart of feature importances sorted ascending, (3) one-vs-rest ROC curves
-with AUC scores for all three cultivar classes on a single axes, and (4) a
-learning curve showing mean training and cross-validation accuracy with +/-1 std
-shading as training set size increases. The learning curve title should reflect
-the current n_estimators and max_depth values from the ipywidgets sliders.
-```
 
 ### What Gets Generated
 
