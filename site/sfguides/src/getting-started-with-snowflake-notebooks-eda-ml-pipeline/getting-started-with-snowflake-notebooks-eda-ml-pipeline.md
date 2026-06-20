@@ -12,7 +12,7 @@ tags: Getting Started, Data Science, Machine Learning, Snowflake Notebooks, EDA,
 <!-- ------------------------ -->
 ## Overview
 
-As a data scientist, setting up a local environment for each new project — installing packages, configuring database connections, and managing dependencies — takes time away from what matters: exploring data and building models. [Snowflake Notebooks](https://docs.snowflake.com/user-guide/ui-snowsight/notebooks) removes that friction by providing a cell-based, interactive environment for Python and SQL that runs directly inside Snowflake. You get access to your data, scalable compute, and a curated package library without leaving the platform.
+As a data scientist, setting up a local environment for each new project (*i.e.* installing packages, configuring database connections, and managing dependencies) takes time away from what matters: exploring data and building models. [Snowflake Notebooks](https://docs.snowflake.com/user-guide/ui-snowsight/notebooks) removes that friction by providing a cell-based, interactive environment for Python and SQL that runs directly inside Snowflake. You get access to your data, scalable compute, and a curated package library without leaving the platform.
 
 This guide walks you through a realistic data science workflow using the [Wine dataset](https://scikit-learn.org/stable/datasets/toy_dataset.html#wine-recognition-dataset) — from loading data and writing SQL queries to producing visualizations and training a classification model, all inside a single Snowflake Notebook.
 
