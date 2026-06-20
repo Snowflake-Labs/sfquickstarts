@@ -12,7 +12,9 @@ tags: Getting Started, Data Science, Machine Learning, Snowflake Notebooks, EDA,
 <!-- ------------------------ -->
 ## Overview
 
-[Snowflake Notebooks](https://docs.snowflake.com/user-guide/ui-snowsight/notebooks) offer an interactive, cell-based programming environment for Python and SQL. In this guide you will build a complete end-to-end classification pipeline on the [Wine dataset](https://scikit-learn.org/stable/datasets/toy_dataset.html#wine-recognition-dataset) entirely inside Snowflake Notebooks — combining SQL-based exploration, Python visualizations, and a scikit-learn Random Forest model.
+As a data scientist, setting up a local environment for each new project — installing packages, configuring database connections, and managing dependencies — takes time away from what matters: exploring data and building models. [Snowflake Notebooks](https://docs.snowflake.com/user-guide/ui-snowsight/notebooks) removes that friction by providing a cell-based, interactive environment for Python and SQL that runs directly inside Snowflake. You get access to your data, scalable compute, and a curated package library without leaving the platform.
+
+This guide walks you through a realistic data science workflow using the [Wine dataset](https://scikit-learn.org/stable/datasets/toy_dataset.html#wine-recognition-dataset) — from loading data and writing SQL queries to producing visualizations and training a classification model, all inside a single Snowflake Notebook.
 
 The pipeline covers five sequential stages:
 
@@ -23,8 +25,6 @@ The pipeline covers five sequential stages:
 | 3 | **EDA with Python** | Grouped box plots, 13x13 correlation heatmap, pairplot |
 | 4 | **Machine Learning Modeling** | Train/test split, PCA scores, Random Forest + cross-validation |
 | 5 | **Post-ML Analysis** | Confusion matrix, feature importances, ROC curves, learning curve |
-
-**Runtime:** Container Runtime (CPU)
 
 ### Prerequisites
 
