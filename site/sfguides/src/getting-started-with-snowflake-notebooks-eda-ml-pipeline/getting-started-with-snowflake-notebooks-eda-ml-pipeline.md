@@ -56,6 +56,7 @@ An end-to-end classification pipeline on the Wine dataset:
 - Post-ML diagnostic charts: confusion matrix, feature importances, ROC curves, and learning curve.
 
 ![EDA & ML Pipeline Workflow](assets/workflow-diagram.png)
+*EDA & ML Pipeline in Snowflake Notebooks — Wine dataset classification workflow*
 
 <!-- ------------------------ -->
 ## Import the Notebook into Snowflake
