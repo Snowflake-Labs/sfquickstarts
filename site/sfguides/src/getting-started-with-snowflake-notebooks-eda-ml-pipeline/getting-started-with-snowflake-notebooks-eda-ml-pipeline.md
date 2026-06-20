@@ -55,6 +55,8 @@ An end-to-end classification pipeline on the Wine dataset:
 - A trained `RandomForestClassifier` with interactive hyperparameter sliders, evaluated via 5-fold cross-validation.
 - Post-ML diagnostic charts: confusion matrix, feature importances, ROC curves, and learning curve.
 
+![EDA & ML Pipeline Workflow](assets/workflow-diagram.png)
+
 <!-- ------------------------ -->
 ## Import the Notebook into Snowflake
 
