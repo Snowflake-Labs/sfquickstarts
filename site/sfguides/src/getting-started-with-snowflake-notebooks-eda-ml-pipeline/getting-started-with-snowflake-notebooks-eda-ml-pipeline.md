@@ -93,7 +93,7 @@ This notebook uses packages such as `scikit-learn`, `seaborn`, and `ipywidgets` 
 
 The first section loads the scikit-learn Wine dataset into a pandas DataFrame, connects to Snowflake, and prepares a SQL-safe copy of the DataFrame called `df_snow`. SQL cells in the notebook reference `df_snow` directly via Jinja templating (`{{df_snow}}`), so no explicit table upload is needed.
 
-Prompt
+### Prompt
 
 Use this prompt with an AI coding assistant to extend this section:
 
