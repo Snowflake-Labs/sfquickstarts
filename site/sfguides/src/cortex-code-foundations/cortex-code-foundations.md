@@ -201,29 +201,15 @@ curl -LsS https://ai.snowflake.com/static/cc-scripts/install.sh | sh
 
 When prompted to add `cortex` to your PATH, respond with **y**.
 
-If the `cortex` command is not recognized after installation, reload your shell:
-
-```bash
-source ~/.bashrc
-```
-
 ### Verify Installation
 
 ```bash
 cortex --version
 ```
 
-### Configure Your Snowflake Connection
-
-CoCo uses the same connection files as SnowCLI, located at:
-
-```
-~/.snowflake/config.toml
-```
-
 ### Create/open the Config File
 
-Run the following in your Codespaces terminal (`open -e` is macOS-only; use `nano` instead):
+Run the following in your Codespaces terminal:
 
 ```bash
 mkdir -p ~/.snowflake
@@ -240,11 +226,20 @@ default_connection_name = "DEMO"
 [connections.DEMO]
 account   = "<YOUR_ACCOUNT>"      # e.g. MYORG-MYACCOUNT
 user      = "<YOUR_USERNAME>"
-password  = "<YOUR_PAT>"
+password  = "<YOUR_PASSWORD>"
 role      = "<YOUR_ROLE>"
 ```
 
-Save with `Ctrl+O`, `Enter`, then exit with `Ctrl+X`.
+Save with `Ctrl+O`, `Enter`, then exit with `Ctrl+X`. To confirm the file saved correctly, re-run the following script and you should see what you previously saved.
+
+```bash
+mkdir -p ~/.snowflake
+touch ~/.snowflake/config.toml
+chmod 600 ~/.snowflake/config.toml
+nano ~/.snowflake/config.toml
+```
+
+![Config file in CodeSpaces](assets/config_codespaces.png)
 
 ![Log In and Find Settings](assets/snowsight_login_settings.png)
 
@@ -446,6 +441,22 @@ Download the three CSV files prepared by the Finance Transformation PMO in the `
 - `sample_business_requirements_business_rules.csv` — BR-001 through BR-010 covering status normalization, dedup logic, currency handling, and open questions
 
 Download all three before starting Demo 2.
+
+### In GitHub Codespaces
+
+If you are using GitHub Codespaces, you cannot download files to a local device from Codespaces. Instead, pull the CSV files directly into your working directory using the Codespaces terminal.
+
+**Before launching CoCo** (or exit CoCo first with `/quit`), run the following in the Codespaces terminal:
+
+```bash
+BASE="https://raw.githubusercontent.com/Snowflake-Labs/sfquickstarts/master/site/sfguides/src/cortex-code-foundations/assets"
+
+curl -O "$BASE/sample_business_requirements_source_onboarding.csv"
+curl -O "$BASE/sample_business_requirements_column_mapping.csv"
+curl -O "$BASE/sample_business_requirements_business_rules.csv"
+```
+
+Once the files are downloaded, relaunch CoCo (`cortex -c DEMO`) and continue with Step 2.1. CoCo will be able to read the CSV files from the current directory.
 
 ### Step 2.1 – Read the Local PRD
 
