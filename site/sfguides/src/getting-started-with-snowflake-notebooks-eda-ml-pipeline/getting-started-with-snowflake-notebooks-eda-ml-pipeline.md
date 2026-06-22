@@ -193,7 +193,7 @@ SQL cells use the `%%sql` cell magic. Adding `-r <variable_name>` captures the r
 SELECT ... FROM {{df_snow}}
 ```
 
-Prompt
+### Prompt
 
 Use this prompt with an AI coding assistant to extend this section with more advanced SQL patterns:
 
@@ -295,7 +295,7 @@ And the alcohol stats query returns:
 
 Python-based EDA focuses on the *shape* of the data — how features are distributed across cultivar classes and how strongly they correlate with each other.
 
-Prompt
+### Prompt
 
 Use this prompt with an AI coding assistant to extend this section:
 
@@ -413,7 +413,7 @@ Three figures are rendered inline in the notebook:
 
 This section preprocesses the data, visualizes the train/test split in PCA space, exposes interactive hyperparameter sliders, trains a Random Forest, and evaluates it with cross-validation.
 
-Prompt
+### Prompt
 
 Use this prompt with an AI coding assistant to extend this section:
 
@@ -547,7 +547,7 @@ Test set accuracy: 0.9722 (97.2%)
 
 Post-training diagnostics help you understand where the model makes mistakes, which features drive its predictions, how well it separates classes across all decision thresholds, and whether additional training data would improve performance.
 
-Prompt
+### Prompt
 
 Use this prompt with an AI coding assistant to extend this section:
 
