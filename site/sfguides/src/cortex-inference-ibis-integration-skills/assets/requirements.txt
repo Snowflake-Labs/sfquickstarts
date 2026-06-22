@@ -1,0 +1,10 @@
+# cortex_ibis dependencies
+ibis-framework[snowflake]>=9.0.0
+pandas>=2.0.0
+pyarrow>=14.0.0
+turbopuffer>=2.4.0
+# cortex_rest.py dependencies
+httpx>=0.28.0
+PyJWT>=2.8.0
+cryptography>=42.0.0
+rich>=13.7.0

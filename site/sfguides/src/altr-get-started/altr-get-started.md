@@ -1,9 +1,9 @@
 
-author: jeff ellerbee
+author: Parker Cummings
 id: altr-get-started
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/snowflake-feature/compliance-security-discovery-governance
 language: en
-summary: Configure ALTR for Snowflake data governance with tokenization, dynamic masking, and role-based access control policies.
+summary: Configure ALTR for Snowflake data governance with dynamic masking and role-based access control policies.
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
@@ -22,23 +22,24 @@ This Quick Start Guide is intended for Data Owners and Data Stewards or any othe
 - You need to be, or have access to, an ACCOUNTADMIN for your Snowflake instance. 
 
 
-### What You’ll Learn 
-- You will learn how to use ALTR to secure sensitive data in Snowflake with role based masking policies.
+### What You'll Learn 
+- How to use ALTR to discover sensitive data in Snowflake using automated classification
+- How to secure that data with column-level masking policies enforced by role
 
-### What You’ll Build 
-- A role based data access policy for Snowflake that is automatically enforced by ALTR.
+### What You'll Build 
+- A role-based data access policy for a Snowflake column that is automatically enforced by ALTR.
 
 <!-- 2 ------------------------ -->
 ## Create a sample database
 
 > 
 >**In This Step:** 
-We are creating a sample database by copying a small amount of data from Snowflakes shared *SNOWFLAKE_SAMPLE_DATA* database. We will use this sample database in the rest of this Quickstart. 
+We are creating a sample database by copying a small amount of data from Snowflake's shared *SNOWFLAKE_SAMPLE_DATA* database. We will use this sample database for the rest of this Quickstart. 
 >
 
 ### Create a sample database
 
-- To create the sample database run the following SQL in a SQL worksheet: 
+- To create the sample database, run the following SQL in a SQL worksheet: 
 
 ```sql
 -- Use ACCOUNTADMIN role
@@ -48,9 +49,9 @@ USE ROLE ACCOUNTADMIN;
 CREATE DATABASE ALTR_GETTING_STARTED_DB;
 
 -- Set DB Context
-USE DATABASE  ALTR_GETTING_STARTED_DB;
+USE DATABASE ALTR_GETTING_STARTED_DB;
 
--- Populate Sample database from Snowflakes shared sample database. 
+-- Populate sample database from Snowflake's shared sample database. 
 -- Usually named: SNOWFLAKE_SAMPLE_DATA
 CREATE TABLE SAMPLE_CUSTOMER AS 
     SELECT 
@@ -63,196 +64,249 @@ CREATE TABLE SAMPLE_CUSTOMER AS
 ```
 
 > 
-> **Note:** If you can't get access to Snowflake's built in sample data and you want to use your own data go for it! To match this guide we recommend creating a separate database using the name ALTR_GETTING_STARTED_DB.  Just populate it with fields from your own data set.  Be sure to include some columns that contain PII like email addresses, names, addresses, SSN's etc. 
+> **Note:** If you can't access Snowflake's built-in sample data and want to use your own data, go for it! To match this guide we recommend creating a separate database named ALTR_GETTING_STARTED_DB. Populate it with fields from your own dataset — be sure to include columns with PII like email addresses, names, addresses, SSNs, etc.
 >
+
 <!-- 3 ------------------------ -->
 ## Setup a new ALTR account
 
 > 
 >**In This Step:** 
->We will create the ALTR account and connect it to Snowflake, all from within your browser. ALTR is a SaaS solution that integrates directly with Snowflake. There is no installation required on your premises. The process starts starts in Snowflake's Partner Connect portal
+>We will create an ALTR account and connect it to Snowflake, all from within your browser. ALTR is a SaaS solution that integrates directly with Snowflake — no installation required on your premises. The process starts in Snowflake's Partner Connect portal.
 >
 
 > 
-> **NOTE:** If you already have an ALTR account and want to use it instead of creating a new one then skip to Step 4 ***ALTR Setup for existing accounts*** 
+> **NOTE:** If you already have an ALTR account and want to use it instead of creating a new one, skip to Step 4 ***ALTR Setup for existing accounts*** 
 >
 
-### Create a new ALTR Account
+### Connect to ALTR via Partner Connect
 
-- Log in to your Snowflake instance and go to the Partner Connect page. If you need help finding Partner connect open this link in a new tab: [Connecting with a Snowflake Partner](https://docs.snowflake.com/en/user-guide/ecosystem-partner-connect#connecting-with-a-snowflake-partner).
-- Type "ALTR" in the search bar and then click on the "ALTR" card.
+- Log in to your Snowflake instance and navigate to **Data Products → Partner Connect**. If you need help finding it, see: [Connecting with a Snowflake Partner](https://docs.snowflake.com/en/user-guide/ecosystem-partner-connect#connecting-with-a-snowflake-partner).
+- Type "ALTR" in the search bar and click on the ALTR card
+- Review the objects that will be created in your Snowflake account (`PC_ALTR_DB`, `PC_ALTR_WH`, `PC_ALTR_USER`, `PC_ALTR_ROLE`) and click **Connect**
+- When you see the confirmation below, click **Activate** — this takes you to the ALTR portal to finish setup
+
 ![ALTR Account Created](assets/partner_account_created.png)
-- Follow the prompts. When you see the screen above click the "Activate" button. This will take you out of Snowflake Partner connect and into the ALTR portal *Password Setting Screen*
 
-### Set your ALTR Password and run ALTR Setup Wizard
+### Set your ALTR Password
 ![ALTR Setup Screen](assets/altr_setup_set_pw.png)
 - Enter your password
 - Accept Terms and Conditions
-- Click "Set Password" Button
-- Follow the prompts in the ALTR Setup Wizard (there are multiple steps). 
+- Click **Set Password**
+
+### Complete the ALTR Setup Wizard
+
+The wizard will walk you through the remaining setup. The key steps are:
+
+1. **Account Details** — enter an Organization Name for your ALTR account
+2. **Configure ALTR for Snowflake** — choose **Express Configuration** (recommended). Copy the SQL snippet provided and run it in a Snowflake worksheet as `ACCOUNTADMIN`:
+```sql
+GRANT ROLE ACCOUNTADMIN TO USER "PC_ALTR_USER";
+```
+Then click **Test Configuration** to verify it worked.
+
+3. **Connect Databases** — select `ALTR_GETTING_STARTED_DB` from the dropdown and complete the wizard
 
 > 
-> **NOTE:** When you get to the **choose a database to connect** prompt, you should see *ALTR_GETTING_STARTED_DB* in the list.  Choose it and then wait for the wizard to complete.
+> **NOTE:** After onboarding is complete you can revoke the `ACCOUNTADMIN` grant from `PC_ALTR_USER` if desired. Express Configuration is temporary by design.
 >
+
 <!-- 4------------------------ -->
 ## ALTR Setup for existing accounts
 
 > 
 >**In This Step**
->Only perform this step if you plan to use an ALTR account that existed before running this quick start.  If you just created a new ALTR account in the previous step then skip to step 5 **Build Data Classification Report** 
+>Only perform this step if you plan to use an ALTR account that existed before running this Quickstart. If you just created a new ALTR account in the previous step, skip to Step 5 **Run Data Classification**.
 >
 
-### Log in to Snowflake and run the ALTR Stored Procedure
-- Log in to the Snowflake instance that has already been associated with an ALTR account
-- Create a new worksheet
-- The stored procedure grants ALTR access to the newly created sample database
-- Call the ALTR setup stored procedure as an ACCOUNTADMIN as follows
+### Grant ALTR access to the sample database
+
+- Log in to the Snowflake instance associated with your existing ALTR account
+- Run the following stored procedure as `ACCOUNTADMIN` in a new worksheet:
 ```sql
-  CALL "PC_ALTR_DB"."PUBLIC"."SETUP_ALTR_SERVICE_ACCOUNT"(TRUE);
+CALL "PC_ALTR_DB"."PUBLIC"."SETUP_ALTR_SERVICE_ACCOUNT"(TRUE);
 ```
 
 > 
-> **NOTE**: If the stored procedure runs but you get an error as a result then try calling it again with the parameter set to "FALSE" instead of TRUE as follows:
+> **NOTE**: If the stored procedure returns an error, try calling it again with `FALSE`:
 >
 ```sql
-  CALL "PC_ALTR_DB"."PUBLIC"."SETUP_ALTR_SERVICE_ACCOUNT"(FALSE);
+CALL "PC_ALTR_DB"."PUBLIC"."SETUP_ALTR_SERVICE_ACCOUNT"(FALSE);
 ```
-### Connect ALTR to Sample Database
+
+### Connect ALTR to the Sample Database
 
 > 
-> **NOTE**: If your current ALTR account is a free tier account you are limited to a single connected database.  You will need to disconnect the existing database from ALTR first in order to connect this quickstart's sample database.  Or, you can use the database you already have connected, just remember the column names may not match what is in this guide. 
+> **NOTE**: Free tier ALTR accounts are limited to a single connected database. Disconnect your existing database before connecting this one, or use the database you already have connected (column names may differ from this guide).
+>
 
 - [Log in to your ALTR portal](https://altrnet.live.altr.com/api/auth/organization_login?uiredirect=true)
-- Navigate to "Data Configuration -> Data Sources" 
-- Click on the "Add New" button
-- Fill in the required fields:
-  - Data Source Name: A friendly name for the datasource, we recommend using the actual database name
-  - Snowflake Host Name: url for snowflake account where this database resides.
-  - Service Account ID: 'PC_ALTR_USER' if ALTR account created via Snowflake Partner Connect
-  - Snowflake Database Name: Name given to the sample database (ALTR_GETTING_STARTED_DB)
-
-> 
-> **NOTE:** If your ALTR account was not created via Snowflake Partner Connect try setting ALTR_SERVICE_USER as the Service Account ID.  One way to identify the Service Account ID: is to look at what value is set for other databases that are already connected to ALTR.  Click on a database that is already connected in the Data Sources page and then expand the "Reconfigure Connection" drop down in the detail pane to see the name of the Service Account ID field.
+- Navigate to **Data Configuration → Data Sources**
+- Click **Add Data Source**, select **Snowflake**, and fill in:
+  - **Display Name:** `ALTR_GETTING_STARTED_DB`
+  - **Service User:** `PC_ALTR_USER`
+  - **Database Name:** `ALTR_GETTING_STARTED_DB`
+- Click **Next**, then **Connect Data Source**
 >
 
 <!-- ------------------------ -->
-## Build Data Classification Report
+## Run Data Classification
 
 > 
 >**In This Step**
->The preceding steps are one time setup required for ALTR.  Now that those tasks are complete we can start building our data access policy. The first task is to identify what data in our database contains sensitive information, what most people call *classification*. So in this step we will have ALTR generate a classification report sending a sample of data to Google DLP service to get classificaton results. 
+>ALTR can scan your database and automatically identify columns that contain sensitive data. We call this *classification*. In this step we will trigger a Google DLP classification scan, which samples your data and sends it to Google's DLP API to detect information types like email addresses, names, and phone numbers.
 >
 
-### Start the data classification job
-- In the ALTR portal navigate to Data Configuration -> Data Sources
-- Open the settings panel for the *ALTR_GETTING_STARTED_DB* database by clicking on it in the list of databases
-- Scroll down to *Data usage and classification* section of the settings panel and check the **Tag data by classification** checkbox
-![Classify Database](assets/classify_database_small.png)
-- Click the *Tag Type* drop down and choose *Google DLP Classification* 
-- Click the *Update Button* to save the settings.  ALTR will start the classificaton process.  You will receive an email when the process is completed. Wait until the classificaton job is complete before moving on.  It should take only a few minutes.
+### Start a classification scan
 
-### View the classification report
-- Navigate to Data Configuration -> Data Management page.
-- Click on the *Classification Report* tab.
-![Classification Report](assets/nav_to_class_rpt.png)
+- In the ALTR portal, navigate to **Data Classification → Classification Reports**
+- Click the **Classify Data** button
+- In the modal that appears, select your **Connection Type** (Snowflake) and **Data Source** (ALTR_GETTING_STARTED_DB), then click **Next**
+
+![Classify Data - Select Data Source](assets/classify_select_datasource.png)
+
+- On the next screen, set **Classification Method** to **Google DLP Classification**
+- **Processing Location** is always **ALTR Hosted** for GDLP scans
+- Click **Next** to start the scan
+
+![Classify Data - Configure Scan](assets/classify_configure_scan.png)
+
+> 
+> **NOTE:** ALTR does not send your raw data to Google DLP. Before submission, ALTR scrambles the sample by randomly mixing values across rows and columns, so individual records cannot be reconstructed.
+>
+
+ALTR will notify you by email when the scan is complete. The scan typically takes only a few minutes. Wait for it to finish before moving on.
+
+### View the classification results
+
+- Once the scan completes, click into the report from **Data Classification → Classification Reports**
+
+![Classification Results](assets/classify_results.png)
 
 > 
 >**Classification Report Explainer:** 
->- The classification job tags columns with the information type it believes are contained in the data column. We call these *classifier tags* 
->- A single column can be tagged with multiple *classifier tags* or none.  
->- The bar chart on the left lists the different types of *classifier tags*, and the percentage of columns in the database that have the tag.
->- You can click on a single *classifier tag's* bar on the left and the chart on the right will update to list all the columns that have that *classifier tag*.
->- Clicking the *Add Data* button next to a column will start ALTR *following* the column.  That means ALTR gets placed in the "Query Stream" of any query that references that column (Including Views)
->- [Get more information on data classification in ALTR](https://docs.altr.com/explore-altr-features/classification)
+>- The left panel lists every *classifier tag* (information type) detected, with a count of how many columns matched.
+>- Clicking a classifier tag filters the right panel to show the specific Schema, Table, Column, and confidence level for each match.
+>- [Get more information on data classification in ALTR](https://docs.altr.com/features/data-classification/)
+>
 
-### Tell ALTR to start "Following" the C_EMAIL_ADDRESS column 
-- Choose *EMAIL_ADDRESS* from the dropdown on the right hand side of the classification report. 
-![Classification Report](assets/class_add_email.png)
-- Click the *Add Data* button for the *C_EMAIL_ADDRESS* column to have ALTR follow this column. 
+Take note of the **EMAIL_ADDRESS** classifier — in the next step we will connect that column to ALTR so we can apply a masking policy to it.
 
 <!-- ------------------------ -->
-## Define Role Based Data Access Policy
+## Connect a Column to ALTR
 
 > 
 >**In This Step**
->We will build role based data access policies for EMAIL addresses from within the ALTR portal using ALTR *Locks*.  
+>Before ALTR can enforce a masking policy on a column, that column must be *connected* to ALTR. Connecting a column places ALTR in the query stream for any query that references it.
 >
 
-### Create a policy defining what Snowflake roles will view email addresses unmasked
-- Navigate to Data Policy -> Locks page in ALTR portal
-- Click the *Add New* button and fill in the form as follows:
-  - For the lock name enter *Email Unmasked*
-  - Click the User Groups dropdown and check *SECURITYADMIN*
-  ![Classification Report](assets/add_new_lock.png)
-  - Under the Policy Section there should be an empty tag/column form.  Fill it in as follows:
-    - Click the *Tag* tab (not the *Column* tab)
-    - Select *EMAIL_ADDRESS* from the Tag dropdown
-    - Select *No Mask* from the Masking Policy dropdown
-- Click the *Update Lock* button to save this lock. 
-![Classification Report](assets/save_lock.png)
+### Connect the C_EMAIL_ADDRESS column
+
+- Navigate to **Data Configuration → Data Management**
+- Click the **Columns** tab
+- Click the **Add Column** button
+- Fill in the form as follows:
+  - **Data Source:** ALTR_GETTING_STARTED_DB
+  - **Schema:** PUBLIC
+  - **Table:** SAMPLE_CUSTOMER
+  - **Column:** C_EMAIL_ADDRESS
+  - **Name:** EMAIL_ADDRESS
+- Click **Connect Column**
+
+![Connect Column](assets/connect_column.png)
 
 > 
->**Lock Explainer**
->- Congrats you just defined your first policy!
->- This lock defines the policy that will display *EMAIL_ADDRESS* values without any masking so long as the user querying snowflake is using the *SECURITYADMIN* role.  
->- This lock will not be applied to any other role because only *SECURITYADMIN* is selected in it.
->- Any user querying for *EMAIL_ADDRESS* under any other snowflake role will get the masking type configured for locks applicable to that role.
->- If a user is operating under a role where there is no applicable Lock then that user will get null's back for *EMAIL_ADDRESS*
->- [Get more information on using ALTR Locks](https://docs.altr.com/explore-altr-features/locks)
+> **Note:** To connect a *tag* instead of an individual column, the process is identical — navigate to the **Tags** tab and click **Add Tag**. Tag-based connections allow a single policy to apply to all columns sharing a tag, which is useful for managing large datasets at scale.
+>
 
+<!-- ------------------------ -->
+## Define a Column-Based Access Policy
 
-### Create a policy defining which Snowflake roles will view email addresses partially masked
-- on the same Locks page click the *Add New* button and fill in the form as follows:
-  - For the lock name enter *Email Partially Masked*
-  - Click the User Groups dropdown and check *SYSADMIN* and *ACCOUNTADMIN*
-- Under the Policy Section there should be an empty tag/column form.  Fill it in as follows:
-  - Click the *Tag* tab (not the *Column* tab)
-  - Select *EMAIL_ADDRESS* from the Tag dropdown
-  - Select *Email Mask* from the Masking Policy dropdown
-- Click the *Update Lock* button to save this lock. 
+> 
+>**In This Step**
+>We will build a role-based masking policy for the EMAIL_ADDRESS column using ALTR Policies. A single policy can contain multiple rule statements — one per role — so we will define all three masking levels in one place.
+>
 
+### Create a Column Policy for EMAIL_ADDRESS
 
-### Create a policy defining which Snowflake roles will view email addresses fully masked
-- on the same Locks page click the *Add New* button and fill in the form as follows:
-  - For the lock name enter *Email Fully Masked*
-  - Click the User Groups dropdown and check *PUBLIC*
-- Under the Policy Section there should be an empty tag/column form.  Fill it in as follows:
-  - Click the *Tag* tab (not the *Column* tab)
-  - Select *EMAIL_ADDRESS* from the Tag dropdown
-  - Select *Email Mask* from the Masking Policy dropdown
-- Click the *Update Lock* button to save this lock. 
+- Navigate to **Policy** in the left navigation menu
+- Click **New Policy**
+- Click **Create Policy** under the **Column Policy** card
+
+![Select Policy Type](assets/policy_select_type.png)
+
+- On the next screen, select **Snowflake** and click **Create Policy**
+- Search for and select **EMAIL_ADDRESS** from the column dropdown (it will show the database, schema, and table)
+- Click **Next**
+
+![Select Column](assets/policy_select_column.png)
+
+### Configure Rule Statements
+
+You are now on the **Create Column Policy** screen. Each rule statement defines what a specific Snowflake role sees when querying this column.
+
+![Rule Statement](assets/policy_rule_statement.png)
+
+Add the following three rule statements. After adding each one (except the last), click **+ Rule Statement** to add the next:
+
+1. **No Mask for ORGADMIN**
+   - Set **Role** to `ORGADMIN`
+   - Set **Masking Policy** to `No Mask`
+   - *ORGADMIN users will see email addresses unredacted*
+
+2. **E-Mail Mask for SYSADMIN**
+   - Click **+ Rule Statement**
+   - Set **Role** to `SYSADMIN`
+   - Set **Masking Policy** to `E-Mail` (displays as `****@example.com`)
+   - *SYSADMIN users will see the domain but not the local part of the email*
+
+3. **Full Mask for PUBLIC**
+   - Click **+ Rule Statement**
+   - Set **Role** to `PUBLIC`
+   - Set **Masking Policy** to `Full Mask` (displays as `******`)
+   - *PUBLIC role users will see a fully masked placeholder*
+
+> 
+>**Policy Explainer**
+>- Any Snowflake role **not** listed in a rule statement will receive `NULL` values for this column — ALTR defaults to deny.
+>- If masking policies conflict across multiple policies on the same column, ALTR applies the **most permissive** rule.
+>- [Get more information on ALTR Policies](https://docs.altr.com/features/data-access-controls/column-based-access-policy/)
+>
+
+- Confirm **Policy State** is set to **Active**
+- Click **Save** to apply the policy. ALTR will immediately begin enforcing it via Snowflake dynamic masking policies.
 
 
 <!-- ------------------------ -->
 ## Test Policy in Snowflake
 
-### Copy test SQL into a new worksheet.
-Copy the SQL code below into a new worksheet.  This sheet has commands and queries we will use to test the policies you just created.  The first section grants access to the sample database for the *SYSADMIN*, *SECURITYADMIN*, and *PUBLIC* roles.  The next section is a series of tests that show ALTR enforcing policy based on a users Snowflake role.
+### Copy test SQL into a new worksheet
+
+Copy the SQL below into a new Snowflake worksheet. The first section grants the necessary privileges to our test roles. The second section runs queries under each role so you can observe ALTR enforcing the policy live.
 
 ```sql
 --
--- Grant access to the sample database to our test roles:
+-- Grant access to the sample database for our test roles:
 --
-use database ALTR_GETTING_STARTED_DB;
-use role accountadmin;
+USE ROLE ACCOUNTADMIN;
+USE DATABASE ALTR_GETTING_STARTED_DB;
 
-grant select on table SAMPLE_CUSTOMER to role SECURITYADMIN;
-grant usage on database ALTR_GETTING_STARTED_DB to role SECURITYADMIN;
-grant usage on schema PUBLIC to role SECURITYADMIN;
-grant usage on warehouse COMPUTE_WH to role SECURITYADMIN;
+GRANT SELECT ON TABLE SAMPLE_CUSTOMER TO ROLE ORGADMIN;
+GRANT USAGE ON DATABASE ALTR_GETTING_STARTED_DB TO ROLE ORGADMIN;
+GRANT USAGE ON SCHEMA PUBLIC TO ROLE ORGADMIN;
+GRANT USAGE ON WAREHOUSE COMPUTE_WH TO ROLE ORGADMIN;
 
-grant select on table SAMPLE_CUSTOMER to role SYSADMIN;
-grant usage on database ALTR_GETTING_STARTED_DB to role SYSADMIN;
-grant usage on schema PUBLIC to role SYSADMIN;
-grant usage on warehouse COMPUTE_WH to role SYSADMIN;
+GRANT SELECT ON TABLE SAMPLE_CUSTOMER TO ROLE SYSADMIN;
+GRANT USAGE ON DATABASE ALTR_GETTING_STARTED_DB TO ROLE SYSADMIN;
+GRANT USAGE ON SCHEMA PUBLIC TO ROLE SYSADMIN;
+GRANT USAGE ON WAREHOUSE COMPUTE_WH TO ROLE SYSADMIN;
 
-grant select on table SAMPLE_CUSTOMER to role PUBLIC;
-grant usage on database ALTR_GETTING_STARTED_DB to role PUBLIC;
-grant usage on schema PUBLIC to role PUBLIC;
-grant usage on warehouse COMPUTE_WH to role PUBLIC;
+GRANT SELECT ON TABLE SAMPLE_CUSTOMER TO ROLE PUBLIC;
+GRANT USAGE ON DATABASE ALTR_GETTING_STARTED_DB TO ROLE PUBLIC;
+GRANT USAGE ON SCHEMA PUBLIC TO ROLE PUBLIC;
+GRANT USAGE ON WAREHOUSE COMPUTE_WH TO ROLE PUBLIC;
 
--- warehouse
-use COMPUTE_WH;
+USE WAREHOUSE COMPUTE_WH;
 
 -- *** END OF GRANT ACCESS section ***
 
@@ -261,64 +315,59 @@ use COMPUTE_WH;
 -- ALTR Policy Tests:
 --
 
--- SECURITYADMIN gets to see emails with no masking at all:
-use role SECURITYADMIN;
-select * from SAMPLE_CUSTOMER;
+-- ORGADMIN sees emails with no masking:
+USE ROLE ORGADMIN;
+SELECT * FROM SAMPLE_CUSTOMER;
 
--- SYSADMIN and ACCOUNT admin domain portion of emails only, email name portion is masked 
-use role SYSADMIN;
-select from SAMPLE_CUSTOMER;
+-- SYSADMIN sees the domain only (****@example.com):
+USE ROLE SYSADMIN;
+SELECT * FROM SAMPLE_CUSTOMER;
 
-use role ACCOUNTADMIN;
-select from SAMPLE_CUSTOMER;
+-- PUBLIC sees fully masked email values (******):
+USE ROLE PUBLIC;
+SELECT * FROM SAMPLE_CUSTOMER;
 
--- PUBLIC sees emails fully masked
-use role PUBLIC;
-select * from SAMPLE_CUSTOMER;
+-- Now go into the ALTR portal and edit the policy:
+--   - Remove PUBLIC from the Full Mask rule statement
+-- Then re-run the query as PUBLIC and observe that policy changes
+-- take effect immediately — no Snowflake changes required.
 
--- Now go into the ALTR portal and make the following changes 
--- 1. remove the PUBLIC role from the fully masked lock,
--- 2. add the PUBLIC role to the partially masked lock.
+USE ROLE PUBLIC;
+SELECT * FROM SAMPLE_CUSTOMER;
 
--- Run query as PUBLIC role again and observe that moving the role into the 
--- partially masked lock instantly updates access for that role
+-- To see the default deny behavior:
+--   - Remove PUBLIC from all rule statements in the policy entirely.
+-- Querying as PUBLIC will now return NULL for C_EMAIL_ADDRESS.
 
-use role PUBLIC;
-select * from SAMPLE_CUSTOMER;
-
--- See what happens when a role is not associated with any policy.  Do this by going
--- into the ALTR portal and unselecting the PUBLIC role from the partially masked lock.  
--- Make sure that the PUBLIC role is not a part of any other lock.
--- 
-
-use role PUBLIC;
-select * from SAMPLE_CUSTOMER;
+USE ROLE PUBLIC;
+SELECT * FROM SAMPLE_CUSTOMER;
 ```
 
-### Run the Grant Portion of SQL
-- In the worksheet you created above hilight the commands from the top through to the comment labeled: -- *** END OF GRANT ACCESS section ***  This will grant access to the sample database for our test roles.
+### Run the Grant section
+- Highlight and run all commands from the top through `-- *** END OF GRANT ACCESS section ***` to grant the required privileges to each test role.
 
 ### Run the policy tests
-- There are six pairs of test commands.  The first command to set the correct role and then the query.  
-- Run each policy test query one at a time and check that the results are what is expected. We've put comments in front of each pair to remind you what we configured in the policy.
-
-
+- Run each `USE ROLE` + `SELECT` pair one at a time and verify the results match what you configured:
+  - **ORGADMIN** → real email addresses visible
+  - **SYSADMIN** → `****@example.com` format
+  - **PUBLIC** → `******`
+- Then follow the inline comments to demonstrate live policy updates and the default-deny behavior.
 
 
 <!-- ------------------------ -->
 ## Conclusion
 
 ### What we covered:
-- How to set up a Free ALTR Account and connect it to a Snowflake Database
-- Generating and Using ALTR's integrated classification report to identify sensitive data.
-- Creating automatically enforced, role based, data access policy for sensitive data
-- Tested ALTR's role based data access enforcement live by querying from Snowflakes Snowsight user interface.
+- How to set up an ALTR account and connect it to a Snowflake database
+- Running an automated Google DLP classification scan to identify sensitive columns
+- Connecting a column to ALTR so it can be governed
+- Creating a column-based access policy with role-specific masking rules
+- Testing ALTR's enforcement live from Snowsight
 
-### Ideas for exploring futher:
-- Use any client or method to connect to Snowflake and query the sample database we just protected with ALTR.  You will see that ALTR enforces your policy in the same way no matter how the data is accessed.  From Snowflakes web ui, through any connector, driver or Method Snowflake supports (Go, Python, JDBC, REST API, Snowpark, .NET, Node.js, ODBC etc... )
+### Ideas for exploring further:
+- Connect using any Snowflake client (Python, JDBC, ODBC, Snowpark, REST API, etc.) and query the protected table — ALTR enforces your policy regardless of how the data is accessed.
+- Try a **Tag Policy** instead of a Column Policy. First assign a Snowflake object tag to your column, connect the tag in ALTR (**Data Configuration → Data Management → Tags**), then create a Tag Policy. A single tag-based policy automatically covers every column that shares the tag — ideal for governing large datasets at scale.
+- Explore **Row Policies** to filter entire rows from query results based on column values.
 
-- 
 ### Getting Help:
-- If you need help on this or another Quickstart email us at support@altr.com (put 'quickstart help' in the subject line please) and somebody will reach out to you.
-
-
+- If you need help on this or another Quickstart, email us at support@altr.com (put 'quickstart help' in the subject line) and someone will reach out to you.

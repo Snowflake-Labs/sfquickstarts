@@ -170,9 +170,9 @@ Open Cortex Code and enter `/bypass` to enable bypass mode, then enter the follo
 ```
 Use the cortex agent dataset-curation skill to pull all available production traces for
 SELF_IMPROVING_AGENT_DB.AGENTS.MARKETING_CAMPAIGNS_AGENT and curate an evaluation dataset.
-Ground truth should always include key figures, a key insights and curated suggestion section,
-and be specific enough to accurately evaluate agent quality.  Store the evalset in
-SELF_IMPROVING_AGENT_DB.AGENTS and register it as a new evaluation dataset.
+Ground truth should always include sections for key figures, curated suggestions and sources referenced
+and be specific enough to accurately evaluate agent quality. Expected tool invocations are not needed.
+Store the evalset in SELF_IMPROVING_AGENT_DB.AGENTS and register it as a new evaluation dataset.
 ```
 
 Cortex Code will:
@@ -206,7 +206,8 @@ Break down scores by metric and identify which queries scored lowest. What are t
 Based on the failure analysis, generate improved orchestration and response instructions for
 SELF_IMPROVING_AGENT_DB.AGENTS.MARKETING_CAMPAIGNS_AGENT that fix the identified issues.
 The instructions should tell the agent what format to respond in, when to use multiple tools and in what order,
-and encourage efficient tool calling. Apply the changes.
+and encourage efficient tool calling. Only make updates to the instructions - do not make any updates to
+the tool configuration or other areas of the agent spec. Apply the changes.
 ```
 
 Cortex Code will:
