@@ -165,6 +165,92 @@ role      = "<YOUR_DEMO_ROLE>"     # e.g. Need a role for connection
 Once updated, make sure to save the file. 
 
 <!-- ------------------------ -->
+## Install on GitHub Codespaces
+
+GitHub Codespaces gives you a fully configured Linux environment in your browser — no local installs required. The CoCo CLI install command is the same as Mac, but a few steps differ. This is the best option if you're running the guide on a corporate laptop with restrictions.
+
+### Open a Codespace
+
+You will need a free GitHub account. If you don't have one, sign up at [github.com](https://github.com).
+
+**Step 1 — Create a new repository**
+
+1. Go to [github.com](https://github.com) and click the **+** icon in the top right → **New repository**
+2. Give it a name (e.g. `coco-workshop`)
+3. Check **Add a README file**
+4. Click **Create repository**
+
+**Step 2 — Launch a Codespace**
+
+1. On your new repository page, click the green **Code** button
+2. Select the **Codespaces** tab
+3. Click **Create codespace on main**
+4. GitHub will build the environment — this takes about 1–2 minutes on first launch
+5. Once ready, you will see a VS Code interface in your browser with a terminal at the bottom
+
+To open the terminal at any time, go to **Terminal → New Terminal** in the menu bar.
+
+### Supported Architectures
+- **x64** — Fully supported
+
+### Install via Terminal
+
+```bash
+curl -LsS https://ai.snowflake.com/static/cc-scripts/install.sh | sh
+```
+
+When prompted to add `cortex` to your PATH, respond with **y**.
+
+If the `cortex` command is not recognized after installation, reload your shell:
+
+```bash
+source ~/.bashrc
+```
+
+### Verify Installation
+
+```bash
+cortex --version
+```
+
+### Configure Your Snowflake Connection
+
+CoCo uses the same connection files as SnowCLI, located at:
+
+```
+~/.snowflake/config.toml
+```
+
+### Create/open the Config File
+
+Run the following in your Codespaces terminal (`open -e` is macOS-only; use `nano` instead):
+
+```bash
+mkdir -p ~/.snowflake
+touch ~/.snowflake/config.toml
+chmod 600 ~/.snowflake/config.toml
+nano ~/.snowflake/config.toml
+```
+
+Copy and adapt the following to your account and role:
+
+```toml
+default_connection_name = "DEMO"
+
+[connections.DEMO]
+account   = "<YOUR_ACCOUNT>"      # e.g. MYORG-MYACCOUNT
+user      = "<YOUR_USERNAME>"
+password  = "<YOUR_PAT>"
+role      = "<YOUR_ROLE>"
+```
+
+Save with `Ctrl+O`, `Enter`, then exit with `Ctrl+X`.
+
+![Log In and Find Settings](assets/snowsight_login_settings.png)
+
+![Account Details Connection](assets/account_details_connection.png)
+
+<!-- ------------------------ -->
 ## Find Your Connection Details
 
 To fill out your config, you'll need your Snowflake account identifier, role, and warehouse.
