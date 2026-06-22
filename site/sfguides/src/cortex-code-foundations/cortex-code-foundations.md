@@ -43,6 +43,31 @@ In Snowsight, click the **blue star icon** in the bottom right corner to open th
 This gives you immediate access to CoCo without any local installation and is useful for quick queries, schema exploration, and testing.
 
 <!-- ------------------------ -->
+
+## Find Your Connection Details
+
+You'll need your Snowflake account identifier, role, username in order to connect your Snowflake account to CoCo. You'll use this information to set up your config file.
+
+1. Log in to Snowsight
+2. Click your username in the bottom left → **Account** → **View account details**
+3. Note your **Account Identifier** (e.g. `SFSENORTHAMERICA-XXXXX`) and **Role**
+
+### Authentication Options
+
+There are several ways to authenticate your connection. Common environment variables include:
+
+| Variable | Description |
+|---|---|
+| `SNOWFLAKE_ACCOUNT` | Your account identifier |
+| `SNOWFLAKE_USER` | Your username |
+| `SNOWFLAKE_PASSWORD` | Password authentication |
+| `SNOWFLAKE_TOKEN` | OAuth token |
+| `SNOWFLAKE_TOKEN_FILE_PATH` | Path to token file |
+| `SNOWFLAKE_OAUTH_CLIENT_ID` | OAuth client ID |
+
+For a full list, see the [Manage Snowflake connections guide](https://docs.snowflake.com/en/user-guide/snowsql-connect).
+
+<!-- ------------------------ -->
 ## Install the CoCo CLI on Mac
 
 ### Supported Architectures
@@ -244,30 +269,6 @@ nano ~/.snowflake/config.toml
 ![Log In and Find Settings](assets/snowsight_login_settings.png)
 
 ![Account Details Connection](assets/account_details_connection.png)
-
-<!-- ------------------------ -->
-## Find Your Connection Details
-
-To fill out your config, you'll need your Snowflake account identifier, role, and warehouse.
-
-1. Log in to Snowsight
-2. Click your username in the bottom left → **Account** → **View account details**
-3. Note your **Account Identifier** (e.g. `SFSENORTHAMERICA-XXXXX`) and **Role**
-
-### Authentication Options
-
-There are several ways to authenticate your connection. Common environment variables include:
-
-| Variable | Description |
-|---|---|
-| `SNOWFLAKE_ACCOUNT` | Your account identifier |
-| `SNOWFLAKE_USER` | Your username |
-| `SNOWFLAKE_PASSWORD` | Password authentication |
-| `SNOWFLAKE_TOKEN` | OAuth token |
-| `SNOWFLAKE_TOKEN_FILE_PATH` | Path to token file |
-| `SNOWFLAKE_OAUTH_CLIENT_ID` | OAuth client ID |
-
-For a full list, see the [Manage Snowflake connections guide](https://docs.snowflake.com/en/user-guide/snowsql-connect).
 
 <!-- ------------------------ -->
 ## Launch Cortex Code
