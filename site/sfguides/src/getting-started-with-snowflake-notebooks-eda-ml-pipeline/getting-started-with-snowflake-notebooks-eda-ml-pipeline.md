@@ -31,7 +31,7 @@ The pipeline covers five sequential stages:
 - Basic familiarity with Python and SQL.
 - A [Snowflake account](https://signup.snowflake.com/cortex-code?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides). Sign up for a [30-day free trial](https://signup.snowflake.com/cortex-code?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) if required.
 - Access to Snowflake Notebooks with **Container Runtime** enabled. If Notebooks is not yet available in your account, ask your administrator to follow the [Snowflake Notebooks setup guide](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-setup).
-- **[Cortex Code](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code) (optional)** — not required if you use the provided code snippets directly. Needed if you want to use the `### Prompt` sections to generate or extend the code interactively.
+- **[Cortex Code](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code) (optional)** — not required if you use the provided code snippets directly. Needed if you want to use the **Prompt** sections to generate or extend the code interactively.
 
 ### What You'll Learn
 
@@ -93,7 +93,7 @@ This notebook uses packages such as `scikit-learn`, `seaborn`, and `ipywidgets` 
 
 The first section loads the scikit-learn Wine dataset into a pandas DataFrame, connects to Snowflake, and prepares a SQL-safe copy of the DataFrame called `df_snow`. SQL cells in the notebook reference `df_snow` directly via Jinja templating (`{{df_snow}}`), so no explicit table upload is needed.
 
-### Prompt
+Prompt
 
 Use this prompt with an AI coding assistant to extend this section:
 
@@ -193,7 +193,7 @@ SQL cells use the `%%sql` cell magic. Adding `-r <variable_name>` captures the r
 SELECT ... FROM {{df_snow}}
 ```
 
-### Prompt
+Prompt
 
 Use this prompt with an AI coding assistant to extend this section with more advanced SQL patterns:
 
@@ -295,7 +295,7 @@ And the alcohol stats query returns:
 
 Python-based EDA focuses on the *shape* of the data — how features are distributed across cultivar classes and how strongly they correlate with each other.
 
-### Prompt
+Prompt
 
 Use this prompt with an AI coding assistant to extend this section:
 
@@ -413,7 +413,7 @@ Three figures are rendered inline in the notebook:
 
 This section preprocesses the data, visualizes the train/test split in PCA space, exposes interactive hyperparameter sliders, trains a Random Forest, and evaluates it with cross-validation.
 
-### Prompt
+Prompt
 
 Use this prompt with an AI coding assistant to extend this section:
 
@@ -547,7 +547,7 @@ Test set accuracy: 0.9722 (97.2%)
 
 Post-training diagnostics help you understand where the model makes mistakes, which features drive its predictions, how well it separates classes across all decision thresholds, and whether additional training data would improve performance.
 
-### Prompt
+Prompt
 
 Use this prompt with an AI coding assistant to extend this section:
 
