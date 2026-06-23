@@ -5,6 +5,7 @@ language: en
 summary: Overview of architectural patterns for Hybrid Table workloads — analytics pipelines, streaming ingest, change detection, data management, and operational monitoring.
 environments: web
 status: Hidden
+
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 <!--

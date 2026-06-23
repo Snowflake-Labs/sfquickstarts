@@ -524,6 +524,18 @@ SELECT * FROM orders WHERE created_by = $active_user;
 ```
 
 <!-- ------------------------ -->
+## Get Started Faster with Cortex Code
+Duration: 1
+
+Use these prompts in [Cortex Code](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code) to apply this guide to your own schema:
+
+> "Analyze my Hybrid Table DDL and identify any secondary index anti-patterns. Suggest improvements based on HT index selection rules."
+
+> "I have a Hybrid Table with these queries: [paste queries]. Recommend the optimal composite index design, with equality columns first and range predicates last."
+
+> "Generate CREATE INDEX DDL for my Hybrid Table based on these WHERE clause predicates: [paste predicates]. Explain which selection rule applies to each."
+
+<!-- ------------------------ -->
 ## Cleanup
 
 ```sql
@@ -553,6 +565,8 @@ You have completed the Hybrid Tables Secondary Index Design quickstart. You can 
 | Hot read path, avoid probe scan | `INDEX idx (key_cols) INCLUDE (projected_cols)` |
 | Adding index to live table | `CREATE INDEX idx ON table(col)`, then monitor with `SHOW INDEXES` |
 | Low-cardinality column alone | Combine with high-cardinality column as leading prefix |
+
+> **Need help with your Hybrid Table architecture?** Book a 30-minute session with our specialist team to discuss your use case, review your schema design, or troubleshoot performance: [Schedule a session](https://calendar.app.google/cGfVnKFe7xbeDqDo8)
 
 ### Related Resources
 

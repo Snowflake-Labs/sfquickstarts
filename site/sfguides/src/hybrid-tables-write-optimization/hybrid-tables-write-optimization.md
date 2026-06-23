@@ -479,6 +479,18 @@ If writes are slower than expected:
 4. Check for throttling — `hybrid_table_requests_throttled_count > 0` in AGGREGATE_QUERY_HISTORY
 
 <!-- ------------------------ -->
+## Get Started Faster with Cortex Code
+Duration: 1
+
+Use these prompts in [Cortex Code](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code) to apply this guide to your own workload:
+
+> "Audit my Hybrid Table INSERT patterns for write amplification. Identify any bulk load anti-patterns and suggest fixes."
+
+> "Rewrite these INSERT statements to use bound variables and eliminate redundant recompilation: [paste SQL]."
+
+> "My Hybrid Table bulk load is slow. Review my approach and tell me whether I am using the optimized load path or the standard row-by-row path."
+
+<!-- ------------------------ -->
 ## Cleanup
 
 ```sql
@@ -509,6 +521,8 @@ You can now:
 | Compilation > 50% of total latency? | Plan cache not warming — check hash cardinality |
 | Loading into non-empty HT? | No fast path available — ~1M rows/min throughput |
 | BI tool scanning HT directly? | Snapshot to standard table first |
+
+> **Need help with your Hybrid Table architecture?** Book a 30-minute session with our specialist team to discuss your use case, review your schema design, or troubleshoot performance: [Schedule a session](https://calendar.app.google/cGfVnKFe7xbeDqDo8)
 
 ### Related Resources
 
