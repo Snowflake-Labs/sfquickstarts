@@ -1,11 +1,12 @@
 author: nagliwiz
 id: test-security-guide
 summary: Test guide for security validation
-categories: Getting-Started
+categories: snowflake-site:taxonomy/getting-started/guides
 environments: web
 status: Hidden
 feedback link: https://github.com/Snowflake-Labs/sfquickstarts/issues
 tags: Getting Started, Security
+language: en
 
 # Test Security Guide
 ## Overview
