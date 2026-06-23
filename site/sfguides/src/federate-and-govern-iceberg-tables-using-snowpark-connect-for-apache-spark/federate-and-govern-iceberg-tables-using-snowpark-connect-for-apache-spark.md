@@ -14,30 +14,27 @@ open in snowflake: https://app.snowflake.com/developer-guides/snowpark-connect
 
 ## Overview
 
-Through this quickstart you will work through four progressive scenarios that show how Snowflake treats Apache Iceberg as a first-class citizen — from native managed storage to AI enrichment pipelines and bidirectional open lakehouse federation.
+Through this quickstart you will work through three progressive scenarios that show how Snowflake treats Apache Iceberg as a first-class citizen — from native managed storage to AI enrichment pipelines and bidirectional open lakehouse federation.
 
-**Scenario 1 — Snowflake-Managed Iceberg + SCOS:**
-Snowflake creates and owns the Iceberg tables on its managed storage. Snowflake Horizon governance policies (column masking and row access) are applied. Snowpark Connect on Snowflake (SCOS) queries those tables using PySpark DataFrames — and because SCOS routes through Snowflake's SQL engine, governance is fully enforced.
+**Scenario 1 — Snowflake-Managed Iceberg + Snowpark Connect:**
+Snowflake creates and owns the Iceberg tables on its managed storage. Snowflake Horizon governance policies (column masking and row access) are applied. Snowpark Connect queries those tables using PySpark DataFrames — and because Snowpark Connect routes through Snowflake's SQL engine, governance is fully enforced.
 
 **Scenario 2 — External Engine Reads Snowflake Tables:**
 An external Iceberg-compatible engine connects to the same Scenario 1 tables via Snowflake Horizon IRC (Iceberg REST Catalog). It reads data using vended S3 credentials. Write access to the protected table is automatically blocked by credential vending. This scenario also shows the governance contrast: the external engine reads raw Parquet and bypasses Snowflake's SQL-layer policies, while Scenario 1 enforced them.
 
-**Scenario 3 — Externally-Managed Iceberg Tables Read by Snowflake:**
-An external catalog creates Iceberg tables (Delta + UniForm) and publishes them via an Iceberg REST endpoint. Snowflake federates them into a catalog-linked database and applies its own independent Horizon governance. SCOS queries the federated tables with live role-based masking — demonstrating that Snowflake governance applies regardless of where the data originated.
-
-**Scenario 4 — AI Enrichment Pipeline on Iceberg:**
-SCOS reads the federated Scenario 3 tables, Snowflake Cortex enriches them with AI-generated risk classification and operational notes, and writes results to a new Snowflake-managed Iceberg table. Horizon governance applies to the AI-generated columns just as it does to raw data. A Cortex Analyst semantic view spans both the AI-enriched and federated tables — answering natural language questions with role-based masking enforced.
+**Scenario 3 — Federate External Iceberg Tables + AI Enrichment Pipeline:**
+An external catalog creates Iceberg tables (Delta + UniForm) and publishes them via an Iceberg REST endpoint. Snowflake federates them into a catalog-linked database and applies its own independent Horizon governance. Snowpark Connect reads the federated tables with live role-based masking. Snowflake Cortex then enriches the data with AI-generated risk classification and operational notes, writing results to a new Snowflake-managed Iceberg table — where Horizon governance applies to AI-generated columns just as it does to raw data. A Cortex Analyst semantic view spans both tables for natural language querying.
 
 ### What You'll Learn
 
-- How Snowflake manages Iceberg tables on its own storage and enforces Horizon governance through SCOS
-- How Snowpark Connect (SCOS) runs PySpark DataFrames on Snowflake's engine with governance fully applied
+- How Snowflake manages Iceberg tables on its own storage and enforces Horizon governance through Snowpark Connect
+- How Snowpark Connect runs PySpark DataFrames on Snowflake's engine with governance fully applied
 - How Snowflake Horizon IRC (Iceberg REST Catalog) exposes managed tables to any Iceberg-compatible engine
 - How credential vending enforces write protection on Snowflake-managed tables at the S3 layer
-- The governance contrast: SCOS enforces policies; external engines reading via IRC read raw Parquet
+- The governance contrast: Snowpark Connect enforces policies; external engines reading via IRC read raw Parquet
 - How Delta + Iceberg UniForm generates interoperable Iceberg metadata with no data duplication
 - How Snowflake catalog-linked databases auto-discover and federate externally-managed Iceberg tables
-- The three setup rules for using SCOS with catalog-linked databases
+- The three setup rules for using Snowpark Connect with catalog-linked databases
 - How Snowflake Cortex LLM functions enrich Iceberg data inline in SQL
 - How Horizon governance applies to AI-generated columns the same way it applies to raw data
 - How Cortex Analyst semantic views enable natural language queries across SF-managed and federated Iceberg tables
@@ -45,7 +42,7 @@ SCOS reads the federated Scenario 3 tables, Snowflake Cortex enriches them with 
 ### Key Capabilities
 
 - **Snowflake-native Iceberg**: Snowflake manages table storage, schema, and governance end-to-end
-- **Governance at the SQL layer**: SCOS enforces Horizon policies on every query, regardless of the caller's role
+- **Governance at the SQL layer**: Snowpark Connect routes every query through Snowflake's SQL engine — Horizon policies apply regardless of the caller's role
 - **Open interoperability**: Horizon IRC exposes Snowflake-managed tables to any Iceberg REST catalog client
 - **Credential-vending write control**: Snowflake controls which engines can write, enforced at S3 without any application-side code
 - **Live role-based masking**: Same query, same Parquet files — different results per Snowflake role
@@ -56,12 +53,11 @@ SCOS reads the federated Scenario 3 tables, Snowflake Cortex enriches them with 
 ### What You'll Build
 
 - Snowflake-managed Iceberg tables with column masking and row access policies
-- A SCOS notebook demonstrating Horizon governance enforced via PySpark on Snowflake's engine
+- A Snowpark Connect notebook demonstrating Horizon governance enforced via PySpark on Snowflake's engine
 - An external engine read/write demo against those same tables via Horizon IRC
 - Externally-managed Iceberg tables federated into Snowflake via a catalog-linked database
-- A second SCOS notebook showing live role-based masking on federated tables
-- A Cortex AI pipeline that reads federated Iceberg data, enriches it with `CORTEX.COMPLETE`, and writes to a new Snowflake-managed Iceberg table
-- A Cortex Analyst semantic view enabling natural language queries across SF-managed and federated Iceberg tables with Horizon masking enforced
+- A second Snowpark Connect notebook showing live role-based masking on federated tables
+- A Cortex AI pipeline (Scenario 3) that reads federated Iceberg data, enriches with `CORTEX.COMPLETE`, writes to Snowflake-managed Iceberg, and exposes results via a Cortex Analyst semantic view
 
 ### What You'll Need
 
@@ -80,7 +76,7 @@ SCOS reads the federated Scenario 3 tables, Snowflake Cortex enriches them with 
 
 ## Architecture
 
-### Scenario 1 — Snowflake-Managed Iceberg + SCOS
+### Scenario 1 — Snowflake-Managed Iceberg + Snowpark Connect
 
 ```
 Snowflake Account
@@ -110,7 +106,7 @@ External Spark Cluster  (no Unity Catalog required)
   → Snowflake SQL-layer governance NOT applied to this path
 ```
 
-### Scenario 3 — External Catalog Tables Federated into Snowflake
+### Scenario 3 — External Catalog Tables Federated into Snowflake + AI Enrichment
 
 ```
 External Catalog (Unity Catalog)
@@ -127,7 +123,7 @@ Snowflake Catalog-Linked Database
        → EU row filter, credit_card masked per role
 ```
 
-### Scenario 4 — AI Enrichment Pipeline on Iceberg
+### Scenario 3 (continued) — AI Enrichment Pipeline on Iceberg
 
 ```
 Catalog-Linked Database (Scenario 3 — read only)
@@ -150,20 +146,45 @@ SF-Managed Iceberg (new table)
 
 <!-- ------------------------ -->
 
-## Download the Demo Files
+## Quickstart Setup
 
-All scripts for this quickstart are in the assets folder:
+### Fork the Quickstart Repository and Enable GitHub Actions
+
+You'll need to create a fork of the repository for this Quickstart in your GitHub account. Visit the [associated GitHub Repository](https://github.com/Snowflake-Labs/sfquickstarts) and click on the **Fork** button near the top right. Complete any required fields and click **Create Fork**.
+
+Once forked, enable GitHub Actions in your fork:
+
+1. In your forked repository, click the **Actions** tab
+2. Click **I understand my workflows, go ahead and enable them**
+
+### Get the Demo Files
+
+All scripts are in the `assets` folder of this Quickstart inside your fork:
+
+```
+sfquickstarts/site/sfguides/src/
+  federate-and-govern-iceberg-tables-using-snowpark-connect-for-apache-spark/
+    assets/
+      01_sf_iceberg_catalog_setup.sql
+      02_scos_sf_iceberg_demo.py
+      03_databricks_rw_sf_iceberg.py
+      04_databricks_create_uc_tables.py
+      05_sf_federate_databricks_uc.sql
+      06_sf_notebook_query_databricks.ipynb
+      07_cortex_ai_pipeline.sql
+      08_scos_ai_pipeline.py
+```
 
 | File | Used in | Purpose |
 |------|---------|---------|
 | [01_sf_iceberg_catalog_setup.sql](assets/01_sf_iceberg_catalog_setup.sql) | Snowflake worksheet | Scenario 1: create managed Iceberg tables, governance policies, credential vending, PAT |
-| [02_scos_sf_iceberg_demo.py](assets/02_scos_sf_iceberg_demo.py) | Snowflake Notebook | Scenario 1: SCOS reads SF-managed tables with Horizon governance enforced |
+| [02_scos_sf_iceberg_demo.py](assets/02_scos_sf_iceberg_demo.py) | Snowflake Notebook | Scenario 1: Snowpark Connect reads SF-managed tables with Horizon governance enforced |
 | [03_databricks_rw_sf_iceberg.py](assets/03_databricks_rw_sf_iceberg.py) | External Spark Cluster | Scenario 2: external engine reads/writes Snowflake tables via Horizon IRC |
 | [04_databricks_create_uc_tables.py](assets/04_databricks_create_uc_tables.py) | External Cluster with UC | Scenario 3 setup: create Delta + UniForm tables in external catalog |
 | [05_sf_federate_databricks_uc.sql](assets/05_sf_federate_databricks_uc.sql) | Snowflake worksheet | Scenario 3 setup: catalog integration, catalog-linked database, masking |
-| [06_sf_notebook_query_databricks.ipynb](assets/06_sf_notebook_query_databricks.ipynb) | Snowflake Notebook | Scenario 3: SCOS reads federated tables with live role-based masking |
-| [07_cortex_ai_pipeline.sql](assets/07_cortex_ai_pipeline.sql) | Snowflake worksheet | Scenario 4: Cortex enrichment CTAS, masking on AI output, semantic view DDL |
-| [08_scos_ai_pipeline.py](assets/08_scos_ai_pipeline.py) | Snowflake Notebook | Scenario 4: SCOS reads federated tables, Cortex enriches, writes to SF-managed Iceberg |
+| [06_sf_notebook_query_databricks.ipynb](assets/06_sf_notebook_query_databricks.ipynb) | Snowflake Notebook | Scenario 3: Snowpark Connect reads federated tables with live role-based masking |
+| [07_cortex_ai_pipeline.sql](assets/07_cortex_ai_pipeline.sql) | Snowflake worksheet | Scenario 3: Cortex enrichment CTAS, masking on AI output, semantic view DDL |
+| [08_scos_ai_pipeline.py](assets/08_scos_ai_pipeline.py) | Snowflake Notebook | Scenario 3: Snowpark Connect reads federated tables, Cortex enriches, writes to SF-managed Iceberg |
 
 > Fill in all `<PLACEHOLDER>` values in each file before running. Every parameter is documented in the header comment of each script.
 
@@ -299,7 +320,7 @@ ALTER USER <SF_USERNAME>
 
 <!-- ------------------------ -->
 
-## Scenario 1 — SCOS Governance Demo
+## Scenario 1 — Snowpark Connect Governance Demo
 
 Upload `02_scos_sf_iceberg_demo.py` to your Snowflake workspace:
 **Snowsight → Notebooks → + Notebook → Import .ipynb file**
@@ -373,9 +394,9 @@ combined = pd.concat([admin_pd, reader_pd]).sort_values(["id", "role"]).reset_in
 print(combined.to_string(index=False))
 ```
 
-**Expected:** Same Iceberg table, same Parquet files — ACCOUNTADMIN sees 3 unmasked rows, reader role sees 2 masked rows. This is Snowflake Horizon governance enforced through SCOS.
+**Expected:** Same Iceberg table, same Parquet files — ACCOUNTADMIN sees 3 unmasked rows, reader role sees 2 masked rows. This is Snowflake Horizon governance enforced through Snowpark Connect.
 
-> **Key insight:** SCOS routes queries through the Snowflake SQL engine. Horizon policies apply to every query regardless of the PySpark API used. Scenario 2 demonstrates the contrast — an external engine reading the same table bypasses these policies.
+> **Key insight:** Snowpark Connect routes queries through the Snowflake SQL engine. Horizon policies apply to every query regardless of the PySpark API used. Scenario 2 demonstrates the contrast — an external engine reading the same table bypasses these policies.
 
 <!-- ------------------------ -->
 
@@ -384,6 +405,16 @@ print(combined.to_string(index=False))
 Attach `03_databricks_rw_sf_iceberg.py` to **Cluster A** (Iceberg REST catalog client, no Unity Catalog).
 
 This connects to the same tables created in Scenario 1 via Snowflake Horizon IRC.
+
+> **Before running — verify your PAT is active.** The PAT token expires after the configured duration. To regenerate:
+> ```sql
+> USE ROLE ACCOUNTADMIN;
+> ALTER USER <your_user> REMOVE PROGRAMMATIC ACCESS TOKEN HORIZON_DEMO_PAT;
+> ALTER USER <your_user> ADD PROGRAMMATIC ACCESS TOKEN HORIZON_DEMO_PAT
+>     EXPIRY_TIME = '<date_90_days_out>'
+>     COMMENT = 'Horizon IRC demo — Iceberg federation';
+> ```
+> Copy the token value from the output — it is shown only once.
 
 ### Configure Horizon IRC
 
@@ -424,18 +455,47 @@ spark.table(f"{CATALOG_NAME}.{SF_SCHEMA}.PROTECTED_TABLE").show(truncate=False)
 
 **Expected:** All 3 rows including the 2023 row. `sensitive_data` is **unmasked** — raw Parquet values.
 
-> **Key contrast with Scenario 1:** Scenario 1 SCOS enforced the mask and row filter. Here, the external engine reads raw Parquet via vended S3 credentials — Snowflake's SQL-layer policies do not apply to this path.
+> **Key contrast with Scenario 1:** Scenario 1 Snowpark Connect enforced the mask and row filter. Here, the external engine reads raw Parquet via vended S3 credentials — Snowflake's SQL-layer policies do not apply to this path.
 
 ### Demo 3 — Write OPEN_TABLE ✅
 
 ```python
+# Insert a new row via the Iceberg REST Catalog write path
 spark.sql(f"""
     INSERT INTO {CATALOG_NAME}.{SF_SCHEMA}.OPEN_TABLE
     VALUES (99, 'Demo Widget', 3, 19.99, current_timestamp())
 """)
+print("Write to OPEN_TABLE: SUCCEEDED ✅")
 ```
 
-**Expected:** Succeeds. `OPEN_TABLE_RW` has write grants → Snowflake vends write-capable S3 credentials.
+**Expected:** Succeeds. The Horizon IRC credential vending path looked up the role bound to the PAT (`DATABRICKS_DEMO_ROLE`), found it holds the `OPEN_TABLE_RW` database role (which has INSERT/UPDATE/DELETE), and vended write-capable S3 credentials. No application code controls this — the Snowflake catalog decides what S3 operations to permit at credential issue time.
+
+**Confirm the write landed — verify from Snowflake immediately after:**
+
+```python
+# Read back through the same catalog to confirm the committed metadata is visible
+df = spark.table(f"{CATALOG_NAME}.{SF_SCHEMA}.OPEN_TABLE")
+df.orderBy(df["created_at"].desc()).show(5, truncate=False)
+```
+
+**And verify from a Snowflake worksheet to show both engines see the same Iceberg table:**
+
+```sql
+-- Run in Snowflake worksheet — external write should be immediately visible
+SELECT id, product, quantity, price, created_at
+FROM HORIZON_DEMO_SFDB.DEMO_SCHEMA.OPEN_TABLE
+ORDER BY created_at DESC
+LIMIT 5;
+```
+
+**Expected:** Row `(99, 'Demo Widget', 3, 19.99, <timestamp>)` appears in both. The external engine wrote directly to Snowflake-managed S3 and committed the Iceberg metadata — Snowflake reads the same metadata and sees the row immediately. This is open Iceberg interoperability: any Iceberg-compatible engine writes, any engine reads.
+
+> **Key governance moment — credential vending controls access at the S3 layer without any application code:**
+>
+> | Principal | Database Role | S3 credentials vended | Write allowed? |
+> |-----------|--------------|----------------------|----------------|
+> | PAT with `DATABRICKS_DEMO_ROLE` → `OPEN_TABLE_RW` | INSERT / UPDATE / DELETE | Write-capable | ✅ |
+> | PAT with `DATABRICKS_DEMO_ROLE` → `PROTECTED_TABLE_RO` | SELECT only | Read-only | ❌ (Demo 4) |
 
 ### Demo 4 — Write PROTECTED_TABLE ❌
 
@@ -569,17 +629,17 @@ Snowflake defines and enforces this policy independently — it applies whether 
 
 <!-- ------------------------ -->
 
-## Scenario 3 — SCOS Governance Demo
+## Scenario 3 — Snowpark Connect Governance Demo
 
 Upload `06_sf_notebook_query_databricks.ipynb` to your Snowflake workspace.
 Install the `snowpark-connect` package, then restart the session.
 
 ### Session Setup for Catalog-Linked Databases
 
-Three setup rules are required when using SCOS with a catalog-linked database:
+Three setup rules are required when using Snowpark Connect with a catalog-linked database:
 
-1. **Initialize SCOS on a regular Snowflake database** — set the session context before calling `init_spark_session`.
-2. **Enable `caseSensitive` mode** — external Iceberg catalogs use lowercase schema and table names; this ensures SCOS resolves them correctly.
+1. **Initialize Snowpark Connect on a regular Snowflake database** — set the session context before calling `init_spark_session`.
+2. **Enable `caseSensitive` mode** — external Iceberg catalogs use lowercase schema and table names; this ensures Snowpark Connect resolves them correctly.
 3. **Use fully-qualified lowercase names** in `spark.sql()` for catalog-linked tables.
 
 ```python
@@ -673,7 +733,7 @@ print(combined.to_string(index=False))
 
 <!-- ------------------------ -->
 
-## Scenario 4 — AI Enrichment Pipeline Setup
+## Scenario 3 — AI Enrichment Pipeline Setup
 
 Run `07_cortex_ai_pipeline.sql` in a Snowflake worksheet as `ACCOUNTADMIN`.
 
@@ -804,7 +864,7 @@ GRANT SELECT ON SEMANTIC VIEW <SF_MANAGED_ICEBERG_DB>.<SF_DEMO_SCHEMA>.ICEBERG_A
 
 <!-- ------------------------ -->
 
-## Scenario 4 — SCOS AI Pipeline Notebook
+## Scenario 3 — Snowpark Connect AI Pipeline Notebook
 
 Upload `08_scos_ai_pipeline.py` to Snowflake:
 **Snowsight → Notebooks → + Notebook → Import**
@@ -823,7 +883,7 @@ spark = snowpark_connect.init_spark_session(conf=conf)
 
 > `caseSensitive=true` is required when reading catalog-linked (FDN) tables, which use lowercase identifiers. It is harmless when reading SF-managed tables.
 
-### Step 2 — SCOS Reads Federated Source Tables
+### Step 2 — Snowpark Connect Reads Federated Source Tables
 
 ```python
 # Read from CLD — federated Databricks Iceberg (read only)
@@ -850,7 +910,7 @@ sf_session.sql(f"""
 """).collect()
 ```
 
-### Step 5 — Governance Comparison via SCOS
+### Step 5 — Governance Comparison via Snowpark Connect
 
 ```python
 COLS = ["order_id", "product", "amount", "region", "risk_level"]
@@ -868,7 +928,7 @@ reader_df.columns = [c.lower() for c in reader_df.columns]
 
 <!-- ------------------------ -->
 
-## Scenario 4 — Cortex Analyst Demo
+## Scenario 3 — Cortex Analyst Demo
 
 **Open:** Snowsight → AI & ML → Cortex Analyst
 
@@ -902,47 +962,40 @@ The semantic view joins `AI_ORDER_INSIGHTS` (SF-managed) and `customer_orders` (
 
 ## Conclusion And Resources
 
-Congratulations — you have completed all four scenarios!
+Congratulations — you have completed all three scenarios!
 
 ### What You Built
 
 - ✅ **Snowflake-managed Iceberg tables** with Horizon column masking and row access policies
-- ✅ **SCOS governance demo** showing Horizon policies enforced through PySpark on Snowflake's engine
+- ✅ **Snowpark Connect governance demo** showing Horizon policies enforced through PySpark on Snowflake's engine
 - ✅ **External engine read/write demo** via Horizon IRC with credential-vending write control
 - ✅ **Catalog-linked database** auto-federating externally-managed Iceberg tables
-- ✅ **SCOS notebook** with live role-based masking on federated tables
-- ✅ **AI enrichment pipeline** — Cortex reads federated Iceberg, enriches with `CORTEX.COMPLETE`, writes to SF-managed Iceberg
+- ✅ **Snowpark Connect notebook** with live role-based masking on federated tables
 - ✅ **Cortex Analyst semantic view** spanning SF-managed and federated Iceberg tables with Horizon masking enforced
 
 ### What You Learned
 
-- How Snowflake manages Iceberg tables on its own storage with Horizon governance enforced at the SQL layer
-- How SCOS runs PySpark DataFrames on Snowflake's engine — governance applies to every query
-- How Horizon IRC exposes Snowflake tables to any Iceberg-compatible engine via open standards
-- How credential vending enforces write protection at the S3 layer without application-side code
-- The governance contrast: SCOS enforces policies; external engines read raw Parquet via vended credentials
-- How Delta + Iceberg UniForm generates interoperable metadata with no data duplication or ETL
-- The three setup rules for using SCOS with catalog-linked databases
-- How `SNOWFLAKE.CORTEX.COMPLETE` enriches federated Iceberg data inline in SQL
-- Why `CREATE OR REPLACE ICEBERG TABLE` drops masking policies and how to re-apply them immediately
-- How Horizon masking applies to AI-generated columns exactly as it does to raw data
-- How Cortex Analyst semantic views enable natural language querying across SF-managed and federated Iceberg tables
+- How Snowflake manages Iceberg natively with Horizon governance enforced through Snowpark Connect at every query
+- How Horizon IRC exposes Snowflake-managed tables to any Iceberg-compatible engine, and how credential vending enforces write protection at the S3 layer
+- How catalog-linked databases auto-federate externally-managed Iceberg tables — and how Snowflake applies independent governance regardless of data origin
+- How `SNOWFLAKE.CORTEX.COMPLETE` enriches federated Iceberg data inline in SQL, with Horizon masking applying to AI-generated columns exactly as it does to raw data
+- How Cortex Analyst semantic views enable natural language querying across SF-managed and federated Iceberg tables with role-based masking enforced
 
 ### Governance Summary
 
 | Access path | Table | Governance result |
 |-------------|-------|-------------------|
-| SCOS (ACCOUNTADMIN) | PROTECTED_TABLE | 3 rows, `sensitive_data` raw — Scenario 1 |
-| SCOS (reader role) | PROTECTED_TABLE | 2 rows filtered, `*** MASKED ***` — Scenario 1 |
+| Snowpark Connect (ACCOUNTADMIN) | PROTECTED_TABLE | 3 rows, `sensitive_data` raw — Scenario 1 |
+| Snowpark Connect (reader role) | PROTECTED_TABLE | 2 rows filtered, `*** MASKED ***` — Scenario 1 |
 | External engine via IRC | PROTECTED_TABLE | 3 rows, raw Parquet — Scenario 2 |
 | External engine write to OPEN_TABLE | OPEN_TABLE | ✅ Succeeds (write credentials vended) |
 | External engine write to PROTECTED_TABLE | PROTECTED_TABLE | ❌ S3 403 (read-only credentials vended) |
-| SCOS (ACCOUNTADMIN) | sensitive_orders | Real credit card numbers — Scenario 3 |
-| SCOS (reader role) | sensitive_orders | `****-****-****-XXXX` — Scenario 3 |
-| SCOS (ACCOUNTADMIN) | AI_ORDER_INSIGHTS | `risk_level = HIGH` visible — Scenario 4 |
-| SCOS (reader role) | AI_ORDER_INSIGHTS | `risk_level = *** RESTRICTED ***` — Scenario 4 |
-| Cortex Analyst (ACCOUNTADMIN) | ICEBERG_AI_SEMANTIC_VIEW | NL query → `HIGH` risk orders — Scenario 4 |
-| Cortex Analyst (reader role) | ICEBERG_AI_SEMANTIC_VIEW | NL query → `*** RESTRICTED ***` — Scenario 4 |
+| Snowpark Connect (ACCOUNTADMIN) | sensitive_orders | Real credit card numbers — Scenario 3 |
+| Snowpark Connect (reader role) | sensitive_orders | `****-****-****-XXXX` — Scenario 3 |
+| Snowpark Connect (ACCOUNTADMIN) | AI_ORDER_INSIGHTS | `risk_level = HIGH` visible — Scenario 3 |
+| Snowpark Connect (reader role) | AI_ORDER_INSIGHTS | `risk_level = *** RESTRICTED ***` — Scenario 3 |
+| Cortex Analyst (ACCOUNTADMIN) | ICEBERG_AI_SEMANTIC_VIEW | NL query → `HIGH` risk orders — Scenario 3 |
+| Cortex Analyst (reader role) | ICEBERG_AI_SEMANTIC_VIEW | NL query → `*** RESTRICTED ***` — Scenario 3 |
 
 ### Related Resources
 
