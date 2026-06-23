@@ -148,43 +148,25 @@ SF-Managed Iceberg (new table)
 
 ## Quickstart Setup
 
-### Fork the Quickstart Repository and Enable GitHub Actions
+### Clone the Demo Repository
 
-You'll need to create a fork of the repository for this Quickstart in your GitHub account. Visit the [associated GitHub Repository](https://github.com/Snowflake-Labs/sfquickstarts) and click on the **Fork** button near the top right. Complete any required fields and click **Create Fork**.
+All demo scripts live in a dedicated GitHub repository. Clone it to get everything in one folder:
 
-Once forked, enable GitHub Actions in your fork:
-
-1. In your forked repository, click the **Actions** tab
-2. Click **I understand my workflows, go ahead and enable them**
-
-### Get the Demo Files
-
-All scripts are in the `assets` folder of this Quickstart inside your fork:
-
-```
-sfquickstarts/site/sfguides/src/
-  federate-and-govern-iceberg-tables-using-snowpark-connect-for-apache-spark/
-    assets/
-      01_sf_iceberg_catalog_setup.sql
-      02_scos_sf_iceberg_demo.py
-      03_databricks_rw_sf_iceberg.py
-      04_databricks_create_uc_tables.py
-      05_sf_federate_databricks_uc.sql
-      06_sf_notebook_query_databricks.ipynb
-      07_cortex_ai_pipeline.sql
-      08_scos_ai_pipeline.py
+```bash
+git clone https://github.com/Snowflake-Labs/sfguide-federate-govern-iceberg-with-snowpark-connect.git
+cd sfguide-federate-govern-iceberg-with-snowpark-connect
 ```
 
 | File | Used in | Purpose |
 |------|---------|---------|
-| [01_sf_iceberg_catalog_setup.sql](https://github.com/Snowflake-Labs/sfquickstarts/blob/main/site/sfguides/src/federate-and-govern-iceberg-tables-using-snowpark-connect-for-apache-spark/assets/01_sf_iceberg_catalog_setup.sql) | Snowflake worksheet | Scenario 1: create managed Iceberg tables, governance policies, credential vending, PAT |
-| [02_scos_sf_iceberg_demo.py](https://github.com/Snowflake-Labs/sfquickstarts/blob/main/site/sfguides/src/federate-and-govern-iceberg-tables-using-snowpark-connect-for-apache-spark/assets/02_scos_sf_iceberg_demo.py) | Snowflake Notebook | Scenario 1: Snowpark Connect reads SF-managed tables with Horizon governance enforced |
-| [03_databricks_rw_sf_iceberg.py](https://github.com/Snowflake-Labs/sfquickstarts/blob/main/site/sfguides/src/federate-and-govern-iceberg-tables-using-snowpark-connect-for-apache-spark/assets/03_databricks_rw_sf_iceberg.py) | External Spark Cluster | Scenario 2: external engine reads/writes Snowflake tables via Horizon IRC |
-| [04_databricks_create_uc_tables.py](https://github.com/Snowflake-Labs/sfquickstarts/blob/main/site/sfguides/src/federate-and-govern-iceberg-tables-using-snowpark-connect-for-apache-spark/assets/04_databricks_create_uc_tables.py) | External Cluster with UC | Scenario 3 setup: create Delta + UniForm tables in external catalog |
-| [05_sf_federate_databricks_uc.sql](https://github.com/Snowflake-Labs/sfquickstarts/blob/main/site/sfguides/src/federate-and-govern-iceberg-tables-using-snowpark-connect-for-apache-spark/assets/05_sf_federate_databricks_uc.sql) | Snowflake worksheet | Scenario 3 setup: catalog integration, catalog-linked database, masking |
-| [06_sf_notebook_query_databricks.ipynb](https://github.com/Snowflake-Labs/sfquickstarts/blob/main/site/sfguides/src/federate-and-govern-iceberg-tables-using-snowpark-connect-for-apache-spark/assets/06_sf_notebook_query_databricks.ipynb) | Snowflake Notebook | Scenario 3: Snowpark Connect reads federated tables with live role-based masking |
-| [07_cortex_ai_pipeline.sql](https://github.com/Snowflake-Labs/sfquickstarts/blob/main/site/sfguides/src/federate-and-govern-iceberg-tables-using-snowpark-connect-for-apache-spark/assets/07_cortex_ai_pipeline.sql) | Snowflake worksheet | Scenario 3: Cortex enrichment CTAS, masking on AI output, semantic view DDL |
-| [08_scos_ai_pipeline.py](https://github.com/Snowflake-Labs/sfquickstarts/blob/main/site/sfguides/src/federate-and-govern-iceberg-tables-using-snowpark-connect-for-apache-spark/assets/08_scos_ai_pipeline.py) | Snowflake Notebook | Scenario 3: Snowpark Connect reads federated tables, Cortex enriches, writes to SF-managed Iceberg |
+| [01_sf_iceberg_catalog_setup.sql](https://github.com/Snowflake-Labs/sfguide-federate-govern-iceberg-with-snowpark-connect/blob/main/01_sf_iceberg_catalog_setup.sql) | Snowflake worksheet | Scenario 1: create managed Iceberg tables, governance policies, credential vending, PAT |
+| [02_scos_sf_iceberg_demo.py](https://github.com/Snowflake-Labs/sfguide-federate-govern-iceberg-with-snowpark-connect/blob/main/02_scos_sf_iceberg_demo.py) | Snowflake Notebook | Scenario 1: Snowpark Connect reads SF-managed tables with Horizon governance enforced |
+| [03_databricks_rw_sf_iceberg.py](https://github.com/Snowflake-Labs/sfguide-federate-govern-iceberg-with-snowpark-connect/blob/main/03_databricks_rw_sf_iceberg.py) | External Spark Cluster | Scenario 2: external engine reads/writes Snowflake tables via Horizon IRC |
+| [04_databricks_create_uc_tables.py](https://github.com/Snowflake-Labs/sfguide-federate-govern-iceberg-with-snowpark-connect/blob/main/04_databricks_create_uc_tables.py) | External Cluster with UC | Scenario 3 setup: create Delta + UniForm tables in external catalog |
+| [05_sf_federate_databricks_uc.sql](https://github.com/Snowflake-Labs/sfguide-federate-govern-iceberg-with-snowpark-connect/blob/main/05_sf_federate_databricks_uc.sql) | Snowflake worksheet | Scenario 3 setup: catalog integration, catalog-linked database, masking |
+| [06_sf_notebook_query_databricks.ipynb](https://github.com/Snowflake-Labs/sfguide-federate-govern-iceberg-with-snowpark-connect/blob/main/06_sf_notebook_query_databricks.ipynb) | Snowflake Notebook | Scenario 3: Snowpark Connect reads federated tables with live role-based masking |
+| [07_cortex_ai_pipeline.sql](https://github.com/Snowflake-Labs/sfguide-federate-govern-iceberg-with-snowpark-connect/blob/main/07_cortex_ai_pipeline.sql) | Snowflake worksheet | Scenario 3: Cortex enrichment CTAS, masking on AI output, semantic view DDL |
+| [08_scos_ai_pipeline.py](https://github.com/Snowflake-Labs/sfguide-federate-govern-iceberg-with-snowpark-connect/blob/main/08_scos_ai_pipeline.py) | Snowflake Notebook | Scenario 3: Snowpark Connect reads federated tables, Cortex enriches, writes to SF-managed Iceberg |
 
 > Fill in all `<PLACEHOLDER>` values in each file before running. Every parameter is documented in the header comment of each script.
 
