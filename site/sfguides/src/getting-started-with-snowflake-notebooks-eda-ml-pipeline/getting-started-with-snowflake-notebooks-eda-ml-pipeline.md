@@ -568,7 +568,6 @@ the current n_estimators and max_depth values from the ipywidgets sliders.
 
 ```python
 from sklearn.metrics import confusion_matrix
-import seaborn as sns
 
 cm = confusion_matrix(y_test, y_pred)
 
