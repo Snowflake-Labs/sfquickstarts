@@ -30,13 +30,13 @@ The pipeline covers five sequential stages:
 
 - Basic familiarity with Python and SQL.
 - A [Snowflake account](https://signup.snowflake.com/cortex-code?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides). Sign up for a [30-day free trial](https://signup.snowflake.com/cortex-code?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) if required.
-- Access to Snowflake Notebooks with **Container Runtime** enabled. If Notebooks is not yet available in your account, ask your administrator to follow the [Snowflake Notebooks setup guide](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-setup).
+- Access to Snowflake Notebooks with **Container Runtime 2.6** (CPU) or later. If Notebooks is not yet available in your account, ask your administrator to follow the [Snowflake Notebooks setup guide](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-setup).
 - **[Cortex Code](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code) (optional)** — not required if you use the provided code snippets directly. Needed if you want to use the **Prompt** sections to generate or extend the code interactively.
 
 ### What You'll Learn
 
 - How to load an in-memory Python dataset into a pandas DataFrame and reference it from SQL cells using Jinja templating.
-- How to query a pandas DataFrame directly from SQL cells using Jinja templating (`{{df_snow}}`).
+- How SQL cells return **Snowpark pandas (snowpandas) DataFrames** by default in Container Runtime 2.6, and how to convert them to pandas with `.to_pandas()` when needed.
 - How to produce publication-quality EDA visualizations (box plots, heatmaps, pairplots) inside a Notebook.
 - How to train and evaluate a Random Forest classifier with interactive `ipywidgets` sliders for hyperparameters.
 - How to interpret post-training diagnostics: confusion matrices, feature importances, ROC curves, and learning curves.
@@ -56,6 +56,7 @@ An end-to-end classification pipeline on the Wine dataset:
 - A trained `RandomForestClassifier` with interactive hyperparameter sliders, evaluated via 5-fold cross-validation.
 - Post-ML diagnostic charts: confusion matrix, feature importances, ROC curves, and learning curve.
 
+<!-- https://excalidraw.com/#json=pBuG3522Q2TPKjL59ep3l,Ka9AXVQl0-xrtxC5G6UVvQ -->
 ![EDA & ML Pipeline Workflow](assets/workflow-diagram.png)
 *EDA & ML Pipeline in Snowflake Notebooks — Wine dataset classification workflow*
 
@@ -72,21 +73,18 @@ The notebook file is available as a `.ipynb` in the [Snowflake Demo Notebooks](h
 ### Step 2 — Import into Snowsight
 
 1. Log in to [Snowsight](https://app.snowflake.com).
-2. Navigate to **Projects > Notebooks** in the left sidebar.
-3. Click **Import from .ipynb** (top-right of the Notebooks page).
-4. Select the downloaded file and click **Open**.
-5. In the **Create Notebook** dialog, choose:
-   - **Database** and **Schema** for the notebook to live in.
-   - **Warehouse** for SQL execution.
-6. Click **Create**.
+2. Navigate to **Projects > Workspaces** in the left sidebar.
+3. In the "Workspaces" tab on the left pane, click on "+ Add new", then "Upload files". 
+4. Select the `.ipynb` notebook file from your local computer that you've already downloaded in step 1 and click **Open**.
+5. From the Workspaces tab on the left pane, click on the notebook file to open it up. Next, click on "Connect" so that it connects to the compute service.
 
 ### Step 3 — Switch to Container Runtime
 
-This notebook uses packages such as `scikit-learn`, `seaborn`, and `ipywidgets` that are available on Container Runtime.
+This notebook uses packages such as `scikit-learn`, `seaborn`, and `ipywidgets` that are available on Container Runtime. This guide was developed and tested with **Container Runtime 2.6 (CPU)**.
 
-1. Open the notebook and click the runtime selector in the top toolbar.
-2. Switch from **Warehouse** to **Container Runtime (CPU)**.
-3. Wait for the container to start (typically under 60 seconds).
+1. Open the notebook and in the top "Connect/Connected" widget, click on the drop-down to create a new service with runtime version 2.6 or edit an existing service to use runtime version 2.6.
+2. Click on the Connect widget to start the service and wait for the container to start (typically under 60 seconds).
+
 
 <!-- ------------------------ -->
 ## Setup: Load the Wine Dataset
@@ -186,11 +184,16 @@ SF version: 8.x.x
 
 With `df_snow` in memory, SQL cells can reference it directly using the `{{df_snow}}` Jinja syntax. Snowflake Notebooks evaluates the template at query time, serialises the DataFrame, and executes the query — all transparently.
 
-SQL cells use the `%%sql` cell magic. Adding `-r <variable_name>` captures the result as a pandas DataFrame for use in subsequent Python cells:
+SQL cells use the `%%sql` cell magic. Adding `-r <variable_name>` captures the result as a **Snowpark pandas (snowpandas) DataFrame** for use in subsequent Python cells. In Container Runtime 2.6 and later, SQL cell results are returned as Snowpark pandas DataFrames by default — if a downstream operation requires a regular pandas DataFrame, call `.to_pandas()` on the result:
 
 ```
 %%sql -r df_result
 SELECT ... FROM {{df_snow}}
+```
+
+```python
+# Convert to pandas if needed for downstream pandas operations
+df_result_pd = df_result.to_pandas()
 ```
 
 ### Prompt
@@ -675,7 +678,7 @@ Four diagnostic plots are rendered inline:
 In this guide you built a complete end-to-end classification pipeline inside a single Snowflake Notebook:
 
 - **Setup** — loaded the Wine dataset into a pandas DataFrame, connected to Snowflake via `get_active_session()`, and sanitised column names for SQL compatibility.
-- **SQL EDA** — queried the in-memory DataFrame directly from SQL cells using `{{df_snow}}` Jinja templating to verify class balance, compare alcohol statistics, surface top flavanoid samples, and compare per-cultivar feature averages.
+- **SQL EDA** — queried the in-memory pandas DataFrame directly from SQL cells using `{{df_snow}}` Jinja templating to verify class balance, compare alcohol statistics, surface top flavanoid samples, and compare per-cultivar feature averages. SQL cell results are returned as Snowpark pandas (snowpandas) DataFrames (call `.to_pandas()` for downstream pandas operations).
 - **Python EDA** — grouped box plots revealed per-feature class separability; the 13x13 correlation heatmap identified collinear features; a pairplot of the five most discriminative features confirmed near-linear class separability.
 - **PCA scores plot** — confirmed the stratified 80/20 train/test split is representative and that cultivars are largely separable in 2D PCA space.
 - **Random Forest** — trained with interactive `ipywidgets` sliders for `n_estimators` and `max_depth`; validated with 5-fold cross-validation to confirm the result generalizes beyond the single split.
