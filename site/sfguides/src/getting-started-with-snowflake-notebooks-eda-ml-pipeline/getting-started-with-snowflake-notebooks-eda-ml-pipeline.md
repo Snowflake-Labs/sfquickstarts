@@ -76,7 +76,7 @@ The notebook file is available as a `.ipynb` in the [Snowflake Demo Notebooks](h
 2. Navigate to **Projects > Workspaces** in the left sidebar.
 3. In the "Workspaces" tab on the left pane, click on "+ Add new", then "Upload files". 
 4. Select the `.ipynb` notebook file from your local computer that you've already downloaded in step 1 and click **Open**.
-5. From the Workspaces tab on the left pane, click on the notebook file to open it up. Next, click on "Connect" so that it connects to the compute service.
+5. From the Workspaces tab on the left pane, click on the notebook file to open it up. Next, click on the **"Connect"** widget so that it connects to the compute service.
 
 ### Step 3 — Switch to Container Runtime
 
