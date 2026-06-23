@@ -14,6 +14,16 @@ open in snowflake: https://app.snowflake.com/developer-guides/snowpark-connect
 
 ## Overview
 
+> **Download the code:**
+> - [01_sf_iceberg_catalog_setup.sql](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/federate-and-govern-iceberg-tables-using-snowpark-connect-for-apache-spark/assets/01_sf_iceberg_catalog_setup.sql)
+> - [02_scos_sf_iceberg_demo.py](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/federate-and-govern-iceberg-tables-using-snowpark-connect-for-apache-spark/assets/02_scos_sf_iceberg_demo.py)
+> - [03_databricks_rw_sf_iceberg.py](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/federate-and-govern-iceberg-tables-using-snowpark-connect-for-apache-spark/assets/03_databricks_rw_sf_iceberg.py)
+> - [04_databricks_create_uc_tables.py](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/federate-and-govern-iceberg-tables-using-snowpark-connect-for-apache-spark/assets/04_databricks_create_uc_tables.py)
+> - [05_sf_federate_databricks_uc.sql](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/federate-and-govern-iceberg-tables-using-snowpark-connect-for-apache-spark/assets/05_sf_federate_databricks_uc.sql)
+> - [06_sf_notebook_query_databricks.ipynb](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/federate-and-govern-iceberg-tables-using-snowpark-connect-for-apache-spark/assets/06_sf_notebook_query_databricks.ipynb)
+> - [07_cortex_ai_pipeline.sql](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/federate-and-govern-iceberg-tables-using-snowpark-connect-for-apache-spark/assets/07_cortex_ai_pipeline.sql)
+> - [08_scos_ai_pipeline.py](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/federate-and-govern-iceberg-tables-using-snowpark-connect-for-apache-spark/assets/08_scos_ai_pipeline.py)
+
 Through this quickstart you will work through three progressive scenarios that show how Snowflake treats Apache Iceberg as a first-class citizen — from native managed storage to AI enrichment pipelines and bidirectional open lakehouse federation.
 
 **Scenario 1 — Snowflake-Managed Iceberg + Snowpark Connect:**
@@ -143,37 +153,6 @@ SF-Managed Iceberg (new table)
     "Which HIGH risk orders need immediate attention?"
     → Horizon masking enforced on risk_level per active role
 ```
-
-<!-- ------------------------ -->
-
-## Quickstart Setup
-
-### Get the Demo Files
-
-All scripts are in the GitHub repository. You can download the entire assets folder in one command using sparse checkout:
-
-```bash
-git clone --no-checkout --depth=1 https://github.com/Snowflake-Labs/sfquickstarts.git
-cd sfquickstarts
-git sparse-checkout set "site/sfguides/src/federate-and-govern-iceberg-tables-using-snowpark-connect-for-apache-spark/assets"
-git checkout main
-cd "site/sfguides/src/federate-and-govern-iceberg-tables-using-snowpark-connect-for-apache-spark/assets"
-```
-
-Or browse and download individual files directly from the [assets folder on GitHub](https://github.com/Snowflake-Labs/sfquickstarts/tree/main/site/sfguides/src/federate-and-govern-iceberg-tables-using-snowpark-connect-for-apache-spark/assets):
-
-| File | Used in | Purpose |
-|------|---------|---------|
-| [01_sf_iceberg_catalog_setup.sql](https://github.com/Snowflake-Labs/sfquickstarts/blob/main/site/sfguides/src/federate-and-govern-iceberg-tables-using-snowpark-connect-for-apache-spark/assets/01_sf_iceberg_catalog_setup.sql) | Snowflake worksheet | Scenario 1: create managed Iceberg tables, governance policies, credential vending, PAT |
-| [02_scos_sf_iceberg_demo.py](https://github.com/Snowflake-Labs/sfquickstarts/blob/main/site/sfguides/src/federate-and-govern-iceberg-tables-using-snowpark-connect-for-apache-spark/assets/02_scos_sf_iceberg_demo.py) | Snowflake Notebook | Scenario 1: Snowpark Connect reads SF-managed tables with Horizon governance enforced |
-| [03_databricks_rw_sf_iceberg.py](https://github.com/Snowflake-Labs/sfquickstarts/blob/main/site/sfguides/src/federate-and-govern-iceberg-tables-using-snowpark-connect-for-apache-spark/assets/03_databricks_rw_sf_iceberg.py) | External Spark Cluster | Scenario 2: external engine reads/writes Snowflake tables via Horizon IRC |
-| [04_databricks_create_uc_tables.py](https://github.com/Snowflake-Labs/sfquickstarts/blob/main/site/sfguides/src/federate-and-govern-iceberg-tables-using-snowpark-connect-for-apache-spark/assets/04_databricks_create_uc_tables.py) | External Cluster with UC | Scenario 3 setup: create Delta + UniForm tables in external catalog |
-| [05_sf_federate_databricks_uc.sql](https://github.com/Snowflake-Labs/sfquickstarts/blob/main/site/sfguides/src/federate-and-govern-iceberg-tables-using-snowpark-connect-for-apache-spark/assets/05_sf_federate_databricks_uc.sql) | Snowflake worksheet | Scenario 3 setup: catalog integration, catalog-linked database, masking |
-| [06_sf_notebook_query_databricks.ipynb](https://github.com/Snowflake-Labs/sfquickstarts/blob/main/site/sfguides/src/federate-and-govern-iceberg-tables-using-snowpark-connect-for-apache-spark/assets/06_sf_notebook_query_databricks.ipynb) | Snowflake Notebook | Scenario 3: Snowpark Connect reads federated tables with live role-based masking |
-| [07_cortex_ai_pipeline.sql](https://github.com/Snowflake-Labs/sfquickstarts/blob/main/site/sfguides/src/federate-and-govern-iceberg-tables-using-snowpark-connect-for-apache-spark/assets/07_cortex_ai_pipeline.sql) | Snowflake worksheet | Scenario 3: Cortex enrichment CTAS, masking on AI output, semantic view DDL |
-| [08_scos_ai_pipeline.py](https://github.com/Snowflake-Labs/sfquickstarts/blob/main/site/sfguides/src/federate-and-govern-iceberg-tables-using-snowpark-connect-for-apache-spark/assets/08_scos_ai_pipeline.py) | Snowflake Notebook | Scenario 3: Snowpark Connect reads federated tables, Cortex enriches, writes to SF-managed Iceberg |
-
-> Fill in all `<PLACEHOLDER>` values in each file before running. Every parameter is documented in the header comment of each script.
 
 <!-- ------------------------ -->
 
