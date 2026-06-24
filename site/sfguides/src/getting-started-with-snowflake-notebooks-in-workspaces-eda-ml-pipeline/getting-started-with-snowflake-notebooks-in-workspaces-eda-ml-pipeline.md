@@ -2,17 +2,17 @@ author: Chanin Nantasenamat
 id: getting-started-with-snowflake-notebooks-in-workspaces-eda-ml-pipeline
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/product/ai
 language: en
-summary: Build a complete EDA and ML classification pipeline inside Snowflake Notebooks using the Wine dataset — combining SQL exploration, Python visualizations, and a Random Forest classifier.
+summary: Build a complete EDA and ML classification pipeline inside Snowflake Notebooks in Workspaces using the Wine dataset — combining SQL exploration, Python visualizations, and a Random Forest classifier.
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Machine Learning, Snowflake Notebooks, EDA, Random Forest, Container Runtime
 
-# Getting Started with Snowflake Notebooks: Build an EDA and ML Pipeline
+# Getting Started with Snowflake Notebooks in Workspaces: Build an EDA and ML Pipeline
 <!-- ------------------------ -->
 ## Overview
 
-As a data scientist, setting up a local environment for each new project (*i.e.* installing packages, configuring database connections, and managing dependencies) takes time away from what matters: exploring data and building models. [Snowflake Notebooks](https://docs.snowflake.com/user-guide/ui-snowsight/notebooks) removes that friction by providing a cell-based, interactive environment for Python and SQL that runs directly inside Snowflake. You get access to your data, scalable compute, and a curated package library without leaving the platform.
+As a data scientist, setting up a local environment for each new project (*i.e.* installing packages, configuring database connections, and managing dependencies) takes time away from what matters: exploring data and building models. [Snowflake Notebooks in Workspaces](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-in-workspaces/notebooks-in-workspaces-overview) removes that friction by providing a cell-based, interactive environment for Python and SQL that runs directly inside Snowflake. You get access to your data, scalable compute, and a curated package library without leaving the platform.
 
 This guide walks you through a realistic data science workflow using the [Wine dataset](https://scikit-learn.org/stable/datasets/toy_dataset.html#wine-recognition-dataset) — from loading data and writing SQL queries to producing visualizations and training a classification model, all inside a single Snowflake Notebook.
 
@@ -30,20 +30,19 @@ The pipeline covers five sequential stages:
 
 - Basic familiarity with Python and SQL.
 - A [Snowflake account](https://signup.snowflake.com/cortex-code?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides). Sign up for a [30-day free trial](https://signup.snowflake.com/cortex-code?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) if required.
-- Access to Snowflake Notebooks with **Container Runtime 2.6** (CPU) or later. If Notebooks is not yet available in your account, ask your administrator to follow the [Snowflake Notebooks setup guide](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-setup).
 - **[Cortex Code](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code) (optional)** — not required if you use the provided code snippets directly. Needed if you want to use the **Prompt** sections to generate or extend the code interactively.
 
 ### What You'll Learn
 
 - How to load an in-memory Python dataset into a pandas DataFrame and reference it from SQL cells using Jinja templating.
-- How SQL cells return **Snowpark pandas (snowpandas) DataFrames** by default in Container Runtime 2.6, and how to convert them to pandas with `.to_pandas()` when needed.
+- How SQL cells return **Snowpark pandas (snowpandas) DataFrames** by default in Container Runtime 2.6 or higher, and how to convert them to pandas with `.to_pandas()` when needed.
 - How to produce publication-quality EDA visualizations (box plots, heatmaps, pairplots) inside a Notebook.
 - How to train and evaluate a Random Forest classifier with interactive `ipywidgets` sliders for hyperparameters.
 - How to interpret post-training diagnostics: confusion matrices, feature importances, ROC curves, and learning curves.
 
 ### What You'll Need
 
-- A Snowflake account with Notebooks enabled on Container Runtime.
+- Access to Snowflake Workspaces and a Compute Pool.
 - The `.ipynb` notebook file from [Snowflake Demo Notebooks](https://github.com/Snowflake-Labs/snowflake-demo-notebooks).
 
 ### What You'll Build
@@ -74,16 +73,16 @@ The notebook file is available as a `.ipynb` in the [Snowflake Demo Notebooks](h
 
 1. Log in to [Snowsight](https://app.snowflake.com).
 2. Navigate to **Projects > Workspaces** in the left sidebar.
-3. In the "Workspaces" tab on the left pane, click on "+ Add new", then "Upload files". 
+3. In the **Workspaces** tab on the left pane, click on **+ Add new**, then **Upload files**. 
 4. Select the `.ipynb` notebook file from your local computer that you've already downloaded in step 1 and click **Open**.
-5. From the Workspaces tab on the left pane, click on the notebook file to open it up. Next, click on the **"Connect"** widget so that it connects to the compute service.
+5. From the **Workspaces** tab on the left pane, click on the notebook file to open it up. Next, click on the **"Connect"** widget so that it connects to the compute service.
 
 ### Step 3 — Switch to Container Runtime
 
 This notebook uses packages such as `scikit-learn`, `seaborn`, and `ipywidgets` that are available on Container Runtime. This guide was developed and tested with **Container Runtime 2.6 (CPU)**.
 
-1. Open the notebook and in the top "Connect/Connected" widget, click on the drop-down to create a new service with runtime version 2.6 or edit an existing service to use runtime version 2.6.
-2. Click on the Connect widget to start the service and wait for the container to start (typically under 60 seconds).
+1. Open the notebook and in the top **Connect/Connected** widget, click on the drop-down to create a new service or edit an existing service to use runtime version 2.6 or higher.
+2. Click on the **Connect** widget to start the service and wait for the container to start (typically under 60 seconds).
 
 
 <!-- ------------------------ -->
@@ -154,7 +153,7 @@ for row in result:
 
 `get_active_session()` connects to the Snowflake session that is already attached to the running notebook — no credentials are required.
 
-The notebook does **not** explicitly write `df_snow` to `WINE_TMP` in a separate cell; instead, SQL cells reference the DataFrame directly via Jinja templating (`{{df_snow}}`), which Snowflake Notebooks evaluates at query time.
+The notebook does not explicitly write `df_snow` to `WINE_TMP` in a separate cell; instead, SQL cells reference the DataFrame directly via Jinja templating (`{{df_snow}}`), which Snowflake Notebooks evaluates at query time.
 
 ### What Gets Generated
 
@@ -693,8 +692,7 @@ In this guide you built a complete end-to-end classification pipeline inside a s
 
 ### Resources
 
-- [Snowflake Notebooks documentation](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-in-workspaces/notebooks-in-workspaces-overview)
-- [Snowflake Notebooks on Container Runtime](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-on-spcs)
+- [Snowflake Notebooks in Workspaces](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-in-workspaces/notebooks-in-workspaces-overview)
 - [Snowflake Model Registry](https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/overview)
 - [Snowpark Python API](https://docs.snowflake.com/en/developer-guide/snowpark/python/index)
 - [scikit-learn Wine dataset](https://scikit-learn.org/stable/datasets/toy_dataset.html#wine-recognition-dataset)
