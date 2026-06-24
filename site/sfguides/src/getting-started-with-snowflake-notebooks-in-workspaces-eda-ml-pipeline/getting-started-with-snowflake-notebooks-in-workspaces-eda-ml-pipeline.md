@@ -1,5 +1,5 @@
 author: Chanin Nantasenamat
-id: getting-started-with-snowflake-notebooks-eda-ml-pipeline
+id: getting-started-with-snowflake-notebooks-in-workspaces-eda-ml-pipeline
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/product/ai
 language: en
 summary: Build a complete EDA and ML classification pipeline inside Snowflake Notebooks using the Wine dataset — combining SQL exploration, Python visualizations, and a Random Forest classifier.
