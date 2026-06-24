@@ -623,6 +623,12 @@ jobs:
           while IFS= read -r name; do
             [ -z "$name" ] && continue
             
+            # Validate name against safe charset to prevent JS injection
+            if ! echo "$name" | grep -qE '^[A-Za-z0-9._-]+$'; then
+              echo "⚠️ Skipping quickstart with invalid name: $name"
+              continue
+            fi
+            
             lang=""
             # Prefer a markdown file that matches the folder name
             candidate="pr/site/sfguides/src/$name/$name.md"
