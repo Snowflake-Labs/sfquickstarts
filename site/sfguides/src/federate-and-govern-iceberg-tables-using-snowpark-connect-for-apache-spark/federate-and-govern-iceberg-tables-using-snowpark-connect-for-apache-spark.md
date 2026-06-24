@@ -26,6 +26,9 @@ An external Iceberg-compatible engine connects to the same Scenario 1 tables via
 An external catalog creates Iceberg tables (Delta + UniForm) and publishes them via an Iceberg REST endpoint. Snowflake federates them into a catalog-linked database and applies its own independent Horizon governance. Snowpark Connect reads the federated tables with live role-based masking. Snowflake Cortex then enriches the data with AI-generated risk classification and operational notes, writing results to a new Snowflake-managed Iceberg table — where Horizon governance applies to AI-generated columns just as it does to raw data. A Cortex Analyst semantic view spans both tables for natural language querying.
 
 > **Download the code:**
+> [Download all files (ZIP)](https://download-directory.github.io/?url=https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/federate-and-govern-iceberg-tables-using-snowpark-connect-for-apache-spark/assets)
+>
+> Or download individual files:
 > - [01_sf_iceberg_catalog_setup.sql](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/federate-and-govern-iceberg-tables-using-snowpark-connect-for-apache-spark/assets/01_sf_iceberg_catalog_setup.sql)
 > - [02_scos_sf_iceberg_demo.py](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/federate-and-govern-iceberg-tables-using-snowpark-connect-for-apache-spark/assets/02_scos_sf_iceberg_demo.py)
 > - [03_databricks_rw_sf_iceberg.py](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/federate-and-govern-iceberg-tables-using-snowpark-connect-for-apache-spark/assets/03_databricks_rw_sf_iceberg.py)
@@ -37,17 +40,10 @@ An external catalog creates Iceberg tables (Delta + UniForm) and publishes them 
 
 ### What You'll Learn
 
-- How Snowflake manages Iceberg tables on its own storage and enforces Horizon governance through Snowpark Connect
-- How Snowpark Connect runs PySpark DataFrames on Snowflake's engine with governance fully applied
-- How Snowflake Horizon IRC (Iceberg REST Catalog) exposes managed tables to any Iceberg-compatible engine
-- How credential vending enforces write protection on Snowflake-managed tables at the S3 layer
-- The governance contrast: Snowpark Connect enforces policies; external engines reading via IRC read raw Parquet
-- How Delta + Iceberg UniForm generates interoperable Iceberg metadata with no data duplication
-- How Snowflake catalog-linked databases auto-discover and federate externally-managed Iceberg tables
-- The three setup rules for using Snowpark Connect with catalog-linked databases
-- How Snowflake Cortex LLM functions enrich Iceberg data inline in SQL
-- How Horizon governance applies to AI-generated columns the same way it applies to raw data
-- How Cortex Analyst semantic views enable natural language queries across SF-managed and federated Iceberg tables
+- How Snowpark Connect runs PySpark DataFrames through Snowflake's SQL engine — enforcing Horizon governance on every query regardless of the caller
+- How Horizon IRC exposes Snowflake-managed Iceberg tables to any external engine via credential vending, with write access controlled at the S3 layer
+- How catalog-linked databases federate externally-managed Iceberg tables (Delta + UniForm) into Snowflake with independent Horizon governance applied at query time
+- How Snowflake Cortex enriches federated Iceberg data inline in SQL — and why Horizon masking applies to AI-generated columns exactly as it does to raw data
 
 ### Key Capabilities
 
