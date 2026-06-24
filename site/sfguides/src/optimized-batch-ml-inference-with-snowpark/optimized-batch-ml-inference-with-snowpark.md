@@ -19,36 +19,36 @@ The scenario: a financial services company runs its transaction processing syste
 
 You will exercise four Snowpark capabilities together:
 
-| Step | Feature | What it does |
-|------|---------|------------|
-| Ingest | **Snowpark DB-API** | Pull data from external databases (Postgres, MySQL, SQL Server) using Python's standard DB-API 2.0 drivers, with parallel partitioned reads. |
-| Transform | **Vectorized UDFs** | Process millions of rows with pandas-level performance instead of row-by-row scalar UDFs. |
-| Score | **Optimized Batch Inference** | Load an ML model once in the head worker and share it across all forked workers via copy-on-write memory. |
-| Ecosystem | **Customer-Hosted Artifact Repository** | Pull UDF dependencies from your own Nexus, Artifactory, or other PyPI-compatible repository. |
+| Feature | What it does |
+|---------|--------------|
+| **Snowpark DB-API** (ingest) | Pull data from external databases like Postgres, MySQL, or SQL Server using Python's standard DB-API 2.0 drivers, with parallel partitioned reads. |
+| **Vectorized UDFs** (transform) | Process millions of rows with pandas-level performance instead of row-by-row scalar UDFs. |
+| **Optimized Batch Inference** (score) | Load an ML model once in the head worker and share it across all forked workers via copy-on-write memory. |
+| **Customer-Hosted Artifact Repository** | Pull UDF dependencies from your own Nexus, Artifactory, or other PyPI-compatible repository. |
 
 ### Prerequisites
 - Familiarity with Python, SQL, and basic ML concepts
 - An understanding of how Snowpark UDFs and stored procedures work
 
 ### What You'll Learn
-- How to ingest data from Postgres into Snowflake with `session.read.dbapi()`
+- How to ingest data from Postgres into Snowflake with the Snowpark DB-API
 - How to write vectorized UDFs that operate on pandas Series for batch performance
 - How to register an XGBoost model with the Snowflake Model Registry
 - How to run optimized batch inference using pre-fork model initialization
 - How to source Python packages from a customer-hosted artifact repository
 
 ### What You'll Need
-- A Snowflake account with `ACCOUNTADMIN` (or equivalent) for one-time setup
+- A Snowflake account with ACCOUNTADMIN (or equivalent) for one-time setup
 - An external Postgres database reachable from Snowflake (an RDS instance is fine)
 - *Optional:* A customer-hosted PyPI repository (Nexus, Artifactory, or similar). If you don't have one, you can use Snowflake's shared PyPI proxy instead.
-- Privileges to create `SECRET`, `NETWORK RULE`, `EXTERNAL ACCESS INTEGRATION`, `API INTEGRATION`, and `ARTIFACT REPOSITORY` objects
+- Privileges to create secrets, network rules, external access integrations, API integrations, and artifact repositories
 
 ### What You'll Build
 - An end-to-end batch inference pipeline:
-  - `RAW_TRANSACTIONS` ingested from Postgres
-  - `TXN_FEATURES` engineered via vectorized UDFs and joined with customer profiles
-  - A registered `fraud_scorer` model in the Snowflake Model Registry
-  - `FRAUD_SCORES` containing a fraud probability for every transaction
+  - **RAW_TRANSACTIONS** ingested from Postgres
+  - **TXN_FEATURES** engineered via vectorized UDFs and joined with customer profiles
+  - A registered **fraud_scorer** model in the Snowflake Model Registry
+  - **FRAUD_SCORES** containing a fraud probability for every transaction
 
 <!-- ------------------------ -->
 ## Architecture
@@ -154,9 +154,7 @@ CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION pg_access_integration
 
 Snowflake UDFs and stored procedures can pull Python packages from a customer-hosted PyPI-compatible repository (Nexus, Artifactory, etc.). This gives you the same package governance as your other Python codebases and lets you serve internal/proprietary wheels.
 
-> aside negative
->
-> **No Nexus?** You can skip this step and substitute `'snowflake.snowpark.pypi_shared_repository'` everywhere this quickstart references `'my_nexus_repo'`. That uses Snowflake's shared PyPI proxy and works for the public packages we use here (`psycopg2-binary`, `pandas`, `numpy`, `xgboost`).
+> NOTE: If you don't have Nexus, Artifactory, or another customer-hosted PyPI repository, you can skip this step entirely. Substitute `'snowflake.snowpark.pypi_shared_repository'` everywhere this quickstart references `'my_nexus_repo'` to use Snowflake's shared PyPI proxy — it works for all of the public packages used here (psycopg2-binary, pandas, numpy, xgboost).
 
 ```sql
 CREATE OR REPLACE SECRET nexus_secret
@@ -181,7 +179,7 @@ CREATE OR REPLACE ARTIFACT REPOSITORY my_nexus_repo
 <!-- ------------------------ -->
 ## Load Customer Profiles into Snowflake
 
-We need a `CUSTOMER_PROFILES` table in Snowflake to join against the transaction features. Run [scripts/customer_profiles.sql](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/optimized-batch-ml-inference-with-snowpark/scripts/customer_profiles.sql) or paste this:
+We need a customer profiles table in Snowflake to join against the transaction features. Run [scripts/customer_profiles.sql](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/optimized-batch-ml-inference-with-snowpark/scripts/customer_profiles.sql) or paste this:
 
 ```sql
 USE SCHEMA BATCH_INF_DEMO.PUBLIC;
@@ -210,7 +208,7 @@ FROM TABLE(GENERATOR(ROWCOUNT => 500));
 <!-- ------------------------ -->
 ## Step 1: Ingest from Postgres with Snowpark DB-API
 
-The new `session.read.dbapi()` API lets you pull data from any external database that ships a Python DB-API 2.0 driver. No Spark, no custom connectors — just `pip install psycopg2-binary` and define a connection factory.
+The new Snowpark DB-API lets you pull data from any external database that ships a Python DB-API 2.0 driver. No Spark, no custom connectors — just install psycopg2-binary and define a connection factory.
 
 Open a Snowflake notebook (or any Snowpark Python session) and run:
 
@@ -277,10 +275,10 @@ session.table('BATCH_INF_DEMO.PUBLIC.RAW_TRANSACTIONS').show(10)
 
 What's happening:
 
-- **`column`, `lower_bound`, `upper_bound`, `num_partitions`** split the read into four parallel partitions on `txn_id`. Each partition runs in its own UDTF instance.
-- **`fetch_size=10000`** overlaps reading from Postgres with writing to Snowflake.
-- **`udtf_configs`** runs the ingestion entirely on Snowflake compute — no driver round-trips.
-- **`artifact_repository='my_nexus_repo'`** sources `psycopg2-binary` from your internal repository.
+- The **column**, **lower_bound**, **upper_bound**, and **num_partitions** arguments split the read into four parallel partitions on the txn_id column. Each partition runs in its own UDTF instance.
+- The **fetch_size** of 10000 overlaps reading from Postgres with writing to Snowflake.
+- **udtf_configs** runs the ingestion entirely on Snowflake compute — no driver round-trips.
+- **artifact_repository='my_nexus_repo'** sources psycopg2-binary from your internal repository.
 
 <!-- ------------------------ -->
 ## Step 2: Engineer Features with a Vectorized UDF
@@ -291,9 +289,9 @@ We will compute four engineered features:
 
 | Feature | Description | Why it matters for fraud |
 |---------|-------------|-------------------------|
-| `amt_zscore` | Z-score normalized transaction amount | Unusually large transactions are suspicious |
-| `hour_sin`, `hour_cos` | Cyclical encoding of transaction hour | Fraud peaks at unusual hours |
-| `category_risk` | Risk weight by merchant category | Travel and online retail have higher fraud rates |
+| amt_zscore | Z-score normalized transaction amount | Unusually large transactions are suspicious |
+| hour_sin, hour_cos | Cyclical encoding of transaction hour | Fraud peaks at unusual hours |
+| category_risk | Risk weight by merchant category | Travel and online retail have higher fraud rates |
 
 ```python
 import numpy as np
@@ -335,7 +333,7 @@ def compute_txn_features(
     return pd.Series(results)
 ```
 
-Now apply the UDF and join with `CUSTOMER_PROFILES`:
+Now apply the UDF and join with the customer profiles table:
 
 ```python
 from snowflake.snowpark import functions as F
@@ -560,13 +558,13 @@ You built an end-to-end optimized batch ML inference pipeline that combines four
 
 | Feature | Demonstrated by |
 |---------|-----------------|
-| Snowpark DB-API | Parallel partitioned ingestion from Postgres into `RAW_TRANSACTIONS` |
-| Vectorized UDFs | `compute_txn_features` running pandas-batch operations on millions of rows |
-| Optimized batch inference | Pre-fork model initialization in the Model Registry's `mv.run()` |
+| Snowpark DB-API | Parallel partitioned ingestion from Postgres into the raw transactions table |
+| Vectorized UDFs | A feature-engineering UDF running pandas-batch operations on millions of rows |
+| Optimized batch inference | Pre-fork model initialization when running the registered model |
 | Customer-hosted artifact repository | UDFs and stored procedures sourcing dependencies from internal Nexus |
 
 ### What You Learned
-- How to ingest from external databases with `session.read.dbapi()` and partitioned reads
+- How to ingest from external databases with the Snowpark DB-API and partitioned reads
 - How to write vectorized UDFs that operate on pandas Series for batch performance
 - How to register and serve XGBoost models with the Snowflake Model Registry
 - How optimized batch inference reduces memory pressure for large models
