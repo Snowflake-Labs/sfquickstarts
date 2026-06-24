@@ -42,7 +42,7 @@ The pipeline covers five sequential stages:
 
 ### What You'll Need
 
-- Access to Snowflake Workspaces and a Compute Pool.
+- Access to [Snowflake Workspaces](https://docs.snowflake.com/en/user-guide/ui-snowsight/workspaces) and a [Compute Pool](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-in-workspaces/notebooks-in-workspaces-compute-setup).
 - The `.ipynb` notebook file from [Snowflake Demo Notebooks](https://github.com/Snowflake-Labs/snowflake-demo-notebooks).
 
 ### What You'll Build
