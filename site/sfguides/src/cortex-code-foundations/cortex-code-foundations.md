@@ -43,6 +43,31 @@ In Snowsight, click the **blue star icon** in the bottom right corner to open th
 This gives you immediate access to CoCo without any local installation and is useful for quick queries, schema exploration, and testing.
 
 <!-- ------------------------ -->
+
+## Find Your Connection Details
+
+You'll need your Snowflake account identifier, role, username in order to connect your Snowflake account to CoCo. You'll use this information to set up your config file.
+
+1. Log in to Snowsight
+2. Click your username in the bottom left → **Account** → **View account details**
+3. Note your **Account Identifier** (e.g. `SFSENORTHAMERICA-XXXXX`) and **Role**
+
+### Authentication Options
+
+There are several ways to authenticate your connection. Common environment variables include:
+
+| Variable | Description |
+|---|---|
+| `SNOWFLAKE_ACCOUNT` | Your account identifier |
+| `SNOWFLAKE_USER` | Your username |
+| `SNOWFLAKE_PASSWORD` | Password authentication |
+| `SNOWFLAKE_TOKEN` | OAuth token |
+| `SNOWFLAKE_TOKEN_FILE_PATH` | Path to token file |
+| `SNOWFLAKE_OAUTH_CLIENT_ID` | OAuth client ID |
+
+For a full list, see the [Manage Snowflake connections guide](https://docs.snowflake.com/en/user-guide/snowsql-connect).
+
+<!-- ------------------------ -->
 ## Install the CoCo CLI on Mac
 
 ### Supported Architectures
@@ -165,28 +190,85 @@ role      = "<YOUR_DEMO_ROLE>"     # e.g. Need a role for connection
 Once updated, make sure to save the file. 
 
 <!-- ------------------------ -->
-## Find Your Connection Details
+## Install on GitHub Codespaces
 
-To fill out your config, you'll need your Snowflake account identifier, role, and warehouse.
+GitHub Codespaces gives you a fully configured Linux environment in your browser — no local installs required. The CoCo CLI install command is the same as Mac, but a few steps differ. This is the best option if you're running the guide on a corporate laptop with restrictions.
 
-1. Log in to Snowsight
-2. Click your username in the bottom left → **Account** → **View account details**
-3. Note your **Account Identifier** (e.g. `SFSENORTHAMERICA-XXXXX`) and **Role**
+### Open a Codespace
 
-### Authentication Options
+You will need a free GitHub account. If you don't have one, sign up at [github.com](https://github.com).
 
-There are several ways to authenticate your connection. Common environment variables include:
+**Step 1 — Create a new repository**
 
-| Variable | Description |
-|---|---|
-| `SNOWFLAKE_ACCOUNT` | Your account identifier |
-| `SNOWFLAKE_USER` | Your username |
-| `SNOWFLAKE_PASSWORD` | Password authentication |
-| `SNOWFLAKE_TOKEN` | OAuth token |
-| `SNOWFLAKE_TOKEN_FILE_PATH` | Path to token file |
-| `SNOWFLAKE_OAUTH_CLIENT_ID` | OAuth client ID |
+1. Go to [github.com](https://github.com) and click the **+** icon in the top right → **New repository**
+2. Give it a name (e.g. `coco-workshop`)
+3. Check **Add a README file**
+4. Click **Create repository**
 
-For a full list, see the [Manage Snowflake connections guide](https://docs.snowflake.com/en/user-guide/snowsql-connect).
+**Step 2 — Launch a Codespace**
+
+1. On your new repository page, click the green **Code** button
+2. Select the **Codespaces** tab
+3. Click **Create codespace on main**
+4. GitHub will build the environment — this takes about 1–2 minutes on first launch
+5. Once ready, you will see a VS Code interface in your browser with a terminal at the bottom
+
+To open the terminal at any time, go to **Terminal → New Terminal** in the menu bar.
+
+### Supported Architectures
+- **x64** — Fully supported
+
+### Install via Terminal
+
+```bash
+curl -LsS https://ai.snowflake.com/static/cc-scripts/install.sh | sh
+```
+
+When prompted to add `cortex` to your PATH, respond with **y**.
+
+### Verify Installation
+
+```bash
+cortex --version
+```
+
+### Create/open the Config File
+
+Run the following in your Codespaces terminal:
+
+```bash
+mkdir -p ~/.snowflake
+touch ~/.snowflake/config.toml
+chmod 600 ~/.snowflake/config.toml
+nano ~/.snowflake/config.toml
+```
+
+Copy and adapt the following to your account and role:
+
+```toml
+default_connection_name = "DEMO"
+
+[connections.DEMO]
+account   = "<YOUR_ACCOUNT>"      # e.g. MYORG-MYACCOUNT
+user      = "<YOUR_USERNAME>"
+password  = "<YOUR_PASSWORD>"
+role      = "<YOUR_ROLE>"
+```
+
+Save with `Ctrl+O`, `Enter`, then exit with `Ctrl+X`. To confirm the file saved correctly, re-run the following script and you should see what you previously saved.
+
+```bash
+mkdir -p ~/.snowflake
+touch ~/.snowflake/config.toml
+chmod 600 ~/.snowflake/config.toml
+nano ~/.snowflake/config.toml
+```
+
+![Config file in CodeSpaces](assets/config_codespaces.png)
+
+![Log In and Find Settings](assets/snowsight_login_settings.png)
+
+![Account Details Connection](assets/account_details_connection.png)
 
 <!-- ------------------------ -->
 ## Launch Cortex Code
@@ -360,6 +442,22 @@ Download the three CSV files prepared by the Finance Transformation PMO in the `
 - `sample_business_requirements_business_rules.csv` — BR-001 through BR-010 covering status normalization, dedup logic, currency handling, and open questions
 
 Download all three before starting Demo 2.
+
+### In GitHub Codespaces
+
+If you are using GitHub Codespaces, you cannot download files to a local device from Codespaces. Instead, pull the CSV files directly into your working directory using the Codespaces terminal.
+
+**Before launching CoCo** (or exit CoCo first with `/quit`), run the following in the Codespaces terminal:
+
+```bash
+BASE="https://raw.githubusercontent.com/Snowflake-Labs/sfquickstarts/master/site/sfguides/src/cortex-code-foundations/assets"
+
+curl -O "$BASE/sample_business_requirements_source_onboarding.csv"
+curl -O "$BASE/sample_business_requirements_column_mapping.csv"
+curl -O "$BASE/sample_business_requirements_business_rules.csv"
+```
+
+Once the files are downloaded, relaunch CoCo (`cortex -c DEMO`) and continue with Step 2.1. CoCo will be able to read the CSV files from the current directory.
 
 ### Step 2.1 – Read the Local PRD
 
