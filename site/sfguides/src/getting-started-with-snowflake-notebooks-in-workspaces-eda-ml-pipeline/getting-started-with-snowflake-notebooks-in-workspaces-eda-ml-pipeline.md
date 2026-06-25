@@ -43,7 +43,7 @@ The pipeline covers five sequential stages:
 ### What You'll Need
 
 - Access to [Snowflake Workspaces](https://docs.snowflake.com/en/user-guide/ui-snowsight/workspaces) and a [Compute Pool](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-in-workspaces/notebooks-in-workspaces-compute-setup).
-- The [getting-started-with-snowflake-notebooks-in-workspaces-eda-ml-pipeline.ipynb](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/getting-started-with-snowflake-notebooks-in-workspaces-eda-ml-pipeline/getting-started-with-snowflake-notebooks-in-workspaces-eda-ml-pipeline.ipynb) notebook file from the Snowflake Demo Notebooks](https://github.com/Snowflake-Labs/snowflake-demo-notebooks) repo.
+- The [getting-started-with-snowflake-notebooks-in-workspaces-eda-ml-pipeline.ipynb](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/getting-started-with-snowflake-notebooks-in-workspaces-eda-ml-pipeline/getting-started-with-snowflake-notebooks-in-workspaces-eda-ml-pipeline.ipynb) notebook file from the [Snowflake Demo Notebooks](https://github.com/Snowflake-Labs/snowflake-demo-notebooks) repo.
 
 ### What You'll Build
 
@@ -62,12 +62,9 @@ An end-to-end classification pipeline on the Wine dataset:
 <!-- ------------------------ -->
 ## Import the Notebook into Snowflake
 
-The [getting-started-with-snowflake-notebooks-in-workspaces-eda-ml-pipeline.ipynb](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/getting-started-with-snowflake-notebooks-in-workspaces-eda-ml-pipeline/getting-started-with-snowflake-notebooks-in-workspaces-eda-ml-pipeline.ipynb) notebook file is available in the [Snowflake Demo Notebooks](https://github.com/Snowflake-Labs/snowflake-demo-notebooks) repository.
-
 ### Step 1 — Download the notebook
 
-1. Click [getting-started-with-snowflake-notebooks-in-workspaces-eda-ml-pipeline](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/tree/main/getting-started-with-snowflake-notebooks-in-workspaces-eda-ml-pipeline) to open the folder directly.
-2. Click on the [getting-started-with-snowflake-notebooks-in-workspaces-eda-ml-pipeline.ipynb](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/getting-started-with-snowflake-notebooks-in-workspaces-eda-ml-pipeline/getting-started-with-snowflake-notebooks-in-workspaces-eda-ml-pipeline.ipynb) notebook file, then click **Download raw file** (top-right icon).
+- Go to the repo page with the [getting-started-with-snowflake-notebooks-in-workspaces-eda-ml-pipeline.ipynb](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/getting-started-with-snowflake-notebooks-in-workspaces-eda-ml-pipeline/getting-started-with-snowflake-notebooks-in-workspaces-eda-ml-pipeline.ipynb) notebook file, then click **Download raw file** (top-right icon).
 
 ### Step 2 — Import into Snowsight
 
