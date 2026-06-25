@@ -89,7 +89,7 @@ Snowflake Account
   │  CREATE ICEBERG TABLE ... CATALOG = 'SNOWFLAKE'
   │  Horizon governance: column masking, row access policy
   │
-  └─ SCOS (Snowpark Connect)
+  └─ Snowpark Connect
        spark.table("DEMO_SCHEMA.OPEN_TABLE")
        spark.table("DEMO_SCHEMA.PROTECTED_TABLE")
        → queries route through Snowflake SQL engine
@@ -123,7 +123,7 @@ Snowflake Catalog-Linked Database
   │  Auto-discovers schemas + tables every 30 s
   │  Applies independent Horizon masking policies
   │
-  └─ SCOS Notebook
+  └─ Snowpark Connect Notebook
        spark.sql(f"SELECT * FROM {SF_FEDERATED_DB}.{DBX_SCHEMA}.customer_orders")
        → Snowflake SQL engine enforces its own masking policy
        → EU row filter, credit_card masked per role
@@ -135,7 +135,7 @@ Snowflake Catalog-Linked Database
 Catalog-Linked Database (Scenario 3 — read only)
   DATABRICKS_DB.horizon_demo.customer_orders   ← Databricks-managed S3
   DATABRICKS_DB.horizon_demo.sensitive_orders  ← Databricks-managed S3
-          ↓  SCOS reads via spark.sql() / spark.table()
+          ↓  Snowpark Connect reads via spark.sql() / spark.table()
           ↓  sf_session.sql() CTAS + SNOWFLAKE.CORTEX.COMPLETE() for ops_note
           ↓  ALTER ICEBERG TABLE re-applies MASK_RISK_LEVEL after CREATE OR REPLACE
 SF-Managed Iceberg (new table)
