@@ -500,12 +500,15 @@ jobs:
         uses: actions/github-script@v7
         env:
           PUBLISH_URL: ${{ env.AEM_PUBLISH_URL }}
+          QUICKSTART_NAME: ${{ inputs.quickstart_name }}
+          LANGUAGE: ${{ inputs.language }}
+          COMMIT_SHA: ${{ inputs.commit_sha }}
         with:
           script: |
             const publishUrl = process.env.PUBLISH_URL;
-            const language = '${{ inputs.language }}';
-            const quickstartName = '${{ inputs.quickstart_name }}';
-            const commitSha = '${{ inputs.commit_sha }}';
+            const language = process.env.LANGUAGE;
+            const quickstartName = process.env.QUICKSTART_NAME;
+            const commitSha = process.env.COMMIT_SHA;
             
             const stagingUrl = `${publishUrl}/${language}/developers/guides/${quickstartName}-${commitSha}`;
             
