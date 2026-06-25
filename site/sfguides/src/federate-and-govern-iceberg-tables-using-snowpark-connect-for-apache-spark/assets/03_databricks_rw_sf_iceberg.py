@@ -15,8 +15,9 @@
 #   3. Attach this notebook to Cluster Config A (NO Unity Catalog).
 #      See DEMO_SCRIPT.md → Cluster Configuration A.
 #   4. Install Maven library on the cluster before attaching:
-#        org.apache.iceberg:iceberg-spark-runtime-3.5_2.12:1.7.0
-#      (use iceberg-spark-runtime-3.4_2.12:1.7.0 for DBR 13.3 LTS)
+#        org.apache.iceberg:iceberg-spark-runtime-3.5_2.12:1.9.1
+#      (use iceberg-spark-runtime-3.4_2.12:1.9.1 for DBR 13.3 LTS)
+#      ⚠  Version 1.9.1+ required for write credential vending via Horizon IRC.
 #
 # !! REPLACE all <PLACEHOLDER> values below before running.
 # ================================================================
@@ -60,6 +61,16 @@ spark.conf.set(f"spark.sql.catalog.{CATALOG_NAME}.oauth2-server-uri", OAUTH_URL)
 spark.conf.set(f"spark.sql.catalog.{CATALOG_NAME}.credential",  f":{SNOWFLAKE_PAT}")
 spark.conf.set(f"spark.sql.catalog.{CATALOG_NAME}.scope",       f"session:role:{SNOWFLAKE_ROLE}")
 spark.conf.set(f"spark.sql.catalog.{CATALOG_NAME}.warehouse",   SF_DATABASE)
+
+# S3FileIO + credential vending: tell Snowflake to include STS credentials
+# in the loadTable response. Without this header, Iceberg falls back to the
+# default AWS credential chain and raises SdkClientException: Unable to load
+# credentials from any of the providers in the chain.
+spark.conf.set(f"spark.sql.catalog.{CATALOG_NAME}.io-impl",
+               "org.apache.iceberg.aws.s3.S3FileIO")
+spark.conf.set(f"spark.sql.catalog.{CATALOG_NAME}.header.X-Iceberg-Access-Delegation",
+               "vended-credentials")
+spark.conf.set(f"spark.sql.iceberg.vectorization.enabled",    "false")
 
 print(f"Catalog  : {CATALOG_NAME}")
 print(f"IRC URL  : {IRC_BASE_URL}")
