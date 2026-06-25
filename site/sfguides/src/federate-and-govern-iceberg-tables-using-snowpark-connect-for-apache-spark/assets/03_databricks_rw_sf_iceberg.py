@@ -20,29 +20,26 @@
 #        org.apache.iceberg:iceberg-spark-runtime-3.5_2.12:1.9.1
 #      (use iceberg-spark-runtime-3.4_2.12:1.9.1 for DBR 13.3 LTS)
 #
-# !! REPLACE all <PLACEHOLDER> values below before running.
+# !! REPLACE only: SNOWFLAKE_ACCOUNT and SNOWFLAKE_PAT (see Step 0 cell).
 # ================================================================
 
 # COMMAND ----------
 # %md
-# ## Step 0 — Configure Horizon IRC Catalog
-# Set your Snowflake account details and PAT token here.
+# ## Step 0 — Parameters
+# !! REPLACE only: SNOWFLAKE_ACCOUNT (your org-account), SNOWFLAKE_PAT (from Step 8 of 01_sf_iceberg_catalog_setup.sql)
+# Everything else is pre-set for the demo.
 
 # COMMAND ----------
-# !! REPLACE: Snowflake account in hyphenated org-account format
-#    e.g. 'myorg-myaccount'  (find in Snowsight → Admin → Accounts → Account URL)
-SNOWFLAKE_ACCOUNT = "<YOUR_ACCOUNT>"          # org-account format, e.g. 'myorg-myaccount'   # org-account, lowercased
+# ----------------------------------------------------------------
+# Parameters — SET YOUR VALUES HERE (change only this block)
+# ----------------------------------------------------------------
+SNOWFLAKE_ACCOUNT = "<YOUR_ACCOUNT>"           # !! REPLACE: org-account format, e.g. 'myorg-myaccount'
+SNOWFLAKE_PAT     = "<YOUR_PAT_TOKEN>"         # !! REPLACE: from ALTER USER ... ADD PROGRAMMATIC ACCESS TOKEN
 
-# !! REPLACE: Snowflake role for Databricks (created by 01_sf_iceberg_catalog_setup.sql)
+# Pre-set demo values — no changes needed below this line
 SNOWFLAKE_ROLE    = "EXT_COMPUTE_ENG_DEMO_ROLE"
-
-# !! REPLACE: PAT token from ALTER USER ... ADD PROGRAMMATIC ACCESS TOKEN output
-#    Generate with Step 8 of 01_sf_iceberg_catalog_setup.sql.
-#    ⚠  Never commit this value to source control.
-SNOWFLAKE_PAT     = "<YOUR_PAT_TOKEN>"
-
-# !! REPLACE: Snowflake database that is the Iceberg catalog
 SF_DATABASE       = "HORIZON_DEMO_SFDB"
+SF_SCHEMA         = "DEMO_SCHEMA"
 
 CATALOG_NAME = "sf_horizon"   # local Spark catalog alias — can be any name
 
@@ -76,9 +73,6 @@ print(f"Role     : {SNOWFLAKE_ROLE}")
 # %md
 # ## Step 1 — Discover Catalog (verify connectivity)
 
-# COMMAND ----------
-# !! REPLACE: schema name (SF_DEMO_SCHEMA from 01_sf_iceberg_catalog_setup.sql)
-SF_SCHEMA = "DEMO_SCHEMA"
 
 print("=== Namespaces (Schemas) ===")
 spark.sql(f"SHOW NAMESPACES IN {CATALOG_NAME}").show()
