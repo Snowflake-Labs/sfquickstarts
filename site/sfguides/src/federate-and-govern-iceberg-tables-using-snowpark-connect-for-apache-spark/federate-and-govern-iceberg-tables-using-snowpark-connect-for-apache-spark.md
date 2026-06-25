@@ -30,13 +30,13 @@ An external catalog creates Iceberg tables (Delta + UniForm) and publishes them 
 >
 > Or download individual files:
 > - [01_sf_iceberg_catalog_setup.sql](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/federate-and-govern-iceberg-tables-using-snowpark-connect-for-apache-spark/assets/01_sf_iceberg_catalog_setup.sql)
-> - [02_scos_sf_iceberg_demo.py](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/federate-and-govern-iceberg-tables-using-snowpark-connect-for-apache-spark/assets/02_scos_sf_iceberg_demo.py)
+> - [02_scos_sf_iceberg_demo.py.ipynb](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/federate-and-govern-iceberg-tables-using-snowpark-connect-for-apache-spark/assets/02_scos_sf_iceberg_demo.py.ipynb)
 > - [03_databricks_rw_sf_iceberg.py](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/federate-and-govern-iceberg-tables-using-snowpark-connect-for-apache-spark/assets/03_databricks_rw_sf_iceberg.py)
 > - [04_databricks_create_uc_tables.py](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/federate-and-govern-iceberg-tables-using-snowpark-connect-for-apache-spark/assets/04_databricks_create_uc_tables.py)
 > - [05_sf_federate_databricks_uc.sql](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/federate-and-govern-iceberg-tables-using-snowpark-connect-for-apache-spark/assets/05_sf_federate_databricks_uc.sql)
 > - [06_sf_notebook_query_databricks.ipynb](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/federate-and-govern-iceberg-tables-using-snowpark-connect-for-apache-spark/assets/06_sf_notebook_query_databricks.ipynb)
 > - [07_cortex_ai_pipeline.sql](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/federate-and-govern-iceberg-tables-using-snowpark-connect-for-apache-spark/assets/07_cortex_ai_pipeline.sql)
-> - [08_scos_ai_pipeline.py](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/federate-and-govern-iceberg-tables-using-snowpark-connect-for-apache-spark/assets/08_scos_ai_pipeline.py)
+> - [08_scos_ai_pipeline.py.ipynb](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/federate-and-govern-iceberg-tables-using-snowpark-connect-for-apache-spark/assets/08_scos_ai_pipeline.py.ipynb)
 
 ### What You'll Learn
 
@@ -284,10 +284,10 @@ ALTER USER <SF_USERNAME>
 
 ## Scenario 1 — Snowpark Connect Governance Demo
 
-Upload `02_scos_sf_iceberg_demo.py` to your Snowflake workspace:
-**Snowsight → Notebooks → + Notebook → Import .ipynb file**
+Upload `02_scos_sf_iceberg_demo.py.ipynb` to your Snowflake workspace:
+**Snowflake Workspaces → drag and drop `02_scos_sf_iceberg_demo.py.ipynb` into the file tree**
 
-Install the `snowpark-connect` package via the notebook package picker, then restart the session.
+> `snowpark-connect` is pre-installed in Snowflake Workspaces — no package picker step needed.
 
 ### Initialize Session
 
@@ -593,8 +593,10 @@ Snowflake defines and enforces this policy independently — it applies whether 
 
 ## Scenario 3 — Snowpark Connect Governance Demo
 
-Upload `06_sf_notebook_query_databricks.ipynb` to your Snowflake workspace.
-Install the `snowpark-connect` package, then restart the session.
+Upload `06_sf_notebook_query_databricks.ipynb` to your Snowflake workspace:
+**Snowflake Workspaces → drag and drop `06_sf_notebook_query_databricks.ipynb` into the file tree**
+
+> `snowpark-connect` is pre-installed in Snowflake Workspaces — no package picker step needed.
 
 ### Session Setup for Catalog-Linked Databases
 
@@ -828,10 +830,10 @@ GRANT SELECT ON SEMANTIC VIEW <SF_MANAGED_ICEBERG_DB>.<SF_DEMO_SCHEMA>.ICEBERG_A
 
 ## Scenario 3 — Snowpark Connect AI Pipeline Notebook
 
-Upload `08_scos_ai_pipeline.py` to Snowflake:
-**Snowsight → Notebooks → + Notebook → Import**
+Upload `08_scos_ai_pipeline.py.ipynb` to your Snowflake workspace:
+**Snowflake Workspaces → drag and drop `08_scos_ai_pipeline.py.ipynb` into the file tree**
 
-Install `snowpark-connect` via the package picker, then restart.
+> `snowpark-connect` is pre-installed in Snowflake Workspaces — no package picker step needed.
 
 ### Initialize Session
 
