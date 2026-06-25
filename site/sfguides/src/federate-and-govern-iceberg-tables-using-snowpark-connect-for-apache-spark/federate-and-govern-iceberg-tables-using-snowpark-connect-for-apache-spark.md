@@ -166,9 +166,9 @@ Scenario 2 requires an external Spark cluster configured with the Apache Iceberg
 
 **Maven Library** (install before attaching the notebook):
 ```
-org.apache.iceberg:iceberg-spark-runtime-3.5_2.12:1.7.0
+org.apache.iceberg:iceberg-spark-runtime-3.5_2.12:1.9.1
 ```
-> For Spark 3.4 (DBR 13.3 LTS): use `iceberg-spark-runtime-3.4_2.12:1.7.0`
+> For Spark 3.4 (DBR 13.3 LTS): use `iceberg-spark-runtime-3.4_2.12:1.9.1`
 
 **Spark Configuration** (Cluster → Advanced Options → Spark):
 ```
@@ -267,8 +267,8 @@ GRANT SELECT ON TABLE
     <SF_MANAGED_ICEBERG_DB>.<SF_DEMO_SCHEMA>.PROTECTED_TABLE
     TO DATABASE ROLE <SF_MANAGED_ICEBERG_DB>.PROTECTED_TABLE_RO;
 
-GRANT DATABASE ROLE <SF_MANAGED_ICEBERG_DB>.OPEN_TABLE_RW      TO ROLE <SF_DATABRICKS_ROLE>;
-GRANT DATABASE ROLE <SF_MANAGED_ICEBERG_DB>.PROTECTED_TABLE_RO TO ROLE <SF_DATABRICKS_ROLE>;
+GRANT DATABASE ROLE <SF_MANAGED_ICEBERG_DB>.OPEN_TABLE_RW      TO ROLE $SF_EXT_COMPUTE_ROLE;
+GRANT DATABASE ROLE <SF_MANAGED_ICEBERG_DB>.PROTECTED_TABLE_RO TO ROLE $SF_EXT_COMPUTE_ROLE;
 ```
 
 ### Generate PAT (for Scenario 2)
@@ -382,7 +382,7 @@ This connects to the same tables created in Scenario 1 via Snowflake Horizon IRC
 
 ```python
 SNOWFLAKE_ACCOUNT = "<SF_ACCOUNT_IDENTIFIER>"   # e.g. myorg-myaccount
-SNOWFLAKE_ROLE    = "<SF_DATABRICKS_ROLE>"
+SNOWFLAKE_ROLE    = "EXT_COMPUTE_ENG_DEMO_ROLE"
 SNOWFLAKE_PAT     = "<SF_PAT_TOKEN>"             # from ALTER USER output
 SF_DATABASE       = "<SF_MANAGED_ICEBERG_DB>"
 SF_SCHEMA         = "<SF_DEMO_SCHEMA>"
@@ -430,7 +430,7 @@ spark.sql(f"""
 print("Write to OPEN_TABLE: SUCCEEDED ✅")
 ```
 
-**Expected:** Succeeds. The Horizon IRC credential vending path looked up the role bound to the PAT (`DATABRICKS_DEMO_ROLE`), found it holds the `OPEN_TABLE_RW` database role (which has INSERT/UPDATE/DELETE), and vended write-capable S3 credentials. No application code controls this — the Snowflake catalog decides what S3 operations to permit at credential issue time.
+**Expected:** Succeeds. The Horizon IRC credential vending path looked up the role bound to the PAT (`EXT_COMPUTE_ENG_DEMO_ROLE`), found it holds the `OPEN_TABLE_RW` database role (which has INSERT/UPDATE/DELETE), and vended write-capable S3 credentials. No application code controls this — the Snowflake catalog decides what S3 operations to permit at credential issue time.
 
 **Confirm the write landed — verify from Snowflake immediately after:**
 
@@ -456,8 +456,8 @@ LIMIT 5;
 >
 > | Principal | Database Role | S3 credentials vended | Write allowed? |
 > |-----------|--------------|----------------------|----------------|
-> | PAT with `DATABRICKS_DEMO_ROLE` → `OPEN_TABLE_RW` | INSERT / UPDATE / DELETE | Write-capable | ✅ |
-> | PAT with `DATABRICKS_DEMO_ROLE` → `PROTECTED_TABLE_RO` | SELECT only | Read-only | ❌ (Demo 4) |
+> | PAT with `EXT_COMPUTE_ENG_DEMO_ROLE` → `OPEN_TABLE_RW` | INSERT / UPDATE / DELETE | Write-capable | ✅ |
+> | PAT with `EXT_COMPUTE_ENG_DEMO_ROLE` → `PROTECTED_TABLE_RO` | SELECT only | Read-only | ❌ (Demo 4) |
 
 ### Demo 4 — Write PROTECTED_TABLE ❌
 
