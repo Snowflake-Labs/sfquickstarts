@@ -623,6 +623,12 @@ jobs:
           while IFS= read -r name; do
             [ -z "$name" ] && continue
             
+            # Validate name against safe charset to prevent JS injection
+            if ! echo "$name" | grep -qE '^[A-Za-z0-9._-]+$'; then
+              echo "⚠️ Skipping quickstart with invalid name: $name"
+              continue
+            fi
+            
             lang=""
             # Prefer a markdown file that matches the folder name
             candidate="pr/site/sfguides/src/$name/$name.md"
@@ -671,7 +677,9 @@ jobs:
       quickstart_name: ${{ matrix.quickstart.name }}
       language: ${{ matrix.quickstart.language || 'en' }}
       commit_sha: ${{ github.event.pull_request.head.sha }}
+      base_sha: ${{ github.event.pull_request.base.sha }}
       pr_number: ${{ github.event.pull_request.number }}
+      source_path: ${{ matrix.guide.source_path }}
     secrets:
       AEM_USERNAME: ${{ secrets.AEM_USERNAME_STAGING }}
       AEM_PASSWORD: ${{ secrets.AEM_PASSWORD_STAGING }}
@@ -689,14 +697,22 @@ jobs:
       AEM_USERNAME: ${{ secrets.AEM_USERNAME_STAGING }}
       AEM_PASSWORD: ${{ secrets.AEM_PASSWORD_STAGING }}
     steps:
-      - name: Checkout repository
+      - name: Checkout PR content (journeys)
         uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           sparse-checkout: |
             journeys/
+          sparse-checkout-cone-mode: true
+
+      - name: Checkout trusted script (from base branch)
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          sparse-checkout: |
             scripts/upload-dam-asset.sh
           sparse-checkout-cone-mode: true
+          path: trusted-scripts
 
       - name: Create DAM folder if needed
         run: |
@@ -741,7 +757,7 @@ jobs:
             [ -z "$file" ] && continue
             [ -f "$file" ] || continue
             echo "📤 Uploading sidebar JSON: $file"
-            bash scripts/upload-dam-asset.sh "$file" "snowflake-site/developers/technical/guides-navigation"
+            bash trusted-scripts/scripts/upload-dam-asset.sh "$file" "snowflake-site/developers/technical/guides-navigation"
           done
           echo "✅ Sidebar JSON upload complete"
 
@@ -758,8 +774,8 @@ jobs:
       quickstart_name: ${{ matrix.guide.name }}
       language: en
       commit_sha: ${{ github.event.pull_request.head.sha }}
+      base_sha: ${{ github.event.pull_request.base.sha }}
       pr_number: ${{ github.event.pull_request.number }}
-      source_path: ${{ matrix.guide.source_path }}
       page_base_path: /content/snowflake-site/global/en/developers/guides/journey-sidebar-base
     secrets:
       AEM_USERNAME: ${{ secrets.AEM_USERNAME_STAGING }}

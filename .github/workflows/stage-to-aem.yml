@@ -19,6 +19,10 @@ on:
         description: 'PR number for commenting'
         required: true
         type: number
+      base_sha:
+        description: 'Base branch SHA for trusted script checkout (security: prevents attacker-controlled scripts from running with secrets)'
+        required: true
+        type: string
       source_path:
         description: 'Path to the source folder containing the markdown'
         required: false
@@ -58,14 +62,22 @@ jobs:
       AEM_URL: ${{ secrets.AEM_AUTHOR_URL }}
       AEM_PUBLISH_URL: ${{ secrets.AEM_PUBLISH_URL }}
     steps:
-      - name: Checkout repository
+      - name: Checkout PR content (markdown and assets only)
         uses: actions/checkout@v4
         with:
           ref: ${{ inputs.commit_sha }}
           sparse-checkout: |
             ${{ inputs.source_path || format('site/sfguides/src/{0}', inputs.quickstart_name) }}
+          sparse-checkout-cone-mode: true
+
+      - name: Checkout trusted scripts (from base branch)
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.base_sha }}
+          sparse-checkout: |
             scripts/aem-staging
           sparse-checkout-cone-mode: true
+          path: trusted-scripts
 
       - name: Setup Python
         uses: actions/setup-python@v5
@@ -95,7 +107,7 @@ jobs:
           QUICKSTART_NAME: ${{ inputs.quickstart_name }}
           BASE_IMAGE_URL: "https://raw.githubusercontent.com/${{ github.repository }}/${{ inputs.commit_sha }}/site/sfguides/src"
         run: |
-          python3 scripts/aem-staging/parse_markdown.py \
+          python3 trusted-scripts/scripts/aem-staging/parse_markdown.py \
             "${{ steps.find_md.outputs.md_file }}" \
             --commit-sha "$COMMIT_SHA" \
             --quickstart-name "$QUICKSTART_NAME" \
@@ -113,7 +125,7 @@ jobs:
           cf_name="${{ inputs.quickstart_name }}-${{ inputs.commit_sha }}"
           cf_path="${CF_DEST_PATH}/${LANGUAGE}/content-fragments/quickstarts/${cf_name}"
           
-          python3 scripts/aem-staging/prepare_aem_payload.py \
+          python3 trusted-scripts/scripts/aem-staging/prepare_aem_payload.py \
             parsed_content.json \
             --content-fragment-path "$cf_path" \
             --language "$LANGUAGE" \
@@ -488,12 +500,15 @@ jobs:
         uses: actions/github-script@v7
         env:
           PUBLISH_URL: ${{ env.AEM_PUBLISH_URL }}
+          QUICKSTART_NAME: ${{ inputs.quickstart_name }}
+          LANGUAGE: ${{ inputs.language }}
+          COMMIT_SHA: ${{ inputs.commit_sha }}
         with:
           script: |
             const publishUrl = process.env.PUBLISH_URL;
-            const language = '${{ inputs.language }}';
-            const quickstartName = '${{ inputs.quickstart_name }}';
-            const commitSha = '${{ inputs.commit_sha }}';
+            const language = process.env.LANGUAGE;
+            const quickstartName = process.env.QUICKSTART_NAME;
+            const commitSha = process.env.COMMIT_SHA;
             
             const stagingUrl = `${publishUrl}/${language}/developers/guides/${quickstartName}-${commitSha}`;
             

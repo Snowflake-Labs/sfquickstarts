@@ -45,7 +45,7 @@ The role-based access control (RBAC) functionality of the app is provided in the
 ![](assets/roles.jpg)
 
 ### Prerequisites
-- A **Snowflake account** (trial or paid). Start with a free trial account at [signup.snowflake.com](https://signup.snowflake.com?utm_source=snowflake-devrel&utm_medium=developer-guides).
+- A **Snowflake account** (trial or paid). Start with a free trial account at [signup.snowflake.com](https://signup.snowflake.com/cortex-code?utm_source=snowflake-devrel&utm_medium=developer-guides).
 - The `ACCOUNTADMIN` role (the default on a new trial).
 - **Snowflake Postgres** available in your account's region.
 - **Cortex Code** installed and connected to your account (see [Cortex Code setup](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code)).

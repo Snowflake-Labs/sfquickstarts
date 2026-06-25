@@ -1,4 +1,6 @@
 # Databricks notebook source
+
+# COMMAND ----------
 # ================================================================
 # SCENARIO 1 — DATABRICKS READS & WRITES SNOWFLAKE-MANAGED ICEBERG
 #
@@ -15,8 +17,8 @@
 #   3. Attach this notebook to Cluster Config A (NO Unity Catalog).
 #      See DEMO_SCRIPT.md → Cluster Configuration A.
 #   4. Install Maven library on the cluster before attaching:
-#        org.apache.iceberg:iceberg-spark-runtime-3.5_2.12:1.7.0
-#      (use iceberg-spark-runtime-3.4_2.12:1.7.0 for DBR 13.3 LTS)
+#        org.apache.iceberg:iceberg-spark-runtime-3.5_2.12:1.9.1
+#      (use iceberg-spark-runtime-3.4_2.12:1.9.1 for DBR 13.3 LTS)
 #
 # !! REPLACE all <PLACEHOLDER> values below before running.
 # ================================================================
@@ -27,21 +29,20 @@
 # Set your Snowflake account details and PAT token here.
 
 # COMMAND ----------
-
 # !! REPLACE: Snowflake account in hyphenated org-account format
 #    e.g. 'myorg-myaccount'  (find in Snowsight → Admin → Accounts → Account URL)
-SNOWFLAKE_ACCOUNT = "<SF_ACCOUNT_IDENTIFIER>"
+SNOWFLAKE_ACCOUNT = "<YOUR_ACCOUNT>"          # org-account format, e.g. 'myorg-myaccount'   # org-account, lowercased
 
 # !! REPLACE: Snowflake role for Databricks (created by 01_sf_iceberg_catalog_setup.sql)
-SNOWFLAKE_ROLE    = "<SF_DATABRICKS_ROLE>"
+SNOWFLAKE_ROLE    = "EXT_COMPUTE_ENG_DEMO_ROLE"
 
 # !! REPLACE: PAT token from ALTER USER ... ADD PROGRAMMATIC ACCESS TOKEN output
 #    Generate with Step 8 of 01_sf_iceberg_catalog_setup.sql.
 #    ⚠  Never commit this value to source control.
-SNOWFLAKE_PAT     = "<SF_PAT_TOKEN>"
+SNOWFLAKE_PAT     = "<YOUR_PAT_TOKEN>"
 
 # !! REPLACE: Snowflake database that is the Iceberg catalog
-SF_DATABASE       = "<SF_MANAGED_ICEBERG_DB>"
+SF_DATABASE       = "HORIZON_DEMO_SFDB"
 
 CATALOG_NAME = "sf_horizon"   # local Spark catalog alias — can be any name
 
@@ -60,6 +61,10 @@ spark.conf.set(f"spark.sql.catalog.{CATALOG_NAME}.oauth2-server-uri", OAUTH_URL)
 spark.conf.set(f"spark.sql.catalog.{CATALOG_NAME}.credential",  f":{SNOWFLAKE_PAT}")
 spark.conf.set(f"spark.sql.catalog.{CATALOG_NAME}.scope",       f"session:role:{SNOWFLAKE_ROLE}")
 spark.conf.set(f"spark.sql.catalog.{CATALOG_NAME}.warehouse",   SF_DATABASE)
+spark.conf.set(f"spark.sql.catalog.{CATALOG_NAME}.io-impl",                           "org.apache.iceberg.aws.s3.S3FileIO")
+spark.conf.set(f"spark.sql.catalog.{CATALOG_NAME}.header.X-Iceberg-Access-Delegation", "vended-credentials")
+spark.conf.set(f"spark.sql.iceberg.vectorization.enabled",    "false")
+
 
 print(f"Catalog  : {CATALOG_NAME}")
 print(f"IRC URL  : {IRC_BASE_URL}")
@@ -72,9 +77,8 @@ print(f"Role     : {SNOWFLAKE_ROLE}")
 # ## Step 1 — Discover Catalog (verify connectivity)
 
 # COMMAND ----------
-
 # !! REPLACE: schema name (SF_DEMO_SCHEMA from 01_sf_iceberg_catalog_setup.sql)
-SF_SCHEMA = "<SF_DEMO_SCHEMA>"
+SF_SCHEMA = "DEMO_SCHEMA"
 
 print("=== Namespaces (Schemas) ===")
 spark.sql(f"SHOW NAMESPACES IN {CATALOG_NAME}").show()
@@ -84,19 +88,15 @@ spark.sql(f"SHOW TABLES IN {CATALOG_NAME}.{SF_SCHEMA}").show()
 
 
 # COMMAND ----------
-# %md
-# ## Demo 1 — Read: OPEN_TABLE  ✅ expected: SUCCESS
-#
-# No governance policies on this table.
-# DATABRICKS_DEMO_ROLE has OPEN_TABLE_RW (SELECT + INSERT + UPDATE + DELETE).
 
-# COMMAND ----------
+# Clear any stale cached metadata/credentials from the session
+spark.catalog.clearCache()
+spark.sql(f"REFRESH TABLE {CATALOG_NAME}.DEMO_SCHEMA.OPEN_TABLE")
 
 print("=== READ: OPEN_TABLE ===")
-df_open = spark.table(f"{CATALOG_NAME}.{SF_SCHEMA}.OPEN_TABLE")
+df_open = spark.table(f"{CATALOG_NAME}.DEMO_SCHEMA.OPEN_TABLE")
 df_open.show(truncate=False)
 print(f"Row count: {df_open.count()}")
-
 
 # COMMAND ----------
 # %md
@@ -113,7 +113,6 @@ print(f"Row count: {df_open.count()}")
 # (demonstrated in 04_sf_federate_databricks_uc.sql governance section).
 
 # COMMAND ----------
-
 print("=== READ: PROTECTED_TABLE (via Horizon IRC — raw Parquet path) ===")
 df_prot = spark.table(f"{CATALOG_NAME}.{SF_SCHEMA}.PROTECTED_TABLE")
 df_prot.show(truncate=False)
@@ -124,21 +123,52 @@ print("Governance is enforced ONLY via Snowflake SQL, not IRC vended-credential 
 
 
 # COMMAND ----------
+import requests# Step 1: Exchange PAT → OAuth access token
+
+oauth_token = requests.post(
+    OAUTH_URL,
+    data={
+        "grant_type":    "client_credentials",
+        "scope":         f"session:role:{SNOWFLAKE_ROLE}",
+        "client_secret": SNOWFLAKE_PAT
+    }
+).json()["access_token"]
+
+# Step 2: Read through Snowflake SQL engine with the OAuth token
+df_governed = spark.read \
+    .format("net.snowflake.spark.snowflake") \
+    .option("sfURL",           f"{SNOWFLAKE_ACCOUNT}.snowflakecomputing.com") \
+    .option("sfUser",          "<YOUR_USERNAME>") \
+    .option("sfAuthenticator", "oauth") \
+    .option("sfToken",         oauth_token) \
+    .option("sfRole",          SNOWFLAKE_ROLE) \
+    .option("sfWarehouse",     "LOAD_WH") \
+    .option("sfDatabase",      "HORIZON_DEMO_SFDB") \
+    .option("sfSchema",        "DEMO_SCHEMA") \
+    .option("dbtable",         "PROTECTED_TABLE") \
+    .load()
+
+df_governed.show(truncate=False)
+
+# COMMAND ----------
 # %md
 # ## Demo 3 — Write: OPEN_TABLE  ✅ expected: SUCCESS
 #
-# DATABRICKS_DEMO_ROLE has INSERT/UPDATE/DELETE on OPEN_TABLE.
+# EXT_COMPUTE_ENG_DEMO_ROLE has INSERT/UPDATE/DELETE on OPEN_TABLE.
 # Snowflake vends write-capable S3 credentials → s3:PutObject succeeds.
 
 # COMMAND ----------
-
 print("=== WRITE: OPEN_TABLE ===")
-spark.sql(f"""
-    INSERT INTO {CATALOG_NAME}.{SF_SCHEMA}.OPEN_TABLE
-    VALUES (99, 'Demo Widget', 3, 19.99, current_timestamp())
-""")
-print("Write to OPEN_TABLE: SUCCESS")
-
+try:
+    spark.sql(f"""
+        INSERT INTO {CATALOG_NAME}.{SF_SCHEMA}.OPEN_TABLE
+        VALUES (99, 'Demo Widget', 3, 19.99, current_timestamp())
+    """)
+    print("Write to OPEN_TABLE: SUCCESS")
+except Exception as e:
+    print("Write BLOCKED ✅ — WRONG.")
+    print(f"Exception : {type(e).__name__}")
+    print(f"Message   : {str(e)[:600]}")
 print()
 print("=== OPEN_TABLE after insert ===")
 spark.table(f"{CATALOG_NAME}.{SF_SCHEMA}.OPEN_TABLE").orderBy("id").show(truncate=False)
@@ -148,7 +178,7 @@ spark.table(f"{CATALOG_NAME}.{SF_SCHEMA}.OPEN_TABLE").orderBy("id").show(truncat
 # %md
 # ## Demo 4 — Write: PROTECTED_TABLE  ❌ expected: FAIL
 #
-# DATABRICKS_DEMO_ROLE has SELECT only on PROTECTED_TABLE
+# EXT_COMPUTE_ENG_DEMO_ROLE has SELECT only on PROTECTED_TABLE
 # (no INSERT/UPDATE/DELETE — see PROTECTED_TABLE_RO database role).
 # Snowflake vends READ-ONLY S3 credentials for this table.
 # Databricks tries to commit the Iceberg snapshot (s3:PutObject) → S3 returns 403.
@@ -157,7 +187,6 @@ spark.table(f"{CATALOG_NAME}.{SF_SCHEMA}.OPEN_TABLE").orderBy("id").show(truncat
 #   AmazonS3Exception: Access Denied (Status Code: 403; Error Code: AccessDenied)
 
 # COMMAND ----------
-
 print("=== WRITE: PROTECTED_TABLE (expected to FAIL) ===")
 try:
     spark.sql(f"""
@@ -176,7 +205,6 @@ except Exception as e:
 # ## Demo 5 — Cleanup: Delete row from OPEN_TABLE  ✅ expected: SUCCESS
 
 # COMMAND ----------
-
 print("=== DELETE from OPEN_TABLE (row id=99) ===")
 spark.sql(f"DELETE FROM {CATALOG_NAME}.{SF_SCHEMA}.OPEN_TABLE WHERE id = 99")
 print("Delete: SUCCESS")
@@ -209,7 +237,6 @@ spark.table(f"{CATALOG_NAME}.{SF_SCHEMA}.OPEN_TABLE").orderBy("id").show(truncat
 # | Databricks via Horizon IRC (any role)  |  3   | unmasked        |
 #
 # → Snowflake Horizon governs the SQL path; credential vending governs writes.
-
 
 # COMMAND ----------
 # %md
