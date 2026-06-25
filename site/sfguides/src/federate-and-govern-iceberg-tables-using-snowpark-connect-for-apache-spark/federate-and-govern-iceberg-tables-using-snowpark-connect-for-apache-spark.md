@@ -26,28 +26,24 @@ An external Iceberg-compatible engine connects to the same Scenario 1 tables via
 An external catalog creates Iceberg tables (Delta + UniForm) and publishes them via an Iceberg REST endpoint. Snowflake federates them into a catalog-linked database and applies its own independent Horizon governance. Snowpark Connect reads the federated tables with live role-based masking. Snowflake Cortex then enriches the data with AI-generated risk classification and operational notes, writing results to a new Snowflake-managed Iceberg table — where Horizon governance applies to AI-generated columns just as it does to raw data. A Cortex Analyst semantic view spans both tables for natural language querying.
 
 > **Download the code:**
+> [Download all files (ZIP)](https://download-directory.github.io/?url=https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/federate-and-govern-iceberg-tables-using-snowpark-connect-for-apache-spark/assets)
+>
+> Or download individual files:
 > - [01_sf_iceberg_catalog_setup.sql](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/federate-and-govern-iceberg-tables-using-snowpark-connect-for-apache-spark/assets/01_sf_iceberg_catalog_setup.sql)
-> - [02_scos_sf_iceberg_demo.py](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/federate-and-govern-iceberg-tables-using-snowpark-connect-for-apache-spark/assets/02_scos_sf_iceberg_demo.py)
+> - [02_scos_sf_iceberg_demo.ipynb](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/federate-and-govern-iceberg-tables-using-snowpark-connect-for-apache-spark/assets/02_scos_sf_iceberg_demo.ipynb)
 > - [03_databricks_rw_sf_iceberg.py](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/federate-and-govern-iceberg-tables-using-snowpark-connect-for-apache-spark/assets/03_databricks_rw_sf_iceberg.py)
 > - [04_databricks_create_uc_tables.py](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/federate-and-govern-iceberg-tables-using-snowpark-connect-for-apache-spark/assets/04_databricks_create_uc_tables.py)
 > - [05_sf_federate_databricks_uc.sql](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/federate-and-govern-iceberg-tables-using-snowpark-connect-for-apache-spark/assets/05_sf_federate_databricks_uc.sql)
 > - [06_sf_notebook_query_databricks.ipynb](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/federate-and-govern-iceberg-tables-using-snowpark-connect-for-apache-spark/assets/06_sf_notebook_query_databricks.ipynb)
 > - [07_cortex_ai_pipeline.sql](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/federate-and-govern-iceberg-tables-using-snowpark-connect-for-apache-spark/assets/07_cortex_ai_pipeline.sql)
-> - [08_scos_ai_pipeline.py](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/federate-and-govern-iceberg-tables-using-snowpark-connect-for-apache-spark/assets/08_scos_ai_pipeline.py)
+> - [08_scos_ai_pipeline.ipynb](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/federate-and-govern-iceberg-tables-using-snowpark-connect-for-apache-spark/assets/08_scos_ai_pipeline.ipynb)
 
 ### What You'll Learn
 
-- How Snowflake manages Iceberg tables on its own storage and enforces Horizon governance through Snowpark Connect
-- How Snowpark Connect runs PySpark DataFrames on Snowflake's engine with governance fully applied
-- How Snowflake Horizon IRC (Iceberg REST Catalog) exposes managed tables to any Iceberg-compatible engine
-- How credential vending enforces write protection on Snowflake-managed tables at the S3 layer
-- The governance contrast: Snowpark Connect enforces policies; external engines reading via IRC read raw Parquet
-- How Delta + Iceberg UniForm generates interoperable Iceberg metadata with no data duplication
-- How Snowflake catalog-linked databases auto-discover and federate externally-managed Iceberg tables
-- The three setup rules for using Snowpark Connect with catalog-linked databases
-- How Snowflake Cortex LLM functions enrich Iceberg data inline in SQL
-- How Horizon governance applies to AI-generated columns the same way it applies to raw data
-- How Cortex Analyst semantic views enable natural language queries across SF-managed and federated Iceberg tables
+- How Snowpark Connect runs PySpark DataFrames through Snowflake's SQL engine — enforcing Horizon governance on every query regardless of the caller
+- How Horizon IRC exposes Snowflake-managed Iceberg tables to any external engine via credential vending, with write access controlled at the S3 layer
+- How catalog-linked databases federate externally-managed Iceberg tables (Delta + UniForm) into Snowflake with independent Horizon governance applied at query time
+- How Snowflake Cortex enriches federated Iceberg data inline in SQL — and why Horizon masking applies to AI-generated columns exactly as it does to raw data
 
 ### Key Capabilities
 
@@ -93,7 +89,7 @@ Snowflake Account
   │  CREATE ICEBERG TABLE ... CATALOG = 'SNOWFLAKE'
   │  Horizon governance: column masking, row access policy
   │
-  └─ SCOS (Snowpark Connect)
+  └─ Snowpark Connect
        spark.table("DEMO_SCHEMA.OPEN_TABLE")
        spark.table("DEMO_SCHEMA.PROTECTED_TABLE")
        → queries route through Snowflake SQL engine
@@ -127,7 +123,7 @@ Snowflake Catalog-Linked Database
   │  Auto-discovers schemas + tables every 30 s
   │  Applies independent Horizon masking policies
   │
-  └─ SCOS Notebook
+  └─ Snowpark Connect Notebook
        spark.sql(f"SELECT * FROM {SF_FEDERATED_DB}.{DBX_SCHEMA}.customer_orders")
        → Snowflake SQL engine enforces its own masking policy
        → EU row filter, credit_card masked per role
@@ -139,7 +135,7 @@ Snowflake Catalog-Linked Database
 Catalog-Linked Database (Scenario 3 — read only)
   DATABRICKS_DB.horizon_demo.customer_orders   ← Databricks-managed S3
   DATABRICKS_DB.horizon_demo.sensitive_orders  ← Databricks-managed S3
-          ↓  SCOS reads via spark.sql() / spark.table()
+          ↓  Snowpark Connect reads via spark.sql() / spark.table()
           ↓  sf_session.sql() CTAS + SNOWFLAKE.CORTEX.COMPLETE() for ops_note
           ↓  ALTER ICEBERG TABLE re-applies MASK_RISK_LEVEL after CREATE OR REPLACE
 SF-Managed Iceberg (new table)
@@ -170,9 +166,9 @@ Scenario 2 requires an external Spark cluster configured with the Apache Iceberg
 
 **Maven Library** (install before attaching the notebook):
 ```
-org.apache.iceberg:iceberg-spark-runtime-3.5_2.12:1.7.0
+org.apache.iceberg:iceberg-spark-runtime-3.5_2.12:1.9.1
 ```
-> For Spark 3.4 (DBR 13.3 LTS): use `iceberg-spark-runtime-3.4_2.12:1.7.0`
+> For Spark 3.4 (DBR 13.3 LTS): use `iceberg-spark-runtime-3.4_2.12:1.9.1`
 
 **Spark Configuration** (Cluster → Advanced Options → Spark):
 ```
@@ -271,8 +267,8 @@ GRANT SELECT ON TABLE
     <SF_MANAGED_ICEBERG_DB>.<SF_DEMO_SCHEMA>.PROTECTED_TABLE
     TO DATABASE ROLE <SF_MANAGED_ICEBERG_DB>.PROTECTED_TABLE_RO;
 
-GRANT DATABASE ROLE <SF_MANAGED_ICEBERG_DB>.OPEN_TABLE_RW      TO ROLE <SF_DATABRICKS_ROLE>;
-GRANT DATABASE ROLE <SF_MANAGED_ICEBERG_DB>.PROTECTED_TABLE_RO TO ROLE <SF_DATABRICKS_ROLE>;
+GRANT DATABASE ROLE <SF_MANAGED_ICEBERG_DB>.OPEN_TABLE_RW      TO ROLE $SF_EXT_COMPUTE_ROLE;
+GRANT DATABASE ROLE <SF_MANAGED_ICEBERG_DB>.PROTECTED_TABLE_RO TO ROLE $SF_EXT_COMPUTE_ROLE;
 ```
 
 ### Generate PAT (for Scenario 2)
@@ -288,10 +284,10 @@ ALTER USER <SF_USERNAME>
 
 ## Scenario 1 — Snowpark Connect Governance Demo
 
-Upload `02_scos_sf_iceberg_demo.py` to your Snowflake workspace:
-**Snowsight → Notebooks → + Notebook → Import .ipynb file**
+Upload `02_scos_sf_iceberg_demo.ipynb` to your Snowflake workspace:
+**Snowflake Workspaces → drag and drop `02_scos_sf_iceberg_demo.ipynb` into the file tree**
 
-Install the `snowpark-connect` package via the notebook package picker, then restart the session.
+> `snowpark-connect` is pre-installed in Snowflake Workspaces — no package picker step needed.
 
 ### Initialize Session
 
@@ -386,7 +382,7 @@ This connects to the same tables created in Scenario 1 via Snowflake Horizon IRC
 
 ```python
 SNOWFLAKE_ACCOUNT = "<SF_ACCOUNT_IDENTIFIER>"   # e.g. myorg-myaccount
-SNOWFLAKE_ROLE    = "<SF_DATABRICKS_ROLE>"
+SNOWFLAKE_ROLE    = "EXT_COMPUTE_ENG_DEMO_ROLE"
 SNOWFLAKE_PAT     = "<SF_PAT_TOKEN>"             # from ALTER USER output
 SF_DATABASE       = "<SF_MANAGED_ICEBERG_DB>"
 SF_SCHEMA         = "<SF_DEMO_SCHEMA>"
@@ -434,7 +430,7 @@ spark.sql(f"""
 print("Write to OPEN_TABLE: SUCCEEDED ✅")
 ```
 
-**Expected:** Succeeds. The Horizon IRC credential vending path looked up the role bound to the PAT (`DATABRICKS_DEMO_ROLE`), found it holds the `OPEN_TABLE_RW` database role (which has INSERT/UPDATE/DELETE), and vended write-capable S3 credentials. No application code controls this — the Snowflake catalog decides what S3 operations to permit at credential issue time.
+**Expected:** Succeeds. The Horizon IRC credential vending path looked up the role bound to the PAT (`EXT_COMPUTE_ENG_DEMO_ROLE`), found it holds the `OPEN_TABLE_RW` database role (which has INSERT/UPDATE/DELETE), and vended write-capable S3 credentials. No application code controls this — the Snowflake catalog decides what S3 operations to permit at credential issue time.
 
 **Confirm the write landed — verify from Snowflake immediately after:**
 
@@ -460,8 +456,8 @@ LIMIT 5;
 >
 > | Principal | Database Role | S3 credentials vended | Write allowed? |
 > |-----------|--------------|----------------------|----------------|
-> | PAT with `DATABRICKS_DEMO_ROLE` → `OPEN_TABLE_RW` | INSERT / UPDATE / DELETE | Write-capable | ✅ |
-> | PAT with `DATABRICKS_DEMO_ROLE` → `PROTECTED_TABLE_RO` | SELECT only | Read-only | ❌ (Demo 4) |
+> | PAT with `EXT_COMPUTE_ENG_DEMO_ROLE` → `OPEN_TABLE_RW` | INSERT / UPDATE / DELETE | Write-capable | ✅ |
+> | PAT with `EXT_COMPUTE_ENG_DEMO_ROLE` → `PROTECTED_TABLE_RO` | SELECT only | Read-only | ❌ (Demo 4) |
 
 ### Demo 4 — Write PROTECTED_TABLE ❌
 
@@ -597,8 +593,10 @@ Snowflake defines and enforces this policy independently — it applies whether 
 
 ## Scenario 3 — Snowpark Connect Governance Demo
 
-Upload `06_sf_notebook_query_databricks.ipynb` to your Snowflake workspace.
-Install the `snowpark-connect` package, then restart the session.
+Upload `06_sf_notebook_query_databricks.ipynb` to your Snowflake workspace:
+**Snowflake Workspaces → drag and drop `06_sf_notebook_query_databricks.ipynb` into the file tree**
+
+> `snowpark-connect` is pre-installed in Snowflake Workspaces — no package picker step needed.
 
 ### Session Setup for Catalog-Linked Databases
 
@@ -832,10 +830,10 @@ GRANT SELECT ON SEMANTIC VIEW <SF_MANAGED_ICEBERG_DB>.<SF_DEMO_SCHEMA>.ICEBERG_A
 
 ## Scenario 3 — Snowpark Connect AI Pipeline Notebook
 
-Upload `08_scos_ai_pipeline.py` to Snowflake:
-**Snowsight → Notebooks → + Notebook → Import**
+Upload `08_scos_ai_pipeline.ipynb` to your Snowflake workspace:
+**Snowflake Workspaces → drag and drop `08_scos_ai_pipeline.ipynb` into the file tree**
 
-Install `snowpark-connect` via the package picker, then restart.
+> `snowpark-connect` is pre-installed in Snowflake Workspaces — no package picker step needed.
 
 ### Initialize Session
 
