@@ -150,14 +150,53 @@ jobs:
           relevant_changed_files_json=$(echo "$relevant_files" | jq -R -s -c 'split("\n") | map(select(length>0))')
           echo "relevant_changed_files_json=$relevant_changed_files_json" >> $GITHUB_OUTPUT
 
+  fetch_prod_secrets:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    outputs:
+      aem_username:    ${{ steps.secrets.outputs.aem_username }}
+      aem_password:    ${{ steps.secrets.outputs.aem_password }}
+      aem_author_url:  ${{ steps.secrets.outputs.aem_author_url }}
+      aem_publish_url: ${{ steps.secrets.outputs.aem_publish_url }}
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::418643147302:role/github-snowflake-labs-aem-iam-role
+          aws-region: us-west-1
+
+      - name: Fetch AEM prod secrets
+        id: secrets
+        run: |
+          secret=$(aws secretsmanager get-secret-value \
+            --secret-id github-snowflake-labs-aem-prod-secrets \
+            --query SecretString --output text)
+
+          aem_username=$(echo "$secret" | jq -r '.AEM_USERNAME')
+          aem_password=$(echo "$secret" | jq -r '.AEM_PASSWORD')
+          aem_author_url=$(echo "$secret" | jq -r '.AEM_AUTHOR_URL')
+          aem_publish_url=$(echo "$secret" | jq -r '.AEM_PUBLISH_URL')
+
+          echo "::add-mask::$aem_username"
+          echo "::add-mask::$aem_password"
+          echo "::add-mask::$aem_author_url"
+          echo "::add-mask::$aem_publish_url"
+
+          echo "aem_username=$aem_username" >> $GITHUB_OUTPUT
+          echo "aem_password=$aem_password" >> $GITHUB_OUTPUT
+          echo "aem_author_url=$aem_author_url" >> $GITHUB_OUTPUT
+          echo "aem_publish_url=$aem_publish_url" >> $GITHUB_OUTPUT
+
   upload_sidebar_json:
-    needs: detect_changes
+    needs: [detect_changes, fetch_prod_secrets]
     if: needs.detect_changes.outputs.has_sidebar_changes == 'true'
     runs-on: ubuntu-latest
     env:
-      AEM_URL: ${{ secrets.AEM_AUTHOR_URL_PROD }}
-      AEM_USERNAME: ${{ secrets.AEM_USERNAME_PROD }}
-      AEM_PASSWORD: ${{ secrets.AEM_PASSWORD_PROD }}
+      AEM_URL: ${{ needs.fetch_prod_secrets.outputs.aem_author_url }}
+      AEM_USERNAME: ${{ needs.fetch_prod_secrets.outputs.aem_username }}
+      AEM_PASSWORD: ${{ needs.fetch_prod_secrets.outputs.aem_password }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -234,7 +273,7 @@ jobs:
           echo "✅ Sidebar JSON publish complete"
 
   publish_to_aem:
-    needs: detect_changes
+    needs: [detect_changes, fetch_prod_secrets]
     if: |
       needs.detect_changes.outputs.has_relevant_changes == 'true' &&
       needs.detect_changes.outputs.quickstart_names_json != '[]'
@@ -250,13 +289,13 @@ jobs:
       commit_sha: ${{ github.sha }}
       base_image_url: ${{ vars.AEM_BASE_IMAGE_URL }}
     secrets:
-      AEM_USERNAME: ${{ secrets.AEM_USERNAME_PROD }}
-      AEM_PASSWORD: ${{ secrets.AEM_PASSWORD_PROD }}
-      AEM_AUTHOR_URL: ${{ secrets.AEM_AUTHOR_URL_PROD }}
-      AEM_PUBLISH_URL: ${{ secrets.AEM_PUBLISH_URL_PROD }}
+      AEM_USERNAME: ${{ needs.fetch_prod_secrets.outputs.aem_username }}
+      AEM_PASSWORD: ${{ needs.fetch_prod_secrets.outputs.aem_password }}
+      AEM_AUTHOR_URL: ${{ needs.fetch_prod_secrets.outputs.aem_author_url }}
+      AEM_PUBLISH_URL: ${{ needs.fetch_prod_secrets.outputs.aem_publish_url }}
 
   publish_journey_guides:
-    needs: detect_changes
+    needs: [detect_changes, fetch_prod_secrets]
     if: needs.detect_changes.outputs.has_journey_guides == 'true'
     strategy:
       matrix:
@@ -272,7 +311,7 @@ jobs:
       source_path: ${{ matrix.guide.source_path }}
       page_base_path: /content/snowflake-site/global/en/developers/guides/journey-sidebar-base
     secrets:
-      AEM_USERNAME: ${{ secrets.AEM_USERNAME_PROD }}
-      AEM_PASSWORD: ${{ secrets.AEM_PASSWORD_PROD }}
-      AEM_AUTHOR_URL: ${{ secrets.AEM_AUTHOR_URL_PROD }}
-      AEM_PUBLISH_URL: ${{ secrets.AEM_PUBLISH_URL_PROD }}
+      AEM_USERNAME: ${{ needs.fetch_prod_secrets.outputs.aem_username }}
+      AEM_PASSWORD: ${{ needs.fetch_prod_secrets.outputs.aem_password }}
+      AEM_AUTHOR_URL: ${{ needs.fetch_prod_secrets.outputs.aem_author_url }}
+      AEM_PUBLISH_URL: ${{ needs.fetch_prod_secrets.outputs.aem_publish_url }}
