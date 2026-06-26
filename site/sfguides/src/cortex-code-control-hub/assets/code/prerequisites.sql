@@ -801,12 +801,12 @@ HANDLER = 'handler'
 EXECUTE AS OWNER
 AS $$
 import re
-_SAFE = re.compile(r'[;\n\r\x00]')  # blocks only truly dangerous chars
-_PARAMS = [
-    'CORTEX_CODE_CLI_DAILY_EST_CREDIT_LIMIT_PER_USER',
-    'CORTEX_CODE_SNOWSIGHT_DAILY_EST_CREDIT_LIMIT_PER_USER',
-    'CORTEX_CODE_DESKTOP_DAILY_EST_CREDIT_LIMIT_PER_USER',
-]
+_SAFE = re.compile(r'[;\n\r\x00]')
+_PARAM_MAP = {
+    'CLI':       'CORTEX_CODE_CLI_DAILY_EST_CREDIT_LIMIT_PER_USER',
+    'SNOWSIGHT': 'CORTEX_CODE_SNOWSIGHT_DAILY_EST_CREDIT_LIMIT_PER_USER',
+    'DESKTOP':   'CORTEX_CODE_DESKTOP_DAILY_EST_CREDIT_LIMIT_PER_USER',
+}
 
 def handler(session):
     reverted = 0
@@ -822,22 +822,59 @@ def handler(session):
             user = str(row[0])
             if not user or _SAFE.search(user):
                 continue
+            safe_user    = user.replace("'",  "''")
+            safe_user_id = user.replace('"', '""')
             try:
-                for param in _PARAMS:
-                    safe_user_id = user.replace('"', '""')
-                    session.sql('ALTER USER "' + safe_user_id + '" UNSET ' + param).collect()
-                safe_user = user.replace("'", "''")
+                # ── Look up cohort permanent limit for this user ──────────────
+                cohort_rows = session.sql(f"""
+                    SELECT cfg.CLI_DAILY_LIMIT, cfg.SNOWSIGHT_DAILY_LIMIT,
+                           cfg.DESKTOP_DAILY_LIMIT
+                    FROM CC_USER_COHORT_RESOLVED r
+                    JOIN CC_CREDIT_CONFIG cfg
+                      ON cfg.ROLE_NAME = r.COHORT_ROLE
+                     AND cfg.CONFIG_TYPE = 'COHORT'
+                     AND cfg.IS_ACTIVE = TRUE
+                     AND (cfg.IS_TEMPORARY = FALSE OR cfg.IS_TEMPORARY IS NULL)
+                    WHERE r.USER_NAME = '{safe_user}'
+                    LIMIT 1
+                """).collect()
+
+                if cohort_rows:
+                    # Restore to cohort permanent values
+                    cr = cohort_rows[0]
+                    limit_map = {
+                        'CLI':       cr[0],
+                        'SNOWSIGHT': cr[1],
+                        'DESKTOP':   cr[2],
+                    }
+                    for surface, param in _PARAM_MAP.items():
+                        limit = limit_map.get(surface)
+                        if limit is not None:
+                            session.sql(
+                                f'ALTER USER "{safe_user_id}" SET {param} = {float(limit)}'
+                            ).collect()
+                        else:
+                            session.sql(
+                                f'ALTER USER "{safe_user_id}" UNSET {param}'
+                            ).collect()
+                else:
+                    # No cohort found — fall back to UNSET (account default)
+                    for param in _PARAM_MAP.values():
+                        session.sql(
+                            f'ALTER USER "{safe_user_id}" UNSET {param}'
+                        ).collect()
+
                 session.sql(
                     "UPDATE CC_CREDIT_CONFIG SET IS_ACTIVE = FALSE, "
                     "UPDATED_AT = CURRENT_TIMESTAMP() "
-                    "WHERE USER_NAME = '" + safe_user + "' AND IS_TEMPORARY = TRUE"
+                    f"WHERE USER_NAME = '{safe_user}' AND IS_TEMPORARY = TRUE"
                 ).collect()
                 reverted += 1
             except Exception:
                 pass
     except Exception as e:
         return "ERROR: " + str(e)[:200]
-    return "OK: Expired " + str(reverted) + " temporary override(s)"
+    return "OK: Expired " + str(reverted) + " temporary override(s), reverted to cohort or account default"
 $$;
 
 -- Resolve user-to-cohort mapping — populates CC_USER_COHORT_RESOLVED
@@ -945,6 +982,64 @@ def handler(session, users_json, model_list):
 $$;
 
 GRANT USAGE ON PROCEDURE SP_CC_ENFORCE_MODEL_ACCESS(VARIANT, VARCHAR) TO ROLE __APP_ROLE__;
+
+-- Revoke model access — removes CORTEX-MODEL-ROLE-* application roles from users
+-- Must remain owned by ACCOUNTADMIN (same as ENFORCE — only ACCOUNTADMIN can revoke APPLICATION ROLEs)
+CREATE OR REPLACE PROCEDURE SP_CC_REVOKE_MODEL_ACCESS(
+    USERS_JSON VARIANT,
+    MODEL_LIST VARCHAR
+)
+RETURNS VARIANT
+LANGUAGE PYTHON
+RUNTIME_VERSION = '3.9'
+PACKAGES = ('snowflake-snowpark-python')
+HANDLER = 'handler'
+EXECUTE AS OWNER
+AS $$
+import re
+
+_SAFE_ID = re.compile(r'[;\n\r\x00]')
+
+def _qid(s):
+    return '"' + str(s).replace('"', '""') + '"'
+
+def handler(session, users_json, model_list):
+    out = {'success': 0, 'failed': 0, 'errors': []}
+    users  = list(users_json) if users_json else []
+    models = [m.strip() for m in str(model_list).split(',') if m.strip()] if model_list else []
+
+    if not models or not users:
+        return out
+
+    for user in users:
+        user = str(user).strip()
+        if not user or _SAFE_ID.search(user):
+            out['failed'] += 1
+            continue
+        for model in models:
+            if _SAFE_ID.search(model):
+                out['failed'] += 1
+                continue
+            app_role = 'CORTEX-MODEL-ROLE-' + model.upper()
+            try:
+                session.sql(
+                    'REVOKE APPLICATION ROLE SNOWFLAKE.' + _qid(app_role) +
+                    ' FROM USER ' + _qid(user)
+                ).collect()
+                out['success'] += 1
+            except Exception as e:
+                # Ignore "not granted" errors — role may not have been granted
+                err = str(e).lower()
+                if 'not granted' in err or 'does not exist' in err:
+                    out['success'] += 1
+                else:
+                    out['errors'].append(f'{user}/{model}: {str(e)[:120]}')
+                    out['failed'] += 1
+
+    return out
+$$;
+
+GRANT USAGE ON PROCEDURE SP_CC_REVOKE_MODEL_ACCESS(VARIANT, VARCHAR) TO ROLE __APP_ROLE__;
 
 -- ---------------------------------------------------------------------------
 -- 7. OWNERSHIP TRANSFER (running as ACCOUNTADMIN, transfer to __SP_OWNER_ROLE__)
@@ -1169,7 +1264,7 @@ CREATE NOTIFICATION INTEGRATION IF NOT EXISTS CC_EMAIL_INTEGRATION
 GRANT USAGE ON INTEGRATION CC_EMAIL_INTEGRATION TO ROLE __SP_OWNER_ROLE__;
 
 -- ---------------------------------------------------------------------------
--- 6h. VIOLATION STREAM + ALERTS (batch every 5min; real-time HIGH-risk 1min)
+-- 6h. VIOLATION STREAM + ALERTS (default: 1 hour; configurable via Settings page)
 -- ---------------------------------------------------------------------------
 CREATE STREAM IF NOT EXISTS CC_VIOLATION_STREAM
     ON TABLE CC_PROMPT_VIOLATIONS
@@ -1177,21 +1272,21 @@ CREATE STREAM IF NOT EXISTS CC_VIOLATION_STREAM
 
 GRANT OWNERSHIP ON STREAM CC_VIOLATION_STREAM TO ROLE __SP_OWNER_ROLE__ COPY CURRENT GRANTS;
 
--- Batch alert: every 5 minutes, check all enabled alert rules
+-- Batch alert: every hour, check all enabled alert rules (configurable via Settings page)
 CREATE ALERT IF NOT EXISTS CC_ALERT_CHECK
     WAREHOUSE = __WH__
-    SCHEDULE  = 'USING CRON */5 * * * * UTC'
-    COMMENT   = 'CoCo Hub batch alerting — checks CC_ALERT_CONFIG thresholds every 5 minutes'
+    SCHEDULE  = 'USING CRON 0 * * * * UTC'
+    COMMENT   = 'CoCo Hub batch alerting — checks CC_ALERT_CONFIG thresholds every hour'
     IF (EXISTS (SELECT 1 FROM CC_ALERT_CONFIG WHERE IS_ENABLED = TRUE LIMIT 1))
     THEN CALL SP_CC_CHECK_ALERTS('BATCH');
 
 ALTER ALERT CC_ALERT_CHECK RESUME;
 
--- Real-time alert: fires within 1 minute of any HIGH risk violation
+-- Real-time alert: every hour, fires on any HIGH risk violation in stream
 CREATE ALERT IF NOT EXISTS CC_REALTIME_VIOLATION_ALERT
     WAREHOUSE = __WH__
-    SCHEDULE  = 'USING CRON * * * * * UTC'
-    COMMENT   = 'CoCo Hub real-time alert — fires within 1 minute of a HIGH risk violation'
+    SCHEDULE  = 'USING CRON 0 * * * * UTC'
+    COMMENT   = 'CoCo Hub real-time alert — checks for HIGH risk violations every hour'
     IF (EXISTS (SELECT 1 FROM CC_VIOLATION_STREAM WHERE RISK_LEVEL = 'HIGH' LIMIT 1))
     THEN CALL SP_CC_CHECK_ALERTS('REALTIME');
 
