@@ -674,7 +674,7 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::418643147302:role/github-snowflake-labs-aem-iam-role
+          role-to-assume: arn:aws:iam::886692307588:role/github-snowflake-labs-aem-iam-role
           aws-region: us-west-1
 
       - name: Fetch AEM staging secrets
