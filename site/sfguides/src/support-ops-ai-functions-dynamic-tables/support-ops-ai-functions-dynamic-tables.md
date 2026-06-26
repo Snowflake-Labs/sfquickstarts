@@ -113,12 +113,15 @@ INSERT INTO SUPPORT_TICKETS (channel, raw_text) VALUES
 ('email', 'Quick question: do you offer volume discounts for organizations with 500+ seats? We are planning a company-wide rollout next quarter.');
 ```
 
-**Step 3.** (Optional) If you have sample audio files (.wav, .mp3, .flac), upload them to the stage using Snowsight: **Data → Add Data → Load files into a Stage** → select `SUPPORT_OPS_AI.RAW.SUPPORT_AUDIO_STAGE`. Then insert corresponding rows:
+**Step 3.** Download [audio_files.zip](assets/audio_files.zip) (50 sample call recordings, ~36 MB). Unzip and upload the MP3 files to the stage using Snowsight: **Data → Add Data → Load files into a Stage** → select `SUPPORT_OPS_AI.RAW.SUPPORT_AUDIO_STAGE`.
+
+**Step 4.** Register the audio files as phone tickets:
 
 ```sql
--- Example: register a phone ticket pointing to your uploaded audio file
+-- Insert phone tickets referencing the uploaded audio files
 INSERT INTO SUPPORT_TICKETS (channel, audio_path)
-VALUES ('phone', 'sample_call.wav');
+SELECT 'phone', RELATIVE_PATH
+FROM DIRECTORY(@SUPPORT_AUDIO_STAGE);
 ```
 
 <!-- ------------------------ -->
