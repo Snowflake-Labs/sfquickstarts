@@ -33,8 +33,8 @@ An external catalog creates Iceberg tables (Delta + UniForm) and publishes them 
 > - [02_sf_iceberg_demo.ipynb](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/federate-and-govern-iceberg-tables-using-snowpark-connect-for-apache-spark/assets/02_sf_iceberg_demo.ipynb)
 > - [03_databricks_rw_sf_iceberg.py](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/federate-and-govern-iceberg-tables-using-snowpark-connect-for-apache-spark/assets/03_databricks_rw_sf_iceberg.py)
 > - [04_databricks_create_uc_tables.py](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/federate-and-govern-iceberg-tables-using-snowpark-connect-for-apache-spark/assets/04_databricks_create_uc_tables.py)
-> - [05_sf_federate_databricks_uc.sql](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/federate-and-govern-iceberg-tables-using-snowpark-connect-for-apache-spark/assets/05_sf_federate_databricks_uc.sql)
-> - [06_sf_notebook_query_databricks.ipynb](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/federate-and-govern-iceberg-tables-using-snowpark-connect-for-apache-spark/assets/06_sf_notebook_query_databricks.ipynb)
+> - [05_databricks_federation_demo.ipynb](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/federate-and-govern-iceberg-tables-using-snowpark-connect-for-apache-spark/assets/05_databricks_federation_demo.ipynb)
+> - [05_databricks_federation_demo.ipynb](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/federate-and-govern-iceberg-tables-using-snowpark-connect-for-apache-spark/assets/05_databricks_federation_demo.ipynb)
 > - [07_cortex_ai_pipeline.ipynb](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/federate-and-govern-iceberg-tables-using-snowpark-connect-for-apache-spark/assets/07_cortex_ai_pipeline.ipynb)
 > - [08_ai_pipeline.ipynb](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/federate-and-govern-iceberg-tables-using-snowpark-connect-for-apache-spark/assets/08_ai_pipeline.ipynb)
 
@@ -393,13 +393,13 @@ print(f"CATALOG_URI  : https://{WORKSPACE_HOST}/api/2.1/unity-catalog/iceberg-re
 print(f"CATALOG_NAME : {CATALOG_NAME}")
 ```
 
-Copy these values into `05_sf_federate_databricks_uc.sql`.
+Copy these values into `05_databricks_federation_demo.ipynb`.
 
 <!-- ------------------------ -->
 
 ## Scenario 2 — Snowflake Setup
 
-Run `05_sf_federate_databricks_uc.sql` in a Snowflake worksheet.
+Run `05_databricks_federation_demo.ipynb` in a Snowflake worksheet.
 
 ### Create Catalog Integration
 
@@ -456,8 +456,8 @@ Snowflake defines and enforces this policy independently — it applies whether 
 
 ## Scenario 2 — Snowpark Connect Governance Demo
 
-Upload `06_sf_notebook_query_databricks.ipynb` to your Snowflake workspace:
-**Snowflake Workspaces → drag and drop `06_sf_notebook_query_databricks.ipynb` into the file tree**
+Upload `05_databricks_federation_demo.ipynb` to your Snowflake workspace:
+**Snowflake Workspaces → drag and drop `05_databricks_federation_demo.ipynb` into the file tree**
 
 > `snowpark-connect` is pre-installed in Snowflake Workspaces — no package picker step needed.
 
