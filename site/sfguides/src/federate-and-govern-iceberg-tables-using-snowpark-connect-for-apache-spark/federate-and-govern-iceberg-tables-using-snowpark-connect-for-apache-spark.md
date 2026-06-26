@@ -769,9 +769,12 @@ reader_df.columns = [c.lower() for c in reader_df.columns]
 
 ## Scenario 2 — Cortex Analyst Demo
 
-**Open:** Snowsight → AI & ML → Cortex Analyst
+**Open:** Snowsight → **AI & ML** → **Cortex Analyst**
 
-**Select semantic view:** `HORIZON_DEMO_SFDB.DEMO_SCHEMA.ICEBERG_AI_SEMANTIC_VIEW`
+**Select the semantic view:**
+1. In the Cortex Analyst list, click `ICEBERG_AI_SEMANTIC_VIEW` under `HORIZON_DEMO_SFDB.DEMO_SCHEMA`
+2. Click the **Playground** tab at the top of the screen
+3. Type prompts in the **chat box at the bottom** of the Playground and press Enter
 
 ### Demo Prompt Sequence
 
