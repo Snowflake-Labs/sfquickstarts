@@ -4,6 +4,7 @@ language: en
 summary: Build an automated support ticket enrichment pipeline using Cortex AI Functions, Dynamic Tables, and Streamlit in Snowflake.
 environments: web
 status: Draft
+duration: 30
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 tags: AI, Cortex, AI_CLASSIFY, AI_COMPLETE, AI_TRANSCRIBE, AI_REDACT, Dynamic Tables, Streamlit, Support Operations
 authors: James Cha-Earley
@@ -80,7 +81,8 @@ USE WAREHOUSE SUPPORT_OPS_WH;
 
 -- Create the stage for phone call recordings
 CREATE STAGE IF NOT EXISTS SUPPORT_AUDIO_STAGE
-  ENCRYPTION = (TYPE = 'SNOWFLAKE_SSE');
+  ENCRYPTION = (TYPE = 'SNOWFLAKE_SSE')
+  DIRECTORY = (ENABLE = TRUE);
 
 -- Create the raw tickets table
 CREATE TABLE IF NOT EXISTS SUPPORT_TICKETS (
@@ -118,6 +120,9 @@ INSERT INTO SUPPORT_TICKETS (channel, raw_text) VALUES
 **Step 4.** Register the audio files as phone tickets:
 
 ```sql
+-- Refresh directory metadata after uploading files
+ALTER STAGE SUPPORT_AUDIO_STAGE REFRESH;
+
 -- Insert phone tickets referencing the uploaded audio files
 INSERT INTO SUPPORT_TICKETS (channel, audio_path)
 SELECT 'phone', RELATIVE_PATH
@@ -206,6 +211,7 @@ The key architectural decision: use **CTEs** to avoid referencing column aliases
 
 ```sql
 USE SCHEMA SUPPORT_OPS_AI.ANALYTICS;
+USE WAREHOUSE SUPPORT_OPS_WH;
 
 CREATE OR REPLACE DYNAMIC TABLE ENRICHED_TICKETS
   TARGET_LAG = '1 hour'
@@ -250,7 +256,7 @@ SELECT
     'claude-4-sonnet',
     CONCAT(
       'Support ops manager. Category: ', issue_category,
-      '. Sentiment: ', ROUND(sentiment_score, 2)::VARCHAR,
+      '. Sentiment: ', COALESCE(ROUND(sentiment_score, 2)::VARCHAR, 'unknown'),
       '. Recommend one operational action in 1-2 sentences.'
     )
   )::VARCHAR AS recommended_action
@@ -258,6 +264,8 @@ FROM classified;
 ```
 
 Once created, this table refreshes itself. Insert a new ticket into `RAW.SUPPORT_TICKETS` and within an hour it appears in `ENRICHED_TICKETS` — classified, scored, and with a recommendation.
+
+> **Note:** The first refresh may take 5–10 minutes as AI Functions process all existing tickets. If the table appears empty, wait and re-query.
 
 ### Verify the Pipeline
 
