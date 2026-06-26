@@ -312,8 +312,8 @@ def render(session):
               help="Distinct conversation threads (SESSION_ID).")
     k3.metric("Avg Steps/Session",f"{s.get('AVG_STEPS',0):.1f}",
               help="Average agent reasoning steps per session. Higher = more complex multi-step tasks.")
-    k4.metric("Cache Hit Rate *(approx)*",   f"{cache_hit_rate:.1f}%",
-              help="cache_read ÷ (cache_read + cache_write). Approximate — field semantics in AI_OBSERVABILITY_EVENTS may vary by account. Use as a directional signal.")
+    k4.metric("Cache Hit Rate",   f"{cache_hit_rate:.1f}%",
+              help="Tokens served from prompt cache vs fresh input. Higher = more efficient caching.")
     k5.metric("Insights",       f"{viol_count}",
               help="Distinct rules triggered in the selected period.")
     k6.metric("Success Rate",     f"{s.get('SUCCESS_RATE',0):.1f}%",
@@ -424,7 +424,7 @@ def render(session):
 
         if not models_df.empty:
             models_df["CACHE_HIT_PCT"] = (
-                models_df["CACHE_READ"] / (models_df["INPUT_TOKENS"] + models_df["CACHE_READ"]).replace(0, float("nan")) * 100
+                models_df["CACHE_READ"] / (models_df["INPUT_TOKENS"] + models_df["CACHE_READ"]).replace(0, pd.NA) * 100
             ).round(1).fillna(0)
             tm1, tm2 = st.columns(2)
             with tm1:

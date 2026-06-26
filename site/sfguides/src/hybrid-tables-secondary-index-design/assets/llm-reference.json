@@ -1,0 +1,178 @@
+{
+  "guide_id": "hybrid-tables-secondary-index-design",
+  "title": "Secondary Index Design for Hybrid Tables",
+  "version": "1.0",
+  "last_updated": "2026-06-16",
+  "description": "Structured reference for designing secondary indexes on Snowflake Hybrid Tables. Optimized for LLM retrieval, code generation, and implementation guidance.",
+  "snowflake_product": "Hybrid Tables (Unistore)",
+  "skill_level": "intermediate",
+  "prerequisites": [
+    "Snowflake paid account in AWS or Azure commercial region",
+    "Role with CREATE TABLE on target schema",
+    "SELECT privilege on table for adding indexes to existing tables"
+  ],
+
+  "core_concepts": {
+    "hybrid_table_storage": "Hybrid Tables store data in a row-oriented store. Queries resolve to: (1) ROW_BASED primary-key access, (2) ROW_BASED secondary-index access, or (3) COLUMN_BASED full scan from object storage.",
+    "index_types": {
+      "automatic": ["PRIMARY KEY", "FOREIGN KEY", "UNIQUE constraint"],
+      "user_defined": "Secondary indexes created with CREATE INDEX or INDEX clause in CREATE HYBRID TABLE"
+    },
+    "scan_modes": {
+      "ROW_BASED_TableScan": "Primary key lookup. Fast. Single row.",
+      "ROW_BASED_IndexScan": "Secondary index seek. Fast. Rows proportional to matches.",
+      "COLUMN_BASED_TableScan": "Full table scan from object storage. Slow. Entire table scanned."
+    }
+  },
+
+  "index_design_rules": [
+    {
+      "rule_id": "R1",
+      "name": "equality_first_range_last",
+      "description": "In a composite index, place equality predicate columns first, followed by at most one range predicate column at the end.",
+      "example_good": "CREATE INDEX idx ON orders (status, region, created_at)",
+      "example_bad": "CREATE INDEX idx ON orders (created_at, status, region)",
+      "reason": "The B-tree is sorted by column order. Range predicates break the seek prefix for subsequent columns."
+    },
+    {
+      "rule_id": "R2",
+      "name": "higher_cardinality_leads",
+      "description": "Within the equality prefix, place higher-cardinality columns before lower-cardinality columns.",
+      "example_good": "CREATE INDEX idx ON orders (region, is_active, created_at)",
+      "example_bad": "CREATE INDEX idx ON orders (is_active, region, created_at)",
+      "reason": "A boolean leading column still scans ~50% of the index on every seek."
+    },
+    {
+      "rule_id": "R3",
+      "name": "use_include_for_covering",
+      "description": "Add INCLUDE columns to avoid probe scans on hot query paths where projected columns are stable.",
+      "syntax": "CREATE INDEX idx ON table (key_cols) INCLUDE (projected_cols)",
+      "tradeoff": "Increases storage (columns stored in both primary store and index). Only use for high-throughput paths."
+    },
+    {
+      "rule_id": "R4",
+      "name": "match_data_types",
+      "description": "Predicate values must match the indexed column's data type. CURRENT_TIMESTAMP() returns TIMESTAMP_LTZ; if the column is TIMESTAMP_NTZ, cast with ::TIMESTAMP_NTZ.",
+      "example_good": "WHERE created_at > DATEADD(DAY, -7, CURRENT_TIMESTAMP()::TIMESTAMP_NTZ)",
+      "example_bad": "WHERE created_at > DATEADD(DAY, -7, CURRENT_TIMESTAMP())",
+      "reason": "Implicit type conversion prevents predicate pushdown to the index."
+    },
+    {
+      "rule_id": "R5",
+      "name": "use_session_variables_not_functions",
+      "description": "Non-deterministic session functions (CURRENT_USER, CURRENT_SESSION, CURRENT_ACCOUNT, CURRENT_ROLE) cannot be pushed to index access predicates.",
+      "example_good": "SET u = CURRENT_USER(); SELECT * FROM t WHERE created_by = $u;",
+      "example_bad": "SELECT * FROM t WHERE created_by = CURRENT_USER();",
+      "reason": "Runtime-evaluated functions are not known at compile time."
+    }
+  ],
+
+  "anti_patterns": [
+    {
+      "id": "AP1",
+      "name": "ILIKE",
+      "description": "ILIKE never uses an index. Use LIKE with constant prefix or normalize case at write time.",
+      "disqualifies_index": true
+    },
+    {
+      "id": "AP2",
+      "name": "function_on_indexed_column",
+      "description": "Wrapping an indexed column in a function (LOWER, UPPER, TRIM, etc.) disqualifies the index.",
+      "fix": "Normalize values at write time; query without function."
+    },
+    {
+      "id": "AP3",
+      "name": "non_leading_column",
+      "description": "Querying on a non-leading column of a composite index cannot use that index.",
+      "fix": "Create a separate index with the desired column as the leading key."
+    },
+    {
+      "id": "AP4",
+      "name": "range_before_equality",
+      "description": "A range predicate on a non-final column in the index breaks the seek prefix for all subsequent columns.",
+      "fix": "Reorder: equality predicates first, single range predicate last."
+    },
+    {
+      "id": "AP5",
+      "name": "low_cardinality_standalone",
+      "description": "An index on a column with very few distinct values provides minimal filtering benefit alone.",
+      "fix": "Combine with higher-cardinality columns in a composite index."
+    },
+    {
+      "id": "AP6",
+      "name": "non_deterministic_session_function",
+      "description": "CURRENT_USER(), CURRENT_SESSION(), CURRENT_ACCOUNT(), CURRENT_ROLE() cannot be pushed to index access predicates.",
+      "fix": "Capture value in a session variable first, then use the variable in the predicate."
+    }
+  ],
+
+  "supported_index_predicates": [
+    "column = value",
+    "column > value",
+    "column >= value",
+    "column < value",
+    "column <= value",
+    "column IN (value_list)",
+    "column BETWEEN value1 AND value2",
+    "STARTSWITH(column, value)",
+    "column LIKE 'prefix%'"
+  ],
+
+  "unsupported_index_predicates": [
+    "ILIKE (always full scan)",
+    "Function wrapping column (LOWER, UPPER, etc.)",
+    "Non-deterministic functions (CURRENT_USER, CURRENT_SESSION, etc.)",
+    "LIKE '%suffix' or LIKE '%middle%' (non-prefix patterns)"
+  ],
+
+  "ddl_reference": {
+    "create_index_inline": "CREATE HYBRID TABLE t (\n  col1 NUMBER PRIMARY KEY,\n  col2 VARCHAR,\n  INDEX idx_col2 (col2)\n);",
+    "create_index_separate": "CREATE INDEX idx_name ON table_name (col1, col2);",
+    "create_index_with_include": "CREATE INDEX idx_name ON table_name (col1, col2) INCLUDE (col3, col4);",
+    "drop_index": "DROP INDEX table_name.index_name;",
+    "show_indexes": "SHOW INDEXES IN TABLE table_name;",
+    "check_build_status": "Run SHOW INDEXES IN TABLE; check the 'status' column. ACTIVE = ready. BUILD IN PROGRESS = still building."
+  },
+
+  "query_profile_diagnosis": {
+    "healthy_patterns": [
+      {"operator": "TableScan", "scan_mode": "ROW_BASED", "meaning": "Primary key lookup. Optimal."},
+      {"operator": "IndexScan", "scan_mode": "ROW_BASED", "meaning": "Secondary index in use. Good."}
+    ],
+    "problematic_patterns": [
+      {"operator": "TableScan", "scan_mode": "COLUMN_BASED", "meaning": "Full table scan. Add secondary index for WHERE clause columns."},
+      {"indicator": "Hybrid Table Requests Throttling > 0%", "meaning": "Too many row store requests. Index may be non-selective."}
+    ]
+  },
+
+  "decision_tree": {
+    "question": "Is the query filtering on the primary key?",
+    "yes": "No index needed. PK access is automatic and optimal.",
+    "no": {
+      "question": "Does the WHERE clause filter on a specific non-PK column with supported predicates?",
+      "yes": {
+        "question": "Is this a single equality predicate?",
+        "yes": "Create a single-column secondary index: CREATE INDEX idx ON table (col)",
+        "no": {
+          "question": "Are there multiple predicates?",
+          "yes": {
+            "action": "Create a composite index. Order: equality columns first (higher cardinality leads), range column last.",
+            "followup": {
+              "question": "Does the query always project the same small set of columns?",
+              "yes": "Add INCLUDE for those projected columns to eliminate probe scan.",
+              "no": "Standard composite index without INCLUDE is sufficient."
+            }
+          }
+        }
+      },
+      "no": "Index cannot help. Consider restructuring the query or normalizing data at write time."
+    }
+  },
+
+  "operational_notes": {
+    "concurrent_builds": "Only one index build can run at a time per table. Multiple CREATE INDEX commands queue sequentially.",
+    "storage_impact": "Each secondary index adds storage. INCLUDE columns increase storage further. Monitor with SHOW HYBRID TABLES.",
+    "write_overhead": "Indexes are maintained synchronously on every DML. More indexes = higher write latency.",
+    "production_best_practice": "Use bound variables (parameterized queries) for plan cache reuse. See: https://docs.snowflake.com/en/user-guide/tables-hybrid-best-practices"
+  }
+}

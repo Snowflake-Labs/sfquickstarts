@@ -77,9 +77,7 @@ def _load_latency_by_model(_session, days: int):
         """).to_pandas()
         if not df.empty:
             df.columns = [c.upper() for c in df.columns]
-            for _score_col in ["AVG_ANSWER_RELEVANCE","AVG_GROUNDEDNESS","AVG_COHERENCE","AVG_SAFETY"]:
-                if _score_col in df.columns:
-                    df[_score_col] = pd.to_numeric(df[_score_col], errors="coerce").fillna(0)
+            df["EVENT_DATE"] = pd.to_datetime(df["EVENT_DATE"]).dt.date
         return df
     except Exception:
         return pd.DataFrame()
@@ -107,9 +105,6 @@ def _load_quality_by_model(_session, days: int):
         """).to_pandas()
         if not df.empty:
             df.columns = [c.upper() for c in df.columns]
-            for _sc in ["AVG_ANSWER_RELEVANCE","AVG_GROUNDEDNESS","AVG_COHERENCE","AVG_SAFETY"]:
-                if _sc in df.columns:
-                    df[_sc] = pd.to_numeric(df[_sc], errors="coerce").fillna(0)
         return df
     except Exception:
         return pd.DataFrame()
@@ -388,7 +383,7 @@ def render(session):
                         help="Days of history for all charts.")
 
     tab_latency, tab_token_econ, tab_quality, tab_violations, tab_usage = st.tabs([
-        "LLM Latency", "Token Economics (Experimental)", "Custom Quality (Experimental)", "Prompt Insights", "Usage Share"
+        "LLM Latency", "Token Economics", "Custom Quality (Experimental)", "Prompt Insights", "Usage Share"
     ])
 
     active_days = days
@@ -460,12 +455,6 @@ def render(session):
 
     # ── Token Economics ─────────────────────────────────────────────────────────
     with tab_token_econ:
-        st.warning(
-            "⚗️ **Experimental — Token Economics.** Token counts are extracted from "
-            "`AI_OBSERVABILITY_EVENTS` via `SP_CC_CLASSIFY_PROMPTS` and cover `CodingAgent.Step-0` "
-            "planning spans only. Cache Hit Rate is approximate — field semantics may vary by account. "
-            "Use as a directional signal, not as official Snowflake billing data."
-        )
         with st.expander("What do these token metrics mean?", expanded=False):
             st.markdown("""
 | Metric | What it is | What to expect for Cortex Code |
@@ -499,8 +488,8 @@ def render(session):
             k1, k2, k3, k4 = st.columns(4)
             k1.metric("Total Tokens", _fmt_tokens(total_tokens),
                       help="Sum of all input, output, cache read, and cache write tokens across all LLMs.")
-            k2.metric("Cache Hit Rate *(approx)*", f"{cache_hit_rate}%",
-                      help="cache_read ÷ (cache_read + cache_write). Approximate — field semantics in AI_OBSERVABILITY_EVENTS may vary by account. Use as a directional signal.")
+            k2.metric("Cache Hit Rate", f"{cache_hit_rate}%",
+                      help="Cache hits ÷ (hits + misses). cache_read = hit (served from cache), cache_write = miss (written fresh). Fresh input_tokens excluded — they're not cache-related.")
             k3.metric("Est. Credits Saved", f"{credits_saved:,.4f}",
                       help="Cache reads cost ~10x less than fresh input tokens. Savings = cache_read × (input_rate - cache_rate).")
             k4.metric("Cache Read Tokens", _fmt_tokens(total_cache_r),
@@ -510,10 +499,7 @@ def render(session):
 
             # 100% stacked bar — Token Composition per LLM
             _sec("Token Composition per LLM (100% Stacked)")
-            df_long = df_econ.copy()
-            for _col in ["INPUT_T", "OUTPUT_T", "CACHE_READ_T", "CACHE_WRITE_T", "TOTAL_T"]:
-                df_long[_col] = pd.to_numeric(df_long[_col], errors="coerce").fillna(0)
-            df_long = df_long.melt(
+            df_long = df_econ.melt(
                 id_vars=["MODEL"],
                 value_vars=["INPUT_T", "OUTPUT_T", "CACHE_READ_T", "CACHE_WRITE_T"],
                 var_name="TOKEN_TYPE", value_name="TOKENS"
@@ -526,10 +512,7 @@ def render(session):
             })
             model_totals_econ = df_long.groupby("MODEL")["TOKENS"].sum().reset_index(name="MODEL_TOTAL")
             df_long = df_long.merge(model_totals_econ, on="MODEL")
-            # Ensure numeric after melt + merge (Snowflake may return object dtype)
-            df_long["TOKENS"]      = pd.to_numeric(df_long["TOKENS"],      errors="coerce").fillna(0)
-            df_long["MODEL_TOTAL"] = pd.to_numeric(df_long["MODEL_TOTAL"], errors="coerce").fillna(0)
-            df_long["PCT"] = (df_long["TOKENS"] / df_long["MODEL_TOTAL"].replace(0, float("nan")) * 100).round(1).fillna(0)
+            df_long["PCT"] = (df_long["TOKENS"] / df_long["MODEL_TOTAL"].replace(0, pd.NA) * 100).round(1).fillna(0)
             # Explicit stack order so bars align with legend
             type_order = ["Input", "Output", "Cache Read", "Cache Write"]
             order_map  = {t: i for i, t in enumerate(type_order)}
@@ -592,7 +575,7 @@ def render(session):
                 axis=1
             )
             econ_tbl["CACHE_WRITE_PCT"] = (
-                econ_tbl["CACHE_WRITE_T"] / econ_tbl["TOTAL_T"].replace(0, float("nan")) * 100
+                econ_tbl["CACHE_WRITE_T"] / econ_tbl["TOTAL_T"].replace(0, pd.NA) * 100
             ).round(1).fillna(0)
             # Format large token counts as abbreviated strings
             for col in ["TOTAL_T", "INPUT_T", "OUTPUT_T", "CACHE_READ_T", "CACHE_WRITE_T"]:

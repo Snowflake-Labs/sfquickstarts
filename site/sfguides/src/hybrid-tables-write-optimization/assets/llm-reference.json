@@ -1,0 +1,44 @@
+{
+  "guide_id": "hybrid-tables-write-optimization",
+  "title": "Optimizing Writes to Hybrid Tables",
+  "version": "1.0.0",
+  "last_updated": "2026-06-16",
+  "author": "Adam Timm",
+  "description": "Optimize write performance for Hybrid Tables: plan cache mechanics, bound variables, stored procedure overhead, COPY INTO behavior, and DML anti-patterns.",
+  "plan_cache_mechanics": {
+    "how_it_works": "Snowflake computes query_parameterized_hash by replacing literals in predicates with parameters, then hashing canonicalized SQL text. Same hash = plan reuse.",
+    "what_shares_same_hash": ["Literal value differences in comparison operators (=, !=, >=, <=)", "Whitespace differences", "Comment differences", "Case-insensitive identifier differences"],
+    "what_breaks_hash": ["Schema qualification difference (db.schema.table vs table)", "Different column order in VALUES", "Different function calls (CURRENT_TIMESTAMP vs literal timestamp)"],
+    "where_visible": ["QUERY_HISTORY (ACCOUNT_USAGE)", "AGGREGATE_QUERY_HISTORY (ACCOUNT_USAGE)", "INFORMATION_SCHEMA.QUERY_HISTORY() table function"]
+  },
+  "performance_hierarchy": [
+    "1. Direct DML with AUTOCOMMIT=TRUE (lowest overhead, plan cache optimal)",
+    "2. Multi-statement transaction (BEGIN/COMMIT) — slight overhead, useful for batching",
+    "3. Stored procedure — highest overhead, use only when procedural logic required"
+  ],
+  "copy_into_behavior": {
+    "supported": true,
+    "on_error": "Only ABORT_STATEMENT supported (not SKIP_FILE or CONTINUE)",
+    "optimized_path": "Only on empty tables (never had data loaded). Shows 'Number of rows bulk loaded' in query profile.",
+    "non_empty_throughput": "~1 million rows per minute (varies with row width and index count)",
+    "ctas_vs_copy": "CTAS and COPY INTO empty HT both use optimized path. CTAS does not support FOREIGN KEY."
+  },
+  "anti_patterns": [
+    {"id": "AP1", "name": "String concatenation instead of bound variables", "impact": "Every unique literal combination compiles a new plan (10-100ms overhead per query)"},
+    {"id": "AP2", "name": "CTAS repeated against populated table", "impact": "Re-creates all indexes from scratch every execution; use MERGE or incremental INSERT instead"},
+    {"id": "AP3", "name": "Single-row INSERTs in a loop", "impact": "N round-trips for N rows; use batch APIs (executemany, addBatch, array binds)"},
+    {"id": "AP4", "name": "BI tool running GROUP BY directly on HT", "impact": "COLUMN_BASED scan every execution; snapshot to ST first"},
+    {"id": "AP5", "name": "Inconsistent schema qualification", "impact": "Splits plan cache into multiple entries; reduces effective hit rate"}
+  ],
+  "diagnostic_checklist": [
+    "compilation_time > 50% of total_elapsed_time → plan cache not warming (check hash cardinality)",
+    "Multiple parameterized hashes for same logical operation → schema qualification inconsistency",
+    "CALL latency >> child INSERT latency → SP overhead, consider removing SP wrapper",
+    "hybrid_table_requests_throttled_count > 0 → too many concurrent requests hitting row store"
+  ],
+  "recommended_batch_size": "500-1000 rows per batch call (profile your specific row width)",
+  "related_guides": [
+    {"title": "Connecting Applications to Hybrid Tables", "url": "https://www.snowflake.com/en/developers/guides/hybrid-tables-application-connectors/"},
+    {"title": "Analytics Patterns for Hybrid Tables", "url": "https://www.snowflake.com/en/developers/guides/hybrid-tables-analytics-patterns/"}
+  ]
+}
