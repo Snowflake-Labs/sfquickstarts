@@ -660,8 +660,47 @@ jobs:
           
           echo "quickstart_names_json=$objs" >> $GITHUB_OUTPUT
 
+  fetch_staging_secrets:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    outputs:
+      aem_username:    ${{ steps.secrets.outputs.aem_username }}
+      aem_password:    ${{ steps.secrets.outputs.aem_password }}
+      aem_author_url:  ${{ steps.secrets.outputs.aem_author_url }}
+      aem_publish_url: ${{ steps.secrets.outputs.aem_publish_url }}
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::886692307588:role/github-snowflake-labs-aem-iam-role
+          aws-region: us-west-1
+
+      - name: Fetch AEM staging secrets
+        id: secrets
+        run: |
+          secret=$(aws secretsmanager get-secret-value \
+            --secret-id github-snowflake-labs-aem-staging-secrets \
+            --query SecretString --output text)
+
+          aem_username=$(echo "$secret" | jq -r '.AEM_USERNAME')
+          aem_password=$(echo "$secret" | jq -r '.AEM_PASSWORD')
+          aem_author_url=$(echo "$secret" | jq -r '.AEM_AUTHOR_URL')
+          aem_publish_url=$(echo "$secret" | jq -r '.AEM_PUBLISH_URL')
+
+          echo "::add-mask::$aem_username"
+          echo "::add-mask::$aem_password"
+          echo "::add-mask::$aem_author_url"
+          echo "::add-mask::$aem_publish_url"
+
+          echo "aem_username=$aem_username" >> $GITHUB_OUTPUT
+          echo "aem_password=$aem_password" >> $GITHUB_OUTPUT
+          echo "aem_author_url=$aem_author_url" >> $GITHUB_OUTPUT
+          echo "aem_publish_url=$aem_publish_url" >> $GITHUB_OUTPUT
+
   stage_to_aem:
-    needs: validate_and_stage_no_workato
+    needs: [validate_and_stage_no_workato, fetch_staging_secrets]
     if: |
       needs.validate_and_stage_no_workato.outputs.has_relevant_changes == 'true' && 
       needs.validate_and_stage_no_workato.outputs.all_validations_passed == 'true' &&
@@ -680,41 +719,23 @@ jobs:
       base_sha: ${{ github.event.pull_request.base.sha }}
       pr_number: ${{ github.event.pull_request.number }}
       source_path: ${{ matrix.guide.source_path }}
-      aws_secret_name: github-snowflake-labs-aem-staging-secrets
+    secrets:
+      AEM_USERNAME: ${{ needs.fetch_staging_secrets.outputs.aem_username }}
+      AEM_PASSWORD: ${{ needs.fetch_staging_secrets.outputs.aem_password }}
+      AEM_AUTHOR_URL: ${{ needs.fetch_staging_secrets.outputs.aem_author_url }}
+      AEM_PUBLISH_URL: ${{ needs.fetch_staging_secrets.outputs.aem_publish_url }}
 
   upload_sidebar_json:
-    needs: validate_and_stage_no_workato
+    needs: [validate_and_stage_no_workato, fetch_staging_secrets]
     if: needs.validate_and_stage_no_workato.outputs.has_sidebar_changes == 'true'
     runs-on: ubuntu-latest
     environment:
       name: staging
-    permissions:
-      id-token: write
-      contents: read
+    env:
+      AEM_URL: ${{ needs.fetch_staging_secrets.outputs.aem_author_url }}
+      AEM_USERNAME: ${{ needs.fetch_staging_secrets.outputs.aem_username }}
+      AEM_PASSWORD: ${{ needs.fetch_staging_secrets.outputs.aem_password }}
     steps:
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: arn:aws:iam::886692307588:role/github-snowflake-labs-aem-iam-role
-          aws-region: us-west-1
-
-      - name: Fetch AEM staging secrets
-        run: |
-          secret=$(aws secretsmanager get-secret-value \
-            --secret-id github-snowflake-labs-aem-staging-secrets \
-            --query SecretString --output text)
-
-          aem_username=$(echo "$secret" | jq -r '.AEM_USERNAME')
-          aem_password=$(echo "$secret" | jq -r '.AEM_PASSWORD')
-          aem_author_url=$(echo "$secret" | jq -r '.AEM_AUTHOR_URL')
-
-          echo "::add-mask::$aem_username"
-          echo "::add-mask::$aem_password"
-
-          echo "AEM_URL=$aem_author_url" >> $GITHUB_ENV
-          echo "AEM_USERNAME=$aem_username" >> $GITHUB_ENV
-          echo "AEM_PASSWORD=$aem_password" >> $GITHUB_ENV
-
       - name: Checkout PR content (journeys)
         uses: actions/checkout@v4
         with:
@@ -780,7 +801,7 @@ jobs:
           echo "✅ Sidebar JSON upload complete"
 
   stage_journey_guides:
-    needs: validate_and_stage_no_workato
+    needs: [validate_and_stage_no_workato, fetch_staging_secrets]
     if: needs.validate_and_stage_no_workato.outputs.has_journey_guides == 'true'
     strategy:
       matrix:
@@ -795,4 +816,8 @@ jobs:
       base_sha: ${{ github.event.pull_request.base.sha }}
       pr_number: ${{ github.event.pull_request.number }}
       page_base_path: /content/snowflake-site/global/en/developers/guides/journey-sidebar-base
-      aws_secret_name: github-snowflake-labs-aem-staging-secrets
+    secrets:
+      AEM_USERNAME: ${{ needs.fetch_staging_secrets.outputs.aem_username }}
+      AEM_PASSWORD: ${{ needs.fetch_staging_secrets.outputs.aem_password }}
+      AEM_AUTHOR_URL: ${{ needs.fetch_staging_secrets.outputs.aem_author_url }}
+      AEM_PUBLISH_URL: ${{ needs.fetch_staging_secrets.outputs.aem_publish_url }}
