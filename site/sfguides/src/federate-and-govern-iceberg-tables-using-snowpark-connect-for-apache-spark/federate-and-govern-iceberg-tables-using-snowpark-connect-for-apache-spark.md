@@ -46,7 +46,7 @@ Create two Snowflake-managed Iceberg tables. Apply column masking (hide `sensiti
 **Step 2 — Federate external Iceberg tables + Snowpark Connect governance** (`04`, `05`)
 Create Iceberg tables in Databricks Unity Catalog (Delta + UniForm). Federate them into Snowflake as a Catalog-Linked Database. Apply Snowflake's own Horizon masking policy to `credit_card` — independent of any Databricks policies. Snowpark Connect queries the federated tables with live role-based masking.
 
-**Step 3 — Cortex AI enrichment pipeline → Cortex Analyst** (`07`, `08`)
+**Step 3 — Cortex AI enrichment pipeline → Cortex Analyst** (`06`, `07`)
 Snowpark Connect reads from both catalogs. Cortex classifies each order as HIGH / MEDIUM / LOW risk and generates a one-sentence operational note. Results are written to a new Snowflake-managed Iceberg table. Horizon masking applies to `risk_level` exactly as it does to raw columns. A Cortex Analyst semantic view spans all three Iceberg tables — ask questions in natural language from Snowsight, with governance enforced per active role.
 
 > **Download the code:**
