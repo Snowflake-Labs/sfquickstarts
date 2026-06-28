@@ -5,11 +5,13 @@ summary: Train a custom YOLOv12 defect detection model on GPU compute directly i
 categories: snowflake-site:taxonomy/solution-center/certification/certified-solution, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/model-development, snowflake-site:taxonomy/snowflake-feature/snowpark-container-services, snowflake-site:taxonomy/snowflake-feature/snowpark, snowflake-site:taxonomy/industry/manufacturing
 environments: web
 status: Published
-feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-fork repo link: https://github.com/Snowflake-Labs/sfguide-defect-detection-using-distributed-pytorch-with-snowflake-notebooks
+feedback_link: https://github.com/Snowflake-Labs/sfguides/issues
+fork_repo_link: https://github.com/Snowflake-Labs/sfguide-defect-detection-using-distributed-pytorch-with-snowflake-notebooks
 
 
 # PCB Defect Detection for Electronics Manufacturing: Achieve Zero-Defect Quality with Snowflake
+
+## Overview
 
 Quality engineers and data scientists struggle to deploy modern AI inspection systems because factory floor image data is locked in silos, legacy AOI systems generate excessive false positives, and security policies block open-source ML models from running inside the corporate firewall.
 

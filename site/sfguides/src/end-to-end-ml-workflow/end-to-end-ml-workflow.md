@@ -13,7 +13,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 ## Overview
 
-In this guide, you'll learn how to build and deploy a complete machine learning workflow entirely within Snowflake ML. You'll work through a mortgage lending prediction use case, implementing each stage of the ML lifecycle from feature engineering to model deployment and monitoring.
+In this guide, you'll learn how to build and deploy a complete machine learning workflow entirely within [Snowflake ML](http://www.snowflake.com/ml). You'll work through a mortgage lending prediction use case, implementing each stage of the ML lifecycle from feature engineering to model deployment and monitoring.
 
 This tutorial showcases Snowflake's ML capabilities, including:
 - Feature Store for defining and managing features
@@ -755,17 +755,14 @@ DATEADD(DAY, -60, CURRENT_DATE()) -- start date
 
 ## Conclusion And Resources
 
-You just walked through a guided experience building and deploying a complete end-to-end machine learning workflow within Snowflake ML for a mortgage lending prediction case. The workflow covers feature engineering with Snowflake Feature Store, model training and hyperparameter optimization using Snowflake ML APIs, model logging and management with Snowflake Model Registry, and model performance tracking and drift detection via ML Observability. 
+You just walked through a guided experience building and deploying a complete end-to-end machine learning workflow within [Snowflake ML](http://www.snowflake.com/ml) for a mortgage lending prediction case. The workflow covers feature engineering with Snowflake Feature Store, model training and hyperparameter optimization using Snowflake ML APIs, model logging and management with Snowflake Model Registry, and model performance tracking and drift detection via ML Observability. 
 
-Ready for more? After you complete this quickstart, you can try one of the following additional examples:
-- [Intro Quickstart: Getting Started with Snowflake Notebook Container Runtime](/en/developers/guides/notebook-container-runtime/)
-- [Scale Embeddings with Snowflake Notebooks on Container Runtime](/en/developers/guides/scale-embeddings-with-snowflake-notebooks-on-container-runtime/)
-- [Getting Started with Running Distributed PyTorch Models on Snowflake](/en/developers/guides/getting-started-with-running-distributed-pytorch-models-on-snowflake/)
-- [Defect Detection Using Distributed PyTorch With Snowflake Notebooks](/en/developers/guides/defect-detection-using-distributed-pytorch-with-snowflake-notebooks/)
+Ready for more? After you complete this quickstart, you can try another guided ML example [here](https://docs.snowflake.com/en/developer-guide/snowflake-ml/quickstart). 
 
 Related Resources
 - [Snowflake ML Docs](https://docs.snowflake.com/en/developer-guide/snowflake-ml/overview)
-- [Snowflake ML Webpage](/en/data-cloud/snowflake-ml/)
+- [Snowflake ML Resources](http://www.snowflake.com/ml)
+- [Best Practices for Production ML](https://www.snowflake.com/en/engineering-blog/best-practices-for-production-ml/)
+- [Agentic Machine Learning Best Practices with Cortex Code](https://www.snowflake.com/en/engineering-blog/agentic-ml-best-practices-cortex-code/)
 - [Fork Notebook on GitHub](https://github.com/Snowflake-Labs/sfguide-build-end-to-end-ml-workflow-in-snowflake/blob/main/train_deploy_monitor_ML_in_snowflake.ipynb?_fsi=hnlih63N&_fsi=hnlih63N)
 - [Download Reference Architecture](/content/dam/snowflake-site/developers/2025/quickstart-reference-architecture.pdf)
-- [Watch Demo](https://www.youtube.com/live/T_YQ8pYaPxU?si=zgjFTIPlHRhU8vPl)

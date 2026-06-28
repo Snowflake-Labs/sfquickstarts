@@ -4,13 +4,17 @@ categories: snowflake-site:taxonomy/solution-center/certification/quickstart, sn
 language: en
 summary: Build a Retail Catchment Analysis application using OpenRouteService and Carto Overture Maps. Deploy a Streamlit app that analyzes store catchment zones with isochrones, identifies competitors, and visualizes address density using H3 hexagons.
 environments: web
-status: Published
+status: Archived
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 fork repo link: https://github.com/Snowflake-Labs/sfguide-create-a-route-optimisation-and-vehicle-route-plan-simulator
 
 # Retail Catchment Analysis with Overture Maps
 
-> 🏪 **Select. Analyze. Compete.** Build an interactive retail catchment analysis tool using real-world POI data - powered by OpenRouteService in Snowflake.
+> Note: This guide is no longer maintained and will not work.
+The content has been consolidated into a single comprehensive quickstart.
+Please see [Build Routing Solution in Snowflake with Cortex Code](https://www.snowflake.com/en/developers/guides/oss-install-openrouteservice-native-app/) for the latest version.
+
+🏪 **Select. Analyze. Compete.** Build an interactive retail catchment analysis tool using real-world POI data - powered by OpenRouteService in Snowflake.
 
 <!-- ------------------------ -->
 ## Overview 

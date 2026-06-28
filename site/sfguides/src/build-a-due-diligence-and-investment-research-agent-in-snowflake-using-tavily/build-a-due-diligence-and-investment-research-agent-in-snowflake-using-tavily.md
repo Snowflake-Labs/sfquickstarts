@@ -7,6 +7,8 @@ environments: web
 status: Published
 feedback link: https://github.com/manisrinivasan2k1/sfquickstarts/issues
 
+# Build a Due Diligence and Investment Research Agent in Snowflake Using Tavily
+<!-- ------------------------ -->
 ## Overview
 
 ![Snowflake x Tavily](assets/snowflakextavily.png)
@@ -70,7 +72,7 @@ By combining trusted financial reference data in Snowflake with Tavily’s real-
 
 Follow the steps below to configure Tavily Web Search within Snowflake.
 
-1. **Install Tavily from Snowflake Marketplace**
+1. **Install Tavily from the Snowflake Marketplace**
 
    - Navigate to **[Snowflake Marketplace](https://app.snowflake.com/marketplace)**.
    - Search for **Tavily Search API**.

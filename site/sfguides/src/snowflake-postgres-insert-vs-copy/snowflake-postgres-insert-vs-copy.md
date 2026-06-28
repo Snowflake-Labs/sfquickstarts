@@ -1,6 +1,6 @@
 author: Brian Pace
 id: snowflake-postgres-insert-vs-copy
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/snowflake-feature/postgres
 language: en
 summary: Comparing INSERT, batch INSERT, and COPY performance in Postgres
 environments: web

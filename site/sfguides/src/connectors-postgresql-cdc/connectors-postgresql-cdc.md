@@ -1,6 +1,6 @@
 author: Joviane Bellegarde
 id: connectors-postgresql-cdc
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/industry/financial-services, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/solution-center/certification/community-sourced
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/industry/financial-services, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/solution-center/certification/community-sourced, snowflake-site:taxonomy/snowflake-feature/postgres
 language: en
 summary: Build real-time financial dashboards using Change Data Capture from PostgreSQL to Snowflake with Dynamic Tables and Streamlit.
 environments: web

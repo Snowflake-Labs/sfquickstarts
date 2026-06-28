@@ -12,7 +12,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 ## Overview 
 
-Through this quickstart guide, you will get an introduction to [Snowflake for Machine Learning](/en/data-cloud/snowflake-ml/). You will set up your Snowflake and Python environments and build an ML development workflow from feature engineering to model training and batch inference with Snowflake ML all from a set of unified Python APIs.
+Through this quickstart guide, you will get an introduction to [Snowflake for Machine Learning](http://www.snowflake.com/ml). You will set up your Snowflake and Python environments and build an ML development workflow from feature engineering to model training and batch inference with Snowflake ML all from a set of unified Python APIs.
 
 ### What is Snowflake ML?
 
@@ -28,9 +28,9 @@ Capabilities for model development and inference include:
 - **ML Explainability** to better understand the features the model considers most impactful when generating predictions
 - **ML Observability** to monitor performance metrics for models running inference in Snowflake
 
-![snowflake_ml_overview](assets/snowflake_ml_overview.png)
+![snowflake_ml_overview](assets/new-snowflake-ml-architecture.png)
 
-To get started with Snowflake ML, developers can use the Python APIs from the [Snowflake ML library](https://docs.snowflake.com/en/developer-guide/snowflake-ml/snowpark-ml), directly from Snowflake Notebooks. 
+To get started with Snowflake ML, developers can use the Python APIs from the [Snowflake ML library](https://docs.snowflake.com/en/developer-guide/snowflake-ml/container-runtime-ml), directly from Snowflake Notebooks. 
 
 **Snowflake ML provides the following advantages:**
 - Transform your data and train your models using open-source Python ML frameworks such as scikit-learn and xgboost
@@ -38,7 +38,7 @@ To get started with Snowflake ML, developers can use the Python APIs from the [S
 - Keep your ML pipeline running within Snowflake's security and governance perimeters
 - Take advantage of the performance and scalability of Snowflake's scalable computing platform.
 
-Learn more about model development with [Snowflake ML APIs](https://docs.snowflake.com/en/developer-guide/snowflake-ml/snowpark-ml) and deployment with the [Snowflake Model Registry](https://docs.snowflake.com/en/developer-guide/snowpark-ml/snowpark-ml-mlops).
+Learn more about model development with [Snowflake ML APIs](https://docs.snowflake.com/en/developer-guide/snowflake-ml/container-runtime-ml) and deployment with the [Snowflake Model Registry](https://docs.snowflake.com/en/developer-guide/snowpark-ml/snowpark-ml-mlops).
 
 ### What you will learn 
 This quickstart will focus on building a custom ML workflow using the following features: 
@@ -222,10 +222,11 @@ For more information, check out the resources below:
 
 ### Related Resources
 - [Source Code on GitHub](https://github.com/Snowflake-Labs/sfguide-intro-to-machine-learning-with-snowflake-ml-for-python)
-- [Snowflake ML Webpage](/en/data-cloud/snowflake-ml/)
+- [Snowflake ML Resources](http://www.snowflake.com/ml)
+- [Best Practices for Production ML](https://www.snowflake.com/en/engineering-blog/best-practices-for-production-ml/)
+- [Agentic Machine Learning Best Practices with Cortex Code](https://www.snowflake.com/en/engineering-blog/agentic-ml-best-practices-cortex-code/)
+- [More ML Quickstarts](https://docs.snowflake.com/en/developer-guide/snowflake-ml/quickstart)
 - [Snowflake ML API Docs](https://docs.snowflake.com/en/developer-guide/snowpark-ml/index)
-- [Quickstart: Build an End-to-End ML Workflow in Snowflake
-](/en/developers/guides/end-to-end-ml-workflow/)
 - Check out other Snowflake ML quickstarts [here](https://docs.snowflake.com/en/developer-guide/snowflake-ml/quickstart)
 - [Download Reference Architecture](/content/dam/snowflake-site/developers/2024/10/snowflake_ml_e2e.png)
 - [Read the Blog](https://medium.com/snowflake/end-to-end-machine-learning-with-snowpark-ml-in-snowflake-notebooks-faa42f1f57fc)
