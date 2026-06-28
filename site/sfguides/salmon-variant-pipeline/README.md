@@ -1,3 +1,12 @@
+author: Priya Joseph
+id: salmon-variant-pipeline
+language: en
+summary: RNA-seq isoform quantification pipeline using Salmon 2.0 (Rust) and Salmon 1.12.0 (C++), with AI-powered analysis via Snowflake Cortex REST API.
+categories: snowflake-site:taxonomy/solution-center/ai-ml/quickstart
+environments: web
+status: Published
+feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+
 # Salmon Variant Pipeline
 
 RNA-seq isoform quantification pipeline using [Salmon](https://github.com/COMBINE-lab/salmon),
@@ -13,7 +22,7 @@ supporting both **Salmon 2.0 (Rust)** and **Salmon 1.12.0 (C++)** side-by-side.
 
 ```bash
 # Create conda environment
-conda env create -f assets/envs/salmon.yaml
+conda env create -f assets/salmon.yaml
 conda activate salmon-pipeline
 
 # Run with Salmon 2.0 Rust (default)
@@ -27,10 +36,10 @@ THREADS=16 bash assets/pipeline.sh                    # Rust
 SALMON_VERSION=cpp THREADS=16 bash assets/pipeline.sh # C++
 
 # Downstream R analysis
-Rscript assets/scripts/deseq2_analysis.R
+Rscript assets/deseq2_analysis.R
 
 # Regenerate all figures
-python3 assets/scripts/generate_plots.py
+python3 assets/generate_plots.py
 ```
 
 ---
@@ -48,11 +57,9 @@ salmon-variant-pipeline/
     ├── Snakefile             # Snakemake DAG — salmon_version: rust|cpp
     ├── config.yaml           # All parameters (threads, URLs, sample list)
     ├── samples.tsv           # 8 airway samples with condition metadata
-    ├── envs/
-    │   └── salmon.yaml       # Conda environment spec
-    └── scripts/
-        ├── deseq2_analysis.R # DESeq2 (gene) + fishpond/swish (transcript)
-        └── generate_plots.py # Generates all figures from synthetic data
+    ├── salmon.yaml           # Conda environment spec
+    ├── deseq2_analysis.R     # DESeq2 (gene) + fishpond/swish (transcript)
+    └── generate_plots.py     # Generates all figures from synthetic data
 ```
 
 ---
