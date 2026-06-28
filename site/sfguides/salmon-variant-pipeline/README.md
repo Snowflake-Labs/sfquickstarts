@@ -13,24 +13,24 @@ supporting both **Salmon 2.0 (Rust)** and **Salmon 1.12.0 (C++)** side-by-side.
 
 ```bash
 # Create conda environment
-conda env create -f envs/salmon.yaml
+conda env create -f assets/envs/salmon.yaml
 conda activate salmon-pipeline
 
 # Run with Salmon 2.0 Rust (default)
-snakemake --cores 8
+snakemake -s assets/Snakefile --cores 8
 
 # Run with Salmon 1.12.0 C++
-snakemake --cores 8 --config salmon_version=cpp
+snakemake -s assets/Snakefile --cores 8 --config salmon_version=cpp
 
 # Or with the bash runner
-THREADS=16 bash pipeline.sh                    # Rust
-SALMON_VERSION=cpp THREADS=16 bash pipeline.sh # C++
+THREADS=16 bash assets/pipeline.sh                    # Rust
+SALMON_VERSION=cpp THREADS=16 bash assets/pipeline.sh # C++
 
 # Downstream R analysis
-Rscript scripts/deseq2_analysis.R
+Rscript assets/scripts/deseq2_analysis.R
 
 # Regenerate all figures
-python3 scripts/generate_plots.py
+python3 assets/scripts/generate_plots.py
 ```
 
 ---
@@ -41,24 +41,18 @@ python3 scripts/generate_plots.py
 
 ```
 salmon-variant-pipeline/
-├── pipeline.sh               # Bash runner — SALMON_VERSION=rust|cpp
-├── Snakefile                 # Snakemake DAG — salmon_version: rust|cpp
-├── config.yaml               # All parameters (threads, URLs, sample list)
-├── samples.tsv               # 8 airway samples with condition metadata
-├── assets/                   # All figures (this README)
-├── envs/
-│   └── salmon.yaml           # Conda environment spec
-├── scripts/
-│   ├── deseq2_analysis.R     # DESeq2 (gene) + fishpond/swish (transcript)
-│   └── generate_plots.py     # Generates all figures from synthetic data
-└── results/
-    ├── references/           # GENCODE v44 transcriptome + genome (shared)
-    ├── index_rust/           # Salmon 2.0 index   ← NOT interchangeable
-    ├── index_cpp/            # Salmon 1.12.0 index ← NOT interchangeable
-    ├── reads/                # SRA reads (shared across versions)
-    ├── quant_rust/           # quant.sf outputs from Rust version
-    ├── quant_cpp/            # quant.sf outputs from C++ version
-    └── downstream/           # DESeq2 + swish CSVs, Cortex AI .md files
+├── README.md
+└── assets/
+    ├── 01_pipeline_dag.png … 09_cortex_api.png  # figures
+    ├── pipeline.sh           # Bash runner — SALMON_VERSION=rust|cpp
+    ├── Snakefile             # Snakemake DAG — salmon_version: rust|cpp
+    ├── config.yaml           # All parameters (threads, URLs, sample list)
+    ├── samples.tsv           # 8 airway samples with condition metadata
+    ├── envs/
+    │   └── salmon.yaml       # Conda environment spec
+    └── scripts/
+        ├── deseq2_analysis.R # DESeq2 (gene) + fishpond/swish (transcript)
+        └── generate_plots.py # Generates all figures from synthetic data
 ```
 
 ---
