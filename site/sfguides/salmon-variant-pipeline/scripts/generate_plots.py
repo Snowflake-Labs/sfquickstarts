@@ -318,24 +318,30 @@ def plot_heatmap(df):
         ["N613","N613","N052","N052","N080","N080","N061","N061"])]
     col_colors = [PALETTE[c] for c in CONDITIONS]
 
-    fig = plt.figure(figsize=(10, 7), facecolor="#1e1e2e")
-    gs  = gridspec.GridSpec(1, 2, width_ratios=[2.2, 1.5], wspace=0.45)
-    ax  = fig.add_subplot(gs[0])
-    cax = fig.add_subplot(gs[1])
+    fig = plt.figure(figsize=(11, 7), facecolor="#1e1e2e")
+    # 3 columns: heatmap | dedicated colorbar | code box
+    gs  = gridspec.GridSpec(1, 3, width_ratios=[2.2, 0.08, 1.5], wspace=0.35)
+    ax   = fig.add_subplot(gs[0])   # heatmap
+    cbax = fig.add_subplot(gs[1])   # colorbar — own column, well clear of title
+    cax  = fig.add_subplot(gs[2])   # R code box
 
     im = ax.imshow(mat, aspect="auto", cmap=cmap, vmin=-2.5, vmax=2.5)
     ax.set_xticks(range(8)); ax.set_xticklabels(col_labels, fontsize=6.5, color="#cdd6f4")
     ax.set_yticks(range(n));  ax.set_yticklabels(sig.label, fontsize=6.5, color="#cdd6f4")
     for j, cc in enumerate(col_colors):
         ax.add_patch(plt.Rectangle((j-0.5, -1.6), 1, 0.6,
-                                   color=cc, clip_on=False, zorder=5))
+                                   color=cc, clip_on=False, zorder=2))
     ax.set_facecolor("#181825")
     for spine in ax.spines.values(): spine.set_edgecolor("#585b70")
-    ax.set_title("Top 30 DE Genes — Z-score (VST)", color="#cdd6f4", fontsize=9)
-    cb = fig.colorbar(im, ax=ax, fraction=0.03, pad=0.02)
+    # pad=22 pushes the title above the annotation colour bars
+    ax.set_title("Top 30 DE Genes — Z-score (VST)", color="#cdd6f4", fontsize=9, pad=22)
+
+    # Colorbar in its own axes — no overlap with heatmap title
+    cb = fig.colorbar(im, cax=cbax)
     cb.set_label("Z-score", color="#cdd6f4", fontsize=7)
-    cb.ax.yaxis.set_tick_params(color="#cdd6f4")
-    plt.setp(cb.ax.yaxis.get_ticklabels(), color="#cdd6f4", fontsize=6)
+    cbax.yaxis.set_tick_params(color="#cdd6f4")
+    plt.setp(cbax.yaxis.get_ticklabels(), color="#cdd6f4", fontsize=6)
+    cbax.set_facecolor("#181825")
 
     r_code = textwrap.dedent("""\
         # R — Heatmap (pheatmap)
