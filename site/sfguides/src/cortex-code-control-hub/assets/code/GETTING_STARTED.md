@@ -55,6 +55,7 @@ Before we start, here is what I need you to know:
    - Whether I want Streamlit on Warehouse or Streamlit on Container (SPCS)
    - Which database and schema to deploy the app into
    - Which warehouse to use
+     > **Warehouse sizing recommendation:** An **X-Small (XS)** warehouse is sufficient for all setup phases and the two overnight scheduled tasks (`CC_CLASSIFY_PROMPTS_TASK`, `CC_REFRESH_USAGE_SUMMARIES`). For the app query warehouse, use **Small (S)** or larger if you have many concurrent users. Set `AUTO_SUSPEND = 300` to avoid constant cold-start delays.
    - Whether I will use ACCOUNTADMIN or a custom role for deployment
    - Which roles should have admin access to the app
 
