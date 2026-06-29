@@ -46,7 +46,7 @@ CoCo Control Hub provides all of this in a single Streamlit app — no external 
 - How to integrate Cortex LLM functions for semantic policy evaluation
 
 ### Source Code
-**GitHub (Snowflake-Labs):** https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/cortex-code-control-hub/assets/code
+**GitHub (Snowflake-Labs):** https://github.com/sfc-gh-rchandrasekaran/snowsolutions-rchandrasekaran/tree/main/streamlit-apps/cortex-code-credit-manager
 
 <!-- ------------------------ -->
 ## Architecture
@@ -126,7 +126,7 @@ Duration: 10
 Download the source files from the Snowflake-Labs sfquickstarts repository:
 
 ```
-https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/cortex-code-control-hub/assets/code
+https://github.com/sfc-gh-rchandrasekaran/snowsolutions-rchandrasekaran/tree/main/streamlit-apps/cortex-code-credit-manager
 ```
 
 Edit `config.yaml` with your database and schema:
@@ -331,6 +331,6 @@ The governance-as-code approach used in this app is reusable beyond Cortex Code.
 
 ### Resources
 
-- **Source Code (Snowflake-Labs):** https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/cortex-code-control-hub/assets/code
+- **Source Code (Snowflake-Labs):** https://github.com/sfc-gh-rchandrasekaran/snowsolutions-rchandrasekaran/tree/main/streamlit-apps/cortex-code-credit-manager
 - **Cortex Code Docs:** https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code
 - **Streamlit in Snowflake:** https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit
