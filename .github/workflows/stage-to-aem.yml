@@ -33,19 +33,10 @@ on:
         required: false
         type: string
         default: ''
-    secrets:
-      AEM_USERNAME:
-        description: 'AEM username for basic auth'
+      aws_secret_name:
+        description: 'AWS Secrets Manager secret name containing AEM credentials'
         required: true
-      AEM_PASSWORD:
-        description: 'AEM password for basic auth'
-        required: true
-      AEM_AUTHOR_URL:
-        description: 'AEM author instance URL'
-        required: true
-      AEM_PUBLISH_URL:
-        description: 'AEM publish instance URL'
-        required: true
+        type: string
 
 env:
   BASE_CF_PATH: /content/dam/snowflake-site/en/content-fragments/base-fragments/base-quickstart-cf
@@ -56,12 +47,39 @@ env:
 jobs:
   stage_quickstart:
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+      pull-requests: write
     env:
-      AEM_USERNAME: ${{ secrets.AEM_USERNAME }}
-      AEM_PASSWORD: ${{ secrets.AEM_PASSWORD }}
-      AEM_URL: ${{ secrets.AEM_AUTHOR_URL }}
-      AEM_PUBLISH_URL: ${{ secrets.AEM_PUBLISH_URL }}
+      MAX_RETRIES: 3
+      RETRY_DELAY: 5
     steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::886692307588:role/github-snowflake-labs-aem-iam-role
+          aws-region: us-west-1
+
+      - name: Fetch AEM secrets
+        run: |
+          secret=$(aws secretsmanager get-secret-value \
+            --secret-id "${{ inputs.aws_secret_name }}" \
+            --query SecretString --output text)
+
+          aem_username=$(echo "$secret" | jq -r '.AEM_USERNAME')
+          aem_password=$(echo "$secret" | jq -r '.AEM_PASSWORD')
+          aem_author_url=$(echo "$secret" | jq -r '.AEM_AUTHOR_URL')
+          aem_publish_url=$(echo "$secret" | jq -r '.AEM_PUBLISH_URL')
+
+          echo "::add-mask::$aem_username"
+          echo "::add-mask::$aem_password"
+
+          echo "AEM_USERNAME=$aem_username" >> $GITHUB_ENV
+          echo "AEM_PASSWORD=$aem_password" >> $GITHUB_ENV
+          echo "AEM_URL=$aem_author_url" >> $GITHUB_ENV
+          echo "AEM_PUBLISH_URL=$aem_publish_url" >> $GITHUB_ENV
+
       - name: Checkout PR content (markdown and assets only)
         uses: actions/checkout@v4
         with:
