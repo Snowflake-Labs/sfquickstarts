@@ -407,10 +407,24 @@ GRANT OWNERSHIP ON STREAMLIT MY_DB.MY_SCHEMA.CORTEX_CODE_CREDIT_MANAGER
 - **20+ tables**: credit config, usage summaries, prompt events, insights, quality scores, alert config/history, policy rules, model config, cohort mapping, audit log
 - **2 scheduled tasks**: 30-min usage refresh, nightly classify (suspended — resume after Phase C)
 - **1 stream**: CC_VIOLATION_STREAM (real-time high-severity detection)
-- **2 alerts**: CC_ALERT_CHECK (5-min batch), CC_REALTIME_VIOLATION_ALERT (1-min)
+- **2 alerts**: CC_ALERT_CHECK (hourly batch), CC_REALTIME_VIOLATION_ALERT (hourly)
 - **1 notification integration**: CC_EMAIL_INTEGRATION
 - **8 default policy rules** seeded via MERGE (PII, Security, Prompt Injection, Data Exfiltration, Competitor, Personal Use, Session Anomaly, Semantic Injection)
             """)
+        # ── Warehouse info hint ──────────────────────────────────────────────
+        try:
+            _wh_row = session.sql("SELECT CURRENT_WAREHOUSE() AS WH").collect()
+            _wh_name = str(_wh_row[0]["WH"]) if _wh_row and _wh_row[0]["WH"] else "unknown"
+            _wh_size_rows = session.sql(f"SHOW WAREHOUSES LIKE '{_wh_name}'").collect()
+            # SHOW WAREHOUSES returns Row objects — access "size" by column name
+            # (Snowflake Row supports both positional and named access)
+            _wh_size = str(_wh_size_rows[0]["size"]).upper() if _wh_size_rows else "unknown"
+            st.info(
+                f"Objects will be created using warehouse **{_wh_name}** (size: **{_wh_size}**). "
+                "XS is sufficient for all setup phases and overnight tasks."
+            )
+        except Exception:
+            pass
         col1, col2 = st.columns(2)
         with col1:
             if st.button("Run Phase A — Create Objects", type="primary", key="btn_setup_a",
