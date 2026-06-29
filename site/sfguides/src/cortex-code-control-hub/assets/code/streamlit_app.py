@@ -151,52 +151,52 @@ def main():
 
     # Page dispatch
     if page_name == PAGE_HOME:
-        from pages.home import render
+        from views.home import render
         render(session)
     elif page_name == PAGE_ACCESS_MGMT and is_admin:
-        from pages.access_management import render
+        from views.access_management import render
         render(session)
     elif page_name == PAGE_CREDIT_CONFIG and is_admin:
-        from pages.credit_config import render
+        from views.credit_config import render
         render(session)
     elif page_name == PAGE_USAGE_TRENDS and is_admin:
-        from pages.usage_trends import render
+        from views.usage_trends import render
         render(session)
     elif page_name == PAGE_MODEL_ACCESS and is_admin:
-        from pages.model_access import render
+        from views.model_access import render
         render(session)
     elif page_name == PAGE_CREDIT_REQUESTS:
-        from pages.credit_requests import render
+        from views.credit_requests import render
         render(session)
     elif page_name == PAGE_SETTINGS and is_admin:
-        from pages.settings import render
+        from views.settings import render
         render(session)
     elif page_name == PAGE_AUDIT_LOG and is_admin:
-        from pages.audit_logs import render
+        from views.audit_logs import render
         render(session)
     elif page_name == PAGE_SETUP and is_admin:
-        from pages.setup import render
+        from views.setup import render
         render(session)
     elif page_name == PAGE_OBSERVABILITY and is_admin:
-        from pages.observability import render
+        from views.observability import render
         render(session)
     elif page_name == PAGE_COST_ATTRIBUTION and is_admin:
-        from pages.cost_attribution import render
+        from views.cost_attribution import render
         render(session)
     elif page_name == PAGE_PROMPT_ANALYSIS and is_admin:
-        from pages.prompt_analysis import render
+        from views.prompt_analysis import render
         render(session)
     elif page_name == PAGE_USER_INTEL and is_admin:
-        from pages.user_intelligence import render
+        from views.user_intelligence import render
         render(session)
     elif page_name == PAGE_POLICY_RULES and is_admin:
-        from pages.policy_rules import render
+        from views.policy_rules import render
         render(session)
     elif page_name == PAGE_ALERTS and is_admin:
-        from pages.alerts import render
+        from views.alerts import render
         render(session)
     elif page_name == PAGE_MODEL_INTEL and is_admin:
-        from pages.model_intelligence import render
+        from views.model_intelligence import render
         render(session)
     else:
         st.error("⛔ Access denied. This page requires admin privileges.")
