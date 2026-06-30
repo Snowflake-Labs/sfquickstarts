@@ -1,7 +1,7 @@
 author: Yoav Ostrinsky
 id: dcm-projects-for-dynamic-tables
-summary: Learn how to use DCM Projects to manage dynamic table pipelines, evolve their schemas, and optimize refreshes with immutability constraints.
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/dynamic-tables
+summary: Learn how to use DCM Projects to manage dynamic table pipelines, evolve their schemas with frozen regions, and enrich them with a Cortex AI function.
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/dynamic-tables
 environments: web
 status: Published
 language: en
@@ -18,12 +18,13 @@ In this guide, you'll focus on **dynamic table lifecycle management** — making
 
 Dynamic tables are the backbone of declarative data pipelines in Snowflake — you define the *what*, and Snowflake handles the *when* and *how*. But managing dynamic tables at scale introduces real challenges: How do you version-control their definitions? How do you promote changes across environments? And when you need to evolve a schema, how do you avoid an expensive full recomputation of historical data?
 
-This guide answers all three questions by combining two powerful Snowflake features:
+This guide answers all three questions by combining a few powerful Snowflake features:
 
 - **DCM Projects** — Define your entire pipeline (databases, schemas, tables, dynamic tables, roles, grants) as code, then plan and deploy changes declaratively.
-- **Immutability constraints** — Tell Snowflake which rows in a dynamic table will never change, so that schema evolutions and dimension table updates only reprocess the mutable window.
+- **Frozen regions** — Tell Snowflake which rows in a dynamic table will never change, so that schema evolutions and dimension table updates only reprocess the active region.
+- **Cortex AI functions in dynamic tables** — Call an LLM-powered function like `AI_CLASSIFY` directly in a dynamic table's definition, so AI-derived columns refresh automatically as data flows through your pipeline.
 
-You'll start by deploying a food truck analytics pipeline using DCM Projects, then evolve a dynamic table's schema by adding a new column — and see firsthand how immutability constraints prevent a full rewrite of historical data.
+You'll start by deploying a food truck analytics pipeline using DCM Projects, then evolve a dynamic table's schema by adding an **AI-classified column** — and see firsthand how frozen regions prevent a full rewrite of historical data and stop the AI function from re-running on rows that will never change.
 
 > **Note:** DCM Projects is currently in Public Preview. See the [DCM Projects documentation](https://docs.snowflake.com/en/user-guide/dcm-projects/dcm-projects-overview) for the latest details.
 
@@ -37,17 +38,19 @@ You'll start by deploying a food truck analytics pipeline using DCM Projects, th
 - How to use Jinja templating to parameterize definitions across environments
 - How to plan (dry-run) and deploy changes using Snowsight Workspaces or Snowflake CLI
 - Why `INITIALIZE = ON_SCHEDULE` matters for fast DCM deployments
-- How immutability constraints work on dynamic tables
+- How frozen regions work on dynamic tables
 - How to evolve a dynamic table's schema without triggering a full recomputation
-- How to use `metadata$is_immutable` to verify which rows were reprocessed
+- How to call a Cortex AI function (`AI_CLASSIFY`) inside a dynamic table — and why a frozen region keeps its cost down
+- How to use `METADATA$IS_FROZEN` to verify which rows were reprocessed
 
 ### What You'll Need
 - A [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) with ACCOUNTADMIN access (or a role with sufficient privileges)
+- [Cortex AI functions](https://docs.snowflake.com/en/user-guide/snowflake-cortex/aisql) available in your account's region (used for the `AI_CLASSIFY` step)
 - (Optional) [Snowflake CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli/installation/installation) v3.16.0+ if you prefer CLI over the Snowsight UI
 
 ### What You'll Build
 - A fully deployed food truck analytics pipeline — databases, schemas, tables, dynamic tables, views, roles, and grants — all defined as code
-- An evolved dynamic table with a new column and an immutability constraint, deployed through a DCM plan-deploy cycle with only partial recomputation
+- An evolved dynamic table with an AI-classified column and a frozen region, deployed through a DCM plan-deploy cycle with only partial recomputation
 
 <!-- ------------------------ -->
 ## Create a Workspace from Git
@@ -70,7 +73,7 @@ Once the workspace is created, you'll see the repository files in the file explo
 |:-----|:------------|
 | `scripts/01_pre_deploy.sql` | Before the first DCM Plan & Deploy |
 | `scripts/02_post_deploy.sql` | After the first successful deployment |
-| `scripts/03_verify_evolution.sql` | After the second deployment (with immutability) |
+| `scripts/03_verify_evolution.sql` | After the second deployment (with frozen region + AI column) |
 | `scripts/04_cleanup.sql` | When you're done and want to tear everything down |
 
 Open `scripts/01_pre_deploy.sql` in a Snowsight worksheet — you'll use it in the next step.
@@ -399,7 +402,7 @@ Open `scripts/02_post_deploy.sql` in a Snowsight worksheet and run each section 
 
 The script inserts data into the raw tables: trucks, menu items, customers, inventory, order headers, and order details. Run all the `INSERT` statements.
 
-> **Note:** Orders 1024 and 1025 are inserted with `CURRENT_TIMESTAMP()` instead of a fixed date. This matters later — when you add an immutability constraint, these recent rows will fall within the mutable window and get recomputed with the new column, while older rows stay frozen.
+> **Note:** Orders 1024 and 1025 are inserted with `CURRENT_TIMESTAMP()` instead of a fixed date. This matters later — when you add a frozen region, these recent rows will fall in the **active region** and get the new AI-classified column, while older rows stay **frozen** (and skip the AI call entirely).
 
 ### 2. Refresh Dynamic Tables
 
@@ -422,26 +425,31 @@ SELECT * FROM dcm_demo_3_dev.analytics.enriched_order_details;
 You should see rows with columns like `order_id`, `order_ts`, `quantity`, `menu_item_name`, `line_item_revenue`, `line_item_profit`, `customer_city`, and `truck_brand_name`. Take note of this schema — in the next step, you'll evolve it.
 
 <!-- ------------------------ -->
-## Evolve the Dynamic Table with Immutability
+## Evolve the Dynamic Table with a Frozen Region and AI
 
-This is where the guide diverges from the basics. You have a running pipeline — but now the analytics team wants a **profit margin percentage** column on `enriched_order_details`. In a traditional setup, adding a column to a dynamic table means recreating it from scratch and recomputing every row. With **immutability constraints**, you can tell Snowflake that historical rows won't change, so only recent data gets reprocessed.
+This is where the guide diverges from the basics. You have a running pipeline — but now the analytics team wants every order tagged with a **diet classification** (`Healthy` or `Indulgent`) so they can analyze ordering trends. Rather than maintain a lookup table by hand, you'll let a **Cortex AI function** classify each menu item directly inside the dynamic table.
 
-### Understanding Immutability Constraints
+There's a catch: AI inference isn't free. Running an LLM over *every* historical order on every refresh would be slow and expensive. You only want to classify rows that are still changing — not years of frozen history. This is exactly what a **frozen region** is for.
 
-The `IMMUTABLE WHERE` clause on a dynamic table declares a condition under which rows are considered frozen. Snowflake skips these rows during incremental refreshes, which means:
+### Understanding Frozen Regions
 
-- **Schema changes** only recompute the mutable window — Snowflake marks historical rows as immutable and avoids a full rewrite of the data.
+The `FROZEN WHERE` clause on a dynamic table declares a condition under which rows are considered frozen. Snowflake skips these rows during refreshes, which means:
+
+- **Schema changes** only recompute the **active region** — Snowflake preserves the frozen rows as-is and avoids a full rewrite of the data.
+- **Expensive expressions only run on the active region** — a Cortex AI function in the SELECT clause is evaluated for active rows only, so you never pay to re-classify frozen history.
 - **Dimension table updates** (e.g., a customer changes city) don't trigger reprocessing of old fact rows that joined against that dimension.
-- **`metadata$is_immutable`** — a virtual column on every dynamic table with an immutability constraint — lets you verify which rows are frozen and which were recomputed.
+- **`METADATA$IS_FROZEN`** — a virtual column on every dynamic table with a frozen region — lets you verify which rows are frozen and which are active.
 
-For more details, see the [Snowflake documentation on immutability constraints](https://docs.snowflake.com/en/user-guide/dynamic-tables-performance-optimize-immutability).
+> **Note:** Frozen regions were previously called *immutability constraints*. The legacy `IMMUTABLE WHERE` syntax still works, and `SHOW DYNAMIC TABLES` still reports the predicate in the `immutable_where` column — but `FROZEN WHERE` and `METADATA$IS_FROZEN` are the current names.
+
+For more details, see the [Snowflake documentation on frozen regions](https://docs.snowflake.com/en/user-guide/dynamic-tables/frozen-regions).
 
 ### Modify the Definition File
 
 Open `sources/definitions/analytics.sql` in your workspace and update the `enriched_order_details` dynamic table definition. You're making two changes:
 
-1. **Add** a `profit_margin_pct` calculated column.
-2. **Add** an `IMMUTABLE WHERE` clause that freezes rows older than 1 day.
+1. **Add** a `DIET_CLASSIFICATION` column powered by `AI_CLASSIFY`.
+2. **Add** a `FROZEN WHERE` clause that freezes rows older than 1 day.
 
 Replace the existing `enriched_order_details` definition with:
 
@@ -451,7 +459,7 @@ WAREHOUSE = DCM_DEMO_3_WH{{env_suffix}}
 TARGET_LAG = 'DOWNSTREAM'
 INITIALIZE = 'ON_SCHEDULE'
 DATA_METRIC_SCHEDULE = 'TRIGGER_ON_CHANGES'
-IMMUTABLE WHERE (ORDER_TS < CURRENT_TIMESTAMP() - INTERVAL '1 day')
+FROZEN WHERE (ORDER_TS < CURRENT_TIMESTAMP() - INTERVAL '1 day')
 AS
 SELECT
     oh.ORDER_ID,
@@ -469,9 +477,7 @@ SELECT
     INITCAP(c.CITY) AS CUSTOMER_CITY,
     t.TRUCK_ID,
     t.TRUCK_BRAND_NAME,
-    ROUND(
-        ((m.SALE_PRICE_USD - m.COST_OF_GOODS_USD) / m.SALE_PRICE_USD) * 100, 2
-    ) AS PROFIT_MARGIN_PCT
+    AI_CLASSIFY(m.MENU_ITEM_NAME, ['Healthy', 'Indulgent']):labels[0]::VARCHAR AS DIET_CLASSIFICATION
 FROM DCM_DEMO_3{{env_suffix}}.RAW.ORDER_HEADER oh
 JOIN DCM_DEMO_3{{env_suffix}}.RAW.ORDER_DETAIL od ON oh.ORDER_ID = od.ORDER_ID
 JOIN DCM_DEMO_3{{env_suffix}}.RAW.MENU m ON od.MENU_ITEM_ID = m.MENU_ITEM_ID
@@ -479,19 +485,21 @@ JOIN DCM_DEMO_3{{env_suffix}}.RAW.CUSTOMER c ON oh.CUSTOMER_ID = c.CUSTOMER_ID
 JOIN DCM_DEMO_3{{env_suffix}}.RAW.TRUCK t ON oh.TRUCK_ID = t.TRUCK_ID;
 ```
 
-> **Note:** The new `PROFIT_MARGIN_PCT` column must be added as the **last column** in the SELECT list.
+> **Note:** The new `DIET_CLASSIFICATION` column must be added as the **last column** in the SELECT list. Inserting it mid-schema breaks the frozen region (ordinal position mismatch).
+
+> **Cortex AI functions in dynamic tables** are supported in the **SELECT clause** for **incremental refresh** only — not in `WHERE`, `GROUP BY`, `HAVING`, or `QUALIFY`. This definition's `AUTO` refresh mode resolves to incremental because the query qualifies. For the full list of supported functions, see [Supported queries for dynamic tables](https://docs.snowflake.com/en/user-guide/dynamic-tables/supported-queries#supported-snowflake-cortex-ai-functions).
 
 Here's what changed and why:
 
 | Change | Purpose |
 |:-------|:--------|
-| Added `PROFIT_MARGIN_PCT` as the **last column** | New calculated column: `((sale_price - cost) / sale_price) * 100`. Must be appended at the end — inserting mid-schema breaks immutability. |
-| Added `IMMUTABLE WHERE (ORDER_TS < CURRENT_TIMESTAMP() - INTERVAL '1 day')` | Orders older than 1 day are frozen — they won't be recomputed on refresh |
+| Added `DIET_CLASSIFICATION` as the **last column** | New AI-derived column: `AI_CLASSIFY` tags each menu item as `Healthy` or `Indulgent`. Must be appended at the end — inserting mid-schema breaks the frozen region. |
+| Added `FROZEN WHERE (ORDER_TS < CURRENT_TIMESTAMP() - INTERVAL '1 day')` | Orders older than 1 day are frozen — they won't be recomputed on refresh, and the AI function won't run on them |
 
-The immutability clause is the key. Most of the sample data has order timestamps from October 2023 — well over a day ago — so those rows will be treated as immutable. But orders 1024 and 1025, inserted with `CURRENT_TIMESTAMP()` in the previous step, fall within the 1-day mutable window. When DCM redeploys this dynamic table, Snowflake will:
+The frozen region is the key. Most of the sample data has order timestamps from October 2023 — well over a day ago — so those rows are frozen. But orders 1024 and 1025, inserted with `CURRENT_TIMESTAMP()` in the previous step, fall in the 1-day active region. Because DCM applies the change with `CREATE OR ALTER` (not a full replace), Snowflake will:
 
-1. **Preserve** the immutable rows as-is — Snowflake marks them as immutable and skips recomputation entirely, so `PROFIT_MARGIN_PCT` will be `NULL` for these rows.
-2. **Recompute** only the mutable rows (orders 1024 and 1025) using the new definition — `PROFIT_MARGIN_PCT` will have a calculated value.
+1. **Preserve** the frozen rows as-is — they are skipped entirely, so `DIET_CLASSIFICATION` stays `NULL` for them and **no AI inference runs** on them.
+2. **Classify** only the active rows (orders 1024 and 1025) using `AI_CLASSIFY` — `DIET_CLASSIFICATION` will have a calculated value.
 
 This means you'll see both behaviors side-by-side after a single refresh — no need to insert additional data.
 
@@ -503,17 +511,17 @@ Now push your definition change through the DCM plan-deploy cycle.
 ### Plan the Change
 
 1. In the DCM control panel in the bottom panel, click the play button next to **Plan**.
-2. This time, the plan output will look different from the initial deployment. Instead of all CREATEs, you'll see an **ALTER** or **REPLACE** operation for `enriched_order_details` — DCM detected that the definition changed and will update only the affected object.
+2. This time, the plan output will look different from the initial deployment. Instead of all CREATEs, you'll see an **ALTER** operation for `enriched_order_details` — DCM applies the change with `CREATE OR ALTER`, updating the definition in place rather than rebuilding the table. This is what preserves the frozen rows.
 
 ![Plan results showing the ALTER operation for the modified dynamic table](assets/plan_redeployment.png)
 
-Review the rendered output in the `out` folder to confirm the `IMMUTABLE WHERE` clause and the new `profit_margin_pct` column appear correctly.
+Review the rendered output in the `out` folder to confirm the `FROZEN WHERE` clause and the new `DIET_CLASSIFICATION` column appear correctly.
 
 ### Deploy the Change
 
 1. Instead of **Plan**, set the operation to **Deploy**.
-2. Add a deployment alias like "Add profit margin with immutability".
-3. DCM will recreate the dynamic table with the new schema and immutability constraint.
+2. Add a deployment alias like "Add AI diet classification with frozen region".
+3. DCM will alter the dynamic table in place with the new column and frozen region.
 
 ### Refresh and Verify
 
@@ -525,7 +533,7 @@ First, refresh the dynamic table:
 ALTER DYNAMIC TABLE DCM_DEMO_3_DEV.ANALYTICS.ENRICHED_ORDER_DETAILS REFRESH;
 ```
 
-Then query the table and include the `metadata$is_immutable` virtual column:
+Then query the table and include the `METADATA$IS_FROZEN` virtual column:
 
 ```sql
 SELECT
@@ -533,31 +541,31 @@ SELECT
     ORDER_TS,
     MENU_ITEM_NAME,
     LINE_ITEM_REVENUE,
-    PROFIT_MARGIN_PCT,
-    metadata$is_immutable AS IS_IMMUTABLE
+    DIET_CLASSIFICATION,
+    METADATA$IS_FROZEN AS IS_FROZEN
 FROM DCM_DEMO_3_DEV.ANALYTICS.ENRICHED_ORDER_DETAILS
 ORDER BY ORDER_TS DESC;
 ```
 
 You should see results like this:
 
-| ORDER_ID | ORDER_TS | MENU_ITEM_NAME | LINE_ITEM_REVENUE | PROFIT_MARGIN_PCT | IS_IMMUTABLE |
-|:---------|:---------|:---------------|:-------------------|:------------------|:-------------|
-| 1025 | 2026-03-27 ... | Margherita Pizza | 12.00 | 62.50 | FALSE |
-| 1024 | 2026-03-27 ... | Beef Birria Tacos | 34.50 | 73.91 | FALSE |
+| ORDER_ID | ORDER_TS | MENU_ITEM_NAME | LINE_ITEM_REVENUE | DIET_CLASSIFICATION | IS_FROZEN |
+|:---------|:---------|:---------------|:-------------------|:--------------------|:----------|
+| 1025 | 2026-03-27 ... | Margherita Pizza | 12.00 | Indulgent | FALSE |
+| 1024 | 2026-03-27 ... | Beef Birria Tacos | 34.50 | Indulgent | FALSE |
 | 1023 | 2023-10-30 11:30:00 | ... | ... | NULL | TRUE |
 | 1022 | 2023-10-30 11:00:00 | ... | ... | NULL | TRUE |
 | ... | ... | ... | ... | NULL | TRUE |
 
 The two most recent orders (1024 and 1025) have:
-- `PROFIT_MARGIN_PCT` with a calculated value — they were recomputed using the new definition
-- `IS_IMMUTABLE = FALSE` — they fell within the mutable window
+- `DIET_CLASSIFICATION` with a value from `AI_CLASSIFY` — the AI function ran on these active rows
+- `IS_FROZEN = FALSE` — they fell in the active region
 
 All historical orders (October 2023) have:
-- `PROFIT_MARGIN_PCT = NULL` — they were preserved from the previous version, not recomputed
-- `IS_IMMUTABLE = TRUE` — Snowflake skipped them entirely
+- `DIET_CLASSIFICATION = NULL` — they were preserved from the previous version; the AI function never ran on them
+- `IS_FROZEN = TRUE` — Snowflake skipped them entirely
 
-This is immutability in action: a schema change was deployed, and Snowflake only reprocessed the rows that needed it.
+This is a frozen region in action: a schema change was deployed, and Snowflake only reprocessed the rows that needed it — keeping your AI inference cost confined to the active region.
 
 <!-- ------------------------ -->
 ## Cleanup
@@ -584,10 +592,11 @@ In this guide, you learned how to:
 - **Define a complete data pipeline as code** using DCM Projects — databases, schemas, tables, dynamic tables, views, roles, and grants in SQL definition files
 - **Deploy and manage** your pipeline through the DCM plan-deploy cycle in Snowsight Workspaces
 - **Evolve a dynamic table's schema** by adding a new column to the definition file and redeploying through DCM
-- **Use immutability constraints** (`IMMUTABLE WHERE`) to prevent full recomputation of historical data when a dynamic table is recreated
-- **Verify partial recomputation** using `metadata$is_immutable` — confirming that Snowflake marked historical rows as immutable and skipped them, while only new data was computed with the updated definition
+- **Call a Cortex AI function** (`AI_CLASSIFY`) inside a dynamic table to enrich rows automatically as they refresh
+- **Use frozen regions** (`FROZEN WHERE`) to prevent full recomputation of historical data — and to stop an expensive AI function from re-running on rows that never change
+- **Verify partial recomputation** using `METADATA$IS_FROZEN` — confirming that Snowflake preserved historical rows and only the active region was computed with the updated definition
 
-The combination of DCM Projects and immutability constraints gives you a production-grade workflow: version-controlled pipeline definitions, environment-aware deployments, and efficient schema evolution that respects the cost of reprocessing large datasets.
+The combination of DCM Projects, frozen regions, and Cortex AI functions gives you a production-grade workflow: version-controlled pipeline definitions, environment-aware deployments, AI-enriched columns that refresh automatically, and efficient schema evolution that respects the cost of reprocessing large datasets.
 
 ### What's Next
 
@@ -598,7 +607,8 @@ Continue the series:
 ### Related Resources
 - [DCM Projects Documentation](https://docs.snowflake.com/en/user-guide/dcm-projects/dcm-projects-overview)
 - [Managing DCM Projects using Snowflake CLI](https://docs.snowflake.com/developer-guide/snowflake-cli/data-pipelines/dcm-projects)
-- [Dynamic Tables — Immutability Constraints](https://docs.snowflake.com/en/user-guide/dynamic-tables-performance-optimize-immutability)
-- [Understanding Immutability Constraints (Concepts)](https://docs.snowflake.com/en/user-guide/dynamic-tables-immutability-constraints)
+- [Dynamic Tables — Frozen Regions and Backfill](https://docs.snowflake.com/en/user-guide/dynamic-tables/frozen-regions)
+- [Supported Queries for Dynamic Tables (Cortex AI Functions)](https://docs.snowflake.com/en/user-guide/dynamic-tables/supported-queries#supported-snowflake-cortex-ai-functions)
+- [Cortex AISQL Functions](https://docs.snowflake.com/en/user-guide/snowflake-cortex/aisql)
 - [Build Data Pipelines with Snowflake DCM Projects](https://www.snowflake.com/en/developers/guides/build-data-pipelines-with-snowflake-dcm-projects/)
 - [Sample DCM Projects Repository](https://github.com/Snowflake-Labs/snowflake-dcm-projects)
