@@ -46,7 +46,7 @@ Create two Snowflake-managed Iceberg tables. Apply column masking (hide `sensiti
 **Step 2 — Federate external Iceberg tables + Snowpark Connect governance** (`04`, `05`)
 Create Iceberg tables in Databricks Unity Catalog (Delta + UniForm). Federate them into Snowflake as a Catalog-Linked Database. Apply Snowflake's own Horizon masking policy to `credit_card` — independent of any Databricks policies. Snowpark Connect queries the federated tables with live role-based masking.
 
-**Step 3 — Cortex AI enrichment pipeline → Cortex Analyst** (`07`, `08`)
+**Step 3 — Cortex AI enrichment pipeline → Cortex Analyst** (`06`, `07`)
 Snowpark Connect reads from both catalogs. Cortex classifies each order as HIGH / MEDIUM / LOW risk and generates a one-sentence operational note. Results are written to a new Snowflake-managed Iceberg table. Horizon masking applies to `risk_level` exactly as it does to raw columns. A Cortex Analyst semantic view spans all three Iceberg tables — ask questions in natural language from Snowsight, with governance enforced per active role.
 
 > **Download the code:**
@@ -769,9 +769,12 @@ reader_df.columns = [c.lower() for c in reader_df.columns]
 
 ## Scenario 2 — Cortex Analyst Demo
 
-**Open:** Snowsight → AI & ML → Cortex Analyst
+**Open:** Snowsight → **AI & ML** → **Cortex Analyst**
 
-**Select semantic view:** `HORIZON_DEMO_SFDB.DEMO_SCHEMA.ICEBERG_AI_SEMANTIC_VIEW`
+**Select the semantic view:**
+1. In the Cortex Analyst list, click `ICEBERG_AI_SEMANTIC_VIEW` under `HORIZON_DEMO_SFDB.DEMO_SCHEMA`
+2. Click the **Playground** tab at the top of the screen
+3. Type prompts in the **chat box at the bottom** of the Playground and press Enter
 
 ### Demo Prompt Sequence
 
@@ -822,19 +825,30 @@ Congratulations — you have completed all three scenarios!
 
 ### Governance Summary
 
-| Access path | Table | Governance result |
-|-------------|-------|-------------------|
-| Snowpark Connect (ACCOUNTADMIN) | PROTECTED_TABLE | 3 rows, `sensitive_data` raw — Scenario 1 |
-| Snowpark Connect (reader role) | PROTECTED_TABLE | 2 rows filtered, `*** MASKED ***` — Scenario 1 |
-| External engine via IRC | PROTECTED_TABLE | 3 rows, raw Parquet — Scenario 2 |
-| External engine write to OPEN_TABLE | OPEN_TABLE | ✅ Succeeds (write credentials vended) |
-| External engine write to PROTECTED_TABLE | PROTECTED_TABLE | ❌ S3 403 (read-only credentials vended) |
-| Snowpark Connect (ACCOUNTADMIN) | sensitive_orders | Real credit card numbers — Scenario 2 |
-| Snowpark Connect (reader role) | sensitive_orders | `****-****-****-XXXX` — Scenario 2 |
-| Snowpark Connect (ACCOUNTADMIN) | AI_ORDER_INSIGHTS | `risk_level = HIGH` visible — Scenario 2 |
-| Snowpark Connect (reader role) | AI_ORDER_INSIGHTS | `risk_level = *** RESTRICTED ***` — Scenario 2 |
-| Cortex Analyst (ACCOUNTADMIN) | ICEBERG_AI_SEMANTIC_VIEW | NL query → `HIGH` risk orders — Scenario 2 |
-| Cortex Analyst (reader role) | ICEBERG_AI_SEMANTIC_VIEW | NL query → `*** RESTRICTED ***` — Scenario 2 |
+**Snowflake-Managed Iceberg Tables** — Horizon policies enforced at the Snowflake SQL layer for every access path including Snowpark Connect and Cortex Analyst.
+
+| Access path | Table | Policy | Governance result |
+|-------------|-------|--------|-------------------|
+| Snowpark Connect (`ACCOUNTADMIN`) | `PROTECTED_TABLE` | Column masking + row access | 3 rows, `sensitive_data` raw |
+| Snowpark Connect (reader role) | `PROTECTED_TABLE` | Column masking + row access | 2 rows filtered, `*** MASKED ***` |
+| Snowpark Connect (`ACCOUNTADMIN`) | `AI_ORDER_INSIGHTS` | Column masking on AI column | `risk_level = HIGH` visible |
+| Snowpark Connect (reader role) | `AI_ORDER_INSIGHTS` | Column masking on AI column | `risk_level = *** RESTRICTED ***` |
+| Cortex Analyst (`ACCOUNTADMIN`) | `ICEBERG_AI_SEMANTIC_VIEW` | Semantic view + masking | NL query → `HIGH` risk visible |
+| Cortex Analyst (reader role) | `ICEBERG_AI_SEMANTIC_VIEW` | Semantic view + masking | NL query → `*** RESTRICTED ***` |
+| External engine via Horizon IRC | `PROTECTED_TABLE` | ❌ Bypassed (raw Parquet path) | 3 rows, `sensitive_data` raw |
+| External engine write to `OPEN_TABLE` | `OPEN_TABLE` | Credential vending | ✅ Write-capable S3 creds vended |
+| External engine write to `PROTECTED_TABLE` | `PROTECTED_TABLE` | Credential vending | ❌ S3 403 — read-only creds vended |
+
+**Externally-Managed Iceberg Tables (Catalog-Linked Database)** — Snowflake applies its own independent Horizon policies at query time, regardless of the source catalog's governance.
+
+| Access path | Table | Policy | Governance result |
+|-------------|-------|--------|-------------------|
+| Snowpark Connect (`ACCOUNTADMIN`) | `sensitive_orders` (CLD) | Snowflake masking — independent of Databricks UC | Real credit card numbers |
+| Snowpark Connect (reader role) | `sensitive_orders` (CLD) | Snowflake masking — independent of Databricks UC | `****-****-****-XXXX` |
+| Snowpark Connect (`ACCOUNTADMIN`) | `customer_orders` (CLD) | No policy applied | All rows, all columns |
+| Snowpark Connect (reader role) | `customer_orders` (CLD) | No policy applied | All rows, all columns |
+
+> **Key insight:** Snowflake's Horizon governance and Databricks UC governance are completely independent. Snowflake enforces its own masking policies on federated tables at query time — the source catalog's policies do not propagate, and Snowflake's policies do not reach into the source catalog.
 
 ### Related Resources
 

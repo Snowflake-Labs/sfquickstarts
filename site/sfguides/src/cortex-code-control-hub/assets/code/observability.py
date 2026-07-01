@@ -1011,9 +1011,9 @@ SHOW PARAMETERS LIKE 'AI_SETTINGS' IN ACCOUNT;""", language="sql")
 
         st.divider()
 
-        (t_trend, t_users, t_models, t_tools, t_prompts,
+        (t_trend, t_users, t_models, t_prompts,
          t_sessions, t_token_econ, t_tool_intel, t_entrypoint, t_quality, t_patterns) = st.tabs([
-            "Activity Trend", "Top Users", "Model Usage", "Tool Calls",
+            "Activity Trend", "Top Users", "Model Usage",
             "Prompt Browser", "Sessions", "Token Economics", "Tool Intelligence",
             "Entrypoints", "Quality Scores", "Prompt Patterns"
         ])
@@ -1081,27 +1081,6 @@ SHOW PARAMETERS LIKE 'AI_SETTINGS' IN ACCOUNT;""", language="sql")
             if c:
                 st.altair_chart(c, use_container_width=True)
             st.dataframe(bm, use_container_width=True, hide_index=True)
-
-        with t_tools:
-            st.caption("Snowflake tools that Cortex Code invoked during AI sessions — SQL execution, search, file reads, etc. Parsed from the TOOLS_RAW span attribute.")
-            _sec("Tool Calls — what CoCo invoked on behalf of users")
-            tdf = df[df["TOOLS_RAW"].notna()].copy()
-            if tdf.empty:
-                st.info("No tool call data.")
-            else:
-                rows = []
-                for _, row in tdf.iterrows():
-                    try:
-                        for t in (json.loads(row["TOOLS_RAW"]) if isinstance(row["TOOLS_RAW"], str) else []):
-                            rows.append({"TOOL": t})
-                    except Exception:
-                        pass
-                if rows:
-                    bt = pd.DataFrame(rows).groupby("TOOL").size().reset_index(name="CALLS").sort_values("CALLS", ascending=False)
-                    c = _hbar(bt, "CALLS", "TOOL", height=max(150, len(bt)*40),
-                              tooltip=["TOOL:N","CALLS:Q"])
-                    if c:
-                        st.altair_chart(c, use_container_width=True)
 
         with t_prompts:
             _sec("Prompt Browser")
@@ -1206,6 +1185,13 @@ SHOW PARAMETERS LIKE 'AI_SETTINGS' IN ACCOUNT;""", language="sql")
 
         # ── Token Economics ───────────────────────────────────────────────────
         with t_token_econ:
+            st.warning(
+                "⚗️ **Experimental — Token Economics.** Token counts are extracted from "
+                "`AI_OBSERVABILITY_EVENTS` via `SP_CC_CLASSIFY_PROMPTS` and cover `CodingAgent.Step-0` "
+                "planning spans only. Cache Hit Rate is approximate — field semantics may vary by account. "
+                "Use as a directional signal, not as official Snowflake billing data.",
+                icon=None
+            )
             with st.expander("What do these token metrics mean?", expanded=False):
                 st.markdown("""
 | Metric | What it is | What to expect for Cortex Code |
@@ -1241,8 +1227,8 @@ SHOW PARAMETERS LIKE 'AI_SETTINGS' IN ACCOUNT;""", language="sql")
                           help="Completion tokens returned by the LLM.")
                 k4.metric("Cache Read Tokens", _fmt_tokens(total_cache_r),
                           help="Tokens served from prompt cache — these cost significantly less than fresh input.")
-                k5.metric("Cache Hit Rate", f"{cache_hit}%",
-                          help="Tokens served from prompt cache vs fresh input. Higher = more credit savings.")
+                k5.metric("Cache Hit Rate *(approx)*", f"{cache_hit}%",
+                           help="cache_read ÷ (cache_read + cache_write). Approximate — field semantics in AI_OBSERVABILITY_EVENTS may vary by account. Use as a directional signal.")
                 k6.metric("Est. Credits Saved", f"{credits_saved:,.4f}",
                           help="Cache reads cost ~10x less than fresh input tokens. Savings = cache_read × (input_rate - cache_rate).")
 

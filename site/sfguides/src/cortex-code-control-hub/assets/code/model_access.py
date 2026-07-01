@@ -16,6 +16,7 @@ from config import (
     KNOWN_MODELS,
     MODEL_CATEGORIES,
     SP_ENFORCE_MODEL_ACCESS,
+    SP_REVOKE_MODEL_ACCESS,
     TABLE_MODEL_CONFIG,
     TABLE_MODEL_ROLE_MAPPING,
     TABLE_USAGE_DAILY,
@@ -491,10 +492,16 @@ def _render_mapping(session):
 
     if st.button("Save & Apply", type="primary", key="btn_save_model_map",
                  help="Saves the mapping and applies based on selected enforcement method."):
+        # Compute models to revoke: previously assigned but no longer selected
+        models_to_revoke = [m for m in role_models if m not in selected_models]
         _save_model_mapping(session, chosen_role, selected_models)
         if "Role Members" in enforcement:
+            if models_to_revoke:
+                _revoke_from_role_members(session, chosen_role, models_to_revoke)
             _enforce_to_role_rbac(session, chosen_role, selected_models)
         elif "Role Directly" in enforcement:
+            if models_to_revoke:
+                _revoke_model_app_role_from_role(session, chosen_role, models_to_revoke)
             _enforce_model_app_role_to_role(session, chosen_role, selected_models)
         elif "Account" in enforcement:
             _enforce_to_account(session, selected_models)
@@ -699,3 +706,47 @@ def _enforce_to_account(session, models):
     except Exception as e:
         st.error(f"✗ Failed: {e}")
         st.caption("ALTER ACCOUNT requires ACCOUNTADMIN on the Streamlit owner role.")
+
+
+def _revoke_model_app_role_from_role(session, role_name, models):
+    """Revoke SNOWFLAKE model application roles FROM a role (replace-mode cleanup)."""
+    safe_role = sql_identifier(role_name.strip('"'))
+    revoked, errors = 0, []
+    with st.spinner(f"Revoking {len(models)} model role(s) from {role_name}…"):
+        for model in models:
+            app_role = f'CORTEX-MODEL-ROLE-{model.upper()}'
+            try:
+                session.sql(
+                    f'REVOKE APPLICATION ROLE SNOWFLAKE.{sql_identifier(app_role)} '
+                    f'FROM ROLE {safe_role}'
+                ).collect()
+                revoked += 1
+            except Exception as e:
+                err = str(e).lower()
+                if 'not granted' in err or 'does not exist' in err:
+                    revoked += 1  # already not granted — treat as success
+                else:
+                    errors.append(f"{model}: {str(e)[:120]}")
+    if errors:
+        st.warning(f"Revoked {revoked}, {len(errors)} failed: {'; '.join(errors[:3])}")
+    elif revoked:
+        st.success(f"✓ Revoked {revoked} model role(s) from `{role_name}`.")
+        log_activity(session, "REVOKE_MODEL_ACCESS", target_role=role_name,
+                     details={"method": "RBAC_TO_ROLE", "models": models, "revoked": revoked})
+
+
+def _revoke_from_role_members(session, role_name, models):
+    """Revoke model application roles from each member of the role via owner-rights SP."""
+    members = get_role_members(session, role_name)
+    if not members:
+        return
+    model_list = ",".join(models)
+    with st.spinner(f"Revoking model access from {len(members)} member(s) of {role_name}…"):
+        ok, raw = call_bulk_sp(session, SP_REVOKE_MODEL_ACCESS, members, model_list)
+    try:
+        result = raw if isinstance(raw, dict) else json.loads(raw)
+    except Exception:
+        result = {"success": 0, "failed": 0}
+    log_activity(session, "REVOKE_MODEL_ACCESS", target_role=role_name,
+                 details={"method": "RBAC_PER_USER", "models": models,
+                          "revoked": result.get("success", 0)})
