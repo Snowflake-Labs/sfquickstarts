@@ -1,0 +1,62 @@
+{
+  "guide_id": "hybrid-tables-application-connectors",
+  "title": "Connecting Applications to Hybrid Tables",
+  "version": "1.0.0",
+  "last_updated": "2026-06-16",
+  "author": "Adam Timm",
+  "minimum_driver_versions": {
+    "JDBC": "3.13.31",
+    "Python": "3.1.0",
+    "Nodejs": "1.9.0",
+    "ODBC": "3.0.2",
+    "Go": "1.6.25",
+    "DotNet": "2.1.2"
+  },
+  "universal_best_practices": [
+    "Use bound variables (prepared statements) for all queries — enables plan cache reuse",
+    "Use connection pooling with long-lived connections — eliminates 100-500ms reconnect overhead",
+    "Use private key (JWT) authentication for service accounts",
+    "Colocate application in same cloud region as Snowflake account",
+    "Keep AUTOCOMMIT = TRUE (default) for OLTP workloads",
+    "Never benchmark HT latency via Snowsight — always use application driver"
+  ],
+  "connector_patterns": {
+    "jdbc": {
+      "auth": "private_key_file or privateKey property (BouncyCastle)",
+      "batch_insert": "prepareStatement + addBatch + executeBatch",
+      "pool": "HikariCP — set maxLifetime and net.snowflake.jdbc.ttl to same value",
+      "ttl_property": "System.setProperty(\"net.snowflake.jdbc.ttl\", \"1800\")",
+      "kafka_pattern": "Kafka consumer (batched=true, concurrency=partitions) -> HikariCP pool -> executeBatch -> HT",
+      "kafka_article": "https://medium.com/snowflake/fresh-fast-and-value-effective-using-snowflake-hybrid-tables-to-simplify-kafka-ingestion-2a4393c49a53"
+    },
+    "python": {
+      "auth": "authenticator=SNOWFLAKE_JWT, private_key_file",
+      "batch_insert": "cursor.executemany(sql, list_of_tuples) with ? qmark binding",
+      "binding_syntax": "? (qmark) — do NOT use f-strings or %s formatting",
+      "pool": "SQLAlchemy create_engine with pool_size, pool_pre_ping=True, pool_recycle=1800",
+      "recommended_batch_size": "500-1000 rows per executemany call",
+      "autocommit": "autocommit=True in connect() params"
+    },
+    "nodejs": {
+      "auth": "authenticator: SNOWFLAKE_JWT, privateKey: fs.readFileSync(path)",
+      "batch_insert": "connection.execute with binds: [[row1...], [row2...]]",
+      "binding_syntax": "? or :N positional — never string template literals",
+      "pool": "snowflake.createPool with evictionRunIntervalMillis: 60000",
+      "pool_warning": "Default evictionRunIntervalMillis=0 disables eviction — always set it"
+    },
+    "snowpark": {
+      "auth": "authenticator: SNOWFLAKE_JWT, private_key_file",
+      "recommended": "session.sql('INSERT ... VALUES (?, ...)').bind([...]).collect()",
+      "not_recommended": "df.write.save_as_table() — not documented for HT",
+      "bulk_pattern": "session.sql('INSERT INTO ht SELECT ... FROM staging WHERE batch_id = ?').bind([id])"
+    }
+  },
+  "anti_patterns": [
+    {"id": "AP1", "name": "String literals in queries", "impact": "Disables plan cache, 10-100ms extra compilation per query"},
+    {"id": "AP2", "name": "Single-row inserts in a loop", "impact": "N round-trips for N rows; use batch APIs instead"},
+    {"id": "AP3", "name": "Reconnecting per request", "impact": "100-500ms connection setup overhead per query"},
+    {"id": "AP4", "name": "Oversized connection pool", "impact": "Warehouse queuing; match pool size to warehouse concurrency"},
+    {"id": "AP5", "name": "Benchmarking via Snowsight", "impact": "5-20x higher latency than driver; not representative"},
+    {"id": "AP6", "name": "Inconsistent schema qualification", "impact": "Splits plan cache into multiple entries; reduces hit rate"}
+  ]
+}

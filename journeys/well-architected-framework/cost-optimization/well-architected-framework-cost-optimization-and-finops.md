@@ -6,7 +6,8 @@ categories: snowflake-site:taxonomy/solution-center/certification/well-architect
 language: en
 summary: The Cost Optimization Pillar focuses on integrating financial accountability and cost awareness throughout the cloud platform lifecycle. 
 environments: web
-status: Published 
+status: Published
+fork_repo_link: https://github.com/Snowflake-Labs/cortex-code-skills/tree/main/skills/well-architected-framework-assessment
 
 
 # Cost Optimization
@@ -542,13 +543,35 @@ contains two key schemas for this purpose:
 (for a consolidated view across all accounts).
 
 
-| Metric Category | Description | Key Metrics | Primary Data Sources |
-|---|---|---|---|
-| Compute & query metrics | Understand the cost of query execution, warehouse consumption, and overall compute health. These are often the most dynamic and largest portion of your spend. | - Credits used: total credits by warehouse<br>- Query performance: execution time, bytes scanned, compilation time, parameterized query hash<br>- Warehouse health: % idle time, queueing, spilling, concurrency | - `ACCOUNT_USAGE.WAREHOUSE_METERING_HISTORY` (hourly warehouse credit usage)<br>- `ACCOUNT_USAGE.QUERY_HISTORY` (detailed query metrics and associated warehouses) |
-| Storage metrics | Costs for compressed data, including active data, Time Travel, and Fail‑safe. | - Storage volume (avg monthly compressed GB/TB)<br>- Inactive storage (Time Travel, Fail‑safe)<br>- Storage growth rates<br>- Table access (stale/unused) | - `ACCOUNT_USAGE.TABLE_STORAGE_METRICS`<br>- `ACCOUNT_USAGE.DATABASE_STORAGE_USAGE_HISTORY`<br>- `ACCOUNT_USAGE.ACCESS_HISTORY` |
-| Serverless & AI metrics | Track credit consumption by Snowflake‑managed services and AI features. | - Credits used by service<br>- Cost per credit‑consuming events | - `ACCOUNT_USAGE.<Serverless Feature>_HISTORY`<br>- `ORGANIZATION_USAGE.METERING_DAILY_HISTORY`<br>- AI views such as `CORTEX_FUNCTIONS_USAGE_HISTORY`, `CORTEX_ANALYST_USAGE_HISTORY`, `DOCUMENT_AI_USAGE_HISTORY` |
-| Data transfer | Cost of moving data into (ingress) and out of (egress) Snowflake, especially cross‑region/cloud. | - Bytes transferred<br>- Transfer cost by destination<br>- Replication vs. egress | - `ACCOUNT_USAGE.DATA_TRANSFER_HISTORY`<br>- `ORGANIZATION_USAGE.DATA_TRANSFER_DAILY_HISTORY` |
-| Financial metrics | Translate credits to currency and provide org‑wide spend view. | - Overall dollar spend (daily)<br>- Spend by service type | - `ORGANIZATION_USAGE.USAGE_IN_CURRENCY_DAILY`<br>- `ORGANIZATION_USAGE.RATE_SHEET_DAILY` |
+**Compute & query metrics**
+
+| Description | Key Metrics | Primary Data Sources |
+|---|---|---|
+| Understand the cost of query execution, warehouse consumption, and overall compute health. These are often the most dynamic and largest portion of your spend. | - Credits used: total credits by warehouse<br>- Query performance: execution time, bytes scanned, compilation time, parameterized query hash<br>- Warehouse health: % idle time, queueing, spilling, concurrency | - `ACCOUNT_USAGE.WAREHOUSE_METERING_HISTORY` (hourly warehouse credit usage)<br>- `ACCOUNT_USAGE.QUERY_HISTORY` (detailed query metrics and associated warehouses) |
+
+**Storage metrics**
+
+| Description | Key Metrics | Primary Data Sources |
+|---|---|---|
+| Costs for compressed data, including active data, Time Travel, and Fail‑safe. | - Storage volume (avg monthly compressed GB/TB)<br>- Inactive storage (Time Travel, Fail‑safe)<br>- Storage growth rates<br>- Table access (stale/unused) | - `ACCOUNT_USAGE.TABLE_STORAGE_METRICS`<br>- `ACCOUNT_USAGE.DATABASE_STORAGE_USAGE_HISTORY`<br>- `ACCOUNT_USAGE.ACCESS_HISTORY` |
+
+**Serverless & AI metrics**
+
+| Description | Key Metrics | Primary Data Sources |
+|---|---|---|
+| Track credit consumption by Snowflake‑managed services and AI features. | - Credits used by service<br>- Cost per credit‑consuming events | - `ACCOUNT_USAGE.<Serverless Feature>_HISTORY`<br>- `ORGANIZATION_USAGE.METERING_DAILY_HISTORY`<br>- AI views such as `CORTEX_FUNCTIONS_USAGE_HISTORY`, `CORTEX_ANALYST_USAGE_HISTORY`, `DOCUMENT_AI_USAGE_HISTORY` |
+
+**Data transfer**
+
+| Description | Key Metrics | Primary Data Sources |
+|---|---|---|
+| Cost of moving data into (ingress) and out of (egress) Snowflake, especially cross‑region/cloud. | - Bytes transferred<br>- Transfer cost by destination<br>- Replication vs. egress | - `ACCOUNT_USAGE.DATA_TRANSFER_HISTORY`<br>- `ORGANIZATION_USAGE.DATA_TRANSFER_DAILY_HISTORY` |
+
+**Financial metrics**
+
+| Description | Key Metrics | Primary Data Sources |
+|---|---|---|
+| Translate credits to currency and provide org‑wide spend view. | - Overall dollar spend (daily)<br>- Spend by service type | - `ORGANIZATION_USAGE.USAGE_IN_CURRENCY_DAILY`<br>- `ORGANIZATION_USAGE.RATE_SHEET_DAILY` |
 
 
 
