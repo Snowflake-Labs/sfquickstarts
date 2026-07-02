@@ -15,7 +15,6 @@ Duration: 5
 
 Apache Iceberg has become the de-facto open table format for the data lakehouse because it lets multiple engines read and write the *same* physical tables without copying data. This quickstart shows you how to make Snowflake and Google BigQuery interoperate on one shared set of Iceberg tables using the modern, catalog-based approach: the **Google BigLake Iceberg REST catalog** (part of Google's *Lakehouse for Apache Iceberg*), Snowflake **catalog-linked databases**, and **workload identity federation** for keyless authentication.
 
-> aside positive
 > **What changed since the old approach?** Earlier integrations required you to manually copy `metadata.json` pointers between platforms, run `PATCH` commands, and manage long-lived service-account keys. That is no longer necessary. A shared Iceberg REST catalog lets each engine discover the current table state automatically, and workload identity federation removes keys entirely. This guide uses that modern path end-to-end.
 
 ### Use Case
@@ -37,8 +36,7 @@ The BigLake Iceberg REST catalog exposes **one** endpoint (`https://biglake.goog
 | Credential vending | Supported (no external volume needed) | Not supported (external volume required) |
 | Data freshness | Live for readers | Reader refreshes after writer publishes metadata |
 
-<!-- DIAGRAM: Side-by-side of Pattern A and Pattern B. Center = one BigLake Iceberg REST endpoint. Left card (Pattern A): Snowflake CLD --write--> gs:// bucket tables; BigQuery --read (PCNT)-->. Right card (Pattern B): BigQuery --write--> BQ-managed Iceberg tables; Snowflake --read (catalog int + ext vol)-->. Show workload identity federation (no keys) as the auth line from Snowflake to Google. -->
-![Snowflake and BigQuery interoperating over one BigLake Iceberg REST catalog: two patterns](assets/gcpicebergarch.png)
+![Snowflake and BigQuery interoperating over one BigLake Iceberg REST catalog: two patterns](assets/gcp_biglake_arch.png)
 
 ### Prerequisites
 - Familiarity with [Snowflake](/en/developers/guides/getting-started-with-snowflake/) and a Snowflake account (with `ACCOUNTADMIN` or a role that can create catalog integrations, external volumes, and databases)
@@ -57,7 +55,6 @@ The BigLake Iceberg REST catalog exposes **one** endpoint (`https://biglake.goog
 - A Snowflake catalog-linked database that writes an Iceberg table BigQuery reads (Pattern A)
 - A BigQuery Apache Iceberg managed table that Snowflake reads (Pattern B)
 
-> aside negative
 > **Regions must line up.** Keep your GCS bucket, BigLake catalog, BigQuery datasets/connections, and Snowflake account in compatible regions to avoid cross-region latency and egress. This guide uses `us-west1` on the Google side; substitute your own region consistently everywhere it appears.
 
 <!-- ------------------------ -->
@@ -74,13 +71,10 @@ Before touching a keyboard, it helps to have the mental model straight — this 
 
 - **BigQuery federation flavour** (`warehouse = bq://projects/<project>/locations/<location>`): the catalog *proxies BigQuery's own catalog*. The tables here are **Apache Iceberg managed tables** — BigQuery-managed Iceberg tables (formerly "BigLake tables for Apache Iceberg in BigQuery"). BigQuery is the writer (full DML, streaming, CDC). This flavour does **not** vend credentials, so external readers like Snowflake attach their own storage access through an **external volume**. → **This is Pattern B.**
 
-<!-- DIAGRAM: The "one endpoint, two flavours" model. Top: the REST endpoint box. Branch left to a "gs:// warehouse — catalog-owned tables, vended creds" node (label: Pattern A writers = Snowflake CLD / Spark; reader = BigQuery live). Branch right to a "bq:// warehouse — BigQuery-managed Iceberg tables, no vending" node (label: Pattern B writer = BigQuery; reader = Snowflake via ext vol). -->
-![One BigLake REST endpoint, two warehouse flavours](assets/gcpicebergarch.png)
+![One BigLake REST endpoint, two warehouse flavours](assets/gcp_biglake_arch.png)
 
-> aside positive
 > **Keyless by design.** In both patterns Snowflake authenticates to Google using **workload identity federation** with an OAuth `TOKEN_EXCHANGE` grant. Snowflake presents a signed identity token; Google exchanges it for a short-lived access token scoped to the roles you grant a *federated subject*. There are **no service-account keys** to create, store, or rotate.
 
-> aside positive
 > **A note on names.** In April 2026 Google rebranded *BigLake* to *Lakehouse for Apache Iceberg* and the *BigLake metastore* to the *Lakehouse runtime catalog*. The APIs, CLI (`gcloud biglake`), IAM roles, and endpoint hostname are unchanged and still say `biglake`, and Snowflake's documentation still refers to "BigLake." This guide uses **BigLake** to match the tooling.
 
 <!-- ------------------------ -->
@@ -157,10 +151,7 @@ export OAUTH_AUDIENCE="//iam.googleapis.com/projects/$PROJECT_NUMBER/locations/g
 echo "$OAUTH_AUDIENCE"
 ```
 
-> aside negative
 > Creating a WIF pool requires `roles/iam.workloadIdentityPoolAdmin`. If you grant it to yourself, allow ~60–90 seconds for the grant to propagate before the create commands succeed. If `gcloud` prompts hang in your shell, prefix commands with `CLOUDSDK_CORE_DISABLE_PROMPTS=1`.
-
-<!-- SCREENSHOT: GCP console → IAM & Admin → Workload Identity Federation, showing the new "snowflake-pool" with its "snowflake-oidc" provider. -->
 
 You now have the shared foundation. Pick your direction below.
 
@@ -170,8 +161,7 @@ Duration: 15
 
 In this pattern the BigLake catalog owns the Iceberg tables (files in your bucket). Snowflake writes through a **catalog-linked database** and BigQuery reads the same tables **live** — no metadata copying.
 
-<!-- DIAGRAM: Pattern A dataflow. Snowflake worksheet -> catalog integration (WIF/TOKEN_EXCHANGE) -> BigLake REST catalog (gs:// warehouse) -> Iceberg files in GCS. BigQuery -> reads same catalog live via project.catalog.namespace.table. Highlight "vended credentials" arrow from catalog to Snowflake. -->
-![Pattern A: Snowflake writes to a GCS-flavour BigLake catalog, BigQuery reads live](assets/gcpicebergarch.png)
+![Pattern A: Snowflake writes to a GCS-flavour BigLake catalog, BigQuery reads live](assets/pattern_a.png)
 
 ### Create the BigLake catalog (GCS flavour) and a namespace
 The catalog id is the bucket name. `gcs-bucket` selects the GCS warehouse flavour.
@@ -234,7 +224,6 @@ DESC CATALOG INTEGRATION biglake_int;
 -- copy the WORKLOAD_IDENTITY_FEDERATION_SUBJECT value
 ```
 
-> aside negative
 > The federated subject **changes every time you run `CREATE OR REPLACE`** on the integration. If you recreate it, re-run `DESC` and re-apply the grants below.
 
 Grant it (in your terminal). `serviceUsageConsumer` is required because of the `x-goog-user-project` billing header; `biglake.viewer` is enough for read in vended mode.
@@ -255,8 +244,6 @@ Allow ~60–90 seconds for IAM to propagate (a `403` right after granting is nor
 ```sql
 SELECT SYSTEM$VERIFY_CATALOG_INTEGRATION('biglake_int');
 ```
-
-<!-- SCREENSHOT: Snowflake worksheet showing SYSTEM$VERIFY_CATALOG_INTEGRATION returning a success payload. -->
 
 ### Create the catalog-linked database and write a table
 A catalog-linked database (CLD) mirrors the BigLake catalog into Snowflake. Because vended credentials are on, **no external volume is needed**.
@@ -296,12 +283,8 @@ Expected result — the same three rows Snowflake just wrote:
 | 2  | Grace |
 | 3  | Alan |
 
-<!-- SCREENSHOT: BigQuery console query editor showing the three rows (Ada, Grace, Alan) returned from the four-part-named catalog table. -->
-
-> aside positive
 > **Freshness in Pattern A is automatic.** BigQuery reads the shared catalog on every query, so a new Snowflake `INSERT` is visible immediately on the next BigQuery `SELECT`. There is nothing to refresh.
 
-> aside negative
 > **BigQuery is read-only here today.** Running DML (e.g. `INSERT`) against a GCS-flavour catalog table from BigQuery returns *"DML statements are only supported over tables that have data stored in BigQuery."* Bidirectional write to these tables is a Google **preview** feature (see *What's Next*). For BigQuery-side writes today, use Pattern B.
 
 <!-- ------------------------ -->
@@ -310,8 +293,7 @@ Duration: 15
 
 Here BigQuery owns the tables as **Apache Iceberg managed tables**, and Snowflake reads them through a catalog integration that federates BigQuery's catalog (`bq://`). Because this flavour does not vend credentials, Snowflake attaches its own storage access via an **external volume**.
 
-<!-- DIAGRAM: Pattern B dataflow. BigQuery -> writes Apache Iceberg managed table -> Iceberg files in GCS + BigQuery catalog. Snowflake -> catalog integration (bq:// federation, WIF) reads metadata via REST endpoint; external volume (Snowflake GCS SA) reads data files. Highlight two Snowflake read principals: federated subject (metadata.json via REST) and external-volume SA (data files). -->
-![Pattern B: BigQuery writes a managed Iceberg table, Snowflake reads via federation + external volume](assets/gcpicebergarch.png)
+![Pattern B: BigQuery writes a managed Iceberg table, Snowflake reads via federation + external volume](assets/pattern_b.png)
 
 ### Create a BigQuery connection and grant it storage
 ```bash
@@ -444,10 +426,15 @@ Expected result — the rows BigQuery wrote:
 | 10        | BQ-Alice    |
 | 20        | BQ-Bob      |
 
-<!-- SCREENSHOT: Snowflake worksheet showing the two BigQuery-written rows (BQ-Alice, BQ-Bob) read through the federated catalog integration. -->
-
-> aside negative
 > **First activation can be slow.** The very first bind of a brand-new cross-cloud external volume can loop on *"Query needs to be retried to setup external volume"* for a few minutes. This almost always means the external-volume SA is missing `buckets.get` — confirm the `legacyBucketReader` grant above — then wait and retry.
+
+> **Prefer a whole database?** You do not have to register tables one at a time. Both patterns can also be consumed as a **catalog-linked database**, which auto-mirrors every namespace/table from the catalog. Pattern B works the same as Pattern A here, except it needs the external volume (there is no vending on `bq://`):
+> ```sql
+> CREATE OR REPLACE DATABASE bq_linked
+>   LINKED_CATALOG = ( CATALOG = 'bq_fed_int' )
+>   EXTERNAL_VOLUME = 'bq_extvol';
+> SELECT * FROM bq_linked.bq_val.drivers ORDER BY driver_id;
+> ```
 
 <!-- ------------------------ -->
 ## Keeping Readers in Sync
@@ -487,7 +474,6 @@ To avoid manual refreshes, enable automatic refresh so Snowflake polls the catal
 ALTER ICEBERG TABLE bq_demo.public.drivers SET AUTO_REFRESH = TRUE;
 ```
 
-> aside positive
 > With `AUTO_REFRESH = TRUE`, Snowflake keeps the table current as BigQuery publishes new metadata. You can also have BigQuery publish metadata automatically on mutation for managed Iceberg tables; contact Google to enable that on your project if you want zero manual `EXPORT TABLE METADATA` calls.
 
 <!-- ------------------------ -->
