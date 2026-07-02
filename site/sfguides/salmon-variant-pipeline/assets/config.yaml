@@ -1,0 +1,46 @@
+# Salmon version to use:
+#   rust → Salmon 2.0 (Rust rewrite, default) — index stored in results/index_rust/
+#   cpp  → Salmon 1.12.0 (final C++ release)  — index stored in results/index_cpp/
+# Index formats are NOT interchangeable; rebuild when switching.
+salmon_version: "rust"
+
+threads: 8
+
+gencode_version: "44"
+gencode_transcriptome_url: "https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_44/gencode.v44.transcripts.fa.gz"
+gencode_genome_url:       "https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_44/GRCh38.primary_assembly.genome.fa.gz"
+gencode_gtf_url:          "https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_44/gencode.v44.annotation.gtf.gz"
+
+# 8 paired-end samples: 4 cell lines x 2 conditions (untreated / dexamethasone)
+samples:
+  SRR1039508:
+    condition: untreated
+    cell_line: N61311
+  SRR1039509:
+    condition: dexamethasone
+    cell_line: N61311
+  SRR1039512:
+    condition: untreated
+    cell_line: N052611
+  SRR1039513:
+    condition: dexamethasone
+    cell_line: N052611
+  SRR1039516:
+    condition: untreated
+    cell_line: N080611
+  SRR1039517:
+    condition: dexamethasone
+    cell_line: N080611
+  SRR1039520:
+    condition: untreated
+    cell_line: N061011
+  SRR1039521:
+    condition: dexamethasone
+    cell_line: N061011
+
+# Salmon quant flags
+salmon_flags:
+  validate_mappings: true
+  gc_bias:           true
+  seq_bias:          true
+  num_bootstraps:    100     # enables fishpond/swish uncertainty quantification
