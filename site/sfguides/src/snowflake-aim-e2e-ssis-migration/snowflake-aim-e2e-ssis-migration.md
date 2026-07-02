@@ -7,12 +7,9 @@ environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 fork repo link: https://github.com/Snowflake-Labs/sfguide-scai-e2e-ssis-migration
-tags: Quickstart, Migrations, SnowConvert, SQL Server, SSIS, Cortex Code, dbt
 
 # Snowflake AIM End-to-End SQL Server and SSIS Migration
-
-
-
+<!-- ------------------------ -->
 ## Overview
 
 Snowflake AIM unifies the proven capabilities of SnowConvert AI, Snowpark Migration Accelerator, and Datometry into a single AI-powered platform for assessing, modernizing, and migrating enterprise data and code workloads to Snowflake. Designed to reduce the complexity, risk, and operational overhead traditionally associated with large-scale migrations, Snowflake AIM enables organizations to define their target state while the platform orchestrates the migration process end to end. From analyzing Spark code and converting APIs to Snowpark, to modernizing warehouses, tables, views, ETL pipelines, reporting assets, and stored procedures across major platforms, Snowflake AIM combines intelligent assessment, automated code conversion, dependency mapping, orchestration, and virtualization into a unified migration experience. By eliminating the need to rebuild workloads from scratch or maintain parallel legacy environments, Snowflake AIM dramatically accelerates modernization timelines while minimizing disruption to ongoing business operations.
@@ -182,7 +179,7 @@ Cortex Code routes into the `register-code-units` sub-skill and runs:
 scai code extract -s tastybytesdb --json
 ```
 
-For TastyBytes the extraction reports **19 objects in ~4s** with no failures:
+For TastyBytes the extraction reports **18 objects in ~1.5s** with no failures:
 
 
 | Type      | Count |
@@ -190,7 +187,7 @@ For TastyBytes the extraction reports **19 objects in ~4s** with no failures:
 | Database  | 1     |
 | Schema    | 3     |
 | Table     | 11    |
-| View      | 2     |
+| View      | 1     |
 | Function  | 1     |
 | Procedure | 1     |
 
@@ -211,13 +208,13 @@ Cortex Code calls:
 scai code convert --etl-replatform-sources-path <PATH>/etl --json
 ```
 
-The conversion completes in ~12 s and reports:
+The conversion completes in ~10 s and reports:
 
-- **Files processed:** 19
-- **Code units converted:** 270 LOC
-- **EWIs:** 2 (1 Critical, 1 Low)
-- **FDMs:** 54
-- **PRFs:** 27
+- **Files processed:** 18
+- **Code units converted:** 250 LOC
+- **EWIs:** 2 (1 High, 1 Medium)
+- **FDMs:** 57
+- **PRFs:** 28
 - **ETL replatforming:** 1 SSIS package processed, 3 issues
 
 Converted artifacts land in:
@@ -264,10 +261,10 @@ Per the kickoff prompt, Cortex Code now goes straight into the deploy/test/fix l
 | Question                                                                               | Answer                                                      |
 | -------------------------------------------------------------------------------------- | ----------------------------------------------------------- |
 | Testing path? Integration uses representative source data; unit synthesizes test data. | **Integration (source data)**                               |
-| Optional: do you have query logs (CSV) capturing real proc invocations?                | **No** (the framework will scaffold from source DB queries) |
+| Optional: do you have query logs (CSV) capturing real proc invocations?                | **Yes** — point it at `sfguide-scai-e2e-ssis-migration/source_db/query_log.csv` so test cases are seeded from real calls |
 
 
-Cortex Code then auto-deploys the `VALIDATION` schema, claims **all 16 wave-1 objects** (3 schemas, 11 tables, 1 ETL, 1 function), and walks them through their tasks.
+Cortex Code then auto-deploys the `VALIDATION` schema and claims the **14 deployable wave-1 objects** (3 schemas, 11 tables) — leaving the SSIS/ETL object unclaimed per the *skip ETL stabilization* instruction — and walks them through their tasks. The view, function, and procedure are claimed in a later batch once their dependency tables are migrated.
 
 ### Step 1 — Deploy Schemas
 
@@ -279,25 +276,22 @@ Cortex Code deploys all 11 tables (`Customer`, `FoodTruck`, `OrderDetail`, `Coun
 
 ### Step 3 — Migrate Data Locally
 
-Because we asked for **local** data-migration infrastructure, Cortex Code:
+Because we asked for **local** data-migration infrastructure (no SPCS / compute pool), Cortex Code:
 
-1. Generates `.scai/settings/DataExchangeWorkerConfig.toml` from the source connection credentials.
-2. Starts the local Data Exchange Worker:
+1. Verifies the Microsoft ODBC Driver for SQL Server is installed (required by the Data Exchange Worker).
+2. Generates `.scai/settings/DataExchangeWorkerConfig.toml` from the source connection credentials.
+3. Generates the migration workflow YAML at `artifacts/data_migration/workflows/where-<hash>.yaml` covering all 11 tables (Full / Native, each partitioned by its integer primary key — an empty `columnNamesToPartitionBy` would finish the workflow without moving any data, so a key column per table is required).
+4. Runs the migration with a **local** orchestrator and worker in a single command. The local path uses `create-workflow` with `--start-orchestrator --start-worker` (not `scai data migrate start`, which targets the SPCS/cloud orchestrator):
   ```bash
-   scai data worker start --local .scai/settings/DataExchangeWorkerConfig.toml
-  ```
-3. Generates the migration workflow YAML at `artifacts/data_migration/workflows/where-<hash>.yaml` covering all 11 tables (Full / Native, partitioned by primary key).
-4. Runs the migration with the local orchestrator:
-  ```bash
-   scai data migrate start \
+   scai data migrate create-workflow \
        --config artifacts/data_migration/workflows/where-<hash>.yaml \
-       -c migrations_sc --json
+       --start-orchestrator --start-worker
   ```
 
-The workflow finishes in ~2.3 minutes:
+The workflow finishes in a few minutes with every partition loaded:
 
 ```
-workflowName:        DATA_MIGRATION_WORKFLOW_2026_05_28_12_51_02
+workflowName:        DATA_MIGRATION_WORKFLOW_2026_06_29_15_01_48
 workflowStatus:      Finished
 totalTables:         11
 preprocessedTables:  11
@@ -306,13 +300,16 @@ loadedPartitions:    11/11
 
 ### Step 4 — Seed Tests for the Function
 
-Cortex Code runs:
+Because we answered **Yes** to the query-log question, Cortex Code runs `scai test seed` with `--execution-log` so the cases are hydrated from real captured calls:
 
 ```bash
-scai test seed --where "source.canonicalName ILIKE '%fn_FormatCustomerName%'" --append
+scai test seed \
+  --where "source.canonicalName ILIKE '%fn_FormatCustomerName%'" \
+  --append \
+  --execution-log <PATH>/sfguide-scai-e2e-ssis-migration/source_db/query_log.csv
 ```
 
-This produces `artifacts/tastybytesdb/tastybytes/function/fn_formatcustomername/test/fn_FormatCustomerName.yml` with the step-based template. Because this is a simple 1-parameter scalar UDF that looks up a customer row and returns `"LASTNAME, Firstname"`, Cortex Code fills `test_cases:` directly with 13 hand-crafted rows covering valid IDs, the lower boundary, and the not-found path:
+This produces `artifacts/tastybytesdb/tastybytes/function/fn_formatcustomername/test/fn_FormatCustomerName.yml`. The seed finds 6 executions in the log and populates `test_cases:` with the 3 distinct `CustomerID` values that were actually called — so no AI swarm fill is needed:
 
 ```yaml
 validation:
@@ -320,15 +317,9 @@ validation:
     - source_query: SELECT TastyBytesDB.TastyBytes.fn_FormatCustomerName({0}) AS "fn_FormatCustomerName"
       target_query: SELECT TastyBytesDB.TastyBytes.fn_FormatCustomerName({0}) AS "fn_FormatCustomerName"
   test_cases:
-    # Valid customer IDs
-    - [1]
     - [2]
     - [3]
-    # ... 7 more valid IDs
-    # Boundary / not-found cases
-    - [0]
-    - [-1]
-    - [999999]
+    - [1]
 ```
 
 ### Step 5 — Deploy the Function
@@ -337,28 +328,29 @@ SnowConvert produced a clean Snowflake SQL UDF for this scalar function — no m
 
 ```sql
 CREATE OR REPLACE FUNCTION TastyBytes.fn_FormatCustomerName (P_CUSTOMERID INT)
-RETURNS VARCHAR(402)
+RETURNS NVARCHAR(402)
 LANGUAGE SQL
 AS
 $$
-    SELECT
-        UPPER(RTRIM(LTRIM(NVL(LastName, '')))) ||
-        ', ' || RTRIM(LTRIM(NVL(FirstName, '')))
-    FROM TastyBytes.Customer
-    WHERE CustomerID = P_CUSTOMERID
+    WITH CTE1 AS (
+        SELECT
+            CAST(UPPER(RTRIM(LTRIM(NVL(LastName, '')))) ||
+                 ', ' || RTRIM(LTRIM(NVL(FirstName, ''))) AS NVARCHAR(402)) AS FULLNAME
+        FROM TastyBytes.Customer
+        WHERE CustomerID = P_CUSTOMERID
+    )
+    SELECT FULLNAME FROM CTE1
 $$;
 ```
 
-A quick smoke test confirms each branch:
+A quick smoke test against the seeded customer IDs:
 
 ```sql
 SELECT
-  TASTYBYTESDB.TASTYBYTES.fn_FormatCustomerName(1)      AS valid_customer,
-  TASTYBYTESDB.TASTYBYTES.fn_FormatCustomerName(2)      AS another_customer,
-  TASTYBYTESDB.TASTYBYTES.fn_FormatCustomerName(0)      AS not_found_zero,
-  TASTYBYTESDB.TASTYBYTES.fn_FormatCustomerName(-1)     AS not_found_negative,
-  TASTYBYTESDB.TASTYBYTES.fn_FormatCustomerName(999999) AS not_found_high;
--- → JOHNSON, Alice | SMITH, Bob | NULL | NULL | NULL
+  TASTYBYTESDB.TASTYBYTES.fn_FormatCustomerName(1) AS customer_1,
+  TASTYBYTESDB.TASTYBYTES.fn_FormatCustomerName(2) AS customer_2,
+  TASTYBYTESDB.TASTYBYTES.fn_FormatCustomerName(3) AS customer_3;
+-- → "LASTNAME, Firstname" for each existing customer
 ```
 
 ### Step 6 — Capture Baselines and Run Functional Tests
@@ -373,64 +365,88 @@ scai test validate --where "source.canonicalName ILIKE '%fn_FormatCustomerName%'
 Result:
 
 ```
-SUMMARY: 13 test cases
-Passed: 13  Failed: 0  Errors: 0
+SUMMARY: 3 test cases
+Passed: 3  Failed: 0  Errors: 0
 ```
 
-All 13 cases match SQL Server output exactly on the first run.
+All 3 cases match SQL Server output exactly (`data_match`) on the first run.
 
 ### Step 7 — Claim and Deploy Wave 1 Remainder
 
-Cortex Code now claims the remaining 3 wave-1 objects (1 procedure, 2 views) and walks them through deploy/test/fix.
+Cortex Code now claims the remaining wave-1 objects — the **view and the procedure** — and walks them through deploy/test/fix.
 
-### Step 8 — Deploy Views (Hand-Fix `vw_TopSellingItems`)
+### Step 8 — Deploy the View (Hand-Fix `vw_TopSellingItems`)
 
-The `vw_CustomerOrderHistory` view deploys cleanly. `vw_TopSellingItems` fails: SnowConvert flagged the SQL Server `CROSS APPLY ... TOP 5 ORDER BY` with `SSC-EWI-TS0082` and emitted an unresolved `!!!RESOLVE EWI!!!` marker plus a non-lateral `LEFT OUTER JOIN`, which won't run in Snowflake.
+`vw_TopSellingItems` fails to deploy with a SQL compilation error (`unexpected '!'`). The SQL Server view uses `SELECT TOP 1 PERCENT ... ORDER BY ...` in two subqueries combined with `UNION`. SnowConvert flagged `SSC-EWI-0040` (the `TOP PERCENT` clause is not supported in Snowflake) and left unresolved `!!!RESOLVE EWI!!!` marker text in the file, alongside a leading `USE DATABASE TastyBytesDB;` that points at the **source** database. The fix is to delete the marker text and the `USE DATABASE` line, fully qualify the view name with the target database, and rewrite each `TOP 1 PERCENT ... ORDER BY <expr> DESC` as a Snowflake `QUALIFY ROW_NUMBER() OVER (ORDER BY <expr> DESC) <= CEIL(0.01 * COUNT(*) OVER ())` — which preserves SQL Server's ceiling semantics for the percentage of rows returned.
 
-Replace the file at `sqlserver-migration/snowflake/tastybytesdb/tastybytes/view/vw_topsellingitems.sql` with a window-function rewrite:
+Replace the file at `sqlserver-migration/snowflake/tastybytesdb/tastybytes/view/vw_topsellingitems.sql` with:
 
 ```sql
-CREATE OR REPLACE VIEW TastyBytes.vw_TopSellingItems AS
-WITH agg AS (
+CREATE OR REPLACE VIEW TASTYBYTESDB.TastyBytes.vw_TopSellingItems
+AS
+SELECT * FROM (
     SELECT
-        oh.TruckID, mi.MenuItemID, mi.ItemName,
+        mi.MenuItemID,
+        mi.ItemName,
         SUM(od.Quantity)                AS TotalQuantitySold,
-        SUM(od.Quantity * od.UnitPrice) AS TotalRevenue
-    FROM TastyBytes.OrderDetail od
-    INNER JOIN TastyBytes.OrderHeader oh ON od.OrderID = oh.OrderID
-    INNER JOIN TastyBytes.MenuItem   mi ON od.MenuItemID = mi.MenuItemID
+        SUM(od.Quantity * od.UnitPrice) AS TotalRevenue,
+        'By Quantity'                   AS RankingBasis
+    FROM TASTYBYTESDB.TastyBytes.OrderDetail od
+    INNER JOIN TASTYBYTESDB.TastyBytes.OrderHeader oh ON od.OrderID = oh.OrderID
+    INNER JOIN TASTYBYTESDB.TastyBytes.MenuItem   mi ON od.MenuItemID = mi.MenuItemID
     WHERE oh.OrderStatus = 'Completed'
-    GROUP BY oh.TruckID, mi.MenuItemID, mi.ItemName
-),
-ranked AS (
-    SELECT a.*,
-           ROW_NUMBER() OVER (PARTITION BY a.TruckID
-                              ORDER BY a.TotalQuantitySold DESC) AS rn
-    FROM agg a
-)
-SELECT ft.TruckID, ft.TruckName,
-       r.MenuItemID, r.ItemName,
-       r.TotalQuantitySold, r.TotalRevenue
-FROM TastyBytes.FoodTruck ft
-INNER JOIN ranked r ON r.TruckID = ft.TruckID
-WHERE r.rn <= 5;
+    GROUP BY mi.MenuItemID, mi.ItemName
+    QUALIFY ROW_NUMBER() OVER (ORDER BY SUM(od.Quantity) DESC, mi.MenuItemID)
+            <= CEIL(0.01 * COUNT(*) OVER ())
+) AS q
+UNION
+SELECT * FROM (
+    SELECT
+        mi.MenuItemID,
+        mi.ItemName,
+        SUM(od.Quantity)                AS TotalQuantitySold,
+        SUM(od.Quantity * od.UnitPrice) AS TotalRevenue,
+        'By Revenue'                    AS RankingBasis
+    FROM TASTYBYTESDB.TastyBytes.OrderDetail od
+    INNER JOIN TASTYBYTESDB.TastyBytes.OrderHeader oh ON od.OrderID = oh.OrderID
+    INNER JOIN TASTYBYTESDB.TastyBytes.MenuItem   mi ON od.MenuItemID = mi.MenuItemID
+    WHERE oh.OrderStatus = 'Completed'
+    GROUP BY mi.MenuItemID, mi.ItemName
+    QUALIFY ROW_NUMBER() OVER (ORDER BY SUM(od.Quantity * od.UnitPrice) DESC, mi.MenuItemID)
+            <= CEIL(0.01 * COUNT(*) OVER ())
+) AS r;
 ```
 
-Redeploy. Both views return 25 rows, matching the source.
+Redeploy. Cortex Code then validates the view against the source by comparing row counts and a 10-row spot check — both sides return **2 rows** with matching values (the only differences are cosmetic: Snowflake folds identifiers to uppercase and shows trailing decimal zeros).
 
 ### Step 9 — Deploy and Test the Procedure
 
-Cortex Code seeds tests for `sp_UpdateInventory` (a procedure that updates `Inventory` rows for a given truck, with an `Override` flag controlling absolute-set vs. increment behavior, and an early return when `TruckID IS NULL`):
+Cortex Code seeds tests for `sp_UpdateInventory` (a procedure that updates `Inventory` rows for a given truck, with an `Override` flag controlling absolute-set vs. increment behavior, and an early return when `TruckID IS NULL`). It returns **no result set**, so we seed from the query log:
 
 ```bash
-scai test seed --where "source.canonicalName ILIKE '%sp_UpdateInventory%'" --append
+scai test seed \
+  --where "source.canonicalName ILIKE '%sp_UpdateInventory%'" \
+  --append \
+  --execution-log <PATH>/sfguide-scai-e2e-ssis-migration/source_db/query_log.csv
 ```
 
-Cortex Code fills `test_cases:` with 6 rows covering:
+The seed populates 3 `test_cases:` of `[TruckID, StockCount, Override]`. Because this proc is **side-effect-only DML**, the default seeded YAML (which only compares the empty return) would pass trivially. Cortex Code edits the YAML to mark the CALL step `validate: false` and add a post-condition step that compares the affected `Inventory` row on both source and target, plus the `modifies_data` / `affected_tables` hints for delta capture:
 
-- Override = 1 (absolute set) for valid truck IDs (1, 3, 5).
-- Override = 0 (increment) for valid truck IDs (1, 2, 4).
-- A zero-stock-count case (`StockCount = 0.00, Override = 1`).
+```yaml
+validation:
+  steps:
+    - source_query: EXECUTE TastyBytesDB.TastyBytes.sp_UpdateInventory @TruckID = {0}, @StockCount = {1}, @Override = {2}
+      target_query: CALL TastyBytesDB.TastyBytes.sp_UpdateInventory({0}, {1}, {2})
+      validate: false
+    - both: "SELECT QuantityOnHand FROM TastyBytesDB.TastyBytes.Inventory WHERE TruckID = {0}"
+  modifies_data: true
+  affected_tables:
+    - TastyBytesDB.TastyBytes.Inventory
+  test_cases:
+    - [3, 75.00, 1]
+    - [1, 100.00, 1]
+    - [2, 25.50, 0]
+```
 
 Deploy the procedure:
 
@@ -438,36 +454,24 @@ Deploy the procedure:
 -- (Cortex Code runs CREATE OR REPLACE PROCEDURE … from snowflake/…/sp_updateinventory.sql)
 ```
 
-Capture baselines and run validation:
+Re-capture baselines (now that the YAML reads the affected table) and run validation:
 
 ```bash
 scai test capture  --where "source.canonicalName ILIKE '%sp_UpdateInventory%'"
 scai test validate --where "source.canonicalName ILIKE '%sp_UpdateInventory%'"
 ```
 
-Inspect the validation results from the framework's stored output:
-
-```sql
-SELECT TEST_NAME, PARAMETERS, STATUS, ERROR_MESSAGE
-FROM TASTYBYTESDB.VALIDATION.LATEST
-WHERE PROCEDURE_NAME ILIKE '%UpdateInventory%'
-ORDER BY ID;
-```
-
-All 6 cases come back as **PASS**:
+All 3 cases come back as **PASS** with `result_and_delta_match` — both the post-condition row and the captured table delta match SQL Server:
 
 
-| Case                                             | Status | Notes                               |
-| ------------------------------------------------ | ------ | ----------------------------------- |
-| `TruckID = 1, StockCount = 100.00, Override = 1` | PASS   | Absolute-set on truck 1.            |
-| `TruckID = 2, StockCount = 50.50, Override = 0`  | PASS   | Increment on truck 2.               |
-| `TruckID = 3, StockCount = 200.00, Override = 1` | PASS   | Absolute-set on truck 3.            |
-| `TruckID = 4, StockCount = 25.00, Override = 0`  | PASS   | Increment on truck 4.               |
-| `TruckID = 5, StockCount = 0.00, Override = 1`   | PASS   | Absolute-set with zero stock count. |
-| `TruckID = 1, StockCount = 999.99, Override = 0` | PASS   | Large increment on truck 1.         |
+| Case                                             | Status | Notes                     |
+| ------------------------------------------------ | ------ | ------------------------- |
+| `TruckID = 3, StockCount = 75.00, Override = 1`  | PASS   | Absolute-set on truck 3.  |
+| `TruckID = 1, StockCount = 100.00, Override = 1` | PASS   | Absolute-set on truck 1.  |
+| `TruckID = 2, StockCount = 25.50, Override = 0`  | PASS   | Increment on truck 2.     |
 
 
-The procedure produces identical post-run state on SQL Server and Snowflake across every test case, confirming the converted Snowflake Scripting body matches the original T-SQL semantics exactly.
+The procedure produces identical post-run `Inventory` state on SQL Server and Snowflake across every test case, confirming the converted Snowflake Scripting body matches the original T-SQL semantics exactly.
 
 ### Verify the Code Deployment
 
@@ -488,7 +492,7 @@ Expected:
 | KIND       | CNT |
 | ---------- | --- |
 | BASE TABLE | 11  |
-| VIEW       | 2   |
+| VIEW       | 1   |
 | FUNCTION   | 1   |
 | PROCEDURE  | 1   |
 
@@ -587,11 +591,12 @@ At this point all four phases are complete:
 
 ```
 ✅ Setup       — project initialized, connections registered, local infra ready
-✅ Phase 1     — 19 objects extracted, 19 files converted, assessment generated
-✅ Phase 2     — 16 wave-1 objects deployed (deploy/test/fix loop)
-                 + 3 additional objects (1 procedure, 2 views) hand-fixed and deployed
-                 + 11 tables, 185 rows migrated locally
-                 + data validation skipped per kickoff prompt
+✅ Phase 1     — 18 objects extracted, 18 files converted, assessment generated
+✅ Phase 2     — 14 wave-1 objects deployed (3 schemas, 11 tables)
+                 + view, function, and procedure deployed and validated (deploy/test/fix loop)
+                 + 1 view hand-fixed (TOP 1 PERCENT rewritten as QUALIFY, EWI markers removed)
+                 + 11 tables migrated locally
+                 + table data validation skipped per kickoff prompt
                  + ETL stabilization skipped per kickoff prompt
 ✅ Phase 3     — row counts verified on Snowflake
 ✅ Phase 4     — dbt project deployed via `snow dbt deploy`,
@@ -604,15 +609,15 @@ At this point all four phases are complete:
 
 Congratulations! You've taken a Microsoft SQL Server database and an SSIS pipeline all the way from source extraction to a fully deployed, populated, and *running* workload in Snowflake — driven end-to-end by the Cortex Code CLI and its `snowflake-migration:migration` skill, plus the `snow dbt deploy` workflow for the SnowConvert-generated dbt project.
 
-You started from a blank project, set up **local** data-migration infrastructure (no SPCS / compute pool needed), registered 19 SQL Server objects and 1 SSIS package, converted them with SnowConvert AI, generated a deployment plan with a classified SSIS assessment, deployed every in-scope database object using a deploy/test/fix loop (hand-fixing 1 conversion artifact — a `CROSS APPLY` view rewritten with window functions), migrated 185 rows of data via the locally-run orchestrator + worker, and finally hand-patched and deployed both the SnowConvert-generated dbt project (`snow dbt deploy`) and the SnowConvert-generated Snowflake task graph (with `XSMALL_WH` per task), executing the full graph end-to-end on demand.
+You started from a blank project, set up **local** data-migration infrastructure (no SPCS / compute pool needed), registered 18 SQL Server objects and 1 SSIS package, converted them with SnowConvert AI, generated a deployment plan with a classified SSIS assessment, deployed every in-scope database object using a deploy/test/fix loop (hand-fixing 1 conversion artifact — a view whose SQL Server `TOP 1 PERCENT` clause was rewritten as a Snowflake `QUALIFY ROW_NUMBER() ... <= CEIL(0.01 * COUNT(*) OVER ())` and whose unresolved SnowConvert EWI markers were removed), migrated the table data via the locally-run orchestrator + worker, and finally hand-patched and deployed both the SnowConvert-generated dbt project (`snow dbt deploy`) and the SnowConvert-generated Snowflake task graph (with `XSMALL_WH` per task), executing the full graph end-to-end on demand.
 
 ### What You Learned
 
 - How to drive an end-to-end SQL Server + SSIS migration with **Cortex Code** and the bundled `snowflake-migration:migration` skill, using just five chat prompts.
 - How **SnowConvert AI** extracts, converts, and deploys a SQL Server workload to Snowflake, and how to read its EWIs, FDMs, and PRFs.
-- How to triage and hand-fix common SnowConvert outputs — rewriting a SQL Server `CROSS APPLY ... TOP` with `ROW_NUMBER() OVER (PARTITION BY ...)`.
+- How to triage and hand-fix common SnowConvert outputs — rewriting an unsupported SQL Server `TOP 1 PERCENT` clause as a Snowflake `QUALIFY ROW_NUMBER()` window filter and removing unresolved `!!!RESOLVE EWI!!!` markers from a view, and customizing a step-based test YAML to validate a side-effect-only DML procedure.
 - How to run the data-migration orchestrator and Data Exchange Worker **locally** for SQL Server → Snowflake table loads, without provisioning SPCS.
-- How to use the seed → capture → validate testing framework against your source database to verify the migrated function produces identical output to the SQL Server original.
+- How to use the seed → capture → validate testing framework against your source database — seeding cases from a query log — to verify the migrated function *and* procedure produce identical output and table side-effects to the SQL Server originals.
 - How to deploy a SnowConvert-generated dbt project to Snowflake via `snow dbt deploy`, then point a Snowflake task graph at it with `EXECUTE DBT PROJECT`.
 
 ### Related Resources
