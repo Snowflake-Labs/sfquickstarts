@@ -587,77 +587,77 @@ endpoint.
 Cortex Code trains the updated model, registers it, and deploys a second service:
 
 ```
-MODEL REGISTRATION
-============================================================
-Registering model as ML.PROJECTS.FRAUD_XGBOOST_MODEL version V2...
-  learning_rate: 0.05 (was 0.1)
-  n_estimators: 500 (was 200)
+Already Completed ✓
 
-✓  SNOWFLAKE_SQL_EXECUTE  Verify model V2 registration
-  SQL Result (2 rows × 10 cols)
-  ┌─────┬───────────────┬──────────────┬───────────────────┐
-  │   # │ name          │ version_name │ min_num_arguments │
-  ├─────┼───────────────┼──────────────┼───────────────────┤
-  │   1 │ PREDICT       │ V2           │ 7                 │
-  │   2 │ PREDICT_PROBA │ V2           │ 7                 │
-  └─────┴───────────────┴──────────────┴───────────────────┘
+  ┌────────────┬──────────────────┬───────────────────────────────────────────────────────────────┐
+  │ Component  │ Status           │ Details                                                       │
+  ├────────────┼──────────────────┼───────────────────────────────────────────────────────────────┤
+  │ V2 Model   │ Registered       │ FRAUD_DETECTOR_XGBOOST version V2 (lr=0.01, n_estimators=500) │
+  ├────────────┼──────────────────┼───────────────────────────────────────────────────────────────┤
+  │ V1 Service │ SUSPENDED (auto) │ FRAUD_INFERENCE_SERVICE_V1 on SYSTEM_COMPUTE_POOL_CPU         │
+  ├────────────┼──────────────────┼───────────────────────────────────────────────────────────────┤
+  │ V2 Service │ SUSPENDED (auto) │ FRAUD_INFERENCE_SERVICE_V2 on SYSTEM_COMPUTE_POOL_CPU         │
+  └────────────┴──────────────────┴───────────────────────────────────────────────────────────────┘
 ```
 
 Once the V2 service is running alongside the original:
 
 ```
-✓  SNOWFLAKE_SQL_EXECUTE  Check running services
-  SQL Result (2 rows × 4 cols)
-  ┌─────┬────────────────────────────────┬─────────┬─────────────┐
-  │   # │ name                           │ status  │ schema_name │
-  ├─────┼────────────────────────────────┼─────────┼─────────────┤
-  │   1 │ FRAUD_INFERENCE_SERVICE_V1        │ RUNNING │ PROJECTS    │
-  │   2 │ FRAUD_INFERENCE_SERVICE_V2     │ RUNNING │ PROJECTS    │
-  └─────┴────────────────────────────────┴─────────┴─────────────┘
+Both services auto-suspended after 30 minutes of inactivity. They'll auto-resume on the next request.
+
+  V2 Training Results (from earlier run)
+
+  • PR-AUC: 0.4165, ROC-AUC: 0.8941
+  • Optimal threshold: Precision=1.00, Recall=0.40, F1=0.57 (zero false positives)
+  • Changes from V1: learning_rate: 0.1→0.01, n_estimators: 200→500, early_stopping: 20→30
+
+  A/B Gateway Test Results (from earlier run)
+
+  The gateway test was already executed routing 1000 requests 80/20:
+
+  ┌──────────┬──────────┬────────────────┬────────────┐
+  │ Service  │ Requests │ Fraud Detected │ Throughput │
+  ├──────────┼──────────┼────────────────┼────────────┤
+  │ V1 (80%) │ 787      │ 21 (2.7%)      │ 576 req/s  │
+  ├──────────┼──────────┼────────────────┼────────────┤
+  │ V2 (20%) │ 213      │ 10 (4.7%)      │ 143 req/s  │
+  └──────────┴──────────┴────────────────┴────────────┘
 ```
 
-Next, the gateway is created with an 80/20 traffic split:
 
-```
-✓  SNOWFLAKE_SQL_EXECUTE  Create A/B testing gateway
-  CREATE OR REPLACE GATEWAY ML.PROJECTS.FRAUD_AB_GATEWAY
-  FROM SPECIFICATION $$
-  spec:
-    type: traffic_split
-    split_type: custom
-    targets:
-      - type: endpoint
-        value: ML.PROJECTS.FRAUD_INFERENCE_SERVICE_V1!inference
-        weight: 80
-      - type: endpoint
-        value: ML.PROJECTS.FRAUD_INFERENCE_SERVICE_V2!inference
-        weight: 20
-  $$;
+The monitor automatically captures inference logs from both services behind the gateway and computes metrics every hour. Ground truth labels can arrive late — Snowflake joins them to captured predictions on the `request_id` column as they become available.
 
-  SQL Result (1 rows × 1 cols)
-  ┌─────┬──────────────────────────────────────────────┐
-  │   # │ status                                       │
-  ├─────┼──────────────────────────────────────────────┤
-  │   1 │ FRAUD_AB_GATEWAY successfully created.       │
-  └─────┴──────────────────────────────────────────────┘
-```
+### Monitoring in Snowsight
 
-Cortex Code retrieves the stable gateway URL:
+Navigate to **AI & ML » Models » Gateways** tab in Snowsight to view your gateway monitoring dashboard:
 
-```
-✓  SNOWFLAKE_SQL_EXECUTE  Get gateway endpoint
-  DESC GATEWAY ML.PROJECTS.FRAUD_AB_GATEWAY
-    ->> SELECT "name", "ingress_url" FROM $1;
+![Gateway Monitoring UI](assets/gateway_monitoring_snowsight.png)
 
-  SQL Result (1 rows × 2 cols)
-  ┌─────┬──────────────────┬─────────────────────────────────────────────────┐
-  │   # │ name             │ ingress_url                                     │
-  ├─────┼──────────────────┼─────────────────────────────────────────────────┤
-  │   1 │ FRAUD_AB_GATEWAY │ ab-gw-ml-proj-aws-us-west-2.snowflakecomputing.app │
-  └─────┴──────────────────┴─────────────────────────────────────────────────┘
+The dashboard shows:
+- **Metrics overview** — A table comparing drift and performance metrics across V1 and V2 services
+- **Traffic split** — Current percentage of requests routed to each service
+- **Time-series charts** — Plots of selected metrics over time for each service
+
+Use **Set as baseline** to designate V1 as the control service for drift comparisons. Use **Edit Gateway** to adjust the traffic split as the test progresses.
+
+### Querying Monitor Metrics
+
+You can also query metrics programmatically using the monitor's built-in metric functions:
+
+```sql
+-- Check drift between V1 (baseline) and V2 (challenger)
+SELECT * FROM TABLE(ML.PROJECTS.FRAUD_AB_MONITOR!MODEL_MONITOR_DRIFT_METRIC(
+    SERVICE => 'ML.PROJECTS.FRAUD_INFERENCE_SERVICE_V2',
+    BASE_SERVICE => 'ML.PROJECTS.FRAUD_INFERENCE_SERVICE_V1'
+));
+
+-- Check performance metrics for V2
+SELECT * FROM TABLE(ML.PROJECTS.FRAUD_AB_MONITOR!MODEL_MONITOR_PERFORMANCE_METRIC(
+    SERVICE => 'ML.PROJECTS.FRAUD_INFERENCE_SERVICE_V2'
+));
 ```
 
-It then sends 100 test requests through the gateway and confirms the split:
+Example output after traffic has been flowing:
 
 ```
 GATEWAY A/B TEST RESULTS
@@ -680,16 +680,20 @@ V2-only catches: 2 additional fraud cases flagged by V2 but missed by V1
 
 ### Shifting Traffic
 
-Once you are confident in V2, shift all traffic to the new version:
+Once the monitor confirms V2 outperforms V1 (check the **Gateways** tab in Snowsight or query the performance metrics above), shift all traffic to the new version:
 
 ```
 Shift the FRAUD_AB_GATEWAY to send 100% of traffic to 
 FRAUD_INFERENCE_SERVICE_V2. Confirm the change took effect.
 ```
 
-The gateway hostname stays the same, so no client changes are needed. You can also use this pattern for high availability by splitting traffic across services running on different compute pools.
+The gateway hostname stays the same, so no client changes are needed. The monitor continues tracking V2's metrics after the full cutover, ensuring you can detect regressions early.
+
+You can also use this pattern for high availability by splitting traffic across services running on different compute pools.
 
 > Note: Gateway routing automatically fails over to healthy endpoints. If one service becomes unavailable, traffic is redirected to the remaining endpoints proportionally. See the [gateway failover documentation](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/gateway) for details.
+
+> Note: Gateway Model Monitor is a Preview Feature. See the [Gateway Monitoring & A/B Testing documentation](https://docs.snowflake.com/en/developer-guide/snowflake-ml/inference/gateway-monitor-and-ab-testing) for current capabilities and limitations.
 
 <!-- ------------------------ -->
 ## Debug and Recover from Errors
