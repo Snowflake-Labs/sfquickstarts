@@ -217,7 +217,6 @@ You have used Cortex Code in Snowsight to go from raw Marketplace data to cross-
 ### What You Learned
 
 - How to get free public data from the Snowflake Marketplace with zero-copy data sharing
-- How to explore unfamiliar datasets using Cortex Code's `#table` syntax
 - How to perform weather and financial analysis using natural language prompts
 - How to join and correlate data across different domains
 
