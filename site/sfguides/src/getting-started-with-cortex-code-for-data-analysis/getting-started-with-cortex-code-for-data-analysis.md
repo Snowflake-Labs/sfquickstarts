@@ -88,7 +88,7 @@ You can point Cortex Code at a table in two ways:
 - Or click the **+** button in the Cortex Code panel to add a table as context
 
 ```
-@PUBLIC_DATA.PUBLIC_DATA.NOAA_WEATHER_STATION_INDEX — How many weather stations are in this table? Show me a breakdown by country for the top 10 countries.
+@(databaseSchema:SNOWFLAKE_PUBLIC_DATA_FREE) — How many weather stations are in this table? Show me a breakdown by country for the top 10 countries.
 ```
 
 ![Cortex Code results for NOAA weather station count by country](assets/cortex-code-noaa-station-index-top-countries.jpg)
@@ -98,7 +98,7 @@ Cortex Code will query the table and show you the distribution of weather statio
 ### Explore the Weather Timeseries
 
 ```
-@PUBLIC_DATA.PUBLIC_DATA.NOAA_WEATHER_METRICS_TIMESERIES — What variables are available in this table? Show me the distinct variable names and a count of records for each.
+@(databaseSchema:SNOWFLAKE_PUBLIC_DATA_FREE) — What variables are available in this table? Show me the distinct variable names and a count of records for each.
 ```
 
 This reveals the available weather metrics: temperature (avg, min, max), precipitation, snowfall, snow depth, wind speed, and more.
@@ -121,13 +121,13 @@ Now let's get familiar with the financial datasets.
 ### Explore Stock Prices
 
 ```
-@PUBLIC_DATA.PUBLIC_DATA.STOCK_PRICE_TIMESERIES — What columns and tickers are available? Show me the top 20 tickers by trading volume in the last available month.
+@(databaseSchema:SNOWFLAKE_PUBLIC_DATA_FREE) — What columns and tickers are available? Show me the top 20 tickers by trading volume in the last available month.
 ```
 
 ### Explore Economic Indicators
 
 ```
-@PUBLIC_DATA.PUBLIC_DATA.FINANCIAL_ECONOMIC_INDICATORS_TIMESERIES — What types of economic indicators are in this table? Show me 10 example variable names and their latest values.
+@(databaseSchema:SNOWFLAKE_PUBLIC_DATA_FREE) — What types of economic indicators are in this table? Show me 10 example variable names and their latest values.
 ```
 
 ### Chart Energy Stocks vs. Tech Stocks
@@ -160,13 +160,8 @@ Find the top 10 coldest weeks in the US in 2024 by average minimum temperature. 
 Find weeks in 2024 where the average maximum temperature across Texas stations exceeded 35°C. How many such weeks were there, and when did they occur?
 ```
 
-### Seasonal Precipitation Patterns
 
-```
-Show me the monthly total precipitation averaged across Florida stations for 2024. Highlight the hurricane season months (June-November) differently.
-```
-
-![Cortex Code chart of Florida monthly average precipitation with hurricane season highlighted (2024)](assets/cortex-code-florida-monthly-avg-precip-2024-hurricane-season.jpg)
+![CoCo Result of Head Waves event in 2024](assets/coco-identify-heat-waves.jpg)
 
 These analyses reveal the weather events that might have impacted markets — cold snaps affecting energy demand, heat waves stressing power grids, and hurricane season disruptions.
 
@@ -187,14 +182,6 @@ Calculate the weekly price volatility (standard deviation of daily returns) for 
 Using the financial economic indicators table, show me monthly US retail sales for 2023 and 2024. Are there seasonal patterns? Highlight December and the summer months.
 ```
 
-### Interest Rate and CPI Trends
-
-```
-Plot the Federal Funds Effective Rate and CPI year-over-year change for 2023-2025 on the same chart. When did rate cuts happen relative to inflation changes?
-```
-
-![Cortex Code chart of EFFR vs CPI year-over-year change (2023-2025)](assets/cortex-code-effr-vs-cpi-yoy-2023-2025.jpg)
-
 These financial analyses give us the "other side" of the correlation story — now we need to connect them.
 
 <!-- ------------------------ -->
@@ -210,12 +197,6 @@ Join weekly average temperature across all US stations with the weekly average c
 
 The hypothesis: extreme cold increases heating demand → higher energy prices → energy stocks rise.
 
-### Precipitation vs. Retail Sales
-
-```
-Join monthly total precipitation averaged across US stations with monthly US retail sales from the economic indicators table for 2023-2024. Is there a correlation between rainy months and retail spending?
-```
-
 ### Extreme Weather Events and Stock Volatility
 
 ```
@@ -224,13 +205,9 @@ Identify weeks in 2024 where the US average temperature deviated more than 2 sta
 
 This analysis tests whether extreme weather events coincide with higher market volatility.
 
-### Build a Weather Summary Table
 
-```
-Create a summary table that shows for each month in 2024: the average US temperature, total precipitation, number of extreme weather days (temp > 2 std dev from mean), and the monthly return of XOM, AAPL, and SPY. Save it as a view in my database.
-```
+![CoCo Results for Extreme Weather Events and Stock Volatility](/assets/coco-extream-weather-and-stock-volatility.jpg)
 
-![Cortex Code results table for monthly weather + market summary view (2024)](assets/cortex-code-monthly-weather-market-summary-view-2024.jpg)
 
 <!-- ------------------------ -->
 ## 7. Conclusion and Resources
