@@ -79,14 +79,14 @@ You should see output like `Snowflake CLI version: 3.x.x`.
 
 Snowflake CoCo is an AI-powered coding assistant that runs in your terminal. It helps you write SQL, build pipelines, deploy apps, and explore your data using natural language prompts.
 
-**macOS (using Homebrew):**
+**macOS and Linux:**
 ```bash
-brew install cortex
+curl -LsS https://ai.snowflake.com/static/cc-scripts/install.sh | sh
 ```
 
-**Windows / Linux:**
-```bash
-pip install cortex
+**Windows (PowerShell):**
+```powershell
+irm https://ai.snowflake.com/static/cc-scripts/install.ps1 | iex
 ```
 
 Verify the installation:
