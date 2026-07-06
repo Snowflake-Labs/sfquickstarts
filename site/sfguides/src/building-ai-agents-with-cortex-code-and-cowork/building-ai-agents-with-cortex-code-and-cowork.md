@@ -76,17 +76,20 @@ Run the following SQL in a worksheet to create a Git integration and repository:
 ```sql
 USE ROLE ACCOUNTADMIN;
 
+CREATE DATABASE IF NOT EXISTS HOL_COCO_COWORK;
+CREATE SCHEMA IF NOT EXISTS HOL_COCO_COWORK.REPOS;
+
 CREATE OR REPLACE API INTEGRATION HOL_GIT_INTEGRATION
   API_PROVIDER = GIT_HTTPS_API
   API_ALLOWED_PREFIXES = ('https://github.com/Snowflake-Labs/')
   ENABLED = TRUE;
 
-CREATE OR REPLACE GIT REPOSITORY HOL_COCO_COWORK.DATA.HOL_REPO
+CREATE OR REPLACE GIT REPOSITORY HOL_COCO_COWORK.REPOS.HOL_REPO
   API_INTEGRATION = HOL_GIT_INTEGRATION
   ORIGIN = 'https://github.com/Snowflake-Labs/sfguide-building-ai-agents-with-cortex-code-and-cowork.git';
 ```
 
-Then in **Snowsight > Projects > Workspaces**, click **+ Workspace** > **Create from Git Repository**, select `HOL_COCO_COWORK.DATA.HOL_REPO` and branch `main`.
+Then in **Snowsight > Projects > Workspaces**, click **+ Workspace** > **Create from Git Repository**, select `HOL_COCO_COWORK.REPOS.HOL_REPO` and branch `main`.
 
 **Option B: Upload Files Manually**
 
