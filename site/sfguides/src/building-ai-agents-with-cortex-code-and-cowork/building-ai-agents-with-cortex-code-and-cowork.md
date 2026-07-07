@@ -67,18 +67,18 @@ This step creates all the infrastructure needed for the lab. You will run SQL an
 
 ### Required Files
 
-Download the [Setup folder](assets/Setup.zip) which contains all scripts and data needed and extract them:
+Download the [Setup folder](https://github.com/sfc-gh-cserrano/sfquickstarts-hol-coco-cowork/blob/dbcf338e2929a495a015a041b83c7a13b3ab3cdd/site/sfguides/src/building-ai-agents-with-cortex-code-and-cowork/assets/Setup.zip) which contains all scripts and data needed and extract them:
 
 | File | Type | Purpose |
 |------|------|---------|
-| [01_setup.sql](assets/Setup/01_setup.sql) | SQL | Creates warehouse, database, schemas, stages, and tables |
-| [02_copy_files.py](assets/Setup/02_copy_files.py) | Python | Uploads CSV data and skill files to stages |
-| [03_load_data.sql](assets/Setup/03_load_data.sql) | SQL | Loads data into tables and verifies row counts |
-| [data/dim_store.csv](assets/Setup/data/dim_store.csv) | CSV | 100 convenience stores |
-| [data/dim_item.csv](assets/Setup/data/dim_item.csv) | CSV | 100 hot food items |
-| [data/fact_item_sales.csv](assets/Setup/data/fact_item_sales.csv) | CSV | 539K sales transactions |
+| [01_setup.sql](https://github.com/sfc-gh-cserrano/sfquickstarts-hol-coco-cowork/blob/dbcf338e2929a495a015a041b83c7a13b3ab3cdd/site/sfguides/src/building-ai-agents-with-cortex-code-and-cowork/assets/Setup/01_setup.sql) | SQL | Creates warehouse, database, schemas, stages, and tables |
+| [02_copy_files.py](https://github.com/sfc-gh-cserrano/sfquickstarts-hol-coco-cowork/blob/dbcf338e2929a495a015a041b83c7a13b3ab3cdd/site/sfguides/src/building-ai-agents-with-cortex-code-and-cowork/assets/Setup/02_copy_files.py) | Python | Uploads CSV data and skill files to stages |
+| [03_load_data.sql](https://github.com/sfc-gh-cserrano/sfquickstarts-hol-coco-cowork/blob/dbcf338e2929a495a015a041b83c7a13b3ab3cdd/site/sfguides/src/building-ai-agents-with-cortex-code-and-cowork/assets/Setup/03_load_data.sql) | SQL | Loads data into tables and verifies row counts |
+| [data/dim_store.csv](https://github.com/sfc-gh-cserrano/sfquickstarts-hol-coco-cowork/blob/dbcf338e2929a495a015a041b83c7a13b3ab3cdd/site/sfguides/src/building-ai-agents-with-cortex-code-and-cowork/assets/Setup/data/dim_store.csv) | CSV | 100 convenience stores |
+| [data/dim_item.csv](https://github.com/sfc-gh-cserrano/sfquickstarts-hol-coco-cowork/blob/dbcf338e2929a495a015a041b83c7a13b3ab3cdd/site/sfguides/src/building-ai-agents-with-cortex-code-and-cowork/assets/Setup/data/dim_item.csv) | CSV | 100 hot food items |
+| [data/fact_item_sales.csv](https://github.com/sfc-gh-cserrano/sfquickstarts-hol-coco-cowork/blob/dbcf338e2929a495a015a041b83c7a13b3ab3cdd/site/sfguides/src/building-ai-agents-with-cortex-code-and-cowork/assets/Setup/data/fact_item_sales.csv) | CSV | 539K sales transactions |
 
-Download the [Skills](assets/Skills.zip) and [Prompts](assets/Prompts.zip) folder and extract them:
+Download the [Skills](https://github.com/sfc-gh-cserrano/sfquickstarts-hol-coco-cowork/blob/dbcf338e2929a495a015a041b83c7a13b3ab3cdd/site/sfguides/src/building-ai-agents-with-cortex-code-and-cowork/assets/Skills.zip) and [Prompts](https://github.com/sfc-gh-cserrano/sfquickstarts-hol-coco-cowork/blob/dbcf338e2929a495a015a041b83c7a13b3ab3cdd/site/sfguides/src/building-ai-agents-with-cortex-code-and-cowork/assets/Prompts.zip) folder and extract them:
 
 ### Step 1: Load Project Files into a Workspace
 
@@ -92,7 +92,7 @@ Download the [Skills](assets/Skills.zip) and [Prompts](assets/Prompts.zip) folde
 
 ### Step 2: Create Infrastructure (SQL)
 
-Open [`Setup/01_setup.sql`](assets/Setup/01_setup.sql) in the Workspace and click **Run All**. This creates:
+Open [`Setup/01_setup.sql`](https://github.com/sfc-gh-cserrano/sfquickstarts-hol-coco-cowork/blob/dbcf338e2929a495a015a041b83c7a13b3ab3cdd/site/sfguides/src/building-ai-agents-with-cortex-code-and-cowork/assets/Setup/01_setup.sql) in the Workspace and click **Run All**. This creates:
 
 ```sql
 -- Warehouse and compute pool
@@ -120,13 +120,13 @@ CREATE SCHEMA IF NOT EXISTS AGENTS;
 
 ### Step 3: Upload Files to Stages (Python)
 
-Open [`Setup/02_copy_files.py`](assets/Setup/02_copy_files.py) in the Workspace and click **Run All**. This uploads:
+Open [`Setup/02_copy_files.py`](https://github.com/sfc-gh-cserrano/sfquickstarts-hol-coco-cowork/blob/dbcf338e2929a495a015a041b83c7a13b3ab3cdd/site/sfguides/src/building-ai-agents-with-cortex-code-and-cowork/assets/Setup/02_copy_files.py) in the Workspace and click **Run All**. This uploads:
 - CSV data files to `@HOL_STAGE`
 - Agent skill files to `@SKILLS_STAGE`
 
 ### Step 4: Load Data (SQL)
 
-Open [`Setup/03_load_data.sql`](assets/Setup/03_load_data.sql) in the Workspace and click **Run All**. This loads data into all three tables.
+Open [`Setup/03_load_data.sql`](https://github.com/sfc-gh-cserrano/sfquickstarts-hol-coco-cowork/blob/dbcf338e2929a495a015a041b83c7a13b3ab3cdd/site/sfguides/src/building-ai-agents-with-cortex-code-and-cowork/assets/Setup/03_load_data.sql) in the Workspace and click **Run All**. This loads data into all three tables.
 
 Verify the final query output shows:
 
@@ -153,7 +153,7 @@ In the Cortex Code chat panel, type:
 /semantic-view @semantic_view.md
 ```
 
-The `@` symbol attaches the file [`Prompts/semantic_view.md`](assets/Prompts/semantic_view.md) as context for the command.
+The `@` symbol attaches the file [`Prompts/semantic_view.md`](https://github.com/sfc-gh-cserrano/sfquickstarts-hol-coco-cowork/blob/dbcf338e2929a495a015a041b83c7a13b3ab3cdd/site/sfguides/src/building-ai-agents-with-cortex-code-and-cowork/assets/Prompts/semantic_view.md) as context for the command.
 
 ### What CoCo Does
 
