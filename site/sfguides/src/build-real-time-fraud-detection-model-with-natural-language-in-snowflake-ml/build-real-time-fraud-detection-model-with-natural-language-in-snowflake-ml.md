@@ -1,18 +1,18 @@
 author: Chanin Nantasenamat, Sho Tanaka, Sumit Kumar, Lucy Zhu
 id: build-real-time-fraud-detection-model-with-natural-language-in-snowflake-ml
-summary: Learn how to build a production-ready fraud detection system with real-time inference using Cortex Code and natural language prompts in Snowflake ML
+summary: Learn how to build a production-ready fraud detection system with real-time inference using CoCo and natural language prompts in Snowflake ML
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/industry/public-sector
 language: en
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Data Science, Machine Learning, Snowflake ML, Model Registry, SPCS, Fraud Detection, Cortex Code, Gateway
+tags: Getting Started, Data Science, Machine Learning, Snowflake ML, Model Registry, SPCS, Fraud Detection, CoCo, Gateway
 
 # Build a Real-Time Fraud Detection Model with Natural Language in Snowflake ML
 <!-- ------------------------ -->
 ## Overview
 
-[Snowflake ML](http://www.snowflake.com/ml) is changing how teams work with agentic ML, an autonomous, reasoning-based system that enables developers to use agents to plan and execute tasks across the entire ML pipeline. In this quickstart, learn how to build and run a real-time fraud detection model with only a handful of prompts so that you can go from raw idea to production-grade REST API in minutes, not weeks, with [Cortex Code](https://www.snowflake.com/en/product/features/cortex-code/), Snowflake’s AI native coding agent. Cortex Code is available both as a CLI and directly in Snowsight, Snowflake's web interface.
+[Snowflake ML](http://www.snowflake.com/ml) is changing how teams work with agentic ML, an autonomous, reasoning-based system that enables developers to use agents to plan and execute tasks across the entire ML pipeline. In this quickstart, learn how to build and run a real-time fraud detection model with only a handful of prompts so that you can go from raw idea to production-grade REST API in minutes, not weeks, with [CoCo](https://www.snowflake.com/en/product/features/cortex-code/), Snowflake’s AI native coding agent. CoCo is available both as a CLI and directly in Snowsight, Snowflake's web interface.
 
 ### What You'll Learn
 - Generate realistic synthetic fraud data with natural language prompts
@@ -33,34 +33,34 @@ A complete fraud detection pipeline featuring:
 
 ### Prerequisites
 - Sign up for the 30-day [free trial](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) of Snowflake. Have `ACCOUNTADMIN` role or a role with permissions for Snowflake ML and Snowpark Container Services
-- [Cortex Code CLI](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code) installed and configured OR [Cortex Code in Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight) (no local installation required)
+- [CoCo CLI](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code) installed and configured OR [CoCo in Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight) (no local installation required)
 - A dedicated Snowflake warehouse
 - A compute pool configured for SPCS
 
 <!-- ------------------------ -->
 ## Setup
 
-### Cortex Code
+### CoCo
 
-[Cortex Code](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code) is an AI agent built into Snowflake, designed for data engineering, analytics, ML, and agent-building tasks. It operates autonomously within your Snowflake environment, leveraging deep knowledge of RBAC, schemas, and platform best practices.
+[CoCo](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code) is an AI agent built into Snowflake, designed for data engineering, analytics, ML, and agent-building tasks. It operates autonomously within your Snowflake environment, leveraging deep knowledge of RBAC, schemas, and platform best practices.
 
 It is available in two forms: within Snowsight and as a local CLI, bringing AI-assisted capabilities to wherever you work.
 
-#### Install Cortex Code CLI
+#### Install CoCo CLI
 
-Follow the [official installation guide](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-cli) to install and configure Cortex Code CLI.
+Follow the [official installation guide](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-cli) to install and configure CoCo CLI.
 
-#### Use Cortex Code in Snowsight
+#### Use CoCo in Snowsight
 
-Prefer a browser-based experience? You can also use [Cortex Code directly in Snowsight](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-snowsight) with no local installation. 
+Prefer a browser-based experience? You can also use [CoCo directly in Snowsight](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-snowsight) with no local installation. 
 
 1. Open Workspace Notebook by going to the sidebar and click on Projects > Workspaces; then in the "My Workspace" panel, click on "+ Add new" > Notebook
 
-2. Once the notebook loads, look for Cortex Code in the lower-right corner of Snowsight.
+2. Once the notebook loads, look for CoCo in the lower-right corner of Snowsight.
 
 The walkthrough below shows CLI output, but the prompts and results are the same in both interfaces. 
 
-> Note: Cortex Code is environment aware so using it in a Workspace Notebook will give the best results as it will have access to all the tools provided by the notebook. When relevant, generated code will be inserted into the notebook and run on your behalf.
+> Note: CoCo is environment aware so using it in a Workspace Notebook will give the best results as it will have access to all the tools provided by the notebook. When relevant, generated code will be inserted into the notebook and run on your behalf.
 
 ### Verify Snowpark Container Services Access
 
@@ -69,11 +69,11 @@ Ensure you have access to create and manage compute pools. You can verify this i
 <!-- ------------------------ -->
 ## Generate Synthetic Data
 
-The first step is creating realistic synthetic data for training our fraud detection model. Using Cortex Code, we can generate this data with a simple natural language prompt.
+The first step is creating realistic synthetic data for training our fraud detection model. Using CoCo, we can generate this data with a simple natural language prompt.
 
 ### Prompt
 
-Open Cortex Code (CLI or Snowsight) and enter the following prompt:
+Open CoCo (CLI or Snowsight) and enter the following prompt:
 
 ```
 Generate realistic looking synthetic data in database ML and schema PROJECTS 
@@ -86,17 +86,17 @@ regular hours), and ~2% of legitimate transactions should have suspicious
 characteristics (high amounts, unusual locations, or odd hours).
 ```
 
-If running Cortex Code CLI, paste the prompt directly into the terminal session. Cortex Code will analyze the request, generate a multi-step plan, and execute each step automatically.
+If running CoCo CLI, paste the prompt directly into the terminal session. CoCo will analyze the request, generate a multi-step plan, and execute each step automatically.
 
-If running Cortex Code on Snowsight, go ahead and enter the prompt in the chat panel on the right. Cortex Code analyzes the request and breaks it into a multi-step plan:
+If running CoCo on Snowsight, go ahead and enter the prompt in the chat panel on the right. CoCo analyzes the request and breaks it into a multi-step plan:
 
-![Cortex Code in Snowsight showing the synthetic data prompt and a 3-step execution plan](assets/snowsight-1.png)
+![CoCo in Snowsight showing the synthetic data prompt and a 3-step execution plan](assets/snowsight-1.png)
 
 ### What Gets Generated
 
-Cortex Code will create the database, schema, and table, then insert 10,000 transactions with the specified fraud distribution. 
+CoCo will create the database, schema, and table, then insert 10,000 transactions with the specified fraud distribution. 
 
-The Cortex Code CLI output shows:
+The CoCo CLI output shows:
 
 ```
 ✓  SNOWFLAKE_SQL_EXECUTE  Insert 10000 synthetic fraud transactions
@@ -134,13 +134,13 @@ Legitimate Transactions with Noise (9,950 rows)
 └─────────────────────────────────────┴───────┴────────────┘
 ```
 
-Here's the generated output from Cortex Code on Snowsight:
+Here's the generated output from CoCo on Snowsight:
 
-1. Cortex Code generates and executes SQL in a stepwise manner; first creating the database and schema, then building the synthetic data:
+1. CoCo generates and executes SQL in a stepwise manner; first creating the database and schema, then building the synthetic data:
 
-![Cortex Code in Snowsight generating SQL code step by step, creating the database and schema and then generating the synthetic data](assets/snowsight-2.png)
+![CoCo in Snowsight generating SQL code step by step, creating the database and schema and then generating the synthetic data](assets/snowsight-2.png)
 
-2. Once complete, Cortex Code displays a summary of the generated data table along with suggested next prompts:
+2. Once complete, CoCo displays a summary of the generated data table along with suggested next prompts:
 
 ![Completed synthetic data generation in Snowsight showing a summary of the data table and suggested next prompts](assets/snowsight-3.png)
 
@@ -149,7 +149,7 @@ Here's the generated output from Cortex Code on Snowsight:
 <!-- ------------------------ -->
 ## Explore the Data
 
-Before training a model, we need to understand our data patterns. Cortex Code can run a complete EDA with a single prompt.
+Before training a model, we need to understand our data patterns. CoCo can run a complete EDA with a single prompt.
 
 ### Prompt
 
@@ -159,7 +159,7 @@ Do exploratory data analysis and recommend the features needed to train a model 
 
 ### What Gets Generated
 
-Cortex Code reads its built-in ML skill, detects the local Python environment, and runs the EDA in incremental steps:
+CoCo reads its built-in ML skill, detects the local Python environment, and runs the EDA in incremental steps:
 
 ```
 ✓  SKILL  machine-learning
@@ -361,7 +361,7 @@ real-time fraud detection.
 
 ### What Gets Generated
 
-Cortex Code will first create a feature engineering view with the 7 recommended features:
+CoCo will first create a feature engineering view with the 7 recommended features:
 
 ```
 ✓  SNOWFLAKE_SQL_EXECUTE  Create feature engineering view
@@ -497,12 +497,12 @@ Inference running on SPCS and show the latency profile.
 ```
 
 > Note: 
-> Cortex Code may suggest a hybrid approach instead (e.g., using the Python SDK `mv.run()` or SQL service functions).
+> CoCo may suggest a hybrid approach instead (e.g., using the Python SDK `mv.run()` or SQL service functions).
 > If that happens, prompt it with: *"Ask for the PAT token so that you can call the REST API"*. It will then guide you through generating one via Snowsight and proceed with direct REST calls.
 
 ### What Gets Generated
 
-Cortex Code will generate 1,000 synthetic transactions, send them to the SPCS endpoint, and report a latency profile:
+CoCo will generate 1,000 synthetic transactions, send them to the SPCS endpoint, and report a latency profile:
 
 ```
 SPCS REST API Latency Profile
@@ -574,137 +574,104 @@ In this step we will deploy an improved V2 model as a second SPCS service, creat
 ### Prompt
 
 ```
-Train an improved V2 fraud model (try a lower learning rate and more 
-estimators), log it to the Model Registry, deploy it as a second SPCS service 
-called FRAUD_INFERENCE_SERVICE_V2, then create a Gateway called 
-FRAUD_AB_GATEWAY that sends 80% of traffic to the original 
-FRAUD_INFERENCE_SERVICE_V1 and 20% to the new V2 service. Test the gateway 
-endpoint.
+Train an improved V2 fraud model (try a lower learning rate and more estimators), log it to the Model Registry.
+
+Before deploying, suspend the existing FRAUD_INFERENCE_SERVICE_V1 to free up compute pool resources. Then deploy the V2 model as a second SPCS service called FRAUD_INFERENCE_SERVICE_V2 with autocapture=True (required for gateway monitoring). Once V2 is RUNNING, drop and recreate FRAUD_INFERENCE_SERVICE_V1 with autocapture=True as well (autocapture is immutable and cannot be added to existing services), then resume it.
+
+Use the CREATE GATEWAY SQL statement to create an SPCS Gateway called FRAUD_AB_GATEWAY that routes 80% of traffic to FRAUD_INFERENCE_SERVICE_V1 and 20% to FRAUD_INFERENCE_SERVICE_V2.
+
+After the gateway is created, create a gateway model monitor using CREATE MODEL MONITOR with GATEWAY = FRAUD_AB_GATEWAY, FUNCTION = 'PREDICT', REFRESH_INTERVAL = '1 minute', and AGGREGATION_WINDOW = '1 hour' so that monitoring results appear in Snowsight under AI & ML > Models > Gateways.
+
+Send sample inference requests through both services to populate autocaptured logs, then verify the monitor is ACTIVE and metrics are being aggregated.
 ```
 
 ### What Gets Generated
 
-Cortex Code trains the updated model, registers it, and deploys a second service:
+CoCe trains the updated model, registers it, and deploys a second service:
 
 ```
-Already Completed ✓
+Complete Setup — All Steps Done
 
-  ┌────────────┬──────────────────┬───────────────────────────────────────────────────────────────┐
-  │ Component  │ Status           │ Details                                                       │
-  ├────────────┼──────────────────┼───────────────────────────────────────────────────────────────┤
-  │ V2 Model   │ Registered       │ FRAUD_DETECTOR_XGBOOST version V2 (lr=0.01, n_estimators=500) │
-  ├────────────┼──────────────────┼───────────────────────────────────────────────────────────────┤
-  │ V1 Service │ SUSPENDED (auto) │ FRAUD_INFERENCE_SERVICE_V1 on SYSTEM_COMPUTE_POOL_CPU         │
-  ├────────────┼──────────────────┼───────────────────────────────────────────────────────────────┤
-  │ V2 Service │ SUSPENDED (auto) │ FRAUD_INFERENCE_SERVICE_V2 on SYSTEM_COMPUTE_POOL_CPU         │
-  └────────────┴──────────────────┴───────────────────────────────────────────────────────────────┘
+  Step 1-2: V2 Model Trained & Registered
+
+  ┌─────────┬───────────────┬────────────┬───────────┬────────┬────────┐
+  │ Version │ Learning Rate │ Estimators │ Max Depth │ PR-AUC │ F1     │
+  ├─────────┼───────────────┼────────────┼───────────┼────────┼────────┤
+  │ V1      │ 0.10          │ 200        │ 6         │ 0.9008 │ 0.9474 │
+  ├─────────┼───────────────┼────────────┼───────────┼────────┼────────┤
+  │ V2      │ 0.01          │ 500        │ 5         │ 0.9005 │ 0.9474 │
+  └─────────┴───────────────┴────────────┴───────────┴────────┴────────┘
+
+  Step 3-5: Services Deployed (both RUNNING)
+
+  ┌────────────────────────────┬───────┬─────────────────────────┬─────────┐
+  │ Service                    │ Model │ Compute Pool            │ Status  │
+  ├────────────────────────────┼───────┼─────────────────────────┼─────────┤
+  │ FRAUD_INFERENCE_SERVICE_V1 │ v1    │ SYSTEM_COMPUTE_POOL_CPU │ RUNNING │
+  ├────────────────────────────┼───────┼─────────────────────────┼─────────┤
+  │ FRAUD_INFERENCE_SERVICE_V2 │ v2    │ SYSTEM_COMPUTE_POOL_CPU │ RUNNING │
+  └────────────────────────────┴───────┴─────────────────────────┴─────────┘
+
+  Step 6: Gateway Created via CREATE GATEWAY
+
+    CREATE GATEWAY ML.PROJECTS.FRAUD_AB_GATEWAY
+      FROM SPECIFICATION $$
+        spec:
+          type: traffic_split
+          split_type: custom
+          targets:
+            - type: endpoint
+              value: ML.PROJECTS.FRAUD_INFERENCE_SERVICE_V1!inference
+              weight: 80
+            - type: endpoint
+              value: ML.PROJECTS.FRAUD_INFERENCE_SERVICE_V2!inference
+              weight: 20
+      $$;
+
+  Step 7: Services Tested via SQL
+
+  ┌───────────────────────────────────────────────────────────────────┬───────────┬───────────┐
+  │ Test                                                              │ V1        │ V2        │
+  ├───────────────────────────────────────────────────────────────────┼───────────┼───────────┤
+  │ Fraud transaction ($5000, international, 3am, high-risk merchant) │ 1 (fraud) │ 1 (fraud) │
+  ├───────────────────────────────────────────────────────────────────┼───────────┼───────────┤
+  │ Legit transaction ($45.99, domestic, 2pm, normal merchant)        │ 0 (legit) │ 0 (legit) │
+  └───────────────────────────────────────────────────────────────────┴───────────┴───────────┘
+
+  Gateway REST Endpoint
+
+  The endpoint URL is being provisioned. Once ready, call it with a PAT:
+
+    curl -X POST "https://<gateway-endpoint>/predict" \
+      -H 'Authorization: Snowflake Token="<YOUR_PAT>"' \
+      -H 'Content-Type: application/json' \
+      -d '{"data": [[0, 5000.0, 8.52, 1, 3, 1, 1, 2, 0, 1, 1, 10.85, 0.001, 0.001]]}'
+
+  The gateway is visible in Snowsight at AI & ML > Models > Gateways. The 80/20 traffic split routes external REST requests automatically between V1 and V2.
 ```
 
-Once the V2 service is running alongside the original:
-
-```
-Both services auto-suspended after 30 minutes of inactivity. They'll auto-resume on the next request.
-
-  V2 Training Results (from earlier run)
-
-  • PR-AUC: 0.4165, ROC-AUC: 0.8941
-  • Optimal threshold: Precision=1.00, Recall=0.40, F1=0.57 (zero false positives)
-  • Changes from V1: learning_rate: 0.1→0.01, n_estimators: 200→500, early_stopping: 20→30
-
-  A/B Gateway Test Results (from earlier run)
-
-  The gateway test was already executed routing 1000 requests 80/20:
-
-  ┌──────────┬──────────┬────────────────┬────────────┐
-  │ Service  │ Requests │ Fraud Detected │ Throughput │
-  ├──────────┼──────────┼────────────────┼────────────┤
-  │ V1 (80%) │ 787      │ 21 (2.7%)      │ 576 req/s  │
-  ├──────────┼──────────┼────────────────┼────────────┤
-  │ V2 (20%) │ 213      │ 10 (4.7%)      │ 143 req/s  │
-  └──────────┴──────────┴────────────────┴────────────┘
-```
-
-
-The monitor automatically captures inference logs from both services behind the gateway and computes metrics every hour. Ground truth labels can arrive late — Snowflake joins them to captured predictions on the `request_id` column as they become available.
-
-### Monitoring in Snowsight
-
-Navigate to **AI & ML » Models » Gateways** tab in Snowsight to view your gateway monitoring dashboard:
-
-![Gateway Monitoring UI](assets/gateway_monitoring_snowsight.png)
+The services behind the gateway automatically capture inference logs (via Auto-Capture enabled at deployment). The gateway model monitor reads those logs and computes aggregated drift metrics at the configured aggregation window (e.g., every hour), refreshing as frequently as the configured refresh interval (e.g., every minute). Ground truth labels can arrive late — if you configure a GROUND_TRUTH table and ID_COLUMNS when creating the monitor, Snowflake joins late-arriving labels to autocaptured predictions on the specified ID columns as they become available.
 
 The dashboard shows:
-- **Metrics overview** — A table comparing drift and performance metrics across V1 and V2 services
-- **Traffic split** — Current percentage of requests routed to each service
-- **Time-series charts** — Plots of selected metrics over time for each service
+- **Gateway Details** — The stable gateway URL and description
+- **Services** — Status, compute pool, and traffic split percentage for each service
+- **Traffic split** — Visual bar showing the 80/20 routing between V1 and V2
 
-Use **Set as baseline** to designate V1 as the control service for drift comparisons. Use **Edit Gateway** to adjust the traffic split as the test progresses.
+![Gateway Overview in Snowsight showing FRAUD_AB_GATEWAY with 80/20 traffic split between V1 and V2 services](assets/gateway_overview_snowsight.jpg)
 
-### Querying Monitor Metrics
+Use **Edit Gateway** to adjust the traffic split as the test progresses.
 
-You can also query metrics programmatically using the monitor's built-in metric functions:
-
-```sql
--- Check drift between V1 (baseline) and V2 (challenger)
-SELECT * FROM TABLE(ML.PROJECTS.FRAUD_AB_MONITOR!MODEL_MONITOR_DRIFT_METRIC(
-    SERVICE => 'ML.PROJECTS.FRAUD_INFERENCE_SERVICE_V2',
-    BASE_SERVICE => 'ML.PROJECTS.FRAUD_INFERENCE_SERVICE_V1'
-));
-
--- Check performance metrics for V2
-SELECT * FROM TABLE(ML.PROJECTS.FRAUD_AB_MONITOR!MODEL_MONITOR_PERFORMANCE_METRIC(
-    SERVICE => 'ML.PROJECTS.FRAUD_INFERENCE_SERVICE_V2'
-));
-```
-
-Example output after traffic has been flowing:
-
-```
-GATEWAY A/B TEST RESULTS
-============================================================
-Endpoint: https://ab-gw-ml-proj-aws-us-west-2.snowflakecomputing.app/predict-proba
-Total requests: 100 | Errors: 0
-
-Traffic Split Observed
-┌──────────────────────────────────┬──────────┬──────────┐
-│ Service                          │ Expected │ Observed │
-├──────────────────────────────────┼──────────┼──────────┤
-│ FRAUD_INFERENCE_SERVICE_V1       │ 80%      │ 78%      │
-├──────────────────────────────────┼──────────┼──────────┤
-│ FRAUD_INFERENCE_SERVICE_V2       │ 20%      │ 22%      │
-└──────────────────────────────────┴──────────┴──────────┘
-
-Prediction Agreement: 96% (both versions agree on fraud/legit label)
-V2-only catches: 2 additional fraud cases flagged by V2 but missed by V1
-```
-
-### Shifting Traffic
-
-Once the monitor confirms V2 outperforms V1 (check the **Gateways** tab in Snowsight or query the performance metrics above), shift all traffic to the new version:
-
-```
-Shift the FRAUD_AB_GATEWAY to send 100% of traffic to 
-FRAUD_INFERENCE_SERVICE_V2. Confirm the change took effect.
-```
-
-The gateway hostname stays the same, so no client changes are needed. The monitor continues tracking V2's metrics after the full cutover, ensuring you can detect regressions early.
-
-You can also use this pattern for high availability by splitting traffic across services running on different compute pools.
-
-> Note: Gateway routing automatically fails over to healthy endpoints. If one service becomes unavailable, traffic is redirected to the remaining endpoints proportionally. See the [gateway failover documentation](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/gateway) for details.
-
-> Note: Gateway Model Monitor is a Preview Feature. See the [Gateway Monitoring & A/B Testing documentation](https://docs.snowflake.com/en/developer-guide/snowflake-ml/inference/gateway-monitor-and-ab-testing) for current capabilities and limitations.
 
 <!-- ------------------------ -->
 ## Debug and Recover from Errors
 
-During any natural language coding session, errors are inevitable. The great thing about Cortex Code is its ability to self-correct by assessing the situation, environment, and error to fix issues automatically.
+During any natural language coding session, errors are inevitable. The great thing about CoCo is its ability to self-correct by assessing the situation, environment, and error to fix issues automatically.
 
 ### Common Scenarios
 
 **Missing Python Binary**
 
-When `python` isn't found on the system, Cortex Code locates `python3` and retries automatically.
+When `python` isn't found on the system, CoCo locates `python3` and retries automatically.
 
 ```
 ✓  WRITE  /Users/cnantasenamat/fraud-eda/eda_step4_time.py +103
@@ -723,7 +690,7 @@ When `python` isn't found on the system, Cortex Code locates `python3` and retri
 
 **Notebook Execution Issues**
 
-When a Jupyter kernel fails to connect, Cortex Code detects the issue and finds an alternative approach.
+When a Jupyter kernel fails to connect, CoCo detects the issue and finds an alternative approach.
 
 ```
 ×  NOTEBOOK:EXECUTE_CELL  fraud_eda.ipynb cell 1
@@ -741,7 +708,7 @@ When a Jupyter kernel fails to connect, Cortex Code detects the issue and finds 
 
 **Artifact Upload Failures**
 
-If an upload fails due to missing resources, Cortex Code investigates and finds a working path.
+If an upload fails due to missing resources, CoCo investigates and finds a working path.
 
 ```
 ×  BASH  cortex artifact create notebook fraud_eda ... --location ML.PROJ...
@@ -761,7 +728,7 @@ If an upload fails due to missing resources, Cortex Code investigates and finds 
 
 **Model Training Errors**
 
-When training fails due to parameter issues, Cortex Code diagnoses and fixes the problem automatically.
+When training fails due to parameter issues, CoCo diagnoses and fixes the problem automatically.
 
 ```
 ×  BASH  SNOWFLAKE_CONNECTION_NAME=trial ... train_fraud_model.py
@@ -783,7 +750,7 @@ When training fails due to parameter issues, Cortex Code diagnoses and fixes the
 
 1. Start with `ACCOUNTADMIN` for initial setup, then create dedicated roles
 2. Monitor compute pool resources during deployment
-3. Review Cortex Code's explanations when it makes corrections
+3. Review CoCo's explanations when it makes corrections
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
@@ -803,11 +770,11 @@ Congratulations! You've successfully built a complete real-time fraud detection 
 Web pages:
 - [Snowflake ML](http://www.snowflake.com/ml) - Integrated set of capabilities for development, MLOps and inference leading with agentic ML
 - [Snowflake Notebooks](https://www.snowflake.com/en/product/features/notebooks/) - Jupyter-based notebooks in Snowflake Workspaces 
-- [Cortex Code](https://www.snowflake.com/en/product/features/cortex-code/) - Snowflake’s AI native coding agent that boosts ML productivity 
+- [CoCo](https://www.snowflake.com/en/product/features/cortex-code/) - Snowflake’s AI native coding agent that boosts ML productivity 
 
 Technical Documentation:
 - [Snowflake ML Documentation](https://docs.snowflake.com/en/developer-guide/snowflake-ml/overview) - Official Snowflake ML developer guide
-- [Cortex Code Documentation](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code) - Getting started with Cortex Code
+- [CoCo Documentation](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code) - Getting started with CoCo
 - [Snowpark Container Services](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview) - Deploy and manage containerized workloads
 - [Snowflake Model Registry](https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/overview) - Register, version, and deploy ML models
 - [SPCS Gateways](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/gateway) - Route ingress traffic to multiple service endpoints
