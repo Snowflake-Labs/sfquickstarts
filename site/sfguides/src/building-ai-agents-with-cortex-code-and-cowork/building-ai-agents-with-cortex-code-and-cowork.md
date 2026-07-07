@@ -65,41 +65,34 @@ The lab uses a convenience store hot food sales dataset (100 stores, 100 items, 
 
 This step creates all the infrastructure needed for the lab. You will run SQL and Python scripts in a Snowflake Workspace.
 
+### Required Files
+
+Download the [Setup folder](assets/Setup.zip) which contains all scripts and data needed and extract them:
+
+| File | Type | Purpose |
+|------|------|---------|
+| [01_setup.sql](assets/Setup/01_setup.sql) | SQL | Creates warehouse, database, schemas, stages, and tables |
+| [02_copy_files.py](assets/Setup/02_copy_files.py) | Python | Uploads CSV data and skill files to stages |
+| [03_load_data.sql](assets/Setup/03_load_data.sql) | SQL | Loads data into tables and verifies row counts |
+| [data/dim_store.csv](assets/Setup/data/dim_store.csv) | CSV | 100 convenience stores |
+| [data/dim_item.csv](assets/Setup/data/dim_item.csv) | CSV | 100 hot food items |
+| [data/fact_item_sales.csv](assets/Setup/data/fact_item_sales.csv) | CSV | 539K sales transactions |
+
+Download the [Skills](assets/Skills.zip) and [Prompts](assets/Prompts.zip) folder and extract them:
+
 ### Step 1: Load Project Files into a Workspace
 
-Clone or download the [companion repository](https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/building-ai-agents-with-cortex-code-and-cowork/assets) and load it into a Snowflake Workspace.
-
-**Option A: Git Workspace (Recommended)**
-
-Run the following SQL in a worksheet to create a Git integration and repository:
-
-```sql
-USE ROLE ACCOUNTADMIN;
-
-CREATE DATABASE IF NOT EXISTS HOL_COCO_COWORK;
-CREATE SCHEMA IF NOT EXISTS HOL_COCO_COWORK.REPOS;
-
-CREATE OR REPLACE API INTEGRATION HOL_GIT_INTEGRATION
-  API_PROVIDER = GIT_HTTPS_API
-  API_ALLOWED_PREFIXES = ('https://github.com/Snowflake-Labs/')
-  ENABLED = TRUE;
-
-CREATE OR REPLACE GIT REPOSITORY HOL_COCO_COWORK.REPOS.HOL_REPO
-  API_INTEGRATION = HOL_GIT_INTEGRATION
-  ORIGIN = 'https://github.com/Snowflake-Labs/sfguide-building-ai-agents-with-cortex-code-and-cowork.git';
-```
-
-Then in **Snowsight > Projects > Workspaces**, click **+ Workspace** > **Create from Git Repository**, select `HOL_COCO_COWORK.REPOS.HOL_REPO` and branch `main`.
-
-**Option B: Upload Files Manually**
-
-1. Download the repository to your local machine
-2. Create a new blank workspace in **Snowsight > Projects > Workspaces**
-3. Upload the `Setup/`, `Skills/`, and `Prompts/` folders
+1. Download all the files listed in the [Required Files](#required-files) table above (or clone the [companion repository](https://github.com/Snowflake-Labs/sfguide-building-ai-agents-with-cortex-code-and-cowork))
+2. In **Snowsight > Projects > Workspaces**, click **+ Workspace** to create a new blank workspace
+3. Use the **Upload** button (or drag and drop) to upload the following folder structure:
+   - `Setup/` — including the `data/` subfolder with all three CSV files
+   - `Skills/` — both skill subfolders with their SKILL.md files
+   - `Prompts/` — all three prompt files (Optional)
+4. Verify all files appear in the workspace file browser before proceeding
 
 ### Step 2: Create Infrastructure (SQL)
 
-Open `Setup/01_setup.sql` in the Workspace and click **Run All**. This creates:
+Open [`Setup/01_setup.sql`](assets/Setup/01_setup.sql) in the Workspace and click **Run All**. This creates:
 
 ```sql
 -- Warehouse and compute pool
@@ -127,13 +120,13 @@ CREATE SCHEMA IF NOT EXISTS AGENTS;
 
 ### Step 3: Upload Files to Stages (Python)
 
-Open `Setup/02_copy_files.py` in the Workspace and click **Run All**. This uploads:
+Open [`Setup/02_copy_files.py`](assets/Setup/02_copy_files.py) in the Workspace and click **Run All**. This uploads:
 - CSV data files to `@HOL_STAGE`
 - Agent skill files to `@SKILLS_STAGE`
 
 ### Step 4: Load Data (SQL)
 
-Open `Setup/03_load_data.sql` in the Workspace and click **Run All**. This loads data into all three tables.
+Open [`Setup/03_load_data.sql`](assets/Setup/03_load_data.sql) in the Workspace and click **Run All**. This loads data into all three tables.
 
 Verify the final query output shows:
 
@@ -160,7 +153,7 @@ In the Cortex Code chat panel, type:
 /semantic-view @semantic_view.md
 ```
 
-The `@` symbol attaches the file `Prompts/semantic_view.md` as context for the command.
+The `@` symbol attaches the file [`Prompts/semantic_view.md`](assets/Prompts/semantic_view.md) as context for the command.
 
 ### What CoCo Does
 
