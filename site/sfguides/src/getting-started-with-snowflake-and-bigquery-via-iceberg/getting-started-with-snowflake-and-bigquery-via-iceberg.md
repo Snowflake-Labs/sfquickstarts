@@ -1,4 +1,4 @@
-author: Matt Marzillo, Yoav Ostrinsky
+author: Yoav Ostrinsky
 id: getting-started-with-snowflake-and-bigquery-via-iceberg
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/transformation, snowflake-site:taxonomy/snowflake-feature/apache-iceberg
 language: en
@@ -467,6 +467,54 @@ ALTER ICEBERG TABLE bq_demo.public.drivers SET AUTO_REFRESH = TRUE;
 ```
 
 > With `AUTO_REFRESH = TRUE`, Snowflake keeps the table current as BigQuery publishes new metadata. You can also have BigQuery publish metadata automatically on mutation for managed Iceberg tables; contact Google to enable that on your project if you want zero manual `EXPORT TABLE METADATA` calls.
+
+<!-- ------------------------ -->
+## Cleanup
+
+When you're done, remove everything the guide created so you don't leave billable storage or standing IAM behind. Run the subset for the pattern(s) you built — or all of it if you did both. Tear down Snowflake first (it references the catalogs), then Google Cloud.
+
+### Snowflake
+```sql
+USE ROLE ACCOUNTADMIN;
+
+-- Pattern A
+DROP DATABASE IF EXISTS biglake_db;              -- catalog-linked database
+DROP CATALOG INTEGRATION IF EXISTS biglake_int;
+
+-- Pattern B
+DROP TABLE IF EXISTS bq_demo.public.drivers;
+DROP DATABASE IF EXISTS bq_demo;
+DROP DATABASE IF EXISTS bq_linked;               -- only if you built the CLD variant
+DROP EXTERNAL VOLUME IF EXISTS bq_extvol;
+DROP CATALOG INTEGRATION IF EXISTS bq_fed_int;
+```
+
+### Google Cloud
+Run these in the terminal where your `$PROJECT_ID`, `$REGION`, `$BUCKET`, `$POOL_ID`, and `$PROVIDER_ID` variables are still set.
+
+```bash
+# --- Pattern B: BigQuery table, dataset, and connection ---
+bq rm -f -t "$PROJECT_ID:bq_val.drivers"
+bq rm -f -d "$PROJECT_ID:bq_val"
+bq rm --connection --location="$REGION" "$PROJECT_ID.$REGION.biglake_conn"
+
+# --- Pattern A: BigLake table, namespace, and catalog ---
+gcloud biglake iceberg tables delete customers \
+  --namespace=analytics --catalog="$BUCKET" --quiet
+gcloud biglake iceberg namespaces delete analytics \
+  --catalog="$BUCKET" --quiet
+gcloud biglake iceberg catalogs delete "$BUCKET" --quiet
+
+# --- Shared: workload identity provider + pool ---
+gcloud iam workload-identity-pools providers delete "$PROVIDER_ID" \
+  --location=global --workload-identity-pool="$POOL_ID" --quiet
+gcloud iam workload-identity-pools delete "$POOL_ID" --location=global --quiet
+
+# --- Shared: the GCS bucket (removes all objects it holds) ---
+gcloud storage rm --recursive "gs://$BUCKET"
+```
+
+> **On the IAM grants.** The project-level role bindings you added to the *federated subject* (`principal://.../subject/...`) become inert the moment the workload identity pool is deleted, so there is nothing dangling to clean up. If you prefer to remove them explicitly, run `gcloud projects remove-iam-policy-binding "$PROJECT_ID" --member=... --role=...` for each role before deleting the pool. Deleting the BigQuery connection and BigLake catalog removes their auto-provisioned service accounts with them.
 
 <!-- ------------------------ -->
 ## What's Next
