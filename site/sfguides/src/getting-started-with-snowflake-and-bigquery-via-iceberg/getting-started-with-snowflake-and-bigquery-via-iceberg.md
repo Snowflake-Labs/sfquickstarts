@@ -11,11 +11,8 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Getting Started with Snowflake and BigQuery via Iceberg
 <!-- ------------------------ -->
 ## Overview 
-Duration: 5
 
-Apache Iceberg has become the de-facto open table format for the data lakehouse because it lets multiple engines read and write the *same* physical tables without copying data. This quickstart shows you how to make Snowflake and Google BigQuery interoperate on one shared set of Iceberg tables using the modern, catalog-based approach: the **Google BigLake Iceberg REST catalog** (part of Google's *Lakehouse for Apache Iceberg*), Snowflake **catalog-linked databases**, and **workload identity federation** for keyless authentication.
-
-> **What changed since the old approach?** Earlier integrations required you to manually copy `metadata.json` pointers between platforms, run `PATCH` commands, and manage long-lived service-account keys. That is no longer necessary. A shared Iceberg REST catalog lets each engine discover the current table state automatically, and workload identity federation removes keys entirely. This guide uses that modern path end-to-end.
+Apache Iceberg has become the de-facto open table format for the data lakehouse because it lets multiple engines read and write the *same* physical tables without copying data. This guide shows you how to make Snowflake and Google BigQuery interoperate on one shared set of Iceberg tables using the modern, catalog-based approach: the **Google BigLake Iceberg REST catalog** (part of Google's *Lakehouse for Apache Iceberg*), Snowflake **catalog-linked databases**, and **workload identity federation** for keyless authentication.
 
 ### Use Case
 There is often no one-size-fits-all engine for every workload. Teams land data with one platform and serve it with another, or inherit multiple platforms through mergers and acquisitions. Sharing a single set of Iceberg tables through a common catalog lets you:
@@ -59,7 +56,6 @@ The BigLake Iceberg REST catalog exposes **one** endpoint (`https://biglake.goog
 
 <!-- ------------------------ -->
 ## Understanding the Architecture
-Duration: 5
 
 Before touching a keyboard, it helps to have the mental model straight — this is what makes the two patterns click.
 
@@ -79,7 +75,6 @@ Before touching a keyboard, it helps to have the mental model straight — this 
 
 <!-- ------------------------ -->
 ## Shared Setup: Project, Bucket, and Keyless Auth
-Duration: 10
 
 Both patterns share the same Google project, storage bucket, and workload identity federation (WIF) trust between Snowflake and Google. Do this section once.
 
@@ -118,7 +113,7 @@ gcloud storage buckets create "gs://$BUCKET" \
 ```
 
 ### Get Snowflake's identity issuer URL
-Snowflake publishes an OIDC issuer that Google will trust. In a Snowflake worksheet:
+Snowflake publishes an OIDC issuer that Google will trust. In a Snowflake workspace:
 
 ```sql
 USE ROLE ACCOUNTADMIN;
@@ -157,7 +152,6 @@ You now have the shared foundation. Pick your direction below.
 
 <!-- ------------------------ -->
 ## Pattern A: Snowflake Writes, BigQuery Reads
-Duration: 15
 
 In this pattern the BigLake catalog owns the Iceberg tables (files in your bucket). Snowflake writes through a **catalog-linked database** and BigQuery reads the same tables **live** — no metadata copying.
 
@@ -289,7 +283,6 @@ Expected result — the same three rows Snowflake just wrote:
 
 <!-- ------------------------ -->
 ## Pattern B: BigQuery Writes, Snowflake Reads
-Duration: 15
 
 Here BigQuery owns the tables as **Apache Iceberg managed tables**, and Snowflake reads them through a catalog integration that federates BigQuery's catalog (`bq://`). Because this flavour does not vend credentials, Snowflake attaches its own storage access via an **external volume**.
 
@@ -362,7 +355,7 @@ CREATE OR REPLACE CATALOG INTEGRATION bq_fed_int
 ```
 
 ### Create an external volume over the bucket
-The volume gives Snowflake its own read path to the data files. Read-only is enough here.
+The `bq://` federation flavour does **not** support credential vending, so Snowflake cannot rely on the catalog to hand it storage tokens the way Pattern A does. Instead you attach your own read path to the data files with an external volume. Read-only is enough here.
 
 ```sql
 CREATE OR REPLACE EXTERNAL VOLUME bq_extvol
@@ -438,7 +431,6 @@ Expected result — the rows BigQuery wrote:
 
 <!-- ------------------------ -->
 ## Keeping Readers in Sync
-Duration: 5
 
 Freshness behaves differently in each direction, and it is worth stating plainly.
 
@@ -478,7 +470,6 @@ ALTER ICEBERG TABLE bq_demo.public.drivers SET AUTO_REFRESH = TRUE;
 
 <!-- ------------------------ -->
 ## What's Next
-Duration: 2
 
 - **Bidirectional writes to a single table (preview).** Google has announced read **and write** interoperability for GCS-flavour Iceberg REST catalog tables — meaning BigQuery will be able to write the very same tables Snowflake writes in Pattern A. When that reaches your project you can collapse Patterns A and B into one truly shared, multi-writer table. Until then, choose the pattern that matches your primary writer.
 - **Add a third engine.** The same catalog is open to Apache Spark (Google's Managed Service for Apache Spark, or self-managed Spark) using the Iceberg REST catalog config with `GoogleAuthManager` and, for the GCS flavour, the `X-Iceberg-Access-Delegation: vended-credentials` header. Nothing about Snowflake or BigQuery changes.
@@ -486,7 +477,6 @@ Duration: 2
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
-Duration: 2
 
 You built genuine, catalog-based interoperability between Snowflake and BigQuery on shared Apache Iceberg tables — no metadata files copied by hand and no service-account keys. You saw both directions and, importantly, *why* each one works the way it does: one BigLake Iceberg REST catalog with two warehouse flavours that decide table ownership, write access, credential vending, and freshness.
 
