@@ -21,7 +21,7 @@ In this quickstart, you will create an operational Postgres database with a simp
 ### What You Will Build
 - A Snowflake Postgres instance with an operational IoT database (devices, sensors, and readings)
 - A Postgres Mirror that replicates selected tables into Snowflake on a schedule
-- An end-to-end sync pipeline that picks up new rows automatically
+- An end-to-end sync pipeline that picks up new rows, schema changes, and deletes automatically
 
 ### What You Will Learn
 - How to create and connect to a Snowflake Postgres instance
@@ -29,6 +29,9 @@ In this quickstart, you will create an operational Postgres database with a simp
 - How to enable the required extensions (`pg_lake` and `snowflake_cdc`)
 - How to create a mirror using SQL or the Snowflake UI
 - How to verify data replication and monitor ongoing sync
+- How schema changes (DDL) propagate automatically through the mirror
+- How deletes replicate from Postgres to Snowflake
+- How to use `$live` views for sub-minute read latency and `$changes` for a 7-day audit trail
 
 ### Prerequisites
 - Access to a Snowflake account with Snowflake Postgres enabled
@@ -147,9 +150,11 @@ You can create a mirror using the `snowflake.postgres.create_mirror` procedure. 
 
 > **Note:** The target database in Snowflake must not already exist — the mirror will create it automatically.
 
+Switch to **Snowflake** and run the following:
+
 ```sql
 CALL snowflake.postgres.create_mirror(
-    mirror_name         => 'orders_mirror',
+    mirror_name         => 'iot_mirror',
     postgres_instance   => 'mirror-test-sql',
     postgres_database   => 'postgres',
     target_database     => 'POSTGRESMIRRORTOSNOWFLAKE',
@@ -171,7 +176,7 @@ There is also a Mirroring tab on the Postgres landing page . This may take a few
 <!-- ------------------------ -->
 ## Confirm Data in Snowflake
 
-Once the mirror is created and the initial sync completes, switch to **Snowflake** and verify that the data has arrived.
+Once the mirror is created and the initial sync completes, run the following in **Snowflake** to verify that the data has arrived.
 
 ```sql
 SELECT COUNT(*) FROM POSTGRESMIRRORTOSNOWFLAKE.PUBLIC.READINGS;
@@ -219,10 +224,170 @@ SELECT COUNT(*) FROM POSTGRESMIRRORTOSNOWFLAKE.PUBLIC.READINGS;
 The count should match 985. From this point on, any inserts, updates, or deletes in Postgres will automatically replicate to Snowflake on the configured refresh interval.
 
 <!-- ------------------------ -->
+## Schema Changes Through the Mirror
+
+Postgres Mirror supports **schema evolution** — DDL changes on the source automatically propagate to the Snowflake target without reconfiguring the mirror.
+
+### Add a Column
+
+Add a `status` column to the `devices` table in **Postgres**. Tables tracked by `snowflake_cdc` don't allow `ADD COLUMN` with a `DEFAULT` clause, so add the column first, then populate existing rows:
+
+```sql
+ALTER TABLE devices ADD COLUMN status TEXT;
+UPDATE devices SET status = 'active';
+```
+
+### Rename a Column
+
+Rename the `location` column to `site_location`:
+
+```sql
+ALTER TABLE devices RENAME COLUMN location TO site_location;
+```
+
+### Verify Schema Changes in Snowflake
+
+Wait about a minute, then confirm the updated schema in **Snowflake**:
+
+```sql
+DESCRIBE TABLE POSTGRESMIRRORTOSNOWFLAKE.PUBLIC.DEVICES;
+SELECT * FROM IOT_TEST3_MIRROR.PUBLIC.DEVICES LIMIT 20;
+```
+
+You should see the new `STATUS` column and the renamed `SITE_LOCATION` column. The mirror handles these DDL changes automatically — no need to drop and recreate anything.
+
+<!-- ------------------------ -->
+## Data Deletes
+
+Postgres Mirror replicates deletes in addition to inserts and updates. Test this by removing some rows from the source.
+
+> **Note:** Tables must have a primary key to support `UPDATE` and `DELETE` replication. The tables in this quickstart already have primary keys defined.
+
+### Delete Rows in Postgres
+
+Remove all readings older than 12 hours in **Postgres**:
+
+```sql
+DELETE FROM readings WHERE ts < NOW() - INTERVAL '12 hours';
+```
+
+Check the remaining count:
+
+```sql
+SELECT COUNT(*) FROM readings;
+```
+
+### Verify Deletes in Snowflake
+
+After the next refresh cycle, the Snowflake target table should reflect the same count:
+
+```sql
+SELECT COUNT(*) FROM POSTGRESMIRRORTOSNOWFLAKE.PUBLIC.READINGS;
+```
+
+The deleted rows are gone from the target table. If you need to see what was deleted, the `$changes` table retains a 7-day history of all changes including deletes (covered in the next section).
+
+<!-- ------------------------ -->
+## Query $live and $changes
+
+Every mirrored table has two companion objects that give you more visibility into the data:
+
+- **`$live`** — A view that combines the target table with not-yet-merged changes, giving sub-minute read lag regardless of the `refresh_interval`.
+- **`$changes`** — A rolling 7-day change feed showing every insert, update, and delete as queryable rows.
+
+### Use $live for Low-Latency Reads
+
+The `$live` view lets you query the latest committed state from Postgres without waiting for the next apply run. Insert a new device in **Postgres**:
+
+```sql
+INSERT INTO devices (device_name, site_location, status)
+VALUES ('IoT-Gateway-Urgent', 'Emergency-Bay', 'active');
+```
+
+Immediately query `$live` in **Snowflake** — you should see the new row within ~30 seconds, even before the next scheduled refresh:
+
+```sql
+SELECT * FROM POSTGRESMIRRORTOSNOWFLAKE.PUBLIC.DEVICES$live
+ORDER BY CREATED_AT DESC
+LIMIT 5;
+```
+
+Compare this with the target table, which only updates on the refresh interval:
+
+```sql
+SELECT COUNT(*) FROM POSTGRESMIRRORTOSNOWFLAKE.PUBLIC.DEVICES;
+SELECT COUNT(*) FROM POSTGRESMIRRORTOSNOWFLAKE.PUBLIC.DEVICES$live;
+```
+
+A gap between these counts indicates changes are pending and will be merged on the next apply run.
+
+> **Note:** `$live` views are not transactional. Because `$changes` rows arrive incrementally, `$live` can expose a partial transaction. For transactional consistency, query the target tables directly.
+
+### Use $changes for Audit and Change History
+
+The `$changes` table exposes every row-level change with metadata columns. Query recent changes to the `readings` table in **Snowflake**:
+
+```sql
+SELECT
+    _commit_time,
+    _change_type,
+    _is_update,
+    READING_ID,
+    SENSOR_ID,
+    VALUE
+FROM POSTGRESMIRRORTOSNOWFLAKE.PUBLIC.READINGS$changes
+ORDER BY _commit_lsn DESC, _lsn DESC
+LIMIT 20;
+```
+
+Key columns in `$changes`:
+- `_change_type`: `I` for insert, `D` for delete. Updates appear as a `D`/`I` pair.
+- `_is_update`: `true` on the insert half of an update, `false` on pure inserts.
+- `_commit_time`: Timestamp of the source transaction commit.
+- `_data_version`: Increments on `TRUNCATE` or primary key changes — a signal to reset any downstream bookmarks.
+
+### See the Deletes from Earlier
+
+You can confirm the deletes you ran earlier show up in the change feed:
+
+```sql
+SELECT _change_type, COUNT(*)
+FROM POSTGRESMIRRORTOSNOWFLAKE.PUBLIC.READINGS$changes
+GROUP BY _change_type;
+```
+
+You should see `D` rows corresponding to the readings you deleted, and `I` rows for all the inserts.
+
+<!-- ------------------------ -->
+## Cleanup
+
+When you're done experimenting, clean up the resources created in this quickstart.
+
+### Drop the Mirror
+
+Drop the mirror from **Snowflake**. Use `CASCADE` to also delete the target database:
+
+```sql
+CALL SNOWFLAKE.POSTGRES.DROP_MIRROR('iot_mirror', CASCADE => TRUE);
+```
+
+If you omit `CASCADE`, the target database is left in place and remains queryable, but it will no longer receive updates.
+
+### Delete the Postgres Instance
+
+Delete the Snowflake Postgres instance from Snowsight or SQL:
+
+```sql
+DROP POSTGRES INSTANCE "my-instance";
+```
+
+Replace `"my-instance"` with the name of your instance.
+
+<!-- ------------------------ -->
 ## Conclusion and Resources
 
 ### Congratulations!
-You have successfully set up Postgres Mirror to replicate operational data from Snowflake Postgres into Snowflake — with no external ETL pipeline required. New changes in Postgres are automatically captured and synced on a schedule.
+You have successfully set up Postgres Mirror to replicate operational data from Snowflake Postgres into Snowflake — with no external ETL pipeline required. New changes in Postgres are automatically captured and synced on a schedule, including schema changes and deletes.
 
 ### What You Learned
 - How to create a Snowflake Postgres instance and connect to it
@@ -230,6 +395,10 @@ You have successfully set up Postgres Mirror to replicate operational data from 
 - How to enable the `pg_lake` and `snowflake_cdc` extensions
 - How to create a mirror using SQL or the Snowflake UI
 - How to verify initial replication and monitor ongoing sync
+- How schema changes (add/rename/alter columns) propagate automatically
+- How deletes replicate through the mirror
+- How to use `$live` for sub-minute read latency
+- How to query `$changes` for a 7-day audit trail of all row-level changes
 
 ### Related Resources
 - [Getting Started with Snowflake Postgres](https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake-postgres/)
