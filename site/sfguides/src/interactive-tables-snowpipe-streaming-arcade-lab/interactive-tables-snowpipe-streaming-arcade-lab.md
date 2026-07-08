@@ -1,7 +1,7 @@
 authors: Brad Culberson
 id: interactive-tables-snowpipe-streaming-arcade-lab
 summary: Stream thousands of arcade game scores into Snowflake in real time using the Snowpipe Streaming Python SDK, store them in an Interactive Table, and query with sub-second latency using an Interactive Warehouse.
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/snowpipe-streaming, snowflake-site:taxonomy/snowflake-feature/ingestion, snowflake-site:taxonomy/snowflake-feature/interactive-tables, snowflake-site:taxonomy/snowflake-feature/interactive-warehouse
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/snowpipe-streaming, snowflake-site:taxonomy/snowflake-feature/ingestion, snowflake-site:taxonomy/snowflake-feature/interactive-tables, snowflake-site:taxonomy/snowflake-feature/interactive-warehouse, snowflake-site:taxonomy/snowflake-feature/unistore
 environments: web
 language: en
 status: Published
