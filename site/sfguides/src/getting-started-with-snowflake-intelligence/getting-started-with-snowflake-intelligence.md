@@ -1,7 +1,7 @@
-id: getting-started-with-snowflake-intelligence
+id:  getting-started-with-snowflake-intelligence
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
 language: en
-summary: This guide outlines the process for getting started with Snowflake Intelligence. 
+summary: This guide outlines the process for getting started with Snowflake CoWork, the personal work agent that brings deep analysis and automation to every knowledge worker.
 environments: web
 status: Published
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
@@ -9,31 +9,21 @@ authors: Dash Desai
 open in snowflake link: https://app.snowflake.com/templates?template=get_started_with_snowflake_intelligence&utm_source=build&utm_medium=templates&utm_campaign=guides&utm_content=nov25
 
 
-
-
-# Getting Started with Snowflake Intelligence
+# Getting Started with Snowflake CoWork
 
 ## Overview
 
+[Snowflake CoWork](https://www.snowflake.com/en/product/snowflake-cowork/) is the personal work agent that brings deep analysis and automation to every knowledge worker. It acts across the systems users already rely on, with built-in RBAC and governance for secure and trusted answers, all inside Snowflake's perimeter. It delivers governed, curated dashboards and shareable artifacts so insights become reusable team knowledge, turning everyday work into repeatable processes and enabling teams to share and build on each other’s insights.
 
-Snowflake Intelligence is an Enterprise Intelligence Agent that provides every user with the ability to answer complex questions in natural language, and puts insights at every user’s fingertips. With a single question, you can get comprehensive insights across your business data. It moves beyond the “what” to the critical “why” with an always-available thought partner at their fingertips that can facilitate deep research and suggest solutions to previously difficult and time-consuming business problems.
+Unlike standalone AI tools, CoWork is grounded in your enterprise data from day one, combining AI reasoning with Snowflake's governance layer so every answer is trusted, cited, and secure.
 
-Snowflake Intelligence removes the barriers to insights, enabling users to understand the cross-sections of their data and test assumptions with a shared understanding of the data needed to make impactful business decisions.
+By the end of this guide, you will have a working Cortex Agent connected to CoWork that can answer business questions across structured sales data and unstructured support tickets, generate charts, and take actions like sending summary emails.
 
-
-### What is Snowflake Intelligence? 
-
-Ask complex questions of all your data, analyze and get insights instantly with Snowflake Intelligence as your always-on thought partner.
-- **Deep analysis, quick action:** Go beyond the “what” to quickly understand the critical “why,” accelerating action with AI agents that use natural language to analyze and reason across all your data, including third-party sources and market intelligence.
-- **Verified, trusted answers:** Trace every answer to its source. Codify "golden" questions for verified answers.
-- **Enterprise-ready:** Maintain peace of mind knowing that Snowflake Intelligence scales with your enterprise data and application complexity — all within Snowflake’s secure perimeter and with the same robust governance policies.
-
-
-![Snowflake Intelligence](assets/si.png)
+![Snowflake CoWork](assets/snowflake-cowork-home-page.png)
 
 ### Use Cases
 
-Snowflake Intelligence streamlines data-driven decision-making across various business use cases:
+CoWork moves teams from reactive Q&A to proactive, context-aware intelligence that drives decisions and execution across various business use cases:
 
 * **Sales performance analysis:** Sales managers can quickly get answers to complex questions like "What were my top product sales in the West region last quarter, and why did product X outperform product Y?" while analysts can understand critical trends like "Why are support tickets increasing?" by reasoning across diverse data sources.
 
@@ -47,13 +37,6 @@ Snowflake Intelligence streamlines data-driven decision-making across various bu
 
 * Access to a [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) with the ACCOUNTADMIN role in a region where you have access to the [supported models](https://docs.snowflake.com/en/user-guide/snowflake-cortex/snowflake-intelligence#supported-models-and-regions). Otherwise, you will need to enable [cross-region inference](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cross-region-inference/?utm_source=snowflake-devrel&utm_medium=developer-guides).
 
-### What You Will Learn
-
-How to create the building blocks (agents) for Snowflake Intelligence.
-
-### What You Will Build
-
-An Enterprise Intelligence Agent - Snowflake Intelligence - that can respond to questions by reasoning over both structured and unstructured data.
 
 <!-- ------------------------ -->
 ## Setup
@@ -130,7 +113,7 @@ as (
 
 ### Create Agent
 
-An agent is an intelligent entity within Snowflake Intelligence that acts on behalf of the user. Agents are configured with specific tools and orchestration logic to answer questions and perform tasks on top of your data. 
+An agent is an intelligent entity within Snowflake CoWork that acts on behalf of the user. Agents are configured with specific tools and orchestration logic to answer questions and perform tasks on top of your data. 
 
 Note that you can create multiple agents for various use cases and/or business teams in your organization. 
 
@@ -187,7 +170,7 @@ Tools are the capabilities an agent can use to accomplish a task. Think of them 
       - Parameter: recipient_email
         - Description: *If the email is not provided, send it to the current user's email address.*
       - Parameter: subject
-        - Description: *If the subject is not provided, use "Snowflake Intelligence".*
+        - Description: *If the subject is not provided, use "Snowflake CoWork".*
       
 
 * Orchestration Instructions: *Whenever you can answer visually with a chart, always choose to generate a chart even if the user didn't specify to.*
@@ -198,13 +181,13 @@ Tools are the capabilities an agent can use to accomplish a task. Think of them 
 > NOTE: On the top right corner, click on **Save** to save the newly updated **Sales_AI** agent.
 
 <!-- ------------------------ -->
-## Snowflake Intelligence
+## Snowflake CoWork
 
 
 
 > PREREQUISITE: Successful completion of steps outlined under **Setup**.
 
-Open <a href="https://ai.snowflake.com/_deeplink/#/ai?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_campaign=-us-en-all&utm_content=app-getting-started-with-si&utm_cta=developer-guides-deeplink" class="_deeplink">Snowflake Intelligence</a> and make sure you're signed into the right account. If you're not sure, click on your name in the bottom left >> **Sign out** and sign back in. Also note that your role should be set to **SNOWFLAKE_INTELLIGENCE_ADMIN**, the warehouse should be set to **DASH_WH_SI**, and your agent should be set to Sales//AI.
+Open <a href="https://ai.snowflake.com/_deeplink/#/ai?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_campaign=-us-en-all&utm_content=app-getting-started-with-si&utm_cta=developer-guides-deeplink" class="_deeplink">Snowflake CoWork</a> and make sure you're signed into the right account. If you're not sure, click on your name in the bottom left >> **Sign out** and sign back in. Also note that your role should be set to **SNOWFLAKE_INTELLIGENCE_ADMIN**, the warehouse should be set to **DASH_WH_SI**, and your agent should be set to Sales//AI.
 
 Now, let's ask the following questions.
 
@@ -243,16 +226,16 @@ Here are some other questions you may ask.
 <!-- ------------------------ -->
 ## Conclusion And Resources
 
-
-Congratulations! You've successfully built an enterprise intelligence agent - Snowflake Intelligence - that can respond to questions by reasoning over both structured and unstructured data.
+Congratulations! You've successfully built a Cortex Agent for Snowflake CoWork that can respond to questions by reasoning over both structured and unstructured data.
 
 ### What You Learned
 
-You've learned how to create the fundamental building blocks for Snowflake Intelligence. This agent is now a powerful asset, capable of combining analysis and automated tasks right from a single chat interface. 
+You've learned how to create the fundamental building blocks for Snowflake CoWork. This Cortex Agent is now a powerful asset, capable of combining deep analysis and automated tasks right from a single chat interface. 
 
 ### Related Resources
 
 - [GitHub Repository](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-intelligence)
-- [Snowflake Intelligence Documentation](https://docs.snowflake.com/user-guide/snowflake-cortex/snowflake-intelligence)
+- [Snowflake CoWork Documentation](https://docs.snowflake.com/user-guide/snowflake-cortex/snowflake-intelligence)
+- [Best Practices to Building Cortex Agents](https://www.snowflake.com/en/developers/guides/best-practices-to-building-cortex-agents/)
 
 

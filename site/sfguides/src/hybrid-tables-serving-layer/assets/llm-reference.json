@@ -1,0 +1,51 @@
+{
+  "guide_id": "hybrid-tables-serving-layer",
+  "title": "Serving Low-Latency Data with Hybrid Tables",
+  "version": "1.0.0",
+  "last_updated": "2026-06-17",
+  "author": "Adam Timm",
+  "description": "Replace reverse ETL pipelines with Hybrid Tables as a low-latency serving layer for email personalization, API backends, and application workloads.",
+  "scenarios": [
+    {
+      "name": "Email/Marketing Personalization",
+      "pattern": "Precompute recommendations in standard table, CTAS+SWAP into Hybrid Table, serve at high concurrency to email platform",
+      "access_pattern": "Lookup by user_id (PK prefix), return top N recommendations",
+      "refresh_method": "CTAS+SWAP (atomic bulk replace, every 4-24 hours)",
+      "concurrency": "10K-50K QPS during campaign blasts"
+    },
+    {
+      "name": "API Backend (Entitlements/Session State)",
+      "pattern": "Hybrid Table as REST API backing store for authorization decisions",
+      "access_pattern": "Lookup by composite key (user_id, resource_type, resource_id)",
+      "refresh_method": "Incremental DML (INSERT/UPDATE/DELETE/MERGE)",
+      "concurrency": "1K-10K QPS steady state"
+    }
+  ],
+  "ctas_swap_pattern": {
+    "steps": [
+      "CREATE OR REPLACE HYBRID TABLE new_table (...) AS SELECT * FROM source",
+      "ALTER TABLE serving_table SWAP WITH new_table",
+      "DROP TABLE new_table"
+    ],
+    "why_swap": "ALTER TABLE SWAP WITH is atomic metadata operation. Applications see new data immediately with zero downtime. RENAME requires two statements with a brief name-unavailable window.",
+    "compaction_note": "After CTAS+SWAP, the new table requires a warm-up period (plan cache, warehouse data cache). Schedule refreshes during low-traffic windows to minimize impact."
+  },
+  "warehouse_sizing": {
+    "size": "XSMALL (point lookups don't need compute power)",
+    "max_cluster_count": "3-10 based on peak concurrency",
+    "min_cluster_count": "1-2 (keep warm to avoid cold-start)",
+    "scaling_policy": "STANDARD (scales up aggressively)",
+    "auto_suspend": "300-600 (avoid suspend/resume during traffic dips)",
+    "why_xs": "XS cluster is sufficient for many operational serving workloads. Benchmark your patterns, then scale horizontally via clusters, not vertically via larger size."
+  },
+  "warpspeed": {
+    "note": "WarpSpeed (Public Preview) can improve latency for repeated query patterns. Benchmark your specific workload to measure impact.",
+    "requirements": ["Bound variables", "Consistent query shape", "Queries outside stored procedures"],
+    "serving_fit": "High — serving workloads execute the same parameterized query shape repeatedly"
+  },
+  "vs_external_cache": {
+    "use_hybrid_table": ["Latency target: double-digit ms", "Data already in Snowflake", "Eliminate pipeline complexity", "Refresh minutes to hours", "Up to ~50K QPS", "Single source of truth"],
+    "keep_external_cache": ["Latency target <1ms", "Data originates outside Snowflake", "Refresh sub-second", ">100K QPS sustained", "Eventual consistency acceptable"]
+  },
+  "validated_patterns": ["CTAS with composite PK (user_id, content_id)", "ALTER TABLE SWAP WITH on Hybrid Tables", "Point lookup on composite PK prefix", "Entitlements INSERT + DELETE + MERGE"]
+}

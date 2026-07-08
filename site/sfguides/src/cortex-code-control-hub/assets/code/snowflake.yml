@@ -1,0 +1,40 @@
+definition_version: 2
+entities:
+  cortex_code_credit_manager:
+    type: streamlit
+    identifier:
+      name: CORTEX_CODE_CREDIT_MANAGER
+      database: YOUR_DB
+      schema: YOUR_SCHEMA
+    title: "CoCo Control Hub"
+    query_warehouse: YOUR_WAREHOUSE
+    main_file: streamlit_app.py
+    artifacts:
+      - config.py
+      - config.yaml
+      - .streamlit/config.toml
+      - audit.py
+      - utils.py
+      - intelligence.py
+      - sp_definitions.py
+      - prerequisites.sql
+      - environment.yml
+      - pages/__init__.py
+      - pages/home.py
+      - pages/access_management.py
+      - pages/credit_config.py
+      - pages/usage_trends.py
+      - pages/budget_forecast.py
+      - pages/model_access.py
+      - pages/credit_requests.py
+      - pages/settings.py
+      - pages/audit_logs.py
+      - pages/setup.py
+      - pages/observability.py
+      - pages/cost_attribution.py
+      - pages/prompt_analysis.py
+      - pages/user_intelligence.py
+      - pages/policy_rules.py
+      - pages/alerts.py
+      - pages/model_intelligence.py
+    stage: CORTEX_CODE_CREDIT_MANAGER_STAGE

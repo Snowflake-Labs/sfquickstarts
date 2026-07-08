@@ -4,7 +4,8 @@ categories: snowflake-site:taxonomy/solution-center/certification/well-architect
 language: en
 summary: Optimizing performance on Snowflake is crucial for efficient data analysis. 
 environments: web
-status: Published 
+status: Published
+fork repo link: https://github.com/Snowflake-Labs/coco-skills/tree/main/skills/well-architected-framework-assessment
 
 
 
