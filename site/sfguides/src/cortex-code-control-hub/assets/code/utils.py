@@ -6,6 +6,7 @@ All read queries go through here. Write operations go through SPs or audit.py.
 """
 
 import json
+import re
 from datetime import date, datetime, timedelta
 from typing import Any, Dict, List, Optional, Tuple
 
@@ -77,28 +78,55 @@ def list_roles(_session) -> List[str]:
             return []
 
 
-@st.cache_data(ttl=USER_LIST_CACHE_TTL)
+_ROLE_UUID   = re.compile(r"^[0-9a-fA-F]{8}-", re.IGNORECASE)
+_ROLE_SVC    = re.compile(r"^(SVC_|MANAGED_|SYSTEM\$|APP_|SNOWFLAKE)", re.IGNORECASE)
+_SKIP_EXPAND = {"ACCOUNTADMIN", "SYSADMIN", "SECURITYADMIN", "ORGADMIN", "PUBLIC"}
+_MAX_ROLES   = 500
+
+
 def get_role_members(_session, role_name: str) -> List[str]:
-    safe_role = sanitize_identifier(role_name)
-    try:
-        df = _session.sql(f'SHOW GRANTS OF ROLE "{safe_role}"').to_pandas()
-        if df.empty:
-            return []
-        df.columns = [c.strip('"').upper() for c in df.columns]
-        if "GRANTED_TO" in df.columns and "GRANTEE_NAME" in df.columns:
-            user_grants = df[df["GRANTED_TO"].str.upper() == "USER"]
-            names = user_grants["GRANTEE_NAME"].dropna().unique().tolist()
-            # Filter out UUID-style managed accounts (OAuth, Cortex Code sessions,
-            # SPCS, etc.) and known service account prefixes.
-            # These appear in GRANTS but not in SHOW USERS — they're not humans.
-            import re
-            _UUID = re.compile(r"^[0-9a-fA-F]{8}-", re.IGNORECASE)
-            _SVC  = re.compile(r"^(SVC_|MANAGED_|SYSTEM\$|APP_|SNOWFLAKE)", re.IGNORECASE)
-            names = [n for n in names if n and not _UUID.match(n) and not _SVC.match(n)]
-            return sorted(names)
-        return []
-    except Exception:
-        return []
+    """
+    Returns all human users who have role_name in their effective role set,
+    including users who inherit it through intermediate roles (full BFS).
+    Excludes service accounts, managed users, and UUID-style sessions.
+    God-roles (ACCOUNTADMIN etc.) have their direct user grants collected
+    but their child roles are not expanded further.
+    """
+    visited: set = set()
+    queue:   list = [role_name.upper()]
+    users:   set  = set()
+
+    while queue and len(visited) < _MAX_ROLES:
+        role = queue.pop(0)
+        if role in visited:
+            continue
+        visited.add(role)
+        # Strip any surrounding quotes from the role name before re-quoting
+        clean_role = role.strip('"').strip("'")
+        safe_role  = clean_role.replace('"', '""')
+        try:
+            df = _session.sql(f'SHOW GRANTS OF ROLE "{safe_role}"').to_pandas()
+            if df.empty:
+                continue
+            df.columns = [c.strip('"').upper() for c in df.columns]
+            if "GRANTED_TO" not in df.columns or "GRANTEE_NAME" not in df.columns:
+                continue
+            for _, row in df.iterrows():
+                gt   = str(row["GRANTED_TO"]).upper()
+                name = str(row["GRANTEE_NAME"]).upper()
+                if not name or name == "NAN":
+                    continue
+                if gt == "USER":
+                    if not _ROLE_UUID.match(name) and not _ROLE_SVC.match(name):
+                        users.add(name)
+                elif gt == "ROLE" and name not in visited:
+                    if role not in _SKIP_EXPAND:
+                        # Strip quotes from child role name before queuing
+                        queue.append(name.strip('"').strip("'"))
+        except Exception:
+            continue
+
+    return sorted(users)
 
 
 def get_account_param(_session, param_name: str) -> Optional[str]:

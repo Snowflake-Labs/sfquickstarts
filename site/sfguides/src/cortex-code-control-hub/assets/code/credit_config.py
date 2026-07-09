@@ -128,8 +128,24 @@ def _render_cohort(session):
                                    help="All members of this role get the configured limit.")
         if chosen_role:
             cohort_identifier = chosen_role
-            members = get_role_members(session, chosen_role)
-            st.info(f"**{len(members)}** members in `{chosen_role}`")
+            # Try resolved members first (includes inherited hierarchy); fall back to direct grants
+            try:
+                resolved_rows = session.sql(f"""
+                    SELECT USER_NAME FROM {fq_table('CC_USER_COHORT_RESOLVED')}
+                    WHERE UPPER(COHORT_ROLE) = UPPER('{chosen_role.replace("'","''")}')
+                """).collect()
+                if resolved_rows:
+                    members = [str(r[0]) for r in resolved_rows]
+                    st.info(f"**{len(members)}** members in `{chosen_role}` (including inherited roles)")
+                else:
+                    members = get_role_members(session, chosen_role)
+                    if members:
+                        st.info(f"**{len(members)}** direct members in `{chosen_role}`")
+                    else:
+                        st.info(f"**0** members found. Click Apply — the SP will resolve members including inherited roles.")
+            except Exception:
+                members = get_role_members(session, chosen_role)
+                st.info(f"**{len(members)}** members in `{chosen_role}`")
     else:
         # Tag-based cohort
         tag_name = st.text_input("Tag Name", value="DEPARTMENT", key="cohort_tag_name",
@@ -172,12 +188,15 @@ def _render_cohort(session):
 
     # Apply button
     if members:
-        if st.button("Apply to Cohort", type="primary", key="btn_cohort_apply",
+        if st.button(f"Apply to Cohort ({len(members)} members)", type="primary", key="btn_cohort_apply",
                      help=f"Sets limits on {len(members)} users. {'Reverts on ' + str(expires_at) if expires_at else 'Permanent.'}"):
             _apply_cohort(session, cohort_identifier, members, cli_limit, ss_limit, dt_limit,
                          is_temporary=(duration_type == "Temporary"), expires_at=expires_at)
     else:
-        st.caption("No members found. Configure the cohort above.")
+        if st.button("Apply to Cohort", type="primary", key="btn_cohort_apply",
+                     help="Saves config and triggers SP to resolve members via full role hierarchy."):
+            _apply_cohort(session, cohort_identifier, members, cli_limit, ss_limit, dt_limit,
+                         is_temporary=(duration_type == "Temporary"), expires_at=expires_at)
 
 
 def _render_user_override(session):
@@ -326,8 +345,21 @@ def _apply_cohort(session, cohort_id, members, cli_limit, ss_limit, dt_limit, is
         return
 
     if not members:
-        st.warning("Config saved but no members to apply to.")
-        return
+        # No direct members — call resolve SP first to populate via role hierarchy
+        try:
+            with st.spinner("Resolving cohort members via role hierarchy..."):
+                session.sql(f"CALL {fq_table(session, 'SP_CC_RESOLVE_USER_COHORTS')}()").collect()
+            resolved_rows = session.sql(f"""
+                SELECT USER_NAME FROM {fq_table(session, 'CC_USER_COHORT_RESOLVED')}
+                WHERE UPPER(COHORT_ROLE) = UPPER('{safe_cohort}')
+            """).collect()
+            members = [str(r[0]) for r in resolved_rows]
+        except Exception as e:
+            st.warning(f"Config saved but could not resolve members: {e}")
+            return
+        if not members:
+            st.warning("Config saved but no members found — check that the role has users assigned (directly or via inherited roles).")
+            return
 
     # --- 2. Single bulk SP call — server-side loop, no CLIENT_ABORT risk ---
     expires_str = str(expires_at) if expires_at else ""
