@@ -265,7 +265,11 @@ The `refresh_action` column shows `INCREMENTAL` when Snowflake processed only th
 <!-- TODO: screenshot of the Snowsight Dynamic Tables monitoring / refresh history UI -->
 
 <!-- ------------------------ -->
-## Migrating a Materialized View
+## Simplified Pipelines
+
+Two of the most common pipelines to modernize are Materialized Views and Streams + Tasks. A Dynamic Table can replace either with a single, self-refreshing object.
+
+### Replacing a Materialized View
 
 A Materialized View pre-computes and stores query results, but it comes with real limits: you can't control its refresh timing, it has no incremental-refresh guarantees, it can't chain into other materialized views, and it **can't use joins or many complex aggregations**. Dynamic Tables have hardly any of these restrictions — they support joins, complex aggregations, and window functions, and chain into multi-layer pipelines.
 
@@ -300,12 +304,11 @@ CREATE OR REPLACE DYNAMIC TABLE menu_summary_dt
 
 You now control freshness with `TARGET_LAG`, get incremental refresh when possible, and can chain this table into downstream Dynamic Tables.
 
-<!-- ------------------------ -->
-## Replacing Streams and Tasks
+### Replacing Streams and Tasks
 
 A classic CDC pipeline uses a **Stream** to capture changes and a **Task** to `MERGE` them into a target table. Dynamic Tables can replace that pattern with far fewer moving parts. We show two approaches.
 
-### The traditional Streams + Tasks pattern
+#### The traditional Streams + Tasks pattern
 
 ```sql
 CREATE OR REPLACE STREAM menu_changes_stream ON TABLE menu_raw;
@@ -336,7 +339,7 @@ CREATE OR REPLACE TASK update_menu_profitability
 
 That's a stream, a task, a target table, and a schedule to manage.
 
-### Approach A: a declarative Dynamic Table
+#### Approach A: a declarative Dynamic Table
 
 When the transformation is expressible as a `SELECT`, a single Dynamic Table replaces all of it:
 
@@ -351,7 +354,7 @@ CREATE OR REPLACE DYNAMIC TABLE menu_profitability_dt
   FROM menu_raw;
 ```
 
-### Approach B: a Custom Incremental Dynamic Table (`REFRESH USING`)
+#### Approach B: a Custom Incremental Dynamic Table (`REFRESH USING`)
 
 Sometimes your logic *isn't* a plain `SELECT` — you need explicit `MERGE`/`INSERT` control (per-row update vs. delete, stream-static joins, accumulators). **Custom incremental dynamic tables** let you write exactly the `MERGE` you'd have put in the task, but Snowflake still owns scheduling, retries, and dependency tracking. They're especially strong at **stream-static joins** — enriching a fast, append-only event stream against slowly-changing dimension tables — because `CHANGES()` feeds only the new events while the dimensions are read fresh on every refresh.
 
@@ -407,7 +410,7 @@ Expected result — the insert and the update collapse to the final value:
 |:--|:--|:--|:--|
 | 9999 | CIDT Test Taco | 97.0000 | 97.98 |
 
-### Stream processing: enrich an event stream (stream-static join)
+#### Stream processing: enrich an event stream (stream-static join)
 
 Custom incremental tables are a natural fit for **stream processing**. Here an append-only `order_events` stream is enriched against the static `menu_raw` dimension — a classic stream-static join. `CHANGES(INFORMATION => APPEND_ONLY)` feeds only the new events; the menu dimension is read fresh on each refresh:
 
@@ -447,7 +450,7 @@ Each new order event is enriched with its menu details and revenue *as it arrive
 | 1 | Ice Tea | 2 | 6.0000 |
 | 2 | Lemonade | 1 | 3.5000 |
 
-### When to use which
+#### When to use which
 
 | | Streams + Tasks | Declarative DT | Custom Incremental DT |
 |:--|:--|:--|:--|
@@ -518,70 +521,7 @@ Expected result — item 1 retains all three versions; the open-ended row is cur
 | 1 | 4.2500 | 2026-06-17 09:00:00 | TRUE |
 | 2 | 3.5000 | 2026-06-01 09:05:00 | TRUE |
 
-> **What about partial updates?** The clean SCD Type 1 above assumes each change carries *all* columns. Real CDC feeds often send only the columns that changed, leaving the rest `NULL` — and a naive "latest row wins" would wipe good data. The next section solves that with custom incremental logic. For the full story, see the blog post [Managing Partial Updates in an SCD-1 Pipeline on Snowflake](https://www.snowflake.com/en/blog/engineering/snowflake-scd1-partial-updates/).
-
-<!-- ------------------------ -->
-## Deduplication with Partial Updates
-
-When a CDC event feed sends **partial updates** — only the changed columns, everything else `NULL` — naive deduplication ("latest row wins") overwrites valid history with `NULL`s. A custom incremental table fixes this by coalescing each incoming value against the state already stored in `SELF`.
-
-Build a feed where item 1's price changes but its name and category arrive `NULL`:
-
-```sql
-CREATE OR REPLACE TABLE menu_item_cdc (
-  menu_item_id NUMBER(38,0), menu_item_name VARCHAR, item_category VARCHAR,
-  sale_price_usd NUMBER(38,4), event_ts TIMESTAMP_NTZ
-) CHANGE_TRACKING = TRUE;
-
-INSERT INTO menu_item_cdc VALUES
-  (1, 'Ice Tea', 'Beverage', 3.00, '2026-06-01 09:00:00'),
-  (2, 'Lemonade', 'Beverage', 3.50, '2026-06-01 09:05:00');
-
--- Partial update: only the price changed; name and category arrive NULL
-INSERT INTO menu_item_cdc (menu_item_id, menu_item_name, item_category, sale_price_usd, event_ts)
-VALUES (1, NULL, NULL, 4.25, '2026-06-17 10:00:00');
-```
-
-```sql
-CREATE OR REPLACE DYNAMIC TABLE dt_menu_current_scd1 (
-  menu_item_id NUMBER(38,0), menu_item_name VARCHAR, item_category VARCHAR,
-  sale_price_usd NUMBER(38,4), last_changed_at TIMESTAMP_NTZ
-)
-  TARGET_LAG = '1 hour'
-  WAREHOUSE = COMPUTE_WH
-  REFRESH USING (
-    MERGE INTO SELF AS tgt USING (
-      SELECT menu_item_id,
-        LAST_VALUE(menu_item_name) IGNORE NULLS OVER (PARTITION BY menu_item_id ORDER BY event_ts) AS menu_item_name,
-        LAST_VALUE(item_category)  IGNORE NULLS OVER (PARTITION BY menu_item_id ORDER BY event_ts) AS item_category,
-        LAST_VALUE(sale_price_usd) IGNORE NULLS OVER (PARTITION BY menu_item_id ORDER BY event_ts) AS sale_price_usd,
-        event_ts
-      FROM menu_item_cdc CHANGES(INFORMATION => APPEND_ONLY)
-      QUALIFY ROW_NUMBER() OVER (PARTITION BY menu_item_id ORDER BY event_ts DESC) = 1
-    ) AS src ON tgt.menu_item_id = src.menu_item_id
-    WHEN MATCHED THEN UPDATE SET
-      menu_item_name = COALESCE(src.menu_item_name, tgt.menu_item_name),
-      item_category  = COALESCE(src.item_category, tgt.item_category),
-      sale_price_usd = COALESCE(src.sale_price_usd, tgt.sale_price_usd),
-      last_changed_at = src.event_ts
-    WHEN NOT MATCHED THEN
-      INSERT (menu_item_id, menu_item_name, item_category, sale_price_usd, last_changed_at)
-      VALUES (src.menu_item_id, src.menu_item_name, src.item_category, src.sale_price_usd, src.event_ts)
-  );
-
-SELECT menu_item_id, menu_item_name, item_category, sale_price_usd
-FROM dt_menu_current_scd1 ORDER BY menu_item_id;
-```
-
-Expected result — item 1 got the new price but **kept** its name and category:
-
-| MENU_ITEM_ID | MENU_ITEM_NAME | ITEM_CATEGORY | SALE_PRICE_USD |
-|:--|:--|:--|:--|
-| 1 | Ice Tea | Beverage | 4.2500 |
-| 2 | Lemonade | Beverage | 3.5000 |
-
-![SCD Type 1 partial update preserved](assets/scd1_partial_update.png)
-<!-- TODO: screenshot of dt_menu_current_scd1 result -->
+> **What about partial updates?** The clean SCD Type 1 above assumes each change carries *all* columns. Real CDC feeds often send only the columns that changed, leaving the rest `NULL` — and a naive "latest row wins" would wipe good data. Custom incremental dynamic tables solve this by coalescing partial updates against the current state — for the full story, see [Managing Partial Updates in an SCD-1 Pipeline on Snowflake](https://www.snowflake.com/en/blog/engineering/snowflake-scd1-partial-updates/).
 
 <!-- ------------------------ -->
 ## Dynamic Iceberg Tables
@@ -590,6 +530,8 @@ A **Dynamic Iceberg Table** stores its output in open Apache Iceberg™ format o
 
 With Snowflake-managed storage you don't need an external volume or catalog; just add the `ICEBERG` keyword.
 
+Dynamic Iceberg Tables can read from both Iceberg v2 and v3 source tables, and materialize their output as either version — control it with `ICEBERG_VERSION` on the table (or the database-level `ICEBERG_VERSION_DEFAULT`).
+
 > Snowflake-managed storage for Iceberg is available on AWS and Azure. If you need control over the storage location, you can instead supply `EXTERNAL_VOLUME`, `CATALOG = 'SNOWFLAKE'`, and `BASE_LOCATION`.
 
 ```sql
@@ -597,6 +539,7 @@ CREATE OR REPLACE DYNAMIC ICEBERG TABLE dt_menu_profit_iceberg
   TARGET_LAG = '1 hour'
   WAREHOUSE = COMPUTE_WH
   REFRESH_MODE = INCREMENTAL
+  ICEBERG_VERSION = 3
   AS
   SELECT menu_item_id, menu_item_name, truck_brand_name,
          (sale_price_usd - cost_of_goods_usd) AS profit_usd
@@ -664,11 +607,11 @@ Dynamic Tables schedule themselves, but they also fit into broader orchestration
 Snowflake refreshes a pipeline of Dynamic Tables in dependency order automatically — you don't build a DAG for the refreshes themselves. When you need to coordinate Dynamic Tables with *other* steps (loads, exports, notifications), you have options:
 
 - **Task graphs (DAGs):** Chain Tasks with predecessor relationships to run steps in order — for example, load a stage, then `EXECUTE TASK` to kick a manual refresh, then export results. Use a finalizer task for teardown/notification steps.
-- **dbt:** If you manage transformations in dbt, you can define and orchestrate Dynamic Tables from dbt models. See [Dynamic Tables + dbt: A Powerful Combination](https://medium.com/snowflake/dynamic-tables-dbt-a-powerful-combination-f550ebc23d60).
+- **dbt:** If you manage transformations in dbt, you can define and orchestrate Dynamic Tables from dbt models. See [Dynamic Tables and dbt](https://docs.snowflake.com/en/user-guide/dynamic-tables/dbt).
 
 ### CI/CD with DCM
 
-**Database Change Management (DCM)** projects let you define Dynamic Tables (and their upstream tables, roles, and grants) declaratively and deploy them with a plan/deploy workflow — infrastructure-as-code for Snowflake. Use `TARGET_LAG = 'DOWNSTREAM'` on intermediate tables and `INITIALIZE = 'ON_SCHEDULE'` for clean deploys.
+**Database Change Management (DCM)** projects let you define Dynamic Tables (and their upstream tables, roles, and grants) declaratively and deploy them with a plan/deploy workflow — infrastructure-as-code for Snowflake. Use `INITIALIZE = 'ON_SCHEDULE'` so a deployment returns immediately instead of blocking on the initial refresh.
 
 For an end-to-end DCM pipeline built around Dynamic Tables, see the companion guide: [DCM Projects for Dynamic Tables](https://www.snowflake.com/en/developers/guides/dcm-projects-for-dynamic-tables/).
 
@@ -688,7 +631,7 @@ DROP DATABASE IF EXISTS DYNAMIC_TABLES_GUIDE;
 
 That's the whole journey — from a first `SELECT`-and-forget table to layered pipelines, custom `MERGE` logic, open Iceberg output, and AI right in the flow.
 
-Here's the takeaway: almost anything you'd normally wire up with streams, tasks, or an external scheduler, a Dynamic Table can run with less code and far less to babysit. If your logic fits a query, this is the way to build your pipelines.
+Here's the takeaway: almost anything you'd normally wire up with multiple tools or objects, a Dynamic Table can run with less code and far less to babysit. If your logic fits a query, this is the way to build your pipelines.
 
 ### What You Learned
 
