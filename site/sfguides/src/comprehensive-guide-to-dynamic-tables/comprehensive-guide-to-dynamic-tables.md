@@ -4,6 +4,7 @@ summary: Build declarative, self-refreshing pipelines with Snowflake Dynamic Tab
 categories: snowflake-site:taxonomy/product/data-engineering,snowflake-site:taxonomy/snowflake-feature/dynamic-tables,snowflake-site:taxonomy/snowflake-feature/transformation
 environments: web
 status: Published
+language: en
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Dynamic Tables, Data Engineering, CDC, Iceberg, Cortex AI
 
