@@ -1,6 +1,6 @@
 author: Meny Kobel
 id: getting-started-with-hybrid-tables
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/snowflake-feature/unistore
 language: en
 summary: Follow this tutorial to learn the basics of hybrid tables 
 environments: web
