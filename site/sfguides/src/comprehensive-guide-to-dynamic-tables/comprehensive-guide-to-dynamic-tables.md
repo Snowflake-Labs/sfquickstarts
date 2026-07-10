@@ -18,6 +18,8 @@ You write a `SELECT`. You say how fresh you want the data. That's it. Snowflake 
 
 No orchestration code. No refresh babysitting. No "why didn't my task run?" at 2am.
 
+And it's one model for **both batch and streaming**: the same Dynamic Table keeps its results current whether new data lands in nightly loads or a continuous feed.
+
 This guide takes you from your very first Dynamic Table all the way to the good stuff — layered pipelines, custom `MERGE` logic, open Iceberg output, and even AI running right inside your pipeline. By the end you'll see why, if your logic fits a query, a Dynamic Table is simply the best way to run it.
 
 ![Dynamic Tables — adjust latency with a single parameter](assets/hero_adjust_latency.png)
@@ -31,7 +33,7 @@ This guide takes you from your very first Dynamic Table all the way to the good 
 - The refresh modes — `AUTO`, `INCREMENTAL`, `FULL`, and `ADAPTIVE` — and how to monitor refreshes
 - How to migrate a **Materialized View** to a Dynamic Table
 - How to replace a **Streams + Tasks** pipeline — first with a declarative Dynamic Table, then with a **Custom Incremental Dynamic Table** (`REFRESH USING`) for imperative `MERGE` logic
-- How to model **SCD Type 1 and Type 2** with declarative Dynamic Tables — and handle **partial updates** with custom incremental logic
+- How to model **SCD Type 1 and Type 2** with declarative Dynamic Tables
 - How to materialize a Dynamic Table in open **Apache Iceberg™** format
 - How to enrich data in-pipeline with **Cortex AI functions** (`AI_CLASSIFY`)
 - How to operationalize pipelines with **external orchestration** (Task DAGs, dbt) and **DCM** for CI/CD
@@ -77,9 +79,6 @@ SELECT * FROM menu_raw LIMIT 10;
 ```
 
 You should load **100** menu items across **4** item categories.
-
-![Loaded menu_raw sample data](assets/load_sample_data.png)
-<!-- TODO: screenshot of SELECT * FROM menu_raw LIMIT 10 result -->
 
 <!-- ------------------------ -->
 ## Your First Dynamic Table
@@ -172,7 +171,7 @@ Expected result — the priciest items relative to their category average:
 Snowflake maintains this as a pipeline: `menu_raw → dt_category_benchmarks → dt_menu_vs_benchmark`. When `menu_raw` changes, both Dynamic Tables refresh in dependency order — no orchestration code required.
 
 ![Layered Dynamic Table pipeline](assets/layered_pipeline.png)
-<!-- TODO: screenshot of the DT dependency graph in Snowsight -->
+<!-- TODO: screenshot of the Dynamic Table dependency graph in Snowsight -->
 
 <!-- ------------------------ -->
 ## Incremental Refresh
@@ -412,9 +411,9 @@ Expected result — the insert and the update collapse to the final value:
 
 #### When to use which
 
-| | Streams + Tasks | Declarative DT | Custom Incremental DT |
+| | Streams + Tasks | Declarative Dynamic Table | Custom Incremental Dynamic Table |
 |:--|:--|:--|:--|
-| Objects to manage | Stream + Task + Table | One DT | One DT |
+| Objects to manage | Stream + Task + Table | One Dynamic Table | One Dynamic Table |
 | Refresh control | Task schedule + `WHEN` | `TARGET_LAG` | `TARGET_LAG` |
 | Transformation | Any DML | `SELECT` only | Single `MERGE`/`INSERT` |
 | Best for | Legacy pipelines | Expressible as `SELECT` | Imperative logic, CDC with deletes, accumulators |
@@ -588,9 +587,6 @@ The `is_iceberg` column reads `true`. Everything else — `TARGET_LAG`, incremen
 
 > Want to go deeper on Iceberg — v3 features, external-engine interop, and catalog options? See the [Comprehensive Guide to Apache Iceberg™ v3 Tables](https://www.snowflake.com/en/developers/guides/iceberg-v3-tables-comprehensive-guide/).
 
-![Dynamic Iceberg table is_iceberg flag](assets/dynamic_iceberg.png)
-<!-- TODO: screenshot of SHOW DYNAMIC TABLES with is_iceberg=true -->
-
 <!-- ------------------------ -->
 ## AI Functions in Dynamic Tables
 
@@ -671,7 +667,7 @@ Here's the takeaway: almost anything you'd normally wire up with multiple tools 
 - The refresh modes (`AUTO`, `INCREMENTAL`, `FULL`, `ADAPTIVE`) and monitoring refreshes
 - Migrating **Materialized Views** to Dynamic Tables
 - Replacing **Streams + Tasks** with declarative and **custom incremental** Dynamic Tables
-- Modeling **SCD Type 1 and Type 2** declaratively — and handling **partial updates** with `MERGE INTO SELF` + `COALESCE`
+- Modeling **SCD Type 1 and Type 2** declaratively
 - Materializing output as open **Apache Iceberg™** tables
 - Enriching data in-pipeline with **Cortex AI** (`AI_CLASSIFY`)
 - Orchestrating with **Task DAGs / dbt** and deploying with **DCM**
