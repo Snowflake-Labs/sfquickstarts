@@ -236,7 +236,7 @@ Every Dynamic Table has a **refresh mode** that controls how it updates. You set
 | `FULL` | Re-runs the whole query and replaces the result | The definition can't incrementalize (e.g. `EXCEPT`, exact percentiles) or most rows change each cycle |
 | `ADAPTIVE` | Refreshes incrementally, but auto-reinitializes when a large change makes a rebuild cheaper | Mostly-incremental workloads with occasional bulk loads |
 
-> `AUTO` resolves **once** at creation and never re-evaluates. If a later change makes incremental refresh impossible, refreshes fail rather than silently switching.
+> **ADAPTIVE is the mode to reach for on messy, real-world data.** It refreshes incrementally by default, but the moment a bulk load or large update would make incremental processing more expensive than a full rebuild, it reinitializes automatically — then drops right back to incremental on the next cycle. You get incremental economics on steady data *and* graceful handling of big swings, with no mode to babysit.
 
 Verify the resolved mode after creation:
 
@@ -410,9 +410,54 @@ Expected result — the insert and the update collapse to the final value:
 |:--|:--|:--|:--|
 | 9999 | CIDT Test Taco | 97.0000 | 97.98 |
 
-#### Stream processing: enrich an event stream (stream-static join)
+#### When to use which
 
-Custom incremental tables are a natural fit for **stream processing**. Here an append-only `order_events` stream is enriched against the static `menu_raw` dimension — a classic stream-static join. `CHANGES(INFORMATION => APPEND_ONLY)` feeds only the new events; the menu dimension is read fresh on each refresh:
+| | Streams + Tasks | Declarative DT | Custom Incremental DT |
+|:--|:--|:--|:--|
+| Objects to manage | Stream + Task + Table | One DT | One DT |
+| Refresh control | Task schedule + `WHEN` | `TARGET_LAG` | `TARGET_LAG` |
+| Transformation | Any DML | `SELECT` only | Single `MERGE`/`INSERT` |
+| Best for | Legacy pipelines | Expressible as `SELECT` | Imperative logic, CDC with deletes, accumulators |
+
+### From Python (Snowpark)
+
+Prefer Python? Snowpark's DataFrame API creates Dynamic Tables directly with [`create_or_replace_dynamic_table`](https://docs.snowflake.com/en/developer-guide/snowpark/reference/python/latest/snowpark/api/snowflake.snowpark.DataFrame.create_or_replace_dynamic_table) — build the transformation as a DataFrame and materialize it as a self-refreshing table:
+
+```python
+from snowflake.snowpark import Session
+from snowflake.snowpark.functions import col
+
+session = Session.builder.getOrCreate()
+
+df = (
+    session.table("menu_raw")
+    .filter(col("sale_price_usd").is_not_null())
+    .select(
+        col("menu_item_id"),
+        col("menu_item_name"),
+        col("truck_brand_name"),
+        (col("sale_price_usd") - col("cost_of_goods_usd")).alias("profit_usd"),
+    )
+)
+
+df.create_or_replace_dynamic_table(
+    "menu_profitability_snowpark",
+    warehouse="COMPUTE_WH",
+    lag="1 hour",
+    refresh_mode="INCREMENTAL",
+)
+```
+
+Same `TARGET_LAG`, refresh, and incremental behavior — you just define the pipeline in Python.
+
+<!-- ------------------------ -->
+## Common Pipeline Patterns
+
+A handful of patterns cover most real pipelines. Three you'll reach for constantly: enriching a live stream, deduplicating a change log, and tracking history — each just a few lines with a Dynamic Table.
+
+### Stream processing: stream-static joins
+
+Dynamic Tables are a natural fit for **stream processing**. Here an append-only `order_events` stream is enriched against the static `menu_raw` dimension — a classic stream-static join. A custom incremental table with `CHANGES(INFORMATION => APPEND_ONLY)` feeds only the new events; the menu dimension is read fresh on each refresh:
 
 ```sql
 CREATE OR REPLACE TABLE order_events (
@@ -450,17 +495,7 @@ Each new order event is enriched with its menu details and revenue *as it arrive
 | 1 | Ice Tea | 2 | 6.0000 |
 | 2 | Lemonade | 1 | 3.5000 |
 
-#### When to use which
-
-| | Streams + Tasks | Declarative DT | Custom Incremental DT |
-|:--|:--|:--|:--|
-| Objects to manage | Stream + Task + Table | One DT | One DT |
-| Refresh control | Task schedule + `WHEN` | `TARGET_LAG` | `TARGET_LAG` |
-| Transformation | Any DML | `SELECT` only | Single `MERGE`/`INSERT` |
-| Best for | Legacy pipelines | Expressible as `SELECT` | Imperative logic, CDC with deletes, accumulators |
-
-<!-- ------------------------ -->
-## Deduplication & History (SCD Types 1 and 2)
+### Deduplication & history (SCD Types 1 and 2)
 
 A huge share of pipeline work is really just **deduplication** — collapsing a noisy change log down to the current row per key. That's SCD Type 1, and it's a one-liner with a Dynamic Table. Keeping the full version history (SCD Type 2) is nearly as easy. Both are plain `SELECT`s. Start with a small change log of price events:
 
@@ -475,7 +510,7 @@ INSERT INTO menu_item_history VALUES
   (2, 'Lemonade', 3.50, '2026-06-01 09:05:00');
 ```
 
-### Deduplication: latest row per key (SCD Type 1)
+#### SCD Type 1 — latest row per key
 
 Deduplicate to the newest row per key with `QUALIFY ROW_NUMBER() ... = 1`:
 
@@ -496,7 +531,7 @@ Expected result:
 | 1 | 4.2500 |
 | 2 | 3.5000 |
 
-### SCD Type 2 — full version history
+#### SCD Type 2 — full version history
 
 Keep every version with validity ranges. `LEAD()` computes each version's `valid_to` from the next version's start:
 
@@ -528,11 +563,7 @@ Expected result — item 1 retains all three versions; the open-ended row is cur
 
 A **Dynamic Iceberg Table** stores its output in open Apache Iceberg™ format on Snowflake-managed storage, so external engines (Spark, Trino, etc.) can read it directly — while it still refreshes like any other Dynamic Table.
 
-With Snowflake-managed storage you don't need an external volume or catalog; just add the `ICEBERG` keyword.
-
-Dynamic Iceberg Tables can read from both Iceberg v2 and v3 source tables, and materialize their output as either version — control it with `ICEBERG_VERSION` on the table (or the database-level `ICEBERG_VERSION_DEFAULT`).
-
-> Snowflake-managed storage for Iceberg is available on AWS and Azure. If you need control over the storage location, you can instead supply `EXTERNAL_VOLUME`, `CATALOG = 'SNOWFLAKE'`, and `BASE_LOCATION`.
+> Dynamic Iceberg Tables can read from both Iceberg v2 and v3 source tables, and materialize their output as either version — control it with `ICEBERG_VERSION` on the table (or the database-level `ICEBERG_VERSION_DEFAULT`).
 
 ```sql
 CREATE OR REPLACE DYNAMIC ICEBERG TABLE dt_menu_profit_iceberg
@@ -592,7 +623,7 @@ Expected distribution (yours may vary slightly — model output isn't perfectly 
 | Dessert | 8 |
 | Seafood | 3 |
 
-> AI functions are compute-intensive. Because their output can vary per call, they're treated as non-deterministic — a Dynamic Table may reprocess more rows than a simple projection would. Keep AI-enriched Dynamic Tables focused, and set a `TARGET_LAG` that reflects how often you actually need the enrichment recomputed.
+> AI functions are non-deterministic, but that doesn't stop you from using them in a Dynamic Table's `SELECT`. The table still refreshes **incrementally** — each new row is classified once as it arrives, and existing rows aren't re-scored on every refresh. You get AI enrichment that stays current while only paying to process new data.
 
 ![AI_CLASSIFY category distribution](assets/ai_classify.png)
 <!-- TODO: screenshot of dt_menu_ai_classified distribution -->
@@ -620,7 +651,7 @@ For an end-to-end DCM pipeline built around Dynamic Tables, see the companion gu
 <!-- ------------------------ -->
 ## Cleanup
 
-Because every object lives in the dedicated database, cleanup is a single command:
+Everything you created lives in one dedicated database, so cleanup is a single command:
 
 ```sql
 DROP DATABASE IF EXISTS DYNAMIC_TABLES_GUIDE;
