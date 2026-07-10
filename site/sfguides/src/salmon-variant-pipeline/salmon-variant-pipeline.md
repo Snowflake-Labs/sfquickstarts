@@ -1,7 +1,7 @@
 author: Priya Joseph
 id: salmon-variant-pipeline
 language: en
-summary: RNA-seq isoform quantification pipeline using Salmon 2.0 (Rust) and Salmon 1.12.0 (C++), with AI-powered analysis via Snowflake Cortex Inference REST API.
+summary: RNA-seq isoform quantification pipeline using Salmon 2.0 (Rust) and Salmon 1.12.0 (C++), with AI-powered analysis via Snowflake Cortex REST API.
 categories: snowflake-site:taxonomy/solution-center/ai-ml/quickstart
 environments: web
 status: Published
