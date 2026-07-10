@@ -111,6 +111,12 @@ CREATE OR REPLACE DYNAMIC TABLE menu_profitability
   WHERE sale_price_usd IS NOT NULL AND cost_of_goods_usd IS NOT NULL;
 ```
 
+Once created, your Dynamic Table shows up in the database object explorer alongside regular tables:
+
+![menu_profitability in the Snowsight object explorer](assets/first_dynamic_table_object_explorer.png)
+
+Query it like any other table:
+
 ```sql
 SELECT truck_brand_name, menu_item_name, price_tier, profit_usd, profit_margin_pct
 FROM menu_profitability
