@@ -4,7 +4,7 @@ categories: snowflake-site:taxonomy/solution-center/certification/quickstart, sn
 language: en
 summary: Download Snowflake CoCo Desktop, connect to your Snowflake account, and run your first natural-language queries from a full AI-powered IDE in under 15 minutes.
 environments: web
-status: Draft
+status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 
