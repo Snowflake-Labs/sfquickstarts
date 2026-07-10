@@ -28,15 +28,14 @@ This guide takes you from your very first Dynamic Table all the way to the good 
 
 ### What You'll Learn
 
-- How Dynamic Tables keep data fresh with `TARGET_LAG` and incremental refresh
-- How to build **multi-layer pipelines** with joins and dependent Dynamic Tables
-- The refresh modes — `AUTO`, `INCREMENTAL`, `FULL`, and `ADAPTIVE` — and how to monitor refreshes
-- How to migrate a **Materialized View** to a Dynamic Table
-- How to replace a **Streams + Tasks** pipeline — first with a declarative Dynamic Table, then with a **Custom Incremental Dynamic Table** (`REFRESH USING`) for imperative `MERGE` logic
-- How to model **SCD Type 1 and Type 2** with declarative Dynamic Tables
-- How to materialize a Dynamic Table in open **Apache Iceberg™** format
-- How to enrich data in-pipeline with **Cortex AI functions** (`AI_CLASSIFY`)
-- How to operationalize pipelines with **external orchestration** (Task DAGs, dbt) and **DCM** for CI/CD
+- Keep data fresh with `TARGET_LAG` and incremental refresh — across **both batch and streaming** pipelines
+- Build **multi-layer pipelines** with joins and dependent Dynamic Tables
+- Choose the right **refresh mode** (`AUTO`, `INCREMENTAL`, `FULL`, `ADAPTIVE`) and monitor refreshes
+- Build pipelines with fewer moving parts — **declarative** and **Custom Incremental** Dynamic Tables (`REFRESH USING`), and Dynamic Tables from Python with **Snowpark**
+- Apply **common patterns**: stream-static joins, deduplication, and **SCD Type 1 & 2**
+- Materialize output in open **Apache Iceberg™** format
+- Enrich data in-pipeline with **Cortex AI** (`AI_CLASSIFY`)
+- Operationalize with **orchestration** (Task DAGs, dbt) and **CI/CD** (DCM)
 
 ### Prerequisites
 
@@ -668,15 +667,14 @@ Here's the takeaway: almost anything you'd normally wire up with multiple tools 
 
 ### What You Learned
 
-- Declarative pipelines with `TARGET_LAG` and incremental refresh
-- Building **multi-layer pipelines** with joins and dependent Dynamic Tables
-- The refresh modes (`AUTO`, `INCREMENTAL`, `FULL`, `ADAPTIVE`) and monitoring refreshes
-- Migrating **Materialized Views** to Dynamic Tables
-- Replacing **Streams + Tasks** with declarative and **custom incremental** Dynamic Tables
-- Modeling **SCD Type 1 and Type 2** declaratively
-- Materializing output as open **Apache Iceberg™** tables
-- Enriching data in-pipeline with **Cortex AI** (`AI_CLASSIFY`)
-- Orchestrating with **Task DAGs / dbt** and deploying with **DCM**
+- Built self-refreshing pipelines with `TARGET_LAG` and incremental refresh, for batch and streaming
+- Layered Dynamic Tables with joins and dependencies
+- Chose refresh modes and monitored refreshes
+- Built pipelines with declarative and Custom Incremental Dynamic Tables, and from Python with Snowpark
+- Applied stream-static joins, deduplication, and SCD Type 1 & 2
+- Materialized output as open **Apache Iceberg™** tables
+- Enriched data in-pipeline with **Cortex AI** (`AI_CLASSIFY`)
+- Orchestrated with **Task DAGs / dbt** and deployed with **DCM**
 
 ### Additional Resources
 
