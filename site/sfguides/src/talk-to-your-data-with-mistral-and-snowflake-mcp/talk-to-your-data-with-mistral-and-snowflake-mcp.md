@@ -47,9 +47,9 @@ In this quickstart, you will connect Mistral Vibe Chat to a Snowflake MCP Server
 Before proceeding, confirm the following are already in place in your Snowflake account.
 
 > **Want to build this from scratch?** If you don't have the demo environment set up yet, use the scripts below in order:
-> 1. **[setup_ddl.sql](assets/setup_ddl.sql)** — Creates the database, schema, and all tables
-> 2. **[load_sample_data.sql](assets/load_sample_data.sql)** — Loads sample data (uses CSV files from the same assets folder)
-> 3. **[cortex_setup.sql](assets/cortex_setup.sql)** — Creates Cortex Search, Semantic View, Agent, and MCP Server
+> 1. **[setup_ddl.sql](https://github.com/sfc-gh-abhatt/sfquickstarts_abhatt/blob/a259f40eae771429e69acee597599ab91daffce0/site/sfguides/src/talk-to-your-data-with-mistral-and-snowflake-mcp/assets/setup_ddl.sql)** — Creates the database, schema, and all tables
+> 2. **[load_sample_data.sql](https://github.com/sfc-gh-abhatt/sfquickstarts_abhatt/blob/a259f40eae771429e69acee597599ab91daffce0/site/sfguides/src/talk-to-your-data-with-mistral-and-snowflake-mcp/assets/load_sample_data.sql)** — Loads sample data (uses CSV data files in **Sample Data Files** Section)
+> 3. **[cortex_setup.sql](https://github.com/sfc-gh-abhatt/sfquickstarts_abhatt/blob/a259f40eae771429e69acee597599ab91daffce0/site/sfguides/src/talk-to-your-data-with-mistral-and-snowflake-mcp/assets/cortex_setup.sql)** — Creates Cortex Search, Semantic View, Agent, and MCP Server
 
 ### MCP Server
 
@@ -71,7 +71,7 @@ This MCP Server is configured with the following tools:
 The user connecting via MCP needs a role with access to the MCP Server and all underlying objects (Semantic View, Cortex Search Service, Cortex Agent, and source tables).
 
 If you haven't set this up yet, download and run the role setup script:
-- **[setup_role_and_permissions.sql](assets/setup_role_and_permissions.sql)** — Creates a dedicated `MCP_USER_ROLE` with minimum required grants
+- **[setup_role_and_permissions.sql](https://github.com/sfc-gh-abhatt/sfquickstarts_abhatt/blob/a259f40eae771429e69acee597599ab91daffce0/site/sfguides/src/talk-to-your-data-with-mistral-and-snowflake-mcp/assets/setup_role_and_permissions.sql)** — Creates a dedicated `MCP_USER_ROLE` with minimum required grants
 
 This script grants:
 - `USAGE` on the database, schema, warehouse, MCP Server, Agent, and Search Service
@@ -83,7 +83,7 @@ This script grants:
 You should have a PAT generated for a user whose active role has the necessary privileges listed above.
 
 If you haven't created a PAT yet, download and run:
-- **[create_pat.sql](assets/create_pat.sql)** — Creates a PAT scoped to the MCP access role
+- **[create_pat.sql](https://github.com/sfc-gh-abhatt/sfquickstarts_abhatt/blob/a259f40eae771429e69acee597599ab91daffce0/site/sfguides/src/talk-to-your-data-with-mistral-and-snowflake-mcp/assets/create_pat.sql)** — Creates a PAT scoped to the MCP access role
 
 > **Important:** The PAT value is shown only once at creation time. Copy and store it securely — you will need it when configuring the Mistral connector.
 
@@ -224,7 +224,7 @@ If your account has an active network policy, it restricts which IP addresses ca
 **How to fix it:**
 
 Use the provided network setup script to create a network rule with Mistral's known egress IPs and apply it to your policy:
-- **[setup_network.sql](assets/setup_network.sql)** — Creates a network rule and policy for Mistral access
+- **[setup_network.sql](https://github.com/sfc-gh-abhatt/sfquickstarts_abhatt/blob/a259f40eae771429e69acee597599ab91daffce0/site/sfguides/src/talk-to-your-data-with-mistral-and-snowflake-mcp/assets/setup_network.sql)** — Creates a network rule and policy for Mistral access
 
 The script handles both scenarios:
 - **No existing policy** — Creates a new network policy with the Mistral rule
@@ -248,7 +248,7 @@ After verifying network settings, confirm the MCP endpoint is reachable by calli
 **Option A: Using the test script (curl)**
 
 Download and run the provided test script:
-- **[test-mcp-connectivity.sh](assets/test-mcp-connectivity.sh)**
+- **[test-mcp-connectivity.sh](https://github.com/sfc-gh-abhatt/sfquickstarts_abhatt/blob/a259f40eae771429e69acee597599ab91daffce0/site/sfguides/src/talk-to-your-data-with-mistral-and-snowflake-mcp/assets/test-mcp-connectivity.sh)**
 
 ```bash
 chmod +x test-mcp-connectivity.sh
@@ -407,7 +407,7 @@ Congratulations! You have successfully connected Mistral Vibe Chat to your Snowf
 ### Cleanup
 
 When you are done with this quickstart, run the teardown script to remove all Snowflake objects created during the demo:
-- **[teardown.sql](assets/teardown.sql)** — Drops the MCP Server, Agent, Semantic View, Search Service, tables, stage, and file format
+- **[teardown.sql](https://github.com/sfc-gh-abhatt/sfquickstarts_abhatt/blob/a259f40eae771429e69acee597599ab91daffce0/site/sfguides/src/talk-to-your-data-with-mistral-and-snowflake-mcp/assets/teardown.sql)** — Drops the MCP Server, Agent, Semantic View, Search Service, tables, stage, and file format
 
 ### Related Resources
 - [Getting Started with Snowflake MCP Server](https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake-mcp-server/)
@@ -419,3 +419,9 @@ When you are done with this quickstart, run the teardown script to remove all Sn
 - [Mistral AI Documentation](https://docs.mistral.ai/)
 - [Mistral Vibe Chat](https://chat.mistral.ai/)
 - [Model Context Protocol Specification](https://modelcontextprotocol.io/)
+
+### Sample Data Files
+- [fact_shipments.csv](https://github.com/sfc-gh-abhatt/sfquickstarts_abhatt/blob/a259f40eae771429e69acee597599ab91daffce0/site/sfguides/src/talk-to-your-data-with-mistral-and-snowflake-mcp/assets/fact_shipments.csv) — 1000 shipment records
+- [fact_performance.csv](https://github.com/sfc-gh-abhatt/sfquickstarts_abhatt/blob/a259f40eae771429e69acee597599ab91daffce0/site/sfguides/src/talk-to-your-data-with-mistral-and-snowflake-mcp/assets/fact_performance.csv) — 1000 performance records
+- [fact_events.csv](https://github.com/sfc-gh-abhatt/sfquickstarts_abhatt/blob/a259f40eae771429e69acee597599ab91daffce0/site/sfguides/src/talk-to-your-data-with-mistral-and-snowflake-mcp/assets/fact_events.csv) — 2426 shipment events
+- [shipping_docs.csv](https://github.com/sfc-gh-abhatt/sfquickstarts_abhatt/blob/a259f40eae771429e69acee597599ab91daffce0/site/sfguides/src/talk-to-your-data-with-mistral-and-snowflake-mcp/assets/shipping_docs.csv) — 42 policy and bulletin documents
