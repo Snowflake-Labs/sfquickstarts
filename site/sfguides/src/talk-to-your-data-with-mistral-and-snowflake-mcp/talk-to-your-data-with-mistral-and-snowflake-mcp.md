@@ -319,7 +319,7 @@ Save the connector. The Mistral console should show the connector status as conn
 
 ![Connector saved with tools discovered](assets/mistral-connector-saved.png)
 
-> **Troubleshooting:** If the connector shows a failed or disconnected status, or tools fail to refresh, revisit the [Verify Network Connectivity](#4) step to ensure Mistral's IPs can reach your Snowflake account.
+> **Troubleshooting:** If the connector shows a failed or disconnected status, or tools fail to refresh, revisit the **Verify Network Connectivity** step to ensure Mistral's IPs can reach your Snowflake account.
 
 <!-- ------------------------ -->
 ## Talk to Your Data
