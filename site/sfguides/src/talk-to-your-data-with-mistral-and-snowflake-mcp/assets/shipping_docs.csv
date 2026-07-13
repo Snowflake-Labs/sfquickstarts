@@ -1,0 +1,1229 @@
+"DOC_ID","CATEGORY","TITLE","CONTENT","REGION","PORT_CODE","TO_VARCHAR(EFFECTIVE_DATE, 'YYYY-MM-DD')","TO_VARCHAR(EXPIRY_DATE, 'YYYY-MM-DD')","TAGS"
+"DOC-0001","POLICY","Euro-Med Shipping Demurrage and Detention Policy — Mediterranean Ports","Euro-Med Shipping Demurrage and Detention Policy for Mediterranean Ports
+
+Effective Date: January 1, 2026
+
+1. SCOPE
+This policy applies to all import and export containers handled through Euro-Med Shipping services at Mediterranean ports including Marseille, Fos-sur-Mer, Valencia, Algeciras, Genoa, Gioia Tauro, Piraeus, Tanger Med, Marsaxlokk, Haifa, and Bejaia.
+
+2. DEFINITIONS
+- Demurrage: Charges for the use of container within the port terminal beyond the allowed free time.
+- Detention: Charges for the use of container outside the port terminal beyond the allowed free time.
+
+3. FREE TIME ALLOWANCE (IMPORT)
+- Standard Dry Containers (20GP/40GP/40HC): 7 calendar days from vessel discharge.
+- Reefer Containers: 4 calendar days from vessel discharge.
+- Gold Tier Customers: Additional 3 days free time on all container types.
+- Silver Tier Customers: Additional 2 days free time on dry containers only.
+
+4. FREE TIME ALLOWANCE (EXPORT)
+- Standard Dry Containers: 10 calendar days before vessel loading.
+- Reefer Containers: 7 calendar days before vessel loading.
+
+5. DEMURRAGE CHARGES (per container per day after free time)
+- Days 1-5: EUR 75 for 20GP, EUR 150 for 40GP/40HC, EUR 200 for Reefer.
+- Days 6-10: EUR 125 for 20GP, EUR 250 for 40GP/40HC, EUR 350 for Reefer.
+- Days 11+: EUR 200 for 20GP, EUR 400 for 40GP/40HC, EUR 500 for Reefer.
+
+6. DETENTION CHARGES (per container per day after free time)
+- Days 1-7: EUR 50 for 20GP, EUR 100 for 40GP/40HC, EUR 150 for Reefer.
+- Days 8-14: EUR 100 for 20GP, EUR 200 for 40GP/40HC, EUR 300 for Reefer.
+- Days 15+: EUR 175 for 20GP, EUR 350 for 40GP/40HC, EUR 450 for Reefer.
+
+7. COMBINED DEMURRAGE AND DETENTION
+Where both demurrage and detention apply, charges are cumulative.
+
+8. DISPUTES AND WAIVERS
+Claims for demurrage/detention waivers must be submitted within 30 days of the invoice date. Supporting documentation including proof of customs holds, force majeure events, or Euro-Med Shipping service failures must be provided. Gold Tier customers may receive automatic waivers for the first 2 days of excess demurrage upon request.
+
+9. PAYMENT TERMS
+All demurrage and detention invoices are payable within 14 days of issue. Late payments incur interest at 1.5% per month.","Mediterranean","\N","2025-11-19","\N","demurrage,detention,free time,charges,policy"
+"DOC-0002","POLICY","Euro-Med Shipping Reefer Container Policy and Guidelines","Euro-Med Shipping Reefer Container Policy and Guidelines
+
+Effective Date: January 1, 2026
+
+1. SCOPE
+This policy governs the booking, handling, and transport of temperature-controlled (reefer) containers on all Euro-Med Shipping Europe-Mediterranean services.
+
+2. BOOKING REQUIREMENTS
+- Reefer bookings must be confirmed at least 72 hours before vessel cut-off.
+- Required information: commodity type, required temperature (Celsius), ventilation settings (CBM/hour), humidity control requirements, and genset requirements for inland transport.
+- Hazardous reefer cargo requires additional DG declaration (see Hazardous Cargo SOP).
+
+3. TEMPERATURE RANGES
+- Frozen cargo: -25C to -18C
+- Chilled cargo: -5C to +5C
+- Controlled atmosphere: +8C to +25C
+- Euro-Med Shipping reefer units can maintain temperatures from -35C to +30C.
+
+4. PRE-TRIP INSPECTION (PTI)
+All reefer containers undergo mandatory PTI before stuffing. PTI checks include thermostat calibration, refrigeration unit operation, door seal integrity, and interior cleanliness. PTI certificates are available upon request.
+
+5. MONITORING
+Euro-Med Shipping provides real-time temperature monitoring via the TRAXENS IoT platform for all reefer containers. Temperature alerts are sent to the booking contact when deviations exceed +/- 2C from the set point. Customers can access monitoring data through the MyShipping portal.
+
+6. POWER SUPPLY
+- At terminal: Continuous shore power supply guaranteed.
+- On vessel: Dedicated reefer plugs with backup power.
+- If genset is required for inland transport, it must be arranged by the customer unless Euro-Med Shipping inland services are booked.
+
+7. CLAIMS
+Temperature deviation claims must be filed within 21 days of container delivery. Claims must include temperature logs, PTI certificate, and cargo inspection report. Euro-Med Shipping liability is limited to the cargo value or USD 500 per package, whichever is less, unless a higher value has been declared.
+
+8. SURCHARGES
+Reefer surcharge applies to all reefer bookings: EUR 450 per 40-foot reefer container for Europe-Mediterranean routes. Genset fuel surcharge applies when Euro-Med Shipping provides genset services for inland transport.","GLOBAL","\N","2025-12-12","\N","reefer,temperature,cold chain,monitoring,surcharge"
+"DOC-0003","POLICY","Euro-Med Shipping Bill of Lading Terms and Conditions","Euro-Med Shipping Bill of Lading Terms and Conditions
+
+Effective Date: January 1, 2026
+
+1. DEFINITIONS
+The 'Carrier' means Euro-Med Shipping SA and any vessel, sub-contractor, or agent acting on behalf of Euro-Med Shipping. The 'Merchant' includes the shipper, consignee, holder of the Bill of Lading, and any party with an interest in the cargo.
+
+2. CARRIER LIABILITY
+Euro-Med Shipping liability for loss or damage to cargo is governed by the Hague-Visby Rules as amended by the SDR Protocol of 1979. Maximum liability: 666.67 SDR per package or 2 SDR per kilogram of gross weight, whichever is higher, unless a higher value is declared before shipment and noted on the Bill of Lading.
+
+3. TIME BAR
+Any claim against the Carrier must be brought within 1 year from the date of delivery of the goods or the date when the goods should have been delivered.
+
+4. JURISDICTION
+All disputes shall be determined by the Commercial Court of Marseille, France, and governed by French law, unless otherwise agreed in writing.
+
+5. FREIGHT
+Freight is deemed fully earned upon receipt of cargo by the Carrier and is non-refundable. The Carrier has a lien on the goods for freight, charges, and expenses.
+
+6. DANGEROUS GOODS
+The Merchant must declare any dangerous or hazardous cargo in accordance with the IMDG Code. Failure to declare may result in the cargo being unloaded, destroyed, or rendered harmless at the Merchant's risk and expense.
+
+7. CONTAINER PACKING
+When a container is packed by or on behalf of the Merchant, the Carrier shall not be liable for loss or damage to the cargo caused by improper packing, stowage, or securing within the container.
+
+8. DEVIATION
+The Carrier may deviate from the intended route for any reasonable purpose including saving life, property, or for any commercial reason. Such deviation shall not be considered a breach of contract.
+
+9. ELECTRONIC DOCUMENTATION
+Euro-Med Shipping supports electronic Bills of Lading via the WAVE BL and Bolero platforms. Electronic documents have the same legal validity as paper originals when processed through approved platforms.","GLOBAL","\N","2025-11-09","\N","bill of lading,liability,terms,conditions,legal"
+"DOC-0004","POLICY","Euro-Med Shipping Service Level Agreement — Gold Tier Customers","Euro-Med Shipping Service Level Agreement for Gold Tier Customers
+
+Effective Date: January 1, 2026
+
+1. ELIGIBILITY
+Gold Tier status is granted to customers with annual freight spend exceeding EUR 500,000 on Euro-Med Shipping services or minimum 200 TEU per quarter.
+
+2. TRANSIT TIME GUARANTEE
+Euro-Med Shipping guarantees published transit times for Gold Tier customers on Europe-Mediterranean routes. If actual transit exceeds published transit by more than 48 hours (excluding force majeure), the customer is entitled to a freight credit:
+- Delay 48-96 hours: 5% freight credit on affected shipment.
+- Delay 96-168 hours: 10% freight credit on affected shipment.
+- Delay >168 hours: 15% freight credit on affected shipment.
+
+3. EQUIPMENT AVAILABILITY
+Priority container allocation for Gold Tier customers. Equipment requests will be fulfilled within 48 hours of booking confirmation. If equipment is unavailable within 48 hours, Euro-Med Shipping will provide a substitute at no additional cost.
+
+4. BOOKING PRIORITY
+Gold Tier bookings receive priority loading. Roll-over rate target: less than 2% of confirmed bookings per quarter.
+
+5. DEDICATED SUPPORT
+- Assigned key account manager.
+- Priority access to customer service (target response time: 4 business hours).
+- Quarterly business reviews with performance reporting.
+
+6. FREE TIME EXTENSIONS
+- Additional 3 days free time for demurrage on all container types at all Mediterranean ports.
+- Additional 2 days free time for detention.
+
+7. CLAIMS PROCESSING
+Priority claims processing with target resolution within 14 business days. Automatic demurrage waivers for the first 2 days of excess when caused by Euro-Med Shipping operational issues.
+
+8. REPORTING
+Monthly performance dashboards including: on-time delivery rate, average transit time, booking confirmation rate, equipment availability, and claims summary.
+
+9. SLA REVIEW
+SLA terms are reviewed annually. Euro-Med Shipping reserves the right to adjust tier status based on volume commitments.","GLOBAL","\N","2025-11-13","\N","SLA,gold tier,transit guarantee,claims,service level"
+"DOC-0005","POLICY","Euro-Med Shipping Cargo Insurance Policy Summary","Euro-Med Shipping Cargo Insurance Policy Summary
+
+Euro-Med Shipping offers optional cargo insurance through its SERENITY product line covering door-to-door shipments on Europe-Mediterranean routes.
+
+COVERAGE OPTIONS:
+1. SERENITY Basic: Covers total loss of cargo due to vessel sinking, fire, or collision. Coverage limit: invoice value of goods. Premium: 0.15% of declared cargo value, minimum EUR 50.
+
+2. SERENITY Plus: Covers total and partial loss including water damage, theft, and handling damage. Coverage limit: 110% of invoice value. Premium: 0.35% of declared cargo value, minimum EUR 100.
+
+3. SERENITY Premium: All-risk coverage including war risk, strikes, and delay-related spoilage for reefer cargo. Coverage limit: 120% of invoice value plus freight costs. Premium: 0.55% of declared cargo value, minimum EUR 200.
+
+CLAIMS PROCEDURE:
+1. Notify Euro-Med Shipping within 3 working days of delivery for visible damage, or within 21 days for concealed damage.
+2. Submit claim form with supporting documentation: Bill of Lading, commercial invoice, packing list, survey report, and photographs.
+3. Claims are processed within 30 business days.
+
+EXCLUSIONS:
+Inherent vice, insufficient packing, delay (except SERENITY Premium), sanctions, nuclear events, and pre-existing damage.","GLOBAL","\N","2025-11-13","\N","insurance,cargo,coverage,claims,SERENITY"
+"DOC-0006","POLICY","Euro-Med Shipping Free Time and Demurrage Schedule — Port of Marseille","Euro-Med Shipping Free Time and Demurrage Schedule for the Port of Marseille, France
+
+Effective Date: January 1, 2026
+
+FREE TIME (IMPORT):
+- 20GP/40GP/40HC: 10 calendar days from vessel discharge.
+- Reefer: 7 calendar days from vessel discharge.
+- Gold Tier: +3 additional days. Silver Tier: +2 additional days (dry only).
+
+FREE TIME (EXPORT):
+- 20GP/40GP/40HC: 13 calendar days before vessel loading.
+- Reefer: 10 calendar days before vessel loading.
+
+DEMURRAGE (per container/day after free time, EUR):
+- 20GP: Days 1-5: 83, Days 6-10: 134, Days 11+: 175.
+- 40GP/40HC: Days 1-5: 157, Days 6-10: 247, Days 11+: 354.
+- Reefer: Days 1-5: 181, Days 6-10: 311, Days 11+: 477.
+
+DETENTION (per container/day, EUR):
+- 20GP: Days 1-7: 47, Days 8-14: 106, Days 15+: 188.
+- 40GP/40HC: Days 1-7: 81, Days 8-14: 215, Days 15+: 325.
+
+LOCAL PORT CONTACTS:
+- Terminal operations: ops-frmrs@carrier-ops.com
+- Customer service: cs-frmrs@carrier-ops.com
+- Emergency (24/7): +75 765 9928","Mediterranean","FRMRS","2025-12-29","\N","demurrage,detention,free time,marseille,port-specific"
+"DOC-0007","POLICY","Euro-Med Shipping Free Time and Demurrage Schedule — Port of Valencia","Euro-Med Shipping Free Time and Demurrage Schedule for the Port of Valencia, Spain
+
+Effective Date: January 1, 2026
+
+FREE TIME (IMPORT):
+- 20GP/40GP/40HC: 7 calendar days from vessel discharge.
+- Reefer: 4 calendar days from vessel discharge.
+- Gold Tier: +3 additional days. Silver Tier: +2 additional days (dry only).
+
+FREE TIME (EXPORT):
+- 20GP/40GP/40HC: 10 calendar days before vessel loading.
+- Reefer: 7 calendar days before vessel loading.
+
+DEMURRAGE (per container/day after free time, EUR):
+- 20GP: Days 1-5: 67, Days 6-10: 128, Days 11+: 207.
+- 40GP/40HC: Days 1-5: 137, Days 6-10: 271, Days 11+: 350.
+- Reefer: Days 1-5: 228, Days 6-10: 320, Days 11+: 539.
+
+DETENTION (per container/day, EUR):
+- 20GP: Days 1-7: 53, Days 8-14: 100, Days 15+: 167.
+- 40GP/40HC: Days 1-7: 89, Days 8-14: 193, Days 15+: 343.
+
+LOCAL PORT CONTACTS:
+- Terminal operations: ops-esvlc@carrier-ops.com
+- Customer service: cs-esvlc@carrier-ops.com
+- Emergency (24/7): +36 194 7224","Mediterranean","ESVLC","2025-12-18","\N","demurrage,detention,free time,valencia,port-specific"
+"DOC-0008","POLICY","Euro-Med Shipping Free Time and Demurrage Schedule — Port of Piraeus","Euro-Med Shipping Free Time and Demurrage Schedule for the Port of Piraeus, Greece
+
+Effective Date: January 1, 2026
+
+FREE TIME (IMPORT):
+- 20GP/40GP/40HC: 5 calendar days from vessel discharge.
+- Reefer: 3 calendar days from vessel discharge.
+- Gold Tier: +3 additional days. Silver Tier: +2 additional days (dry only).
+
+FREE TIME (EXPORT):
+- 20GP/40GP/40HC: 8 calendar days before vessel loading.
+- Reefer: 6 calendar days before vessel loading.
+
+DEMURRAGE (per container/day after free time, EUR):
+- 20GP: Days 1-5: 71, Days 6-10: 122, Days 11+: 208.
+- 40GP/40HC: Days 1-5: 136, Days 6-10: 271, Days 11+: 355.
+- Reefer: Days 1-5: 226, Days 6-10: 358, Days 11+: 518.
+
+DETENTION (per container/day, EUR):
+- 20GP: Days 1-7: 43, Days 8-14: 119, Days 15+: 174.
+- 40GP/40HC: Days 1-7: 85, Days 8-14: 215, Days 15+: 337.
+
+LOCAL PORT CONTACTS:
+- Terminal operations: ops-grpir@carrier-ops.com
+- Customer service: cs-grpir@carrier-ops.com
+- Emergency (24/7): +83 743 6925","Eastern Mediterranean","GRPIR","2025-11-10","\N","demurrage,detention,free time,piraeus,port-specific"
+"DOC-0009","POLICY","Euro-Med Shipping Free Time and Demurrage Schedule — Port of Port Said","Euro-Med Shipping Free Time and Demurrage Schedule for the Port of Port Said, Egypt
+
+Effective Date: January 1, 2026
+
+FREE TIME (IMPORT):
+- 20GP/40GP/40HC: 10 calendar days from vessel discharge.
+- Reefer: 7 calendar days from vessel discharge.
+- Gold Tier: +3 additional days. Silver Tier: +2 additional days (dry only).
+
+FREE TIME (EXPORT):
+- 20GP/40GP/40HC: 13 calendar days before vessel loading.
+- Reefer: 10 calendar days before vessel loading.
+
+DEMURRAGE (per container/day after free time, EUR):
+- 20GP: Days 1-5: 66, Days 6-10: 104, Days 11+: 172.
+- 40GP/40HC: Days 1-5: 162, Days 6-10: 234, Days 11+: 387.
+- Reefer: Days 1-5: 185, Days 6-10: 329, Days 11+: 462.
+
+DETENTION (per container/day, EUR):
+- 20GP: Days 1-7: 52, Days 8-14: 98, Days 15+: 179.
+- 40GP/40HC: Days 1-7: 120, Days 8-14: 233, Days 15+: 346.
+
+LOCAL PORT CONTACTS:
+- Terminal operations: ops-egpsd@carrier-ops.com
+- Customer service: cs-egpsd@carrier-ops.com
+- Emergency (24/7): +40 479 6820","Eastern Mediterranean","EGPSD","2025-12-30","\N","demurrage,detention,free time,port said,port-specific"
+"DOC-0010","POLICY","Euro-Med Shipping Free Time and Demurrage Schedule — Port of Rotterdam","Euro-Med Shipping Free Time and Demurrage Schedule for the Port of Rotterdam, Netherlands
+
+Effective Date: January 1, 2026
+
+FREE TIME (IMPORT):
+- 20GP/40GP/40HC: 5 calendar days from vessel discharge.
+- Reefer: 3 calendar days from vessel discharge.
+- Gold Tier: +3 additional days. Silver Tier: +2 additional days (dry only).
+
+FREE TIME (EXPORT):
+- 20GP/40GP/40HC: 8 calendar days before vessel loading.
+- Reefer: 6 calendar days before vessel loading.
+
+DEMURRAGE (per container/day after free time, EUR):
+- 20GP: Days 1-5: 81, Days 6-10: 117, Days 11+: 214.
+- 40GP/40HC: Days 1-5: 163, Days 6-10: 261, Days 11+: 359.
+- Reefer: Days 1-5: 218, Days 6-10: 321, Days 11+: 518.
+
+DETENTION (per container/day, EUR):
+- 20GP: Days 1-7: 63, Days 8-14: 97, Days 15+: 160.
+- 40GP/40HC: Days 1-7: 109, Days 8-14: 204, Days 15+: 334.
+
+LOCAL PORT CONTACTS:
+- Terminal operations: ops-nlrtm@carrier-ops.com
+- Customer service: cs-nlrtm@carrier-ops.com
+- Emergency (24/7): +89 755 4598","North Europe","NLRTM","2025-11-11","\N","demurrage,detention,free time,rotterdam,port-specific"
+"DOC-0011","POLICY","Euro-Med Shipping Hazardous Cargo Surcharge Schedule — Europe-Mediterranean","Euro-Med Shipping Hazardous Cargo Surcharge Schedule for Europe-Mediterranean Routes
+
+Effective Date: January 1, 2026
+
+IMDG CLASS SURCHARGES (per TEU, EUR):
+- Class 1 (Explosives): Not accepted on Euro-Med Shipping vessels.
+- Class 2.1 (Flammable Gas): EUR 350
+- Class 2.2 (Non-flammable Gas): EUR 250
+- Class 3 (Flammable Liquid): EUR 300
+- Class 4.1 (Flammable Solid): EUR 300
+- Class 4.2 (Spontaneous Combustion): EUR 400
+- Class 4.3 (Dangerous When Wet): EUR 400
+- Class 5.1 (Oxidizing): EUR 350
+- Class 5.2 (Organic Peroxide): EUR 500
+- Class 6.1 (Toxic): EUR 350
+- Class 6.2 (Infectious): EUR 500
+- Class 7 (Radioactive): By special arrangement only.
+- Class 8 (Corrosive): EUR 300
+- Class 9 (Miscellaneous): EUR 200
+
+STOWAGE SURCHARGES:
+On-deck stowage mandatory for classes 2.1, 4.2, 5.2: additional EUR 150 per TEU.
+Under-deck stowage available for classes 3, 6.1, 8: additional EUR 100 per TEU.
+
+DOCUMENTATION REQUIREMENTS:
+- IMDG Dangerous Goods Declaration (multimodal form)
+- Material Safety Data Sheet (MSDS)
+- Container packing certificate
+- All documents must be submitted 72 hours before vessel cut-off.
+
+NON-COMPLIANCE:
+Undeclared or misdeclared dangerous goods will be refused loading. The shipper will bear all costs including handling, storage, re-routing, and penalties up to EUR 25,000 per incident.","GLOBAL","\N","2025-12-12","\N","hazardous,dangerous goods,IMDG,surcharge,DG"
+"DOC-0012","POLICY","Euro-Med Shipping VGM (Verified Gross Mass) Policy","Euro-Med Shipping Verified Gross Mass (VGM) Policy
+
+Effective Date: January 1, 2026
+
+1. REGULATORY REQUIREMENT
+In accordance with SOLAS Chapter VI, Regulation 2, all packed containers must have a verified gross mass (VGM) before vessel loading. Euro-Med Shipping will not load any container without a confirmed VGM.
+
+2. VGM SUBMISSION METHODS
+- Method 1: Weighing the packed container using calibrated equipment.
+- Method 2: Weighing all cargo, packaging, and dunnage, then adding the container tare weight.
+
+3. SUBMISSION CHANNELS
+VGM must be submitted via one of the following:
+- MyShipping portal (preferred)
+- EDI (VERMAS message)
+- Email to vgm@carrier-ops.com with vessel name, voyage, container number, and VGM.
+
+4. CUT-OFF TIMES
+VGM must be received at least 24 hours before the published vessel cut-off time. Late VGM submissions will result in the container being rolled to the next available vessel.
+
+5. TOLERANCE
+A tolerance of +/- 5% between the declared VGM and terminal weigh-bridge reading is accepted. Discrepancies exceeding 5% will trigger a re-weigh at the shipper's expense (EUR 150 per container).
+
+6. PENALTIES
+Containers loaded without valid VGM (in violation of this policy) will incur a penalty of EUR 500 per container, plus any regulatory fines imposed by port authorities.","GLOBAL","\N","2025-12-07","\N","VGM,SOLAS,weighing,compliance,regulation"
+"DOC-0013","POLICY","Euro-Med Shipping Data Privacy and Shipment Tracking Policy","Euro-Med Shipping Data Privacy and Shipment Tracking Policy
+
+Effective Date: January 1, 2026
+
+1. TRACKING DATA
+Euro-Med Shipping provides shipment tracking data through MyShipping portal, API, and customer service channels. Tracking data includes vessel name, voyage number, container status, port of loading/discharge, and estimated arrival times.
+
+2. DATA ACCESS
+Tracking data is available to the booking party, consignee (upon Bill of Lading reference), and authorized third parties designated by the shipper. API access requires registration and authentication via API key.
+
+3. DATA RETENTION
+Shipment tracking data is retained for 24 months after final delivery. Historical data beyond 24 months is available upon written request and may incur a data retrieval fee of EUR 50 per request.
+
+4. GDPR COMPLIANCE
+Euro-Med Shipping processes personal data in accordance with the EU General Data Protection Regulation (GDPR). Personal data associated with shipments (contact names, email addresses, phone numbers) is used solely for shipment execution and customer communication.
+
+5. IOT AND SENSOR DATA
+Containers equipped with TRAXENS IoT devices collect location, temperature, humidity, and shock data. This data is owned by Euro-Med Shipping and shared with the booking party for the duration of the shipment. IoT data is retained for 12 months.
+
+6. THIRD-PARTY SHARING
+Euro-Med Shipping may share shipment data with port authorities, customs agencies, and terminal operators as required by law or for operational purposes. No shipment data is shared with commercial third parties without written consent.","GLOBAL","\N","2025-12-15","\N","privacy,tracking,GDPR,data,IoT"
+"DOC-0014","POLICY","Euro-Med Shipping Environmental Surcharge and Carbon Offset Program","Euro-Med Shipping Environmental Surcharge and Carbon Offset Program
+
+Effective Date: January 1, 2026
+
+1. ENVIRONMENTAL FUEL SURCHARGE (EFS)
+Euro-Med Shipping applies an Environmental Fuel Surcharge to cover the cost of low-sulfur compliant fuels as required by IMO 2020 regulations.
+
+EFS RATES (Europe-Mediterranean):
+- 20GP: EUR 85 per container
+- 40GP/40HC: EUR 170 per container
+- Reefer: EUR 210 per container
+
+EFS rates are reviewed quarterly and published on the Euro-Med Shipping website.
+
+2. CARBON OFFSET PROGRAM (ACT WITH Euro-Med Shipping)
+Euro-Med Shipping offers a voluntary carbon offset program. For each shipment, an estimated CO2 emission is calculated based on distance, vessel efficiency, and cargo weight.
+
+CO2 ESTIMATES (Europe-Mediterranean):
+- Average: 35g CO2 per TEU-km
+- Euro-Med Shipping LNG-powered vessels: 20g CO2 per TEU-km (approximately 40% reduction)
+
+OFFSET OPTIONS:
+- Standard offset: EUR 8 per ton of CO2 — invested in certified reforestation projects.
+- Premium offset: EUR 15 per ton of CO2 — invested in marine ecosystem restoration.
+
+3. EMISSION REPORTING
+Customers can request a CO2 emission report for their shipments via the MyShipping portal. Reports follow the GLEC Framework methodology and can be used for Scope 3 emissions reporting.","GLOBAL","\N","2025-12-28","\N","environment,carbon,emissions,surcharge,sustainability"
+"DOC-0015","BULLETIN","Port Congestion Advisory — Piraeus","TRADE LANE BULLETIN: Port Congestion Advisory
+
+Port: Piraeus, Greece
+Port Code: GRPIR
+Issue Date: February 11, 2026
+Severity: HIGH
+
+SITUATION:
+Piraeus is currently experiencing significant congestion due to increased transshipment volumes and labor shortages. Average vessel waiting time has increased to 3 days compared to the normal 0.5 day turnaround.
+
+IMPACT ON Euro-Med Shipping SERVICES:
+- Vessels calling at Piraeus may experience berthing delays of 48 hours.
+- Container dwell times have increased by approximately 4 days.
+- Estimated return to normal operations: late March 2026.
+
+CUSTOMER IMPACT:
+- Shipments with Piraeus as port of discharge may experience delivery delays of 5 days.
+- Transshipment cargo routed through Piraeus may be diverted to ITGIT if delays exceed 7 days.
+
+RECOMMENDED ACTIONS:
+1. Check shipment status regularly via MyShipping portal.
+2. Plan for potential delays in supply chain scheduling.
+3. Contact your Euro-Med Shipping account manager for shipment-specific updates.
+4. Consider alternative routing via ITGIT for time-sensitive cargo.
+
+Demurrage/detention free time extensions of 2 days will be automatically applied to affected shipments.
+
+This bulletin supersedes any previous congestion advisory for Piraeus. Next update will be issued within 7 days or when conditions change significantly.","Eastern Mediterranean","GRPIR","2026-04-07","2026-06-10","congestion,delay,advisory,port,piraeus"
+"DOC-0016","BULLETIN","Port Congestion Advisory — Valencia","TRADE LANE BULLETIN: Port Congestion Advisory
+
+Port: Valencia, Spain
+Port Code: ESVLC
+Issue Date: March 28, 2026
+Severity: MODERATE
+
+SITUATION:
+Valencia is currently experiencing moderate congestion due to post-holiday cargo surge and truck driver shortage. Average vessel waiting time has increased to 2 days compared to the normal 0.5 day turnaround.
+
+IMPACT ON Euro-Med Shipping SERVICES:
+- Vessels calling at Valencia may experience berthing delays of 24 hours.
+- Container dwell times have increased by approximately 2 days.
+- Estimated return to normal operations: mid-February 2026.
+
+CUSTOMER IMPACT:
+- Shipments with Valencia as port of discharge may experience delivery delays of 3 days.
+- Transshipment cargo routed through Valencia may be diverted to ESALG if delays exceed 5 days.
+
+RECOMMENDED ACTIONS:
+1. Check shipment status regularly via MyShipping portal.
+2. Plan for potential delays in supply chain scheduling.
+3. Contact your Euro-Med Shipping account manager for shipment-specific updates.
+4. Consider alternative routing via ESALG for time-sensitive cargo.
+
+Demurrage/detention free time extensions of 1 days will be automatically applied to affected shipments.
+
+This bulletin supersedes any previous congestion advisory for Valencia. Next update will be issued within 7 days or when conditions change significantly.","Mediterranean","ESVLC","2026-03-28","2026-04-29","congestion,delay,advisory,port,valencia"
+"DOC-0017","BULLETIN","Port Congestion Advisory — Port Said","TRADE LANE BULLETIN: Port Congestion Advisory
+
+Port: Port Said, Egypt
+Port Code: EGPSD
+Issue Date: February 24, 2026
+Severity: HIGH
+
+SITUATION:
+Port Said is currently experiencing significant congestion due to Suez Canal traffic management adjustments. Average vessel waiting time has increased to 4 days compared to the normal 0.5 day turnaround.
+
+IMPACT ON Euro-Med Shipping SERVICES:
+- Vessels calling at Port Said may experience berthing delays of 72 hours.
+- Container dwell times have increased by approximately 5 days.
+- Estimated return to normal operations: April 2026 pending canal authority schedule.
+
+CUSTOMER IMPACT:
+- Shipments with Port Said as port of discharge may experience delivery delays of 6 days.
+- Transshipment cargo routed through Port Said may be diverted to GRPIR if delays exceed 8 days.
+
+RECOMMENDED ACTIONS:
+1. Check shipment status regularly via MyShipping portal.
+2. Plan for potential delays in supply chain scheduling.
+3. Contact your Euro-Med Shipping account manager for shipment-specific updates.
+4. Consider alternative routing via GRPIR for time-sensitive cargo.
+
+Demurrage/detention free time extensions of 3 days will be automatically applied to affected shipments.
+
+This bulletin supersedes any previous congestion advisory for Port Said. Next update will be issued within 7 days or when conditions change significantly.","Eastern Mediterranean","EGPSD","2026-02-06","2026-03-09","congestion,delay,advisory,port,port said"
+"DOC-0018","BULLETIN","Port Congestion Advisory — Istanbul","TRADE LANE BULLETIN: Port Congestion Advisory
+
+Port: Istanbul, Turkey
+Port Code: TRIST
+Issue Date: February 11, 2026
+Severity: MODERATE
+
+SITUATION:
+Istanbul is currently experiencing moderate congestion due to strait navigation restrictions and terminal equipment maintenance. Average vessel waiting time has increased to 2 days compared to the normal 0.5 day turnaround.
+
+IMPACT ON Euro-Med Shipping SERVICES:
+- Vessels calling at Istanbul may experience berthing delays of 36 hours.
+- Container dwell times have increased by approximately 3 days.
+- Estimated return to normal operations: within 14 days.
+
+CUSTOMER IMPACT:
+- Shipments with Istanbul as port of discharge may experience delivery delays of 4 days.
+- Transshipment cargo routed through Istanbul may be diverted to GRPIR if delays exceed 5 days.
+
+RECOMMENDED ACTIONS:
+1. Check shipment status regularly via MyShipping portal.
+2. Plan for potential delays in supply chain scheduling.
+3. Contact your Euro-Med Shipping account manager for shipment-specific updates.
+4. Consider alternative routing via GRPIR for time-sensitive cargo.
+
+Demurrage/detention free time extensions of 2 days will be automatically applied to affected shipments.
+
+This bulletin supersedes any previous congestion advisory for Istanbul. Next update will be issued within 7 days or when conditions change significantly.","Eastern Mediterranean","TRIST","2026-02-02","2026-04-28","congestion,delay,advisory,port,istanbul"
+"DOC-0019","BULLETIN","Port Congestion Advisory — Hamburg","TRADE LANE BULLETIN: Port Congestion Advisory
+
+Port: Hamburg, Germany
+Port Code: DEHAM
+Issue Date: April 08, 2026
+Severity: LOW
+
+SITUATION:
+Hamburg is currently experiencing minor congestion due to seasonal fog and reduced tug availability. Average vessel waiting time has increased to 1 days compared to the normal 0.5 day turnaround.
+
+IMPACT ON Euro-Med Shipping SERVICES:
+- Vessels calling at Hamburg may experience berthing delays of 12 hours.
+- Container dwell times have increased by approximately 1 days.
+- Estimated return to normal operations: within 7 days.
+
+CUSTOMER IMPACT:
+- Shipments with Hamburg as port of discharge may experience delivery delays of 2 days.
+- Transshipment cargo routed through Hamburg may be diverted to BEANR if delays exceed 3 days.
+
+RECOMMENDED ACTIONS:
+1. Check shipment status regularly via MyShipping portal.
+2. Plan for potential delays in supply chain scheduling.
+3. Contact your Euro-Med Shipping account manager for shipment-specific updates.
+4. Consider alternative routing via BEANR for time-sensitive cargo.
+
+Demurrage/detention free time extensions of 1 days will be automatically applied to affected shipments.
+
+This bulletin supersedes any previous congestion advisory for Hamburg. Next update will be issued within 7 days or when conditions change significantly.","North Europe","DEHAM","2026-04-17","2026-06-03","congestion,delay,advisory,port,hamburg"
+"DOC-0020","BULLETIN","Weather Advisory — Western Mediterranean Sea Routes","TRADE LANE BULLETIN: Weather Advisory
+
+Region: Western Mediterranean
+Issue Date: February 10, 2026
+Valid Until: February 17, 2026
+Severity: MODERATE
+
+WEATHER CONDITIONS:
+A deep low-pressure system is moving across the western Mediterranean bringing sustained winds of 40-60 km/h and wave heights of 3-5 meters. The Balearic Sea and Gulf of Lion are most affected.
+
+AFFECTED ROUTES:
+Marseille-Valencia, Marseille-Algeciras, Genoa-Tanger Med, Marseille-Tanger Med
+
+IMPACT ON Euro-Med Shipping SERVICES:
+- Vessels operating in the Western Mediterranean may reduce speed for safety, resulting in transit time increases of 1 days.
+- Port operations at exposed terminals may be suspended during peak weather conditions.
+- Container handling at open-air terminals may be restricted during high winds (>50 km/h).
+
+VESSEL SAFETY MEASURES:
+Euro-Med Shipping vessels will implement the following safety protocols:
+- Reduced speed in affected areas.
+- Route deviation to avoid worst conditions where possible.
+- Additional cargo lashing inspections.
+- Reefer monitoring frequency increased to every 2 hours.
+
+CUSTOMER ADVISORY:
+Customers with time-sensitive cargo on affected routes should contact their Euro-Med Shipping representative for updated ETAs. No additional charges will apply for weather-related diversions or delays.
+
+This advisory will be updated daily until conditions improve.","Western Mediterranean","\N","2026-04-29","2026-07-06","weather,storm,advisory,safety,western-mediterranean"
+"DOC-0021","BULLETIN","Weather Advisory — Eastern Mediterranean Sea Routes","TRADE LANE BULLETIN: Weather Advisory
+
+Region: Eastern Mediterranean
+Issue Date: March 5, 2026
+Valid Until: March 12, 2026
+Severity: HIGH
+
+WEATHER CONDITIONS:
+An intense Medicane (Mediterranean hurricane) is forecast to develop near Crete with sustained winds up to 90 km/h and wave heights exceeding 6 meters. All eastern Mediterranean routes are affected.
+
+AFFECTED ROUTES:
+Piraeus-Port Said, Piraeus-Haifa, Istanbul-Piraeus, Marsaxlokk-Piraeus
+
+IMPACT ON Euro-Med Shipping SERVICES:
+- Vessels operating in the Eastern Mediterranean may reduce speed for safety, resulting in transit time increases of 2 days.
+- Port operations at exposed terminals may be suspended during peak weather conditions.
+- Container handling at open-air terminals may be restricted during high winds (>50 km/h).
+
+VESSEL SAFETY MEASURES:
+Euro-Med Shipping vessels will implement the following safety protocols:
+- Reduced speed in affected areas.
+- Route deviation to avoid worst conditions where possible.
+- Additional cargo lashing inspections.
+- Reefer monitoring frequency increased to every 2 hours.
+
+CUSTOMER ADVISORY:
+Customers with time-sensitive cargo on affected routes should contact their Euro-Med Shipping representative for updated ETAs. No additional charges will apply for weather-related diversions or delays.
+
+This advisory will be updated daily until conditions improve.","Eastern Mediterranean","\N","2026-04-29","2026-07-03","weather,storm,advisory,safety,eastern-mediterranean"
+"DOC-0022","BULLETIN","Weather Advisory — Strait of Gibraltar Sea Routes","TRADE LANE BULLETIN: Weather Advisory
+
+Region: Strait of Gibraltar
+Issue Date: January 22, 2026
+Valid Until: January 25, 2026
+Severity: LOW
+
+WEATHER CONDITIONS:
+Dense fog conditions expected in the Strait of Gibraltar area reducing visibility below 1 nautical mile. Vessel traffic management may impose speed restrictions.
+
+AFFECTED ROUTES:
+Algeciras-Tanger Med, all transits through Strait of Gibraltar
+
+IMPACT ON Euro-Med Shipping SERVICES:
+- Vessels operating in the Strait of Gibraltar may reduce speed for safety, resulting in transit time increases of 1 days.
+- Port operations at exposed terminals may be suspended during peak weather conditions.
+- Container handling at open-air terminals may be restricted during high winds (>50 km/h).
+
+VESSEL SAFETY MEASURES:
+Euro-Med Shipping vessels will implement the following safety protocols:
+- Reduced speed in affected areas.
+- Route deviation to avoid worst conditions where possible.
+- Additional cargo lashing inspections.
+- Reefer monitoring frequency increased to every 2 hours.
+
+CUSTOMER ADVISORY:
+Customers with time-sensitive cargo on affected routes should contact their Euro-Med Shipping representative for updated ETAs. No additional charges will apply for weather-related diversions or delays.
+
+This advisory will be updated daily until conditions improve.","Strait of Gibraltar","\N","2026-03-03","2026-04-14","weather,storm,advisory,safety,strait-of-gibraltar"
+"DOC-0023","BULLETIN","Weather Advisory — Adriatic and Ionian Sea Sea Routes","TRADE LANE BULLETIN: Weather Advisory
+
+Region: Adriatic and Ionian Sea
+Issue Date: April 8, 2026
+Valid Until: April 14, 2026
+Severity: MODERATE
+
+WEATHER CONDITIONS:
+A Sirocco wind event bringing sustained southerly winds of 45-65 km/h across the Adriatic and Ionian seas. Sand dust from North Africa may affect visibility.
+
+AFFECTED ROUTES:
+Genoa-Piraeus, Gioia Tauro-Piraeus, Genoa-Istanbul
+
+IMPACT ON Euro-Med Shipping SERVICES:
+- Vessels operating in the Adriatic and Ionian Sea may reduce speed for safety, resulting in transit time increases of 2 days.
+- Port operations at exposed terminals may be suspended during peak weather conditions.
+- Container handling at open-air terminals may be restricted during high winds (>50 km/h).
+
+VESSEL SAFETY MEASURES:
+Euro-Med Shipping vessels will implement the following safety protocols:
+- Reduced speed in affected areas.
+- Route deviation to avoid worst conditions where possible.
+- Additional cargo lashing inspections.
+- Reefer monitoring frequency increased to every 2 hours.
+
+CUSTOMER ADVISORY:
+Customers with time-sensitive cargo on affected routes should contact their Euro-Med Shipping representative for updated ETAs. No additional charges will apply for weather-related diversions or delays.
+
+This advisory will be updated daily until conditions improve.","Adriatic and Ionian Sea","\N","2026-01-05","2026-03-25","weather,storm,advisory,safety,adriatic-and-ionian-sea"
+"DOC-0024","BULLETIN","Weather Advisory — North Sea and English Channel Sea Routes","TRADE LANE BULLETIN: Weather Advisory
+
+Region: North Sea and English Channel
+Issue Date: December 15, 2025
+Valid Until: December 20, 2025
+Severity: HIGH
+
+WEATHER CONDITIONS:
+A major Atlantic storm system is crossing northern Europe with sustained winds of 70-90 km/h. Wave heights in the North Sea expected to reach 7-9 meters. All North European port operations may be affected.
+
+AFFECTED ROUTES:
+Rotterdam-Hamburg, Rotterdam-Antwerp, Le Havre-Rotterdam, Le Havre-Hamburg
+
+IMPACT ON Euro-Med Shipping SERVICES:
+- Vessels operating in the North Sea and English Channel may reduce speed for safety, resulting in transit time increases of 3 days.
+- Port operations at exposed terminals may be suspended during peak weather conditions.
+- Container handling at open-air terminals may be restricted during high winds (>50 km/h).
+
+VESSEL SAFETY MEASURES:
+Euro-Med Shipping vessels will implement the following safety protocols:
+- Reduced speed in affected areas.
+- Route deviation to avoid worst conditions where possible.
+- Additional cargo lashing inspections.
+- Reefer monitoring frequency increased to every 2 hours.
+
+CUSTOMER ADVISORY:
+Customers with time-sensitive cargo on affected routes should contact their Euro-Med Shipping representative for updated ETAs. No additional charges will apply for weather-related diversions or delays.
+
+This advisory will be updated daily until conditions improve.","North Sea and English Channel","\N","2026-04-06","2026-05-01","weather,storm,advisory,safety,north-sea-and-english-channel"
+"DOC-0025","BULLETIN","Schedule Change Notice — MEDEX Service","TRADE LANE BULLETIN: Schedule Change Notice
+
+Service: MEDEX
+Effective: March 1, 2026
+Type: Temporary port omission
+
+SCHEDULE MODIFICATION:
+The MEDEX service will temporarily omit the call at Marsaxlokk (Malta) for 4 consecutive voyages due to terminal maintenance.
+
+AFFECTED PORT ROTATION:
+Rotterdam - Antwerp - Marseille - [Marsaxlokk omitted] - Gioia Tauro - Piraeus - Istanbul
+
+REASON FOR CHANGE:
+Terminal maintenance at Malta Freeport Terminal (berth reinforcement project)
+
+IMPACT:
+- Booking cut-off dates will be adjusted. Updated cut-offs available on MyShipping.
+- Transit times on affected legs may change by 1 days.
+- Connecting services at transshipment hubs may be adjusted.
+
+ACTION REQUIRED:
+1. Review updated sailing schedule on Euro-Med Shipping website.
+2. Confirm booking cut-off dates for upcoming shipments.
+3. Contact customer service for bookings already confirmed on affected voyages.
+
+Customers with confirmed bookings on affected voyages will be contacted directly by their Euro-Med Shipping representative with revised shipping instructions.","Europe-Mediterranean","\N","2025-12-13","2026-01-10","schedule,rotation,change,service,medex"
+"DOC-0026","BULLETIN","Schedule Change Notice — EUROSAL Service","TRADE LANE BULLETIN: Schedule Change Notice
+
+Service: EUROSAL
+Effective: February 15, 2026
+Type: Additional port call
+
+SCHEDULE MODIFICATION:
+The EUROSAL service will add a call at Bejaia, Algeria starting from voyage 026E.
+
+AFFECTED PORT ROTATION:
+Antwerp - Le Havre - Algeciras - Bejaia (NEW) - Valencia - Genoa - Marseille
+
+REASON FOR CHANGE:
+Customer demand for direct Algeria coverage
+
+IMPACT:
+- Booking cut-off dates will be adjusted. Updated cut-offs available on MyShipping.
+- Transit times on affected legs may change by 1 days.
+- Connecting services at transshipment hubs may be adjusted.
+
+ACTION REQUIRED:
+1. Review updated sailing schedule on Euro-Med Shipping website.
+2. Confirm booking cut-off dates for upcoming shipments.
+3. Contact customer service for bookings already confirmed on affected voyages.
+
+Customers with confirmed bookings on affected voyages will be contacted directly by their Euro-Med Shipping representative with revised shipping instructions.","Europe-Mediterranean","\N","2026-01-09","2026-02-12","schedule,rotation,change,service,eurosal"
+"DOC-0027","BULLETIN","Schedule Change Notice — AEGEAN EXPRESS Service","TRADE LANE BULLETIN: Schedule Change Notice
+
+Service: AEGEAN EXPRESS
+Effective: April 1, 2026
+Type: Vessel upgrade
+
+SCHEDULE MODIFICATION:
+Euro-Med Shipping MEDEA (9,400 TEU) will be replaced by Euro-Med Shipping MARSEILLE (14,000 TEU) on the Aegean Express service, increasing capacity by 49%.
+
+AFFECTED PORT ROTATION:
+Hamburg - Rotterdam - Gioia Tauro - Piraeus - Istanbul - Haifa - Port Said
+
+REASON FOR CHANGE:
+Capacity increase to meet growing demand on Eastern Mediterranean routes
+
+IMPACT:
+- Booking cut-off dates will be adjusted. Updated cut-offs available on MyShipping.
+- Transit times on affected legs may change by 0 days.
+- Connecting services at transshipment hubs may be adjusted.
+
+ACTION REQUIRED:
+1. Review updated sailing schedule on Euro-Med Shipping website.
+2. Confirm booking cut-off dates for upcoming shipments.
+3. Contact customer service for bookings already confirmed on affected voyages.
+
+Customers with confirmed bookings on affected voyages will be contacted directly by their Euro-Med Shipping representative with revised shipping instructions.","Europe-Mediterranean","\N","2026-03-19","2026-06-17","schedule,rotation,change,service,aegean-express"
+"DOC-0028","BULLETIN","Schedule Change Notice — PHOENICIAN Service","TRADE LANE BULLETIN: Schedule Change Notice
+
+Service: PHOENICIAN
+Effective: January 10, 2026
+Type: Rotation change
+
+SCHEDULE MODIFICATION:
+The Phoenician service rotation will be reversed to optimize transit times for eastbound cargo.
+
+AFFECTED PORT ROTATION:
+Marseille - Genoa - Gioia Tauro - Piraeus - Beirut - Haifa (reversed from current westbound priority)
+
+REASON FOR CHANGE:
+Transit time optimization following customer feedback
+
+IMPACT:
+- Booking cut-off dates will be adjusted. Updated cut-offs available on MyShipping.
+- Transit times on affected legs may change by -1 days.
+- Connecting services at transshipment hubs may be adjusted.
+
+ACTION REQUIRED:
+1. Review updated sailing schedule on Euro-Med Shipping website.
+2. Confirm booking cut-off dates for upcoming shipments.
+3. Contact customer service for bookings already confirmed on affected voyages.
+
+Customers with confirmed bookings on affected voyages will be contacted directly by their Euro-Med Shipping representative with revised shipping instructions.","Europe-Mediterranean","\N","2025-12-17","2026-02-18","schedule,rotation,change,service,phoenician"
+"DOC-0029","BULLETIN","Schedule Change Notice — NORTH EUROPE MED Service","TRADE LANE BULLETIN: Schedule Change Notice
+
+Service: NORTH EUROPE MED
+Effective: May 1, 2026
+Type: Frequency increase
+
+SCHEDULE MODIFICATION:
+The North Europe Med service will increase from bi-weekly to weekly frequency starting May 2026.
+
+AFFECTED PORT ROTATION:
+Hamburg - Rotterdam - Antwerp - Le Havre - Algeciras - Tanger Med - Valencia - Marseille
+
+REASON FOR CHANGE:
+Increased trade volumes on North Europe to Western Mediterranean corridor
+
+IMPACT:
+- Booking cut-off dates will be adjusted. Updated cut-offs available on MyShipping.
+- Transit times on affected legs may change by 0 days.
+- Connecting services at transshipment hubs may be adjusted.
+
+ACTION REQUIRED:
+1. Review updated sailing schedule on Euro-Med Shipping website.
+2. Confirm booking cut-off dates for upcoming shipments.
+3. Contact customer service for bookings already confirmed on affected voyages.
+
+Customers with confirmed bookings on affected voyages will be contacted directly by their Euro-Med Shipping representative with revised shipping instructions.","Europe-Mediterranean","\N","2026-03-08","2026-06-06","schedule,rotation,change,service,north-europe-med"
+"DOC-0030","BULLETIN","Customs and Regulatory Update — Turkey","TRADE LANE BULLETIN: Customs and Regulatory Update
+
+Country: Turkey
+Port(s): Istanbul
+Issue Date: March 15, 2026
+Effective: April 1, 2026
+
+REGULATORY CHANGE:
+Turkish Customs Authority has introduced mandatory electronic pre-arrival cargo declarations (e-Manifest) for all containerized imports effective April 1, 2026.
+
+REQUIREMENTS:
+1. Electronic manifest must be submitted via Turkish Trade Ministry portal 48 hours before vessel arrival.
+2. Shipper's tax ID and EORI number must be included in all documentation.
+3. Phytosanitary certificates for agricultural products must be digitized.
+
+IMPACT ON SHIPMENTS:
+- All import shipments to Turkey will require e-Manifest submission. Paper declarations will no longer be accepted.
+- Non-compliant shipments may be held at customs, resulting in additional demurrage and storage charges.
+- Processing times may increase by 5 business days during the transition period.
+
+Euro-Med Shipping SUPPORT:
+Euro-Med Shipping's documentation team can assist with compliance. Contact docs-trist@carrier-ops.com for guidance.
+
+DEADLINE:
+All shipments arriving after April 1, 2026 must comply with the new requirements. Shipments currently in transit are exempt until April 30, 2026.
+
+Customers are advised to review their documentation procedures and update internal systems accordingly.","Eastern Mediterranean","TRIST","2026-03-30","2026-06-19","customs,regulatory,compliance,documentation,turkey"
+"DOC-0031","BULLETIN","Customs and Regulatory Update — Egypt","TRADE LANE BULLETIN: Customs and Regulatory Update
+
+Country: Egypt
+Port(s): Port Said
+Issue Date: February 1, 2026
+Effective: March 1, 2026
+
+REGULATORY CHANGE:
+Egyptian General Authority for Export and Import Control (GOEIC) has updated import inspection requirements for consumer electronics and textiles.
+
+REQUIREMENTS:
+1. Certificate of Conformity from an accredited inspection body required for electronics.
+2. Textile imports require updated labeling with Arabic-language care instructions.
+3. Advance Cargo Information (ACI) system registration mandatory for all importers.
+
+IMPACT ON SHIPMENTS:
+- Consumer electronics and textile shipments may face extended inspection times. Recommend submitting documentation well in advance.
+- Non-compliant shipments may be held at customs, resulting in additional demurrage and storage charges.
+- Processing times may increase by 7 business days during the transition period.
+
+Euro-Med Shipping SUPPORT:
+Euro-Med Shipping's documentation team can assist with compliance. Contact docs-egpsd@carrier-ops.com for guidance.
+
+DEADLINE:
+All shipments arriving after March 1, 2026 must comply with the new requirements. Shipments currently in transit are exempt until March 31, 2026.
+
+Customers are advised to review their documentation procedures and update internal systems accordingly.","Eastern Mediterranean","EGPSD","2026-02-03","2026-04-28","customs,regulatory,compliance,documentation,egypt"
+"DOC-0032","BULLETIN","Customs and Regulatory Update — Morocco","TRADE LANE BULLETIN: Customs and Regulatory Update
+
+Country: Morocco
+Port(s): Tanger Med
+Issue Date: April 10, 2026
+Effective: May 1, 2026
+
+REGULATORY CHANGE:
+Morocco's Administration des Douanes has implemented a new single-window customs clearance platform replacing the legacy BADR system.
+
+REQUIREMENTS:
+1. All customs brokers must register on the new PORTNET+ platform by May 1, 2026.
+2. Import declarations must use updated HS code classification (2026 revision).
+3. Electronic payment of duties via the platform is mandatory.
+
+IMPACT ON SHIPMENTS:
+- Initial processing delays of 2-3 days expected during system transition. Euro-Med Shipping recommends building buffer time into supply chains for Morocco-bound cargo.
+- Non-compliant shipments may be held at customs, resulting in additional demurrage and storage charges.
+- Processing times may increase by 3 business days during the transition period.
+
+Euro-Med Shipping SUPPORT:
+Euro-Med Shipping's documentation team can assist with compliance. Contact docs-maptm@carrier-ops.com for guidance.
+
+DEADLINE:
+All shipments arriving after May 1, 2026 must comply with the new requirements. Shipments currently in transit are exempt until June 1, 2026.
+
+Customers are advised to review their documentation procedures and update internal systems accordingly.","Mediterranean","MAPTM","2025-12-03","2025-12-31","customs,regulatory,compliance,documentation,morocco"
+"DOC-0033","BULLETIN","Customs and Regulatory Update — Greece","TRADE LANE BULLETIN: Customs and Regulatory Update
+
+Country: Greece
+Port(s): Piraeus
+Issue Date: January 20, 2026
+Effective: February 15, 2026
+
+REGULATORY CHANGE:
+Hellenic Customs Authority is implementing enhanced security screening for all transshipment cargo passing through Piraeus as an EU external border port.
+
+REQUIREMENTS:
+1. All transshipment cargo requires electronic transit declaration (T1/T2) before discharge.
+2. Random physical inspections will increase from 5% to 15% of transshipment containers.
+3. X-ray scanning mandatory for containers originating from non-EU Mediterranean ports.
+
+IMPACT ON SHIPMENTS:
+- Transshipment containers may experience delays of 12-24 hours for security screening. Direct import cargo is less affected.
+- Non-compliant shipments may be held at customs, resulting in additional demurrage and storage charges.
+- Processing times may increase by 2 business days during the transition period.
+
+Euro-Med Shipping SUPPORT:
+Euro-Med Shipping's documentation team can assist with compliance. Contact docs-grpir@carrier-ops.com for guidance.
+
+DEADLINE:
+All shipments arriving after February 15, 2026 must comply with the new requirements. Shipments currently in transit are exempt until March 15, 2026.
+
+Customers are advised to review their documentation procedures and update internal systems accordingly.","Eastern Mediterranean","GRPIR","2026-04-17","2026-06-04","customs,regulatory,compliance,documentation,greece"
+"DOC-0034","BULLETIN","Customs and Regulatory Update — Algeria","TRADE LANE BULLETIN: Customs and Regulatory Update
+
+Country: Algeria
+Port(s): Bejaia
+Issue Date: March 1, 2026
+Effective: April 15, 2026
+
+REGULATORY CHANGE:
+Algerian Directorate General of Customs has introduced new import licensing requirements for automotive parts and chemical products.
+
+REQUIREMENTS:
+1. Import license application must be submitted 30 days before shipment.
+2. Certificate of origin must be apostilled or notarized.
+3. Pre-shipment inspection by ABCI required for shipments exceeding USD 50,000.
+
+IMPACT ON SHIPMENTS:
+- Automotive and chemical importers should apply for licenses immediately. Shipments without valid licenses will be held at customs.
+- Non-compliant shipments may be held at customs, resulting in additional demurrage and storage charges.
+- Processing times may increase by 10 business days during the transition period.
+
+Euro-Med Shipping SUPPORT:
+Euro-Med Shipping's documentation team can assist with compliance. Contact docs-dzbja@carrier-ops.com for guidance.
+
+DEADLINE:
+All shipments arriving after April 15, 2026 must comply with the new requirements. Shipments currently in transit are exempt until May 15, 2026.
+
+Customers are advised to review their documentation procedures and update internal systems accordingly.","Mediterranean","DZBJA","2026-02-26","2026-03-26","customs,regulatory,compliance,documentation,algeria"
+"DOC-0035","SOP","SOP: Container Loading and Securing Guidelines","Standard Operating Procedure: Container Loading and Securing
+
+Document ID: SOP-CTR-001
+Effective Date: January 1, 2026
+Revision: 3.0
+
+1. PURPOSE
+This SOP establishes guidelines for the safe loading and securing of cargo within shipping containers to prevent damage during transit on Euro-Med Shipping vessels.
+
+2. SCOPE
+Applies to all FCL (Full Container Load) shipments loaded by shippers or their agents for transport on Euro-Med Shipping Europe-Mediterranean services.
+
+3. WEIGHT DISTRIBUTION
+- Cargo must be evenly distributed across the container floor.
+- Heavy items must be placed at the bottom; lighter items on top.
+- The center of gravity should be at or below the mid-height of the container.
+- Maximum floor loading: 1 ton per linear meter for 20GP, 0.85 tons per linear meter for 40GP/40HC.
+
+4. SECURING METHODS
+- Blocking: Use timber or inflatable dunnage bags to fill gaps between cargo and container walls.
+- Bracing: Use timber or metal bracing bars to prevent lateral movement.
+- Lashing: Use webbing straps or chains rated for the cargo weight. Minimum 2 lashing points per heavy item.
+- Anti-slip mats: Required under all palletized cargo.
+
+5. PROHIBITED PRACTICES
+- Loading cargo exceeding the container's maximum payload.
+- Mixing incompatible cargo (e.g., food products with chemicals) without proper separation.
+- Leaving unsecured gaps greater than 15cm between cargo units.
+- Using damaged or wet dunnage material.
+
+6. DOCUMENTATION
+Shipper must provide a Container Packing Certificate confirming compliance with this SOP. Containers found to be improperly loaded may be refused for loading at the shipper's risk and expense.
+
+7. PHOTOGRAPHIC EVIDENCE
+Euro-Med Shipping recommends shippers photograph the loaded container (door-end view) before sealing. This documentation supports claims in case of damage during transit.","GLOBAL","\N","2026-01-01","\N","loading,securing,container,packing,SOP"
+"DOC-0036","SOP","SOP: Hazardous Cargo Handling Procedures","Standard Operating Procedure: Hazardous Cargo Handling
+
+Document ID: SOP-DG-001
+Effective Date: January 1, 2026
+Revision: 4.0
+
+1. PURPOSE
+This SOP defines the requirements for booking, documenting, handling, and transporting dangerous goods (DG) on Euro-Med Shipping vessels in compliance with the International Maritime Dangerous Goods (IMDG) Code.
+
+2. ACCEPTED CARGO CLASSES
+Euro-Med Shipping accepts IMDG Classes 2.1, 2.2, 3, 4.1, 4.2, 4.3, 5.1, 5.2, 6.1, 6.2, 8, and 9. Class 1 (Explosives) and Class 7 (Radioactive) are NOT accepted except by special arrangement.
+
+3. BOOKING PROCEDURE
+a) DG bookings must be requested at least 7 days before vessel cut-off.
+b) Submit via MyShipping portal: DG Declaration Form, MSDS, Emergency Response Card.
+c) Euro-Med Shipping DG team reviews within 48 hours and confirms acceptance or rejection.
+d) Booking confirmation includes stowage instructions (on-deck/under-deck).
+
+4. DOCUMENTATION REQUIREMENTS
+- Multimodal Dangerous Goods Form (IMDG format)
+- Material Safety Data Sheet (MSDS/SDS) in English
+- Container Packing Certificate
+- Emergency contact information (24/7 availability required)
+All documents must be submitted 72 hours before vessel cut-off.
+
+5. CONTAINER REQUIREMENTS
+- DG containers must display correct UN number placards on all 4 sides and top.
+- Containers must be in good condition with no damage to structure or door seals.
+- Reefer DG cargo requires temperature-controlled containers with appropriate certification.
+- Fumigated containers must be clearly marked with fumigation warning signs.
+
+6. STOWAGE
+- Class 2.1, 4.2, 5.2: Mandatory on-deck stowage.
+- Segregation per IMDG Code Table 7.2.4 strictly enforced.
+- DG containers are not placed adjacent to crew quarters or engine room ventilation.
+
+7. EMERGENCY RESPONSE
+In case of incident involving DG cargo, the vessel master will follow the Emergency Procedures for Ships Carrying Dangerous Goods (EmS Guide). Shore-side emergency contact: Euro-Med Shipping Emergency Operations Center +33 4 88 91 90 00 (24/7).","GLOBAL","\N","2026-01-01","\N","hazardous,dangerous goods,IMDG,handling,safety,SOP"
+"DOC-0037","SOP","SOP: Customs Clearance Documentation Guide","Standard Operating Procedure: Customs Clearance Documentation Guide
+
+Document ID: SOP-DOC-001
+Effective Date: January 1, 2026
+Revision: 2.0
+
+1. PURPOSE
+This guide outlines the documentation requirements for customs clearance of containerized cargo at Europe-Mediterranean ports served by Euro-Med Shipping.
+
+2. STANDARD DOCUMENTS (ALL SHIPMENTS)
+a) Commercial Invoice: Must include seller/buyer details, Incoterms, HS codes, cargo description, quantity, and declared value.
+b) Packing List: Itemized list of cargo with weights, dimensions, and package marks.
+c) Bill of Lading: Original or telex-released, showing shipper, consignee, notify party, and cargo details.
+d) Certificate of Origin: Required for preferential tariff treatment under trade agreements (EUR.1 for EU, EUR-MED for Pan-Euro-Med zone).
+
+3. ADDITIONAL DOCUMENTS BY CARGO TYPE
+- Agricultural products: Phytosanitary certificate, fumigation certificate.
+- Animal products: Veterinary health certificate.
+- Pharmaceuticals: Import license, GMP certificate.
+- Chemicals: MSDS, import permit (if restricted substance).
+- Textiles: Certificate of Conformity, labeling compliance certificate.
+- Electronics: CE marking declaration, WEEE compliance.
+- Automotive parts: Type approval certificate, homologation papers.
+
+4. COUNTRY-SPECIFIC REQUIREMENTS
+- Turkey: e-Manifest via Trade Ministry portal, EORI number.
+- Egypt: ACI system registration, GOEIC inspection for certain goods.
+- Morocco: PORTNET+ registration, updated HS codes (2026 revision).
+- Algeria: Import license for automotive/chemicals, apostilled Certificate of Origin.
+- Israel: Import declaration via SHAAR system, dual-use goods license if applicable.
+
+5. SUBMISSION TIMELINE
+Documents must be submitted to the customs broker at least 48 hours before vessel arrival at the port of discharge. Late documentation is the primary cause of customs delays and associated demurrage charges.
+
+6. Euro-Med Shipping SUPPORT
+Euro-Med Shipping offers a documentation review service. Submit documents to docs-review@carrier-ops.com at least 5 business days before vessel arrival for a compliance check. Service fee: EUR 75 per shipment.","Europe-Mediterranean","\N","2026-01-01","\N","customs,documentation,clearance,compliance,SOP"
+"DOC-0038","SOP","SOP: Reefer Container Pre-Trip Inspection (PTI) Procedure","Standard Operating Procedure: Reefer Container Pre-Trip Inspection
+
+Document ID: SOP-RFR-001
+Effective Date: January 1, 2026
+Revision: 2.0
+
+1. PURPOSE
+This SOP defines the Pre-Trip Inspection (PTI) process for all reefer containers used on Euro-Med Shipping services to ensure equipment reliability and cargo safety.
+
+2. PTI TIMING
+PTI must be completed no more than 72 hours before container stuffing and no more than 5 days before vessel loading.
+
+3. PTI CHECKLIST
+a) External inspection: Container structure, door seals, hinges, locking mechanism, drain plugs.
+b) Refrigeration unit: Compressor operation, thermostat accuracy (+/- 1C), defrost cycle, fan operation.
+c) Temperature test: Unit must reach set-point temperature and hold for minimum 2 hours.
+d) Electrical: Power supply cable integrity, plug condition, insulation resistance test.
+e) Interior: Cleanliness, odor check, T-bar floor integrity, wall panels.
+f) Data logger: Verify data logger is installed and operational (TRAXENS or Emerson).
+
+4. PTI RESULT CODES
+- PASS: Container is approved for use. PTI certificate issued.
+- CONDITIONAL: Minor issues that can be repaired within 24 hours. Re-inspection required.
+- FAIL: Container is rejected. Major defects found. Container returned to depot for repair.
+
+5. PTI CERTIFICATE
+PTI certificate must accompany the reefer container throughout the transport chain. The certificate includes: container number, PTI date, technician ID, set-point temperature, test results, and next maintenance due date.
+
+6. CUSTOMER RESPONSIBILITY
+If the customer stuffs a reefer container that has not undergone PTI, Euro-Med Shipping is not liable for cargo damage resulting from equipment failure. The customer will bear all costs including cargo loss and container cleaning.","GLOBAL","\N","2026-01-01","\N","reefer,PTI,inspection,cold chain,SOP"
+"DOC-0039","SOP","SOP: Overweight Container Handling Procedure","Standard Operating Procedure: Overweight Container Handling
+
+Document ID: SOP-OWT-001
+Effective Date: January 1, 2026
+Revision: 1.0
+
+1. PURPOSE
+This SOP defines the procedures for identifying and handling containers that exceed maximum gross weight limits as per ISO standards and Euro-Med Shipping vessel requirements.
+
+2. WEIGHT LIMITS
+- 20GP: Maximum gross weight 30,480 kg (including container tare weight ~2,200 kg, max payload ~28,280 kg).
+- 40GP: Maximum gross weight 30,480 kg (including container tare weight ~3,750 kg, max payload ~26,730 kg).
+- 40HC: Maximum gross weight 30,480 kg (including container tare weight ~3,900 kg, max payload ~26,580 kg).
+
+3. DETECTION
+Overweight containers are identified at the terminal weigh-bridge. Any container exceeding the declared VGM by more than 5% or exceeding the ISO maximum gross weight will be flagged.
+
+4. PROCEDURE FOR OVERWEIGHT CONTAINERS
+a) Container is placed on hold at the terminal.
+b) Shipper is notified immediately via email and phone.
+c) Options offered to shipper:
+   - Repack to reduce weight (at shipper's expense).
+   - Split into two containers (additional container and freight charges apply).
+   - Accept and load if within vessel's cell guide limits (requires Euro-Med Shipping approval and overweight surcharge).
+d) Overweight surcharge: EUR 500 per container if approved for loading.
+
+5. SAFETY
+Overweight containers pose risks to vessel stability, crane operations, and road/rail transport. Euro-Med Shipping will NOT load containers exceeding vessel cell guide limits regardless of shipper requests. Safety is non-negotiable.
+
+6. PENALTIES
+Persistent VGM inaccuracies (3+ incidents per quarter) may result in mandatory weighing at terminal for all shipper's containers at the shipper's expense (EUR 50 per weigh).","GLOBAL","\N","2026-01-01","\N","overweight,VGM,weight,safety,SOP"
+"DOC-0040","SOP","SOP: LCL (Less than Container Load) Consolidation Procedure","Standard Operating Procedure: LCL Consolidation
+
+Document ID: SOP-LCL-001
+Effective Date: January 1, 2026
+Revision: 2.0
+
+1. PURPOSE
+This SOP defines the process for Less than Container Load (LCL) consolidation and deconsolidation at Euro-Med Shipping Container Freight Stations (CFS) in the Europe-Mediterranean region.
+
+2. LCL BOOKING
+- LCL bookings accepted for minimum 1 CBM or 500 kg (whichever produces greater revenue).
+- Cut-off for cargo delivery to CFS: 3 business days before vessel cut-off.
+- LCL rates quoted per CBM or per ton (weight/measurement), whichever is higher.
+
+3. CFS LOCATIONS (Europe-Mediterranean)
+- Marseille CFS: Fos-sur-Mer, Zone Industrielle (import/export)
+- Rotterdam CFS: Europoort, Maasvlakte (import/export)
+- Piraeus CFS: Neo Ikonio, Container Terminal Area (import only)
+- Istanbul CFS: Ambarli, Beylikduzu (import/export)
+
+4. CONSOLIDATION RULES
+- Compatible cargo only: No mixing of food products with chemicals, wet cargo with dry cargo, or odorous with non-odorous cargo.
+- Fumigated cargo must be consolidated separately.
+- DG LCL cargo accepted only at Marseille and Rotterdam CFS.
+- Maximum individual piece weight: 2,000 kg without prior arrangement.
+
+5. DOCUMENTATION
+Each LCL shipment requires individual House Bill of Lading plus the following:
+- Commercial invoice, packing list, and any commodity-specific documents.
+- CFS Receipt issued upon cargo delivery to the warehouse.
+
+6. TRANSIT TIMES
+LCL transit times are typically 3-5 days longer than FCL due to CFS processing at origin and destination.
+
+7. CLAIMS
+LCL cargo damage claims must reference both the House and Master Bill of Lading numbers. Claims must be filed within 21 days of cargo collection from destination CFS.","Europe-Mediterranean","\N","2026-01-01","\N","LCL,consolidation,CFS,warehouse,SOP"
+"DOC-0041","SOP","SOP: Container Damage Reporting and Claims Procedure","Standard Operating Procedure: Container Damage Reporting and Claims
+
+Document ID: SOP-CLM-001
+Effective Date: January 1, 2026
+Revision: 3.0
+
+1. PURPOSE
+This SOP defines the procedure for reporting container and cargo damage and filing claims with Euro-Med Shipping.
+
+2. DAMAGE REPORTING TIMELINE
+- Visible damage: Report within 3 working days of container delivery.
+- Concealed damage: Report within 21 calendar days of container delivery.
+- Failure to report within these timelines may result in claim denial.
+
+3. REPORTING PROCEDURE
+a) Contact Euro-Med Shipping customer service or claims department immediately upon discovery.
+b) Submit a written notice via email to claims-med@carrier-ops.com with:
+   - Bill of Lading number
+   - Container number
+   - Description of damage
+   - Photographs of damage (container exterior and interior, affected cargo)
+   - Delivery receipt with exceptions noted
+
+4. SURVEY
+Euro-Med Shipping may appoint a surveyor to inspect the damage. The customer must preserve the cargo and container in the damaged condition until the survey is completed or Euro-Med Shipping waives the survey requirement.
+
+5. CLAIM SUBMISSION
+Submit a formal claim with:
+- Claim letter with amount
+- Original or copy of Bill of Lading
+- Commercial invoice showing cargo value
+- Packing list
+- Survey report (if applicable)
+- Repair estimates or replacement invoices
+- Photographs
+
+6. CLAIM PROCESSING
+- Acknowledgment within 5 business days.
+- Assessment within 30 business days for standard claims.
+- Priority processing (14 business days) for Gold Tier customers.
+- Settlement offer or denial with explanation.
+
+7. LIABILITY LIMITS
+Per Hague-Visby Rules: 666.67 SDR per package or 2 SDR per kg of gross weight, whichever is higher. Higher limits apply only if declared value was noted on the Bill of Lading before shipment.","GLOBAL","\N","2026-01-01","\N","damage,claims,reporting,survey,SOP"
+"DOC-0042","SOP","SOP: Out-of-Gauge (OOG) and Breakbulk Cargo Handling","Standard Operating Procedure: Out-of-Gauge and Breakbulk Cargo Handling
+
+Document ID: SOP-OOG-001
+Effective Date: January 1, 2026
+Revision: 2.0
+
+1. PURPOSE
+This SOP covers the booking, documentation, and handling requirements for out-of-gauge (OOG) cargo and breakbulk shipments on Euro-Med Shipping Europe-Mediterranean services.
+
+2. DEFINITIONS
+- Out-of-Gauge: Cargo that exceeds the internal dimensions of a standard container (over-height, over-width, or over-length).
+- Breakbulk: Individual pieces of cargo too large or heavy for containerization.
+
+3. EQUIPMENT OPTIONS
+- Flat Rack (20FR/40FR): For over-width and over-height cargo.
+- Open Top (20OT/40OT): For over-height cargo loaded from the top.
+- Platform (20PL/40PL): For heavy, oversized machinery.
+
+4. BOOKING PROCEDURE
+a) Submit OOG booking request minimum 14 days before vessel cut-off.
+b) Provide detailed cargo dimensions (L x W x H in cm) and weight (kg).
+c) Include photographs or technical drawings of the cargo.
+d) Euro-Med Shipping engineering team assesses stowage feasibility within 48 hours.
+e) Approval includes stowage plan, special lashing requirements, and any slot loss charges.
+
+5. SLOT LOSS CHARGES
+OOG cargo may occupy multiple container slots on the vessel. Charges are based on the number of slots consumed:
+- 1 additional slot: 50% of base freight surcharge.
+- 2 additional slots: 100% of base freight surcharge.
+- 3+ slots: Custom quotation required.
+
+6. LASHING AND SECURING
+All OOG cargo must be secured according to Euro-Med Shipping's lashing plan. The shipper is responsible for providing adequate securing materials (chains, turnbuckles, timber). Euro-Med Shipping terminal will verify lashing before vessel loading.
+
+7. LIMITATIONS
+Maximum piece weight: 40,000 kg (dependent on port crane capacity). Some ports may have lower limits. Confirm with Euro-Med Shipping before booking.","GLOBAL","\N","2026-01-01","\N","OOG,breakbulk,flat rack,oversize,SOP"
