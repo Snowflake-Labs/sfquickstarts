@@ -265,10 +265,6 @@ What schemas are in my default database?
 ```
 
 ```
-Show me the top 5 largest tables in my account by row count
-```
-
-```
 Explain what a Dynamic Table is and when I should use one
 ```
 
