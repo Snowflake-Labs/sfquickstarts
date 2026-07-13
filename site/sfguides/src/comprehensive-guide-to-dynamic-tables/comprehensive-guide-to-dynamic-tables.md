@@ -175,6 +175,8 @@ Expected result — the priciest items relative to their category average:
 
 Snowflake maintains this as a pipeline: `menu_raw → dt_category_benchmarks → dt_menu_vs_benchmark`. When `menu_raw` changes, both Dynamic Tables refresh in dependency order — no orchestration code required.
 
+> **Every refresh sees a single, consistent snapshot.** Snowflake evaluates each refresh at one transactional point in time — its *data timestamp* — so every input reflects all committed base data up to that instant and nothing after. A table that joins several sources can never read a half-updated picture, and across a layered pipeline the whole graph refreshes against a consistent snapshot. Each new result is swapped in atomically: your queries always see the fully-old or fully-new table, never a partial one.
+
 ![Layered Dynamic Table pipeline](assets/layered_pipeline.png)
 <!-- TODO: screenshot of the Dynamic Table dependency graph in Snowsight -->
 
@@ -252,7 +254,17 @@ SHOW DYNAMIC TABLES LIKE 'menu_profitability';
 <!-- ------------------------ -->
 ## Monitoring Refreshes
 
-Every refresh is recorded in `INFORMATION_SCHEMA.DYNAMIC_TABLE_REFRESH_HISTORY`. Query it to see whether each refresh was `INCREMENTAL` or `FULL`, its state, and how long it took:
+Dynamic Tables report their health through several surfaces — pick the one that matches the question you're asking:
+
+| Question | Where to look | Retention |
+|:--|:--|:--|
+| Current config & resolved refresh mode | `SHOW DYNAMIC TABLES` | live |
+| Fleet health — is anything falling behind its lag? | `INFORMATION_SCHEMA.DYNAMIC_TABLES()` | live snapshot |
+| Per-refresh detail — incremental vs full, duration, errors | `INFORMATION_SCHEMA.DYNAMIC_TABLE_REFRESH_HISTORY()` | 7 days |
+| Long-term trends & audits | `SNOWFLAKE.ACCOUNT_USAGE.DYNAMIC_TABLE_REFRESH_HISTORY` | 365 days |
+| The dependency graph over time | `INFORMATION_SCHEMA.DYNAMIC_TABLE_GRAPH_HISTORY()` | 7 days |
+
+Start with per-refresh history to confirm a refresh ran and whether it was incremental, its state, and how long it took:
 
 ```sql
 SELECT name, refresh_action, state,
@@ -263,7 +275,26 @@ ORDER BY refresh_start_time DESC
 LIMIT 5;
 ```
 
-The `refresh_action` column shows `INCREMENTAL` when Snowflake processed only the changed rows. You can also monitor refresh history, lag, and the dependency graph visually in Snowsight under **Monitoring » Dynamic Tables**.
+The `refresh_action` column shows `INCREMENTAL` when Snowflake processed only the changed rows.
+
+To watch a whole pipeline at once, `INFORMATION_SCHEMA.DYNAMIC_TABLES()` gives a live health snapshot of every Dynamic Table — its lag behavior and the snapshot it's currently serving:
+
+```sql
+SELECT name, target_lag_sec, mean_lag_sec, maximum_lag_sec,
+       time_within_target_lag_ratio, last_completed_refresh_state, latest_data_timestamp
+FROM TABLE(INFORMATION_SCHEMA.DYNAMIC_TABLES())
+ORDER BY time_within_target_lag_ratio;
+```
+
+`time_within_target_lag_ratio` is the fraction of time each table met its `TARGET_LAG` — anything drifting below ~0.90 is falling behind and worth a look. `latest_data_timestamp` is the *data timestamp* of the snapshot that table is currently serving (the same consistent snapshot described earlier). To triage just the failures, filter refresh history with `ERROR_ONLY => TRUE`:
+
+```sql
+SELECT name, state, refresh_action, refresh_end_time
+FROM TABLE(INFORMATION_SCHEMA.DYNAMIC_TABLE_REFRESH_HISTORY(ERROR_ONLY => TRUE))
+ORDER BY refresh_end_time DESC;
+```
+
+The `INFORMATION_SCHEMA` functions keep **7 days** of history; for longer audits or trend analysis, query the `SNOWFLAKE.ACCOUNT_USAGE.DYNAMIC_TABLE_REFRESH_HISTORY` view, which retains **365 days**. To be paged automatically when a refresh fails, route the event to an [alert](https://docs.snowflake.com/en/user-guide/alerts) on the refresh history. You can also monitor refresh history, lag, and the dependency graph visually in Snowsight under **Monitoring » Dynamic Tables**. For the full set of monitoring tools — including event tables and OpenTelemetry spans — see [Monitor Dynamic Tables](https://docs.snowflake.com/en/user-guide/dynamic-tables/monitoring).
 
 ![Dynamic Tables monitoring in Snowsight](assets/monitoring.png)
 <!-- TODO: screenshot of the Snowsight Dynamic Tables monitoring / refresh history UI -->
