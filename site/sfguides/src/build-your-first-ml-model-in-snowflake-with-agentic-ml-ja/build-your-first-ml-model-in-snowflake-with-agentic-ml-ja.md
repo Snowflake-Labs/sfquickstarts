@@ -479,7 +479,7 @@ EDA 結果のサマリー：
 <!-- ------------------------ -->
 ## 付録 A — S3 からの事前構築済みデータセットの読み込み
 
-CoCo で合成データを生成する代わりに事前構築済みのデータセットを読み込む場合は、[Snowsight SQL ワークシート](https://docs.snowflake.com/en/user-guide/ui-snowsight-worksheets-gs#create-worksheets-from-a-sql-file)で以下の SQL を実行するか、CoCo CLI にプロンプトとして貼り付けてください。[setup.sql](https://github.com/Snowflake-Labs/cortex-code-samples/blob/main/data-science-ml/setup.sql) をダウンロードすることもできます。
+CoCo で合成データを生成する代わりに事前構築済みのデータセットを読み込む場合は、[Snowsight SQL ワークシート](https://docs.snowflake.com/en/user-guide/ui-snowsight-worksheets-gs#create-worksheets-from-a-sql-file)で以下の SQL を実行するか、CoCo CLI にプロンプトとして貼り付けてください。
 
 ```sql
 USE ROLE ACCOUNTADMIN;
