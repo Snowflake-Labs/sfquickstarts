@@ -1,5 +1,5 @@
 author: Kevin Nguyen
-id: getting-started-with-coco-desktop-cli-snowsight-codespaces
+id: getting-started-with-coco
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/platform
 language: en
 summary: Choose how to access Snowflake CoCo — directly in Snowsight with no install, via the desktop IDE, the CLI, or GitHub Codespaces — and run your first natural-language queries in minutes.
