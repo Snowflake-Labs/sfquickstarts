@@ -1,4 +1,4 @@
-author: Sho Tanaka, Caleb Baechtold, Lucy Zhu
+author: Yusuke Shibui, Sho Tanaka, Caleb Baechtold, Lucy Zhu
 id: build-your-first-ml-model-in-snowflake-with-agentic-ml-ja
 summary: Learn how to build an end-to-end customer LTV prediction model — from EDA to batch or real-time inference — using CoCo and natural language prompts in Snowflake ML
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai
