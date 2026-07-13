@@ -365,13 +365,13 @@ When you're done experimenting, clean up the resources created in this quickstar
 
 ### Drop the Mirror
 
-Drop the mirror from **Snowflake**. Use `CASCADE` to also delete the target database:
+Drop the mirror from **Snowflake**. Use `DROP_TARGET_DATABASE` to also delete the target database:
 
 ```sql
-CALL SNOWFLAKE.POSTGRES.DROP_MIRROR('iot_mirror', CASCADE => TRUE);
+CALL SNOWFLAKE.POSTGRES.DROP_MIRROR(MIRROR_NAME => 'iot_mirror', DROP_TARGET_DATABASE => TRUE);
 ```
 
-If you omit `CASCADE`, the target database is left in place and remains queryable, but it will no longer receive updates.
+If you omit `DROP_TARGET_DATABASE`, the target database is left in place and remains queryable, but it will no longer receive updates.
 
 ### Delete the Postgres Instance
 
