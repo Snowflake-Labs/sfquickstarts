@@ -1,6 +1,6 @@
 author: Adam Timm
 id: hybrid-tables-secondary-index-design
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/hybrid-tables
 language: en
 summary: Learn how to design, create, and validate secondary indexes for Hybrid Tables to achieve low-latency point lookups and efficient range scans in your OLTP workloads.
 environments: web

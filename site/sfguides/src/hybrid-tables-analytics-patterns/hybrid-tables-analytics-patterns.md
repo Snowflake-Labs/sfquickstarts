@@ -1,6 +1,6 @@
 author: Adam Timm
 id: hybrid-tables-analytics-patterns
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/hybrid-tables
 language: en
 summary: Learn how to run analytics on Hybrid Table data using Task-based snapshots, Dynamic Tables, Materialized Views, and precomputed KPI serving patterns.
 environments: web
