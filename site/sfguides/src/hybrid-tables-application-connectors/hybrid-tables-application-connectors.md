@@ -1,6 +1,6 @@
 author: Adam Timm
 id: hybrid-tables-application-connectors
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/hybrid-tables
 language: en
 summary: Learn how to connect applications to Snowflake Hybrid Tables using JDBC, Python, Node.js, and Snowpark with bound variables, connection pooling, and Kafka ingest patterns.
 environments: web
