@@ -4,7 +4,7 @@ categories: snowflake-site:taxonomy/solution-center/certification/quickstart
 language: en
 environments: web
 status: Hidden
-author:  Snowflake DevRel Team
+author:  Snowflake Developer Growth Team
 
 # Snowflake Guide Basics
 
@@ -12,31 +12,13 @@ author:  Snowflake DevRel Team
 
 The following sections explain the various headings of a guide that are required to keep the look and feel consistent.
 
-Your guide will reside in this [sfguides/src folder](https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src)
-
-### Overview 
-
-Please use [this markdown file](https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/_markdown-template) as a template for writing your own Snowflake Guides. This example guide has elements that you will use when writing your own guides, including: code snippet highlighting, downloading files, inserting photos, and more. 
-
+Your guide must reside in this [sfguides/src folder](https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src)
 
 ### Prerequisites
 - Familiarity with Markdown syntax
-
-### What You’ll Learn 
-- Components of a Guide
-- Metadata configuration
-- Formatting considerations (including headers, subheaders, code, buttons, links, images and videos)
-- Tags to include (Language, industries, content type and category)
-- Converting content to markdown 
-- Submitting your guide for approval
-
-### What You’ll Need 
+  - Please use [this markdown file](https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/_markdown-template) as a template for writing your own Snowflake Guides. This example guide has elements that you will use when writing your own guides, including: code snippet highlighting, downloading files, inserting photos, and more. 
 - A [GitHub](https://github.com/) Account 
 - (OPTIONAL) A code editor like [VSCode](https://code.visualstudio.com/download) if you choose to edit locally
-
-
-### What You’ll Build 
-Once you complete this guide, you should be able to create your "Snowflake Guide" and submit it using the updated process.
 
 
 ### Layout Basics
@@ -97,13 +79,9 @@ It is important to set the correct metadata for your Snowflake Guide. The metada
   - Select from the complete list of content type categories, categories 1, 2 and 3 and/or industries categories provided.  Please DO NOT create new categories.
 - **status**: 
   - `Published` - implies the guide is active<br>
-  - `Archived` - implies the sfguide is out of date and deprecated and no longer available<br>
-  - Please note the `hidden` status will no longer be supported. If a content piece is not ready for publication, please keep this in draft form until you are ready to make this live. 
-  - `Archived` status wil be assessed on a case by case basis and is preferred that it is avoided to prevent redirect issues.  It is recommended to update existing guides.  Redirects will only be applied where absolutely needed.
+  - Please note no other statuses are supported with the AEM integration ('Archived', 'Hidden' etc), the default should always be 'Published'
 - **authors**:
   - Provide author full name. Multiple authors can be added
-  - Including the GitHub Account login helps us notify you of any changes requested in the future.
-
 
 **OPTIONAL FIELDS**
 
@@ -117,30 +95,6 @@ It is important to set the correct metadata for your Snowflake Guide. The metada
   - **open in snowflake link**:
     - add a link to the product as a deeplink or a template link
 
-
-You can see the source metadata at the top of the markdown for this guide [here](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/get-started-with-guides/get-started-with-guides.md?plain=1) for reference.
-
-
-
-## Markdown File and Formatting
-
-This section covers the basic markdown formatting options that you will need for your QuickStart. 
-
-Look at the [markdown source for this sfguide](https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/_markdown-template) to see how to use markdown to generate code snippets, info boxes, and download buttons. 
-
-> **Ctrl+Click** (Windows/Linux) or **Cmd+Click** (macOS) to open links in a new tab.  This is useful when following along instructions in a guide.
-
-**Things to Keep in Mind**
-Sticking to these guidelines ensures that all Guides have a similar look and feel.  Keeping the document clean helps create a good end-user experience.
-
-- Remember to include the header info in  your markdown 
-- Keep the H2 (##) Headings short: 3-4 words
-- Have an Overview section <br>(this includes the Prerequisites, What You'll Learn, What You'll Build and What You'll Need subsections)
-- Have a Conclusion and Resources section <br>
- (this includes the What We've Covered and Related Resources links)
-- **Do not** use html in markdown files as this will cause errors
-
-
 ### Adding Tables
 
 Code for adding tables:
@@ -153,27 +107,35 @@ Code for adding tables:
 
 ```
 
-
 ### Adding Images
-
 
 Images should:
 - Have lower case and hyphens
-- Cannot have $ signs or special characters
-- Should have the same correct image file name in the .md file (this is case sensitive)
-- Upload all images in the "assets" folder. The path to this folder will be used to embed your image within your file.<br> 
-  Navigate to the folder,  click "Add file"  on top-right and select "Upload files."  Drag-and-drop or "choose your files."<br>
-  **Please DO NOT create subfolders inside this folder** 
+- Not have $ signs or special characters
+- Have the same correct image file name in the .md file (this is case sensitive)
 - Be sized appropriately (no full res images), and optimized for web (recommend tinypng)
-- Sizes should be 1 MB max file size, gifs are an exception but they should also be optimized - large images will slow down the page load
-- Please add images and tables in Markdown format, not HTML
+- Be 1 MB max file size. Gifs are an exception, but they should also be optimized. Note that large images will slow down the page load
+- Be in markdown format, not HTML
 
-Code for adding images:
+Upload all images in the "assets" folder. The path to this folder will be used to embed your image within your file.<br> 
+  Navigate to the folder,  click "Add file"  on top-right and select "Upload files."  Drag-and-drop or "choose your files."<br>
+**Please DO NOT create subfolders inside this folder** 
 
+
+Example code for linking to images or files:
 ```
 ![text of your choice](path within sfguide repo "assets" subfolder where image has been uploaded)
 
---Sample URL: ![puppy](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/get-started-with-guides/assets/puppy.jpg)
+--Sample URL: ![Use Cases Overview](assets/use_cases_diagram2.png)
+```
+
+Example code for linking non-image files in the /assets subfolder directly to the Github URL in the markdown. Do not use the assets path for linking these in your markdown. This is treated the same as hyperlinking. 
+
+```
+[Link Title](Github URL)
+
+--[SQL code](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/getting-started-with-batch-cortex-search/code/setup_wikipedia_search.sql) 
+
 ```
 
 
@@ -194,9 +156,9 @@ Code for adding videos:
 
 <!-- ------------------------ -->
 
-## Important tags to include
+## Tagging within Metadata
 
-All tags are added into the metadata at the start of your markdown file. For fields beyond language, the taxonomy path is added to the "categories" section. Multiple categories are separated by commas. 
+All tags are added into the metadata at the start of your markdown file. Multiple categories are separated by commas. 
 
 
 ### Language Tags
@@ -309,7 +271,7 @@ Add the "Taxonomy Path" in comma separated format for multiple selections in the
 | Data Lake | snowflake-site:taxonomy/snowflake-feature/data-lake |
 | Horizon | snowflake-site:taxonomy/snowflake-feature/horizon |
 
-#### Industries Category
+#### Industry and Sub-Industry Categories
 
 Please select any relevant Industries for your Guide and add in the "categories: " section of the header. 
 
@@ -317,23 +279,37 @@ Please select any relevant Industries for your Guide and add in the "categories:
 |-----------|---------------|
 | Advertising, Media & Entertainment | snowflake-site:taxonomy/industry/advertising-media-and-entertainment |
 | Financial Services | snowflake-site:taxonomy/industry/financial-services |
-| Manufacturing & Industrial | snowflake-site:taxonomy/industry/manufacturing |
+| Manufacturing | snowflake-site:taxonomy/industry/manufacturing |
 | Healthcare & Life Sciences | snowflake-site:taxonomy/industry/healthcare-and-life-sciences |
 | Public Sector | snowflake-site:taxonomy/industry/public-sector |
 | Retail & Consumer Goods | snowflake-site:taxonomy/industry/retail-and-cpg |
-| Sports | snowflake-site:taxonomy/industry/sports |
 | Telecom | snowflake-site:taxonomy/industry/telecom |
-| Transportation | snowflake-site:taxonomy/industry/transportation |
 | Travel and Hospitality | snowflake-site:taxonomy/industry/travel-and-hospitality |
+| Marketing | snowflake-site:taxonomy/industry/marketing |
 
-
-<!-- ------------------------ -->
-
-## Converting Existing Files to Markdown
-
-
-You can use the Google Docs feature of saving to Markdown, however **please review your markdown before submission as some formatting options can be different.** In some instances Google Docs may add additional spacing or characters during conversion that will cause markdown errors. 
- 
+| Sub-Industry | Taxonomy Path |
+|-----------|---------------|
+| Federal Government | taxonomy/industry/public-sector/federal-government |
+| Defense | taxonomy/industry/public-sector/defense |
+| State & Local Government | taxonomy/industry/public-sector/state-and-local-government |
+| Higher Education | taxonomy/industry/public-sector/higher-education |
+| Asset & Wealth Management | taxonomy/industry/financial-services/wealth-and-asset-management |
+| Banking | taxonomy/industry/financial-services/banking |
+| Insurance | taxonomy/industry/financial-services/insurance |
+| Payments | taxonomy/industry/financial-services/payments |
+| Media & Publishers | taxonomy/industry/advertising-media-and-entertainment/media-and-publishers |
+| AdTech & MarTech | taxonomy/industry/advertising-media-and-entertainment/adtech-and-martech |
+| Agencies | taxonomy/industry/advertising-media-and-entertainment/agencies |
+| Sports | taxonomy/industry/advertising-media-and-entertainment/sports |
+| Gaming | taxonomy/industry/advertising-media-and-entertainment/gaming |
+| Retail | taxonomy/industry/retail-and-cpg/retail |
+| Consumer Goods | taxonomy/industry/retail-and-cpg/consumer-goods |
+| Healthcare Providers | taxonomy/industry/healthcare-and-life-sciences/healthcare-providers |
+| Healthcare Payers | taxonomy/industry/healthcare-and-life-sciences/healthcare-payers |
+| Life Sciences | taxonomy/industry/healthcare-and-life-sciences/healthcare-payers |
+| Automotive | taxonomy/industry/manufacturing/automotive |
+| Energy | taxonomy/industry/manufacturing/logistics |
+| Logistics & Transportation | taxonomy/industry/manufacturing/logistics-and-transportation |
 
 
 <!-- ------------------------ -->
@@ -353,7 +329,7 @@ You can use the Google Docs feature of saving to Markdown, however **please revi
 
 6.  An automated preview link is generated and commented on your PR for you to review and make sure everything looks as expected. 
 
-7. The DevRel team will review and approve the PR. Once approved it will publish to www.snowflake.com/en/developers/guides within an hour. 
+7. The Developer Growth team will review and approve the PR. Once approved it will publish to www.snowflake.com/en/developers/guides within an hour. 
 
 
 
@@ -371,7 +347,6 @@ You can use the Google Docs feature of saving to Markdown, however **please revi
 
 
 ### Github Process Documentation 
-- [SFGuides on GitHub](https://github.com/Snowflake-Labs/sfguides)
 - [Learn the GitHub Flow](https://guides.github.com/introduction/flow/)
 - [Learn How to Fork a project on GitHub](https://guides.github.com/activities/forking/)
 - Video on [How to Fork a Repo](https://youtu.be/ePRJHFXU6n4)
