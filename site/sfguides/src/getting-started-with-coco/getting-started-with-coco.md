@@ -8,7 +8,7 @@ status: Draft
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 
-# Getting Started with Snowflake CoCo: Desktop, CLI, Snowsight, and Codespaces
+# Getting Started with CoCo: Desktop, CLI, Snowsight, and Codespaces
 <!-- ------------------------ -->
 ## Overview
 
@@ -41,6 +41,21 @@ A working Snowflake CoCo environment in the access mode of your choice, connecte
 If you encounter access errors when first using CoCo, see the access requirements in the section for your chosen mode.
 
 <!-- ------------------------ -->
+## Find Your Account Details
+Duration: 2
+
+If you're setting up CoCo Desktop, the CLI, or Codespaces, you'll need your Snowflake account identifier, username, and role to configuring your connection.
+
+1. Sign in to [Snowsight](https://app.snowflake.com).
+2. Click your username in the bottom left → **Account** → **View account details**.
+
+You'll return to this page when you're ready to connect your account to CoCo.
+
+![Snowsight account details](assets/account-details.png)
+
+> **Note:** If you're using CoCo in Snowsight, skip this section — no connection setup is required.
+
+<!-- ------------------------ -->
 ## Access via Snowsight
 Duration: 3
 
@@ -54,6 +69,8 @@ Snowsight is the fastest path to CoCo — no installation needed. CoCo is built 
 4. Type your question in the message box and press **Enter**.
 
 ![CoCo panel open in Snowsight](assets/snowsight-coco-panel.png)
+
+![CoCo panel open in Snowsight](assets/snowsight-coco-panel2.png)
 
 > **Note:** CoCo always starts your session using your **default role**. If you need a different role, ask CoCo directly: `"Switch to the SYSADMIN role."`
 >
@@ -100,9 +117,11 @@ On first launch, a setup wizard walks you through connecting to Snowflake. Choos
 | Password | Direct username/password |
 | Key Pair (JWT) | Service accounts and automated workflows |
 
-Enter your account identifier (e.g. `myorg-myaccount`) and set the connection name to `DEMO`. Complete sign-in in your browser if prompted, and you're connected.
+Enter your account identifier and set the connection name to `DEMO`. Complete sign-in in your browser if prompted, and you're connected. If you want to set other settings like role, warehouse, database, and schema, click on 'Optional Settings'.
 
-> **Tip:** If you already have a `~/.snowflake/connections.toml` file from the CoCo CLI or Snowflake CLI, your existing connections appear automatically.
+> **Tip:** If you already have a ~/.snowflake/connections.toml file from the CoCo CLI or Snowflake CLI, your existing connections appear automatically.
+
+![CoCo Desktop connection](assets/coco-desktop-connections.png)
 
 ![CoCo Desktop connected and ready](assets/agent-mode.png)
 
@@ -113,6 +132,7 @@ For a full interface walkthrough including session management and Plan Mode, see
 Duration: 3
 
 The CoCo CLI (`cortex`) is a terminal-based interface for macOS, Linux, and Windows. It shares the same connection configuration as the Snowflake CLI (`snow`), so if you already have `connections.toml` set up, you can start using CoCo immediately.
+
 
 ### Install
 
@@ -136,9 +156,9 @@ cortex --version
 
 ### Configure Your Connection
 
-CoCo CLI uses the same `connections.toml` file as the Snowflake CLI. If you already have connections configured there, skip to the next step.
+CoCo CLI reads connections from `~/.snowflake/connections.toml`. If that file already exists (e.g. from Snowflake CLI), you can add a new block to it — don't replace what's there.
 
-To create a new connection file:
+To create:
 
 **macOS / Linux:**
 
@@ -155,16 +175,31 @@ mkdir $env:USERPROFILE\.snowflake -Force
 New-Item -ItemType File -Path "$env:USERPROFILE\.snowflake\connections.toml" -Force
 ```
 
-Open the file and add a connection block:
+Open the file in a text editor:
 
-```toml
-default_connection_name = "DEMO"
+**macOS:**
+```bash
+open -e ~/.snowflake/connections.toml
+```
 
-[connections.DEMO]
-account   = "<YOUR_ACCOUNT>"   # e.g. myorg-myaccount
-user      = "<YOUR_USERNAME>"
-password  = "<YOUR_PASSWORD>"
-role      = "<YOUR_ROLE>"
+**Linux:**
+```bash
+nano ~/.snowflake/connections.toml
+```
+
+**Windows (PowerShell):**
+```powershell
+notepad $env:USERPROFILE\.snowflake\connections.toml
+```
+
+Copy and adapt the following to your account and role. Save the file once you've updated:
+
+```
+[DEMO]
+account  = "<YOUR_ACCOUNT>"   # e.g. myorg-myaccount
+user     = "<YOUR_USERNAME>"
+password = "<YOUR_PASSWORD>"
+role     = "<YOUR_ROLE>"
 ```
 
 ### Launch CoCo CLI
@@ -199,6 +234,9 @@ You need a free GitHub account — sign up at [github.com](https://github.com) i
 
 1. On your repository page, click the green **Code** button → **Codespaces** tab.
 2. Click **Create codespace on main**.
+   
+![Create GitHub Codespace](assets/create-codespaces.png)
+
 3. GitHub builds the environment in about 1–2 minutes. Once ready, you see a VS Code interface in your browser with a terminal at the bottom.
 
 ![GitHub Codespace with terminal open](assets/codespaces-terminal.png)
@@ -231,16 +269,18 @@ user      = "<YOUR_USERNAME>"
 password  = "<YOUR_PASSWORD>"
 role      = "<YOUR_ROLE>"
 ```
-
 Save with **Ctrl+O**, **Enter**, then exit with **Ctrl+X**.
+![Connections in Codespaces](assets/codespaces-config.png)
+
 
 ### Launch CoCo
 
 ```bash
 cortex -c DEMO
 ```
+![CoCo in Codespaces](assets/coco-in-codespaces.png)
 
-> **Note:** Codespace sessions are ephemeral — your `config.toml` will be lost if the Codespace is deleted. To persist it across rebuilds, add your setup commands to a [dev container configuration](https://docs.github.com/en/codespaces/setting-up-your-project-for-codespaces/adding-a-dev-container-configuration).
+> **Note:** Codespace sessions are ephemeral — your `connections.toml` will be lost if the Codespace is deleted.
 
 <!-- ------------------------ -->
 ## Try Your First Prompts
