@@ -18,7 +18,7 @@ You can submit your own Guides to be published on Snowflake's website by submitt
 * Looks great, with web implementation on snowflake.com
 * Anchors to content to make it easy to scroll on a single page
 
-> Please note that the DevRel team has a 24 business hour SLA for approving PRs. Please do not post in #devrel to notify the team of submissions or send DMs unless the 24 hours have passed. Please note there will be delays during US holidays.  
+> Please note that the DevRel team has a **3 business day SLA for approving PRs.** Please do not post in #devrel to notify the team of submissions or send DMs unless the 3 business days have passed unless there is a product-related change required that is time-sensitive. Please note there will be delays during US holidays.  
 
 ## Getting Started
 
