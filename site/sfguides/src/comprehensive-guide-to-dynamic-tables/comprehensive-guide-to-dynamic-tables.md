@@ -95,6 +95,7 @@ A Dynamic Table declares *what* the data should look like and *how fresh* it mus
 CREATE OR REPLACE DYNAMIC TABLE menu_profitability
   TARGET_LAG = '3 hours'
   WAREHOUSE = COMPUTE_WH
+  REFRESH_MODE = ADAPTIVE
   AS
   SELECT
     menu_item_id, menu_item_name, truck_brand_name, menu_type, item_category, item_subcategory,
