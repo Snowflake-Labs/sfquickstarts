@@ -1,6 +1,6 @@
 author: Adam Timm
 id: hybrid-tables-monitoring-observability
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/hybrid-tables
 language: en
 summary: Learn how to monitor Hybrid Table workloads using AGGREGATE_QUERY_HISTORY, track credits and storage, build latency dashboards, set up multi-signal alerts, export metrics to external observability tools, and build custom monitoring apps.
 environments: web

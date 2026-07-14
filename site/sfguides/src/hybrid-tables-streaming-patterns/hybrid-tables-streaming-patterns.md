@@ -1,6 +1,6 @@
 author: Adam Timm
 id: hybrid-tables-streaming-patterns
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/hybrid-tables
 language: en
 summary: Learn streaming and change detection patterns for Hybrid Tables — real-time ingest with deduplication, watermark-based CDC without Streams, outbound event notifications, and sharded multi-database architectures with Interactive Analytics.
 environments: web

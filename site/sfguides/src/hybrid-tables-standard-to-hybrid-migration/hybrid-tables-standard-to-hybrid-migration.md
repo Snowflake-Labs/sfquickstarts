@@ -1,6 +1,6 @@
 author: Adam Timm
 id: hybrid-tables-standard-to-hybrid-migration
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/hybrid-tables
 language: en
 summary: Learn how to assess, migrate, and validate the conversion of standard Snowflake tables to Hybrid Tables for low-latency OLTP workloads.
 environments: web
