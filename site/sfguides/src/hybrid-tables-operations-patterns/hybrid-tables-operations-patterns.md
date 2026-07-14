@@ -1,6 +1,6 @@
 author: Adam Timm
 id: hybrid-tables-operations-patterns
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/hybrid-tables
 language: en
 summary: Learn data management and operations patterns for Hybrid Tables — fan-in aggregation across multiple HTs, hot/cold data tiering, and alert-based monitoring with AGGREGATE_QUERY_HISTORY.
 environments: web
