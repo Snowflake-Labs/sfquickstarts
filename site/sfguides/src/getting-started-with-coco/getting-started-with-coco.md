@@ -270,6 +270,7 @@ password  = "<YOUR_PASSWORD>"
 role      = "<YOUR_ROLE>"
 ```
 Save with **Ctrl+O**, **Enter**, then exit with **Ctrl+X**.
+
 ![Connections in Codespaces](assets/codespaces-config.png)
 
 
