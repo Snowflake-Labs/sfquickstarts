@@ -2,10 +2,11 @@ author: Gilberto Hernandez, Rida Safdar
 id: snowflake-northstar-data-engineering
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
 language: en
-summary: Build an end-to-end data pipeline in Snowflake using the I-T-D framework. 
+summary: Build an end-to-end data pipeline in Snowflake using the I-T-D framework — prompt-driven with Cortex Code, powered by Dynamic Tables, and delivered through a Cortex Agent in Snowflake CoWork.
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+fork repo link: https://github.com/Snowflake-Labs/sfguide-snowflake-northstar-data-engineering
 
 
 # Getting Started – Data Engineering with Snowflake
@@ -14,7 +15,11 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 ### Overview
 
-In this Quickstart, we're going to focus on data engineering with Snowflake. We'll specifically build an end-to-end data pipeline with Snowflake. We'll apply the  **Ingestion-Transformation–Delivery** framework, also known as **I-T-D**, to build the pipeline.
+In this Quickstart, we're going to build an end-to-end data pipeline in Snowflake using the **Ingestion–Transformation–Delivery** framework, also known as **I-T-D**.
+
+There's a twist: instead of copying and pasting SQL from a repo, you'll build the pipeline by **prompting [Cortex Code](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-code) (CoCo)** — Snowflake's AI coding agent — right inside a Snowflake Workspace. You'll describe what you want in plain English, and Cortex Code will write the SQL for you.
+
+We'll also use Snowflake's most modern building blocks:
 
 **Ingestion**
 
@@ -27,15 +32,14 @@ We'll load data from:
 
 We'll transform our data using:
 
-* SQL
-* Views
-* User-defined functions (UDFs)
+* SQL and user-defined functions (UDFs)
+* **Dynamic Tables** (instead of standard views)
 
 **Delivery**
 
 We'll deliver a final data product using:
 
-* Streamlit in Snowflake
+* A **semantic view** and a **Cortex Agent**, queried in natural language through **Snowflake CoWork**
 
 
 ### Prerequisites
@@ -44,17 +48,18 @@ We'll deliver a final data product using:
 ### What You’ll Learn 
 - Snowflake for data engineering
 - The Ingestion-Transformation-Delivery framework, or I-T-D, for data pipelines
-- Data sharing from Snowflake Marketplace
-- How to load data from AWS S3 blob storage
-- How to perform transformations against data using SQL, Python, Views, UDFs, Stored Procedures
-- How to deliver an end data product using Streamlit in Snowflake
+- How to clone a public GitHub repo into Snowflake as a Git-backed Workspace
+- How to develop prompt-first with Cortex Code
+- Data sharing from Snowflake Marketplace and loading data from AWS S3
+- How to build Dynamic Tables and user-defined functions (UDFs)
+- How to create a semantic view and a Cortex Agent, and use them in Snowflake CoWork
 
 ### What You’ll Need 
 - A free Snowflake trial account: [https://signup.snowflake.com/](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&trial=student&cloud=aws&region=us-west-2&utm_campaign=introtosnowflake&utm_cta=developer-guides)
-- The companion GitHub repo that contains the code to complete this lab: [sfguide-snowflake-northstar-data-engineering](https://github.com/Snowflake-Labs/sfguide-snowflake-northstar-data-engineering)
+- The companion GitHub repo, which you'll clone into Snowflake as a Workspace: [sfguide-snowflake-northstar-data-engineering](https://github.com/Snowflake-Labs/sfguide-snowflake-northstar-data-engineering)
 
 ### What You’ll Build 
-- An end-to-end data pipeline in Snowflake
+- An end-to-end, prompt-driven data pipeline in Snowflake that an analyst can query in natural language
 
 <!-- ------------------------ -->
 ## Open a Snowflake Trial Account
@@ -67,7 +72,7 @@ To complete this lab, you'll need a Snowflake account. A free Snowflake trial ac
 
 3. On the next section of the form,  be sure to set the Snowflake edition to "Enterprise (Most popular").
 
-4. Select "AWS – Amazon Web Services" as the cloud provider.
+4. Select "AWS – Amazon Web Services" as the cloud provider.
 
 5. Select "US West (Oregon)" as the region.
 
@@ -82,7 +87,7 @@ Tasty Bytes is a food truck company that operates globally in many countries. Yo
 
 * Sales in the city of Hamburg, Germany dropped to $0 for a few days in the month of February
 
-As a data engineer, your goal is to figure out why this happened, and to also build and end-to-end data pipeline that can  keep analysts up-to-date on the weather in Hamburg.
+As a data engineer, your goal is to figure out why this happened, and to build an end-to-end data pipeline that lets analysts get answers about Hamburg weather and sales just by asking.
 
 Here's how we'll do this:
 
@@ -94,355 +99,186 @@ Here's how we'll do this:
 
 **Transformation**
 
-* Use SQL to perform transformations
+* Use SQL and UDFs to perform transformations
 
-* Create views that we can use for data analytics
-
-* Create user-defined functions (UDFs) that perform weather-related calculations to enrich the views with more data
+* Build **Dynamic Tables** — self-refreshing tables that replace the standard views you'd normally maintain by hand
 
 **Deliver**
 
-* Deliver final insights and a live graph of weather in Hamburg, Germany using Streamlit in Snowflake (write the application in Python)
+* Create a **semantic view** over the transformed data, wire it to a **Cortex Agent**, and let analysts ask questions in plain English through **Snowflake CoWork**
+
+The difference from a traditional lab: you won't copy and paste this SQL. You'll **prompt Cortex Code** to write it, working through files in a Snowflake Workspace.
 
 Let's get started!
 
 <!-- ------------------------ -->
-## Weather Data From Snowflake Marketplace
+## Set Up Your Workspace
 
-Let's start by "loading" the raw weather data into Snowflake. It turns out that "loading" is really the wrong word here. 
+Before we ingest anything, we'll set up the environment: create a Git integration, clone the companion repo **into Snowflake as a Workspace**, and open Cortex Code.
 
-We're using Snowflake's unique data sharing capability in Snowflake Marketplace. Because of this, we don't actually need to copy any data to our Snowflake account with any logic. Instead, we can directly access the weather data shared by a trusted provide in Snowflake Marketplace. Let's go ahead and do this.
+> **Note:** This setup is a bit heavier than a traditional Quickstart, because we're wiring up prompt-driven development and Snowflake CoWork up front. It only takes a few minutes.
+
+### 1. Create the Git API integration
+
+To clone a public GitHub repo into Snowflake, your account needs an **API integration**. On a trial account you're `ACCOUNTADMIN`, so you can create one.
 
 1. Log into your Snowflake account.
 
-2. Click on "Marketplace".
+2. Open a new SQL worksheet (**Projects » Worksheets » +**).
 
-3. Click on "Snowflake Marketplace". 
+3. Run the following:
 
-4. In the search bar, search for "pelmorex frostbyte".
+```sql
+USE ROLE accountadmin;
 
-5. The first result should be "Pelmorex Weather Source: Frostbyte" by the "Pelmorex Weather Source" provider. Click on the listing.
+CREATE OR REPLACE API INTEGRATION github_public_api
+  API_PROVIDER = git_https_api
+  API_ALLOWED_PREFIXES = ('https://github.com/Snowflake-Labs')
+  ENABLED = TRUE;
+```
 
-6. On the right, click "Get".
+> **Note:** Only users with the `ACCOUNTADMIN` role (or a role with `CREATE INTEGRATION`) can create API integrations.
 
-7. In the ensuing modal, click "Get" once more. Do **NOT** rename the dataset.
+### 2. Clone the companion repo as a Workspace
 
-This is a live dataset! No need to write ingestion logic to bring the data into your account. The data is maintained and kept fresh by the provider.
+1. In the navigation menu, go to **Projects » Workspaces**.
+
+2. Click the dropdown at the top and select **From Git repository**.
+
+3. For the **Repository URL**, paste:
+   `https://github.com/Snowflake-Labs/sfguide-snowflake-northstar-data-engineering`
+
+4. For the **API integration**, select `GITHUB_PUBLIC_API`.
+
+5. Check **Public repository**, give the Workspace a name, and create it.
+
+Snowflake clones the repo into your Workspace. You'll see two folders — **project/** (the files you'll work through) and **solution/** (the answers, if you get stuck).
+
+> **Note:** Workspaces clone public repos as **read-only**. You won't be pushing changes back, which is exactly what we want here.
+
+### 3. Meet Cortex Code
+
+With the Workspace open, open the **Cortex Code** panel. This is the AI coding agent you'll prompt throughout the lab. Instead of writing SQL by hand, you'll open a file, read the prompt in the comments, send it to Cortex Code, and run the SQL it generates.
+
+### 4. Run the setup file
+
+1. In your Workspace, open **project/00_setup/setup.sql**.
+
+2. Work through it top to bottom. Some steps are marked **"Run as-is"** — just run them. Others are marked with a **▶ PROMPT** — copy that prompt into Cortex Code, then run the SQL it writes.
+
+This file creates the `tasty_bytes` database and its schemas, and enables **Snowflake CoWork** (Snowflake Intelligence) so we can deliver our agent later.
+
+Once you've run every step in **00_setup/setup.sql**, your account is ready. Let's ingest some data.
+
+<!-- ------------------------ -->
+## Ingestion — Load The Data
+
+The first stage of I-T-D is **Ingestion**. We'll bring in weather data from Snowflake Marketplace and sales data from AWS S3.
+
+### Weather data from Snowflake Marketplace
+
+Let's start with the raw weather data. It turns out "loading" is the wrong word here — we'll use Snowflake's data sharing to access a live dataset without copying anything.
+
+1. Click on **Marketplace**.
+
+2. Click on **Snowflake Marketplace**.
+
+3. In the search bar, search for "pelmorex frostbyte".
+
+4. The first result should be "Pelmorex Weather Source: Frostbyte" by the "Pelmorex Weather Source" provider. Click on the listing.
+
+5. On the right, click **Get**.
+
+6. In the ensuing modal, click **Get** once more. Do **NOT** rename the dataset.
+
+This is a live dataset! No need to write ingestion logic — the data is maintained and kept fresh by the provider.
 
 ![data](./assets/weathersource.png)
 
-<!-- ------------------------ -->
-## Load Sales Data From AWS S3
+### Sales data from AWS S3
 
-Let's now load the Tasty Bytes sales data. This data is currently sitting across many CSV files in an AWS S3 bucket. Let's use Snowflake's COPY INTO command to load the data into your Snowflake account.
+Now let's load the Tasty Bytes sales data, which sits across many CSV files in an AWS S3 bucket. Rather than copy-paste the load scripts, you'll **prompt Cortex Code** to write them.
 
-1. Start by creating a new SQL worksheet.
+1. In your Workspace, open **project/01_ingestion/ingestion.sql**.
 
-2. Set your context. Set your role to **ACCOUNTADMIN**, and set your compute resource (virtual warehouse) to **COMPUTE_WH**.
+2. Work through the prompts in order. You'll prompt Cortex Code to:
+   - Create a **CSV file format**.
+   - Create the **external stage** on the Tasty Bytes S3 bucket.
+   - Create the **COUNTRY** table — our single teaching example of the load pattern.
+   - Run a **COPY INTO** to load the COUNTRY table.
 
-3. Next, create the database and schema to store the data that we'll load. Type the following into the worksheet:
+   After each prompt, run the SQL Cortex Code generates. You should see success messages and about 30 rows land in the **COUNTRY** table. Great job!
 
-```sql
-CREATE OR REPLACE DATABASE tasty_bytes;
-CREATE OR REPLACE SCHEMA raw_pos;
-```
+3. **Scale it up.** Loading ~1 GB of sales data table-by-table would be tedious, and you've already learned the pattern. **Step 6** of the file is a large block of boilerplate — the remaining target tables, the `COPY INTO` loads, and the harmonized `orders_v` views — marked **"Run as-is."** Run it directly. It creates an XL warehouse, loads every table, and drops the warehouse when it's done.
 
-4. Run this code by highlighting these two statements and clicking the Run button at the top right of the SQL worksheet.
+After running the file, all of the Tasty Bytes data is in your account. Confirm the tables using the object picker on the left.
 
-5. Next, navigate to the [**copy_into.sql**](https://github.com/Snowflake-Labs/sfguide-snowflake-northstar-data-engineering/blob/main/00_ingestion/copy_into.sql) file in the **00_ingestion** folder of the **sfguide-snowflake-northstar-data-engineering** repo. Copy the contents of this file.
-
-6. Navigate back to the SQL worksheet you opened. Paste in the code you copied under the two lines of SQL you wrote in the previous step.
-
-7. Start by creating the file format necessary to load the data into Snowflake. Type the following underneath the "Create a CSV file format here:" comment:
-
-```sql
-CREATE OR REPLACE FILE FORMAT tasty_bytes.public.csv_ff
-type = 'csv';
-```
-
-Run this command.
-
-8. In the next block of SQL, with the comment `-- Specify the file format below:`, we create the Snowflake stage that points to the S3 bucket containing the CSV files. It's currently missing the file format argument that's necessary during the loading process. Below the `url` parameter, type:
-
-```sql
-file_format = tasty_bytes.public.csv_ff;
-```
-
-Run this entire command.
-
-9. The next block of SQL creates a table called **COUNTRY** in the **tasty_bytes.raw_pos** schema. Run this block of SQL to create the table. Confirm the creation of the table using the object picker on the left-hand side.
-
-10. Let's bring it all together now! After creating the table, let's now load the data into this table using the powerful **COPY INTO** command. At the very bottom of the worksheet, underneath the "Use the COPY INTO command..." comment, type:
-
-```sql
-COPY INTO tasty_bytes.raw_pos.country
-FROM @tasty_bytes.public.s3load/raw_pos/country/;
-```
-
-Run this command. You should see a success message in the console. Great job!
-
-**We're not quite done.** We loaded about 30 rows of data into the **COUNTRY** table, but we actually need to load close to 1 GB of sales data. We won't do this line-by-line. Instead, you'll use some SQL that we've written for you in advance.
-
-1. Navigate to the [**load_tasty_bytes.sql**](https://github.com/Snowflake-Labs/sfguide-snowflake-northstar-data-engineering/blob/main/00_ingestion/load_tasty_bytes.sql) file in the **00_ingestion** folder within the **sfguide-snowflake-northstar-data-engineering** companion repo. Copy the contents. 
-
-2. Navigate back to Snowflake and create a new SQL worksheet. Paste the contents you copied into the worksheet.
-
-3. Run the entire file at once by clicking the drop-down at the top right, and clicking "Run All".
-
-Observations:
-
-* This will load close to 1 GB of Tasty Bytes sales data from AWS S3 into your Snowflake account.
-
-* The script programmatically creates an XL compute resource (virtual warehouse) used for the loading of the data. Once the loading is done, the compute resource is dropped.
-
-* This worksheet contains about 300 lines of SQL. The powerful thing is that you can understand 99% of it because of the SQL you wrote earlier to load data into the **COUNTRY** table.
-
-After running the file, you should have all of the data loaded into your account! Confirm the creation of all the tables (and their data) using the object picker to the left.
-
-This completes the **Ingestion** aspect of our pipeline for this lab.
+This completes the **Ingestion** stage of our pipeline.
 
 <!-- ------------------------ -->
-## Data Transformations With SQL
+## Transformation — UDFs And Dynamic Tables
 
-We now have the necessary data in our Snowflake account. To get closer to the insights that we need – weather-related data for the city of Hamburg, Germany – we need to use SQL to apply transformations to the data. This will bring us closer to the insights we're after. Let's begin.
+The second stage is **Transformation**. In the original version of this lab we created standard **views**. This time we'll create **Dynamic Tables** instead.
 
-1. Start by navigating to the [**hamburg_sales.sql**](https://github.com/Snowflake-Labs/sfguide-snowflake-northstar-data-engineering/blob/main/01_transformation/hamburg_sales.sql) file in the **01_transformation** folder in repo. Copy the contents.
+A Dynamic Table is a table whose contents are defined by a query — but unlike a view, Snowflake **materializes and automatically refreshes** the results for you based on a target lag you set. You get the simplicity of "define it with a query" plus the performance of a real table, without writing any refresh logic.
 
-2. Open a new SQL worksheet in Snowflake and paste the contents into the sheet.
+Open **project/02_transformation/dynamic_tables.sql** and work through the prompts.
 
-In this worksheet, we use SQL to explore the suspicion that there are weather-related anomalies affecting sales in February in Hamburg, Germany. Let's start exploring.
+1. **Explore the drop.** The first prompt asks Cortex Code to write a query showing daily Hamburg sales for February 2022. Run it — you'll see several days at $0.00. The analysts were right.
 
-3. Run the first few lines to set your context.
+2. **Create two UDFs.** Analysts want metric units. Prompt Cortex Code to create two user-defined functions in `tasty_bytes.analytics`: one that converts Fahrenheit to Celsius, and one that converts inches to millimeters.
 
-4. Run the first block of SQL that explores sales in Hamburg. You should encounter an error. We need to specify the city and country we're interested in exploring. On line 16, add `'Germany'` as the country, and `'Hamburg'` as the city. Re-run the block of SQL.
+3. **Create the base weather Dynamic Table.** Prompt Cortex Code to create `daily_weather_dt`, which joins the shared Pelmorex weather data to the cities where Tasty Bytes operates.
 
-```sql
--- Query to explore sales in the city of Hamburg, Germany
-WITH _feb_date_dim AS (
-    SELECT DATEADD(DAY, SEQ4(), '2022-02-01') AS date 
-    FROM TABLE(GENERATOR(ROWCOUNT => 28))
-)
-SELECT
-    fdd.date,
-    ZEROIFNULL(SUM(o.price)) AS daily_sales
-FROM _feb_date_dim fdd
-LEFT JOIN analytics.orders_v o
-    ON fdd.date = DATE(o.order_ts)
-    AND o.country = '#' -- Add country
-    AND o.primary_city = '#' -- Add city
-WHERE fdd.date BETWEEN '2022-02-01' AND '2022-02-28'
-GROUP BY fdd.date
-ORDER BY fdd.date ASC;
-```
+   > **Important:** This Dynamic Table reads **live, shared data that we don't own**. Incremental refresh requires change tracking on the base objects, which requires `OWNERSHIP` — so we pin this table to `REFRESH_MODE = FULL`. Dynamic Tables built only on tables you own can refresh incrementally.
 
-**It looks like the analysts were correct – there were several days in February where sales totaled 0.00. You can use the Chart feature to confirm this visually. We're on the right path!**
+4. **Find the culprit.** The next prompts explore temperature and then wind speed in Hamburg for February 2022. Chart the wind speed result — you'll see spikes approaching hurricane-force winds. **That windspeed is our likely culprit.**
 
-5. Let's now create a view that adds weather data – the data from our live data share we pulled from Snowflake Marketplace – to all cities where Tasty Bytes operates. Run the next block of SQL that creates the `tasty_bytes.harmonized.daily_weather_v` view. We'll use this view later on in our pipeline.
+5. **Create the wind speed Dynamic Table.** Prompt Cortex Code to create `windspeed_hamburg_dt` from the base weather Dynamic Table.
 
-```sql
--- Create view that adds weather data for cities where Tasty Bytes operates
-CREATE OR REPLACE VIEW tasty_bytes.harmonized.daily_weather_v
-COMMENT = 'Weather Source Daily History filtered to Tasty Bytes supported Cities'
-    AS
-SELECT
-    hd.*,
-    TO_VARCHAR(hd.date_valid_std, 'YYYY-MM') AS yyyy_mm,
-    pc.city_name AS city,
-    c.country AS country_desc
-FROM Pelmorex_Weather_Source_frostbyte.onpoint_id.history_day hd
-JOIN Pelmorex_Weather_Source_frostbyte.onpoint_id.postal_codes pc
-    ON pc.postal_code = hd.postal_code
-    AND pc.country = hd.country
-JOIN TASTY_BYTES.raw_pos.country c
-    ON c.iso_country = hd.country
-    AND c.city = hd.city_name;
-```
+6. **Create the combined Dynamic Table.** Finally, prompt Cortex Code to create `weather_hamburg_dt`, which joins weather to sales and **invokes your two UDFs** to add Celsius and millimeter columns.
 
-6. The next block of SQL helps us query this view to explore temperatures for the month of February in Hamburg. Run the block of code. Click on "Chart" once the block of code executes. Nothing seems to be out of the ordinary here...
+Here's what these Dynamic Tables give us:
 
-```sql
--- Query the view to explore daily temperatures in Hamburg, Germany for anomalies
-SELECT
-    dw.country_desc,
-    dw.city_name,
-    dw.date_valid_std,
-    AVG(dw.avg_temperature_air_2m_f) AS avg_temperature_air_2m_f
-FROM harmonized.daily_weather_v dw
-WHERE 1=1
-    AND dw.country_desc = 'Germany'
-    AND dw.city_name = 'Hamburg'
-    AND YEAR(date_valid_std) = '2022'
-    AND MONTH(date_valid_std) = '2' -- February
-GROUP BY dw.country_desc, dw.city_name, dw.date_valid_std
-ORDER BY dw.date_valid_std DESC;
-```
+- **Self-refreshing pipelines** — no manual `CREATE OR REPLACE` or scheduled tasks; Snowflake keeps them fresh to your target lag.
+- **A clear dependency chain** — `daily_weather_dt` feeds `windspeed_hamburg_dt` and `weather_hamburg_dt`, and Snowflake manages the refresh order.
 
-7. Run the next query that explores wind speeds in Hamburg. Once again, click "Chart" to visualize this data. Wow – there were spikes in windspeed that approached hurricane-force winds. **It looks like this windspeed affected sales during the month of February!**
-
-```sql
--- Query the view to explore wind speeds in Hamburg, Germany for anomalies
-SELECT
-    dw.country_desc,
-    dw.city_name,
-    dw.date_valid_std,
-    MAX(dw.max_wind_speed_100m_mph) AS max_wind_speed_100m_mph
-FROM tasty_bytes.harmonized.daily_weather_v dw
-WHERE 1=1
-    AND dw.country_desc IN ('Germany')
-    AND dw.city_name = 'Hamburg'
-    AND YEAR(date_valid_std) = '2022'
-    AND MONTH(date_valid_std) = '2' -- February
-GROUP BY dw.country_desc, dw.city_name, dw.date_valid_std
-ORDER BY dw.date_valid_std DESC;
-```
-
-8. Now that we've found a likely culprit behind the drop in sales, so let's create a view that tracks windspeed. We'll use this view later on in our pipeline. Locate the next block of SQL. Add `windspeed_hamburg` to the end of the first line, so that the line reads `CREATE OR REPLACE VIEW tasty_bytes.harmonized.windspeed_hamburg` and names our view. Run the final block of SQL to create the view.
-
-```sql
--- Create a view that tracks windspeed for Hamburg, Germany
-CREATE OR REPLACE VIEW tasty_bytes.harmonized. --add name of view
-    AS
-SELECT
-    dw.country_desc,
-    dw.city_name,
-    dw.date_valid_std,
-    MAX(dw.max_wind_speed_100m_mph) AS max_wind_speed_100m_mph
-FROM harmonized.daily_weather_v dw
-WHERE 1=1
-    AND dw.country_desc IN ('Germany')
-    AND dw.city_name = 'Hamburg'
-GROUP BY dw.country_desc, dw.city_name, dw.date_valid_std
-ORDER BY dw.date_valid_std DESC;
-```
-
-A view in Snowflake allows you to store and access the **result** of a query. This is in contrast to querying multiple tables with raw data to extract insights. The queries that views store can be arbitrarily simple or complex. This helps you query exactly what you need at a much faster speed. 
-
-Views also help organize exactly which aspects of data might be valuable, and help with secure data access control. We can use views to power our data pipeline, without sacrificing performance.
-
-We'll use these views in our pipeline later on.
+This completes the **Transformation** stage of our pipeline.
 
 <!-- ------------------------ -->
-## Create User-Defined Functions For Calculations
+## Delivery — Semantic View And Cortex Agent
 
-We're missing some critical data for our pipeline. Our analysts have requested that we track certain weather measurements using the metric system. We are tracking a country in Europe after all.
+The final stage is **Delivery**. We have the insight we need — now we need to make it accessible to analysts. In the original lab we hand-coded a Streamlit app. This time we'll do something more powerful: we'll let analysts **ask questions in plain English** and get charts back, using a **Cortex Agent** in **Snowflake CoWork**.
 
-They've specifically requested that we include temperature measurements in Celsius, and precipitation in millimeters.
+To do that, we need two things: a **semantic view** (which teaches Cortex what our data means) and a **Cortex Agent** (which uses that semantic view to answer questions).
 
-To do this, we'll create two user-defined functions, or UDFs, that are able to take in existing data from our tables and perform the necessary conversions. We will then invoke them later on to derive these new values.
+Open **project/03_delivery/semantic_view_and_agent.sql** and work through the prompts.
 
-Let's get started.
+1. **Create the semantic view.** Prompt Cortex Code to create `hamburg_weather_sales_sv` over the `weather_hamburg_dt` Dynamic Table. Because that Dynamic Table already joins sales and weather at a daily grain, the semantic view is a single, clean table with:
+   - **Dimensions:** date, city, country
+   - **Metrics:** daily sales, average temperature (°C), maximum wind speed (mph), average precipitation (mm)
+   - A **verified query** for our key question, which helps the agent answer accurately.
 
-1. Copy the contents of the [**udf.sql**](https://github.com/Snowflake-Labs/sfguide-snowflake-northstar-data-engineering/blob/main/01_transformation/udf.sql) file in the **01_transformation** folder in the repo.
+2. **Create the Cortex Agent.** Prompt Cortex Code to create `tasty_bytes_weather_agent` in the `snowflake_intelligence.agents` schema, backed by a Cortex Analyst tool that uses the semantic view. Agents created in this schema appear automatically in Snowflake CoWork.
 
-2. Open a new SQL worksheet in Snowflake and paste the contents in.
+3. **Ask your pipeline a question.** Open **Snowflake CoWork** (**AI & ML » Agents**), select the **Tasty Bytes Weather Analyst** agent, and ask:
 
-3. These two blocks of SQL each create a UDF. One converts temperatures from Fahrenheit to Celsius, and the other converts inches to millimeters. 
+   > *"Why did Hamburg sales drop to zero in February 2022?"*
 
-4. We need to finish these SQL statements before we can run this code and create the functions. Add the word `FUNCTION` after each the `CREATE OR REPLACE` statements. Be sure to remove the `/*  */` placeholders.
+CoWork queries your semantic view, correlates the wind speed spike with the sales drop, and charts the answer for you — no dashboard code required.
 
-```sql
-CREATE OR REPLACE /*  */ tasty_bytes.analytics.fahrenheit_to_celsius(temp_f NUMBER(35,4))
-  RETURNS NUMBER(35,4)
-  AS
-  $$
-    (temp_f - 32) * (5/9)
-  $$
-;
-
-CREATE OR REPLACE /*  */ tasty_bytes.analytics.inch_to_millimeter(inch NUMBER(35,4))
-  RETURNS NUMBER(35,4)
-  AS
-  $$
-    inch * 25.4
-  $$
-;
-```
-
-5. After completing the SQL statements, run the entire worksheet. You should see a success message, and you can verify the creation of the functions in the **tasty_bytes.analytics** schema.
-
-Great! We'll use these functions to expand the views we're planning on using in our pipeline.
-
-<!-- ------------------------ -->
-## Apply UDFs For Data Transformations
-
-Let's now use the UDFs to add new columns in our views. These new columns will contains the converted values for temperature and precipitation.
-
-1. Copy the contents of the [**updated_hamburg_sales.sql**](https://github.com/Snowflake-Labs/sfguide-snowflake-northstar-data-engineering/blob/main/01_transformation/updated_hamburg_sales.sql) file in the **01_transformation** folder in repo.
-
-2. Open a new SQL worksheet in Snowflake and paste the contents in.
-
-3. Notice that on lines 14 and 16, we call the UDFs and apply them against existing values, and then use the output of those functions to create new columns with corresponding data.
-
-```sql
--- Apply UDFs and confirm successful execution
-...
--- Code to focus on
-    ROUND(AVG(analytics.fahrenheit_to_celsius(fd.avg_temperature_air_2m_f)),2) AS avg_temperature_celsius,
-    ROUND(AVG(fd.tot_precipitation_in),2) AS avg_precipitation_inches,
-    ROUND(AVG(analytics.inch_to_millimeter(fd.tot_precipitation_in)),2) AS avg_precipitation_millimeters,
-
-...
-```
-
-4. Name the view. On line 6, finish the statement by adding `weather_hamburg`. The entire line should read `CREATE OR REPLACE VIEW harmonized.weather_hamburg`.
-
-5. Run the entire file top to bottom. You should see a successful message, and you can confirm the creation of the view using the object picker on the left.
-
-Great job! We've transformed our data using SQL to create views, and we've used UDFs to expand our views (and create new views!). We'll use these transformations later on in our pipeline.
-
-This completes the **Transformation** aspect of our pipeline for this lab.
-
-<!-- ------------------------ -->
-## Deliver Insights With Streamlit in Snowflake
-
-We now have the insights that we need, and we can now also deliver them to our data analysts. We specifically have views that track the weather and sales in Hamburg, Germany. So how exactly will we make these insights easily accessible for our data analysts?
-
-We're going to create a Streamlit in Snowflake app that will visualize this data for them.
-
-For some context, Streamlit is a popular open-source Python library for creating data apps in Python – no need for HTML, CSS, or any other front-end frameworks. It's also natively available within Snowflake, which means creating data apps that use the data in our Snowflake environment is both powerful and easy to do.
-
-Let's go ahead and create the app for our analysts.
-
-1. Copy the contents of the [**streamlit.py**](https://github.com/Snowflake-Labs/sfguide-snowflake-northstar-data-engineering/blob/main/02_delivery/streamlit.py) file in the **02_delivery** folder in the repo.
-
-2. Navigate to "Projects", then click on "Streamlit".
-
-3. At the top, create a new Streamlit app. Name the app "HAMBURG_GERMANY_TRENDS".
-
-4. For the app location, select **TASTY_BYTES** as the database, and **HARMONIZED** for the schema. Leave everything else as-is.
-
-5. Create the app and wait for it to boot up. You'll notice a default, sample app rendered for you automatically.
-
-6. If the code editor is not present, click on "Edit" at the top. Otherwise, you can see the code powering this sample app in the Python editor in Snowflake.
-
-7. Delete all of this sample code.
-
-8. Paste in the Python code you copied earlier from the **streamlit.py** file.
-
-This code creates an app that visualizes the data within the views we created earlier. 
-
-9. Click "Run" at the top. You should encounter an error. On line 14, replace `"INSERT NAME OF VIEW HERE"` with `tasty_bytes.harmonized.weather_hamburg` and click "Run once more.
-
-10. The application should render successfully! Congratulations!
-
-![app](./assets/app.png)
-
-In just 54 lines of code, we created a Streamlit in Snowflake application with Python that delivers the insights we extracted from our data. 
-
-At the top, you could imagine clicking on "Share" and sharing the app with relevant analyst roles in your Snowflake account.
-
-With this application, we've now completed our end-to-end data pipeline. This completes the **Delivery** aspect of our pipeline for this lab.
+With this, we've completed our end-to-end pipeline. Analysts no longer need SQL or a custom app; they just ask. This completes the **Delivery** stage of our pipeline.
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
 
 ### Conclusion
 
-Congratulations! You've built an end-to-end data pipeline in Snowflake using the **Ingestion-Transformation–Delivery** framework, also known as **I-T-D**. Let's recap what you did. 
+Congratulations! You've built an end-to-end data pipeline in Snowflake using the **Ingestion–Transformation–Delivery (I-T-D)** framework — and you built it by prompting Cortex Code the whole way. Let's recap.
 
 ### What You Learned
 
-You built a data pipeline that tracks weather and sales data for Tasty Bytes food trucks in the city of Hamburg, Germany. As part of the I-T-D framework, you:
+You built a prompt-driven data pipeline that tracks weather and sales for Tasty Bytes food trucks in Hamburg, Germany. As part of the I-T-D framework, you:
 
 **Ingestion**
 
@@ -455,15 +291,16 @@ Loaded data from:
 
 Transformed data using:
 
-* SQL
-* Views
-* User-defined functions (UDFs)
+* SQL and user-defined functions (UDFs)
+* Dynamic Tables
 
 **Delivery**
 
 Delivered a final data product using:
 
-* Streamlit in Snowflake
+* A semantic view and a Cortex Agent, queried through Snowflake CoWork
+
+Along the way, you learned to develop prompt-first with Cortex Code inside a Git-backed Snowflake Workspace.
 
 Congratulations! 
 
@@ -471,6 +308,12 @@ Congratulations!
 
 For more resources, check out the following:
 
-* You can build the objects we used in the pipeline using Snowpark for Python as well. The code to do this is provided in the [**hamburg_sales_snowpark.ipynb** Notebook file in the repo](https://github.com/Snowflake-Labs/sfguide-snowflake-northstar-data-engineering/blob/main/01_transformation/hamburg_sales_snowpark.ipynb).
+* The companion repo, with the `project/` prompts and `solution/` answers: [sfguide-snowflake-northstar-data-engineering](https://github.com/Snowflake-Labs/sfguide-snowflake-northstar-data-engineering)
+
+* [Cortex Code documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-code)
+
+* [Dynamic Tables](https://docs.snowflake.com/en/user-guide/dynamic-tables-about)
+
+* [Semantic views](https://docs.snowflake.com/en/user-guide/views-semantic/overview) and [Cortex Agents](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents)
 
 * Learn more at [Snowflake Northstar](/en/developers/northstar/) for developers.
