@@ -1,0 +1,183 @@
+# =============================================================================
+# Snakemake workflow — Salmon RNA-seq Variant (Isoform) Quantification
+#
+# Dataset : Airway SMC cells, dexamethasone vs untreated (PMID: 24926665)
+# Ref     : GENCODE v44 / GRCh38
+#
+# Supports both Salmon versions via config salmon_version:
+#   rust  → Salmon 2.0 (Rust rewrite)  — index stored in results/index_rust/
+#   cpp   → Salmon 1.12.0 (C++ final)  — index stored in results/index_cpp/
+#   Index formats are NOT interchangeable; rebuild when switching versions.
+#
+# Run (default rust) : snakemake --cores 8 --use-conda
+# Run with C++       : snakemake --cores 8 --use-conda --config salmon_version=cpp
+# Dry-run            : snakemake -n
+# DAG                : snakemake --dag | dot -Tsvg > dag.svg
+# =============================================================================
+configfile: "config.yaml"
+
+SAMPLES         = list(config["samples"].keys())
+THREADS         = config["threads"]
+SALMON_VERSION  = config.get("salmon_version", "rust")   # "rust" or "cpp"
+INDEX_DIR       = f"results/index_{SALMON_VERSION}"
+QUANT_DIR       = f"results/quant_{SALMON_VERSION}"
+
+# Flags that differ between versions
+# rust: selective alignment is the default; --validateMappings is a no-op (ignored)
+# cpp : --validateMappings enables selective alignment (otherwise quasi-mapping)
+QUANT_EXTRA = (
+    "--gcBias --seqBias --numBootstraps 100"
+    if SALMON_VERSION == "rust"
+    else "--validateMappings --gcBias --seqBias --numBootstraps 100"
+)
+
+
+rule all:
+    """Final targets: one quant.sf per sample."""
+    input:
+        expand(f"{QUANT_DIR}/{{sample}}/quant.sf", sample=SAMPLES),
+        f"{QUANT_DIR}/multiqc_report.html",
+
+
+# ---------------------------------------------------------------------------
+# Reference data (shared between both versions)
+# ---------------------------------------------------------------------------
+rule download_transcriptome:
+    output: "results/references/transcriptome.fa"
+    params: url=config["gencode_transcriptome_url"]
+    shell:
+        "wget -q --show-progress -O {output}.gz {params.url} && gunzip {output}.gz"
+
+
+rule download_genome:
+    output: "results/references/genome.fa"
+    params: url=config["gencode_genome_url"]
+    shell:
+        "wget -q --show-progress -O {output}.gz {params.url} && gunzip {output}.gz"
+
+
+rule download_gtf:
+    """GTF used by the R analysis script to build tx→gene mapping."""
+    output: "results/references/annotation.gtf.gz"
+    params: url=config["gencode_gtf_url"]
+    shell:
+        "wget -q --show-progress -O {output} {params.url}"
+
+
+# ---------------------------------------------------------------------------
+# Decoy-aware gentrome (shared source; separate index per version)
+# ---------------------------------------------------------------------------
+rule make_gentrome:
+    """
+    Concatenate transcriptome + genome so off-target reads are absorbed
+    by the decoy layer rather than spuriously assigned to transcripts.
+    """
+    input:
+        txome  = "results/references/transcriptome.fa",
+        genome = "results/references/genome.fa",
+    output:
+        gentrome = "results/references/gentrome.fa",
+        decoys   = "results/references/decoys.txt",
+    shell:
+        """
+        grep "^>" {input.genome} | cut -d " " -f 1 | sed 's/>//' > {output.decoys}
+        cat {input.txome} {input.genome} > {output.gentrome}
+        """
+
+
+rule salmon_index:
+    """
+    Build version-specific index.
+    rust → results/index_rust/   (2.0 format, piscem-rs)
+    cpp  → results/index_cpp/    (1.12.0 format, pufferfish)
+    These formats are NOT interchangeable — never point one version at the other's index.
+    """
+    input:
+        gentrome = "results/references/gentrome.fa",
+        decoys   = "results/references/decoys.txt",
+    output:
+        directory(INDEX_DIR),
+    threads: THREADS
+    log:     f"results/logs/salmon_index_{SALMON_VERSION}.log"
+    shell:
+        # --gencode strips version suffixes (ENST…X.Y → ENST…X)
+        """
+        salmon index \
+            -t {input.gentrome} \
+            -d {input.decoys} \
+            -i {output} \
+            -p {threads} \
+            --gencode \
+            2>{log}
+        """
+
+
+# ---------------------------------------------------------------------------
+# Download SRA reads (shared; only downloaded once regardless of version)
+# ---------------------------------------------------------------------------
+rule download_reads:
+    output:
+        r1 = "results/reads/{sample}_1.fastq.gz",
+        r2 = "results/reads/{sample}_2.fastq.gz",
+    threads: 4
+    log:     "results/logs/{sample}_download.log"
+    shell:
+        """
+        fasterq-dump {wildcards.sample} \
+            -O results/reads \
+            -e {threads} \
+            --split-files \
+            --progress \
+            2>{log}
+        gzip results/reads/{wildcards.sample}_1.fastq \
+             results/reads/{wildcards.sample}_2.fastq
+        """
+
+
+# ---------------------------------------------------------------------------
+# Salmon quantification
+# ---------------------------------------------------------------------------
+rule salmon_quant:
+    """
+    rust: selective alignment by default; --gcBias, --seqBias, 100 bootstraps.
+    cpp : adds --validateMappings to activate selective alignment mode.
+    Both: 100 bootstrap replicates for fishpond/swish uncertainty quantification.
+    """
+    input:
+        index = INDEX_DIR,
+        r1    = "results/reads/{sample}_1.fastq.gz",
+        r2    = "results/reads/{sample}_2.fastq.gz",
+    output:
+        quant = f"{QUANT_DIR}/{{sample}}/quant.sf",
+        aux   = directory(f"{QUANT_DIR}/{{sample}}/aux_info"),
+    params:
+        extra     = QUANT_EXTRA,
+        quant_dir = f"{QUANT_DIR}/{{sample}}",
+    threads: THREADS
+    log:     f"results/logs/{{sample}}_quant_{SALMON_VERSION}.log"
+    shell:
+        """
+        salmon quant \
+            -i {input.index} \
+            -l A \
+            -1 {input.r1} \
+            -2 {input.r2} \
+            -p {threads} \
+            {params.extra} \
+            -o {params.quant_dir} \
+            2>{log}
+        """
+
+
+# ---------------------------------------------------------------------------
+# MultiQC — aggregate Salmon logs for the active version
+# ---------------------------------------------------------------------------
+rule multiqc:
+    input:
+        expand(f"{QUANT_DIR}/{{sample}}/quant.sf", sample=SAMPLES),
+    output:
+        f"{QUANT_DIR}/multiqc_report.html",
+    params:
+        quant_dir = QUANT_DIR,
+    shell:
+        "multiqc {params.quant_dir} -o {params.quant_dir} --filename multiqc_report.html"

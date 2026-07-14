@@ -1,6 +1,6 @@
 author: Jon Osborn
 id: hybrid-tables-performance-optimization-primer
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/hybrid-tables
 language: en
 summary: Follow this primer to learn about basic hybrid table performance optimization techniques 
 environments: web
@@ -46,7 +46,7 @@ Hybrid tables leverage a row store as the primary data store to provide excellen
 
 - Familiarity with the Snowflake's Snowsight interface
 - Familiarity with SQL
-- Snowflake non-trial account with Hybrid Tables enabled
+- A Snowflake paid account in an AWS or Azure commercial region (Hybrid Tables are not available in GCP, government regions, or trial accounts)
 - A database and/or schema within which you have permissions to create tables
 
 
@@ -445,6 +445,8 @@ from this Snowflake feature.
 1. Use a `PRIMARY KEY`, built from business columns, to drive the highest performance.
 1. Implement `FOREIGN KEYS` when joining hybrid tables.
 1. Write queries that use keys and indexes to keep queries in `ROW_BASED` mode.
+1. Use `INCLUDE` columns on secondary indexes to create covering indexes that eliminate probe scans for hot query paths.
+1. Use **bound variables** (parameterized queries) in application code so Snowflake can cache and reuse compiled query plans.
 1. Use Snowsight query plans to verify optimal query plans and troubleshoot performance issues.
 1. Pay close attention to data types, join criteria, and index utilization.
 1. Follow Snowflake [hybrid table best practices](https://docs.snowflake.com/en/user-guide/tables-hybrid-best-practices).
@@ -472,6 +474,9 @@ Having completed this quickstart you have successfully
 ### Related Resources:
 - [Snowflake Unistore Landing Page](/en/data-cloud/workloads/unistore/)
 - [Snowflake Documentation for Hybrid Tables](https://docs.snowflake.com/en/user-guide/tables-hybrid)
-- [Hybrid Table Best Practices](https://docs.snowflake.com/en/user-guide/tables-hybrid-best-practices)
+- [Best Practices for Hybrid Tables](https://docs.snowflake.com/en/user-guide/tables-hybrid-best-practices)
+- [Performance Testing for Hybrid Tables](https://docs.snowflake.com/en/user-guide/tables-hybrid-test)
 - [Hybrid Table Performance Testing Quickstart](/en/developers/guides/hybrid-tables-jmeter-performance-testing/)
+- [Secondary Index Design for Hybrid Tables](/en/developers/guides/hybrid-tables-secondary-index-design/)
+- [Converting Standard Tables to Hybrid Tables](/en/developers/guides/hybrid-tables-standard-to-hybrid-migration/)
 - [Simplify Application Development Hybrid Tables Blog](/blog/simplify-application-development-hybrid-tables)

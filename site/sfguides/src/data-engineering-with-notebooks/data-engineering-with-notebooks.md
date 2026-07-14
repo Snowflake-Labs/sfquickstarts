@@ -47,7 +47,7 @@ This Quickstart will focus on how to build Python data engineering pipelines usi
 You will need the following things before beginning:
 
 * Snowflake account
-    * **A Snowflake Account**. Visit the [Snowflake Account Sign In](https://app.snowflake.com/) page to log into your account or to sign up for a trial account.
+    * **A Snowflake Account**. Visit the [Snowflake Account Sign In](https://app.snowflake.com/) page to log into your account or to sign up for a trial account (we recommend Enterprise).
     * **A Snowflake user created with ACCOUNTADMIN permissions**. This user will be used to get things setup in Snowflake.
 * GitHub account
     * **A GitHub account**. If you don't already have a GitHub account you can create one for free. Visit the [Join GitHub](https://github.com/signup) page to get started.
@@ -88,18 +88,22 @@ This API integration allows Snowflake to access GitHub repositories. The `ALLOWE
 
 > **Note**: Only users with ACCOUNTADMIN privileges (or the CREATE INTEGRATION privilege) can create API integrations. If you don't have these privileges, ask your Snowflake administrator to create this integration for you.
 
+> **Note**: If you'd rather authenticate to GitHub using OAuth, instead of PAT, follow the steps in [Configure for authenticating with OAuth](https://docs.snowflake.com/en/developer-guide/git/git-setting-up-public#configure-for-authenticating-with-oauth) and use that `CREATE OR REPLACE API INTEGRATION` statement instead.
+
 ### Create Workspace
 
 Now let's create a Git-integrated workspace connected to your forked repository. Workspaces provide a unified development environment where you can create, organize, and manage notebooks and other code files. Git-integrated workspaces allow you to sync your work with a Git repository for version control and collaboration.
 
 1. In the left navigation menu, select **Projects → Workspaces**
 
-2. In the Workspaces menu at the top left, under "Create", select **From Git repository**
+2. In the Workspaces menu at the top left, under "+", select **Git workspace**
 
 3. In the "Create Workspace" dialog:
    - **Repository URL**: Paste the URL of your forked repository (e.g., `https://github.com/YOUR_USERNAME/sfguide-data-engineering-with-notebooks`)
    - **Workspace name**: Leave it as-is, or enter a name you prefer (e.g., `sfguide-data-engineering-with-notebooks`)
    - **API Integration**: Select the `GITHUB_API_INTEGRATION` we created from the dropdown
+   - **Authentication method**: Select `Personal access token`
+   - **Credentials secret**: Select your "USER$&lt;username&gt;" database and the "PUBLIC" schema
 
 4. For authentication, select **Personal access token** and then click **+ Secret** to create a new secret with your GitHub Personal Access Token
 
@@ -108,6 +112,9 @@ Now let's create a Git-integrated workspace connected to your forked repository.
 Snowflake will now clone the repository and create your workspace. This may take a few moments. Once complete, you'll see all the files from the GitHub repository in the left pane of your workspace. You can now open these files directly within Snowflake.
 
 > **Note** - The Workspace provides a Jupyter-compatible notebook experience with direct access to governed Snowflake data. Notebooks run in a pre-built container environment optimized for AI/ML development with fully-managed access to CPUs and GPUs.
+
+> **Note**: If you'd rather authenticate to GitHub using OAuth, instead of PAT, select `OAuth2` instead of `Personal access token` in "Authentication method" and follow the steps for OAuth2 authentication in [Create a Git workspace](https://docs.snowflake.com/en/user-guide/ui-snowsight/workspaces-git#create-a-git-workspace).
+
 
 ### Create Demo Objects in Snowflake
 
@@ -147,7 +154,7 @@ To create your notebook service:
 2. Click the **Connect** button at the top of the notebook
 3. Enter the following values in the "Connect your notebook" dialog (and expand "Service settings"):
    - **Service name**: Enter `NOTEBOOK_SERVICE`
-   - **External access integrations**: Select `PYPI_ACCESS_INTEGRATION`
+   - **Artifact repositories (optional)**: Select `SNOWFLAKE.SNOWPARK.PYPI_SHARED_REPOSITORY`
    - **Service settings**:
       - **Compute type**: Leave with default of `CPU`
       - **Python version**: Leave with default
@@ -158,23 +165,25 @@ To create your notebook service:
 
 The notebook service will start up, which may take a minute or two for the first time. Once connected, you'll see a green "Connected" indicator.
 
+The Snowflake Artifact Repository allows you to install third-party packages in your notebooks. And in this case we're using Snowflake’s default PyPI Artifact Repository to install PyPI packages. Check out [Using artifact repositories](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-in-workspaces/notebooks-in-workspaces-artifact-repositories) for more details.
+
 > **Tip** - Since notebook services can be shared across multiple notebooks, you only need to create one service. When you open other notebooks in your workspace, you can connect them to the same `NOTEBOOK_SERVICE` to share compute resources.
 
 
 <!-- ------------------------ -->
 ## Load Weather
 
-During this step we will be "loading" the raw weather data to Snowflake. But "loading" is really the wrong word here. Because we're using Snowflake's unique data sharing capability we don't actually need to copy the data to our Snowflake account with a custom ETL process. Instead we can directly access the weather data shared by Weather Source in the Snowflake Marketplace. To put this in context, we are on step **#2** in our data flow overview:
+During this step we will be "loading" the raw weather data to Snowflake. But "loading" is really the wrong word here. Because we're using Snowflake's unique data sharing capability we don't actually need to copy the data to our Snowflake account with a custom ETL process. Instead we can directly access the weather data shared by Pelmorex Weather Source in the Snowflake Marketplace. To put this in context, we are on step **#2** in our data flow overview:
 
 ![assets/quickstart_overview.png](assets/quickstart_overview.png)
 
 ### Load Weather Data from Snowflake Marketplace
-Weather Source is a leading provider of global weather and climate data and their OnPoint Product Suite provides businesses with the necessary weather and climate data to quickly generate meaningful and actionable insights for a wide range of use cases across industries. Let's connect to the `Weather Source LLC: frostbyte` feed from Weather Source in the Snowflake Marketplace by following these steps:
+Pelmorex Weather Source is a leading provider of global weather and climate data and their OnPoint Product Suite provides businesses with the necessary weather and climate data to quickly generate meaningful and actionable insights for a wide range of use cases across industries. Let's connect to the `Pelmorex Weather Source: Frostbyte` feed in the Snowflake Marketplace by following these steps:
 
 * Login to Snowsight
 * Click on the `Marketplace` -> `Snowflake Marketplace` link in the left navigation bar
-* Enter "Weather Source LLC: frostbyte" in the search box and click return
-* Click on the "Weather Source LLC: frostbyte" listing tile
+* Enter "Pelmorex Weather Source: Frostbyte" in the search box and click return
+* Click on the "Pelmorex Weather Source: Frostbyte" listing tile
 * Click the blue "Get" button
     * Expand the "Options" dialog
     * Change the "Database name" to read "FROSTBYTE_WEATHERSOURCE" (all capital letters)
@@ -447,7 +456,7 @@ with DAG(dag_name, schedule=timedelta(days=1), warehouse=warehouse_name) as dag:
             COMPUTE_POOL = {compute_pool}
             RUNTIME = '{runtime}'
             QUERY_WAREHOUSE = {warehouse_name}
-            EXTERNAL_ACCESS_INTEGRATIONS = ('{external_access_integration}')
+            ARTIFACT_REPOSITORIES = ({artifact_repository})
             ARGUMENTS = '--database-name {database_name} --schema-name {schema_name}'
         ''', warehouse=warehouse_name)
     dag_task2 = DAGTask("LOAD_DAILY_CITY_METRICS", definition=f'''
@@ -470,7 +479,7 @@ You can see that we're defining two tasks, one for each Notebook, and that each 
 
 * **MAIN_FILE**: The notebook file to execute within the NPO
 * **COMPUTE_POOL**: The SPCS compute pool to run the notebook on
-* **RUNTIME**: The container runtime version (e.g., `V2.2-CPU-PY3.12`)
+* **RUNTIME**: The container runtime version (e.g., `V2.5-CPU-PY3.12`)
 * **QUERY_WAREHOUSE**: The warehouse to use for SQL queries
 
 We then define the dependencies and deploy the DAG. As you can see this makes managing complex Task DAGs much easier!
@@ -539,9 +548,20 @@ During this step we will be deploying our Notebooks to production using a CI/CD 
 ![assets/quickstart_overview.png](assets/quickstart_overview.png)
 
 ### Create a Snowflake Personal Access Token
-In order to connect to your Snowflake account from GitHub Actions, we will use a Snowflake Personal Access Token (or PAT). Please follow the steps in [Generating a programmatic access token](https://docs.snowflake.com/en/user-guide/programmatic-access-tokens#generating-a-programmatic-access-token) to create a Snowflake PAT for your user. When choosing which role to grant the PAT access to, select the `DEMO_ROLE` role.
+In order to connect to your Snowflake account from GitHub Actions, we will use a Snowflake Personal Access Token (or PAT). Please follow the steps in [Generating a programmatic access token](https://docs.snowflake.com/en/user-guide/programmatic-access-tokens#generating-a-programmatic-access-token) to create a Snowflake PAT for your user. Use these values when creating the PAT, in the "New programmatic access token" dialog:
+
+* **Name**: DEMO_PAT
+* **Expires in**: Leave with default (15 days)
+* **Grant access**: Select **Single role (recommended)**, then the `DEMO_ROLE` role
 
 Make sure to save the PAT before leaving the page, as you won't be able to view it again.
+
+Finally, run the following command in a SQL script in Workspaces. This will allow you to bypass the active network policy rule temporarily, for 60 minutes, in order to test out the CI/CD pipeline. For long-term access you need to create a network policy allowing access from the GitHub Actions environment. For more details check out our [Controlling network traffic with network policies](https://docs.snowflake.com/en/user-guide/network-policies) page.
+
+```sql
+ALTER USER &lt;your user name&gt; MODIFY PROGRAMMATIC ACCESS TOKEN DEMO_PAT
+  SET MINS_TO_BYPASS_NETWORK_POLICY_REQUIREMENT = 60;
+```
 
 ### Configure GitHub Actions
 By default GitHub Actions disables any workflows (or CI/CD pipelines) defined in the forked repository. This repository contains a workflow to deploy your Snowpark Notebooks, which we'll use later on. So for now enable this workflow by opening your forked repository in GitHub, clicking on the `Actions` tab near the top middle of the page, and then clicking on the `I understand my workflows, go ahead and enable them` green button.

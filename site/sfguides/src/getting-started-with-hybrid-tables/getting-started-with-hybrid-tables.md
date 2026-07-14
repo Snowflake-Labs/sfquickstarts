@@ -1,6 +1,6 @@
 author: Meny Kobel
 id: getting-started-with-hybrid-tables
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/snowflake-feature/hybrid-tables
 language: en
 summary: Follow this tutorial to learn the basics of hybrid tables 
 environments: web
@@ -46,7 +46,7 @@ Hybrid tables leverage a row store as the primary data store to provide excellen
 
 - Familiarity with the Snowflake Snowsight interface
 - Familiarity with SQL
-- Snowflake non-trial account with Hybrid Tables enabled
+- A Snowflake paid account in an AWS or Azure commercial region (Hybrid Tables are not available in GCP, government regions, or trial accounts)
 - Account admin credentials which you should use to execute the quickstart
 
 
@@ -54,6 +54,8 @@ Hybrid tables leverage a row store as the primary data store to provide excellen
 
 
 In this part of the step, we will setup our Snowflake account, create new worksheets, role, database structures, create a Virtual Warehouse and create two hybrid tables and one standard table that we will use in this step.
+
+> **Note on Production Workloads:** The SQL in this quickstart uses string literals for clarity. Production OLTP workloads should use bound variables (parameterized queries) so Snowflake can cache and reuse query plans. See [Hybrid Tables Best Practices](https://docs.snowflake.com/en/user-guide/tables-hybrid-best-practices) and [Performance Testing for Hybrid Tables](https://docs.snowflake.com/en/user-guide/tables-hybrid-test).
 
 
 ### Step 2.1 Creating a Worksheet
@@ -104,8 +106,8 @@ We will create three tables:
 - TRUCK_HISTORY standard table -  This table will store historical TRUCK information, enabling you to track changes over time.
 
 You may bulk load data into hybrid tables by copying from a data stage or other tables (that is, using CTAS, COPY, or INSERT INTO … SELECT).
-It is strongly recommended to bulk load data into a hybrid table using a CREATE TABLE … AS SELECT statement, as there are several optimizations which can only be applied to a data load as part of table creation. Bulk loading via INSERT or COPY is supported, but data loading is slower compared to CTAS, which could be 10 times faster, for large amounts of data and queries against freshly loaded data will be slower as well.
-You need to define all keys, indexes, and constraints at the creation of a hybrid table.
+All three bulk load methods (CTAS, COPY, and INSERT INTO … SELECT) use an optimized loading path when the target hybrid table is empty. CTAS is convenient for tables without FOREIGN KEY constraints. For tables with FOREIGN KEY constraints, create the schema first and use INSERT INTO … SELECT (CTAS does not support FOREIGN KEY).
+You can define keys, indexes, and constraints at table creation time (recommended) or add secondary indexes later using CREATE INDEX on populated tables.
 
 First we have to create a [FILE FORMAT](https://docs.snowflake.com/en/sql-reference/sql/create-file-format) that describes a set of staged data to access or load into Snowflake tables and a [STAGE](https://docs.snowflake.com/en/user-guide/data-load-overview) which is a Snowflake object that points to a cloud storage location Snowflake can access to both ingest and query data. In this step the data is stored in a publicly accessible AWS S3 bucket which we are referencing when creating the Stage object.
 
@@ -327,7 +329,7 @@ SHOW HYBRID TABLES;
 List all the indexes in your account for which you have access privileges. Note the value of the is_unique column: for the PRIMARY KEY the value is Y and for the index the value is N.
 ```sql
 --Show all HYBRID tables indexes
-SHOW INDEXES;
+SHOW INDEXES IN DATABASE HYBRID_QUICKSTART_DB;
 ```
 
 Look at a sample of the tables.
@@ -789,5 +791,10 @@ Having completed this quickstart you have successfully
 ### Related Resources:
 - [Snowflake Unistore Landing Page](/en/data-cloud/workloads/unistore/)
 - [Snowflake Documentation for Hybrid Tables](https://docs.snowflake.com/en/user-guide/tables-hybrid)
+- [Best Practices for Hybrid Tables](https://docs.snowflake.com/en/user-guide/tables-hybrid-best-practices)
+- [Performance Testing for Hybrid Tables](https://docs.snowflake.com/en/user-guide/tables-hybrid-test)
 - [Simplify Application Development Hybrid Tables Blog](/blog/simplify-application-development-hybrid-tables)
 - [Getting Started with Snowflake Postgres](/en/developers/guides/getting-started-with-snowflake-postgres/)
+- [Hybrid Tables Performance Optimization Primer](/en/developers/guides/hybrid-tables-performance-optimization-primer/)
+- [Secondary Index Design for Hybrid Tables](/en/developers/guides/hybrid-tables-secondary-index-design/)
+- [Converting Standard Tables to Hybrid Tables](/en/developers/guides/hybrid-tables-standard-to-hybrid-migration/)

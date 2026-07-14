@@ -16,7 +16,7 @@ CI/CD pipelines let you automate Snowflake deployments so that changes are trigg
 
 In this Quickstart, we'll walk through configuring three of those integrations:
 
-- **GitHub Actions** — using the [snowflakedb/snowflake-cli-action](https://github.com/snowflakedb/snowflake-cli-action) GitHub Action
+- **GitHub Actions** — using the [snowflakedb/snowflake-actions](https://github.com/snowflakedb/snowflake-actions) GitHub Action
 - **GitLab CI/CD** — using the [Snowflake CI/CD Component](https://gitlab.com/snowflakedbutils/snowflake-cicd-component) from the GitLab CI/CD Catalog
 - **Azure DevOps** — using the [ConfigureSnowflakeCLI@0](https://github.com/snowflakedb/snowflake-ado-extension) Azure Pipelines task
 
@@ -157,7 +157,7 @@ jobs:
           persist-credentials: false
 
       - name: Install and configure Snowflake CLI
-        uses: snowflakedb/snowflake-cli-action@v2.0.2
+        uses: snowflakedb/snowflake-actions@v2.0.4
         with:
           use-oidc: true
           cli-version: "3.16"
@@ -174,7 +174,7 @@ jobs:
 Here's what the code does:
 
 - Sets `id-token: write` permission, which is required for the runner to request a GitHub OIDC token
-- Uses `snowflakedb/snowflake-cli-action@v2.0.2` to install the Snowflake CLI and configure OIDC authentication
+- Uses `snowflakedb/snowflake-actions@v2.0.4` to install the Snowflake CLI and configure OIDC authentication
 - Runs `snow connection test -x` to verify the connection, then `snow dcm deploy` to deploy changes
 - The `-x` flag indicates a temporary connection (no **config.toml** required)
 
@@ -195,7 +195,7 @@ If OIDC is not available, you can use key-pair authentication. Store your privat
 
 ```yaml
 - name: Install Snowflake CLI
-  uses: snowflakedb/snowflake-cli-action@v2.0.2
+  uses: snowflakedb/snowflake-actions@v2.0.4
 
 - name: Deploy
   env:
@@ -221,7 +221,7 @@ Then override the connection fields through environment variables:
 
 ```yaml
 - name: Install and configure Snowflake CLI
-  uses: snowflakedb/snowflake-cli-action@v2.0.2
+  uses: snowflakedb/snowflake-actions@v2.0.4
   with:
     default-config-file-path: "config.toml"
 
@@ -242,7 +242,7 @@ Password authentication is supported but not recommended for production CI/CD. S
 
 ```yaml
 - name: Install Snowflake CLI
-  uses: snowflakedb/snowflake-cli-action@v2.0.2
+  uses: snowflakedb/snowflake-actions@v2.0.4
 
 - name: Deploy
   env:
@@ -725,7 +725,7 @@ Congratulations! You've configured Snowflake CI/CD integrations that authenticat
 
 - How Snowflake CI/CD integrations work: service users, OIDC authentication, and the Snowflake CLI on CI runners
 - How to create a Snowflake service user with OIDC workload identity for GitHub Actions, GitLab CI/CD, and Azure DevOps
-- How to configure a GitHub Actions workflow using `snowflakedb/snowflake-cli-action`
+- How to configure a GitHub Actions workflow using `snowflakedb/snowflake-actions`
 - How to configure a GitLab CI/CD pipeline using the Snowflake CI/CD Component
 - How to set up an Azure Entra ID App Registration with a federated credential and configure an Azure Pipeline using `ConfigureSnowflakeCLI@0`
 - How to troubleshoot common OIDC token and claim mismatch issues
@@ -740,6 +740,6 @@ Congratulations! You've configured Snowflake CI/CD integrations that authenticat
 - [DevOps with Snowflake](https://docs.snowflake.com/en/developer-guide/builders/devops-with-snowflake)
 - [Snowflake Workload Identity Federation](https://docs.snowflake.com/en/user-guide/workload-identity-federation)
 - [Snowflake CLI documentation](https://docs.snowflake.com/en/developer-guide/snowflake-cli/index)
-- [snowflake-cli-action repository](https://github.com/snowflakedb/snowflake-cli-action)
+- [snowflake-actions repository](https://github.com/snowflakedb/snowflake-actions)
 - [snowflake-cicd-component repository](https://gitlab.com/snowflakedbutils/snowflake-cicd-component)
 - [snowflake-ado-extension repository](https://github.com/snowflakedb/snowflake-ado-extension)
