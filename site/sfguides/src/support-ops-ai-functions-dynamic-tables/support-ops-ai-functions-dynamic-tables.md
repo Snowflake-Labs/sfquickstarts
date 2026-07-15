@@ -5,7 +5,7 @@ summary: Build an automated support ticket enrichment pipeline using Cortex AI F
 environments: web
 status: Draft
 duration: 30
-feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
+feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: AI, Cortex, AI_CLASSIFY, AI_COMPLETE, AI_TRANSCRIBE, AI_REDACT, Dynamic Tables, Streamlit, Support Operations
 authors: James Cha-Earley
 
@@ -187,7 +187,7 @@ SELECT
   raw_text,
   TRY_TO_DOUBLE(
     AI_COMPLETE(
-      'claude-4-sonnet',
+      'claude-sonnet-4-5',
       CONCAT(
         'Rate the sentiment of this support ticket on a scale from -1.0 ',
         '(extremely frustrated) to +1.0 (satisfied/positive). ',
@@ -243,7 +243,7 @@ classified AS (
     ):labels[0]::VARCHAR AS issue_category,
     TRY_TO_DOUBLE(
       AI_COMPLETE(
-        'claude-4-sonnet',
+        'claude-sonnet-4-5',
         CONCAT('Rate sentiment -1.0 to +1.0. Return only a number. Ticket: ', ticket_text)
       )::VARCHAR
     ) AS sentiment_score
@@ -253,7 +253,7 @@ SELECT
   ticket_id, channel, created_at, ticket_text,
   issue_category, sentiment_score,
   AI_COMPLETE(
-    'claude-4-sonnet',
+    'claude-sonnet-4-5',
     CONCAT(
       'Support ops manager. Category: ', issue_category,
       '. Sentiment: ', COALESCE(ROUND(sentiment_score, 2)::VARCHAR, 'unknown'),
@@ -265,7 +265,7 @@ FROM classified;
 
 Once created, this table refreshes itself. Insert a new ticket into `RAW.SUPPORT_TICKETS` and within an hour it appears in `ENRICHED_TICKETS` — classified, scored, and with a recommendation.
 
-> **Note:** The first refresh may take 5–10 minutes as AI Functions process all existing tickets. If the table appears empty, wait and re-query.
+> **Note:** The first refresh may take 15–30 minutes as AI Functions transcribe and enrich all existing tickets. If the table appears empty, wait and re-query.
 
 ### Verify the Pipeline
 
@@ -384,9 +384,9 @@ For production, apply [Dynamic Data Masking](https://docs.snowflake.com/en/user-
 | Task | Recommended Model | Reason |
 |------|-------------------|--------|
 | Classification | `AI_CLASSIFY` (managed) | Optimized internally by Snowflake |
-| Sentiment scoring | `claude-4-sonnet` | Good structured output at lower cost |
-| Recommendations | `claude-4-sonnet` | Balanced quality and cost |
-| Complex edge cases | `claude-4-opus` | Strongest reasoning for ambiguous tickets |
+| Sentiment scoring | `claude-sonnet-4-5` | Good structured output at lower cost |
+| Recommendations | `claude-sonnet-4-5` | Balanced quality and cost |
+| Complex edge cases | `claude-opus-4-7` | Strongest reasoning for ambiguous tickets |
 
 ### Human-in-the-Loop
 
