@@ -232,11 +232,61 @@ Open **project/02_transformation/dynamic_tables.sql** and work through the promp
 
    > **Important:** This Dynamic Table reads **live, shared data that we don't own**. Incremental refresh requires change tracking on the base objects, which requires `OWNERSHIP` — so we pin this table to `REFRESH_MODE = FULL`. Dynamic Tables built only on tables you own can refresh incrementally.
 
-4. **Find the culprit.** The next prompts explore temperature and then wind speed in Hamburg for February 2022. Chart the wind speed result — you'll see spikes approaching hurricane-force winds. **That windspeed is our likely culprit.**
+   The Dynamic Table Cortex Code generates should look like this:
+
+   ```sql
+   CREATE OR REPLACE DYNAMIC TABLE tasty_bytes.harmonized.daily_weather_dt
+     TARGET_LAG = '1 day'
+     WAREHOUSE = compute_wh
+     REFRESH_MODE = FULL
+     AS
+   SELECT
+       hd.*,
+       TO_VARCHAR(hd.date_valid_std, 'YYYY-MM') AS yyyy_mm,
+       pc.city_name AS city,
+       c.country AS country_desc
+   FROM Pelmorex_Weather_Source_frostbyte.onpoint_id.history_day hd
+   JOIN Pelmorex_Weather_Source_frostbyte.onpoint_id.postal_codes pc
+       ON pc.postal_code = hd.postal_code
+       AND pc.country = hd.country
+   JOIN tasty_bytes.raw_pos.country c
+       ON c.iso_country = hd.country
+       AND c.city = hd.city_name;
+   ```
+
+4. **Find the culprit.** The next prompts explore temperature and then wind speed in Hamburg for February 2022. Chart the wind speed result — you'll see spikes approaching hurricane-force winds. **That wind speed is our likely culprit.**
 
 5. **Create the wind speed Dynamic Table.** Prompt Cortex Code to create `windspeed_hamburg_dt` from the base weather Dynamic Table.
 
-6. **Create the combined Dynamic Table.** Finally, prompt Cortex Code to create `weather_hamburg_dt`, which joins weather to sales and **invokes your two UDFs** to add Celsius and millimeter columns.
+6. **Create the combined Dynamic Table.** Finally, prompt Cortex Code to create `weather_hamburg_dt`, which joins weather to sales and **invokes your two UDFs** to add Celsius and millimeter columns. The generated table should look like this:
+
+   ```sql
+   CREATE OR REPLACE DYNAMIC TABLE tasty_bytes.harmonized.weather_hamburg_dt
+     TARGET_LAG = '1 day'
+     WAREHOUSE = compute_wh
+     REFRESH_MODE = FULL
+     AS
+   SELECT
+       fd.date_valid_std,
+       fd.city_name,
+       fd.country_desc,
+       ZEROIFNULL(SUM(odv.price)) AS daily_sales,
+       ROUND(AVG(fd.avg_temperature_air_2m_f),2) AS avg_temperature_fahrenheit,
+       ROUND(AVG(analytics.fahrenheit_to_celsius(fd.avg_temperature_air_2m_f)),2) AS avg_temperature_celsius,
+       ROUND(AVG(fd.tot_precipitation_in),2) AS avg_precipitation_inches,
+       ROUND(AVG(analytics.inch_to_millimeter(fd.tot_precipitation_in)),2) AS avg_precipitation_millimeters,
+       MAX(fd.max_wind_speed_100m_mph) AS max_wind_speed_100m_mph
+   FROM harmonized.daily_weather_dt fd
+   LEFT JOIN harmonized.orders_v odv
+       ON fd.date_valid_std = DATE(odv.order_ts)
+       AND fd.city_name = odv.primary_city
+       AND fd.country_desc = odv.country
+   WHERE 1=1
+       AND fd.country_desc = 'Germany'
+       AND fd.city = 'Hamburg'
+       AND fd.yyyy_mm = '2022-02'
+   GROUP BY fd.date_valid_std, fd.city_name, fd.country_desc;
+   ```
 
 Here's what these Dynamic Tables give us:
 
@@ -268,6 +318,26 @@ Open **project/03_delivery/semantic_view_and_agent.sql** and work through the pr
 CoWork queries your semantic view, correlates the wind speed spike with the sales drop, and charts the answer for you — no dashboard code required.
 
 With this, we've completed our end-to-end pipeline. Analysts no longer need SQL or a custom app; they just ask. This completes the **Delivery** stage of our pipeline.
+
+<!-- ------------------------ -->
+## Clean Up
+
+If you built this in a trial account you'd like to keep tidy, you can drop everything you created. Open a SQL worksheet and run the following:
+
+```sql
+USE ROLE accountadmin;
+
+-- Drop the agent, then the pipeline database and its objects
+DROP AGENT IF EXISTS snowflake_intelligence.agents.tasty_bytes_weather_agent;
+DROP DATABASE IF EXISTS tasty_bytes;
+
+-- Drop the Git API integration used to clone the Workspace
+DROP INTEGRATION IF EXISTS github_public_api;
+```
+
+> **Note:** This leaves the `snowflake_intelligence` database in place, since your account may use it for other agents. Drop it with `DROP DATABASE IF EXISTS snowflake_intelligence;` only if you're sure nothing else depends on it.
+
+You can also delete the Workspace you created from the **Projects » Workspaces** menu.
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
