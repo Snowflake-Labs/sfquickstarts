@@ -36,7 +36,6 @@ A working Snowflake CoCo Desktop environment connected to your Snowflake account
 
 <!-- ------------------------ -->
 ## Download and Install
-Duration: 3
 
 ### Download
 
@@ -71,7 +70,6 @@ CoCo Desktop launches directly to the onboarding screen. If you see the welcome 
 
 <!-- ------------------------ -->
 ## Connect to Snowflake
-Duration: 5
 
 On first launch, CoCo Desktop walks you through a four-step setup flow: **welcome → connect → mode → theme**.
 
@@ -130,7 +128,6 @@ Once in the app, your active connection name appears in the top navigation bar. 
 
 <!-- ------------------------ -->
 ## Explore the Interface
-Duration: 5
 
 CoCo Desktop has two modes. Understanding them helps you get the most out of the app.
 
@@ -166,7 +163,6 @@ Switch to Editor Mode when you're writing code, debugging, or using editor exten
 
 <!-- ------------------------ -->
 ## Run Your First Query
-Duration: 5
 
 With the session running, type a plain-English question in the chat input:
 
@@ -214,7 +210,6 @@ CoCo Desktop fetches the column definitions and a sample of rows so it can answe
 
 <!-- ------------------------ -->
 ## Manage Sessions
-Duration: 3
 
 Every conversation is saved automatically. You can pick up exactly where you left off.
 
@@ -246,7 +241,6 @@ For sensitive work, enable **Private Mode** from the connection menu in the top 
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 2
 
 Congratulations! You've successfully installed Snowflake CoCo Desktop, connected it to your Snowflake account, and run your first natural-language queries from a full AI-powered IDE.
 
