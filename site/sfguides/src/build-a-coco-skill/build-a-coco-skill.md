@@ -78,7 +78,7 @@ Here are a couple of important things to keep in mind when building a skill:
 
 - Capture the steps before you build. Even a rough list of what you do, in order, is enough, and it means the skill encodes the workflow you actually follow instead of a guess at it.
 
-Once you've spotted a good candidate, there are a coup;e of ways to turn it into a skill:
+Once you've spotted a good candidate, there are a couple of ways to turn it into a skill:
 
 - You already have the idea in your head: e.g., "I want a skill that drafts on-brand launch emails." That's the path we'll walk through next.
 
