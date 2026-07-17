@@ -78,7 +78,7 @@ Here are a couple of important things to keep in mind when building a skill:
 
 - Capture the steps before you build. Even a rough list of what you do, in order, is enough, and it means the skill encodes the workflow you actually follow instead of a guess at it.
 
-Once you've spotted a good candidate, there are a coupe of ways to turn it into a skill:
+Once you've spotted a good candidate, there are a coup;e of ways to turn it into a skill:
 
 - You already have the idea in your head: e.g., "I want a skill that drafts on-brand launch emails." That's the path we'll walk through next.
 
@@ -87,9 +87,9 @@ Once you've spotted a good candidate, there are a coupe of ways to turn it into 
 <!-- ------------------------ -->
 ## Invoke the Skill Development Skill
 
-CoCo includes a built-in skill called **Skill Development** whose entire job is to help you build other skills. Let's start it.
-
 > This guide uses the `skill-development` skill to build a single skill – the same create-from-scratch workflow works in the CoCo CLI and CoCo Desktop. In the Snowsight UI, you create a skill with **+ Create Skill** instead. (CoCo Desktop also bundles a `plugin-creator` skill, but that scaffolds a whole *plugin* – a container that packages one or more skills for sharing – which is more than you need for a single skill.) Either way you end up with a **SKILL.md** in your skills folder, and everything after this step works identically. The **Use Your Skill in CoCo Desktop, the CLI, and Snowsight** section below covers the differences.
+
+CoCo includes a built-in skill called **Skill Development** whose entire job is to help you build other skills. Let's start it.
 
 In the CoCo prompt, type `/` to open the skill picker, then choose **skill-development** (or type `$skill-development`). Tell CoCo what you want to build:
 
