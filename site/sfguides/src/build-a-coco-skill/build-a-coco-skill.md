@@ -78,7 +78,15 @@ Here are a couple of important things to keep in mind when building a skill:
 
 - Capture the steps before you build. Even a rough list of what you do, in order, is enough, and it means the skill encodes the workflow you actually follow instead of a guess at it.
 
-Once you've spotted a good candidate, there are a coup;e of ways to turn it into a skill:
+And before you build anything, it's worth checking whether the skill already exists. CoCo ships with a large built-in library, and your team may have published more – so search first:
+
+```bash
+/find-skill is there a skill for drafting on-brand marketing content?
+```
+
+CoCo searches the catalog and lists anything that matches, ready to install in one step. In our case nothing fits our brand, so we'll build it.
+
+Once you've spotted a good candidate, there are a couple of ways to turn it into a skill:
 
 - You already have the idea in your head: e.g., "I want a skill that drafts on-brand launch emails." That's the path we'll walk through next.
 
@@ -243,6 +251,29 @@ A few things worth knowing:
 - **How you start a skill varies a bit.** The `skill-development` create workflow builds a single skill on both the CLI and Desktop; in Snowsight you use **+ Create Skill**. CoCo Desktop's `plugin-creator` is the step up from there – it packages one or more skills into a shareable *plugin*. Whatever you use, you end up with a **SKILL.md** in a skills folder, invoked the same way everywhere.
 
 <!-- ------------------------ -->
+## Share Your Skill With Your Team
+
+A skill that lives only on your machine only helps you – and if everyone builds their own version, you're back to five slightly different launch emails. The fix is to publish it to the **Skills Catalog**, Snowflake's governed registry for skills. Once it's there, teammates find and install the same version, with access controlled by Snowflake roles.
+
+How you publish depends on your surface:
+
+- **CoCo Desktop** – select the skill in **Agent Settings → Skills** and choose **Publish to Skills Catalog**.
+- **Snowsight** – run the `share-skill` skill, which gives you a share link to hand out.
+- **CoCo CLI** – run `cortex skill publish` to push the skill to a Snowflake stage or the catalog.
+
+However you publish, teammates then discover it with `find-skill` (or by pasting a share link) and install it in one step – so everyone runs the same `brand-content` skill.
+
+### Package Related Skills as a Plugin
+
+As your toolkit grows – say `brand-content`, a launch-checklist skill, and a competitor-scan skill – you don't have to share them one at a time. A **plugin** is the container that bundles related skills (and optionally hooks or MCP servers) into a single installable unit. On CoCo Desktop, ask the `plugin-creator` skill to package them:
+
+```bash
+/plugin-creator package my marketing skills into a plugin
+```
+
+Now a teammate installs the whole toolkit in one step instead of hunting for each piece.
+
+<!-- ------------------------ -->
 ## Scale Your Skill
 
 The skill you built is a single **SKILL.md** plus one reference file – and for most tasks, that's all you'll ever need. As your skills take on bigger jobs, two patterns help them grow without becoming slow or unwieldy. 
@@ -339,7 +370,7 @@ For the full catalog, see the [CoCo CLI bundled skills](https://docs.snowflake.c
 
 If you only built this skill to follow along, you can remove it. Delete the skill folder CoCo created – the **brand-content/** directory and everything inside it. Once it's gone, it will no longer appear in the `/` picker.
 
-If you want to keep it, share the folder with your teammates and have them drop it into their own **skills** directory. That's the whole distribution model: a skill is just a folder of Markdown.
+If you want to keep it, the best way to get it to your teammates is to publish it to the Skills Catalog (see **Share Your Skill With Your Team** above). For a quick one-off, you can also just share the folder and have them drop it into their own **skills** directory – a skill is just a folder of Markdown.
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
