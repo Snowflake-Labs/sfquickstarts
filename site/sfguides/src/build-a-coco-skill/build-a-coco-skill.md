@@ -11,11 +11,11 @@ language: en
 <!-- ------------------------ -->
 ## Overview
 
-CoCo is Snowflake's AI coding assistant. Out of the box it can query your data, write SQL, and explore your account, but its real power is that you can teach it new, repeatable workflows through **skills**.
+CoCo is Snowflake's AI coding assistant. Out of the box it can query your data, write SQL, and explore your account, and more. One of its key capabilities is also being able to teach it new, repeatable workflows through **skills**.
 
-A skill is a small Markdown file that tells CoCo how to complete a specific task. Skills allow you to turn tasks that have a known and repeatable structure into something CoCo does consistently, every time. Once you add a skill, it shows up in CoCo's `/` picker and anyone on your team can invoke it.
+A skill is a small Markdown file that tells CoCo how to complete a specific task. Skills allow you to turn tasks that have a known and repeatable structure into something CoCo does consistently every time. Once you add a skill, it shows up in CoCo's `/` picker and anyone on your team can invoke it.
 
-The best part: you don't have to write a CoCo skill by hand. CoCo ships with a built-in skill called **Skill Development** that interviews you and writes the skill for you.
+You don't have to write a CoCo skill manually. CoCo ships with a built-in skill called **Skill Development** that interviews you and writes the skill for you.
 
 In this guide you'll play the role of a **marketer at Peak Outfitters**, a fictional outdoor-gear company. Your marketing team wants everyone – even non-technical team members – to be able to draft launch emails and slide outlines that follow the company's brand voice and style guidelines. Instead of asking everyone to memorize the style guide, you'll build a reusable **brand-content** skill that does it for them.
 
@@ -55,7 +55,7 @@ Here's what the frontmatter does:
 
 - **`name`** – the skill's identifier, in `kebab-case` (lowercase words joined by hyphens).
 
-- **`description`** – the most important field. This is how CoCo decides *when* to use the skill. A good description says **what** the skill does, **when** to use it, and lists **trigger** words that should activate it.
+- **`description`** – the most important field. This is how CoCo decides when to use the skill. A good description says **what** the skill does, **when** to use it, and lists **trigger** words that should activate it.
 
 **2. Body** – plain Markdown that teaches CoCo how to do the task. The [Create your own skill](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-desktop/skills#create-your-own-skill) documentation describes the structure, but the common sections are:
 
@@ -63,28 +63,28 @@ Here's what the frontmatter does:
 - `## Stopping Points` – where CoCo should pause and check in with you.
 - `## Output` – what the skill produces when it's done.
 
-That's it. A skill is just a description of a job, written so CoCo can follow it. You don't have to write this file yourself – the Skill Development skill will do it for you. But before we build one, it's worth understanding: when is a skill actually worth creating?
+That's it! A skill is just a description of a job, written so CoCo can follow it. You don't have to write this file yourself – the Skill Development skill will do it for you.
+
+Before we build one, it's worth understanding: when is a skill actually worth creating?
 
 <!-- ------------------------ -->
 ## When Should You Build a Skill?
 
-Not every task will deserve a skill. Building one for the wrong thing just adds clutter to your `/` picker. 
-
-The signal to watch for is repetition with structure: you catch yourself doing the same kind of task more than once – the same rough steps, the same shape – just with different inputs each time. Drafting a launch email every quarter, standing up a new pipeline the same way each time, running the same checks before you ship a change – those are skills waiting to happen. A true one-off, or something open-ended and creative with no repeatable shape, usually isn't worth capturing.
-
-Here are a couple of important things to keep in mind when building a skill:
-
-- Know the outcome. Be clear about what "done" actually looks like, because that's the artifact your skill has to produce every time. 
-
-- Capture the steps before you build. Even a rough list of what you do, in order, is enough, and it means the skill encodes the workflow you actually follow instead of a guess at it.
-
-And before you build anything, it's worth checking whether the skill already exists. CoCo ships with a large built-in library, and your team may have published more – so search first:
+Before you build anything, it's good practice to check whether a relevant skill already exists. CoCo ships with a large library of built-in skills, and your team may have published more – so search first using the built-in `/find-skill` skill:
 
 ```bash
 /find-skill is there a skill for drafting on-brand marketing content?
 ```
 
-CoCo searches the catalog and lists anything that matches, ready to install in one step. In our case nothing fits our brand, so we'll build it.
+CoCo will search the catalog and lists anything that matches, ready to install in one step. In our case nothing fits our use case, so we'll build one.
+
+Note that not every task will deserve a skill. Building one for the wrong thing just adds clutter to your `/` picker. The signal to watch for is repetition with structure: you catch yourself doing the same kind of task more than once – the same rough steps, the same shape – just with different inputs each time. This could be things like drafting a launch email every quarter, standing up a new data pipeline the same way each time, running the same checks before you ship a change. Those are skills waiting to happen. A true one-off, or something open-ended and creative with no repeatable shape, usually isn't worth capturing as a skill.
+
+Here are a couple of important things to keep in mind when building a skill:
+
+- **Clearly define the outcome.** Be clear about what "done" actually looks like, because that's the artifact your skill has to produce every time. 
+
+- **Capture as many steps as possible before you build.** Even a rough list of what you do, in order, is enough, and it means the skill encodes the workflow you actually follow instead of a guess at it.
 
 Once you've spotted a good candidate, there are a couple of ways to turn it into a skill:
 
@@ -95,7 +95,7 @@ Once you've spotted a good candidate, there are a couple of ways to turn it into
 <!-- ------------------------ -->
 ## Invoke the Skill Development Skill
 
-> This guide uses the `skill-development` skill to build a single skill – the same create-from-scratch workflow works in the CoCo CLI and CoCo Desktop. In the Snowsight UI, you create a skill with **+ Create Skill** instead. (CoCo Desktop also bundles a `plugin-creator` skill, but that scaffolds a whole *plugin* – a container that packages one or more skills for sharing – which is more than you need for a single skill.) Either way you end up with a **SKILL.md** in your skills folder, and everything after this step works identically. The **Use Your Skill in CoCo Desktop, the CLI, and Snowsight** section below covers the differences.
+This guide uses the `skill-development` skill to build a single skill – the same create-from-scratch workflow works in the CoCo CLI and CoCo Desktop. In the Snowsight UI, you create a skill with **+ Create Skill** instead. (CoCo Desktop also bundles a `plugin-creator` skill, but that scaffolds a whole **plugin** – a container that packages one or more skills for sharing – which is more than you need for a single skill.) Either way you end up with a **SKILL.md** in your skills folder, and everything after this step works identically. The **Use Your Skill in CoCo Desktop, the CLI, and Snowsight** section below covers the differences.
 
 CoCo includes a built-in skill called **Skill Development** whose entire job is to help you build other skills. Let's start it.
 
@@ -178,7 +178,9 @@ An on-brand email or slide outline, plus a brand-compliance checklist.
 Here's what this skill does:
 
 - The **description** is written to trigger on many everyday phrases, so teammates don't have to know it exists to benefit from it.
+
 - The **Setup** section points to a separate **references/brand-guidelines.md** file. Keeping the guidelines in their own file means CoCo only loads them when it's actually drafting – and Marketing can update the brand rules without touching the workflow.
+
 - The **⚠️ STOP** checkpoints make CoCo pause so a human confirms the brief and the final copy before anything ships.
 
 Next, create the guidelines file the skill relies on. Ask CoCo to add **references/brand-guidelines.md** next to the **SKILL.md**, with your team's actual voice, terminology, structure rules, and calls to action. A short version of this file could look like this:
@@ -248,12 +250,12 @@ A few things worth knowing:
 
 - **Snowsight skills are workspace-scoped.** A personal skill you create in a Snowsight workspace is only available in that workspace – it won't follow you elsewhere.
 
-- **How you start a skill varies a bit.** The `skill-development` create workflow builds a single skill on both the CLI and Desktop; in Snowsight you use **+ Create Skill**. CoCo Desktop's `plugin-creator` is the step up from there – it packages one or more skills into a shareable *plugin*. Whatever you use, you end up with a **SKILL.md** in a skills folder, invoked the same way everywhere.
+- **How you start a skill varies a bit.** The `skill-development` create workflow builds a single skill on both the CLI and Desktop; in Snowsight you use **+ Create Skill**. CoCo Desktop's `plugin-creator` is the step up from there – it packages one or more skills into a shareable plugin. Whatever you use, you end up with a **SKILL.md** in a skills folder, invoked the same way everywhere.
 
 <!-- ------------------------ -->
-## Share Your Skill With Your Team
+## Share Skills With Your Team
 
-A skill that lives only on your machine only helps you – and if everyone builds their own version, you're back to five slightly different launch emails. The fix is to publish it to the **Skills Catalog**, Snowflake's governed registry for skills. Once it's there, teammates find and install the same version, with access controlled by Snowflake roles.
+A skill that lives only on your machine only helps you. If everyone builds their own version, you're back to five slightly different launch emails. The fix is to publish it to the **Skills Catalog**, Snowflake's governed registry for skills. Once it's there, teammates find and install the same version, with access controlled by Snowflake roles.
 
 How you publish depends on your surface:
 
@@ -339,7 +341,7 @@ Skills are living documents. As your needs grow, the Skill Development skill can
 - **Add capabilities** – extend the workflow (for example, add a "social post" content type) by describing the change and letting CoCo update the **SKILL.md**.
 
 <!-- ------------------------ -->
-## Build a Skill for Anything
+## Build a skill for Anything
 
 This guide walked through one skill end to end – the mechanics of what a skill is made of, the best practices for when and how to build one, and how to use and design skills across CoCo Desktop, the CLI, and Snowsight. We kept the example deliberately simple and aimed it at non-technical teammates, but that's just one shape a skill can take. You can build a skill for almost anything you do repeatedly, and the same mechanics apply.
 
@@ -369,8 +371,6 @@ For the full catalog, see the [CoCo CLI bundled skills](https://docs.snowflake.c
 ## Clean Up
 
 If you only built this skill to follow along, you can remove it. Delete the skill folder CoCo created – the **brand-content/** directory and everything inside it. Once it's gone, it will no longer appear in the `/` picker.
-
-If you want to keep it, the best way to get it to your teammates is to publish it to the Skills Catalog (see **Share Your Skill With Your Team** above). For a quick one-off, you can also just share the folder and have them drop it into their own **skills** directory – a skill is just a folder of Markdown.
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
