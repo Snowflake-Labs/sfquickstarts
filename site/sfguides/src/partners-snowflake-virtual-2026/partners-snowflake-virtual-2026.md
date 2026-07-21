@@ -41,7 +41,7 @@ Most Snowflake hands-on labs start by asking you to provision your own account, 
 
 Before we get into the analysis, it is worth taking two minutes to understand the architecture, because everything you do in this session is running on Snowflake.
 
-<img src="assets/sigma-snowflake-architecture.png" width="800"/>
+![Architecture](assets/sigma-snowflake-architecture.png)
 
 Sigma is an agentic analytics platform built directly on top of the Snowflake AI Data Cloud. It does not extract your data or store a copy of it somewhere else. When you interact with Sigma, it generates optimized SQL on the fly, executes it on Snowflake compute, and surfaces the results in an interface that any business user can work in. Your governance policies are inherited automatically and nothing leaves your warehouse.
 
@@ -69,7 +69,7 @@ Duration: 5
 
 **2:** Create an account and then enter your email address:
 
-<img src="assets/sfs-2026-01.png" width="700"/>
+![Login](assets/sfs-2026-01.png)
 
 <aside class="positive">
 <strong>IMPORTANT:</strong><br> Do not sign up for a new Sigma trial for this lab! Use only the URL and instructions provided by your lab facilitator.
@@ -81,7 +81,7 @@ Duration: 5
 
 **5:** Once you see the homepage, you’re ready to proceed!
 
-<img src="assets/sfv-2026-02.png" width="800"/>
+![Homepage](assets/sfv-2026-02.png)
 
 ![Footer](assets/sigma-footer.png)
 <!-- END OF SECTION-->
@@ -93,15 +93,15 @@ To understand profitability for this year’s product lineup, we need insight in
 
 **1:** Open `Sigma Assistant` from the left sidebar to ask a question and get a starting point for analysis:
 
-<img src="assets/sfv-2026-03.png" width="800"/>
+![Sigma Assistant](assets/sfv-2026-03.png)
 
 **2:** In dropdown select the `BIG_BUYS_OFFICIAL` Cortex Agent. This will route our question directly to the agent instead of Sigma's default Assistant (which is still powered by Cortex)
 
-<img src="assets/sfv-2026-04a.png" width="800"/>
+![Cortex Agent](assets/sfv-2026-04a.png)
 
 **3:** In the text box, type: `How are computer products performing across regions?` and click the black arrow:
 
-<img src="assets/sfv-2026-04b.png" width="800"/>
+![Chatbox](assets/sfv-2026-04b.png)
 
 <aside class="negative">
 <strong>NOTE:</strong><br> The response comes from a Cortex Agent, so your output may differ slightly from this guide.
@@ -109,16 +109,16 @@ To understand profitability for this year’s product lineup, we need insight in
 
 Notice that the Cortex Agent is suggesting we use the `BIG_BUYS_SALES_ANALYST` Cortex Analyst, and that it walks through its reasoning.
 
-<img src="assets/sfv-2026-05.png" width="800"/>
+![Response](assets/sfv-2026-05.png)
 
 As the agents responds it provides both top level analysis and a breakdown of how it built the output.
 
-<img src="assets/sfv-2026-06.png" width="800"/>
+![Agent Response](assets/sfv-2026-06.png)
 
 
 **4:** With your cursor over the table, click the `Explore` icon in the top-right corner to explore the data in a spreadsheet interface and begin analysis:
 
-<img src="assets/sfv-2026-07.png" width="800"/>
+![Explore](assets/sfv-2026-07.png)
 
 ![Footer](assets/sigma-footer.png)
 <!-- END OF SECTION-->
@@ -128,35 +128,35 @@ Duration: 5
 
 **1:** To ensure that we are at the same spot, make sure that your table has the same columns in the grouping the one pictured here. If there are any missing ones, drag them into the calculations under the store region grouping. Lets also rename the columns to: `Total Revenue`, `Total Profit`, `Total COGS`, and `Profit Margin`. We should also use the formatting bar to set three columns to use `Currency` and `Profit Margin` to `%`:
 
-<img src="assets/sfv-2026-08.png" width="800"/>
+![Brands](assets/sfv-2026-08.png)
 
 <aside class="negative">
 <strong>NOTE:</strong><br> In this case the agent decided to multiply the profit margin by 100 so that the default output would not show as a percent. We need to modify the formula to remove the unneeded step in the calculation.
 </aside>
 
-<img src="assets/sfv-2026-08b.png" width="800"/>
+![Modifying Formula](assets/sfv-2026-08b.png)
 
 **2:** The first thing that we noticed is the `Southwest` is the lowest performing region out of the whole Big Buys network of stores.
 
 **3:** Let's right click and keep only the `Southwest` region:
 
-<img src="assets/sf2025-9.png" width="500"/>
+![Southwest](assets/sf2025-9.png)
 
 **4:** Next, let's drag in the `Brand` column to the grouping level on the right hand side:
 
-<img src="assets/sf2025-10.png" width="800"/>
+![Brand](assets/sf2025-10.png)
 
 **5:** Now let's sort the `Profit margin` column descending so that our highest margin brands in the `Southwest` region are at the top and the lowest ones are at the bottom:
 
-<img src="assets/sf2025-11.png" width="550"/>
+![Profit margin](assets/sf2025-11.png)
 
 **6:** We should add in some conditional formatting to make this easier to look at. Let's go ahead and right click `Conditional formatting` on the column and add in data bars from the configuration pane on the right side:
 
-<img src="assets/sf2025-12.png" width="600"/>
+![Conditional formatting](assets/sf2025-12.png)
 
 **7:** With a little bit of color, we can easily see there are certain brands that are losing us money and others are performing great. To improve overall profitability, we could drop some brands but before we do that, let's inform our decision with some additional outside data:
 
-<img src="assets/sf2025-13.png" width="800"/>
+![Results](assets/sf2025-13.png)
 
 **8:** Luckily we have a CSV of product reviews that we are able to load into Sigma and directly leverage in our analysis. 
 
@@ -166,25 +166,25 @@ Since we are using Sigma on top of Snowflake, we don't even have to wait for our
 
 Let's click on the table button on the left side of the `Element bar`:
 
-<img src="assets/sf2025-15.png" width="800"/>
+![Element Bar](assets/sf2025-15.png)
 
 Then select the CSV option:
 
-<img src="assets/sf2025-16.png" width="400"/>
+![CSV Option](assets/sf2025-16.png)
 
 From there we can drag and drop or browse to find the CSV file we downloaded:
 
-<img src="assets/sf2025-17.png" width="300"/>
+![Drag and drop](assets/sf2025-17.png)
 
 Sigma reads the file so we can review it and then click `Save`:
 
-<img src="assets/sf2025-18.png" width="800"/>
+![Save](assets/sf2025-18.png)
 
 **9:** With these 5000+ product reviews, we need to create a quantitative score to leverage in our analysis. So, we could either go one by one and write our own score or let's just leverage Snowflake Cortex to go through and provide us a sentiment analysis on each review.  
 
 Right click the `Review` column and select `Add column`:
 
-<img src="assets/sf2025-19.png" width="800"/>
+![Review](assets/sf2025-19.png)
 
 **10:** With the new column selected go to the formula bar and type in:
 ```copy-code
@@ -193,15 +193,15 @@ sentiment(Review)
 
 You may want to reduce the decimal places shown too:
 
-<img src="assets/sf2025-20.png" width="800"/>
+![Reduce decimal](assets/sf2025-20.png)
 
 **11:** Now we need to tie this to our `BIG_BUYS_POS` table. In Excel, you can do this with a Vlookup. Luckily Sigma has the same paradigm. On the `BIG_BUYS_POS` table right click `Brand` and select `Add column via lookup`.
 
-<img src="assets/sf2025-21.png" width="550"/>
+![Lookup](assets/sf2025-21.png)
 
 **12:** In the modal, select the `Sentiment` column as the column to add, set the aggregate to `Average`, You will notice that brand has automatically been matched to `Brand` for us. 
 
-<img src="assets/sf2025-22.png" width="400"/>
+![Sentiment](assets/sf2025-22.png)
 
 Once you click `Done`, you'll notice that the sentiment scores have now been averaged and tied to their respective brands.
 
@@ -209,11 +209,11 @@ Once you click `Done`, you'll notice that the sentiment scores have now been ave
 
 You may have also noticed that Sigma lets you see the formula that the `Add column via lookup` created for us:
 
-<img src="assets/sf2025-23.png" width="800"/>
+![Add column via lookup](assets/sf2025-23.png)
 
 Then right click the `Sentiment` column and select `Conditional formatting`. This time let's add a color scale:
 
-<img src="assets/sf2025-24.png" width="800"/>
+![Sentiment](assets/sf2025-24.png)
 
 **14:** Now, just a few minutes later, we have a strong understanding of which brands are our least profitable ones, and which brands are preferred by our customer base.
 
@@ -228,37 +228,37 @@ The next step is to set up the Price Changes linked input table that our Sigma A
 
 **1:** From the `Product_Reviews_Big_Buys.csv` table, select the create child element icon and the select `Linked input table`:
 
-<img src="assets/sfv-2026-25.png" width="800"/>
+![Linked input table](assets/sfv-2026-25.png)
 
 **2:** From there, click the `Choose column(s) to make unique row identifiers` drop down, and select `Brand`. Finally click the `Create input table` button.
 
-<img src="assets/sfv-2026-26.png" width="400"/>
+![Create input table](assets/sfv-2026-26.png)
 
 **3:** Rename the input table to `Price Changes`, and the default `Text` column to comments by double clicking on the respective names:
 
-<img src="assets/sfv-2026-27.png" width="800"/>
+![Price changes](assets/sfv-2026-27.png)
 
 **4:** Right click the `Brand Column` and select `Add new column` then click on `Number`. Rename this new column `Price Change`.
 
-<img src="assets/sfv-2026-28.png" width="800"/>
+![Adding new column](assets/sfv-2026-28.png)
 
 **5:** Now on the `Brand` column on the `BIG_BUYS_POS` table, right click and select `Add column via lookup`.
 
 Choose the `Price Changes` table that we just created and set the `Column to add` to  `Price Change` with `Brand` set as the matching key:
 
-<img src="assets/sf2025-31.png" width="400"/>
+![Price changes](assets/sf2025-31.png)
 
 **6:** Rename the new column to `Price Change`.
 
 These values should show up as `Null` right now since we havent entered any changes, but now we're ready to build our model:
 
-<img src="assets/sfv-2026-29.png" width="800"/>
+![Null](assets/sfv-2026-29.png)
 
 **7:** In some cases the AI does something unexpected and we don't catch it right away. In our case we just noticed it did not group the `COGS` column to create `Total COGS` as might be expected, but that is easy to correct.
 
 We can drag `COGS` into the grouping after the `Total Profit` column and rename it to `Total COGS`:
 
-<img src="assets/sf2025-35.png" width="800"/>
+![Total COGS](assets/sf2025-35.png)
 
 <aside class="negative">
 <strong>NOTE:</strong><br> If "Total COGS" is present in your table, ignore the instructions to add it manually.
@@ -275,17 +275,17 @@ Set its formula to:
 
 Change the column format to `Percentage`. Note this column will still be Null as we have not entered any price changes yet:
 
-<img src="assets/sfv-2026-30.png" width="800"/>
+![Percentage](assets/sfv-2026-30.png)
 
 We are ready to make a visualization.
 
 **9:** Click the `Add child element` button in the top right of the table and select `Chart`:
 
-<img src="assets/sf2025-36.png" width="800"/>
+![Child element](assets/sf2025-36.png)
 
 **10:** Drag `Brand` to the `X axis` and the `Profit Margin` to the `Y-Axis`. Then change the chart to be vertically aligned by swapping the axes:
 
-<img src="assets/sf2025-37.png" width="800"/>
+![Brand](assets/sf2025-37.png)
 
 **11:** Add the `Adjusted profit margin` column to the `X axis` and select `Unstacked` for the bar chart style, but nothing should new show up since we still have not added price changes.
 
@@ -298,31 +298,31 @@ Rather than manually entering price adjustments, we’ll use a Sigma Agent to an
 
 **1:** In the element tray at the bottom of the screen select `UI` then click `Chat`. This will create a chat element where we can showcase our agent. 
 
-<img src="assets/sfv-2026-31.png" width="600"/>
+![Agent UI](assets/sfv-2026-31.png)
 
 Then select `Create New Agent`.
 
-<img src="assets/sfv-2026-32.png" width="400"/>
+![Create new agent](assets/sfv-2026-32.png)
 
 **2:** The Configure Agents window should now be open. This is where we can provide Sigma instructions and tools for the agent to do work for us. First we need to give the agent access to two data sources. In the `Data Sources` section click add and select `BIG_BUYS_POS` and then `Price Changes`.
 
-<img src="assets/sfv-2026-33.png" width="800"/>
+![Configure agent](assets/sfv-2026-33.png)
 
 **3:** Next we have to give the agent a tool to use to update our prices changes in the input table. Click the add tool icon and then select `Actions`:
 
-<img src="assets/sfv-2026-34.png" width="400"/>
+![Action tools](assets/sfv-2026-34.png)
 
 Then in the `Action` type dropdown select `Update row(s)`
 
-<img src="assets/sfv-2026-35.png" width="600"/>
+![Action](assets/sfv-2026-35.png)
 
 **4:** Configure the Update row(s) action to work on the `Price Changes` linked input table as a `Single row` update. Ensure all columns have been added by clicking the `Add column` button at the bottom of the modal and configure all columns to be set by `Agent input` with a value of the column's name.
 
-<img src="assets/sfv-2026-36.png" width="400"/>
+![Configure](assets/sfv-2026-36.png)
 
 **5:** Rename the newly created tool to `Update Price Change` by clicking on the pencil icon in the top middle of the modal.
 
-<img src="assets/sfv-2026-37.png" width="600"/>
+![Update price change](assets/sfv-2026-37.png)
 
 **6:** Finally copy the instructions below into the `Instructions` panel.
 
@@ -355,15 +355,15 @@ One tool call per brand, in order, until all brands are complete. Do not skip an
 
 **7:** Let's reorganize the page so that the `Price Changes` input table is side-by-side with the agent, and the graph we made earlier is directly above them. Note you can move elements by clicking on the 6 dots icon in the top right of the element and resize them by hovering over the edge and having your cursor turn into arrows.
 
-<img src="assets/sfv-2026-38.png" width="800"/>
+![Resize](assets/sfv-2026-38.png)
 
 **8:** Lets ask the agent to `Review product performance and recommend price changes` by putting that in the chat box and clicking the arrow icon.   
 
-<img src="assets/sfv-2026-39.png" width="600"/>
+![Agent review](assets/sfv-2026-39.png)
 
 **9:** The agent completes its full analysis first, then executes all writes in quick succession. You should start to see pricing recommendations populating, and the data points showing up in the lookup columns in the `BIG_BUYS_POS` table and the graph.
 
-<img src="assets/sfv-2026-40.png" width="800"/>
+![Analysis](assets/sfv-2026-40.png)
 
 Once the agent has finished, review its recommendations. Notice how it has balanced margin recovery with customer sentiment to arrive at each suggested price change. You can adjust any values you disagree with before moving on.
 
@@ -381,20 +381,21 @@ Duration: 5
 
 We’re going to create our own pricing scenario based on what we just learned. Let's click the `Create New Scenario` button in the top left:
 
-<img src="assets/sf2025-26.png" width="800"/>
+![New scenario](assets/sf2025-26.png)
 
 **3:** Provide a name for your new scenario and type in a quick description. Then click `Create` and let's go plug in some numbers:
 
-<img src="assets/sf2025-27.png" width="600"/>
+![Create](assets/sf2025-27.png)
 
 Since this profit planning tool is shared with all category managers at Big Buys, it’s not filtered by default to any specific product type. 
 
 **4:** Let's go ahead and filter it to `Computers` and then set the `Store Region` to `Southwest`:
 
-<img src="assets/sf2025-28.png" width="800"/>
+![Filter](assets/sf2025-28.png)
 
 **5:** After applying the filters, you'll see the profit margin over time for that subset, along with a Snowpark forecasting model:
-<img src="assets/sf2025-29.png" width="800"/>
+
+![Apply filter](assets/sf2025-29.png)
 
 This is our third example of leveraging Snowflake Cortex AI functions directly inside of Sigma to open up new possibilities for real-time analytics. 
 
@@ -402,7 +403,7 @@ We are now ready to hop in and apply some of our price adjustments from our scra
 
 **6:** Return to your `Big Buys - {your name}` workbook. Sort the `Price Changes` input table ascending by the `Brand` column, and copy all values from the `Price Change` column:
 
-<img src="assets/sf2025-39.png" width="500"/>
+![Price Change Column](assets/sf2025-39.png)
 
 Go back to the `Big Buys Profit Planning Tool` > `Price Adjustments` table, click `Edit Data`, sort the table ascending on the `Brand` column and paste the values into the `Price Change (%)` column.
 
@@ -410,7 +411,7 @@ Go back to the `Big Buys Profit Planning Tool` > `Price Adjustments` table, clic
 <strong>NOTE:</strong><br> Click the first cell in the "Price Change" column, then scroll to the bottom of the table. Hold down the Shift key and click the last cell in the same column.
 </aside>
 
-<img src="assets/sf2025-40.png" width="500"/>
+![Save table](assets/sf2025-40.png)
 
 <aside class="negative">
 <strong>NOTE:</strong><br> To copy, press Ctrl+C on Windows and Command+C on macOS. To paste, press Ctrl+V on Windows and Command+V on macOS. 
@@ -420,7 +421,7 @@ Click `Save` on the input table.
 
 **7:** After entering the data, you should see a loading bar start. The Snowpark forecasting model will process your changes and show real-time results based on Snowflake’s projections.
 
-<img src="assets/sf2025-41.png" width="800"/>
+![Charts](assets/sf2025-41.png)
 
 **8:** With our scenario now loaded in, we are ready to go ahead submit it for approval because Sigma AI Apps allow for multi step workflows. 
 
