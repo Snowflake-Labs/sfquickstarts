@@ -13,11 +13,11 @@ language: en
 
 CoCo is Snowflake's AI coding assistant. Out of the box it can query your data, write SQL, and explore your account, and more. One of its key capabilities is also being able to teach it new, repeatable workflows through **skills**.
 
-A skill is a small Markdown file that tells CoCo how to complete a specific task. Skills allow you to turn tasks that have a known and repeatable structure into something CoCo does consistently every time. Once you add a skill, it shows up in CoCo's `/` picker and anyone on your team can invoke it.
+A skill is a small Markdown file that tells CoCo how to complete a specific task. Skills allow you to turn tasks that have a known and repeatable structure into something CoCo does consistently every time. Once you add a skill, it shows up in either CoCo's skill picker (`$skill-name`) or command picker (`/skill-name`) where anyone on your team can invoke it.
 
-You don't have to write a CoCo skill manually. CoCo ships with a built-in skill called **Skill Development** that interviews you and writes the skill for you.
+You don't have to write a CoCo skill manually because CoCo ships with a built-in skill called **Skill Development** (`skill-development`) that interviews you and writes the skill on your behalf.
 
-In this guide you'll play the role of a **marketer at Peak Outfitters**, a fictional outdoor-gear company. Your marketing team wants everyone – even non-technical team members – to be able to draft launch emails and slide outlines that follow the company's brand voice and style guidelines. Instead of asking everyone to memorize the style guide, you'll build a reusable **brand-content** skill that does it for them.
+In this guide, you'll play the role of a **marketer at Peak Outfitters**, a fictional outdoor-gear company. Your marketing team wants everyone – even non-technical team members – to be able to draft launch emails and slide outlines that follow the company's brand voice and style guidelines. Instead of asking everyone to memorize the style guide, you'll build a reusable **brand-content** skill that does it for them.
 
 ### What You'll Learn
 - What a CoCo skill is and what it's made of
@@ -30,7 +30,7 @@ In this guide you'll play the role of a **marketer at Peak Outfitters**, a ficti
 ### What You'll Need
 - Access to **CoCo** – see the [CoCo Skills documentation](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-desktop/skills) for how to get started
 - A working directory (project folder) open in CoCo where you can create files
-- No prior coding experience – everything here is plain English and Markdown
+- No prior coding experience – everything here is in plain English and Markdown
 
 ### What You'll Build
 - A custom **`brand-content`** skill that drafts on-brand marketing copy
@@ -63,7 +63,7 @@ Here's what the frontmatter does:
 - `## Stopping Points` – where CoCo should pause and check in with you.
 - `## Output` – what the skill produces when it's done.
 
-That's it! A skill is just a description of a job, written so CoCo can follow it. You don't have to write this file yourself – the Skill Development skill will do it for you.
+That's it! A skill is just a description of a job, formatted as a Markdown text file that is written so CoCo can follow it. You don't have to write this file yourself – the Skill Development skill will do it for you.
 
 Before we build one, it's worth understanding: when is a skill actually worth creating?
 
@@ -181,9 +181,9 @@ Here's what this skill does:
 
 - The **Setup** section points to a separate **references/brand-guidelines.md** file. Keeping the guidelines in their own file means CoCo only loads them when it's actually drafting – and Marketing can update the brand rules without touching the workflow.
 
-- The **⚠️ STOP** checkpoints make CoCo pause so a human confirms the brief and the final copy before anything ships.
+- The **⚠️ STOP** checkpoints make CoCo pause so that a human confirms the brief and the final copy before anything ships.
 
-Next, create the guidelines file the skill relies on. Ask CoCo to add **references/brand-guidelines.md** next to the **SKILL.md**, with your team's actual voice, terminology, structure rules, and calls to action. A short version of this file could look like this:
+Next, create the guidelines file that the skill relies on. Ask CoCo to add **references/brand-guidelines.md** next to the **SKILL.md**, with your team's actual voice, terminology, structure rules, and calls to action. A short version of this file could look like this:
 
 ```markdown
 # Peak Outfitters – Brand Voice & Style Guidelines
