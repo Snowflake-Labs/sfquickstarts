@@ -12,7 +12,6 @@ lastUpdated: 2026-07-12
 # From Insight to Action: Agentic Analytics with Sigma and Snowflake
 
 ## Overview 
-Duration: 5 
 
 In this lab, you'll step into the role of a business analyst at a retail company investigating a performance problem hiding in your data.
 
@@ -32,10 +31,7 @@ You will build a retail pricing plan for a future quarter. You will leverage a C
 ### Prerequisites
 A computer with a current browser. It does not matter which browser you want to use.
 
-![Footer](assets/sigma-footer.png)
-
 ## Sigma + Snowflake
-Duration: 5
 
 Most Snowflake hands-on labs start by asking you to provision your own account, configure a virtual warehouse, and manage credentials. This lab skips all of that. You are working inside a shared, pre-configured Snowflake environment so you get right into the core of the lab: working with your data.
 
@@ -59,11 +55,7 @@ Your Snowflake investment is only as valuable as what your team can actually do 
 
 Now let's put that to work.
 
-![Footer](assets/sigma-footer.png)
-<!-- END OF SECTION-->
-
 ## Setup
-Duration: 5
 
 **1:** Use this link to navigate to [Sigma](https://app.sigmacomputing.com/snowflake-virtual-hol)
 
@@ -81,11 +73,7 @@ Duration: 5
 
 ![Homepage](assets/sfv-2026-02.png)
 
-![Footer](assets/sigma-footer.png)
-<!-- END OF SECTION-->
-
 ## Sigma Assistant
-Duration: 5
 
 To understand profitability for this year’s product lineup, we need insight into current performance. As new users at Big Buys, we don’t know the data’s location. Let’s use Sigma Assistant to get started. 
 
@@ -116,11 +104,7 @@ As the agents responds it provides both top level analysis and a breakdown of ho
 
 ![Explore](assets/sfv-2026-07.png)
 
-![Footer](assets/sigma-footer.png)
-<!-- END OF SECTION-->
-
 ## Find Underperforming Brands
-Duration: 5
 
 **1:** To ensure that we are at the same spot, make sure that your table has the same columns in the grouping the one pictured here. If there are any missing ones, drag them into the calculations under the store region grouping. Lets also rename the columns to: `Total Revenue`, `Total Profit`, `Total COGS`, and `Profit Margin`. We should also use the formatting bar to set three columns to use `Currency` and `Profit Margin` to `%`:
 
@@ -211,12 +195,7 @@ Then right click the `Sentiment` column and select `Conditional formatting`. Thi
 
 **14:** Now, just a few minutes later, we have a strong understanding of which brands are our least profitable ones, and which brands are preferred by our customer base.
 
-![Footer](assets/sigma-footer.png)
-<!-- END OF SECTION-->
-
-
 ## Mock Up Price Changes
-Duration: 5
 
 The next step is to set up the Price Changes linked input table that our Sigma Agent will populate with recommendations.
 
@@ -284,7 +263,6 @@ We are ready to make a visualization.
 Now we’re ready to generate our price recommendations using a Sigma Agent.
 
 ## Sigma Agent Pricing Recommendations
-Duration: 10
 
 Rather than manually entering price adjustments, we’ll use a Sigma Agent to analyze our brand performance data and generate recommendations based on both the profit margin and sentiment data we’ve gathered.
 
@@ -361,11 +339,7 @@ Once the agent has finished, review its recommendations. Notice how it has balan
 
 When you’re ready, click `Save As` and save the workbook as `Big Buys - {first name_last name}`. This naming format helps us identify your work if others need to review it.
 
-![Footer](assets/sigma_footer.png)
-<!-- END OF SECTION-->
-
 ## Use Big Buys’ corporate profit planning application
-Duration: 5
 
 **1:** Let's navigate to the home page and open up the `Big Buys Profit Planning Tool`, from the home page. 
 
@@ -419,11 +393,7 @@ I mean, we obviously know it's right, so first we'll click `Submit for Approval`
 
 **9:** Finally, click `Review Submission`, select your scenario, and click `Approve`.
 
-![Footer](assets/sigma-footer.png)
-<!-- END OF SECTION-->
-
 ## Conclusion And Resources
-Duration: 5
 
 ### What You Learned
 In this QuickStart, you used Sigma and Snowflake to take a business question all the way from initial discovery to a governed, approved decision. You used Sigma Assistant backed by a Cortex Agent to find the right data from a plain-language question, applied Snowflake Cortex AI functions to score thousands of product reviews in seconds, built a Sigma Agent to reason across performance data and generate price recommendations, and modeled the impact using a Snowpark forecasting model before submitting for approval through a Sigma AI App.
@@ -449,5 +419,3 @@ Be sure to check out all the latest developments at [Sigma's First Friday Featur
 [![Facebook](assets/facebook.png)](https://www.facebook.com/sigmacomputing)
 
 ![Footer](assets/sigma-footer.png)
-<!-- END OF WHAT WE COVERED -->
-<!-- END OF QUICKSTART -->
