@@ -71,9 +71,7 @@ Duration: 5
 
 ![Login](assets/sfs-2026-01.png)
 
-<aside class="positive">
-<strong>IMPORTANT:</strong><br> Do not sign up for a new Sigma trial for this lab! Use only the URL and instructions provided by your lab facilitator.
-</aside>
+> **IMPORTANT:** Do not sign up for a new Sigma trial for this lab! Use only the URL and instructions provided by your lab facilitator.
 
 **3:** Check your inbox for a message from `info@send.sigmacomputing.com` and continue the sign-up process by clicking the link in that email.
 
@@ -103,9 +101,7 @@ To understand profitability for this year’s product lineup, we need insight in
 
 ![Chatbox](assets/sfv-2026-04b.png)
 
-<aside class="negative">
-<strong>NOTE:</strong><br> The response comes from a Cortex Agent, so your output may differ slightly from this guide.
-</aside>
+> **NOTE:** The response comes from a Cortex Agent, so your output may differ slightly from this guide.
 
 Notice that the Cortex Agent is suggesting we use the `BIG_BUYS_SALES_ANALYST` Cortex Analyst, and that it walks through its reasoning.
 
@@ -130,9 +126,7 @@ Duration: 5
 
 ![Brands](assets/sfv-2026-08.png)
 
-<aside class="negative">
-<strong>NOTE:</strong><br> In this case the agent decided to multiply the profit margin by 100 so that the default output would not show as a percent. We need to modify the formula to remove the unneeded step in the calculation.
-</aside>
+> **NOTE:** In this case the agent decided to multiply the profit margin by 100 so that the default output would not show as a percent. We need to modify the formula to remove the unneeded step in the calculation.
 
 ![Modifying Formula](assets/sfv-2026-08b.png)
 
@@ -162,7 +156,7 @@ Duration: 5
 
 Since we are using Sigma on top of Snowflake, we don't even have to wait for our data team to load the data in. We can do it right here right now. 
 
-<button>[Download the Product Reviews CSV](https://sigma-quickstarts-main.s3.us-west-1.amazonaws.com/csv/Product_Reviews_Big_Buys.csv)</button>
+[Download the Product Reviews CSV](https://sigma-quickstarts-main.s3.us-west-1.amazonaws.com/csv/Product_Reviews_Big_Buys.csv)
 
 Let's click on the table button on the left side of the `Element bar`:
 
@@ -260,9 +254,7 @@ We can drag `COGS` into the grouping after the `Total Profit` column and rename 
 
 ![Total COGS](assets/sf2025-35.png)
 
-<aside class="negative">
-<strong>NOTE:</strong><br> If "Total COGS" is present in your table, ignore the instructions to add it manually.
-</aside>
+> **NOTE:** If "Total COGS" is present in your table, ignore the instructions to add it manually.
 
 **8:** We want to compare the original gross margin to the price change. 
 
@@ -407,15 +399,11 @@ We are now ready to hop in and apply some of our price adjustments from our scra
 
 Go back to the `Big Buys Profit Planning Tool` > `Price Adjustments` table, click `Edit Data`, sort the table ascending on the `Brand` column and paste the values into the `Price Change (%)` column.
 
-<aside class="negative">
-<strong>NOTE:</strong><br> Click the first cell in the "Price Change" column, then scroll to the bottom of the table. Hold down the Shift key and click the last cell in the same column.
-</aside>
+> **NOTE:** Click the first cell in the "Price Change" column, then scroll to the bottom of the table. Hold down the Shift key and click the last cell in the same column.
 
 ![Save table](assets/sf2025-40.png)
 
-<aside class="negative">
-<strong>NOTE:</strong><br> To copy, press Ctrl+C on Windows and Command+C on macOS. To paste, press Ctrl+V on Windows and Command+V on macOS. 
-</aside>
+> **NOTE:** To copy, press Ctrl+C on Windows and Command+C on macOS. To paste, press Ctrl+V on Windows and Command+V on macOS. 
 
 Click `Save` on the input table.
 
@@ -446,17 +434,19 @@ The retail scenario is just the vehicle. The pattern of using Sigma and Snowflak
 
 **Additional Resource Links**
 
-[Blog](https://www.sigmacomputing.com/blog/)<br>
-[Community](https://community.sigmacomputing.com/)<br>
-[Help Center](https://help.sigmacomputing.com/hc/en-us)<br>
-[QuickStarts](https://quickstarts.sigmacomputing.com/)<br>
+[Blog](https://www.sigmacomputing.com/blog/)
+
+[Community](https://community.sigmacomputing.com/)
+
+[Help Center](https://help.sigmacomputing.com/hc/en-us)
+
+[QuickStarts](https://quickstarts.sigmacomputing.com/)
 
 Be sure to check out all the latest developments at [Sigma's First Friday Feature page!](https://quickstarts.sigmacomputing.com/firstfridayfeatures/)
-<br>
 
-[<img src="./assets/twitter.png" width="75"/>](https://twitter.com/sigmacomputing)&emsp;
-[<img src="./assets/linkedin.png" width="75"/>](https://www.linkedin.com/company/sigmacomputing)&emsp;
-[<img src="./assets/facebook.png" width="75"/>](https://www.facebook.com/sigmacomputing)
+[![Twitter](assets/twitter.png)](https://twitter.com/sigmacomputing)
+[![LinkedIn](assets/linkedin.png)](https://www.linkedin.com/company/sigmacomputing)
+[![Facebook](assets/facebook.png)](https://www.facebook.com/sigmacomputing)
 
 ![Footer](assets/sigma-footer.png)
 <!-- END OF WHAT WE COVERED -->
