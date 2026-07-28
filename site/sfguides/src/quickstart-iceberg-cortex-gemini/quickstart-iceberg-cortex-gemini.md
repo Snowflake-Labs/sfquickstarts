@@ -9,9 +9,10 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Iceberg, Cortex, Gemini, MCP, Semantic View, Agents, GCP, Google Cloud
 
 # Agentic AI for Your Lakehouse: Snowflake Cortex and Gemini Enterprise on Iceberg
+
 <!-- ------------------------ -->
+
 ## Overview
-Duration: 2
 
 We're going to build an AI agent that answers economic questions about the wellbeing of Americans — and make it available to anyone in the organization. The agent will live in Snowflake, but employees will talk to it from Gemini Enterprise, their everyday corporate AI assistant.
 
@@ -19,11 +20,9 @@ We start from raw public data. We land it in an [Apache Iceberg](https://iceberg
 
 The key idea: define your business logic once, in the data layer, not in prompts. That way every consumer — a chat interface, a BI dashboard, an external AI assistant — gets the same correct answer from the same governed data.
 
-> aside positive
-> 
-> This quickstart is also available as a [Snowflake Notebook](https://github.com/sfc-gh-akhosro/gcp-snowflake-solutions/tree/main/hands-on-lab-cortex-gemini) that you can run directly in Snowsight Workspaces. [Readme](./assets/readme.md) more info.
+> **Tip:** This quickstart is also available as a [Snowflake Notebook](https://github.com/sfc-gh-akhosro/gcp-snowflake-solutions/blob/main/hands-on-lab-cortex-gemini/hol-cortex-gemini.ipynb) that you can run directly in Snowsight Workspaces. [More info](https://github.com/sfc-gh-akhosro/gcp-snowflake-solutions/blob/main/hands-on-lab-cortex-gemini/README.md).
 
-![Architecture](assets/arch-diagram.png)
+![Architecture](assets/arch-diagram.svg)
 
 ### What You Will Learn 
 - How to create Snowflake-managed Iceberg tables on GCS
@@ -31,12 +30,14 @@ The key idea: define your business logic once, in the data layer, not in prompts
 - How to create a Cortex Agent powered by Gemini
 - How to expose the agent via MCP (Model Context Protocol)
 - How to connect Gemini Enterprise to Snowflake through MCP
+- How to connect Looker to the same Iceberg data for BI dashboards
 
 ### What You Will Build
 - An Apache Iceberg table on your GCS bucket with US economic indicators
 - A Semantic View defining dimensions, facts, and metrics
 - A Cortex Agent accessible from Snowflake CoWork and Gemini Enterprise
 - An MCP server with OAuth for secure cross-platform access
+- A Looker dashboard connected to the same Iceberg data
 
 ### Prerequisites
 - A [Snowflake account](https://signup.snowflake.com/) on GCP with `ACCOUNTADMIN` privileges
@@ -44,40 +45,91 @@ The key idea: define your business logic once, in the data layer, not in prompts
 - Gemini Enterprise enabled in your Google Workspace (for the MCP connection step)
 
 <!-- ------------------------ -->
+
 ## Setup
-Duration: 5
+
 
 We need three environments for this lab:
 
-| # | Environment | Used for |
-|---|-------------|----------|
-| 1 | **Google Cloud Console** | Create a GCS bucket for Iceberg storage. Later, register the MCP connector in Gemini Enterprise. |
-| 2 | **Snowflake (Snowsight)** | Build everything: Iceberg tables, Semantic Views, Cortex Agents, and the MCP server. |
-| 3 | **Gemini Enterprise** | Talk to the agent from the corporate AI assistant. |
+> Tip: Use Incognito mode or create a temporary Chrome profile (top right of Chrome window > Profile icon > Add > Stay signed out > name: "workshop") to manage all lab accounts. Qwiklabs and DataOps will provide URLs for your GCP and Snowflake accounts. Open all account URLs in this "workshop" profile or Incognito window.
 
-> aside positive
-> 
-> Tip: Open each environment in a separate browser tab for easy switching.
+If you are using official workshop that Qwiklabs provides your GCP account and DataOps provides your Snowflake account, follow the below video and instructions.
 
-### Workspace
+Follow this [how-to setup video](https://github.com/sfc-gh-akhosro/gcp-snowflake-solutions/blob/main/hands-on-lab-cortex-gemini/assets/how-to-setup-gcp-snowflake-workshop.mov) to set up your environments.
 
-Snowflake Workspaces give you a full developer environment in the browser. We'll use a Snowflake Notebook that walks through the course with mixed SQL and Python cells.
 
-**In Snowsight**: Go to Projects → Workspaces.
-- Select or create a workspace connected to your git repo.
-- Open `hands-on-lab-cortex-gemini/hol-cortex-gemini.ipynb`.
-- Click "Connected" to start the notebook service (takes a few minutes — read ahead while it spins up).
+In your main Chrome profile:
 
-### Role Based Access Control
+1. **Google Cloud** — We will create a GCS bucket for Iceberg storage and later use Gemini Enterprise to interact with our agent.
+    * Go to [Qwiklabs](https://explore.qwiklabs.com) for your GCP lab environment.
+    * Log in or sign up using the same email you used to register for the workshop.
+    * Choose the snowflake lab and click.
+    * Qwiklabs will provide a URL to open the Google Cloud Console along with temporary credentials.
+
+
+2. **Snowflake** — This is where we will build everything: Iceberg tables, Semantic Views, Cortex Agents, and the MCP server.
+    * Go to [DataOps](https://go.dataops.live) to sign in or register.
+    * DataOps will provide a URL to your Snowflake account along with a username and password.
+
+
+3. **Looker** — We will connect a BI dashboard to the same Iceberg data.
+    * Login information will be provided during the workshop.
+
+
+In your Incognito window or temporary "Workshop" Chrome profile:
+
+* **GCP Environment:**
+    * Use the Qwiklabs URL to open your provisioned GCP console, which we will use to set up GCS buckets.
+    * You can also use `Cloud Shell` (located on the top right bar) as a terminal connected directly to your GCP account if scripting is needed.
+
+
+* **Snowflake Environment for the class Notebook:**
+    * Use the DataOps URL to open your provisioned Snowflake environment.
+    * Open **Workspaces** from the left panel.
+    * Open the shared workspace `gcp-snowflake-solutions`.
+    * Open the file `hands-on-lab-cortex-gemini/hol-cortex-gemini.ipynb`. We will stay in this notebook throughout the workshop, running it cell by cell.
+
+
+* **Snowflake Environment for UI exploration:**
+    * Open a second Snowflake tab using the DataOps URL so you can explore the UI during the workshop.
+    * From the left panel, locate Cortex Agents, Analyst, Snowflake Marketplace, Database Explorer, Workspaces, dbt Projects, Streamlit, Openflow, and Dynamic Tables.
+    * Feel free to explore Snowflake before the workshop begins.
+
+
+<!-- ------------------------ -->
+## Workspace
+
+Snowflake Workspaces give you a full developer environment in the browser. It connects to a git repo so you can collaborate with a team, and runs Python and SQL files with a built-in compute engine.
+
+We'll use a Snowflake Notebook that walks us through the course. The Notebook service lets you run cells with mixed SQL and Python code in the same session context. You can identify 3 types of cells in this notebook: markdown, python and sql.
+
+If you are using the workshop account from DataOps and you are using the shared workspace "gcp-snowflake-solutions", you do not need this Workspace setup and you can skip it. You already opened this Notebook through the shared workspace.
+
+**UI-Snowsight**: Go to Projects → Workspaces.
+- Select "gcp-snowflake-solutions" from the list of available workspaces.
+- If not available, create a public git integration and connect to this repo.
+    - Click **+** on the very top left > Git Workspace
+    - Repo name: `https://github.com/sfc-gh-akhosro/gcp-snowflake-solutions`
+    - Choose public repo connection (no auth needed).
+- Make sure to click Changes, and then click Pull to get the latest version of this notebook.
+- Open `hands-on-lab-cortex-gemini/hol-cortex-gemini.ipynb`. Click "Connected" to start service. It takes a few minutes — start it now and read ahead while it spins up.
+
+**UI-Snowsight**: Open a second browser tab at the same Snowflake instance URL for exploring components. In this tab find Marketplace, Cortex Analyst, Agents, AI Functions, dbt Projects, Database Explorer, and Workspaces.
 
 Throughout this lab we use two roles:
-- **`hol_role`** — the developer. Runs the notebook and owns everything we create.
-- **`end_user_role`** — simulates a business user who can only ask questions through the agent.
+
+- **`hol_role`** — this is us, the developer. It runs the notebook and owns everything we create.
+- **`end_user_role`** — this simulates a business user who can only ask questions through the agent but can't build or modify anything.
+
+Let's create those roles and grant the needed privileges in our first cell. While you're at it, explore the notebook toolbar — you'll see run, stop, and cell controls up top.
+
+<!-- ------------------------ -->
+## Role Based Access Control
 
 ```sql
 USE ROLE ACCOUNTADMIN;
 
--- Create a warehouse for this lab
+-- Create a warehouse for this lab (guaranteed to exist)
 CREATE WAREHOUSE IF NOT EXISTS hol_wh
   WAREHOUSE_SIZE = 'XSMALL' AUTO_SUSPEND = 60 INITIALLY_SUSPENDED = TRUE;
 USE WAREHOUSE hol_wh;
@@ -88,11 +140,20 @@ CREATE ROLE IF NOT EXISTS hol_role;
 -- Consumer role: can only use the agent (CoWork, Gemini Enterprise)
 CREATE ROLE IF NOT EXISTS end_user_role;
 
+-- Attach both roles to the role hierarchy.
+-- hol_role OWNS everything we build, so without this an admin has no path to
+-- those objects once the workshop user goes away -- and cleanup becomes impossible.
+-- ACCOUNTADMIN inherits SYSADMIN, so it can always do whatever hol_role can do.
+GRANT ROLE hol_role      TO ROLE SYSADMIN;
+GRANT ROLE end_user_role TO ROLE SYSADMIN;
+
 -- Grant both roles to whoever is running this notebook
 BEGIN
   LET usr := CURRENT_USER();
   EXECUTE IMMEDIATE 'GRANT ROLE hol_role TO USER ' || :usr;
   EXECUTE IMMEDIATE 'GRANT ROLE end_user_role TO USER ' || :usr;
+  -- MCP OAuth sessions (e.g., Gemini Enterprise) fail to initialize if the connecting user's DEFAULT_WAREHOUSE is null.
+  EXECUTE IMMEDIATE 'ALTER USER ' || :usr || ' SET DEFAULT_WAREHOUSE = ''hol_wh''';
 END;
 
 -- Builder privileges
@@ -126,64 +187,89 @@ GRANT USAGE ON DATABASE hol_db TO ROLE end_user_role;
 GRANT USAGE ON SCHEMA hol_db.public TO ROLE end_user_role;
 
 -- Verify context
-SELECT CURRENT_ROLE() AS role, CURRENT_WAREHOUSE() AS wh,
-       CURRENT_DATABASE() AS db, CURRENT_SCHEMA() AS schema;
+SELECT CURRENT_ROLE() AS role, CURRENT_WAREHOUSE() AS wh, CURRENT_DATABASE() AS db, CURRENT_SCHEMA() AS schema;
 ```
 
 <!-- ------------------------ -->
+
+## Architecture
+
+[Apache Iceberg](https://iceberg.apache.org/) is the cornerstone of a modern data platform. It allows multiple engines to read and write directly to the same data, while that data stays in one place — your cloud storage. No copies between systems, no vendor lock-in.
+
+We'll get our data sources from Snowflake Marketplace and land them in an Iceberg table on a GCS bucket. Snowflake Horizon serves as the catalog and governance layer. We could just as easily use Google Cloud Open Lakehouse Runtime or any other IRC-compliant catalog instead.
+
+Next, we use Snowflake Semantic View Autopilot to create a Semantic View that defines the business logic of our Iceberg table. We wrap this in a Cortex Agent and use Gemini as the reasoning model behind it. The biggest gain from Snowflake Cortex is the added context and logic that makes answers accurate and thorough — customers love it for reduced hallucination.
+
+Then we build an MCP connection between Gemini Enterprise and our Cortex Agent, so employees can talk to their data through their corporate AI chat. Looker helps us visualize and get insights from the same data.
+
+![Architecture](assets/arch-diagram.svg)
+
+Here's a summary of what each component does:
+
+- **Snowflake Marketplace** — instant access to curated, live datasets. No ETL, no ingestion pipelines.
+- **Iceberg** — open table format on your GCS bucket. Multiple engines read the same files. You own the data.
+- **Snowflake Horizon** — catalog and governance layer for Iceberg tables. Access control, lineage, and discoverability.
+- **Semantic View** — business logic defined once in the data layer. Grounds the AI so it doesn't guess.
+- **Cortex Agent** — natural-language interface that turns questions into governed SQL and returns correct answers.
+- **Gemini** — the reasoning model powering our agent. Large context window, native to Google Cloud.
+- **MCP** — open protocol to expose the agent. Connect once, access from any MCP-compatible client.
+- **Snowflake CoWork** — chat interface inside Snowflake for business users who don't write SQL.
+- **Gemini Enterprise** — Google Cloud's corporate AI assistant. Employees ask questions in a familiar interface and get grounded answers from Iceberg data via MCP.
+
+<!-- ------------------------ -->
+
 ## Marketplace
-Duration: 3
 
-We get our source data from Snowflake Marketplace. It lets teams access curated, live datasets instantly — you click "Get" and the data appears in your account. No ETL pipelines, no data copying.
+We get our source data from Snowflake Marketplace. It lets teams access curated, live datasets instantly — you click "Get" and the data appears in your account. No ETL pipelines, no data copying. For data providers, it's a secure channel to share or sell data to the world.
 
-We want to build an economic dataset that tracks the financial wellbeing of Americans at the state level. We need income, inflation, mortgage rates, and unemployment — all on a monthly basis. That means four source tables from public data.
+We want to build an economic dataset that tracks the financial wellbeing of Americans at the state level. We need income, inflation, mortgage rates, and unemployment — all on a monthly basis. That means four source tables from the Bureau of Labor Statistics and related public data.
 
-**In Snowsight**: Data Products → Marketplace → search **"Snowflake Public Data"** → **Get** (free).
-- Database name: `SNOWFLAKE_PUBLIC_DATA_FREE` (accept default options).
+Let's go get them.
 
-Verify access to all four source tables:
+**UI-Snowsight**: Marketplace → Snowflake Marketplace → Data products→ search "Snowflake Public Data" → Click on Snowflake Public Data (Free) → **Get**.
+- Database name: `SNOWFLAKE_PUBLIC_DATA_FREE` (accept default options and don't change them).
+- Direct link: https://app.snowflake.com/marketplace/listing/GZTSZ290BV255/snowflake-public-data-products-snowflake-public-data-free
+
+This dataset is already available on most workshop accounts. The cell below verifies access to all four source tables we need.
 
 ```sql
-SELECT 'BLS_PRICE' AS source, COUNT(*) AS row_count
-  FROM SNOWFLAKE_PUBLIC_DATA_FREE.PUBLIC_DATA_FREE.BUREAU_OF_LABOR_STATISTICS_PRICE_TIMESERIES
+-- Verify marketplace data access
+SELECT 'BLS_PRICE' AS source, COUNT(*) AS row_count FROM SNOWFLAKE_PUBLIC_DATA_FREE.PUBLIC_DATA_FREE.BUREAU_OF_LABOR_STATISTICS_PRICE_TIMESERIES
 UNION ALL
-SELECT 'BLS_EMPLOYMENT', COUNT(*)
-  FROM SNOWFLAKE_PUBLIC_DATA_FREE.PUBLIC_DATA_FREE.BUREAU_OF_LABOR_STATISTICS_EMPLOYMENT_TIMESERIES
+SELECT 'BLS_EMPLOYMENT', COUNT(*) FROM SNOWFLAKE_PUBLIC_DATA_FREE.PUBLIC_DATA_FREE.BUREAU_OF_LABOR_STATISTICS_EMPLOYMENT_TIMESERIES
 UNION ALL
-SELECT 'FREDDIE_MAC', COUNT(*)
-  FROM SNOWFLAKE_PUBLIC_DATA_FREE.PUBLIC_DATA_FREE.FREDDIE_MAC_HOUSING_TIMESERIES
+SELECT 'FREDDIE_MAC', COUNT(*) FROM SNOWFLAKE_PUBLIC_DATA_FREE.PUBLIC_DATA_FREE.FREDDIE_MAC_HOUSING_TIMESERIES
 UNION ALL
-SELECT 'IRS_INCOME', COUNT(*)
-  FROM SNOWFLAKE_PUBLIC_DATA_FREE.PUBLIC_DATA_FREE.IRS_INDIVIDUAL_INCOME_TIMESERIES;
+SELECT 'IRS_INCOME', COUNT(*) FROM SNOWFLAKE_PUBLIC_DATA_FREE.PUBLIC_DATA_FREE.IRS_INDIVIDUAL_INCOME_TIMESERIES;
 ```
 
 <!-- ------------------------ -->
+
 ## Iceberg
-Duration: 10
 
-[Apache Iceberg](https://iceberg.apache.org/) is an open table format. Parquet data files and metadata sit in your own GCS bucket — you own them. Any engine that speaks Iceberg can read them directly: Snowflake, BigQuery, Managed Spark, or any Iceberg REST Catalog–compliant runtime. No copying between systems.
+Now we need somewhere to land this data.
 
-We use `CATALOG = 'SNOWFLAKE'`, which means Snowflake manages the table through Snowflake Horizon, handling governance, access control, and discoverability. But the actual data never leaves your bucket.
+Iceberg is an open table format. Parquet data files and metadata sit in your own GCS bucket — you own them. Any engine that speaks Iceberg can read them directly: Snowflake, BigQuery, Managed Spark, or any Iceberg REST Catalog–compliant runtime. No copying between systems.
 
-### Create GCS Bucket
+We use `catalog=snowflake`, which means Snowflake manages the table through Snowflake Horizon, handling governance, access control, and discoverability. But the actual data never leaves your bucket.
 
-**In Google Cloud Console**: Cloud Storage → **Create Bucket**.
-- Name: choose a unique name (e.g. `yourname_hol_iceberg`)
+Let's create the bucket in Google Cloud Console, give Snowflake write access, and build our economic indicators table.
+
+**UI-GCP**: Google Cloud Console → Cloud Storage → **Create Bucket**.
+- Name: `firstname_lastname_hol_0729`
 - Location: `Multi-region`
 - Leave everything else as default.
 
-### Create External Volume
-
 ```sql
 -- Create an external volume pointing to your GCS bucket
-CREATE EXTERNAL VOLUME IF NOT EXISTS hol_gcs_vol
+CREATE OR REPLACE EXTERNAL VOLUME hol_gcs_vol
   STORAGE_LOCATIONS = ((
     NAME = 'hol-gcs'
     STORAGE_PROVIDER = 'GCS'
-    STORAGE_BASE_URL = 'gcs://<YOUR_BUCKET_NAME>/iceberg/'
+    STORAGE_BASE_URL = 'gcs://<your-bucket-name>/iceberg/'
   ));
 
--- Describe to get the service account
+-- Describe to get storage config
 DESCRIBE EXTERNAL VOLUME hol_gcs_vol;
 SET desc_qid = LAST_QUERY_ID();
 
@@ -195,17 +281,16 @@ FROM TABLE(RESULT_SCAN($desc_qid))
 WHERE "property" = 'STORAGE_LOCATION_1';
 ```
 
-Copy the service account printed above.
+Copy the service account printed above (Snowflake will use it to access your bucket).
 
-**In Google Cloud Console**: Your bucket → **Permissions** tab → **Grant Access**.
-- Paste the service account.
+**UI-GCP**: Google Cloud Console → your bucket → **Permissions** tab → **Grant Access**.
+- Paste the service account you copied.
 - Role: **Storage Admin** → Save.
 
-### Create Iceberg Table
-
-Join four marketplace sources into one wide-format economic indicators table:
+We have created the bucket for Iceberg data and metadata files, and granted read/write access to Snowflake's service account.
 
 ```sql
+-- Create Iceberg table: join four marketplace sources into one wide-format table
 CREATE OR REPLACE ICEBERG TABLE hol_db.public.economic_indicators
   CATALOG = 'SNOWFLAKE'
   EXTERNAL_VOLUME = 'hol_gcs_vol'
@@ -270,8 +355,7 @@ income_indexed AS (
     geo_id,
     yr,
     avg_income_per_return,
-    ROUND((avg_income_per_return / FIRST_VALUE(avg_income_per_return)
-      OVER (PARTITION BY geo_id ORDER BY yr)) * 100, 1) AS income_index
+    ROUND((avg_income_per_return / FIRST_VALUE(avg_income_per_return) OVER (PARTITION BY geo_id ORDER BY yr)) * 100, 1) AS income_index
   FROM income_raw
 ),
 national_income AS (
@@ -323,20 +407,31 @@ SELECT * FROM states
 ORDER BY date, geo_id;
 ```
 
-### Explore Iceberg Data
+### Explore Iceberg Data and Metadata
 
-**In Google Cloud Console**: Your bucket → explore the files.
+**UI-GCP**: Google Cloud Console → your bucket → explore the files.
 - You'll see Parquet data files and a metadata folder with JSON files.
 
-The Iceberg table uses `CATALOG = 'SNOWFLAKE'` — all data and metadata is in your own bucket. Every engine reads and writes directly while the catalog (Snowflake Horizon) provides governance and security.
+Look at the Iceberg table definition above and identify the catalog we used (`CATALOG = 'SNOWFLAKE'`). All data and metadata is in your own bucket — not owned by Snowflake, BigQuery, or any other vendor. Every engine reads and writes directly while a catalog (here Snowflake Horizon) provides governance and security.
+
+This is the cornerstone of a modern data platform: one source of truth in a datalake with high data gravity. All services are drawn to this data to perform their tasks.
 
 <!-- ------------------------ -->
-## Data Profiling
-Duration: 2
 
-Query the Iceberg table to see national economic indicators:
+## Data Profiling
+
+We have our Iceberg table. Let's look at what's inside.
+
+Snowsight gives you profiling, charting, and pivot tables right in the cell output. You can understand the shape of a dataset without leaving the notebook.
+
+**UI-Snowsight**: After running the query, explore the cell output:
+- Click **Chart** tab to visualize trends over time.
+- Click **Query Profile** tab to see the execution plan.
+- Click column headers for quick profiling stats (min, max, distribution).
 
 ```sql
+-- National economic indicators since 2015
+-- Try: Chart (line) to visualize trends, Query Profile to see execution plan
 SELECT
   date,
   cpi_index,
@@ -351,27 +446,31 @@ WHERE geo_id = 'country/USA'
 ORDER BY date;
 ```
 
-> aside positive
-> 
-> In Snowsight, click the **Chart** tab to visualize trends over time, or click column headers for quick profiling stats (min, max, distribution).
-
 <!-- ------------------------ -->
-## Cortex Agent
-Duration: 10
+
+## Cortex
 
 We have a clean Iceberg table. Any analyst can query it with SQL. But that doesn't make it AI-ready.
 
-When an LLM sees column names like `CPI_INDEX` or `GEO_ID`, it guesses what they mean — and guesses wrong. We need to define which columns are dimensions, which are facts, how metrics are calculated, and what questions this table can answer.
+Here's the gap: when an LLM sees column names like `CPI_INDEX` or `GEO_ID`, it guesses what they mean. It guesses wrong. We need to tell it which columns are dimensions, which are facts, how metrics are calculated, and what kinds of questions this table can answer.
 
-That's what a **Semantic View** does. You define your business logic once — in the data layer, not scattered across prompts — and every AI consumer inherits the same correct definitions.
+That's what a Semantic View does. You define your business logic once — in the data layer, not scattered across prompts — and every AI consumer inherits the same correct definitions.
 
 ### Semantic View
 
 The Semantic View is the grounding layer for our agent. We define dimensions (date, geography), facts (CPI, mortgage rate, unemployment, income), and metrics (year-over-year inflation, average mortgage rate by state).
 
-> aside positive
-> 
-> **UI Alternative**: In Snowsight, go to AI & ML → Cortex Analyst → **Create Semantic View** → select your table → click **Autopilot** to auto-generate the YAML.
+We can also add verified queries — known-good question-to-SQL pairs that anchor the model's behavior for common questions. Without this layer, an LLM guesses and hallucinates. With it, a question like "How has inflation compared to income growth?" maps to the exact right SQL every time.
+
+**UI-Snowsight**: AI & ML → Cortex Analyst → **Create Semantic View**.
+- Select table: `HOL_DB.PUBLIC.ECONOMIC_INDICATORS`.
+- Click **Autopilot** to auto-generate dimensions, facts, and metrics from the table schema.
+- Review the generated YAML — check that dimensions (DATE, GEO_ID, GEO_NAME), facts (CPI_INDEX, INFLATION_PCT, etc.), and metrics are correct.
+- Add or edit descriptions to clarify business meaning.
+- Optionally add verified queries (known-good question → SQL pairs).
+- Save as `economic_semantic_view`.
+
+In this lab we create it via code (YAML below), but Autopilot is the fastest way to get started.
 
 ```sql
 CALL SYSTEM$CREATE_SEMANTIC_VIEW_FROM_YAML(
@@ -445,13 +544,23 @@ $$
 SHOW SEMANTIC VIEWS IN SCHEMA hol_db.public;
 ```
 
-### Create Cortex Agent
+### Cortex Agent
 
-A Cortex Agent takes a natural-language question and passes it to Cortex Analyst. Cortex Analyst uses the Semantic View to generate correct SQL, executes it, and returns a grounded answer with supporting data. We use Gemini as the reasoning model.
+Now we wrap the Semantic View in a conversational interface.
 
-> aside positive
-> 
-> **UI Alternative**: In Snowsight, go to AI & ML → Cortex Agents → **+ Create** → select your semantic view → choose Gemini as the model.
+A Cortex Agent takes a natural-language question and passes it to Cortex Analyst. Cortex Analyst uses the Semantic View to generate correct SQL, executes it, and returns a grounded answer with supporting data. We use Gemini as the reasoning model behind the agent.
+
+The whole thing is defined in a single SQL statement — reproducible and version-controlled.
+
+**UI-Snowsight**: AI & ML → Cortex Agents → **+ Create Agent**.
+- Name: `hol_economic_agent`
+- Model: change to **Gemini** (default may be different).
+- Tools: add Cortex Analyst tool → select `economic_semantic_view`.
+- Instructions: describe what the agent does, e.g. "Answer questions about US economic indicators including inflation, mortgage rates, unemployment by state, and income trends."
+- Warehouse: `hol_wh` (for query execution).
+- Test the agent in the preview pane before saving.
+
+In this lab we create it via SQL for reproducibility.
 
 ```sql
 -- Create a Cortex Agent backed by the economic indicators semantic view
@@ -480,27 +589,35 @@ GRANT SELECT ON TABLE hol_db.public.economic_indicators TO ROLE end_user_role;
 SHOW AGENTS IN SCHEMA hol_db.public;
 ```
 
-### Test with CoWork
+### CoWork
 
-Snowflake CoWork is the chat surface for business users — no SQL knowledge needed.
+Snowflake CoWork is the chat surface for business users. No SQL knowledge needed, no notebook — just a conversation with the agent.
 
-**In Snowsight**: AI & ML → Open Snowflake CoWork.
+Let's switch to `end_user_role` to see what it looks like for someone who can only consume, not build.
+
+**UI-Snowsight**: AI & ML → Open Snowflake CoWork.
 - In CoWork, go to bottom left profile, click setting, and switch role to `end_user_role`, warehouse: `hol_wh`. Done.
 - You should be able to see **hol_economic_agent** in the agent list (control buttons of the CoWork chat).
 - Ask: *"How has the 30-year mortgage rate changed relative to inflation since 2020?"*
+- Ask: *"Tell the economic story of California vs Texas over the last 10 years using all available indicators."*
+- Ask: *"What did the COVID shock look like in data — unemployment spike, rate crash, inflation surge — and how long did each phase last?"*
 
-The response includes the generated SQL so you can see exactly what query was executed. Same agent, same data, different role — a chat-based surface instead of a notebook.
+Look at the responses — they include the generated SQL so you can see exactly what queries were executed. Same agent, same data, different role — a chat-based surface instead of a notebook.
 
 <!-- ------------------------ -->
-## MCP Server
-Duration: 8
+
+## MCP
 
 So far our agent lives inside Snowflake. But what if employees want to ask it questions from Gemini Enterprise, or from another AI tool?
 
-[Model Context Protocol (MCP)](https://modelcontextprotocol.io/) is an open standard that gives AI applications a universal way to connect to data tools. We declare our agent as an MCP tool and add OAuth for secure access. Any MCP-compatible client can then connect.
+That's where MCP comes in. Model Context Protocol is an open standard that gives AI applications a universal way to connect to data tools. We declare our agent as an MCP tool and add OAuth for secure access. Any MCP-compatible client can then connect — no custom connector per client.
+
+### MCP Server
+
+Let's create the actual MCP server. We register our Cortex Agent as a callable tool inside a Snowflake-managed MCP server, then set up an OAuth security integration so external clients can authenticate securely. The output from this step gives us the credentials we'll register in Gemini Enterprise next.
 
 ```sql
--- MCP server exposing the Cortex Agent as a tool
+-- MCP server exposing the Cortex Agent as a tool (requires schema ownership → hol_role)
 USE ROLE hol_role;
 USE WAREHOUSE hol_wh;
 USE SCHEMA hol_db.public;
@@ -515,12 +632,13 @@ CREATE OR REPLACE MCP SERVER hol_db.public.hol_mcp
       title: "Economic Indicators Agent"
   $$;
 
--- Grant MCP server usage to the consumer role
+-- Grant MCP server usage to the consumer role (required for Gemini to discover tools)
+-- ALLOWED_ROLES_LIST must include the role used in the OAuth scope, otherwise
+-- Snowflake rejects it with "invalid role" even if the user has the role granted.
 USE ROLE ACCOUNTADMIN;
 
 GRANT USAGE ON MCP SERVER hol_db.public.hol_mcp TO ROLE end_user_role;
 
--- OAuth integration for external MCP clients
 CREATE OR REPLACE SECURITY INTEGRATION hol_mcp_oauth
   TYPE = OAUTH
   OAUTH_CLIENT = CUSTOM
@@ -529,11 +647,11 @@ CREATE OR REPLACE SECURITY INTEGRATION hol_mcp_oauth
   ALLOWED_ROLES_LIST = ('END_USER_ROLE')
   ENABLED = TRUE;
 
--- Get MCP server metadata
+-- Get MCP server metadata (database, schema, name)
 DESCRIBE MCP SERVER hol_db.public.hol_mcp;
 SET mcp_qid = LAST_QUERY_ID();
 
--- Get OAuth integration metadata
+-- Get OAuth integration metadata (auth URL, token URL, client ID)
 DESCRIBE SECURITY INTEGRATION hol_mcp_oauth;
 SET int_qid = LAST_QUERY_ID();
 
@@ -542,6 +660,7 @@ USE WAREHOUSE hol_wh;
 USE SCHEMA hol_db.public;
 
 -- Retrieve all credentials for Gemini Enterprise MCP connection
+-- Values derived from DESCRIBE metadata — nothing hardcoded
 WITH mcp_meta AS (
   SELECT "database_name", "schema_name", "name"
   FROM TABLE(RESULT_SCAN($mcp_qid))
@@ -557,14 +676,14 @@ secrets AS (
   SELECT PARSE_JSON(SYSTEM$SHOW_OAUTH_CLIENT_SECRETS('HOL_MCP_OAUTH')) AS s
 ),
 account_base AS (
+  -- Org-account URL format (required by Gemini Enterprise)
   SELECT 'https://' || CURRENT_ORGANIZATION_NAME() || '-' || CURRENT_ACCOUNT_NAME()
          || '.snowflakecomputing.com' AS url
 )
 SELECT field_name, value
 FROM (
   SELECT 1 AS ord, 'MCP Server URL' AS field_name,
-    ab.url || '/api/v2/databases/' || m."database_name" || '/schemas/' || m."schema_name"
-    || '/mcp-servers/' || m."name" AS value
+    ab.url || '/api/v2/databases/' || m."database_name" || '/schemas/' || m."schema_name" || '/mcp-servers/' || m."name" AS value
     FROM account_base ab, mcp_meta m
   UNION ALL
   SELECT 2, 'Auth URL', o.auth_endpoint FROM oauth_meta o
@@ -579,38 +698,30 @@ FROM (
   UNION ALL
   SELECT 7, 'Scopes', 'session:role:end_user_role' FROM secrets s
   UNION ALL
-  SELECT 8, 'MCP Server Description',
-    'Snowflake Cortex Agent for US economic indicators (CPI, mortgage rates, unemployment, income)'
-    FROM secrets s
+  SELECT 8, 'MCP Server Description', 'Snowflake Cortex Agent for US economic indicators (CPI, mortgage rates, unemployment, income)' FROM secrets s
   UNION ALL
-  SELECT 9, 'Agent Instructions',
-    'Use the hol-economic-agent tool to answer questions about US economic data including inflation, mortgage rates, unemployment by state, and income trends.'
-    FROM secrets s
+  SELECT 9, 'Agent Instructions', 'Use the hol-economic-agent tool to answer questions about US economic data including inflation, mortgage rates, unemployment by state, and income trends.' FROM secrets s
   UNION ALL
   SELECT 10, 'Data Connector Name', 'hol_cortex_gemini_economic_agent' FROM secrets s
 )
 ORDER BY ord;
 ```
 
-> aside negative
-> 
-> Save the output — you'll need these values to register the connector in Gemini Enterprise.
-
 <!-- ------------------------ -->
+
 ## Gemini Enterprise
-Duration: 5
 
 Gemini Enterprise is Google Cloud's corporate AI assistant — the chat interface employees across the organization already use daily.
 
-By registering our Snowflake MCP server as a data connector, the Cortex Agent becomes a tool that Gemini calls when it needs economic data. Employees ask questions in Gemini and get grounded answers from governed Iceberg data.
+By registering our Snowflake MCP server as a data connector, the Cortex Agent becomes a tool that Gemini calls when it needs economic data. Employees ask questions in Gemini and get grounded answers from governed Iceberg data. They don't need to know anything about Snowflake or SQL underneath.
 
-**In Google Cloud Console**: Search "Gemini Enterprise" → Data stores → **+Create data store** → Add MCP Server.
+**UI-GCP**: Google Cloud Console → search "Gemini Enterprise" → Data stores → +Create data store → Add MCP Server.
 - Fill in the fields using values from the MCP output above (server URL, client ID, client secret, scopes, etc.).
 - Complete the OAuth authorization flow when prompted.
-- Click **Actions** → "Reload Custom Actions" and log in.
-- Select the tool "hol-economic-agent" → "Enable Actions" → confirm.
+- Click **Actions** and then "Reload Custom Actions" and log in with your workshop provided account.
+- Select the tool "hol-economic-agent" and then "Enable Actions" and confirm.
 
-Now open [Gemini Enterprise](https://gemini.google.com) and ask:
+Now open Gemini Enterprise chat and ask the same question:
 
 *"How has the 30-year mortgage rate changed relative to inflation since 2020?"*
 
@@ -618,25 +729,48 @@ Same question we asked in Snowflake CoWork, same correct answer — just a diffe
 
 ### Troubleshooting
 
-**Network Policy** — If Gemini can't reach Snowflake (OAuth errors, timeouts), a network policy may be blocking external IPs:
-
-```sql
-USE ROLE ACCOUNTADMIN;
-ALTER ACCOUNT UNSET NETWORK_POLICY;
--- To re-enable later: ALTER ACCOUNT SET NETWORK_POLICY = <your_policy_name>;
-```
+**Network Policy** — If Gemini can't reach Snowflake (OAuth errors, timeouts), a network policy may be blocking external IPs. Run the cell below to temporarily allow all connections.
 
 **Google Cloud Org Policy** — If you see `constraints/discoveryengine.managed.disableCustomMcpServerConnector`:
 
-**In Google Cloud Console**: IAM & Admin → Organization Policies → search `disableCustomMcpServerConnector` → Enforcement: **Off** → Save. Retry connector setup.
+**UI-GCP**: IAM & Admin → Organization Policies → search `disableCustomMcpServerConnector` → Enforcement: **Off** → Save. Retry connector setup.
+
+```sql
+-- Temporarily disable account network policy to allow Gemini Enterprise OAuth
+USE ROLE ACCOUNTADMIN;
+ALTER ACCOUNT UNSET NETWORK_POLICY;
+
+-- To re-enable later:
+-- ALTER ACCOUNT SET NETWORK_POLICY = <your_policy_name>;
+```
 
 <!-- ------------------------ -->
+
+## Looker
+
+The same Iceberg data that powers the AI agent also feeds traditional BI. Looker connects directly to the Snowflake table — no additional copies, no separate pipeline. One data product serves both governed dashboards and AI chat.
+
+**UI-Looker**: Admin → Database → Connections → add Snowflake connection.
+- Use lab credentials, point to `HOL_DB.PUBLIC`.
+- Create LookML project on `ECONOMIC_INDICATORS`.
+- Build Explore + Dashboard.
+
+Please follow [Looker instructions](https://docs.google.com/document/d/14DwWTrCz4YLreXNiYfJ3cI86MUNT44lj_yXlIq__pwg/edit?usp=sharing&resourcekey=0-s31XT4gARcUOk4CX6ZYWvw)
+
+We would like to:
+- Log in to Looker (given account, username, password)
+- Create a secure connection to your Snowflake account
+- Create a project and database and explore Looker
+- Get familiar with LookML (which defines the semantic model of your data)
+- Talk to your Snowflake data
+
+<!-- ------------------------ -->
+
 ## Conclusion And Resources
-Duration: 1
 
 Let's step back and look at what we built.
 
-One copy of data on open Iceberg in your GCS bucket. A Semantic View that teaches AI what the data means. A Cortex Agent powered by Gemini that turns questions into governed SQL. And we consume it from Snowflake CoWork, Gemini Enterprise, and any MCP client — all pointing at the same source of truth.
+One copy of data on open Iceberg in your GCS bucket. A Semantic View that teaches AI what the data means. A Cortex Agent powered by Gemini that turns questions into governed SQL. And we consume it from Snowflake CoWork, Gemini Enterprise, Looker, and any MCP client — all pointing at the same source of truth.
 
 No data copies between systems. No custom integrations for each surface. No hallucination from ungrounded prompts. Build it once, consume it everywhere.
 
@@ -647,25 +781,46 @@ No data copies between systems. No custom integrations for each surface. No hall
 - How to build a Cortex Agent with Gemini as the reasoning model
 - How to expose an agent via MCP with OAuth security
 - How to connect Gemini Enterprise to Snowflake through MCP
+- How to connect Looker to the same Iceberg data for BI dashboards
 
 ### Related Resources
 - [Snowflake Cortex Agents Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents)
 - [Apache Iceberg on Snowflake](https://docs.snowflake.com/en/user-guide/tables-iceberg)
 - [Semantic Views](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst/semantic-view)
 - [MCP Servers in Snowflake](https://docs.snowflake.com/en/user-guide/snowflake-cortex/mcp-server)
-- [Source Notebook on GitHub](https://github.com/sfc-gh-akhosro/gcp-snowflake-solutions/tree/main/hands-on-lab-cortex-gemini)
+- [Source Notebook on GitHub](https://github.com/sfc-gh-akhosro/gcp-snowflake-solutions/blob/main/hands-on-lab-cortex-gemini/hol-cortex-gemini.ipynb)
 
 ### Cleanup
 
-When you're done, run this to remove all lab objects:
+Run only when you're done with the lab.
 
 ```sql
 USE ROLE ACCOUNTADMIN;
+
+-- Drop every object the workshop roles own BEFORE dropping the roles themselves.
+-- hol_role owns hol_gcs_vol, so dropping the roles first leaves the external
+-- volume orphaned and the cleanup does not run clean on a copy-paste.
+
+-- Drop database first (cascades all objects inside: tables, views, agents, MCP servers)
 DROP DATABASE IF EXISTS hol_db;
+
+-- The external volume can only be dropped after the Iceberg tables that reference it.
+-- Dropping it means redoing the GCS bucket IAM binding if you run the lab again.
+DROP EXTERNAL VOLUME IF EXISTS hol_gcs_vol;
+
 DROP WAREHOUSE IF EXISTS hol_wh;
 DROP INTEGRATION IF EXISTS hol_mcp_oauth;
+
+-- Roles last, once nothing they own is left
 DROP ROLE IF EXISTS hol_role;
 DROP ROLE IF EXISTS end_user_role;
--- External volume kept (GCS permissions take time to set up):
--- DROP EXTERNAL VOLUME IF EXISTS hol_gcs_vol;
+
+-- Re-enable network policy if it was disabled
+-- ALTER ACCOUNT SET NETWORK_POLICY = ACCOUNT_VPN_POLICY_SE;
+
+-- The Iceberg data/metadata files still sit in your GCS bucket.
+-- Delete them in Google Cloud Console (Cloud Storage -> your bucket), or:
+--   gcloud storage rm --recursive gs://<your-bucket>/**
+
+SHOW ROLES LIKE '%HOL%';
 ```
