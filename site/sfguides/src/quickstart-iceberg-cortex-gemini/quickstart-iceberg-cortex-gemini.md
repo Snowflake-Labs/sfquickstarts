@@ -87,7 +87,7 @@ In your Incognito window or temporary "Workshop" Chrome profile:
     * Use the DataOps URL to open your provisioned Snowflake environment.
     * Open **Workspaces** from the left panel.
     * Open the shared workspace `gcp-snowflake-solutions`.
-    * Open the file `hands-on-lab-cortex-gemini/hol-cortex-gemini.ipynb` — the notebook version of this guide. We will stay in it throughout the workshop, running it cell by cell.
+    * Open the file `hands-on-lab-cortex-gemini/hol-cortex-gemini.ipynb` — the notebook version of this guide — if you prefer to run the lab as a notebook, cell by cell. Otherwise follow the steps in this guide from a SQL worksheet.
 
 
 * **Snowflake Environment for UI exploration:**
@@ -112,15 +112,15 @@ Everything in this guide is plain SQL plus UI steps, so you can run it straight 
 
 **UI-Snowsight**: Open a second browser tab at the same Snowflake instance URL for exploring components. In this tab find Marketplace, Cortex Analyst, Agents, AI Functions, dbt Projects, Database Explorer, and Workspaces.
 
+<!-- ------------------------ -->
+## Role Based Access Control
+
 Throughout this lab we use two roles:
 
 - **`hol_role`** — this is us, the developer. It runs the lab and owns everything we create.
 - **`end_user_role`** — this simulates a business user who can only ask questions through the agent but can't build or modify anything.
 
 Let's create those roles and grant the needed privileges.
-
-<!-- ------------------------ -->
-## Role Based Access Control
 
 ```sql
 USE ROLE ACCOUNTADMIN;
@@ -222,7 +222,7 @@ We want to build an economic dataset that tracks the financial wellbeing of Amer
 
 Let's go get them.
 
-**UI-Snowsight**: Marketplace → Snowflake Marketplace → Data products→ search "Snowflake Public Data" → Click on Snowflake Public Data (Free) → **Get**.
+**UI-Snowsight**: Marketplace → Snowflake Marketplace → Data products → search "Snowflake Public Data" → Click on Snowflake Public Data (Free) → **Get**.
 - Database name: `SNOWFLAKE_PUBLIC_DATA_FREE` (accept default options and don't change them).
 - Direct link: https://app.snowflake.com/marketplace/listing/GZTSZ290BV255/snowflake-public-data-products-snowflake-public-data-free
 
@@ -727,10 +727,6 @@ Same question we asked in Snowflake CoWork, same correct answer — just a diffe
 
 **Network Policy** — If Gemini can't reach Snowflake (OAuth errors, timeouts), a network policy may be blocking external IPs. Run the statement below to temporarily allow all connections.
 
-**Google Cloud Org Policy** — If you see `constraints/discoveryengine.managed.disableCustomMcpServerConnector`:
-
-**UI-GCP**: IAM & Admin → Organization Policies → search `disableCustomMcpServerConnector` → Enforcement: **Off** → Save. Retry connector setup.
-
 ```sql
 -- Temporarily disable account network policy to allow Gemini Enterprise OAuth
 USE ROLE ACCOUNTADMIN;
@@ -739,6 +735,10 @@ ALTER ACCOUNT UNSET NETWORK_POLICY;
 -- To re-enable later:
 -- ALTER ACCOUNT SET NETWORK_POLICY = <your_policy_name>;
 ```
+
+**Google Cloud Org Policy** — If you see `constraints/discoveryengine.managed.disableCustomMcpServerConnector`:
+
+**UI-GCP**: IAM & Admin → Organization Policies → search `disableCustomMcpServerConnector` → Enforcement: **Off** → Save. Retry connector setup.
 
 <!-- ------------------------ -->
 
