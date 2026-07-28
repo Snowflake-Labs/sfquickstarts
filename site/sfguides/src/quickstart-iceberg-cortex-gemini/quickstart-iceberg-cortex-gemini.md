@@ -83,11 +83,11 @@ In your Incognito window or temporary "Workshop" Chrome profile:
     * You can also use `Cloud Shell` (located on the top right bar) as a terminal connected directly to your GCP account if scripting is needed.
 
 
-* **Snowflake Environment for the class Notebook:**
+* **Snowflake Environment for running the lab:**
     * Use the DataOps URL to open your provisioned Snowflake environment.
     * Open **Workspaces** from the left panel.
     * Open the shared workspace `gcp-snowflake-solutions`.
-    * Open the file `hands-on-lab-cortex-gemini/hol-cortex-gemini.ipynb`. We will stay in this notebook throughout the workshop, running it cell by cell.
+    * Open the file `hands-on-lab-cortex-gemini/hol-cortex-gemini.ipynb` — the notebook version of this guide. We will stay in it throughout the workshop, running it cell by cell.
 
 
 * **Snowflake Environment for UI exploration:**
@@ -101,27 +101,23 @@ In your Incognito window or temporary "Workshop" Chrome profile:
 
 Snowflake Workspaces give you a full developer environment in the browser. It connects to a git repo so you can collaborate with a team, and runs Python and SQL files with a built-in compute engine.
 
-We'll use a Snowflake Notebook that walks us through the course. The Notebook service lets you run cells with mixed SQL and Python code in the same session context. You can identify 3 types of cells in this notebook: markdown, python and sql.
-
-If you are using the workshop account from DataOps and you are using the shared workspace "gcp-snowflake-solutions", you do not need this Workspace setup and you can skip it. You already opened this Notebook through the shared workspace.
+Everything in this guide is plain SQL plus UI steps, so you can run it straight from a SQL worksheet. If you would rather run it as a notebook — mixed SQL, Python, and markdown cells sharing one session context — open the [notebook version of this quickstart](https://github.com/sfc-gh-akhosro/gcp-snowflake-solutions/blob/main/hands-on-lab-cortex-gemini/hol-cortex-gemini.ipynb) in a Snowflake Workspace:
 
 **UI-Snowsight**: Go to Projects → Workspaces.
-- Select "gcp-snowflake-solutions" from the list of available workspaces.
-- If not available, create a public git integration and connect to this repo.
+- Create a public git integration and connect to this repo.
     - Click **+** on the very top left > Git Workspace
     - Repo name: `https://github.com/sfc-gh-akhosro/gcp-snowflake-solutions`
     - Choose public repo connection (no auth needed).
-- Make sure to click Changes, and then click Pull to get the latest version of this notebook.
 - Open `hands-on-lab-cortex-gemini/hol-cortex-gemini.ipynb`. Click "Connected" to start service. It takes a few minutes — start it now and read ahead while it spins up.
 
 **UI-Snowsight**: Open a second browser tab at the same Snowflake instance URL for exploring components. In this tab find Marketplace, Cortex Analyst, Agents, AI Functions, dbt Projects, Database Explorer, and Workspaces.
 
 Throughout this lab we use two roles:
 
-- **`hol_role`** — this is us, the developer. It runs the notebook and owns everything we create.
+- **`hol_role`** — this is us, the developer. It runs the lab and owns everything we create.
 - **`end_user_role`** — this simulates a business user who can only ask questions through the agent but can't build or modify anything.
 
-Let's create those roles and grant the needed privileges in our first cell. While you're at it, explore the notebook toolbar — you'll see run, stop, and cell controls up top.
+Let's create those roles and grant the needed privileges.
 
 <!-- ------------------------ -->
 ## Role Based Access Control
@@ -147,7 +143,7 @@ CREATE ROLE IF NOT EXISTS end_user_role;
 GRANT ROLE hol_role      TO ROLE SYSADMIN;
 GRANT ROLE end_user_role TO ROLE SYSADMIN;
 
--- Grant both roles to whoever is running this notebook
+-- Grant both roles to whoever is running this lab
 BEGIN
   LET usr := CURRENT_USER();
   EXECUTE IMMEDIATE 'GRANT ROLE hol_role TO USER ' || :usr;
@@ -230,7 +226,7 @@ Let's go get them.
 - Database name: `SNOWFLAKE_PUBLIC_DATA_FREE` (accept default options and don't change them).
 - Direct link: https://app.snowflake.com/marketplace/listing/GZTSZ290BV255/snowflake-public-data-products-snowflake-public-data-free
 
-This dataset is already available on most workshop accounts. The cell below verifies access to all four source tables we need.
+This dataset is already available on many Snowflake accounts. The query below verifies access to all four source tables we need.
 
 ```sql
 -- Verify marketplace data access
@@ -422,9 +418,9 @@ This is the cornerstone of a modern data platform: one source of truth in a data
 
 We have our Iceberg table. Let's look at what's inside.
 
-Snowsight gives you profiling, charting, and pivot tables right in the cell output. You can understand the shape of a dataset without leaving the notebook.
+Snowsight gives you profiling, charting, and pivot tables right in the query results. You can understand the shape of a dataset without leaving the browser.
 
-**UI-Snowsight**: After running the query, explore the cell output:
+**UI-Snowsight**: After running the query, explore the results pane:
 - Click **Chart** tab to visualize trends over time.
 - Click **Query Profile** tab to see the execution plan.
 - Click column headers for quick profiling stats (min, max, distribution).
@@ -591,7 +587,7 @@ SHOW AGENTS IN SCHEMA hol_db.public;
 
 ### CoWork
 
-Snowflake CoWork is the chat surface for business users. No SQL knowledge needed, no notebook — just a conversation with the agent.
+Snowflake CoWork is the chat surface for business users. No SQL knowledge needed, no SQL worksheet — just a conversation with the agent.
 
 Let's switch to `end_user_role` to see what it looks like for someone who can only consume, not build.
 
@@ -602,7 +598,7 @@ Let's switch to `end_user_role` to see what it looks like for someone who can on
 - Ask: *"Tell the economic story of California vs Texas over the last 10 years using all available indicators."*
 - Ask: *"What did the COVID shock look like in data — unemployment spike, rate crash, inflation surge — and how long did each phase last?"*
 
-Look at the responses — they include the generated SQL so you can see exactly what queries were executed. Same agent, same data, different role — a chat-based surface instead of a notebook.
+Look at the responses — they include the generated SQL so you can see exactly what queries were executed. Same agent, same data, different role — a chat-based surface instead of SQL.
 
 <!-- ------------------------ -->
 
@@ -718,7 +714,7 @@ By registering our Snowflake MCP server as a data connector, the Cortex Agent be
 **UI-GCP**: Google Cloud Console → search "Gemini Enterprise" → Data stores → +Create data store → Add MCP Server.
 - Fill in the fields using values from the MCP output above (server URL, client ID, client secret, scopes, etc.).
 - Complete the OAuth authorization flow when prompted.
-- Click **Actions** and then "Reload Custom Actions" and log in with your workshop provided account.
+- Click **Actions** and then "Reload Custom Actions" and log in with your account.
 - Select the tool "hol-economic-agent" and then "Enable Actions" and confirm.
 
 Now open Gemini Enterprise chat and ask the same question:
@@ -729,7 +725,7 @@ Same question we asked in Snowflake CoWork, same correct answer — just a diffe
 
 ### Troubleshooting
 
-**Network Policy** — If Gemini can't reach Snowflake (OAuth errors, timeouts), a network policy may be blocking external IPs. Run the cell below to temporarily allow all connections.
+**Network Policy** — If Gemini can't reach Snowflake (OAuth errors, timeouts), a network policy may be blocking external IPs. Run the statement below to temporarily allow all connections.
 
 **Google Cloud Org Policy** — If you see `constraints/discoveryengine.managed.disableCustomMcpServerConnector`:
 
