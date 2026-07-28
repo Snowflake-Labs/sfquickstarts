@@ -92,6 +92,6 @@ As you see we narrate very briefly, just say the core advantage of the component
 try to have one code cell in each step (like verification after creation in the same cell, etc). 
 the goal is to teach through ui (but mainly for playing around) but the lab goes through running codes (mainly, except for when we do something in looker or google env). UI is just to "teach" and do "playground". We do not need to give exact instruction (put this in this field, etc).
 
-When we want to provide insight about our choice of components (why this), we want to highly depend on "./input/blog-post.md" which we are implementing (mainly the ai part). so the reasons can come from there (summarized or edited or added), it is a good starting point.
+When we want to provide insight about our choice of components (why this), we want to highly depend on "./assets/blog-post.md" which we are implementing (mainly the ai part). so the reasons can come from there (summarized or edited or added), it is a good starting point.
 
 

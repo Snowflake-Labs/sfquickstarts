@@ -4,7 +4,7 @@
 
 We're going to build an AI agent that answers economic questions about the wellbeing of Americans — and make it available to anyone in the organization. The agent will live in Snowflake, but employees will talk to it from Gemini Enterprise, their everyday corporate AI assistant.
 
-We start from raw public data. We land it in an [Apache Iceberg](https://iceberg.apache.org/) table on your own GCS bucket. We teach an AI model what the data means through a Semantic View. And we wrap it all in a Cortex Agent powered by Gemini.
+We start from raw public data. We land it in an [Apache Iceberg](https://iceberg.apache.org/) table on your own GCS bucket. We teach an AI model what the data means through a Semantic View. And we wrap it all in a Snowflake Cortex Agent powered by Gemini.
 
 The key idea: define your business logic once, in the data layer, not in prompts. That way every consumer — a chat interface, a BI dashboard, an external AI assistant — gets the same correct answer from the same governed data.
 
@@ -33,7 +33,7 @@ We'll use a Snowflake Notebook that walks us through the course. The Notebook se
 
 Let's open a new workspace connected to [this repo](https://github.com/sfc-gh-akhosro/gcp-snowflake-solutions), then open `hands-on-lab-cortex-gemini/hol-cortex-gemini.ipynb` and start the service connection. It takes a few minutes — start it now and read ahead while it spins up.
 
-> Open a **second browser tab** with the same [Snowflake instance](https://app.snowflake.com). Use that tab to explore the Snowflake UI (Marketplace, AI & ML, etc.) throughout this workshop while the first tab stays on the notebook. In this new tab, explore the left hand panel, find and familiarize yourself with Cortex Agents, Analyst, CoWork, Marketplace, and Data Explorer. We will need them later.
+> Open a **second browser tab** with the same [Snowflake instance](https://app.snowflake.com). Use that tab to explore the Snowflake UI and its left-hand panel (Marketplace, AI & ML, etc.) throughout this workshop while the first tab stays on the notebook. In this new tab, explore the left hand panel, find and familiarize yourself with Snowflake's Cortex Agents, Analyst, CoWork, Marketplace, and Data Explorer. We will need them later.
 
 Throughout this lab we use two roles:
 
@@ -49,7 +49,7 @@ Let's create those roles and grant the needed privileges in our first cell. Whil
 
 We'll get our data sources from Snowflake Marketplace and land them in an Iceberg table on a GCS bucket. Snowflake Horizon serves as the catalog and governance layer. We could just as easily use Google Cloud Open Lakehouse Runtime or any other IRC-compliant catalog instead.
 
-Next, we use Snowflake Semantic View Autopilot to create a Semantic View that defines the business logic of our Iceberg table. We wrap this in a Cortex Agent and use Gemini as the reasoning model behind it. The biggest gain from Snowflake Cortex is the added context and logic that makes answers accurate and thorough — customers love it for reduced hallucination.
+Next, we use Snowflake Semantic View Autopilot to create a Semantic View that defines the business logic of our Iceberg table. We wrap this in a Cortex Agent and use Gemini as the reasoning model behind it. Snowflake's Cortex adds critical context and logic that makes answers accurate and thorough — customers love it for reduced hallucination.
 
 Then we build an MCP connection between Gemini Enterprise and our Cortex Agent, so employees can talk to their data through their corporate AI chat. Looker helps us visualize and get insights from the same data.
 
@@ -96,16 +96,13 @@ Snowsight gives you profiling, charting, and pivot tables right in the cell outp
 Run the query below. Then try the **Chart** tab to visualize trends, and the **Query Profile** to see how the execution plan works.
 
 
-## Cortex
+## Semantic View
 
 We have a clean Iceberg table. Any analyst can query it with SQL. But that doesn't make it AI-ready.
 
 Here's the gap: when an LLM sees column names like `CPI_INDEX` or `GEO_ID`, it guesses what they mean. It guesses wrong. We need to tell it which columns are dimensions, which are facts, how metrics are calculated, and what kinds of questions this table can answer.
 
 That's what a Semantic View does. You define your business logic once — in the data layer, not scattered across prompts — and every AI consumer inherits the same correct definitions.
-
-
-## Semantic View
 
 The Semantic View is the grounding layer for our agent. We define dimensions (date, geography), facts (CPI, mortgage rate, unemployment, income), and metrics (year-over-year inflation, average mortgage rate by state).
 

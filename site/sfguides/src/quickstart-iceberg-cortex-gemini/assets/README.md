@@ -4,9 +4,9 @@ A hands-on lab that builds an AI-ready data product on Apache Iceberg — from r
 
 This lab loosely follows the architecture described in [blog-post.md](./blog-post.md).
 
-If you are looking for how to setup MCP connection between Snowflake Cortex and Gemini Enterprise, please got [mcp guide](./mcp-server-setup-guide.md)
+If you are looking for how to set up MCP connection between Snowflake Cortex and Gemini Enterprise, see the [MCP guide](./mcp-server-setup-guide.md).
 
-![Architecture](./input/arch-diagram.svg)
+![Architecture](./assets/arch-diagram.svg)
 
 ## What You Build
 
@@ -32,14 +32,14 @@ Open **`hol-cortex-gemini.ipynb`** in a Snowflake Workspace and run cells top-to
 | File | Purpose |
 |------|---------|
 | `hol-cortex-gemini.ipynb` | **The lab notebook** — run this |
+| `quickstart-iceberg-cortex-gemini.md` | Self-service quickstart (Snowflake sfguide format) |
+| `how-to.md` | Workshop how-to with UI pointers and code blocks |
 | `blog-post.md` | Conceptual blog post explaining the architecture and "why" |
+| `mcp-server-setup-guide.md` | Gemini Enterprise MCP connection to Snowflake Cortex |
 | `main-prompt.md` | Human-written input prompt used to guide AI content generation |
 | `narration.md` | Pure narrative text for each section (no code, no UI) |
-| `how-to.md` | Code cells + telegraphic UI pointers, organized by section |
-| `diagrams.md` | Graphviz DOT source and spotlight display snippets |
 | `proofreads.md` | Feedback and iteration notes — edit this to give AI direction |
-| `mcp-server-setup-guide.md` | Gemini Enterprise MCP call to Snowflake Cortex |
-| `input/` | Supporting assets (SVG diagram, reference docs) |
+| `assets/` | Supporting assets (SVG diagram, setup video, diagrams source) |
 
 ## Prerequisites
 
