@@ -2,11 +2,7 @@ author: Ali Khosro (Snowflake), Bruce Sandell (Google)
 id: quickstart-iceberg-cortex-gemini
 language: en
 summary: Build an AI agent on Iceberg data with Snowflake Cortex and Gemini Enterprise via MCP
-categories: Getting-Started, Data-Engineering, AI-ML
-environments: web
-status: Published
-feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, Iceberg, Cortex, Gemini, MCP, Semantic View, Agents, GCP, Google Cloud
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/interoperable-storage, snowflake-site:taxonomy/snowflake-feature/lakehouse-analytics, snowflake-site:taxonomy/snowflake-feature/apache-iceberg, snowflake-site:taxonomy/snowflake-feature/cortex-analyst, snowflake-site:taxonomy/snowflake-feature/snowflake-intelligence
 
 # Agentic AI for Your Lakehouse: Snowflake Cortex and Gemini Enterprise on Iceberg
 
@@ -22,7 +18,7 @@ The key idea: define your business logic once, in the data layer, not in prompts
 
 > **Tip:** This quickstart is also available as a [Snowflake Notebook](https://github.com/sfc-gh-akhosro/gcp-snowflake-solutions/blob/main/hands-on-lab-cortex-gemini/hol-cortex-gemini.ipynb) that you can run directly in Snowsight Workspaces. [More info](https://github.com/sfc-gh-akhosro/gcp-snowflake-solutions/blob/main/hands-on-lab-cortex-gemini/README.md).
 
-![Architecture](assets/arch-diagram.svg)
+![Architecture](assets/arch-diagram.png)
 
 ### What You Will Learn 
 - How to create Snowflake-managed Iceberg tables on GCS
@@ -198,7 +194,7 @@ Next, we use Snowflake Semantic View Autopilot to create a Semantic View that de
 
 Then we build an MCP connection between Gemini Enterprise and our Cortex Agent, so employees can talk to their data through their corporate AI chat. Looker helps us visualize and get insights from the same data.
 
-![Architecture](assets/arch-diagram.svg)
+![Architecture](assets/arch-diagram.png)
 
 Here's a summary of what each component does:
 
