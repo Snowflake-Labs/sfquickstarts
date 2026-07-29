@@ -1,4 +1,4 @@
-author: Trace Smith
+author: Trace Smith, Ghazaleh Kazeminejad
 id: build-real-time-ml-inference-with-feature-store
 language: en
 summary: Build a real-time ML inference service with Snowflake's Postgres-backed Feature Store to eliminate training-serving skew and serve predictions at low latency.
