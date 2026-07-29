@@ -44,9 +44,11 @@ The diagram above illustrates the end-to-end inference flow. Source data in the 
 - A **real-time inference service** (SPCS) that automatically fetches features from the online store when callers send only a `TRANSACTION_ID`
 
 <!-- ------------------------ -->
-## Setup Environment
+## Part I: Environment Setup
 
-### Step 1: Open a Snowflake Notebook
+This section prepares your notebook, installs dependencies, and loads sample data into Snowflake.
+
+### Open a Snowflake Notebook
 
 Navigate to **Snowsight > Notebooks** and create a new notebook with the following settings:
 
@@ -55,7 +57,7 @@ Navigate to **Snowsight > Notebooks** and create a new notebook with the followi
 
 Alternatively, import the notebook directly from the [GitHub repository](https://github.com/sfc-gh-trasmith/snowflake-fs-ml-service/blob/main/example.ipynb).
 
-### Step 2: Install Dependencies
+### Install Dependencies
 
 In the first cell of your notebook, install the required package:
 
@@ -63,7 +65,7 @@ In the first cell of your notebook, install the required package:
 pip install snowflake-ml-python -U
 ```
 
-### Step 3: Set Configuration
+### Set Configuration
 
 Create a configuration cell with centralized version and naming config. Update these values if you need to re-run the notebook with different versions:
 
@@ -80,10 +82,7 @@ PRODUCER_ROLE = "ACCOUNTADMIN"
 CONSUMER_ROLE = "ACCOUNTADMIN"
 ```
 
-<!-- ------------------------ -->
-## Create Feature Store
-
-### Step 4: Create Database and Schema
+### Create Database and Schema
 
 Create the database and schema that will house the feature store, model, and inference service:
 
@@ -95,7 +94,7 @@ USE DATABASE ML_DEMO_INF_FS_LOOKUP;
 USE SCHEMA FRAUD_ML_SERVICE_FS;
 ```
 
-### Step 5: Generate Synthetic Data
+### Generate Synthetic Data
 
 Create 200 synthetic transaction records with features for fraud detection. In production, this would be your actual transaction data pipeline:
 
@@ -130,7 +129,7 @@ The features include:
 | `DAILY_TXN_COUNT` | Number of transactions today |
 | `IS_FRAUD` | Binary target (0=legitimate, 1=fraudulent) |
 
-### Step 6: Load Data into Snowflake
+### Load Data into Snowflake
 
 Write the synthetic DataFrame to a Snowflake table that will serve as the source for the Feature View:
 
@@ -147,9 +146,11 @@ print("Table TRANSACTION_FEATURES created with", session.table("TRANSACTION_FEAT
 ```
 
 <!-- ------------------------ -->
-## Register Features with Online Serving
+## Part II: Feature Store with Online Serving
 
-### Step 7: Initialize Feature Store and Register Entity
+This section creates the Postgres-backed online Feature Store, registers entities and feature views, and verifies low-latency feature retrieval.
+
+### Initialize Feature Store and Register Entity
 
 Initialize the Feature Store connection and register the `TRANSACTION` entity with `TRANSACTION_ID` as the join key. The entity defines the primary key that links feature rows to inference requests:
 
@@ -170,7 +171,7 @@ fs.register_entity(transaction_entity)
 print("Entity registered:", transaction_entity.name)
 ```
 
-### Step 8: Create the Online Service
+### Create the Online Service
 
 Provision the Postgres-backed online serving infrastructure. This spins up a managed Postgres instance that will serve features at low latency for real-time inference:
 
@@ -202,7 +203,7 @@ else:
 > aside positive
 > The online service may take a few minutes to reach `RUNNING` state on first creation. Subsequent runs will be faster.
 
-### Step 9: Register Feature View with Postgres Online Store
+### Register Feature View with Postgres Online Store
 
 Define and register the `TRANSACTION_FRAUD_FEATURES` Feature View. The `online_config` enables Postgres-backed serving with a **10-second target lag** — features sync from the source table to the online store within 10 seconds of any update:
 
@@ -230,7 +231,7 @@ print(f"Feature View registered: {txn_fv.name} version {txn_fv.version}")
 print(f"Online store type: POSTGRES")
 ```
 
-### Step 10: Authenticate to the Online Feature Store
+### Authenticate to the Online Feature Store
 
 The Online Feature Store client authenticates via a **Programmatic Access Token (PAT)**. Without a valid token set in the environment, calls to `fs.read_feature_view()` with `StoreType.ONLINE` will fail with a connection or auth error.
 
@@ -245,7 +246,7 @@ os.environ['SNOWFLAKE_PAT'] = session.connection.rest.token
 > aside negative
 > The session token above is short-lived and suitable for development/testing. For production workloads, generate a dedicated PAT via **Snowsight → User Menu → My Profile → Authentication → Personal Access Tokens → + Generate** and store it securely (e.g., as a Snowflake secret).
 
-### Step 11: Verify Online Feature Retrieval
+### Verify Online Feature Retrieval
 
 With authentication configured, confirm the online store is synced and serving features at low latency:
 
@@ -272,9 +273,11 @@ online_result
 You should see the feature values returned from the Postgres online store for each transaction ID. If you receive a connection or authentication error, verify that `SNOWFLAKE_PAT` is set correctly in your environment.
 
 <!-- ------------------------ -->
-## Train and Register Model
+## Part III: Train, Register, and Deploy Model
 
-### Step 12: Train XGBoost Model
+This section trains an XGBoost fraud detection model, registers it in the Snowflake Model Registry, and deploys it as a real-time inference service on SPCS with automatic feature lookup from the online store.
+
+### Train XGBoost Model
 
 Train an XGBoost binary classifier on the synthetic fraud data:
 
@@ -308,7 +311,7 @@ print(f"Accuracy: {accuracy_score(y_test, y_pred):.3f}")
 print(f"ROC AUC:  {roc_auc_score(y_test, y_proba):.3f}")
 ```
 
-### Step 13: Register Model in Snowflake Model Registry
+### Register Model in Snowflake Model Registry
 
 Log the trained model to the Snowflake Model Registry with its input signature. This lets the inference service know which features the model expects:
 
@@ -335,10 +338,7 @@ funcs = mv.show_functions()
 print(f"Functions: {[f['name'] if isinstance(f, dict) else str(f) for f in funcs]}")
 ```
 
-<!-- ------------------------ -->
-## Deploy Inference Service
-
-### Step 14: Create Compute Pool
+### Create Compute Pool
 
 Create a compute pool for online inference. The pool provisions nodes that will host the containerized model service:
 
@@ -354,7 +354,7 @@ CREATE COMPUTE POOL IF NOT EXISTS ML_ONLINE_CPU_POOL
 DESCRIBE COMPUTE POOL ML_ONLINE_CPU_POOL;
 ```
 
-### Step 15: Deploy Inference Service with Feature Store Lookup
+### Deploy Inference Service with Feature Store Lookup
 
 Deploy the model as a real-time HTTP service on SPCS. The key parameter is `feature_sources_per_function` — it maps the `predict` method to the Postgres-backed Feature View so the service **automatically fetches features** when callers send only `TRANSACTION_ID`:
 
@@ -383,9 +383,9 @@ print(services_df.to_string())
 > The service may take a few minutes to start. If it shows as `PENDING`, wait and re-run the verification cell.
 
 <!-- ------------------------ -->
-## Invoke the Service
+## Part IV: Test the Inference Endpoint
 
-In this section, you'll test the inference service by calling its **public REST endpoint from outside Snowflake** — simulating how a production client (web app, microservice, Postman, or curl) would invoke it. This step is not done from within the Snowsight UI; instead, you'll authenticate with a Programmatic Access Token (PAT) and make HTTP requests directly to the SPCS ingress endpoint.
+In this section, you'll test the inference service by calling its **public REST endpoint from outside Snowflake** — simulating how a production client (web app, microservice, Postman, or curl) would invoke it. This is not done from within the Snowsight UI; instead, you'll authenticate with a Programmatic Access Token (PAT) and make HTTP requests directly to the SPCS ingress endpoint.
 
 ### How It Works
 
@@ -397,7 +397,7 @@ The `feature_sources_per_function` parameter enables the inference service to **
 4. The enriched payload is forwarded to the XGBoost model container
 5. Fraud predictions are returned
 
-### Step 16: Set Up a Programmatic Access Token (PAT)
+### Set Up Authentication
 
 To invoke the service from outside Snowflake, you need a PAT:
 
@@ -424,7 +424,7 @@ ALTER NETWORK POLICY <your_policy_name>
 > aside positive
 > You can find your public IP by running `curl ifconfig.me` from your terminal. If no network policy is active on the account, this step can be skipped — Snowflake allows access from all IPs by default.
 
-### Step 17: Call the Service (External Client)
+### Call the Service
 
 First, retrieve the ingress endpoint URL for your service:
 
@@ -443,7 +443,7 @@ curl -X POST "https://<ENDPOINT_URL>/predict" \
   -d '{"dataframe_split": {"index": [0, 1, 2], "columns": ["TRANSACTION_ID"], "data": [["TXN_0001"], ["TXN_0010"], ["TXN_0050"]]}}'
 ```
 
-Replace `<ENDPOINT_URL>` with the `ingress_url` from the query above and `<PAT_TOKEN>` with the PAT generated in Step 16.
+Replace `<ENDPOINT_URL>` with the `ingress_url` from the query above and `<PAT_TOKEN>` with the PAT you generated.
 
 The response will contain fraud predictions for each transaction — all without the caller needing to know which features exist or how they're computed.
 
