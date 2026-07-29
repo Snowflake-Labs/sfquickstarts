@@ -53,13 +53,20 @@ GRANT USAGE ON WAREHOUSE __WH__ TO ROLE __SP_OWNER_ROLE__;
 GRANT USAGE ON DATABASE __DB__ TO ROLE __SP_OWNER_ROLE__;
 GRANT USAGE ON SCHEMA __DB__.__SCHEMA__ TO ROLE __SP_OWNER_ROLE__;
 
+-- Required to CREATE, RESUME, and own tasks and alerts
+-- NOTE: Snowflake requires explicit EXECUTE TASK / EXECUTE ALERT even for ACCOUNTADMIN
+GRANT EXECUTE TASK  ON ACCOUNT TO ROLE ACCOUNTADMIN;
+GRANT EXECUTE ALERT ON ACCOUNT TO ROLE ACCOUNTADMIN;
+GRANT EXECUTE TASK  ON ACCOUNT TO ROLE __SP_OWNER_ROLE__;
+GRANT EXECUTE ALERT ON ACCOUNT TO ROLE __SP_OWNER_ROLE__;
+
 -- ---------------------------------------------------------------------------
 -- 2. TABLES
 -- ---------------------------------------------------------------------------
 -- NOTE: Running as ACCOUNTADMIN; will transfer ownership to __SP_OWNER_ROLE__ at end
 -- USE ROLE __SP_OWNER_ROLE__;  -- Skipped: running as ACCOUNTADMIN
 USE DATABASE __DB__;
-USE SCHEMA APP;
+USE SCHEMA __SCHEMA__;
 USE WAREHOUSE __WH__;
 
 CREATE TABLE IF NOT EXISTS CC_CREDIT_CONFIG (
@@ -70,6 +77,10 @@ CREATE TABLE IF NOT EXISTS CC_CREDIT_CONFIG (
     CLI_DAILY_LIMIT  NUMBER(10,2),
     SNOWSIGHT_DAILY_LIMIT NUMBER(10,2),
     DESKTOP_DAILY_LIMIT NUMBER(10,2),
+    -- Monthly budget: app-tracked spending cap (separate from Snowflake daily limit enforcement)
+    -- NULL = no monthly budget set. -1 = unlimited. Positive = monthly credit cap.
+    -- Control note: this column does NOT affect ALTER USER parameters. Read by UI only.
+    MONTHLY_LIMIT    NUMBER(10,2),
     IS_ACTIVE        BOOLEAN        DEFAULT TRUE,
     CREATED_BY       VARCHAR(255),
     CREATED_AT       TIMESTAMP_LTZ  DEFAULT CURRENT_TIMESTAMP(),
@@ -230,9 +241,42 @@ CREATE TABLE IF NOT EXISTS CC_SP_JOB_LOG (
     MESSAGE         VARCHAR(2000)
 );
 
+-- AI Budget metadata — tracks Snowflake-native Budget objects managed by this app
+-- Control note: these are MONITORING objects only. They do NOT block users.
+-- Blocking is handled by ALTER USER daily limits (separate). Budgets trigger notifications only.
+CREATE TABLE IF NOT EXISTS CC_AI_BUDGETS (
+    BUDGET_ID       NUMBER AUTOINCREMENT PRIMARY KEY,
+    BUDGET_NAME     VARCHAR(255)   NOT NULL UNIQUE,  -- short name (e.g. "ENGINEERING")
+    FQ_BUDGET_NAME  VARCHAR(500)   NOT NULL,          -- full: DB.SCHEMA.CC_BUDGET_<name>
+    MONTHLY_LIMIT   NUMBER(10,2)   NOT NULL,
+    DOMAINS         ARRAY,                            -- ['CORTEX CODE','AI FUNCTION',...]
+    TAG_NAME        VARCHAR(255),                     -- NULL = all users in account
+    TAG_VALUE       VARCHAR(255),
+    SCOPE_OPERATOR  VARCHAR(20)    DEFAULT 'UNION',   -- UNION or INTERSECTION
+    IS_ACTIVE       BOOLEAN        DEFAULT TRUE,
+    CREATED_BY      VARCHAR(255),
+    CREATED_AT      TIMESTAMP_LTZ  DEFAULT CURRENT_TIMESTAMP(),
+    UPDATED_BY      VARCHAR(255),
+    UPDATED_AT      TIMESTAMP_LTZ  DEFAULT CURRENT_TIMESTAMP()
+);
+
+-- Nightly-cached budget usage — populated by SP_CC_REFRESH_BUDGET_USAGE
+-- No ACCOUNT_USAGE view exists for budgets; usage is fetched via budget instance methods.
+CREATE TABLE IF NOT EXISTS CC_AI_BUDGET_USAGE (
+    BUDGET_NAME      VARCHAR(255)  NOT NULL,
+    MEASUREMENT_DATE DATE          NOT NULL,
+    SERVICE_TYPE     VARCHAR(100)  NOT NULL DEFAULT 'UNKNOWN',
+    CREDITS_SPENT    FLOAT         DEFAULT 0,
+    REFRESHED_AT     TIMESTAMP_LTZ DEFAULT CURRENT_TIMESTAMP(),
+    PRIMARY KEY (BUDGET_NAME, MEASUREMENT_DATE, SERVICE_TYPE)
+);
+
 -- Grant table access to app role
 GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA __DB__.__SCHEMA__ TO ROLE __APP_ROLE__;
 GRANT SELECT, INSERT, UPDATE, DELETE ON FUTURE TABLES IN SCHEMA __DB__.__SCHEMA__ TO ROLE __APP_ROLE__;
+
+-- Grant SNOWFLAKE.BUDGET_CREATOR so SP_OWNER_ROLE can create and manage Budget objects
+GRANT DATABASE ROLE SNOWFLAKE.BUDGET_CREATOR TO ROLE __SP_OWNER_ROLE__;
 
 -- ---------------------------------------------------------------------------
 -- 3. OWNER-RIGHTS STORED PROCEDURES
@@ -469,6 +513,181 @@ GRANT USAGE ON PROCEDURE SP_CC_REBALANCE_CREDITS(VARCHAR, VARCHAR, VARCHAR, VARC
 
 
 -- ---------------------------------------------------------------------------
+-- 3b. AI BUDGET MANAGEMENT STORED PROCEDURES
+-- ---------------------------------------------------------------------------
+-- These SPs create/manage native Snowflake Budget objects (SNOWFLAKE.CORE.BUDGET).
+-- Budget objects are MONITORING only — they do NOT block users.
+-- All operations are audited to CC_AUDIT_LOG.
+-- Requires SNOWFLAKE.BUDGET_CREATOR database role on __SP_OWNER_ROLE__.
+
+CREATE OR REPLACE PROCEDURE SP_CC_CREATE_AI_BUDGET(
+    P_BUDGET_NAME    VARCHAR,   -- short name, e.g. 'ENGINEERING'
+    P_MONTHLY_LIMIT  NUMBER,    -- credits per month
+    P_DOMAINS_JSON   VARCHAR,   -- JSON array e.g. '["CORTEX CODE","AI FUNCTION"]'
+    P_TAG_NAME       VARCHAR,   -- fully-qualified tag name, or NULL for all users
+    P_TAG_VALUE      VARCHAR,   -- tag value, or NULL
+    P_SCOPE_OP       VARCHAR    -- UNION (default) or INTERSECTION
+)
+RETURNS VARCHAR
+LANGUAGE SQL
+EXECUTE AS OWNER
+AS
+$$
+DECLARE
+    v_fq_name   VARCHAR DEFAULT '__DB__.__SCHEMA__.CC_BUDGET_' || UPPER(P_BUDGET_NAME);
+    v_actor     VARCHAR;
+    v_err       VARCHAR;
+BEGIN
+    IF (NOT REGEXP_LIKE(P_BUDGET_NAME, '^[A-Za-z0-9_]+$')) THEN
+        RETURN 'ERROR: Budget name must be alphanumeric and underscores only.';
+    END IF;
+    IF (P_MONTHLY_LIMIT <= 0) THEN
+        RETURN 'ERROR: Monthly limit must be a positive number.';
+    END IF;
+
+    -- Create the native Budget object
+    EXECUTE IMMEDIATE 'CREATE SNOWFLAKE.CORE.BUDGET IF NOT EXISTS ' || v_fq_name || '()';
+
+    -- Set spending limit
+    EXECUTE IMMEDIATE 'CALL ' || v_fq_name || '!SET_SPENDING_LIMIT(' || P_MONTHLY_LIMIT::VARCHAR || ')';
+
+    -- Add each selected domain individually (4 possible domains — no loop needed)
+    IF (POSITION('CORTEX CODE' IN P_DOMAINS_JSON) > 0) THEN
+        EXECUTE IMMEDIATE 'CALL ' || v_fq_name || '!ADD_SHARED_RESOURCE(''CORTEX CODE'')';
+    END IF;
+    IF (POSITION('AI FUNCTION' IN P_DOMAINS_JSON) > 0) THEN
+        EXECUTE IMMEDIATE 'CALL ' || v_fq_name || '!ADD_SHARED_RESOURCE(''AI FUNCTION'')';
+    END IF;
+    IF (POSITION('CORTEX AGENT' IN P_DOMAINS_JSON) > 0) THEN
+        EXECUTE IMMEDIATE 'CALL ' || v_fq_name || '!ADD_SHARED_RESOURCE(''CORTEX AGENT'')';
+    END IF;
+    IF (POSITION('SNOWFLAKE INTELLIGENCE' IN P_DOMAINS_JSON) > 0) THEN
+        EXECUTE IMMEDIATE 'CALL ' || v_fq_name || '!ADD_SHARED_RESOURCE(''SNOWFLAKE INTELLIGENCE'')';
+    END IF;
+
+    -- Scope to users by tag (if provided)
+    IF (P_TAG_NAME IS NOT NULL AND P_TAG_NAME != '' AND P_TAG_VALUE IS NOT NULL AND P_TAG_VALUE != '') THEN
+        EXECUTE IMMEDIATE '
+            CALL ' || v_fq_name || '!SET_USER_TAGS(
+                [[(SELECT SYSTEM$REFERENCE(''TAG'', ''' || P_TAG_NAME || ''', ''SESSION'', ''APPLYBUDGET'')),
+                ''' || P_TAG_VALUE || ''']],
+            ''' || COALESCE(P_SCOPE_OP, 'UNION') || ''')';
+    END IF;
+
+    -- Store metadata
+    SELECT CURRENT_USER() INTO v_actor;
+    MERGE INTO CC_AI_BUDGETS t
+    USING (SELECT :P_BUDGET_NAME AS NM) s ON t.BUDGET_NAME = s.NM
+    WHEN NOT MATCHED THEN INSERT
+        (BUDGET_NAME, FQ_BUDGET_NAME, MONTHLY_LIMIT, DOMAINS, TAG_NAME, TAG_VALUE,
+         SCOPE_OPERATOR, IS_ACTIVE, CREATED_BY, UPDATED_BY)
+    VALUES (:P_BUDGET_NAME, :v_fq_name, :P_MONTHLY_LIMIT, PARSE_JSON(:P_DOMAINS_JSON)::ARRAY,
+            NULLIF(:P_TAG_NAME,''), NULLIF(:P_TAG_VALUE,''), COALESCE(:P_SCOPE_OP,'UNION'),
+            TRUE, :v_actor, :v_actor);
+
+    -- Audit
+    INSERT INTO CC_AUDIT_LOG (ACTOR, ACTION_TYPE, DETAILS, STATUS)
+    SELECT :v_actor, 'CREATE_AI_BUDGET',
+           OBJECT_CONSTRUCT('budget', :P_BUDGET_NAME, 'limit', :P_MONTHLY_LIMIT)::VARIANT,
+           'SUCCESS';
+
+    RETURN 'OK: Budget ' || :P_BUDGET_NAME || ' created with limit ' || :P_MONTHLY_LIMIT::VARCHAR || ' credits/month.';
+
+EXCEPTION WHEN OTHER THEN
+    v_err := SQLERRM;
+    INSERT INTO CC_AUDIT_LOG (ACTOR, ACTION_TYPE, DETAILS, STATUS)
+    SELECT CURRENT_USER(), 'CREATE_AI_BUDGET',
+           OBJECT_CONSTRUCT('budget', :P_BUDGET_NAME, 'error', :v_err)::VARIANT,
+           'FAILED';
+    RETURN 'ERROR: ' || :v_err;
+END;
+$$;
+GRANT USAGE ON PROCEDURE SP_CC_CREATE_AI_BUDGET(VARCHAR,NUMBER,VARCHAR,VARCHAR,VARCHAR,VARCHAR) TO ROLE __APP_ROLE__;
+
+
+CREATE OR REPLACE PROCEDURE SP_CC_UPDATE_AI_BUDGET(
+    P_BUDGET_NAME    VARCHAR,
+    P_MONTHLY_LIMIT  NUMBER
+)
+RETURNS VARCHAR
+LANGUAGE SQL
+EXECUTE AS OWNER
+AS
+$$
+DECLARE
+    v_fq_name VARCHAR;
+    v_actor   VARCHAR;
+    v_err     VARCHAR;
+BEGIN
+    SELECT FQ_BUDGET_NAME INTO v_fq_name
+    FROM CC_AI_BUDGETS WHERE BUDGET_NAME = :P_BUDGET_NAME AND IS_ACTIVE = TRUE;
+
+    IF (v_fq_name IS NULL) THEN
+        RETURN 'ERROR: Budget ' || :P_BUDGET_NAME || ' not found or inactive.';
+    END IF;
+
+    EXECUTE IMMEDIATE 'CALL ' || :v_fq_name || '!SET_SPENDING_LIMIT(' || :P_MONTHLY_LIMIT::VARCHAR || ')';
+
+    SELECT CURRENT_USER() INTO v_actor;
+    UPDATE CC_AI_BUDGETS
+    SET MONTHLY_LIMIT = :P_MONTHLY_LIMIT, UPDATED_BY = :v_actor, UPDATED_AT = CURRENT_TIMESTAMP()
+    WHERE BUDGET_NAME = :P_BUDGET_NAME;
+
+    INSERT INTO CC_AUDIT_LOG (ACTOR, ACTION_TYPE, DETAILS, STATUS)
+    SELECT :v_actor, 'UPDATE_AI_BUDGET',
+           OBJECT_CONSTRUCT('budget', :P_BUDGET_NAME, 'new_limit', :P_MONTHLY_LIMIT)::VARIANT,
+           'SUCCESS';
+
+    RETURN 'OK: Budget ' || :P_BUDGET_NAME || ' limit updated to ' || :P_MONTHLY_LIMIT::VARCHAR || ' credits/month.';
+
+EXCEPTION WHEN OTHER THEN
+    v_err := SQLERRM;
+    RETURN 'ERROR: ' || :v_err;
+END;
+$$;
+GRANT USAGE ON PROCEDURE SP_CC_UPDATE_AI_BUDGET(VARCHAR,NUMBER) TO ROLE __APP_ROLE__;
+
+
+CREATE OR REPLACE PROCEDURE SP_CC_DELETE_AI_BUDGET(P_BUDGET_NAME VARCHAR)
+RETURNS VARCHAR
+LANGUAGE SQL
+EXECUTE AS OWNER
+AS
+$$
+DECLARE
+    v_fq_name VARCHAR;
+    v_actor   VARCHAR;
+    v_err     VARCHAR;
+BEGIN
+    SELECT FQ_BUDGET_NAME INTO v_fq_name
+    FROM CC_AI_BUDGETS WHERE BUDGET_NAME = :P_BUDGET_NAME AND IS_ACTIVE = TRUE;
+
+    IF (v_fq_name IS NULL) THEN
+        RETURN 'ERROR: Budget ' || :P_BUDGET_NAME || ' not found or already inactive.';
+    END IF;
+
+    EXECUTE IMMEDIATE 'DROP SNOWFLAKE.CORE.BUDGET IF EXISTS ' || :v_fq_name;
+
+    SELECT CURRENT_USER() INTO v_actor;
+    UPDATE CC_AI_BUDGETS
+    SET IS_ACTIVE = FALSE, UPDATED_BY = :v_actor, UPDATED_AT = CURRENT_TIMESTAMP()
+    WHERE BUDGET_NAME = :P_BUDGET_NAME;
+
+    INSERT INTO CC_AUDIT_LOG (ACTOR, ACTION_TYPE, DETAILS, STATUS)
+    SELECT :v_actor, 'DELETE_AI_BUDGET',
+           OBJECT_CONSTRUCT('budget', :P_BUDGET_NAME)::VARIANT, 'SUCCESS';
+
+    RETURN 'OK: Budget ' || :P_BUDGET_NAME || ' deleted.';
+
+EXCEPTION WHEN OTHER THEN
+    v_err := SQLERRM;
+    RETURN 'ERROR: ' || :v_err;
+END;
+$$;
+GRANT USAGE ON PROCEDURE SP_CC_DELETE_AI_BUDGET(VARCHAR) TO ROLE __APP_ROLE__;
+
+
+-- ---------------------------------------------------------------------------
 -- 4. INCREMENTAL REFRESH TASK
 -- ---------------------------------------------------------------------------
 -- Merges new data from ACCOUNT_USAGE into pre-aggregated summary tables.
@@ -487,18 +706,65 @@ DECLARE
     v_count_daily NUMBER DEFAULT 0;
     v_count_hourly NUMBER DEFAULT 0;
 BEGIN
+    -- DEDUP: remove duplicate rows keeping latest REFRESHED_AT per key.
+    -- Only runs when duplicates detected — avoids overhead on clean tables.
+    -- Uses DELETE WHERE rn > 1 — transactional, no TRUNCATE risk.
+    LET dup_daily NUMBER := (
+        SELECT COUNT(*) - COUNT(DISTINCT USAGE_DATE||'|'||USER_NAME||'|'||SURFACE||'|'||MODEL_NAME)
+        FROM CC_USAGE_DAILY_SUMMARY
+    );
+    IF (dup_daily > 0) THEN
+        DELETE FROM CC_USAGE_DAILY_SUMMARY
+        WHERE (USAGE_DATE, USER_NAME, SURFACE, MODEL_NAME, REFRESHED_AT) IN (
+            SELECT USAGE_DATE, USER_NAME, SURFACE, MODEL_NAME, REFRESHED_AT
+            FROM (
+                SELECT USAGE_DATE, USER_NAME, SURFACE, MODEL_NAME, REFRESHED_AT,
+                       ROW_NUMBER() OVER (
+                           PARTITION BY USAGE_DATE, USER_NAME, SURFACE, MODEL_NAME
+                           ORDER BY REFRESHED_AT DESC
+                       ) AS rn
+                FROM CC_USAGE_DAILY_SUMMARY
+            ) WHERE rn > 1
+        );
+    END IF;
+
+    LET dup_hourly NUMBER := (
+        SELECT COUNT(*) - COUNT(DISTINCT USAGE_DATE||'|'||USAGE_HOUR||'|'||USER_NAME||'|'||SURFACE)
+        FROM CC_USAGE_HOURLY_SUMMARY
+    );
+    IF (dup_hourly > 0) THEN
+        DELETE FROM CC_USAGE_HOURLY_SUMMARY
+        WHERE (USAGE_DATE, USAGE_HOUR, USER_NAME, SURFACE, REFRESHED_AT) IN (
+            SELECT USAGE_DATE, USAGE_HOUR, USER_NAME, SURFACE, REFRESHED_AT
+            FROM (
+                SELECT USAGE_DATE, USAGE_HOUR, USER_NAME, SURFACE, REFRESHED_AT,
+                       ROW_NUMBER() OVER (
+                           PARTITION BY USAGE_DATE, USAGE_HOUR, USER_NAME, SURFACE
+                           ORDER BY REFRESHED_AT DESC
+                       ) AS rn
+                FROM CC_USAGE_HOURLY_SUMMARY
+            ) WHERE rn > 1
+        );
+    END IF;
+
     -- Determine watermark: last refresh timestamp (or 90 days ago for first run)
     SELECT COALESCE(MAX(REFRESHED_AT), DATEADD('day', -90, CURRENT_TIMESTAMP()))
     INTO v_last_refresh
     FROM CC_USAGE_DAILY_SUMMARY;
 
     -- Pre-compute user-to-cohort mapping (avoids correlated subquery in MERGE)
+    -- CC_TEMP_USER_COHORT collapses to MAX(COHORT_ROLE) per user to prevent
+    -- multiplying usage rows when a user belongs to multiple cohorts.
     CREATE OR REPLACE TEMPORARY TABLE CC_TEMP_USER_COHORT AS
-    SELECT DISTINCT g.GRANTEE_NAME AS USER_NAME, c.ROLE_NAME AS COHORT_ROLE
-    FROM CC_CREDIT_CONFIG c
-    JOIN SNOWFLAKE.ACCOUNT_USAGE.GRANTS_TO_USERS g
-        ON g.ROLE = c.ROLE_NAME AND g.DELETED_ON IS NULL
-    WHERE c.CONFIG_TYPE = 'COHORT' AND c.IS_ACTIVE = TRUE;
+    SELECT USER_NAME, MAX(COHORT_ROLE) AS COHORT_ROLE
+    FROM (
+        SELECT DISTINCT g.GRANTEE_NAME AS USER_NAME, c.ROLE_NAME AS COHORT_ROLE
+        FROM CC_CREDIT_CONFIG c
+        JOIN SNOWFLAKE.ACCOUNT_USAGE.GRANTS_TO_USERS g
+            ON g.ROLE = c.ROLE_NAME AND g.DELETED_ON IS NULL
+        WHERE c.CONFIG_TYPE = 'COHORT' AND c.IS_ACTIVE = TRUE
+    )
+    GROUP BY USER_NAME;
 
     -- DAILY SUMMARY: CLI
     MERGE INTO CC_USAGE_DAILY_SUMMARY tgt
@@ -506,10 +772,18 @@ BEGIN
         SELECT
             DATE_TRUNC('day', h.USAGE_TIME)::DATE AS USAGE_DATE,
             u.NAME AS USER_NAME,
-            uc.COHORT_ROLE,
+            MAX(uc.COHORT_ROLE) AS COHORT_ROLE,
             'CLI' AS SURFACE,
             COALESCE(f.KEY, 'UNKNOWN') AS MODEL_NAME,
-            SUM(h.TOKEN_CREDITS) AS TOTAL_CREDITS,
+            -- Sum per-model credits from CREDITS_GRANULAR to avoid overcounting
+            -- when requests span multiple models (TOKEN_CREDITS is the request total,
+            -- summing it after FLATTEN would double/triple-count multi-model requests)
+            SUM(
+                COALESCE(f.VALUE:input::FLOAT, 0) +
+                COALESCE(f.VALUE:output::FLOAT, 0) +
+                COALESCE(f.VALUE:cache_read_input::FLOAT, 0) +
+                COALESCE(f.VALUE:cache_write_input::FLOAT, 0)
+            ) AS TOTAL_CREDITS,
             SUM(h.TOKENS) AS TOTAL_TOKENS,
             COUNT(*) AS QUERY_COUNT
         FROM SNOWFLAKE.ACCOUNT_USAGE.CORTEX_CODE_CLI_USAGE_HISTORY h
@@ -517,7 +791,7 @@ BEGIN
         LEFT JOIN CC_TEMP_USER_COHORT uc ON uc.USER_NAME = u.NAME
         LEFT JOIN LATERAL FLATTEN(INPUT => h.CREDITS_GRANULAR, OUTER => TRUE) f
         WHERE h.USAGE_TIME > :v_last_refresh
-        GROUP BY 1, 2, 3, 4, 5
+        GROUP BY 1, 2, 4, 5
     ) src
     ON tgt.USAGE_DATE = src.USAGE_DATE
         AND tgt.USER_NAME = src.USER_NAME
@@ -542,10 +816,15 @@ BEGIN
         SELECT
             DATE_TRUNC('day', h.USAGE_TIME)::DATE AS USAGE_DATE,
             u.NAME AS USER_NAME,
-            uc.COHORT_ROLE,
+            MAX(uc.COHORT_ROLE) AS COHORT_ROLE,
             'SNOWSIGHT' AS SURFACE,
             COALESCE(f.KEY, 'UNKNOWN') AS MODEL_NAME,
-            SUM(h.TOKEN_CREDITS) AS TOTAL_CREDITS,
+            SUM(
+                COALESCE(f.VALUE:input::FLOAT, 0) +
+                COALESCE(f.VALUE:output::FLOAT, 0) +
+                COALESCE(f.VALUE:cache_read_input::FLOAT, 0) +
+                COALESCE(f.VALUE:cache_write_input::FLOAT, 0)
+            ) AS TOTAL_CREDITS,
             SUM(h.TOKENS) AS TOTAL_TOKENS,
             COUNT(*) AS QUERY_COUNT
         FROM SNOWFLAKE.ACCOUNT_USAGE.CORTEX_CODE_SNOWSIGHT_USAGE_HISTORY h
@@ -553,7 +832,7 @@ BEGIN
         LEFT JOIN CC_TEMP_USER_COHORT uc ON uc.USER_NAME = u.NAME
         LEFT JOIN LATERAL FLATTEN(INPUT => h.CREDITS_GRANULAR, OUTER => TRUE) f
         WHERE h.USAGE_TIME > :v_last_refresh
-        GROUP BY 1, 2, 3, 4, 5
+        GROUP BY 1, 2, 4, 5
     ) src
     ON tgt.USAGE_DATE = src.USAGE_DATE
         AND tgt.USER_NAME = src.USER_NAME
@@ -578,10 +857,15 @@ BEGIN
         SELECT
             DATE_TRUNC('day', h.USAGE_TIME)::DATE AS USAGE_DATE,
             u.NAME AS USER_NAME,
-            uc.COHORT_ROLE,
+            MAX(uc.COHORT_ROLE) AS COHORT_ROLE,
             'DESKTOP' AS SURFACE,
             COALESCE(f.KEY, 'UNKNOWN') AS MODEL_NAME,
-            SUM(h.TOKEN_CREDITS) AS TOTAL_CREDITS,
+            SUM(
+                COALESCE(f.VALUE:input::FLOAT, 0) +
+                COALESCE(f.VALUE:output::FLOAT, 0) +
+                COALESCE(f.VALUE:cache_read_input::FLOAT, 0) +
+                COALESCE(f.VALUE:cache_write_input::FLOAT, 0)
+            ) AS TOTAL_CREDITS,
             SUM(h.TOKENS) AS TOTAL_TOKENS,
             COUNT(*) AS QUERY_COUNT
         FROM SNOWFLAKE.ACCOUNT_USAGE.CORTEX_CODE_DESKTOP_USAGE_HISTORY h
@@ -589,7 +873,7 @@ BEGIN
         LEFT JOIN CC_TEMP_USER_COHORT uc ON uc.USER_NAME = u.NAME
         LEFT JOIN LATERAL FLATTEN(INPUT => h.CREDITS_GRANULAR, OUTER => TRUE) f
         WHERE h.USAGE_TIME > :v_last_refresh
-        GROUP BY 1, 2, 3, 4, 5
+        GROUP BY 1, 2, 4, 5
     ) src
     ON tgt.USAGE_DATE = src.USAGE_DATE
         AND tgt.USER_NAME = src.USER_NAME
@@ -615,7 +899,7 @@ BEGIN
             DATE_TRUNC('day', h.USAGE_TIME)::DATE AS USAGE_DATE,
             EXTRACT(HOUR FROM h.USAGE_TIME)::NUMBER(2,0) AS USAGE_HOUR,
             u.NAME AS USER_NAME,
-            uc.COHORT_ROLE,
+            MAX(uc.COHORT_ROLE) AS COHORT_ROLE,
             'CLI' AS SURFACE,
             SUM(h.TOKEN_CREDITS) AS TOTAL_CREDITS,
             COUNT(*) AS QUERY_COUNT
@@ -623,7 +907,7 @@ BEGIN
         JOIN SNOWFLAKE.ACCOUNT_USAGE.USERS u ON h.USER_ID = u.USER_ID
         LEFT JOIN CC_TEMP_USER_COHORT uc ON uc.USER_NAME = u.NAME
         WHERE h.USAGE_TIME > :v_last_refresh
-        GROUP BY 1, 2, 3, 4, 5
+        GROUP BY 1, 2, 3, 5
     ) src
     ON tgt.USAGE_DATE = src.USAGE_DATE
         AND tgt.USAGE_HOUR = src.USAGE_HOUR
@@ -647,7 +931,7 @@ BEGIN
             DATE_TRUNC('day', h.USAGE_TIME)::DATE AS USAGE_DATE,
             EXTRACT(HOUR FROM h.USAGE_TIME)::NUMBER(2,0) AS USAGE_HOUR,
             u.NAME AS USER_NAME,
-            uc.COHORT_ROLE,
+            MAX(uc.COHORT_ROLE) AS COHORT_ROLE,
             'SNOWSIGHT' AS SURFACE,
             SUM(h.TOKEN_CREDITS) AS TOTAL_CREDITS,
             COUNT(*) AS QUERY_COUNT
@@ -655,7 +939,7 @@ BEGIN
         JOIN SNOWFLAKE.ACCOUNT_USAGE.USERS u ON h.USER_ID = u.USER_ID
         LEFT JOIN CC_TEMP_USER_COHORT uc ON uc.USER_NAME = u.NAME
         WHERE h.USAGE_TIME > :v_last_refresh
-        GROUP BY 1, 2, 3, 4, 5
+        GROUP BY 1, 2, 3, 5
     ) src
     ON tgt.USAGE_DATE = src.USAGE_DATE
         AND tgt.USAGE_HOUR = src.USAGE_HOUR
@@ -679,7 +963,7 @@ BEGIN
             DATE_TRUNC('day', h.USAGE_TIME)::DATE AS USAGE_DATE,
             EXTRACT(HOUR FROM h.USAGE_TIME)::NUMBER(2,0) AS USAGE_HOUR,
             u.NAME AS USER_NAME,
-            uc.COHORT_ROLE,
+            MAX(uc.COHORT_ROLE) AS COHORT_ROLE,
             'DESKTOP' AS SURFACE,
             SUM(h.TOKEN_CREDITS) AS TOTAL_CREDITS,
             COUNT(*) AS QUERY_COUNT
@@ -687,7 +971,7 @@ BEGIN
         JOIN SNOWFLAKE.ACCOUNT_USAGE.USERS u ON h.USER_ID = u.USER_ID
         LEFT JOIN CC_TEMP_USER_COHORT uc ON uc.USER_NAME = u.NAME
         WHERE h.USAGE_TIME > :v_last_refresh
-        GROUP BY 1, 2, 3, 4, 5
+        GROUP BY 1, 2, 3, 5
     ) src
     ON tgt.USAGE_DATE = src.USAGE_DATE
         AND tgt.USAGE_HOUR = src.USAGE_HOUR
@@ -789,6 +1073,17 @@ AS
     CALL SP_CC_DAILY_RESET_LIMITS();
 
 ALTER TASK CC_DAILY_RESET_LIMITS RESUME;
+
+
+-- Budget usage refresh task — runs nightly at 2am UTC
+-- Calls SP_CC_REFRESH_BUDGET_USAGE (created by Setup Phase B via sp_definitions.py)
+CREATE TASK IF NOT EXISTS CC_REFRESH_BUDGET_USAGE
+    WAREHOUSE = __WH__
+    SCHEDULE  = 'USING CRON 0 2 * * * UTC'
+AS
+    CALL SP_CC_REFRESH_BUDGET_USAGE();
+
+ALTER TASK CC_REFRESH_BUDGET_USAGE SUSPEND;  -- starts suspended; Setup page resumes after Phase B
 
 
 -- ---------------------------------------------------------------------------
@@ -1127,6 +1422,15 @@ GRANT OWNERSHIP ON PROCEDURE SP_CC_REVOKE_CORTEX_ACCESS(VARCHAR, VARCHAR) TO ROL
 GRANT OWNERSHIP ON PROCEDURE SP_CC_REBALANCE_CREDITS(VARCHAR, VARCHAR, VARCHAR, VARCHAR, VARCHAR) TO ROLE __SP_OWNER_ROLE__ COPY CURRENT GRANTS;
 GRANT OWNERSHIP ON PROCEDURE SP_CC_REFRESH_USAGE_SUMMARIES() TO ROLE __SP_OWNER_ROLE__ COPY CURRENT GRANTS;
 GRANT OWNERSHIP ON PROCEDURE SP_CC_DAILY_RESET_LIMITS() TO ROLE __SP_OWNER_ROLE__ COPY CURRENT GRANTS;
+-- NOTE: Phase C SPs (SP_CC_CLASSIFY_PROMPTS, SP_CC_CHECK_ALERTS, SP_CC_EVALUATE_RESPONSES,
+--       SP_CC_REFRESH_BUDGET_USAGE, SP_CC_MANAGE_QUOTA) are created by the Setup page Phase C
+--       and transferred to __SP_OWNER_ROLE__ automatically. If deploying prerequisites.sql
+--       manually and skipping the Setup page, run these ownership transfers after Phase A:
+-- GRANT OWNERSHIP ON PROCEDURE SP_CC_CLASSIFY_PROMPTS(NUMBER)          TO ROLE __SP_OWNER_ROLE__ COPY CURRENT GRANTS;
+-- GRANT OWNERSHIP ON PROCEDURE SP_CC_CHECK_ALERTS(VARCHAR)             TO ROLE __SP_OWNER_ROLE__ COPY CURRENT GRANTS;
+-- GRANT OWNERSHIP ON PROCEDURE SP_CC_EVALUATE_RESPONSES(NUMBER,VARCHAR) TO ROLE __SP_OWNER_ROLE__ COPY CURRENT GRANTS;
+-- GRANT OWNERSHIP ON PROCEDURE SP_CC_REFRESH_BUDGET_USAGE()            TO ROLE __SP_OWNER_ROLE__ COPY CURRENT GRANTS;
+-- GRANT OWNERSHIP ON PROCEDURE SP_CC_MANAGE_QUOTA(VARCHAR,VARCHAR,VARIANT) TO ROLE __SP_OWNER_ROLE__ COPY CURRENT GRANTS;
 
 -- Tasks must be suspended before ownership can be transferred
 ALTER TASK CC_REFRESH_USAGE_SUMMARIES SUSPEND;
@@ -1214,11 +1518,6 @@ USING (
          'KEYWORD',
          '{"keywords":["send to email","upload to s3","export to google","copy to external","post to webhook","dump table","extract everything"]}',
          'HIGH','SECURITY'),
-        ('Competitor Mention',
-         'Prompts referencing Snowflake competitors.',
-         'KEYWORD',
-         '{"keywords":["databricks","bigquery","redshift","synapse","teradata","cloudera","palantir","dbt cloud","fivetran","azure sql"]}',
-         'MEDIUM','COMPETITOR'),
         ('Personal Use',
          'Prompts unrelated to work — entertainment, personal errands.',
          'KEYWORD',
@@ -1258,7 +1557,8 @@ AS
 CALL SP_CC_CLASSIFY_PROMPTS(26);
 
 -- Resume the task so it actually runs on schedule
-ALTER TASK CC_CLASSIFY_PROMPTS_TASK RESUME;
+-- (RESUME is done in section 7b after ownership is transferred to __SP_OWNER_ROLE__)
+-- ALTER TASK CC_CLASSIFY_PROMPTS_TASK RESUME;
 
 -- ---------------------------------------------------------------------------
 -- 6e. PROMPT EVENTS PRE-COMPUTE TABLE (enterprise-scale Prompt Intelligence)
@@ -1296,6 +1596,11 @@ CREATE TABLE IF NOT EXISTS CC_PROMPT_EVENTS (
 ALTER TABLE IF EXISTS CC_PROMPT_EVENTS ADD COLUMN IF NOT EXISTS PROMPT_CATEGORY VARCHAR(100);
 ALTER TABLE IF EXISTS CC_PROMPT_EVENTS ADD COLUMN IF NOT EXISTS PROMPT_COST_CREDITS FLOAT;
 GRANT OWNERSHIP ON TABLE CC_PROMPT_EVENTS TO ROLE __SP_OWNER_ROLE__ COPY CURRENT GRANTS;
+-- Monthly budget column: app-tracked only, does NOT affect daily limit enforcement
+ALTER TABLE IF EXISTS CC_CREDIT_CONFIG ADD COLUMN IF NOT EXISTS MONTHLY_LIMIT NUMBER(10,2);
+-- AI Budget tables for existing deployments (new tables — safe no-op if already exist via CREATE TABLE IF NOT EXISTS)
+-- Re-grant SNOWFLAKE.BUDGET_CREATOR for existing deployments
+GRANT DATABASE ROLE SNOWFLAKE.BUDGET_CREATOR TO ROLE __SP_OWNER_ROLE__;
 
 -- ---------------------------------------------------------------------------
 -- 6f. ALERTING & NOTIFICATION TABLES
@@ -1339,7 +1644,9 @@ WHERE NOT EXISTS (SELECT 1 FROM CC_ALERT_CONFIG WHERE CREATED_BY = 'SYSTEM' LIMI
 
 -- ---------------------------------------------------------------------------
 -- 6g. EMAIL NOTIFICATION INTEGRATION
---     Requires ACCOUNTADMIN to run. Used by SP_CC_CHECK_ALERTS.
+--     !! REQUIRES ACCOUNTADMIN — this step will silently fail if run as a lower role !!
+--     If using the Setup page, this step is best run as ACCOUNTADMIN separately.
+--     Used by SP_CC_CHECK_ALERTS for email notifications when alerts fire.
 -- ---------------------------------------------------------------------------
 CREATE NOTIFICATION INTEGRATION IF NOT EXISTS CC_EMAIL_INTEGRATION
     TYPE = EMAIL
@@ -1365,6 +1672,7 @@ CREATE ALERT IF NOT EXISTS CC_ALERT_CHECK
     THEN CALL SP_CC_CHECK_ALERTS('BATCH');
 
 ALTER ALERT CC_ALERT_CHECK RESUME;
+-- NOTE: ownership transfer + final RESUME are in section 7b at the end of this script
 
 -- Real-time alert: every hour, fires on any HIGH risk violation in stream
 CREATE ALERT IF NOT EXISTS CC_REALTIME_VIOLATION_ALERT
@@ -1397,6 +1705,50 @@ CREATE TABLE IF NOT EXISTS CC_RESPONSE_QUALITY (
 ) CLUSTER BY (RESPONSE_DATE);
 
 GRANT OWNERSHIP ON TABLE CC_RESPONSE_QUALITY TO ROLE __SP_OWNER_ROLE__ COPY CURRENT GRANTS;
+
+-- ---------------------------------------------------------------------------
+-- 6j. NATIVE PER-USER QUOTAS (Preview)
+--     Snowflake SNOWFLAKE.CORE.QUOTA objects for hard monthly/daily enforcement.
+--     Requires SNOWFLAKE.QUOTA_CREATOR database role on the SP owner role.
+--     NOTE: SNOWFLAKE.QUOTA_CREATOR is a preview feature — requires Snowflake to enable it.
+--           If not yet available in your account, skip these steps and use daily limits only.
+-- ---------------------------------------------------------------------------
+
+-- Grant quota creation privileges to SP owner role
+-- NOTE: If SNOWFLAKE.QUOTA_CREATOR is not available, this will fail — safe to skip.
+GRANT DATABASE ROLE SNOWFLAKE.QUOTA_CREATOR TO ROLE __SP_OWNER_ROLE__;
+GRANT CREATE SNOWFLAKE.CORE.QUOTA ON SCHEMA __DB__.__SCHEMA__ TO ROLE __SP_OWNER_ROLE__;
+
+-- Tag used to scope quotas to specific cohorts
+-- Users in a cohort are tagged with CC_COHORT_TAG = '<cohort_role_name>'
+-- The quota object then scopes to users bearing that tag value.
+CREATE TAG IF NOT EXISTS CC_COHORT_TAG
+    COMMENT = 'CoCo Hub cohort assignment for per-user quota scoping (per-user quotas preview feature)';
+GRANT APPLY ON TAG CC_COHORT_TAG TO ROLE __SP_OWNER_ROLE__;
+GRANT APPLYBUDGET ON TAG CC_COHORT_TAG TO ROLE __SP_OWNER_ROLE__;
+
+-- Tracking table for quota objects managed by CoCo Hub
+CREATE TABLE IF NOT EXISTS CC_NATIVE_QUOTAS (
+    QUOTA_ID        NUMBER AUTOINCREMENT PRIMARY KEY,
+    QUOTA_NAME      VARCHAR(255)   NOT NULL UNIQUE,  -- Snowflake object name, e.g. CC_QUOTA_ENGINEERING
+    QUOTA_LABEL     VARCHAR(255)   NOT NULL,          -- Human-readable display name
+    COHORT_ROLE     VARCHAR(255),                     -- NULL = all users in account
+    MONTHLY_LIMIT   NUMBER(10,2)   NOT NULL,
+    DAILY_LIMIT     NUMBER(10,2),                     -- NULL = no daily limit set
+    DOMAINS         ARRAY,                            -- e.g. ['CORTEX CODE']
+    BLOCK_ENFORCEMENT  BOOLEAN     DEFAULT FALSE,
+    NOTIFY_80_PCT   BOOLEAN        DEFAULT TRUE,
+    NOTIFY_100_PCT  BOOLEAN        DEFAULT TRUE,
+    TAGGED_USERS    NUMBER         DEFAULT 0,         -- # of users tagged at last sync
+    LAST_SYNCED_AT  TIMESTAMP_LTZ,
+    IS_ACTIVE       BOOLEAN        DEFAULT TRUE,
+    CREATED_BY      VARCHAR(255),
+    CREATED_AT      TIMESTAMP_LTZ  DEFAULT CURRENT_TIMESTAMP(),
+    UPDATED_BY      VARCHAR(255),
+    UPDATED_AT      TIMESTAMP_LTZ  DEFAULT CURRENT_TIMESTAMP()
+);
+
+GRANT OWNERSHIP ON TABLE CC_NATIVE_QUOTAS TO ROLE __SP_OWNER_ROLE__ COPY CURRENT GRANTS;
 
 -- ---------------------------------------------------------------------------
 -- 7b. GENERIC ROLE ACCESS LINEAGE UTILITY
@@ -1491,6 +1843,23 @@ def handler(session, target_role):
 $$;
 
 GRANT USAGE ON PROCEDURE SP_SHOW_ROLE_ACCESS_LINEAGE(VARCHAR) TO ROLE __APP_ROLE__;
+
+-- ---------------------------------------------------------------------------
+-- 7b. OWNERSHIP TRANSFER — Phase 6d/6g objects (created after Phase 7)
+--     CC_CLASSIFY_PROMPTS_TASK, CC_REFRESH_BUDGET_USAGE, CC_ALERT_CHECK,
+--     and CC_REALTIME_VIOLATION_ALERT are defined later in the script so their
+--     ownership must be transferred here, at the very end.
+-- ---------------------------------------------------------------------------
+ALTER TASK CC_CLASSIFY_PROMPTS_TASK SUSPEND;
+ALTER TASK CC_REFRESH_BUDGET_USAGE  SUSPEND;
+GRANT OWNERSHIP ON TASK  CC_CLASSIFY_PROMPTS_TASK       TO ROLE __SP_OWNER_ROLE__ COPY CURRENT GRANTS;
+GRANT OWNERSHIP ON TASK  CC_REFRESH_BUDGET_USAGE        TO ROLE __SP_OWNER_ROLE__ COPY CURRENT GRANTS;
+GRANT OWNERSHIP ON ALERT CC_ALERT_CHECK                 TO ROLE __SP_OWNER_ROLE__ COPY CURRENT GRANTS;
+GRANT OWNERSHIP ON ALERT CC_REALTIME_VIOLATION_ALERT    TO ROLE __SP_OWNER_ROLE__ COPY CURRENT GRANTS;
+ALTER TASK  CC_CLASSIFY_PROMPTS_TASK    RESUME;
+-- CC_REFRESH_BUDGET_USAGE stays SUSPENDED — Setup page resumes it after Phase B SP is deployed
+ALTER ALERT CC_ALERT_CHECK              RESUME;
+ALTER ALERT CC_REALTIME_VIOLATION_ALERT RESUME;
 
 -- ---------------------------------------------------------------------------
 -- 8. VERIFICATION

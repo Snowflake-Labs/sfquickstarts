@@ -31,27 +31,39 @@ admin:
 
 This creates roles, tables, stored procedures, and tasks. **Run as ACCOUNTADMIN.**
 
-Open `prerequisites.sql` and update the three variables at the top:
+> **Important:** `prerequisites.sql` uses `__VARIABLE__` placeholders (e.g. `__DB__`, `__SCHEMA__`).
+> These are **not** SQL variables — they must be substituted with your actual values before running.
+> The **recommended approach is the Setup page** inside the app, which handles substitution automatically.
+> For direct SQL or CLI deployment, use the sed command below.
 
-```sql
-SET APP_DB     = 'YOUR_DB';
-SET APP_SCHEMA = 'YOUR_SCHEMA';
-SET APP_WH     = 'YOUR_WAREHOUSE';
-```
+### Recommended: Deploy via the App Setup Page
 
-Then execute the entire file:
+After deploying the Streamlit app (Step 3), open it and go to **Setup → Phase A**.
+The app reads `prerequisites.sql`, substitutes all placeholders using your `config.yaml` values, and executes it. No manual editing needed.
+
+### Alternative: Direct SQL/CLI deployment
+
+If you want to run `prerequisites.sql` outside the app, first substitute the placeholders:
 
 ```bash
-# Option A: Via Cortex Code CLI
-cortex
-> Run the prerequisites.sql file against my Snowflake account
+# 1. Substitute placeholders with your actual values
+sed \
+  -e 's/__DB__/YOUR_DATABASE/g' \
+  -e 's/__SCHEMA__/YOUR_SCHEMA/g' \
+  -e 's/__WH__/YOUR_WAREHOUSE/g' \
+  -e 's/__SP_OWNER_ROLE__/CC_SP_OWNER_ROLE/g' \
+  -e 's/__APP_ROLE__/CC_APP_ROLE/g' \
+  -e 's/__ADMIN_ROLE__/CC_ADMIN_ROLE/g' \
+  -e 's/__USER_ROLE__/CC_USER_ROLE/g' \
+  prerequisites.sql > prerequisites_ready.sql
 
-# Option B: Via Snowflake CLI
-snow sql -f prerequisites.sql --connection YOUR_CONNECTION
-
-# Option C: Via Snowsight
-# Copy-paste and run in a worksheet
+# 2. Run the substituted file (as ACCOUNTADMIN)
+snow sql -f prerequisites_ready.sql --connection YOUR_CONNECTION
 ```
+
+Or for **Snowsight**: open `prerequisites_ready.sql` in a worksheet and run it.
+
+> **Note:** The role names (`CC_SP_OWNER_ROLE` etc.) are defaults. Change them if your org requires different naming.
 
 ### What This Creates
 
