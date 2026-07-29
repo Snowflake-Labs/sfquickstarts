@@ -55,8 +55,6 @@ Navigate to **Snowsight > Notebooks** and create a new notebook with the followi
 - **Runtime**: Container Runtime (CPU)
 - **Warehouse**: Any X-Small or larger warehouse
 
-Alternatively, import the notebook directly from the [GitHub repository](https://github.com/sfc-gh-trasmith/snowflake-fs-ml-service/blob/main/example.ipynb).
-
 ### Install Dependencies
 
 In the first cell of your notebook, install the required package:
@@ -482,7 +480,6 @@ Congratulations! You've built a complete real-time ML inference pipeline that el
 - **Simplified contracts**: Adding or modifying features doesn't require API changes
 
 ### Related Resources
-- [GitHub Repository: snowflake-fs-ml-service](https://github.com/sfc-gh-trasmith/snowflake-fs-ml-service)
 - [Snowflake ML Inference Service Documentation](https://docs.snowflake.com/en/developer-guide/snowflake-ml/inference/real-time-inference-rest-api)
 - [Snowflake Feature Store Documentation](https://docs.snowflake.com/en/developer-guide/snowflake-ml/feature-store/overview)
 - [Snowflake Model Registry Documentation](https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/overview)
