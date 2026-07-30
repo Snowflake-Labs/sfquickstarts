@@ -34,7 +34,7 @@ Snowflake streams encode all three change types using two metadata columns:
 | `DELETE` | `FALSE` | Row deleted | DELETE |
 | `DELETE` | `TRUE` | Old version of an updated row | DELETE |
 
-An UPDATE produces two stream records for the same `product_id` — a `DELETE` (old values) followed by an `INSERT` (new values), both with `_is_update=TRUE`. The sync function does exactly what each record says: DELETE records trigger a delete, INSERT records trigger an insert. Because all records within a file are processed in a single transaction ordered by `updated_at ASC, _action ASC` (DELETEs sort before INSERTs alphabetically), the DELETE half of an update always runs before the INSERT half. This makes UPDATE handling completely transparent — the sync function needs no special logic to detect or handle updates.
+An UPDATE produces two stream records for the same `product_id` — a `DELETE` (old values) and an `INSERT` (new values), both with `_is_update=TRUE`. Crucially, a Snowflake stream reports the **net outcome** of each row between two consumes, not a full statement-by-statement history: within a single exported file, each `product_id` appears as at most a single `INSERT`, a single `DELETE`, or one `DELETE`+`INSERT` update pair. The sync function uses this guarantee to apply each file with a single set-based `MERGE`: the `_is_update` flag distinguishes a genuine deletion (`_is_update=FALSE`) from the delete-half of an update (`_is_update=TRUE`), so after filtering out the update-half deletes there is exactly one intended action per key. This makes UPDATE handling completely transparent — no row-by-row loop and no special update-detection logic is needed.
 
 ### File Ordering Guarantee
 
@@ -394,47 +394,55 @@ OPTIONS (
 
 ### Step 4: Create Sync Function
 
-The sync function processes a single Parquet file inside a single transaction. It loops through the file's records ordered by `updated_at ASC, _action ASC`. Because `'DELETE' < 'INSERT'` alphabetically, all DELETE records are processed before INSERT records within the same timestamp. This means the DELETE half of an UPDATE pair always runs before the INSERT half — no special update detection logic is needed.
+The sync function applies a single Parquet file inside a single transaction using one set-based `MERGE` — no row-by-row loop. To understand why a single statement is sufficient (and correct), you first need to understand what a Snowflake stream actually hands you.
 
-Each record is applied literally: DELETE records delete, INSERT records insert. Since the entire file is one transaction, the intermediate state (row momentarily absent between the DELETE and INSERT of an update) is never visible to any other session.
+> **How Snowflake streams work — net outcome, not history:** A standard (delta) stream does **not** replay every DML statement applied to the source. It exposes the **net change of each row between two offsets** (the last time the stream was consumed and now). All intermediate churn for a given key is collapsed before you ever see it. Concretely, within a single consume — and therefore within a single exported file — each `product_id` appears as **at most one** of the following:
+>
+> | Records for a key in one file | `METADATA$ISUPDATE` (`_is_update`) | Net meaning |
+> |---|---|---|
+> | `INSERT` alone | `false` | net-new row |
+> | `DELETE` alone | `false` | genuine removal |
+> | `DELETE` + `INSERT` pair | `true` (both) | update |
+>
+> You can never get two independent inserts, or an unrelated delete and insert, for the same key in one file. For example, if a row is deleted and then re-inserted before the next consume, the stream nets it to a single `INSERT` (if the row was absent at the start offset) or to a `DELETE`+`INSERT` update pair (if it was present) — never to two separate events. This is why a per-key final-state resolution is always well defined.
 
-> **Note on `updated_at` as the ordering key:** Snowflake table streams expose only three metadata columns — `METADATA$ACTION`, `METADATA$ISUPDATE`, and `METADATA$ROW_ID`. There is no system-provided transaction timestamp or sequence number per record. The `ORDER BY updated_at ASC` in the sync function therefore relies on the **application-maintained** `updated_at` column in the source table. This ordering is correct as long as every INSERT and UPDATE sets `updated_at = current_timestamp()`. If `updated_at` is omitted, stale, or not updated on every change, the sync order will be unreliable.
+The `_is_update` flag is the key to routing each record correctly. The important property: a `DELETE` with `_is_update = true` **always** has its partner `INSERT` in the same file (the pair is emitted atomically in one consume). So the delete-half of an update is noise — the paired `INSERT` already carries the correct final state — and only a `DELETE` with `_is_update = false` should actually remove a row.
+
+By filtering out the update-half deletes (`_action = 'DELETE' AND _is_update = true`), the source reduces to **exactly one row per `product_id`**, each carrying a single intended action. That is precisely the shape Postgres `MERGE` needs (it cannot delete and insert the same target row in one pass), so the whole file collapses into one statement:
+
+- **net update** and **reinsert of an existing row**: the `DELETE` is filtered out; the `INSERT` matches the existing row → `UPDATE`.
+- **net insert**: no matching target row → `INSERT`.
+- **net delete**: `DELETE` with `_is_update = false` matches the target row → `DELETE`.
+
+> **Note on `updated_at`:** Because routing is decided by record *structure* (`_is_update`) rather than by ordering, `updated_at` is **not** a control key for this function — it is stored as a plain data column. Cross-file ordering is handled separately by the sorted list wrapper in Step 5 (file modification time), which sequences one file after another. Within a file there is only one net state per key, so no per-record ordering is required. Snowflake streams expose only three metadata columns — `METADATA$ACTION`, `METADATA$ISUPDATE`, and `METADATA$ROW_ID` — and `_is_update` (`METADATA$ISUPDATE`) is the one that makes this deterministic.
 
 ```sql
 -- Postgres Setup: Step 4 - Create Sync Function
 -- Execute in: psql (Postgres)
 CREATE OR REPLACE FUNCTION sync_products_from_file(filepath TEXT)
 RETURNS VOID
-LANGUAGE plpgsql AS $$
-DECLARE
-    r RECORD;
-BEGIN
-    FOR r IN
-        SELECT
-            product_id,
-            product_name,
-            category,
-            (price_cents::NUMERIC / 100)::NUMERIC(10,2) AS price,
-            status,
-            updated_at::TIMESTAMP AS updated_at,
-            _action
+LANGUAGE SQL AS $$
+    MERGE INTO products t
+    USING (
+        SELECT product_id, product_name, category, (price_cents::NUMERIC / 100)::NUMERIC(10,2) AS price,
+               status, updated_at::TIMESTAMP AS updated_at, _action
         FROM   products_stream_files
         WHERE  _filename = filepath
-        ORDER BY updated_at ASC, _action ASC
-    LOOP
-        IF r._action = 'DELETE' THEN
-
-            DELETE FROM products
-            WHERE  product_id = r.product_id;
-
-        ELSIF r._action = 'INSERT' THEN
-
-            INSERT INTO products (product_id, product_name, category, price, status, updated_at, synced_at)
-            VALUES (r.product_id, r.product_name, r.category, r.price, r.status, r.updated_at, now());
-
-        END IF;
-    END LOOP;
-END;
+               AND  NOT (_action = 'DELETE' AND _is_update = true)  -- drop the delete-half of updates
+    ) s
+    ON t.product_id = s.product_id
+    WHEN MATCHED AND s._action = 'DELETE' THEN
+        DELETE
+    WHEN MATCHED AND s._action = 'INSERT' THEN
+        UPDATE SET product_name = s.product_name,
+                   category     = s.category,
+                   price        = s.price,
+                   status       = s.status,
+                   updated_at   = s.updated_at,
+                   synced_at    = now()
+    WHEN NOT MATCHED AND s._action = 'INSERT' THEN
+        INSERT (product_id, product_name, category, price, status, updated_at, synced_at)
+        VALUES (s.product_id, s.product_name, s.category, s.price, s.status, s.updated_at, now());
 $$;
 ```
 
@@ -654,8 +662,8 @@ Congratulations! You have successfully:
 
 - Created a Snowflake Stream to capture row-level changes (INSERT, UPDATE, DELETE)
 - Created a Snowflake Task that exports stream records to Parquet files on a shared internal stage
-- Understood stream metadata columns (`METADATA$ACTION`, `METADATA$ISUPDATE`) and how INSERT and DELETE records represent all three change types
-- Written a Postgres sync function that processes each change record correctly using ordered row-by-row execution
+- Understood stream metadata columns (`METADATA$ACTION`, `METADATA$ISUPDATE`) and how streams report the net outcome per row across INSERT, UPDATE, and DELETE
+- Written a Postgres sync function that applies each file with a single set-based `MERGE`, using `_is_update` to route each change correctly
 - Used `pg_incremental` to automatically detect and process new stage files with exactly-once delivery
 - Observed end-to-end sync — a change made in Snowflake appeared in Postgres within ~30 seconds
 
