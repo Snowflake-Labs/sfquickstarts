@@ -90,14 +90,18 @@ GRANT EXECUTE TASK ON ACCOUNT TO ROLE dcm_developer;
 GRANT MANAGE GRANTS ON ACCOUNT TO ROLE dcm_developer;
 ```
 
+The access definitions in this project use `GRANT INHERITED` (a Public Preview feature), which requires a one-time account-level opt-in — independent of DCM:
+
+```sql
+ALTER ACCOUNT SET FEATURE_RBAC_INHERITED_GRANTS = 'ENABLED';
+```
+
 ### 3. Grant Data Quality Privileges
 
 To define and test data quality expectations, grant the following:
 
 ```sql
 GRANT APPLICATION ROLE SNOWFLAKE.DATA_QUALITY_MONITORING_VIEWER TO ROLE dcm_developer;
-GRANT APPLICATION ROLE SNOWFLAKE.DATA_QUALITY_MONITORING_ADMIN TO ROLE dcm_developer;
-GRANT DATABASE ROLE SNOWFLAKE.DATA_METRIC_USER TO ROLE dcm_developer;
 GRANT EXECUTE DATA METRIC FUNCTION ON ACCOUNT TO ROLE dcm_developer;
 ```
 
@@ -391,17 +395,19 @@ Open `scripts/02_post_deploy.sql` in a Snowsight worksheet and run each section 
 
 ### 1. Insert Sample Data
 
-The script inserts data into the raw tables: trucks, menu items, customers, inventory, order headers, and order details. Run all the `INSERT` statements.
+The script inserts data into the raw tables: trucks, menu items, customers, inventory, order headers, and order details. It's safe to re-run — dimension inserts skip rows that already exist, and order IDs use a computed offset so each run appends cleanly. Run the statements in this section.
 
 ### 2. Refresh Dynamic Tables
 
-Because all dynamic tables use `INITIALIZE = ON_SCHEDULE`, they were created without data. Use `EXECUTE DCM PROJECT ... REFRESH ALL` to kick off the first refresh of every DT the project manages in one statement:
+Because all dynamic tables use `INITIALIZE = ON_SCHEDULE`, they were created without data. Refresh the analytics dynamic tables with a single multi-table `ALTER DYNAMIC TABLE ... REFRESH` — Snowflake merges their shared upstream (`ENRICHED_ORDER_DETAILS`) and refreshes everything at one data timestamp:
 
 ```sql
-EXECUTE DCM PROJECT DCM_DEMO.PROJECTS.DCM_PROJECT_DEV REFRESH ALL;
+ALTER DYNAMIC TABLE dcm_demo_1_dev.analytics.menu_item_popularity,
+                    dcm_demo_1_dev.analytics.customer_spending_summary,
+                    dcm_demo_1_dev.analytics.truck_performance REFRESH;
 ```
 
-DCM triggers refreshes in dependency order — upstream tables refresh before downstream ones.
+Listing the downstream tables is enough — their shared upstream refreshes once, in dependency order.
 
 ### 3. Verify
 
