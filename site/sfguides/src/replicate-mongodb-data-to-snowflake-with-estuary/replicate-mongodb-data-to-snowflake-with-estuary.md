@@ -284,7 +284,7 @@ With all of our Snowflake resources set up, we can then move back to the Estuary
 
 5. Under the **Source Collections** section, find **Link Capture** and click **Modify**.
 6. Select your MongoDB capture and click **Continue**.
-7. You will then be prompted to decide what you want your **Destination Layout** to look like. This gives you control over how your schema and tables should appear in Snowflake. Try out one of the different options or stick with the **Match source structure** setting to use your MongoDB schema and table names.
+7. You will then be prompted to decide what you want your **Destination Layout** to look like. This gives you control over how your schema and tables should appear in Snowflake. Use the Snowflake schema you created: select **Set a default schema** and provide `ESTUARY_SCHEMA` as the name.
 8. Finalize your choice with **Set source capture**.
 
 With the basic configuration set, there are numerous ways to customize the integration further.
