@@ -84,7 +84,6 @@ GRANT MANAGE GRANTS ON ACCOUNT TO ROLE dcm_developer;
 GRANT CREATE NETWORK POLICY ON ACCOUNT TO ROLE dcm_developer;
 ```
 
-> aside positive
 > **New RBAC feature:** these access definitions use `GRANT INHERITED`, a Snowflake Public Preview capability. Grants marked `INHERITED` are automatically extended to objects created *later* in the container, so read roles stay correctly privileged without re-granting. It needs the one-time, account-level opt-in below — a behavior-change setting that is independent of DCM.
 
 ```sql
