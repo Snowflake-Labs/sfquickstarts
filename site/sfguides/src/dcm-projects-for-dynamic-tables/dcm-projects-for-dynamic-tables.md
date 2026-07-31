@@ -242,7 +242,7 @@ The `sources/definitions/` directory contains SQL files that define your Snowfla
 |:-----|:----------------|
 | `raw.sql` | Database, schemas, and raw landing tables (TRUCK, MENU, CUSTOMER, etc.) |
 | `access.sql` | Warehouse, database roles, account roles, and grants |
-| `analytics.sql` | Dynamic tables for transformations and a UDF for profit margin calculation |
+| `analytics.sql` | Dynamic tables for transformations, plus two scalar functions DCM manages side by side — a **SQL** UDF (`CALCULATE_PROFIT_MARGIN`) for profit-margin %, and a **Python** UDF (`MARGIN_TIER`) that classifies each truck's margin into PREMIUM / STANDARD / VALUE tiers (used in `TRUCK_PERFORMANCE`) |
 | `serve.sql` | Views for dashboards and reporting |
 | `ingest.sql` | A stage and a Task for loading data from CSV files |
 | `expectations.sql` | Data quality expectations using Data Metric Functions |
