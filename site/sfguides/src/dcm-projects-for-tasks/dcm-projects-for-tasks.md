@@ -21,7 +21,7 @@ Task graphs (DAGs, or directed acyclic graphs, of Tasks — meaning dependencies
 You'll define a fifteen-task demo graph that shows off every interesting Task feature in one place:
 
 - **Root task with retries, overlap policy, and graph-level config** pushed into children via `SYSTEM$GET_TASK_GRAPH_CONFIG`
-- **Finalizer task** that emails a plain-text JSON summary of every graph run — even when it failed mid-way
+- **Finalizer task** that emails a formatted HTML summary of every graph run — even when it failed mid-way
 - **Serverless task** and **multi-predecessor task** patterns
 - **Stream-conditional** and **return-value-conditional** child tasks
 - **Failing task with retries** + dependent that gets skipped
@@ -43,7 +43,7 @@ Along the way, you'll see two DCM features that make Tasks a first-class citizen
 - How to define a range of Task features declaratively with `DEFINE TASK`
 - How to use the new `STARTED | SUSPENDED` target-state property to control task state through DCM deployments
 - How to manage SQL procedures used by tasks with `DEFINE PROCEDURE`
-- How to build a finalizer task that sends a plain-text JSON email summary for every graph run
+- How to build a finalizer task that sends a formatted HTML email summary for every graph run
 - How to add a DMF-based quality gate that routes rows to target or quarantine tables
 - How to monitor ongoing health with a serverless failed-task alert
 
@@ -113,14 +113,18 @@ GRANT MANAGE GRANTS ON ACCOUNT TO ROLE dcm_developer;
 GRANT IMPORTED PRIVILEGES ON DATABASE SNOWFLAKE TO ROLE dcm_developer;
 ```
 
+The access definitions use `GRANT INHERITED` (a Public Preview feature), which requires a one-time account-level opt-in — independent of DCM:
+
+```sql
+ALTER ACCOUNT SET FEATURE_RBAC_INHERITED_GRANTS = 'ENABLED';
+```
+
 ### 3. Grant Data Quality Privileges
 
 The quality-gate branch uses system and custom DMFs, which require these grants:
 
 ```sql
 GRANT APPLICATION ROLE SNOWFLAKE.DATA_QUALITY_MONITORING_VIEWER TO ROLE dcm_developer;
-GRANT APPLICATION ROLE SNOWFLAKE.DATA_QUALITY_MONITORING_ADMIN  TO ROLE dcm_developer;
-GRANT DATABASE ROLE SNOWFLAKE.DATA_METRIC_USER TO ROLE dcm_developer;
 GRANT EXECUTE DATA METRIC FUNCTION ON ACCOUNT TO ROLE dcm_developer;
 ```
 
@@ -280,6 +284,7 @@ Three helper functions, all managed by DCM:
 - **`RUNTIME_WITH_OUTLIERS`** — randomizes each task's duration so the graph feels realistic, with 1-in-10 outlier runs
 - **`GET_TASK_GRAPH_RUN_SUMMARY`** — returns the current graph run as a JSON array (used by the finalizer)
 - **`GET_ACTIVE_QUALITY_CHECKS`** — a UDTF listing every DMF currently attached to a given table
+- **`HTML_FROM_JSON_TASK_RUNS`** — a Python function that renders the JSON run summary as an HTML table (used by the finalizer for the email body)
 
 ### Expectations — `sources/definitions/expectations.sql`
 
@@ -363,27 +368,29 @@ AS
     END;
 ```
 
-And the finalizer that closes out every run with a plain-text JSON email:
+And the finalizer that closes out every run with a formatted HTML email summary:
 
 ```sql
 DEFINE TASK DCM_DEMO_4{{env_suffix}}.PIPELINE.DEMO_FINALIZER
     WAREHOUSE = 'DCM_DEMO_4_WH{{env_suffix}}'
     FINALIZE = DCM_DEMO_4{{env_suffix}}.PIPELINE.DEMO_TASK_1
-    COMMENT = 'Sends a plain-text JSON email summary after every graph run'
+    COMMENT = 'Sends a formatted HTML email summary after every graph run'
     STARTED
 AS
     DECLARE
         MY_ROOT_TASK_ID STRING;
         MY_START_TIME   TIMESTAMP_LTZ;
         SUMMARY_JSON    STRING;
+        SUMMARY_HTML    STRING;
     BEGIN
         MY_ROOT_TASK_ID := (CALL SYSTEM$TASK_RUNTIME_INFO('CURRENT_ROOT_TASK_UUID'));
         MY_START_TIME   := (CALL SYSTEM$TASK_RUNTIME_INFO('CURRENT_TASK_GRAPH_ORIGINAL_SCHEDULED_TIMESTAMP'));
 
         SUMMARY_JSON := (SELECT DCM_DEMO_4{{env_suffix}}.PIPELINE.GET_TASK_GRAPH_RUN_SUMMARY(:MY_ROOT_TASK_ID, :MY_START_TIME));
+        SUMMARY_HTML := (SELECT DCM_DEMO_4{{env_suffix}}.PIPELINE.HTML_FROM_JSON_TASK_RUNS(:SUMMARY_JSON));
 
         CALL SYSTEM$SEND_SNOWFLAKE_NOTIFICATION(
-            SNOWFLAKE.NOTIFICATION.TEXT_PLAIN(:SUMMARY_JSON),
+            SNOWFLAKE.NOTIFICATION.TEXT_HTML(:SUMMARY_HTML),
             SNOWFLAKE.NOTIFICATION.EMAIL_INTEGRATION_CONFIG(
                 'dcm_demo_email_notifications',
                 'DCM Task Graph Run Summary ({{env_suffix}})',
@@ -455,7 +462,7 @@ Deployment takes about 30–60 seconds. When it succeeds, every `STARTED` task i
 <!-- ------------------------ -->
 ## Post-Deploy: Stream and a Manual Run
 
-Streams are not yet supported as DCM `DEFINE` statements, so the stream setup still lives in `scripts/02_post_deploy.sql`. The script also resumes the DCM-managed failed-task alert (which deploys suspended) and triggers the first graph run. (The DMF attachments and the failed-task alert definition are already DCM-managed — see `expectations.sql` and `alerts.sql` above.)
+Streams are not yet supported as DCM `DEFINE` statements, so the stream setup still lives in `scripts/02_post_deploy.sql`. The script seeds the source table and triggers the first graph run. (The DMF attachments and the failed-task alert are already DCM-managed, and the alert deploys `STARTED` — see `expectations.sql` and `alerts.sql` above.)
 
 Open that script in a Snowsight worksheet and walk through it section by section.
 
@@ -469,13 +476,15 @@ CREATE OR REPLACE STREAM dcm_demo_4_dev.pipeline.demo_stream
 
 `DEMO_TASK_8` has `WHEN SYSTEM$STREAM_HAS_DATA('...DEMO_STREAM')`, so without data it is skipped on every graph run — exactly the "conditional execution on a stream" scenario.
 
-### 2. Resume the Failed-Task Alert
+### 2. Force-Run the Failed-Task Alert (optional)
+
+Because the alert deploys with a `STARTED` target state, it is already evaluating on its 60-minute schedule — no `RESUME` is needed. To see it fire on demand rather than waiting for the schedule, force-run it:
 
 ```sql
-ALTER ALERT dcm_demo_4_dev.pipeline.failed_task_alert RESUME;
+EXECUTE ALERT dcm_demo_4_dev.pipeline.failed_task_alert;
 ```
 
-The alert was deployed by DCM but starts suspended — this one-time `RESUME` flips it to running. From here on it evaluates on its 60-minute schedule.
+This evaluates the alert condition immediately against recent task history.
 
 ### 3. Seed the Source Table and Run the Graph
 
@@ -519,7 +528,7 @@ Check your inbox — you should see **two kinds of notification email** from thi
 
 | Email subject | Sent by | When it fires |
 |---|---|---|
-| **DCM Task Graph Run Summary (_DEV)** | `DEMO_FINALIZER` — a DCM-managed finalizer task | After **every** graph run, with a JSON summary of task statuses, return values, and durations |
+| **DCM Task Graph Run Summary (_DEV)** | `DEMO_FINALIZER` — a DCM-managed finalizer task | After **every** graph run, with a formatted HTML summary of task statuses, return values, and durations |
 | **DCM Pipeline — Failed Task Alert** | `FAILED_TASK_ALERT` — the DCM-managed serverless alert (defined in `alerts.sql`, resumed in `02_post_deploy.sql`) | Every 60 minutes, **only** when at least one task failed since the last check |
 
 The finalizer gives you per-run detail; the alert is a background safety net that catches failures even if the finalizer itself errors out.
@@ -571,7 +580,7 @@ In this guide, you learned how to:
 - **Define a complete task graph as code** using DCM Projects — root, finalizer, conditional branches, retries, and quality gates, all in SQL definition files
 - **Use the `STARTED | SUSPENDED` target-state property** on `DEFINE TASK` so every deployment lands the graph in exactly the state you wanted, no post-scripts required
 - **Manage stored procedures through DCM** with `DEFINE PROCEDURE`, so the procs your tasks call version alongside the tasks themselves
-- **Send plain-text email summaries from a finalizer task** using a reusable JSON summary helper function
+- **Send formatted HTML email summaries from a finalizer task** using reusable JSON-summary and HTML-rendering helper functions
 - **Build a DMF-backed quality gate** that uses return-value routing to push clean rows to a target table and bad rows to quarantine — and make the set of checks completely data-driven
 - **Monitor graph health with a DCM-managed serverless alert** (`DEFINE ALERT`) that emails you whenever any task in the database fails
 
