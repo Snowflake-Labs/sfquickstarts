@@ -524,6 +524,62 @@ FROM   incremental.processed_files
 WHERE  pipeline_name = 'products_sync_pipeline';
 ```
 
+### Step 9: Schedule Stage File Purge
+
+`incremental.processed_files` accumulates one row per processed file and the Parquet files themselves remain on the stage indefinitely. Create a maintenance function that purges files older than a configurable number of days and schedule it with pg_cron to run daily.
+
+**Operation order matters for safety.** If the `processed_files` row were deleted first and the stage delete then failed, pg_incremental would no longer recognise the file as processed and would apply it again on the next pipeline run, producing duplicate rows. To prevent this, the function deletes the stage file and flushes the cache *before* removing the tracking row. If `lake_file.delete` raises an error, the `processed_files` row is left intact and the file cannot be reprocessed. A per-file loop with an inner exception block isolates failures so one bad file does not abort the entire purge run — skipped files are logged as warnings.
+
+```sql
+-- Postgres Setup: Step 9 - Schedule Stage File Purge
+-- Execute in: psql (Postgres)
+
+CREATE OR REPLACE FUNCTION purge_old_sync_files(older_than_days INT DEFAULT 7)
+RETURNS INT LANGUAGE plpgsql AS $$
+DECLARE
+    rec           RECORD;
+    deleted_count INT := 0;
+BEGIN
+    FOR rec IN
+        SELECT file_path
+        FROM   incremental.processed_files
+        WHERE  pipeline_name = 'products_sync_pipeline'
+          AND  processed_at  < now() - (older_than_days || ' days')::interval
+    LOOP
+        BEGIN
+            -- Stage delete first: if this fails the processed_files row is
+            -- preserved and the file will not be reprocessed
+            PERFORM lake_file.delete(rec.file_path);
+            PERFORM lake_file_cache.remove(rec.file_path);
+
+            -- Only remove the tracking row after the stage delete succeeds
+            DELETE FROM incremental.processed_files
+            WHERE  file_path = rec.file_path;
+
+            deleted_count := deleted_count + 1;
+        EXCEPTION WHEN OTHERS THEN
+            RAISE WARNING 'purge_old_sync_files: skipping % — %',
+                          rec.file_path, SQLERRM;
+        END;
+    END LOOP;
+
+    RETURN deleted_count;
+END;
+$$;
+
+-- Run daily at 03:00 UTC, retaining the last 30 days of files
+SELECT cron.schedule(
+    'purge-old-sync-files',
+    '0 3 * * *',
+    $$SELECT purge_old_sync_files(7)$$
+);
+
+-- Confirm the job is registered
+SELECT jobid, jobname, schedule, active FROM cron.job ORDER BY jobid;
+```
+
+Adjust the `7` day default in the `cron.schedule` call to match your retention requirements.
+
 <!-- ------------------------ -->
 ## Observe Live Sync
 
