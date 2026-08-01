@@ -373,6 +373,7 @@ Add schema tests to the existing models in this project.
 Save the results in dbt/models/_schema.yml.
 At a minimum, each model's primary key should have not_null and unique tests.
 Add any other tests that make sense given the columns in each model.
+For parameterized tests like accepted_values, nest all test parameters under an arguments: key.
 ```
 
 CoCo will read the model SQL files, identify the primary key columns, and generate `dbt/models/_schema.yml` with appropriate tests for `customer_key` in `customers` and `order_key` in `orders_summary`, along with additional column-level tests where they make sense. Review the changes and click on "Keep" to accept/save them. Run `dbt build` to confirm everything passes:
