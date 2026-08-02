@@ -660,6 +660,10 @@ Expected results:
 ```sql
 -- Cleanup: Postgres Cleanup
 -- Execute in: psql (Postgres)
+SELECT cron.unschedule('purge-old-sync-files');
+
+DROP FUNCTION      IF EXISTS purge_old_sync_files(INT);
+
 SELECT incremental.drop_pipeline('products_sync_pipeline');
 
 DROP FUNCTION      IF EXISTS sync_products_from_file(TEXT);
