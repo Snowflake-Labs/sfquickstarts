@@ -65,7 +65,7 @@ There are several ways to authenticate your connection. Common environment varia
 | `SNOWFLAKE_TOKEN_FILE_PATH` | Path to token file |
 | `SNOWFLAKE_OAUTH_CLIENT_ID` | OAuth client ID |
 
-For a full list, see the [Manage Snowflake connections guide](https://docs.snowflake.com/en/user-guide/snowsql-connect).
+For a full list, see the [Manage Snowflake connections guide](https://docs.snowflake.com/en/developer-guide/snowflake-cli/connecting/configure-connections).
 
 <!-- ------------------------ -->
 ## Install the CoCo CLI on Mac
@@ -676,7 +676,7 @@ In Demo 1, that means a Dynamic Table, a small runbook from a bundled skill, and
 
 ### Related Resources
 - [Cortex Code Documentation](https://docs.snowflake.com/en/user-guide/cortex-code)
-- [Manage Snowflake Connections](https://docs.snowflake.com/en/user-guide/snowsql-connect)
+- [Manage Snowflake Connections](https://docs.snowflake.com/en/developer-guide/snowflake-cli/connecting/configure-connections)
 - [Dynamic Tables Overview](https://docs.snowflake.com/en/user-guide/dynamic-tables-intro)
 - [Cortex Agents Overview](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agent)
 - [Get Started with Snowflake Guides](https://www.snowflake.com/en/developers/guides/get-started-with-guides)
