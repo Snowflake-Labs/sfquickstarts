@@ -260,6 +260,10 @@ Five tables support the graph:
 - **`QUARANTINED_WEATHER_DATA`** — target for rows that failed
 - **`TASK_DEMO_TABLE`** — used by the stream-conditional task
 
+The same file also declares the stream the graph depends on:
+
+- **`DEMO_STREAM`** — a `DEFINE STREAM` on `TASK_DEMO_TABLE`, read by the stream-conditional task `DEMO_TASK_8`
+
 ### Procedures — `sources/definitions/procedures.sql`
 
 This file uses **`DEFINE PROCEDURE`**, so procedure lifecycle is fully DCM-managed — you don't need separate `CREATE OR ALTER PROCEDURE` migrations for the demo procs.
@@ -460,23 +464,15 @@ snow dcm deploy --target DCM_DEV
 Deployment takes about 30–60 seconds. When it succeeds, every `STARTED` task is already running state — the schedule on `DEMO_TASK_1` will fire the root task at the next CRON slot, and `DEMO_TASK_14` and `DEMO_TASK_15` are correctly in `SUSPENDED` state.
 
 <!-- ------------------------ -->
-## Post-Deploy: Stream and a Manual Run
+## Post-Deploy: Seed Data and a Manual Run
 
-Streams are not yet supported as DCM `DEFINE` statements, so the stream setup still lives in `scripts/02_post_deploy.sql`. The script seeds the source table and triggers the first graph run. (The DMF attachments and the failed-task alert are already DCM-managed, and the alert deploys `STARTED` — see `expectations.sql` and `alerts.sql` above.)
+`scripts/02_post_deploy.sql` seeds the source table and triggers the first graph run. Everything the graph depends on is already DCM-managed — the stream, the DMF attachments, and the failed-task alert, which deploys `STARTED` (see `tables.sql`, `expectations.sql` and `alerts.sql` above).
+
+`DEMO_STREAM` is declared with `DEFINE STREAM` next to its source table and deploys empty. `DEMO_TASK_8` has `WHEN SYSTEM$STREAM_HAS_DATA('...DEMO_STREAM')`, so without data it is skipped on every graph run — exactly the "conditional execution on a stream" scenario.
 
 Open that script in a Snowsight worksheet and walk through it section by section.
 
-### 1. Create the Stream
-
-```sql
-CREATE OR REPLACE STREAM dcm_demo_4_dev.pipeline.demo_stream
-    ON TABLE dcm_demo_4_dev.pipeline.task_demo_table
-    COMMENT = 'Empty stream — DEMO_TASK_8 will be skipped unless this has data';
-```
-
-`DEMO_TASK_8` has `WHEN SYSTEM$STREAM_HAS_DATA('...DEMO_STREAM')`, so without data it is skipped on every graph run — exactly the "conditional execution on a stream" scenario.
-
-### 2. Force-Run the Failed-Task Alert (optional)
+### 1. Force-Run the Failed-Task Alert (optional)
 
 Because the alert deploys with a `STARTED` target state, it is already evaluating on its 60-minute schedule — no `RESUME` is needed. To see it fire on demand rather than waiting for the schedule, force-run it:
 
@@ -486,7 +482,7 @@ EXECUTE ALERT dcm_demo_4_dev.pipeline.failed_task_alert;
 
 This evaluates the alert condition immediately against recent task history.
 
-### 3. Seed the Source Table and Run the Graph
+### 2. Seed the Source Table and Run the Graph
 
 ```sql
 INSERT INTO dcm_demo_4_dev.pipeline.weather_data_source (...) VALUES (...);
