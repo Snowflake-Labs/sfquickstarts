@@ -269,5 +269,5 @@ Other CoCo interfaces:
 - [Snowflake CoCo in Snowsight](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-snowsight)
 
 Additional Reading:
-- [Snowflake Developers Blog](https://developers.snowflake.com/blog/)
+- [Snowflake Developers Blog](https://medium.com/snowflake)
 - [Snowflake Community](https://community.snowflake.com/s/)
