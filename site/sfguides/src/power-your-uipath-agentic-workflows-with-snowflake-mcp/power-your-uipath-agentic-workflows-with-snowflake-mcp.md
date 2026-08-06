@@ -467,7 +467,7 @@ When you are done with this quickstart, run the teardown script to remove all Sn
 - [Snowflake MCP Server Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents-mcp)
 - [Network Policies](https://docs.snowflake.com/en/user-guide/network-policies)
 - [Snowflake Cortex Analyst](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst)
-- [Snowflake Cortex Search](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search)
+- [Snowflake Cortex Search](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview)
 - [UiPath Automation Cloud Documentation](https://docs.uipath.com/automation-cloud/automation-cloud/latest)
 - [UiPath Orchestrator - MCP Servers](https://docs.uipath.com/orchestrator/automation-cloud/latest)
 - [UiPath Orchestrator Outbound IP Addresses](https://docs.uipath.com/orchestrator/automation-cloud/latest/user-guide/orchestrator-outbound-ip-addresses)
