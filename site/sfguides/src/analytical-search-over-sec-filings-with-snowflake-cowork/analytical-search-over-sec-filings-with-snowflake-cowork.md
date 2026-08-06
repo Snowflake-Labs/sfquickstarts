@@ -96,6 +96,7 @@ Consider the question: *"How many filings filed on Feb 3, 2025 mention cybersecu
 3. COUNT(DISTINCT ACCESSION_NO) over the filtered table
 
 > Answer: "5 filings filed on Feb 3, 2025 mention substantive cybersecurity risks. The companies are: [complete list with citations]."
+
 ![Cybersecurity_result](assets/Cybersecurity_result.png)
 
 → Quantitative, exhaustive answer with precise filtering and SQL-level computation.
@@ -121,8 +122,6 @@ Once the corpus is pruned, the agent applies semantic operators directly on the 
 | **AI_EXTRACT** | Pull structured fields from unstructured text | Extract person name, role, and whether it's a departure or appointment |
 | **AI_AGG** | Deduplicate, cluster, and summarize across rows | Collapse 200 risk phrases into top-10 categories with counts |
 | **SQL** | Group, count, join, rank, trend, calculate | COUNT BY sector, percentage breakdowns, temporal comparisons |
-
-![Analytical_search_flow](assets/Analytical_search_flow.png)
 
 ### Auto-Routing
 
@@ -566,7 +565,7 @@ In Snowflake UI click Cortex AI and open **Snowflake CoWork** and select the `SE
 
 **Key insight:** Trust over completeness. The agent refuses to fabricate when the corpus lacks data, and offers constructive alternatives. This is as important as getting answers right.
 
-**Follow-up (if desired):**
+**Follow-up with Boeing and RTX instead of Apple and Microsoft**
 
 > Compare Boeing and RTX 10-K risk factor language — what does each emphasize?
 ![Boeing_RTX](assets/Boeing_RTX.png)
