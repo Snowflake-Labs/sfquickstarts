@@ -95,7 +95,8 @@ Consider the question: *"How many filings filed on Feb 3, 2025 mention cybersecu
 2. AI_FILTER to classify which chunks discuss *actual* cybersecurity risks (not generic boilerplate)
 3. COUNT(DISTINCT ACCESSION_NO) over the filtered table
 
-> Answer: "10 filings filed on Feb 3, 2025 mention substantive cybersecurity risks. The companies are: [complete list with citations]."
+> Answer: "5 filings filed on Feb 3, 2025 mention substantive cybersecurity risks. The companies are: [complete list with citations]."
+![Cybersecurity_result](assets/Cybersecurity_result.png)
 
 → Quantitative, exhaustive answer with precise filtering and SQL-level computation.
 
@@ -138,11 +139,7 @@ Before executing analytical queries, the agent generates a clear execution plan 
 
 ### The Spectrum of Search Intelligence
 
-| Level | Product | Output | Example |
-|-------|---------|--------|---------|
-| Retrieve | Cortex Search | Top-K Results | "Here are 10 relevant docs" |
-| Retrieve + Reason | Cortex Agent + Search | Top-K Results + Reasoning | "Based on 10 docs, the answer is..." |
-| Retrieve + Compute | **Analytical Search** | Multi-Search + AI Functions + SQL | "42% of 847 docs mention X, trending up Q3→Q4" |
+![Search_intelligence](assets/Search_intelligence.png)
 
 <!-- ------------------------ -->
 ## Setting Up Your Environment (00_env_setup.sql)
