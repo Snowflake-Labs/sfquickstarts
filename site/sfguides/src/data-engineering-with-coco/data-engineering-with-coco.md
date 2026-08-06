@@ -1,11 +1,11 @@
 authors: Jeremiah Hansen
 id: data-engineering-with-coco
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/community-sourced, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/cortex-code
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/community-sourced, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/coco
 language: en
 summary: Learn how to use CoCo Skills, Plugins, and Agents to turn your team's data engineering standards into reproducible, automated outcomes.
 environments: web
 status: Published
-feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+feedback link: https://github.com/Snowflake-Labs/sfquickstarts/issues
 fork repo link: https://github.com/Snowflake-Labs/sfguide-data-engineering-with-coco
 
 
