@@ -8,7 +8,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 # Build Real-Time ML Inference with Feature Store
-<!-- ------------------------ -->
+
 ## Overview
 
 In production ML systems, one of the hardest problems is **training-serving skew** — when features used at inference time differ from those used during training due to separate code paths and data sources. Snowflake's **Feature Store + ML Inference Service** integration solves this by providing a single source of truth for features across training and serving.
