@@ -5,7 +5,7 @@ categories: snowflake-site:taxonomy/solution-center/certification/quickstart, sn
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-fork repo link: https://github.com/sfc-gh-ppaczewski/sfquickstarts/tree/master/site/sfguides/src/analytical-search-over-sec-filings-with-snowflake-cowork
+fork repo link: https://github.com/sfc-gh-ppaczewski/sfquickstarts/tree/add-analytical-search-sec-filings-guide/site/sfguides/src/analytical-search-over-sec-filings-with-snowflake-cowork
 
 # Analytical Search over SEC Filings with Snowflake CoWork
 <!-- ------------------------ -->
@@ -31,7 +31,7 @@ In this quickstart you will ingest a day of SEC EDGAR filings, build a multi-ind
 -   A **Data Pipeline** that ingests, enriches, chunks, and extracts signals from SEC EDGAR filings
 -   A **Cortex Search service** with text + vector indexes over 3,400+ filing chunks
 -   A **Semantic View** for structured analytics (counts, sentiment breakdowns, sector comparisons)
--   An **Analytical Search agent** wired to all three tools, registered in Snowflake CoWork
+-   An **Analytical Search agent** wired to all Cortex Search and Semantic View tools, registered in Snowflake CoWork
 -   Validated analytical queries demonstrating counting, listing, hybrid, and auto-routing capabilities
 
 ### What You'll Need
