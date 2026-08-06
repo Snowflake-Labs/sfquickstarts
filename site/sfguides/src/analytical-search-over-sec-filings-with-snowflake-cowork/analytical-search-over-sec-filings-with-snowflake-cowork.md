@@ -1,0 +1,667 @@
+author: Piotr Paczewski, Lucas Galan
+id: analytical-search-over-sec-filings-with-snowflake-cowork
+summary: Build an analytical search agent that answers counting, listing, and trend questions over thousands of SEC filings — going far beyond what traditional RAG can do.
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/cortex-agents, site:taxonomy/snowflake-feature/cortex-search
+environments: web
+status: Published
+feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+fork repo link: https://github.com/sfc-gh-ppaczewski/sfquickstarts/tree/master/site/sfguides/src/analytical-search-over-sec-filings-with-snowflake-cowork
+
+# Analytical Search over SEC Filings with Snowflake CoWork
+<!-- ------------------------ -->
+![Analytical_search_intro](assets/Analytical_search_intro.png)
+
+## Overview
+
+**Answer analytical questions: precise counts, exhaustive lists, cross-document patterns over thousands of unstructured SEC filings using Cortex Agents with Analytical Search.**
+
+Traditional RAG retrieves 10–50 passages and asks an LLM to summarize. That works for single-document lookups, but fails on questions that require processing hundreds of filings: "How many companies disclosed a cybersecurity incident?" or "List every M&A deal filed this week." Analytical Search solves this by combining semantic search, AI functions, and SQL into one orchestrated loop.
+
+In this quickstart you will ingest a day of SEC EDGAR filings, build a multi-index Cortex Search service, create a Semantic View for structured analytics, and deploy an Analytical Search agent in Snowflake CoWork — then ask it questions that no standard RAG system can answer.
+
+### What You'll Learn
+
+-   Why traditional RAG breaks on analytical questions (top-k ceiling, no compute, no filters)
+-   How Analytical Search combines Cortex Search with AI_FILTER, AI_EXTRACT, and AI_AGG
+-   How auto-routing keeps simple questions cheap while powering analytical ones
+-   How adaptive depth retrieves exactly as much data as the question requires
+
+### What You'll Build
+
+-   A **Data Pipeline** that ingests, enriches, chunks, and extracts signals from SEC EDGAR filings
+-   A **Cortex Search service** with text + vector indexes over 3,400+ filing chunks
+-   A **Semantic View** for structured analytics (counts, sentiment breakdowns, sector comparisons)
+-   An **Analytical Search agent** wired to all three tools, registered in Snowflake CoWork
+-   Validated analytical queries demonstrating counting, listing, hybrid, and auto-routing capabilities
+
+### What You'll Need
+
+-   Snowflake account with `ACCOUNTADMIN` role
+-   Cortex enabled in you Snowflake account 
+
+### Source Code
+
+All SQL files are available in the [source code repository](https://github.com/sfc-gh-ppaczewski/sfquickstarts/tree/master/site/sfguides/src/analytical-search-over-sec-filings-with-snowflake-cowork/sql):
+
+| File | Purpose |
+|------|---------|
+| `sql/00_env_setup.sql` | Environment setup |
+| `sql/01_pipeline.sql` | Full ingestion, enrichment, chunking, and signal extraction pipeline |
+| `sql/02_create_search_service.sql` | Multi-index Cortex Search service |
+| `sql/03_create_semantic_view.sql` | Semantic View for Cortex Analyst |
+| `sql/04_deploy_agent.sql` | Agent deployment + CoWork registration |
+| `sql/99_teardown.sql` | Full cleanup |
+
+<!-- ------------------------ -->
+## The Problem: Why RAG Breaks on Analytical Questions
+
+Standard RAG has three fundamental limitations that make it unsuitable for analytical work over large document collections:
+
+### Top-K Ceiling
+
+RAG retrieves just 10–50 results to fit in the LLM context window. Extending beyond this typically reduces accuracy and increases cost. You cannot count 36 leadership changes by looking at 5 examples.
+
+### Semantic Only
+
+No structural filters over attributes such as date, status, or region. "Contextual chunking" can help, but doesn't allow for targeted search queries with precise date ranges or category filters.
+
+### No Compute
+Counts and sums are mostly hallucinated, not calculated. The LLM's worldview is limited to the handful of passages in its context — it estimates rather than computes.
+
+### Query Types That Break Traditional RAG
+
+High-value enterprise queries requiring exhaustiveness, aggregates, or temporal analysis:
+
+| Query Type | Example | Why RAG Fails |
+|------------|---------|---------------|
+| **List queries with multi-aspect filters** | "List all companies that disclosed a cybersecurity incident this month" | Top-k misses the long tail |
+| **Aggregates** | "What percentage of filings mention supply chain risk in Finance vs Technology?" | Cannot count from a sample |
+| **Temporal queries** | "What new risk themes emerged this quarter compared to last?" | No date filtering, no comparison logic |
+
+### Traditional RAG vs Analytical Search
+
+Consider the question: *"How many filings filed on Feb 3, 2025 mention cybersecurity risks?"*
+
+**Traditional RAG approach:**
+1. One search query with limit=10: `search("cybersecurity risks")`
+2. Feeds 10 results back to the LLM to summarize
+
+> Answer: "Based on the provided documents, several companies mention cybersecurity risks, including Boeing and GE. However, there may be more that were not analyzed."
+
+→ Imprecise answer based on a sample. No actual count.
+
+**Analytical Search approach:**
+1. Structured search
+2. AI_FILTER to classify which chunks discuss *actual* cybersecurity risks (not generic boilerplate)
+3. COUNT(DISTINCT ACCESSION_NO) over the filtered table
+
+> Answer: "10 filings filed on Feb 3, 2025 mention substantive cybersecurity risks. The companies are: [complete list with citations]."
+
+→ Quantitative, exhaustive answer with precise filtering and SQL-level computation.
+
+<!-- ------------------------ -->
+## How Analytical Search Works
+
+Analytical Search is an orchestration capability in Cortex Agents that enables analytical queries over large document collections. It operates in two layers:
+
+### Layer 1: Search to Prune
+
+Cortex Search narrows the full corpus to a relevant candidate set — finding documents about a specific topic, isolating records with a particular attribute, or filtering to a date range. This happens without scanning every document with a large model.
+
+**Adaptive depth** controls how far to search. Rather than using a fixed top-k limit, the agent dynamically adjusts search depth based on the relevance of results: extending when the tail is still relevant, stopping when quality drops.
+
+### Layer 2: AI Functions and SQL to Analyze
+
+Once the corpus is pruned, the agent applies semantic operators directly on the result set:
+
+| Function | What It Does | Example |
+|----------|-------------|---------|
+| **AI_FILTER** | Semantic yes/no classification per row | "Is this about an actual cybersecurity incident (not generic risk boilerplate)?" |
+| **AI_EXTRACT** | Pull structured fields from unstructured text | Extract person name, role, and whether it's a departure or appointment |
+| **AI_AGG** | Deduplicate, cluster, and summarize across rows | Collapse 200 risk phrases into top-10 categories with counts |
+| **SQL** | Group, count, join, rank, trend, calculate | COUNT BY sector, percentage breakdowns, temporal comparisons |
+
+### The Analytical Search Flow
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                           User Query                                 │
+└───────────────────────────────────┬─────────────────────────────────┘
+                                    │
+                                    ▼
+                            ┌──────────────┐
+                            │     Plan     │  Agent generates execution plan
+                            └──────┬───────┘
+                                   │
+                                   ▼
+                            ┌──────────────┐     ┌─────────────────────┐
+                            │    Search    │◄───▶│  Cortex Search      │
+                            └──────┬───────┘     │  Service            │
+                                   │             │  (Multi-Index)      │
+                                   ▼             └─────────────────────┘
+                            ┌──────────────┐
+                            │ AI Functions │  AI_FILTER, AI_EXTRACT, AI_AGG
+                            └──────┬───────┘
+                                   │
+                                   ▼
+                            ┌──────────────┐
+                            │   Reason +   │  Iterate if needed
+                            │   Iterate    │
+                            └──────┬───────┘
+                                   │
+                                   ▼
+                            ┌──────────────┐
+                            │   Results    │  Precise, cited, auditable
+                            └──────────────┘
+```
+
+### Auto-Routing
+
+The agent classifies query intent at runtime:
+- **Simple, single-passage questions** → standard RAG path (no persist, no AI functions, low cost)
+- **Corpus-wide analytical questions** → full Analytical Search loop
+
+You don't need to specify which mode to use. The agent decides automatically.
+
+### Planning Mode
+
+Before executing analytical queries, the agent generates a clear execution plan and presents it for review. This lets you verify the logical steps before any data is processed.
+
+### The Spectrum of Search Intelligence
+
+| Level | Product | Output | Example |
+|-------|---------|--------|---------|
+| Retrieve | Cortex Search | Top-K Results | "Here are 10 relevant docs" |
+| Retrieve + Reason | Cortex Agent + Search | Top-K Results + Reasoning | "Based on 10 docs, the answer is..." |
+| Retrieve + Compute | **Analytical Search** | Multi-Search + AI Functions + SQL | "42% of 847 docs mention X, trending up Q3→Q4" |
+
+<!-- ------------------------ -->
+## Setting Up Your Environment (00_env_setup.sql)
+
+Open a SQL file in Snowflake Workspace and run the following to create the infrastructure:
+
+```sql
+USE ROLE ACCOUNTADMIN;
+
+-- Configuration — edit these values
+SET config_database   = 'SEC_FILINGS';
+SET config_schema     = 'FILING_DATA';
+SET config_warehouse  = 'FILING_WH';
+SET config_user_agent = 'YourOrg SEC-Filing-Demo your_name@company.com';
+SET config_start_date = '2025-02-03';  -- single day for quickstart
+SET config_end_date   = '2025-02-03';
+
+-- Create database and schema
+CREATE DATABASE IF NOT EXISTS IDENTIFIER($config_database);
+USE DATABASE IDENTIFIER($config_database);
+CREATE SCHEMA IF NOT EXISTS IDENTIFIER($config_schema);
+USE SCHEMA IDENTIFIER($config_schema);
+
+-- Create a dedicated warehouse
+CREATE WAREHOUSE IF NOT EXISTS IDENTIFIER($config_warehouse)
+    WAREHOUSE_SIZE = 'SMALL'
+    AUTO_SUSPEND = 60
+    AUTO_RESUME = TRUE
+    INITIALLY_SUSPENDED = TRUE
+    COMMENT = 'SEC pipeline: dynamically resized by RUN_PIPELINE()';
+USE WAREHOUSE IDENTIFIER($config_warehouse);
+
+-- Network access for SEC EDGAR
+CREATE OR REPLACE NETWORK RULE SEC_EDGAR_NETWORK_RULE
+    MODE = EGRESS
+    TYPE = HOST_PORT
+    VALUE_LIST = ('www.sec.gov:443', 'data.sec.gov:443', 'efts.sec.gov:443');
+
+CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION SEC_EDGAR_EAI
+    ALLOWED_NETWORK_RULES = (SEC_EDGAR_NETWORK_RULE)
+    ENABLED = TRUE;
+```
+
+> **NOTE:** SEC EDGAR requires a valid `User-Agent` header with your organization name and contact email. Edit `config_user_agent` above — this value is passed as a parameter to `RUN_PIPELINE()`, which forwards it to all HTTP calls. You only need to set it in this one place. See [SEC EDGAR access policies](https://www.sec.gov/os/accessing-edgar-data) for details.
+
+<!-- ------------------------ -->
+## Building the Data Pipeline (01_pipeline.sql)
+
+The data pipeline ingests SEC EDGAR filings, enriches them with tickers and industry classification, chunks them for search, and extracts AI signals. The full source is in `sql/00_pipeline.sql`.
+
+### Core Tables
+
+The pipeline creates four main tables:
+
+| Table | Purpose | Key Columns |
+|-------|---------|-------------|
+| `FILING_INDEX` | Filing metadata registry | ACCESSION_NO, CIK, COMPANY_NAME, FORM_TYPE, FILED_AT, TICKER, INDUSTRY_SECTOR |
+| `FILING_CONTENT` | Raw filing text | ACCESSION_NO, CONTENT_TEXT, PARSE_STATUS, SIGNAL_STATUS |
+| `FILING_CHUNKS` | Searchable passages | CHUNK_ID, CHUNK_TEXT, SECTION_NAME, ~800 chars avg |
+| `FILING_SIGNALS` | AI-extracted structured signals | SIGNAL_ID, EVENT_TYPE, SENTIMENT, REVENUE, KEY_METRICS |
+
+### Running the Pipeline
+
+Execute the entire `sql/01_pipeline.sql` file in Snowflake workspace. 
+![Pipeline_script](assets/Pipeline_script.png)
+
+```sql
+-- The last command in the script calls the pipeline:
+CALL RUN_PIPELINE('2025-02-03', '2025-02-03', 'YourOrg SEC-Filing-Demo your_name@company.com');
+```
+
+The pipeline executes four phases automatically:
+
+| Phase | What It Does | Warehouse Size |
+|-------|-------------|---------------|
+| 1. Ingest | Downloads daily EDGAR archives, parses filing metadata and content | LARGE (SNOWPARK-OPTIMIZED) |
+| 2. Enrich | Resolves stock tickers via SEC company search, maps SIC codes to industry sectors | SMALL |
+| 3. Chunk | Splits filings into searchable passages by section (Risk Factors, MD&A, Financial Statements, etc.) | SMALL |
+| 4. Extract | AI extracts structured signals: sentiment, event type, key metrics, forward guidance | SMALL |
+
+> **NOTE:** The pipeline dynamically resizes the warehouse between phases. **Total runtime for a single day: ~3-5 minutes**.
+
+### Verify the Pipeline Output
+
+```sql
+-- Check corpus statistics
+SELECT
+    COUNT(*)                       AS total_chunks,
+    COUNT(DISTINCT ACCESSION_NO)   AS distinct_filings,
+    COUNT(DISTINCT TICKER)         AS distinct_tickers,
+    COUNT(DISTINCT FORM_TYPE)      AS distinct_form_types,
+    MIN(FILED_AT)                  AS earliest_filing,
+    MAX(FILED_AT)                  AS latest_filing,
+    AVG(LENGTH(CHUNK_TEXT))::INT   AS avg_chunk_chars
+FROM FILING_CHUNKS
+WHERE CHUNK_TEXT IS NOT NULL;
+```
+
+Expected output for Feb 3, 2025:
+
+| Metric | Value |
+|--------|-------|
+| Total chunks | ~3,453 |
+| Distinct filings | ~259 |
+| Distinct tickers | ~197 |
+| Form types | 10-K, 10-Q, 8-K, 8-K/A |
+| Avg chunk chars | ~1,250 |
+
+<!-- ------------------------ -->
+## Creating the Cortex Search Service (02_create_search_service.sql)
+
+> **NOTE:** If you already have a Cortex Search service, you can reuse it; you don’t need to create a new service specifically for analytical search. If your agent already has a Cortex Search tool configured, you don’t need to add another one.
+
+### Create the Service
+In this example we will be creating Cortex Search service from scratch.
+
+```sql
+USE ROLE ACCOUNTADMIN;
+USE WAREHOUSE FILING_WH;
+
+CREATE OR REPLACE CORTEX SEARCH SERVICE SEC_FILINGS.FILING_DATA.SEC_FILING_SEARCH
+    TEXT INDEXES CHUNK_TEXT, CHUNK_ID, ACCESSION_NO, SECTION_NAME, COMPANY_NAME
+    VECTOR INDEXES CHUNK_TEXT (model='snowflake-arctic-embed-m-v1.5')
+    ATTRIBUTES COMPANY_NAME, TICKER, FORM_TYPE, SECTION_NAME, FILED_AT,
+               PERIOD_OF_REPORT, INDUSTRY_SECTOR, INDUSTRY_TITLE, CHUNK_ID, ACCESSION_NO
+    WAREHOUSE = FILING_WH
+    TARGET_LAG = '1 day'
+    COMMENT = 'SEC filing search - multi-index with text and vector'
+AS (
+    SELECT
+        CHUNK_ID, CHUNK_TEXT, ACCESSION_NO, COMPANY_NAME, TICKER, FORM_TYPE,
+        SECTION_NAME,
+        TO_VARCHAR(FILED_AT, 'YYYY-MM-DD') AS FILED_AT,
+        TO_VARCHAR(PERIOD_OF_REPORT, 'YYYY-MM-DD') AS PERIOD_OF_REPORT,
+        COALESCE(INDUSTRY_SECTOR, 'Other') AS INDUSTRY_SECTOR,
+        INDUSTRY_TITLE
+    FROM SEC_FILINGS.FILING_DATA.FILING_CHUNKS
+    WHERE CHUNK_TEXT IS NOT NULL AND LENGTH(CHUNK_TEXT) > 100
+);
+```
+
+### Why Each Design Choice Matters for Analytical Search
+
+| Config Element | Why It Matters |
+|---------------|----------------|
+| `TEXT INDEXES` on 5 columns | Enables keyword search on content, company names, section names — the agent searches on meaning AND exact names |
+| `VECTOR INDEXES` with Arctic embed | Semantic similarity — "cybersecurity risks" matches "unauthorized access to our systems" even with no keyword overlap |
+| `ATTRIBUTES` (10 columns) | Become **filterable** and **returnable** in search results. The agent can filter by `FORM_TYPE='10-K'` or `INDUSTRY_SECTOR='Finance'` server-side |
+| `TARGET_LAG = '1 day'` | Refresh frequency. For a demo corpus that doesn't change, this is sufficient |
+
+> **NOTE:** The search service indexes ~3,283 of the 3,453 total chunks. The `WHERE LENGTH(CHUNK_TEXT) > 100` filter excludes very short chunks (section headers, boilerplate) that would add noise to search results.
+
+<!-- ------------------------ -->
+## Creating the Semantic View (03_create_semantic_view.sql)
+
+The Semantic View is required for Cortex Analyst tool execution. It allows the agent to answer counting and aggregation questions with SQL precision.
+
+### Create the Semantic View
+
+```sql
+USE ROLE ACCOUNTADMIN;
+USE DATABASE SEC_FILINGS;
+USE SCHEMA FILING_DATA;
+USE WAREHOUSE FILING_WH;
+
+CREATE OR REPLACE SEMANTIC VIEW SEC_FILING_ANALYTICS
+  TABLES (
+    signals AS FILING_SIGNALS
+      WITH SYNONYMS = ('investment signals', 'filing signals', 'EDGAR signals', 'SEC filings')
+      COMMENT = 'AI-extracted investment signals from SEC EDGAR filings.',
+
+    meta AS FILING_INDEX
+      WITH SYNONYMS = ('filing metadata', 'EDGAR index', 'filing registry')
+      COMMENT = 'SEC EDGAR filing metadata: accession numbers, CIKs, filing URLs, dates'
+  )
+  RELATIONSHIPS (
+    signals_to_meta AS signals(ACCESSION_NO) REFERENCES meta(ACCESSION_NO)
+  )
+  FACTS (
+    signals.accession_no AS signals.ACCESSION_NO
+      WITH SYNONYMS = ('accession number', 'filing id')
+      COMMENT = 'EDGAR accession number uniquely identifying the filing',
+    signals.revenue AS signals.REVENUE
+      WITH SYNONYMS = ('total revenue', 'sales', 'top line')
+      COMMENT = 'Revenue in millions USD. NULL if not extractable.',
+    signals.net_income AS signals.NET_INCOME
+      WITH SYNONYMS = ('net income', 'profit', 'bottom line')
+      COMMENT = 'Net income figure extracted from filing.',
+    signals.eps AS signals.EPS
+      WITH SYNONYMS = ('earnings per share', 'diluted EPS')
+      COMMENT = 'Normalized EPS value.',
+    signals.yoy_change AS signals.YOY_CHANGE
+      WITH SYNONYMS = ('year over year', 'YoY growth', 'growth rate')
+      COMMENT = 'Year-over-year change percentage.',
+    signals.forward_guidance AS signals.FORWARD_GUIDANCE
+      WITH SYNONYMS = ('guidance', 'outlook', 'forecast')
+      COMMENT = 'Forward-looking financial guidance from MD&A.'
+  )
+  DIMENSIONS (
+    signals.company_name AS signals.COMPANY_NAME
+      WITH SYNONYMS = ('company', 'filer', 'issuer')
+      COMMENT = 'Company that filed the SEC document',
+    signals.ticker AS signals.TICKER
+      WITH SYNONYMS = ('stock ticker', 'symbol')
+      COMMENT = 'Stock ticker symbol. May be NULL for non-public filers.',
+    signals.form_type AS signals.FORM_TYPE
+      WITH SYNONYMS = ('filing type', 'SEC form')
+      COMMENT = '10-K (annual), 10-Q (quarterly), 8-K (current report)',
+    signals.event_type AS COALESCE(signals.EVENT_TYPE_NORMALIZED, signals.EVENT_TYPE)
+      WITH SYNONYMS = ('event', 'signal type', 'event classification')
+      COMMENT = 'AI-classified event type: Earnings, M&A, Leadership Change, Risk Disclosure, Guidance Update, Regulatory, Capital Markets, Bankruptcy, Annual Report, Quarterly Report, Current Report, Other.',
+    signals.sentiment AS signals.SENTIMENT
+      WITH SYNONYMS = ('tone', 'filing sentiment')
+      COMMENT = 'AI-assessed sentiment: POSITIVE, NEGATIVE, NEUTRAL, MIXED.',
+    signals.industry_sector AS COALESCE(signals.INDUSTRY_SECTOR, 'Other')
+      WITH SYNONYMS = ('sector', 'industry')
+      COMMENT = 'SEC Office-based industry sector: Technology, Life Sciences, Finance, Real Estate & Construction, Energy & Transportation, Manufacturing, Trade & Services, Other.',
+    signals.industry_title AS signals.INDUSTRY_TITLE
+      WITH SYNONYMS = ('specific industry', 'sub-sector')
+      COMMENT = 'Specific SEC industry title.',
+    signals.is_amendment AS signals.IS_AMENDMENT
+      WITH SYNONYMS = ('amendment', 'restated')
+      COMMENT = 'TRUE if this is an amended filing.',
+    meta.cik AS meta.CIK
+      WITH SYNONYMS = ('SEC CIK', 'central index key')
+      COMMENT = 'SEC Central Index Key',
+    signals.signal_date AS signals.SIGNAL_DATE
+      WITH SYNONYMS = ('filing date', 'date filed', 'when filed')
+      COMMENT = 'The date the SEC received the filing.',
+    signals.period_of_report AS signals.PERIOD_OF_REPORT
+      WITH SYNONYMS = ('fiscal period', 'report period', 'period end')
+      COMMENT = 'Fiscal period end date the filing covers.'
+  )
+  METRICS (
+    signals.filing_count AS COUNT(signals.SIGNAL_ID)
+      WITH SYNONYMS = ('number of filings', 'total filings', 'how many filings')
+      COMMENT = 'Total number of filings matching filters',
+    signals.positive_signals AS COUNT(CASE WHEN signals.SENTIMENT = 'POSITIVE' THEN 1 END)
+      WITH SYNONYMS = ('positive filings', 'bullish signals')
+      COMMENT = 'Count of filings with positive sentiment',
+    signals.negative_signals AS COUNT(CASE WHEN signals.SENTIMENT = 'NEGATIVE' THEN 1 END)
+      WITH SYNONYMS = ('negative filings', 'bearish signals')
+      COMMENT = 'Count of filings with negative sentiment',
+    signals.ma_count AS COUNT(CASE WHEN signals.EVENT_TYPE = 'M&A' THEN 1 END)
+      WITH SYNONYMS = ('merger filings', 'M&A events', 'deals')
+      COMMENT = 'Count of merger and acquisition events',
+    signals.leadership_change_count AS COUNT(CASE WHEN signals.EVENT_TYPE = 'Leadership Change' THEN 1 END)
+      WITH SYNONYMS = ('leadership events', 'management changes')
+      COMMENT = 'Count of leadership change events',
+    signals.negative_sentiment_pct AS
+      ROUND(100.0 * COUNT(CASE WHEN signals.SENTIMENT = 'NEGATIVE' THEN 1 END)
+            / NULLIF(COUNT(signals.SIGNAL_ID), 0), 2)
+      WITH SYNONYMS = ('negative rate', 'percent negative')
+      COMMENT = 'Percentage of filings with negative sentiment (0-100 scale)'
+  )
+  COMMENT = 'Investment signal analytics over SEC EDGAR filing corpus.'
+  AI_SQL_GENERATION 'This semantic view covers SEC EDGAR filings. SIGNAL_DATE is the authoritative filing timestamp. EVENT_TYPE and SENTIMENT are AI-extracted.';
+```
+
+<!-- ------------------------ -->
+## Deploying the Analytical Search Agent (04_deploy_agent.sql)
+
+### Create the Agent
+
+```sql
+USE ROLE ACCOUNTADMIN;
+USE DATABASE SEC_FILINGS;
+USE SCHEMA FILING_DATA;
+
+-- Ensure Snowflake Intelligence (CoWork) object exists
+CREATE SNOWFLAKE INTELLIGENCE IF NOT EXISTS SNOWFLAKE_INTELLIGENCE_OBJECT_DEFAULT;
+
+-- Deploy the Analytical Search agent (co-located with search service + semantic view)
+CREATE OR REPLACE AGENT SEC_FILINGS.FILING_DATA.SEC_ANALYTICAL_SEARCH_AGENT
+COMMENT = 'SEC filing research agent v7 - FILED_AT/PERIOD_OF_REPORT are now native DATE in the search service, range filters supported.'
+FROM SPECIFICATION $$
+{
+  "models": { "orchestration": "claude-opus-4-7" },
+  "orchestration": { "budget": { "seconds": 600, "tokens": 200000 } },
+  "instructions": {
+    "orchestration": "You are SEC Filing Analyst, an investment-research agent over a corpus of SEC EDGAR 10-K, 10-Q, 8-K filings.\n\nFor questions about counts, comparisons, exhaustive lists, or cross-filing patterns:\n1. Search broadly using multiple relevant queries — use synonyms and related phrasings.\n2. Return a clear answer with company name, form type, filing date, and the specific evidence from each filing chunk."
+  },
+  "tools": [
+    {
+      "tool_spec": {
+        "type": "cortex_search",
+        "name": "filing_semantic_search",
+        "description": "Multi-index Cortex Search over SEC filing chunks."
+      }
+    },
+    {
+      "tool_spec": {
+        "type": "cortex_analyst_text_to_sql",
+        "name": "filing_analyst",
+        "description": "Structured analytics over pre-extracted filing signals (sector counts, sentiment percentages, signal trends)."
+      }
+    }
+  ],
+  "tool_resources": {
+    "filing_semantic_search": {
+      "name": "SEC_FILINGS.FILING_DATA.SEC_FILING_SEARCH",
+      "search_service": "SEC_FILINGS.FILING_DATA.SEC_FILING_SEARCH",
+      "database_schema": "SEC_FILINGS.FILING_DATA",
+      "is_multi_index": true,
+      "max_results": 200,
+      "id_column": "CHUNK_ID",
+      "title_column": "COMPANY_NAME",
+      "base_table": "SEC_FILINGS.FILING_DATA.FILING_CHUNKS",
+      "base_table_columns": [
+        "CHUNK_ID","CHUNK_TEXT","ACCESSION_NO","COMPANY_NAME","TICKER",
+        "FORM_TYPE","SECTION_NAME","FILED_AT","PERIOD_OF_REPORT",
+        "INDUSTRY_SECTOR","INDUSTRY_TITLE"
+      ],
+      "execution_environment": {"type": "warehouse", "warehouse": "FILING_WH"},
+      "columns_and_descriptions": {
+        "CHUNK_ID":         {"description": "Chunk primary key", "type": "string", "searchable": true,  "filterable": true},
+        "CHUNK_TEXT":       {"description": "Full filing passage text. Search here for filing content.", "type": "string", "searchable": true, "filterable": false},
+        "COMPANY_NAME":     {"description": "Filer company name. Search here for specific companies.", "type": "string", "searchable": true, "filterable": true},
+        "TICKER":           {"description": "Stock ticker (e.g. NVDA, MSFT, GOOGL). Use for searching or filtering filings by specific public companies. Approximately 85% of filings have a populated ticker.", "type": "string", "searchable": true, "filterable": true},
+        "FORM_TYPE":        {"description": "10-K, 10-K/A, 10-Q, 10-Q/A, 8-K, 8-K/A.", "type": "string", "searchable": false, "filterable": true},
+        "SECTION_NAME":     {"description": "Filing section (Risk Factors, MD&A, Item 1.01, etc.).", "type": "string", "searchable": true, "filterable": true},
+        "FILED_AT":         {"description": "SEC filing date (DATE). Supports @gte / @lte range filters.", "type": "date", "searchable": false, "filterable": true},
+        "PERIOD_OF_REPORT": {"description": "Fiscal period end date (DATE). Supports @gte / @lte range filters.", "type": "date", "searchable": false, "filterable": true},
+        "INDUSTRY_SECTOR":  {"description": "SIC-based sector grouping.", "type": "string", "searchable": false, "filterable": true},
+        "INDUSTRY_TITLE":   {"description": "Detailed SIC industry title.", "type": "string", "searchable": false, "filterable": true},
+        "ACCESSION_NO":     {"description": "SEC accession number, unique per filing.", "type": "string", "searchable": false, "filterable": true}
+      }
+    },
+    "filing_analyst": {
+      "semantic_view": "SEC_FILINGS.FILING_DATA.SEC_FILING_ANALYTICS",
+      "execution_environment": {"type": "warehouse", "warehouse": "FILING_WH"}
+    }
+  }
+}
+$$;
+
+-- Register in Snowflake CoWork
+ALTER SNOWFLAKE INTELLIGENCE SNOWFLAKE_INTELLIGENCE_OBJECT_DEFAULT
+    ADD AGENT SEC_FILINGS.FILING_DATA.SEC_ANALYTICAL_SEARCH_AGENT;
+```
+### Tools and Their Roles
+
+| Tool | Type | Role in Analytical Search |
+|------|------|--------------------------|
+| `filing_semantic_search` | `cortex_search` | Unstructured data search, prerequisite for Analytical Search  |
+| `filing_analyst` | `cortex_analyst_text_to_sql` | Structured analytics via the Semantic View (counts, breakdowns, percentages) |
+
+> **NOTE:** Columns and descriptions are critical for analytical search quality. Rich descriptions help the agent decide which columns to filter on, how to interpret values, and how to frame AI_FILTER and AI_EXTRACT calls.
+
+<!-- ------------------------ -->
+## Analytical Search in Action: Guided Exercises
+
+In Snowflake UI click Cortex AI and open **Snowflake CoWork** and select the `SEC_ANALYTICAL_SEARCH_AGENT`. Try each exercise below to see different Analytical Search capabilities in action.
+![CoWork](assets/CoWork.png)
+
+### Exercise 1: Auto-Routing (RAG Path)
+
+**Ask the agent:**
+
+> What does Boeing's 10-K say about supply chain risk?
+![Boeing_10k](assets/Boeing_10k.png)
+
+**What to observe:**
+- This is a per-document question — the agent auto-routes to standard top-k RAG
+- You get a focused answer with citations from Boeing's Risk Factors section
+- Response time: fast (~30 seconds)
+
+**Why this matters:** Auto-routing keeps simple questions cheap. Analytical Search is for analytical questions, not every question.
+
+---
+
+### Exercise 2: Counting (Analytical Search Path)
+
+**Ask the agent:**
+
+> How many filings filed on Feb 3, 2025 mention cybersecurity risks?
+![Cybersecurity_plan](assets/Cybersecurity_plan.png)
+
+**What to observe:**
+- The agent shows a **plan** before executing (probe → search → AI_FILTER → COUNT)
+- AI_FILTER classifies each chunk: is this about an *actual* cybersecurity risk (not generic boilerplate)?
+- The answer is a precise integer with a list of companies
+- Response time: 1–3 minutes
+
+**Expected result:** ~5 filings mention substantive cybersecurity risks. The agent will list each company with its form type and filing date.
+![Cybersecurity_result](assets/Cybersecurity_result.png)
+
+**Key insight:** A RAG agent would say "here are some examples..." — it cannot count because it only sees 5–10 documents. The Analytical Search agent counts from the full result set using SQL.
+
+---
+
+### Exercise 3: Exhaustive Listing with Extraction
+
+**Ask the agent:**
+
+> List every company that announced a leadership change in an 8-K filing on Feb 3, 2025.
+![Leadership_change_plan](assets/Leadership_change_plan.png)
+
+**What to observe:**
+- **Adaptive depth** retrieves exactly as many results as needed
+- The agent shows a **plan** before executing (probe → search → AI_FILTER → COUNT (deduplicate)
+- `AI_FILTER` identifies genuine leadership-change language
+- The result is a **table artifact** with one row per event
+
+**Expected result:** ~50 leadership changes in a single day — a table with company, person, role, and type. Notable examples: RTX Corp (Gregory Hayes stepping down), Baxter International (CEO transition).
+![Leadership_change_execute](assets/Leadership_change_execute.png)
+
+**Key insight:** A RAG agent would return 5–10 examples and hedge with "there may be more." The Analytical Search agent finds all ~50 and structures them into an audit-ready table.
+
+---
+
+### Exercise 4: Honest Refusal
+
+**Ask the agent:**
+
+> Compare Apple and Microsoft 10-K risk factor language about AI — what specific concerns does each company raise?
+![Honest_refusal](assets/Honest_refusal.png)
+
+**What to observe:**
+- The agent **does not hallucinate**
+- It explains: Apple's fiscal year ends Sept 30 (10-K filed Oct/Nov), Microsoft's ends June 30 (10-K filed Jul/Aug) — neither is in this Feb 3 corpus
+- It searched, found nothing, and says so explicitly
+- It offers alternatives: "I can compare Boeing and RTX, whose 10-Ks are in the corpus"
+
+**Key insight:** Trust over completeness. The agent refuses to fabricate when the corpus lacks data, and offers constructive alternatives. This is as important as getting answers right.
+
+**Follow-up (if desired):**
+
+> Compare Boeing and RTX 10-K risk factor language — what does each emphasize?
+![Boeing_RTX](assets/Boeing_RTX.png)
+This works: both have substantial risk-factor sections in the corpus.
+
+---
+
+### Bonus Exercises
+
+| Exercise | Prompt | AS Feature Demonstrated |
+|----------|--------|------------------------|
+| M&A details | "List every M&A transaction filed on Feb 3, 2025. Extract acquirer, target, and deal summary." | AI_EXTRACT (structured extraction) |
+| Risk themes | "What are the most common risk themes across the 10-K annual reports filed today?" | AI_AGG (deduplication/clustering) |
+| Full breakdown | "Break down all filings filed today by industry sector and sentiment." | Cortex Analyst (pure structured) |
+
+<!-- ------------------------ -->
+## Cleanup
+
+When you're done exploring, run the teardown script to remove all objects:
+
+```sql
+USE ROLE ACCOUNTADMIN;
+
+-- Drop database (removes all tables, views, UDFs, procedures)
+DROP DATABASE IF EXISTS SEC_FILINGS;
+
+-- Drop warehouse
+DROP WAREHOUSE IF EXISTS FILING_WH;
+
+-- Drop external access integration
+DROP INTEGRATION IF EXISTS SEC_EDGAR_EAI;
+```
+
+<!-- ------------------------ -->
+## Conclusion and Resources
+
+**You have built an Analytical Search agent that answers precise analytical questions over hundrends of SEC filing passages — going far beyond what traditional RAG can do.**
+
+### What You Built
+
+-   A **Data Pipeline** ingesting SEC EDGAR filings with ticker enrichment, section-aware chunking, and AI signal extraction
+-   A **Multi-Index Cortex Search service** with text and vector indexes over 3,400+ filing chunks enabling Analytical Search
+-   A **Semantic View** enabling natural-language SQL analytics over structured filing signals
+-   Validated exercises demonstrating counting, exhaustive listing, hybrid queries, auto-routing, and honest refusal
+
+### Key Takeaways
+
+-   **Analytical Search = Retrieve + Compute** — it goes beyond RAG's "retrieve and summarize" to deliver SQL-level analytical rigor over unstructured data
+-   **AI_FILTER understands meaning, not keywords** — it distinguishes "actual cybersecurity incident" from generic "we maintain security programs"
+-   **Auto-routing keeps simple questions cheap** — per-document lookups skip the analytical path entirely
+-   **Hybrid answers combine structured + unstructured** — Cortex Analyst for counts, Cortex Search for evidence, in one turn
+-   **The agent refuses honestly when data is missing** — trust over completeness, with constructive alternatives
+
+### Resources
+
+-   [Analytical Search Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents-analytical-search)
+-   [Cortex Agents — Configure and Interact](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents-manage)
+-   [Cortex Search Service DDL](https://docs.snowflake.com/en/sql-reference/sql/create-cortex-search)
+-   [CREATE AGENT Reference](https://docs.snowflake.com/en/sql-reference/sql/create-agent)
+-   [AI_FILTER Function](https://docs.snowflake.com/en/sql-reference/functions/ai_filter)
+-   [AI_EXTRACT Function](https://docs.snowflake.com/en/sql-reference/functions/ai_extract)
+-   [AI_AGG Function](https://docs.snowflake.com/en/sql-reference/functions/ai_agg)
+-   [Semantic Views](https://docs.snowflake.com/en/user-guide/views-semantic)
+-   [Source Code Repository](https://github.com/sfc-gh-ppaczewski/sfquickstarts/tree/master/site/sfguides/src/analytical-search-over-sec-filings-with-snowflake-cowork)
