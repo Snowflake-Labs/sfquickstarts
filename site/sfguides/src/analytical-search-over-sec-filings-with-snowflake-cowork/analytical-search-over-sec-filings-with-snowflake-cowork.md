@@ -121,39 +121,7 @@ Once the corpus is pruned, the agent applies semantic operators directly on the 
 | **AI_AGG** | Deduplicate, cluster, and summarize across rows | Collapse 200 risk phrases into top-10 categories with counts |
 | **SQL** | Group, count, join, rank, trend, calculate | COUNT BY sector, percentage breakdowns, temporal comparisons |
 
-### The Analytical Search Flow
-
-```
-┌─────────────────────────────────────────────────────────────────────┐
-│                           User Query                                 │
-└───────────────────────────────────┬─────────────────────────────────┘
-                                    │
-                                    ▼
-                            ┌──────────────┐
-                            │     Plan     │  Agent generates execution plan
-                            └──────┬───────┘
-                                   │
-                                   ▼
-                            ┌──────────────┐     ┌─────────────────────┐
-                            │    Search    │◄───▶│  Cortex Search      │
-                            └──────┬───────┘     │  Service            │
-                                   │             │  (Multi-Index)      │
-                                   ▼             └─────────────────────┘
-                            ┌──────────────┐
-                            │ AI Functions │  AI_FILTER, AI_EXTRACT, AI_AGG
-                            └──────┬───────┘
-                                   │
-                                   ▼
-                            ┌──────────────┐
-                            │   Reason +   │  Iterate if needed
-                            │   Iterate    │
-                            └──────┬───────┘
-                                   │
-                                   ▼
-                            ┌──────────────┐
-                            │   Results    │  Precise, cited, auditable
-                            └──────────────┘
-```
+![Analytical_search_flow](assets/Analytical_search_flow.png)
 
 ### Auto-Routing
 
@@ -165,7 +133,8 @@ You don't need to specify which mode to use. The agent decides automatically.
 
 ### Planning Mode
 
-Before executing analytical queries, the agent generates a clear execution plan and presents it for review. This lets you verify the logical steps before any data is processed.
+Before executing analytical queries, the agent generates a clear execution plan and presents it for review. This lets you verify the logical steps before any data is processed. Example of an execution planned proposed for a review below.
+![Cybersecurity_plan](assets/Cybersecurity_plan.png)
 
 ### The Spectrum of Search Intelligence
 
