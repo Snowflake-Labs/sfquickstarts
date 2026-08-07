@@ -794,7 +794,6 @@ DROP FOREIGN TABLE IF EXISTS sync_anomalies CASCADE;
 DROP FOREIGN TABLE IF EXISTS readings_csv CASCADE;
 
 -- Remove Files
-SET pg_lake_table.enable_delete_file_function=true;
 SELECT lake_file.delete(path) FROM lake_file.list('@STAGE/iot/export/*');
 SELECT lake_file.delete(path) FROM lake_file.list('@STAGE/iot/sync/*');
 SELECT lake_file_cache.remove(path) FROM lake_file_cache.list();
