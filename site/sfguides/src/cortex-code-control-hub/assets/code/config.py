@@ -38,6 +38,11 @@ TABLE_PROMPT_EVENTS = "CC_PROMPT_EVENTS"
 TABLE_ALERT_CONFIG = "CC_ALERT_CONFIG"
 TABLE_ALERT_HISTORY = "CC_ALERT_HISTORY"
 TABLE_RESPONSE_QUALITY = "CC_RESPONSE_QUALITY"
+# AI Budget tables
+TABLE_AI_BUDGETS      = "CC_AI_BUDGETS"
+TABLE_AI_BUDGET_USAGE = "CC_AI_BUDGET_USAGE"
+# Native Per-User Quotas (Preview)
+TABLE_NATIVE_QUOTAS   = "CC_NATIVE_QUOTAS"
 
 # Column names — v1 schema (aligned with Snowflake AI Observability terminology)
 COL_ANSWER_RELEVANCE  = "ANSWER_RELEVANCE_SCORE"   # did the LLM answer the query?
@@ -159,6 +164,14 @@ SP_COMPUTE_REBALANCE = "SP_CC_COMPUTE_REBALANCE"
 # Alerting + quality evaluation SPs
 SP_CHECK_ALERTS = "SP_CC_CHECK_ALERTS"
 SP_EVALUATE_RESPONSES = "SP_CC_EVALUATE_RESPONSES"
+# AI Budget SPs
+SP_CREATE_AI_BUDGET       = "SP_CC_CREATE_AI_BUDGET"
+SP_UPDATE_AI_BUDGET       = "SP_CC_UPDATE_AI_BUDGET"
+SP_DELETE_AI_BUDGET       = "SP_CC_DELETE_AI_BUDGET"
+SP_REFRESH_BUDGET_USAGE   = "SP_CC_REFRESH_BUDGET_USAGE"
+SP_MANAGE_QUOTA           = "SP_CC_MANAGE_QUOTA"
+# Supported AI domains for budget scoping
+AI_BUDGET_DOMAINS = ["CORTEX CODE", "AI FUNCTION", "CORTEX AGENT", "SNOWFLAKE INTELLIGENCE"]
 
 DATE_PRESETS = {
     "1 Day": 1,
@@ -219,6 +232,8 @@ PAGE_USER_INTEL = "User Intelligence"
 PAGE_POLICY_RULES = "Policy Rules"
 PAGE_ALERTS = "Alerts"
 PAGE_MODEL_INTEL = "Model Intelligence"
+PAGE_BUDGET_FORECAST = "Budget Forecast"
+PAGE_NATIVE_QUOTAS   = "Native Quotas"
 
 ADMIN_PAGES = [
     PAGE_SETUP,
@@ -235,6 +250,8 @@ ADMIN_PAGES = [
     PAGE_USER_INTEL,
     PAGE_POLICY_RULES,
     PAGE_ALERTS,
+    PAGE_BUDGET_FORECAST,
+    PAGE_NATIVE_QUOTAS,
 ]
 
 USER_PAGES = [PAGE_HOME, PAGE_CREDIT_REQUESTS]
@@ -246,10 +263,22 @@ ALL_PAGES = [
     PAGE_OBSERVABILITY, PAGE_USER_INTEL,
     PAGE_PROMPT_ANALYSIS, PAGE_POLICY_RULES, PAGE_ALERTS,
     PAGE_MODEL_INTEL,
+    PAGE_BUDGET_FORECAST,
+    PAGE_NATIVE_QUOTAS,
 ]
 
 GLOBAL_CSS = """
 <style>
+/* ── Hide auto-generated Streamlit native page nav (duplicate of our st.radio nav) ── */
+/* Streamlit auto-discovers the pages/ folder and renders a second nav list.          */
+/* CoCo Hub uses a custom st.radio() nav, so we suppress the native one.              */
+[data-testid="stSidebarNav"],
+[data-testid="stSidebarNavItems"],
+[data-testid="stSidebarNavSeparator"],
+section[data-testid="stSidebar"] > div:first-child > div:first-child ul {
+    display: none !important;
+}
+
 /* ── Base — aggressive dark override for all Streamlit/enterprise accounts ── */
 html, body, .stApp,
 [class*="css"], .main,
