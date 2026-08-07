@@ -25,7 +25,7 @@ Along the way, you will use **CoCo**, Snowflake's AI coding assistant, to write 
 - No Python experience required for Module 1; basic Python familiarity helps for Module 2
 
 ### What You'll Learn
-- How to call large language models (LLMs) directly in Snowflake using `CORTEX.COMPLETE`
+- How to call large language models (LLMs) directly in Snowflake using `COMPLETE`
 - The architecture behind Retrieval-Augmented Generation (RAG) and why it prevents hallucinations
 - How to build a production RAG app using `CORTEX SEARCH SERVICE` and a Snowflake Notebook
 - How to use CoCo to generate complex Snowflake SQL and Python from plain English
