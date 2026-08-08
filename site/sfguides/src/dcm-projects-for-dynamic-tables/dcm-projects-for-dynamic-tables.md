@@ -109,6 +109,12 @@ GRANT EXECUTE TASK ON ACCOUNT TO ROLE dcm_developer;
 GRANT MANAGE GRANTS ON ACCOUNT TO ROLE dcm_developer;
 ```
 
+> **New RBAC feature:** this project's `access.sql` uses `GRANT INHERITED`, a Snowflake Public Preview capability. Grants marked `INHERITED` are automatically extended to objects created *later* in the container, so read roles stay correctly privileged without re-granting. It needs the one-time, account-level opt-in below — a behavior-change setting that is independent of DCM.
+
+```sql
+ALTER ACCOUNT SET FEATURE_RBAC_INHERITED_GRANTS = 'ENABLED';
+```
+
 ### 3. Grant Data Quality Privileges
 
 To define and test data quality expectations, grant the following:
@@ -244,7 +250,7 @@ The `sources/definitions/` directory contains SQL files that define your Snowfla
 |:-----|:----------------|
 | `raw.sql` | Database, schemas, and raw landing tables (TRUCK, MENU, CUSTOMER, etc.) |
 | `access.sql` | Warehouse, database roles, account roles, and grants |
-| `analytics.sql` | Dynamic tables for transformations and a UDF for profit margin calculation |
+| `analytics.sql` | Dynamic tables for transformations, plus two scalar functions DCM manages side by side — a **SQL** UDF (`CALCULATE_PROFIT_MARGIN`) for profit-margin %, and a **Python** UDF (`MARGIN_TIER`) that classifies each truck's margin into PREMIUM / STANDARD / VALUE tiers (used in `TRUCK_PERFORMANCE`) |
 | `serve.sql` | Views for dashboards and reporting |
 | `ingest.sql` | A stage and a Task for loading data from CSV files |
 | `expectations.sql` | Data quality expectations using Data Metric Functions |
