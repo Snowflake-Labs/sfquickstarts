@@ -144,7 +144,7 @@ Consider the question: *"How many filings filed on Feb 3, 2025 mention cybersecu
 → Quantitative, exhaustive answer with precise filtering and SQL-level computation.
 
 <!-- ------------------------ -->
-## How It Works
+## How Analytical Search Works
 
 ![analytical-search-intro](assets/analytical-search-intro.png)
 
