@@ -10,7 +10,7 @@ fork repo link: https://github.com/sfc-gh-ppaczewski/sfquickstarts/tree/add-anal
 # Analytical Search over SEC Filings with Snowflake CoWork
 <!-- ------------------------ -->
 
-![End_to_end_solution_architecture](assets/End_to_end_solution_architecture.png)
+![E2E_architecture](assets/E2E_architecture.png)
 
 ## Overview
 
