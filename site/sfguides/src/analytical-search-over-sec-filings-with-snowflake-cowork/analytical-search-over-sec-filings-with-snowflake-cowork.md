@@ -729,5 +729,5 @@ This quickstart is not just a demo — it produces a near-production-ready, end-
 -   [AI_FILTER Function](https://docs.snowflake.com/en/sql-reference/functions/ai_filter)
 -   [AI_EXTRACT Function](https://docs.snowflake.com/en/sql-reference/functions/ai_extract)
 -   [AI_AGG Function](https://docs.snowflake.com/en/sql-reference/functions/ai_agg)
--   [Semantic Views](https://docs.snowflake.com/en/user-guide/views-semantic)
+-   [Semantic Views](https://docs.snowflake.com/en/user-guide/views-semantic/overview)
 -   [Source Code Repository](https://github.com/Snowflake-Labs/sfquickstarts/tree/main/site/sfguides/src/analytical-search-over-sec-filings-with-snowflake-cowork)
