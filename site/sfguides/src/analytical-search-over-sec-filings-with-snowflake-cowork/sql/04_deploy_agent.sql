@@ -37,7 +37,7 @@ FROM SPECIFICATION $$
       "search_service": "SEC_FILINGS.FILING_DATA.SEC_FILING_SEARCH",
       "database_schema": "SEC_FILINGS.FILING_DATA",
       "is_multi_index": true,
-      "max_results": 200,
+      "max_results": 1000,
       "id_column": "CHUNK_ID",
       "title_column": "COMPANY_NAME",
       "base_table": "SEC_FILINGS.FILING_DATA.FILING_CHUNKS",

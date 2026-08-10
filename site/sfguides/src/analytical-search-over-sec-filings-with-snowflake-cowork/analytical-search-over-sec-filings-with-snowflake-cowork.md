@@ -18,7 +18,7 @@ fork repo link: https://github.com/sfc-gh-ppaczewski/sfquickstarts/tree/add-anal
 
 Traditional RAG retrieves 10–50 passages and asks an LLM to summarize. That works for single-document lookups, but fails on questions that require processing hundreds of filings: "How many companies disclosed a cybersecurity incident?" or "List every M&A deal filed this week." Analytical Search solves this by combining semantic search, AI functions, and SQL into one orchestrated loop.
 
-In this quickstart you will ingest a day of SEC EDGAR filings, build a multi-index Cortex Search service, create a Semantic View for structured analytics, and deploy an Analytical Search agent in Snowflake CoWork — then ask it questions that no standard RAG system can answer.
+In this quickstart you will ingest a day of SEC EDGAR filings, build a multi-index Cortex Search service, create a Semantic View for structured analytics, and deploy an Analytical Search agent in Snowflake CoWork — then ask it questions that no standard RAG system can answer. The result is a near-production-ready, end-to-end solution that you can easily reuse: expand the date range for historical depth, schedule ongoing ingestion with Snowflake Tasks, and the agent grows with the data automatically.
 
 ### What You'll Learn
 
@@ -69,6 +69,44 @@ No structural filters over attributes such as date, status, or region. "Contextu
 ### No Compute
 Counts and sums are mostly hallucinated, not calculated. The LLM's worldview is limited to the handful of passages in its context — it estimates rather than computes.
 
+### Why Agentic Search Isn't Enough Either
+
+A natural evolution from standard RAG is **agentic search**: an AI agent searches, reads, reasons, reformulates its query, and searches again in a loop. By decomposing a problem and chasing missing evidence across multiple turns, agentic search drastically improves recall for complex document QA.
+
+But at its core, agentic search is still **search-and-summarize in a reasoning loop**. The agent takes more turns to find better evidence, yet the final answer is still synthesized from a relatively small, sampled evidence set. It cannot perform true macro-analysis — there is no grouping, counting, or SQL-level aggregation happening. Ask it "how many filings mention cybersecurity risks?" and it will find more examples than basic RAG, but it still cannot give you a precise count because it never processes the full result set computationally.
+
+The evolution looks like this:
+
+| Stage | Approach | Limitation |
+|-------|----------|-----------|
+| **Standard RAG** | Retrieve top-k, summarize | Misses the long tail; no compute |
+| **Agentic Search** | Loop: search → read → reformulate → search again | Better recall, but still sampling — no true aggregation |
+| **Analytical Search** | Retrieve adaptively + compute with AI functions + SQL | Treats documents as a table: filter, aggregate, count, compare |
+
+### Why Bigger Context Windows Don't Solve This
+
+A popular argument says RAG is dead because LLMs can now ingest a million tokens — so just load the documents and let the model reason end-to-end. This solves the context window constraint, but it doesn't give the model a database.
+
+Loading thousands of documents into a single prompt fails for three reasons:
+
+1. **Cost** — It is orders of magnitude more expensive than targeted retrieval followed by focused computation.
+2. **No auditable trace** — The model produces a final answer with no inspectable execution path. You cannot verify what was searched, filtered, counted, or excluded.
+3. **No SQL-level precision** — LLMs estimate; they don't compute. Grouping, counting, ranking, and calculating deltas require an actual execution engine, not a language model approximating arithmetic over raw text.
+
+Analytical Search takes the opposite approach: use retrieval to prune, then hand off to AI functions and SQL for precise computation — getting both scalability and rigor.
+
+### Why Coding Agents Fall Short
+
+Coding agents offer another alternative: grep through documents as local files, load matches into the agent's context, and write code to reason over the results. This is a strong agentic baseline — the agent can improvise an analytical loop (search, parse, aggregate) on every question and partially succeed.
+
+However, coding agents don't scale once questions demand corpus-wide aggregation. On analytical benchmarks, they trail Analytical Search by 10–45% because:
+
+- They lack adaptive depth — they either over-fetch (expensive) or under-fetch (incomplete)
+- They have no built-in semantic operators (AI_FILTER, AI_EXTRACT) optimized for document-level classification
+- Each question requires re-inventing the analytical workflow from scratch rather than executing a systematic, optimized pipeline
+
+A system designed around the analytical loop — with retrieval, semantic classification, and SQL as first-class stages — does the work more reliably and at lower cost than ad-hoc coding for each question.
+
 ### Query Types That Break Traditional RAG
 
 High-value enterprise queries requiring exhaustiveness, aggregates, or temporal analysis:
@@ -111,7 +149,17 @@ Analytical Search is an orchestration capability in Cortex Agents that enables a
 
 Cortex Search narrows the full corpus to a relevant candidate set — finding documents about a specific topic, isolating records with a particular attribute, or filtering to a date range. This happens without scanning every document with a large model.
 
-**Adaptive depth** controls how far to search. Rather than using a fixed top-k limit, the agent dynamically adjusts search depth based on the relevance of results: extending when the tail is still relevant, stopping when quality drops.
+**Adaptive depth** controls how far to search. Rather than using a fixed top-k limit, the agent dynamically adjusts search depth based on the relevance of results. A fixed top-k gets two things wrong: too shallow (the missing item is often the data point that changes the answer), or too deep (the user asks for k=1,000 but only a few dozen documents are relevant — the rest is wasted compute).
+
+Adaptive depth makes the cutoff a function of the data, not a guessed parameter, and works in two phases:
+
+**Phase 1 — Bound the relevant region.** The system fetches an initial batch of results and uses a fast LLM to judge small samples at the head and tail of the ranked list. If the tail is still relevant, the system extends the fetch limit and rejudges the new tail — repeating until the tail goes off-topic or a hard ceiling is reached. If even the top results are irrelevant, the search returns nothing rather than feed AI functions material that would only generate noise.
+
+**Phase 2 — Find the exact cutoff.** Once the relevant region is bounded, the system binary-searches inside it, LLM-judging a sample around the midpoint and tightening the window to land on the precise boundary in a handful of rounds.
+
+The result: a narrow fact question stays shallow; a trend across a broad corpus goes deep; a question against a sparse corpus stops early — all without any parameter tuning.
+
+> **Cost note:** Adaptive depth optimizes spend in both directions. Better coverage reduces wasted downstream AI function calls that would produce wrong answers. Better restraint avoids paying to extract and classify documents that would not have answered the question in the first place. AI functions are powerful but not free — every unnecessary call adds latency and dollars. Adaptive depth is the layer that decides how many of those calls are worth making.
 
 ### Layer 2: AI Functions and SQL to Analyze
 
@@ -224,6 +272,12 @@ The pipeline executes four phases automatically:
 
 > **NOTE:** The pipeline dynamically resizes the warehouse between phases. **Total runtime for a single day: ~3-5 minutes**.
 
+> **Scaling Beyond One Day**
+>
+> This quickstart ingests a single day for speed (~3-5 minutes). To load more historical data, simply widen `config_start_date` and `config_end_date` in `00_env_setup.sql` — the pipeline handles any date range up to a full year (runtime scales at ~3-5 minutes per business day). For large backfills (e.g., a full year), you can parallelize by creating multiple Snowflake Tasks that each call `RUN_PIPELINE()` with non-overlapping monthly date ranges (e.g., Jan, Feb, Mar…), allowing months to process concurrently.
+>
+> For continuous automated ingestion, schedule a single Snowflake Task with a daily CRON to call `RUN_PIPELINE()` for the current day — new filings flow into the Cortex Search service and Semantic View automatically with no manual intervention.
+
 ### Verify the Pipeline Output
 
 ```sql
@@ -264,7 +318,7 @@ USE WAREHOUSE FILING_WH;
 
 CREATE OR REPLACE CORTEX SEARCH SERVICE SEC_FILINGS.FILING_DATA.SEC_FILING_SEARCH
     TEXT INDEXES CHUNK_TEXT, CHUNK_ID, ACCESSION_NO, SECTION_NAME, COMPANY_NAME
-    VECTOR INDEXES CHUNK_TEXT (model='snowflake-arctic-embed-m-v1.5')
+    VECTOR INDEXES CHUNK_TEXT (model='snowflake-arctic-embed-l-v2.0')
     ATTRIBUTES COMPANY_NAME, TICKER, FORM_TYPE, SECTION_NAME, FILED_AT,
                PERIOD_OF_REPORT, INDUSTRY_SECTOR, INDUSTRY_TITLE, CHUNK_ID, ACCESSION_NO
     WAREHOUSE = FILING_WH
@@ -288,7 +342,7 @@ AS (
 | Config Element | Why It Matters |
 |---------------|----------------|
 | `TEXT INDEXES` on 5 columns | Enables keyword search on content, company names, section names — the agent searches on meaning AND exact names |
-| `VECTOR INDEXES` with Arctic embed | Semantic similarity — "cybersecurity risks" matches "unauthorized access to our systems" even with no keyword overlap |
+| `VECTOR INDEXES` with Arctic embed | Semantic similarity — "cybersecurity risks" matches "unauthorized access to our systems" even with no keyword overlap. `snowflake-arctic-embed-l-v2.0` is the recommended model for analytical search |
 | `ATTRIBUTES` (10 columns) | Become **filterable** and **returnable** in search results. The agent can filter by `FORM_TYPE='10-K'` or `INDUSTRY_SECTOR='Finance'` server-side |
 | `TARGET_LAG = '1 day'` | Refresh frequency. For a demo corpus that doesn't change, this is sufficient |
 
@@ -446,7 +500,7 @@ FROM SPECIFICATION $$
       "search_service": "SEC_FILINGS.FILING_DATA.SEC_FILING_SEARCH",
       "database_schema": "SEC_FILINGS.FILING_DATA",
       "is_multi_index": true,
-      "max_results": 200,
+      "max_results": 1000,
       "id_column": "CHUNK_ID",
       "title_column": "COMPANY_NAME",
       "base_table": "SEC_FILINGS.FILING_DATA.FILING_CHUNKS",
@@ -489,7 +543,15 @@ ALTER SNOWFLAKE INTELLIGENCE SNOWFLAKE_INTELLIGENCE_OBJECT_DEFAULT
 | `filing_semantic_search` | `cortex_search` | Unstructured data search, prerequisite for Analytical Search  |
 | `filing_analyst` | `cortex_analyst_text_to_sql` | Structured analytics via the Semantic View (counts, breakdowns, percentages) |
 
-> **NOTE:** Columns and descriptions are critical for analytical search quality. Rich descriptions help the agent decide which columns to filter on, how to interpret values, and how to frame AI_FILTER and AI_EXTRACT calls.
+> **NOTE:** Column descriptions are the single most impactful thing you can do to improve analytical search quality. The agent uses them to decide which columns to filter on, how to interpret values, and how to frame AI_FILTER and AI_EXTRACT calls. For each column, describe:
+> - What it contains and its expected format or value range
+> - Sample values or enumerations (e.g., `"Values: 10-K, 10-Q, 8-K, 8-K/A"`)
+> - Whether it's suitable for filtering, searching, or extraction
+> - Any relationships to other columns
+>
+> Columns without descriptions are harder for the agent to use effectively, especially filterable attributes that determine how the search is scoped.
+
+> **NOTE:** Snowflake recommends setting `max_results` to 1,000 for analytical search. This gives the agent enough breadth to surface the full relevant set of documents. Adaptive depth limits actual compute to what the question requires — you won't pay for 1,000 AI function calls on a narrow question.
 
 <!-- ------------------------ -->
 ## Analytical Search in Action: Guided Exercises
@@ -497,6 +559,10 @@ ALTER SNOWFLAKE INTELLIGENCE SNOWFLAKE_INTELLIGENCE_OBJECT_DEFAULT
 In Snowflake UI click Cortex AI and open **Snowflake CoWork** and select the `SEC_ANALYTICAL_SEARCH_AGENT`. Try each exercise below to see different Analytical Search capabilities in action.
 
 ![CoWork](assets/CoWork.png)
+
+> **Performance expectations:** Simple RAG questions typically complete in ~30 seconds. Analytical search workflows take **2–6 minutes** for most questions. Complex analyses over large corpora (thousands of documents with multi-step extraction and aggregation) may take up to **15 minutes**. This is expected — the agent is doing real computation, not just summarizing a handful of passages.
+
+> **Cost considerations:** Analytical search incurs costs from agent orchestration and the AI functions it uses (AI_FILTER, AI_EXTRACT, AI_AGG). Each AI function call processes one row. Adaptive depth limits unnecessary calls by stopping retrieval when results are no longer relevant — so you pay only for the documents that matter to the answer. For detailed AI function pricing, see the [Cortex AI cost documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/aisql-cost#label-cortex-llm-cost-considerations).
 
 ### Exercise 1: Auto-Routing (RAG Path)
 
@@ -622,6 +688,15 @@ DROP INTEGRATION IF EXISTS SEC_EDGAR_EAI;
 -   A **Multi-Index Cortex Search service** with text and vector indexes over 3,400+ filing chunks enabling Analytical Search
 -   A **Semantic View** enabling natural-language SQL analytics over structured filing signals
 -   Validated exercises demonstrating counting, exhaustive listing, hybrid queries, auto-routing, and honest refusal
+
+### From Quickstart to Production
+
+This quickstart is not just a demo — it produces a near-production-ready, end-to-end solution you can put to real use:
+
+-   **Historical depth** — Widen the date range to ingest weeks, months, or a full year of filings for richer analytical insights
+-   **Parallel backfills** — For large date ranges, create multiple Snowflake Tasks calling `RUN_PIPELINE()` with non-overlapping monthly ranges to process months concurrently
+-   **Continuous ingestion** — Schedule a daily Snowflake Task (e.g., `SCHEDULE = 'USING CRON 0 7 * * * America/New_York'`) to call `RUN_PIPELINE()` for the current day, keeping your corpus fresh with no manual intervention
+-   **Automatic growth** — As new data flows in, the Cortex Search service and Semantic View automatically incorporate new filings — no additional configuration needed
 
 ### Key Takeaways
 
