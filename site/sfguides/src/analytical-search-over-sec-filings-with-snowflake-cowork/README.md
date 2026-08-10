@@ -14,4 +14,4 @@ Snowflake CoWork + **Analytical Search** changes that. This demo answers
 *"How many filings filed on Feb 3, 2025 mention cybersecurity risks?"* with a precise
 count — backed by a persisted search + AI_FILTER + COUNT, not a top-k guess.
 
-Check Snowflake Guide for demo details.
+**Full quickstart guide:** [Analytical Search over SEC Filings with Snowflake CoWork](https://www.snowflake.com/en/developers/guides/analytical-search-over-sec-filings-with-snowflake-cowork/)
