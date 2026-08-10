@@ -1393,3 +1393,15 @@ $$;
 -- =============================================================================
 -- Full pipeline (ingest + enrich + AI signals):
 CALL RUN_PIPELINE('2025-02-03', '2025-02-03', 'YourOrg SEC-Filing-Demo your_name@company.com');
+
+-- Verify pipeline output, check corpus statistics
+SELECT
+    COUNT(*)                       AS total_chunks,
+    COUNT(DISTINCT ACCESSION_NO)   AS distinct_filings,
+    COUNT(DISTINCT TICKER)         AS distinct_tickers,
+    COUNT(DISTINCT FORM_TYPE)      AS distinct_form_types,
+    MIN(FILED_AT)                  AS earliest_filing,
+    MAX(FILED_AT)                  AS latest_filing,
+    AVG(LENGTH(CHUNK_TEXT))::INT   AS avg_chunk_chars
+FROM FILING_CHUNKS
+WHERE CHUNK_TEXT IS NOT NULL;

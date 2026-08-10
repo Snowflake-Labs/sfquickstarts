@@ -10,15 +10,17 @@ fork repo link: https://github.com/sfc-gh-ppaczewski/sfquickstarts/tree/add-anal
 # Analytical Search over SEC Filings with Snowflake CoWork
 <!-- ------------------------ -->
 
-![Analytical_search_intro](assets/Analytical_search_intro.png)
+![End_to_end_solution_architecture](assets/End_to_end_solution_architecture.png)
 
 ## Overview
 
-**Answer analytical questions: precise counts, exhaustive lists, cross-document patterns over thousands of unstructured SEC filings using Cortex Agents with Analytical Search.**
+**Answer analytical questions  over thousands of unstructured SEC filings using Cortex Agents with Analytical Search.**
 
 Traditional RAG retrieves 10–50 passages and asks an LLM to summarize. That works for single-document lookups, but fails on questions that require processing hundreds of filings: "How many companies disclosed a cybersecurity incident?" or "List every M&A deal filed this week." Analytical Search solves this by combining semantic search, AI functions, and SQL into one orchestrated loop.
 
-In this quickstart you will ingest a day of SEC EDGAR filings, build a multi-index Cortex Search service, create a Semantic View for structured analytics, and deploy an Analytical Search agent in Snowflake CoWork — then ask it questions that no standard RAG system can answer. The result is a near-production-ready, end-to-end solution that you can easily reuse: expand the date range for historical depth, schedule ongoing ingestion with Snowflake Tasks, and the agent grows with the data automatically.
+In this quickstart you will ingest SEC EDGAR filings directly from the SEC's public EDGAR archive using Snowflake's External Access Integration. A stored procedure fetches daily filing archives over HTTPS, parses metadata and document content, enriches filings with stock tickers and industry classification, chunks them into searchable passages, and extracts structured AI signals. 
+
+You will then build a multi-index Cortex Search service, create a Semantic View for structured analytics, and deploy an Analytical Search agent in Snowflake CoWork — then ask it questions that no standard RAG system can answer. The result is a near-production-ready, end-to-end solution that you can easily reuse: expand the date range for historical depth, schedule ongoing ingestion with Snowflake Tasks, and the agent grows with the data automatically.
 
 ### What You'll Learn
 
@@ -143,6 +145,8 @@ Consider the question: *"How many filings filed on Feb 3, 2025 mention cybersecu
 <!-- ------------------------ -->
 ## How Analytical Search Works
 
+![Analytical_search_intro](assets/Analytical_search_intro.png)
+
 Analytical Search is an orchestration capability in Cortex Agents that enables analytical queries over large document collections. It operates in two layers:
 
 ### Layer 1: Search to Prune
@@ -185,10 +189,6 @@ You don't need to specify which mode to use. The agent decides automatically.
 Before executing analytical queries, the agent generates a clear execution plan and presents it for review. This lets you verify the logical steps before any data is processed. Example of an execution planned proposed for a review below.
 
 ![Cybersecurity_plan](assets/Cybersecurity_plan.png)
-
-### The Spectrum of Search Intelligence
-
-![Search_intelligence](assets/Search_intelligence.png)
 
 <!-- ------------------------ -->
 ## Setting Up Your Environment (00_env_setup.sql)
@@ -237,7 +237,7 @@ CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION SEC_EDGAR_EAI
 <!-- ------------------------ -->
 ## Building the Data Pipeline (01_pipeline.sql)
 
-The data pipeline ingests SEC EDGAR filings, enriches them with tickers and industry classification, chunks them for search, and extracts AI signals. The full source is in `sql/00_pipeline.sql`.
+The data pipeline ingests SEC EDGAR filings, enriches them with tickers and industry classification, chunks them for search, and extracts AI signals. The full source is in `sql/01_pipeline.sql`.
 
 ### Core Tables
 
@@ -364,10 +364,11 @@ USE WAREHOUSE FILING_WH;
 CREATE OR REPLACE SEMANTIC VIEW SEC_FILING_ANALYTICS
   TABLES (
     signals AS FILING_SIGNALS
+      PRIMARY KEY (SIGNAL_ID)
       WITH SYNONYMS = ('investment signals', 'filing signals', 'EDGAR signals', 'SEC filings')
       COMMENT = 'AI-extracted investment signals from SEC EDGAR filings.',
-
     meta AS FILING_INDEX
+      PRIMARY KEY (ACCESSION_NO)
       WITH SYNONYMS = ('filing metadata', 'EDGAR index', 'filing registry')
       COMMENT = 'SEC EDGAR filing metadata: accession numbers, CIKs, filing URLs, dates'
   )
