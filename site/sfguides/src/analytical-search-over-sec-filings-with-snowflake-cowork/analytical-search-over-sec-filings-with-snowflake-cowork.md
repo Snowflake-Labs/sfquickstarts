@@ -238,7 +238,7 @@ CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION SEC_EDGAR_EAI
 > **NOTE:** SEC EDGAR requires a valid `User-Agent` header with your organization name and contact email. Edit `config_user_agent` above — this value is passed as a parameter to `RUN_PIPELINE()`, which forwards it to all HTTP calls. You only need to set it in this one place. See [SEC EDGAR access policies](https://www.sec.gov/os/accessing-edgar-data) for details.
 
 <!-- ------------------------ -->
-## Data Pipeline
+## Building the Data Pipeline
 
 > **File:** `sql/01_pipeline.sql`
 
@@ -310,7 +310,7 @@ Expected output for Feb 3, 2025:
 | Avg chunk chars | ~1,250 |
 
 <!-- ------------------------ -->
-## Cortex Search Service
+## Create the Cortex Search Service
 
 > **File:** `sql/02_create_search_service.sql`
 
@@ -356,7 +356,7 @@ AS (
 > **NOTE:** The search service indexes ~3,283 of the 3,453 total chunks. The `WHERE LENGTH(CHUNK_TEXT) > 100` filter excludes very short chunks (section headers, boilerplate) that would add noise to search results.
 
 <!-- ------------------------ -->
-## Semantic View
+## Create the Semantic View
 
 > **File:** `sql/03_create_semantic_view.sql`
 
@@ -466,7 +466,7 @@ CREATE OR REPLACE SEMANTIC VIEW SEC_FILING_ANALYTICS
 ```
 
 <!-- ------------------------ -->
-## Deploy the Agent
+## Deploy the Analytical Search Agent
 
 > **File:** `sql/04_deploy_agent.sql`
 
@@ -566,7 +566,7 @@ ALTER SNOWFLAKE INTELLIGENCE SNOWFLAKE_INTELLIGENCE_OBJECT_DEFAULT
 > **NOTE:** Snowflake recommends setting `max_results` to 1,000 for analytical search. This gives the agent enough breadth to surface the full relevant set of documents. Adaptive depth limits actual compute to what the question requires — you won't pay for 1,000 AI function calls on a narrow question.
 
 <!-- ------------------------ -->
-## Guided Exercises
+## Analytical Search in Action
 
 In Snowflake UI click Cortex AI and open **Snowflake CoWork** and select the `SEC_ANALYTICAL_SEARCH_AGENT`. Try each exercise below to see different Analytical Search capabilities in action.
 
