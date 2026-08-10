@@ -5,7 +5,7 @@ categories: snowflake-site:taxonomy/solution-center/certification/quickstart, sn
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-fork repo link: https://github.com/sfc-gh-ppaczewski/sfquickstarts/tree/add-analytical-search-sec-filings-guide/site/sfguides/src/analytical-search-over-sec-filings-with-snowflake-cowork
+fork repo link: https://github.com/Snowflake-Labs/sfquickstarts/tree/main/site/sfguides/src/analytical-search-over-sec-filings-with-snowflake-cowork
 
 # Analytical Search over SEC Filings with Snowflake CoWork
 <!-- ------------------------ -->
@@ -44,7 +44,7 @@ You will then build a multi-index Cortex Search service, create a Semantic View 
 
 ### Source Code
 
-All SQL files are available in the [source code repository](https://github.com/sfc-gh-ppaczewski/sfquickstarts/tree/add-analytical-search-sec-filings-guide/site/sfguides/src/analytical-search-over-sec-filings-with-snowflake-cowork/sql):
+All SQL files are available in the [source code repository](https://github.com/Snowflake-Labs/sfquickstarts/tree/main/site/sfguides/src/analytical-search-over-sec-filings-with-snowflake-cowork/sql):
 
 | File | Purpose |
 |------|---------|
@@ -717,4 +717,4 @@ This quickstart is not just a demo — it produces a near-production-ready, end-
 -   [AI_EXTRACT Function](https://docs.snowflake.com/en/sql-reference/functions/ai_extract)
 -   [AI_AGG Function](https://docs.snowflake.com/en/sql-reference/functions/ai_agg)
 -   [Semantic Views](https://docs.snowflake.com/en/user-guide/views-semantic)
--   [Source Code Repository](https://github.com/sfc-gh-ppaczewski/sfquickstarts/tree/add-analytical-search-sec-filings-guide/site/sfguides/src/analytical-search-over-sec-filings-with-snowflake-cowork)
+-   [Source Code Repository](https://github.com/Snowflake-Labs/sfquickstarts/tree/main/site/sfguides/src/analytical-search-over-sec-filings-with-snowflake-cowork)
