@@ -194,6 +194,8 @@ Before executing analytical queries, the agent generates a clear execution plan 
 <!-- ------------------------ -->
 ## Environment Setup
 
+> **File:** `sql/00_env_setup.sql`
+
 Open a SQL file in Snowflake Workspace and run the following to create the infrastructure:
 
 ```sql
@@ -238,7 +240,9 @@ CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION SEC_EDGAR_EAI
 <!-- ------------------------ -->
 ## Data Pipeline
 
-The data pipeline ingests SEC EDGAR filings, enriches them with tickers and industry classification, chunks them for search, and extracts AI signals. The full source is in `sql/01_pipeline.sql`.
+> **File:** `sql/01_pipeline.sql`
+
+The data pipeline ingests SEC EDGAR filings, enriches them with tickers and industry classification, chunks them for search, and extracts AI signals.
 
 ### Core Tables
 
@@ -308,6 +312,8 @@ Expected output for Feb 3, 2025:
 <!-- ------------------------ -->
 ## Cortex Search Service
 
+> **File:** `sql/02_create_search_service.sql`
+
 > **NOTE:** If you already have a Cortex Search service, you can reuse it; you don’t need to create a new service specifically for analytical search. If your agent already has a Cortex Search tool configured, you don’t need to add another one.
 
 ### Create the Service
@@ -351,6 +357,8 @@ AS (
 
 <!-- ------------------------ -->
 ## Semantic View
+
+> **File:** `sql/03_create_semantic_view.sql`
 
 The Semantic View is required for Cortex Analyst tool execution. It allows the agent to answer counting and aggregation questions with SQL precision.
 
@@ -459,6 +467,8 @@ CREATE OR REPLACE SEMANTIC VIEW SEC_FILING_ANALYTICS
 
 <!-- ------------------------ -->
 ## Deploy the Agent
+
+> **File:** `sql/04_deploy_agent.sql`
 
 ### Create the Agent
 
@@ -663,6 +673,8 @@ This works: both have substantial risk-factor sections in the corpus.
 
 <!-- ------------------------ -->
 ## Cleanup
+
+> **File:** `sql/99_teardown.sql`
 
 When you're done exploring, run the teardown script to remove all objects:
 
