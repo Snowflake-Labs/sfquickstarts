@@ -238,7 +238,7 @@ CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION SEC_EDGAR_EAI
 > **NOTE:** SEC EDGAR requires a valid `User-Agent` header with your organization name and contact email. Edit `config_user_agent` above — this value is passed as a parameter to `RUN_PIPELINE()`, which forwards it to all HTTP calls. You only need to set it in this one place. See [SEC EDGAR access policies](https://www.sec.gov/os/accessing-edgar-data) for details.
 
 <!-- ------------------------ -->
-## Building the Data Pipeline
+## Build the Data Pipeline
 
 > **File:** `sql/01_pipeline.sql`
 
