@@ -1,7 +1,7 @@
 author: Piotr Paczewski, Lucas Galan
 id: analytical-search-over-sec-filings-with-snowflake-cowork
 summary: Build an analytical search agent that answers counting, listing, and trend questions over thousands of SEC filings — going far beyond what traditional RAG can do.
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/cortex-agents, site:taxonomy/snowflake-feature/cortex-search
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/cortex-agents, site:taxonomy/snowflake-feature/cortex-search
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
