@@ -11,7 +11,7 @@ fork repo link: https://github.com/Snowflake-Labs/sfquickstarts/tree/main/site/s
 # Analytical Search over SEC Filings with Snowflake CoWork
 <!-- ------------------------ -->
 
-![E2E_architecture](assets/E2E_architecture.png)
+![e2e-architecture](assets/e2e-architecture.png)
 
 ## Overview
 
@@ -139,14 +139,14 @@ Consider the question: *"How many filings filed on Feb 3, 2025 mention cybersecu
 
 > Answer: "5 filings filed on Feb 3, 2025 mention substantive cybersecurity risks. The companies are: [complete list with citations]."
 
-![Cybersecurity_result](assets/Cybersecurity_result.png)
+![cybersecurity-result](assets/cybersecurity-result.png)
 
 → Quantitative, exhaustive answer with precise filtering and SQL-level computation.
 
 <!-- ------------------------ -->
 ## How Analytical Search Works
 
-![Analytical_search_intro](assets/Analytical_search_intro.png)
+![analytical-search-intro](assets/analytical-search-intro.png)
 
 Analytical Search is an orchestration capability in Cortex Agents that enables analytical queries over large document collections. It operates in two layers:
 
@@ -189,7 +189,7 @@ You don't need to specify which mode to use. The agent decides automatically.
 
 Before executing analytical queries, the agent generates a clear execution plan and presents it for review. This lets you verify the logical steps before any data is processed. Example of an execution planned proposed for a review below.
 
-![Cybersecurity_plan](assets/Cybersecurity_plan.png)
+![cybersecurity-plan](assets/cybersecurity-plan.png)
 
 <!-- ------------------------ -->
 ## Setting Up Your Environment (00_env_setup.sql)
@@ -255,7 +255,7 @@ The pipeline creates four main tables:
 
 Execute the entire `sql/01_pipeline.sql` file in Snowflake workspace. 
 
-![Pipeline_script](assets/Pipeline_script.png)
+![pipeline-script](assets/pipeline-script.png)
 
 ```sql
 -- The last command in the script calls the pipeline:
@@ -560,7 +560,7 @@ ALTER SNOWFLAKE INTELLIGENCE SNOWFLAKE_INTELLIGENCE_OBJECT_DEFAULT
 
 In Snowflake UI click Cortex AI and open **Snowflake CoWork** and select the `SEC_ANALYTICAL_SEARCH_AGENT`. Try each exercise below to see different Analytical Search capabilities in action.
 
-![CoWork](assets/CoWork.png)
+![cowork](assets/cowork.png)
 
 > **Performance expectations:** Simple RAG questions typically complete in ~30 seconds. Analytical search workflows take **2–6 minutes** for most questions. Complex analyses over large corpora (thousands of documents with multi-step extraction and aggregation) may take up to **15 minutes**. This is expected — the agent is doing real computation, not just summarizing a handful of passages.
 
@@ -572,7 +572,7 @@ In Snowflake UI click Cortex AI and open **Snowflake CoWork** and select the `SE
 
 > What does Boeing's 10-K say about supply chain risk?
 
-![Boeing_10k](assets/Boeing_10k.png)
+![boeing-10k](assets/boeing-10k.png)
 
 **What to observe:**
 - This is a per-document question — the agent auto-routes to standard top-k RAG
@@ -589,7 +589,7 @@ In Snowflake UI click Cortex AI and open **Snowflake CoWork** and select the `SE
 
 > How many filings filed on Feb 3, 2025 mention cybersecurity risks?
 
-![Cybersecurity_plan](assets/Cybersecurity_plan.png)
+![cybersecurity-plan](assets/cybersecurity-plan.png)
 
 **What to observe:**
 - The agent shows a **plan** before executing (probe → search → AI_FILTER → COUNT)
@@ -599,7 +599,7 @@ In Snowflake UI click Cortex AI and open **Snowflake CoWork** and select the `SE
 
 **Expected result:** ~5 filings mention substantive cybersecurity risks. The agent will list each company with its form type and filing date.
 
-![Cybersecurity_result](assets/Cybersecurity_result.png)
+![cybersecurity-result](assets/cybersecurity-result.png)
 
 **Key insight:** A RAG agent would say "here are some examples..." — it cannot count because it only sees 5–10 documents. The Analytical Search agent counts from the full result set using SQL.
 
@@ -611,7 +611,7 @@ In Snowflake UI click Cortex AI and open **Snowflake CoWork** and select the `SE
 
 > List every company that announced a leadership change in an 8-K filing on Feb 3, 2025.
 
-![Leadership_change_plan](assets/Leadership_change_plan.png)
+![leadership-change-plan](assets/leadership-change-plan.png)
 
 **What to observe:**
 - **Adaptive depth** retrieves exactly as many results as needed
@@ -621,7 +621,7 @@ In Snowflake UI click Cortex AI and open **Snowflake CoWork** and select the `SE
 
 **Expected result:** ~50 leadership changes in a single day — a table with company, person, role, and type. Notable examples: RTX Corp (Gregory Hayes stepping down), Baxter International (CEO transition).
 
-![Leadership_change_execute](assets/Leadership_change_execute.png)
+![leadership-change-execute](assets/leadership-change-execute.png)
 
 **Key insight:** A RAG agent would return 5–10 examples and hedge with "there may be more." The Analytical Search agent finds all ~50 and structures them into an audit-ready table.
 
@@ -633,7 +633,7 @@ In Snowflake UI click Cortex AI and open **Snowflake CoWork** and select the `SE
 
 > Compare Apple and Microsoft 10-K risk factor language about AI — what specific concerns does each company raise?
 
-![Honest_refusal](assets/Honest_refusal.png)
+![honest-refusal](assets/honest-refusal.png)
 
 **What to observe:**
 - The agent **does not hallucinate**
@@ -647,7 +647,7 @@ In Snowflake UI click Cortex AI and open **Snowflake CoWork** and select the `SE
 
 > Compare Boeing and RTX 10-K risk factor language — what does each emphasize?
 
-![Boeing_RTX](assets/Boeing_RTX.png)
+![boeing-rtx](assets/boeing-rtx.png)
 
 This works: both have substantial risk-factor sections in the corpus.
 
