@@ -57,7 +57,7 @@ All SQL files are available in the [source code repository](https://github.com/S
 | `sql/99_teardown.sql` | Full cleanup |
 
 <!-- ------------------------ -->
-## The Problem: Why RAG Breaks on Analytical Questions
+## Why RAG Falls Short
 
 Standard RAG has three fundamental limitations that make it unsuitable for analytical work over large document collections:
 
@@ -144,7 +144,7 @@ Consider the question: *"How many filings filed on Feb 3, 2025 mention cybersecu
 → Quantitative, exhaustive answer with precise filtering and SQL-level computation.
 
 <!-- ------------------------ -->
-## How Analytical Search Works
+## How It Works
 
 ![analytical-search-intro](assets/analytical-search-intro.png)
 
@@ -192,7 +192,7 @@ Before executing analytical queries, the agent generates a clear execution plan 
 ![cybersecurity-plan](assets/cybersecurity-plan.png)
 
 <!-- ------------------------ -->
-## Setting Up Your Environment (00_env_setup.sql)
+## Environment Setup
 
 Open a SQL file in Snowflake Workspace and run the following to create the infrastructure:
 
@@ -236,7 +236,7 @@ CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION SEC_EDGAR_EAI
 > **NOTE:** SEC EDGAR requires a valid `User-Agent` header with your organization name and contact email. Edit `config_user_agent` above — this value is passed as a parameter to `RUN_PIPELINE()`, which forwards it to all HTTP calls. You only need to set it in this one place. See [SEC EDGAR access policies](https://www.sec.gov/os/accessing-edgar-data) for details.
 
 <!-- ------------------------ -->
-## Building the Data Pipeline (01_pipeline.sql)
+## Data Pipeline
 
 The data pipeline ingests SEC EDGAR filings, enriches them with tickers and industry classification, chunks them for search, and extracts AI signals. The full source is in `sql/01_pipeline.sql`.
 
@@ -306,7 +306,7 @@ Expected output for Feb 3, 2025:
 | Avg chunk chars | ~1,250 |
 
 <!-- ------------------------ -->
-## Creating the Cortex Search Service (02_create_search_service.sql)
+## Cortex Search Service
 
 > **NOTE:** If you already have a Cortex Search service, you can reuse it; you don’t need to create a new service specifically for analytical search. If your agent already has a Cortex Search tool configured, you don’t need to add another one.
 
@@ -350,7 +350,7 @@ AS (
 > **NOTE:** The search service indexes ~3,283 of the 3,453 total chunks. The `WHERE LENGTH(CHUNK_TEXT) > 100` filter excludes very short chunks (section headers, boilerplate) that would add noise to search results.
 
 <!-- ------------------------ -->
-## Creating the Semantic View (03_create_semantic_view.sql)
+## Semantic View
 
 The Semantic View is required for Cortex Analyst tool execution. It allows the agent to answer counting and aggregation questions with SQL precision.
 
@@ -458,7 +458,7 @@ CREATE OR REPLACE SEMANTIC VIEW SEC_FILING_ANALYTICS
 ```
 
 <!-- ------------------------ -->
-## Deploying the Analytical Search Agent (04_deploy_agent.sql)
+## Deploy the Agent
 
 ### Create the Agent
 
@@ -556,7 +556,7 @@ ALTER SNOWFLAKE INTELLIGENCE SNOWFLAKE_INTELLIGENCE_OBJECT_DEFAULT
 > **NOTE:** Snowflake recommends setting `max_results` to 1,000 for analytical search. This gives the agent enough breadth to surface the full relevant set of documents. Adaptive depth limits actual compute to what the question requires — you won't pay for 1,000 AI function calls on a narrow question.
 
 <!-- ------------------------ -->
-## Analytical Search in Action: Guided Exercises
+## Guided Exercises
 
 In Snowflake UI click Cortex AI and open **Snowflake CoWork** and select the `SEC_ANALYTICAL_SEARCH_AGENT`. Try each exercise below to see different Analytical Search capabilities in action.
 
@@ -662,7 +662,7 @@ This works: both have substantial risk-factor sections in the corpus.
 | Full breakdown | "Break down all filings filed today by industry sector and sentiment." | Cortex Analyst (pure structured) |
 
 <!-- ------------------------ -->
-## Cleanup (99_teardown.sql)
+## Cleanup
 
 When you're done exploring, run the teardown script to remove all objects:
 
