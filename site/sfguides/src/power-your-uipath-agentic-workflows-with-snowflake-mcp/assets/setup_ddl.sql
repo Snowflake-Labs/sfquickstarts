@@ -1,0 +1,132 @@
+-- =============================================================================
+-- Shipping Logistics Demo — Database, Schema & Table DDLs
+-- Target: LOGISTICS_C.SHIPPING_MARTS
+-- =============================================================================
+
+USE ROLE ACCOUNTADMIN;
+
+-- Database & Schema
+CREATE DATABASE IF NOT EXISTS LOGISTICS_C;
+CREATE SCHEMA IF NOT EXISTS LOGISTICS_C.SHIPPING_MARTS;
+
+USE DATABASE LOGISTICS_C;
+USE SCHEMA SHIPPING_MARTS;
+USE WAREHOUSE COMPUTE_WH;
+
+-- =============================================================================
+-- DIMENSION TABLES
+-- =============================================================================
+
+CREATE OR REPLACE TABLE DIM_CUSTOMERS (
+    CUSTOMER_ID       VARCHAR(20)   NOT NULL,
+    CUSTOMER_NAME     VARCHAR(200)  NOT NULL,
+    INDUSTRY          VARCHAR(50),
+    COUNTRY           VARCHAR(50),
+    REGION            VARCHAR(50),
+    CONTRACT_TIER     VARCHAR(20),
+    CREATED_DATE      DATE,
+    CONSTRAINT PK_DIM_CUSTOMERS PRIMARY KEY (CUSTOMER_ID)
+);
+
+CREATE OR REPLACE TABLE DIM_VESSELS (
+    VESSEL_ID         VARCHAR(20)   NOT NULL,
+    VESSEL_NAME       VARCHAR(100)  NOT NULL,
+    VESSEL_TYPE       VARCHAR(30),
+    CAPACITY_TEU      INTEGER,
+    FLAG_COUNTRY      VARCHAR(50),
+    BUILD_YEAR        INTEGER,
+    CONSTRAINT PK_DIM_VESSELS PRIMARY KEY (VESSEL_ID)
+);
+
+CREATE OR REPLACE TABLE DIM_PORTS (
+    PORT_CODE         VARCHAR(10)   NOT NULL,
+    PORT_NAME         VARCHAR(100)  NOT NULL,
+    COUNTRY           VARCHAR(50),
+    REGION            VARCHAR(50),
+    TERMINAL          VARCHAR(100),
+    TIMEZONE          VARCHAR(30),
+    CONSTRAINT PK_DIM_PORTS PRIMARY KEY (PORT_CODE)
+);
+
+CREATE OR REPLACE TABLE DIM_ROUTES (
+    ROUTE_ID              VARCHAR(20)   NOT NULL,
+    ROUTE_NAME            VARCHAR(100)  NOT NULL,
+    ORIGIN_PORT_CODE      VARCHAR(10)   NOT NULL,
+    DESTINATION_PORT_CODE VARCHAR(10)   NOT NULL,
+    TRADE_LANE            VARCHAR(50),
+    STANDARD_TRANSIT_DAYS INTEGER,
+    SERVICE_FREQUENCY     VARCHAR(20),
+    CONSTRAINT PK_DIM_ROUTES PRIMARY KEY (ROUTE_ID)
+);
+
+-- =============================================================================
+-- FACT TABLES
+-- =============================================================================
+
+CREATE OR REPLACE TABLE FACT_SHIPMENTS (
+    SHIPMENT_ID         VARCHAR(20)     NOT NULL,
+    CUSTOMER_ID         VARCHAR(20)     NOT NULL,
+    ROUTE_ID            VARCHAR(20)     NOT NULL,
+    VESSEL_ID           VARCHAR(20)     NOT NULL,
+    CONTAINER_COUNT     INTEGER,
+    CONTAINER_TYPE      VARCHAR(10),
+    CARGO_TYPE          VARCHAR(50),
+    BOOKING_DATE        DATE,
+    PLANNED_DEPARTURE   TIMESTAMP_NTZ,
+    PLANNED_ARRIVAL     TIMESTAMP_NTZ,
+    ACTUAL_DEPARTURE    TIMESTAMP_NTZ,
+    ACTUAL_ARRIVAL      TIMESTAMP_NTZ,
+    SHIPMENT_STATUS     VARCHAR(20),
+    TOTAL_WEIGHT_KG     FLOAT,
+    FREIGHT_CHARGE_USD  FLOAT,
+    CREATE_DTTM         TIMESTAMP_NTZ   DEFAULT CURRENT_TIMESTAMP(),
+    UPDATE_DTTM         TIMESTAMP_NTZ   DEFAULT CURRENT_TIMESTAMP(),
+    CONSTRAINT PK_FACT_SHIPMENTS PRIMARY KEY (SHIPMENT_ID)
+);
+
+CREATE OR REPLACE TABLE FACT_SHIPMENT_EVENTS (
+    EVENT_ID            VARCHAR(20)     NOT NULL,
+    SHIPMENT_ID         VARCHAR(20)     NOT NULL,
+    EVENT_TYPE          VARCHAR(30),
+    PORT_CODE           VARCHAR(10),
+    EVENT_TIMESTAMP     TIMESTAMP_NTZ,
+    REMARKS             VARCHAR(500),
+    CREATE_DTTM         TIMESTAMP_NTZ   DEFAULT CURRENT_TIMESTAMP(),
+    UPDATE_DTTM         TIMESTAMP_NTZ   DEFAULT CURRENT_TIMESTAMP(),
+    CONSTRAINT PK_FACT_SHIPMENT_EVENTS PRIMARY KEY (EVENT_ID)
+);
+
+CREATE OR REPLACE TABLE FACT_SHIPMENT_PERFORMANCE (
+    SHIPMENT_ID          VARCHAR(20)    NOT NULL,
+    PLANNED_TRANSIT_DAYS INTEGER,
+    ACTUAL_TRANSIT_DAYS  INTEGER,
+    DELAY_DAYS           INTEGER,
+    DELAY_REASON         VARCHAR(50),
+    ON_TIME_FLAG         BOOLEAN,
+    CREATE_DTTM          TIMESTAMP_NTZ  DEFAULT CURRENT_TIMESTAMP(),
+    UPDATE_DTTM          TIMESTAMP_NTZ  DEFAULT CURRENT_TIMESTAMP(),
+    CONSTRAINT PK_FACT_SHIPMENT_PERFORMANCE PRIMARY KEY (SHIPMENT_ID)
+);
+
+-- =============================================================================
+-- UNSTRUCTURED DATA TABLE (for Cortex Search)
+-- =============================================================================
+
+CREATE OR REPLACE TABLE SHIPPING_DOCS (
+    DOC_ID           VARCHAR(20)     NOT NULL,
+    CATEGORY         VARCHAR(30),
+    TITLE            VARCHAR(200),
+    CONTENT          VARCHAR(16000),
+    REGION           VARCHAR(50),
+    PORT_CODE        VARCHAR(10),
+    EFFECTIVE_DATE   DATE,
+    EXPIRY_DATE      DATE,
+    TAGS             VARCHAR(200),
+    CONSTRAINT PK_SHIPPING_DOCS PRIMARY KEY (DOC_ID)
+);
+
+-- =============================================================================
+-- Validation: confirm all tables created
+-- =============================================================================
+
+SHOW TABLES IN SCHEMA LOGISTICS_C.SHIPPING_MARTS;

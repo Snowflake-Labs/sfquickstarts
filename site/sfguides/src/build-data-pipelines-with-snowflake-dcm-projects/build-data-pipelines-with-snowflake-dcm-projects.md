@@ -21,8 +21,6 @@ In this guide, you'll take that a step further. You'll work with **two separate 
 
 By splitting platform infrastructure and data pipelines into separate projects, you get a clean separation of concerns. The Platform project can be owned by a platform team and deployed independently, while the Pipeline project can be owned by a data engineering team that builds transformations on top.
 
-> **Note:** DCM Projects is currently in Public Preview. See the [DCM Projects documentation](https://docs.snowflake.com/en/user-guide/dcm-projects/dcm-projects-overview) for the latest details.
-
 ### Prerequisites
 - A [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) with ACCOUNTADMIN access (or a role with sufficient privileges)
 - Familiarity with DCM Projects concepts (complete [Get Started with Snowflake DCM Projects](https://www.snowflake.com/en/developers/guides/get-started-snowflake-dcm-projects/) first)

@@ -11,7 +11,7 @@ status: Published
 
 ### Overview
 
-This guide assumes you have already read [Best Practices for Building Cortex Agents](https://quickstarts.snowflake.com/guide/best-practices-to-building-cortex-agents). The scope here is the evaluation cycle in detail, from early prototyping to production observability.
+This guide assumes you have already read [Best Practices for Building Cortex Agents](https://www.snowflake.com/en/developers/guides/best-practices-to-building-cortex-agents/). The scope here is the evaluation cycle in detail, from early prototyping to production observability.
 
 Evaluation helps you understand how agents perform across a variety of scenarios so you can systematically improve their quality.
 
@@ -26,7 +26,7 @@ Evaluation helps you understand how agents perform across a variety of scenarios
 ### Prerequisites
 - A Snowflake account with access to [Snowflake Intelligence](https://docs.snowflake.com/en/user-guide/snowflake-cortex/snowflake-intelligence/getting-started)
 - A Cortex Agent you want to evaluate
-- Familiarity with the [Best Practices for Building Cortex Agents](https://quickstarts.snowflake.com/guide/best-practices-to-building-cortex-agents) guide
+- Familiarity with the [Best Practices for Building Cortex Agents](https://www.snowflake.com/en/developers/guides/best-practices-to-building-cortex-agents/) guide
 
 <!-- ------------------------ -->
 ## Defining Your Evaluation Set
@@ -440,6 +440,6 @@ Congratulations! You now have a comprehensive understanding of how to evaluate, 
 6. Set up production alerts for evaluation accuracy, latency, reliability, and user feedback to catch issues before users do
 
 ### Related resources
-- [Best Practices for Building Cortex Agents](https://quickstarts.snowflake.com/guide/best-practices-to-building-cortex-agents)
+- [Best Practices for Building Cortex Agents](https://www.snowflake.com/en/developers/guides/best-practices-to-building-cortex-agents/)
 - [Cortex Agents Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents)
 - [Snowflake Intelligence](https://docs.snowflake.com/en/user-guide/snowflake-cortex/snowflake-intelligence/getting-started)
