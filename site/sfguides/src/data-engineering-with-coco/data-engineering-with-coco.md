@@ -11,17 +11,16 @@ fork repo link: https://github.com/Snowflake-Labs/sfguide-data-engineering-with-
 
 # Data Engineering with CoCo
 
-![CoCo DE Logo](assets/coco_de_logo.png)
-
 <!-- ------------------------ -->
 ## Overview
-Duration: 5
+
+![CoCo DE Logo](assets/coco_de_logo.png)
 
 Anyone can get an AI agent to produce a result. Professionals ensure the right result, every time.
 
 AI coding agents are completely reshaping the data engineering landscape — and if you're not already using them regularly, I'd encourage you to start today. But here's the thing: the fact that an AI agent can generate code isn't actually that interesting anymore. What *is* interesting is how professional data engineers should be thinking about and leveraging these tools to create repeatable, high-quality outcomes.
 
-That's exactly what this Quickstart is about. We're going to use Snowflake's AI coding agent — [Cortex Code](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code) (or "CoCo") — to build a real data engineering project. But more importantly, we're going to do it the *right way*, by encoding our standards and conventions into reusable Skills and Plugins so that every member of your team gets consistent, professional results from the agent — not just you, and not just today.
+That's exactly what this Guide is about. We're going to use Snowflake's AI coding agent — [Cortex Code](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code) (or "CoCo") — to build a real data engineering project. But more importantly, we're going to do it the *right way*, by encoding our standards and conventions into reusable Skills and Plugins so that every member of your team gets consistent, professional results from the agent — not just you, and not just today.
 
 ### What You'll Learn
 * What Cortex Code is, how to install it, and why it's particularly powerful for Snowflake data engineers
@@ -54,33 +53,14 @@ That's exactly what this Quickstart is about. We're going to use Snowflake's AI 
 
 <!-- ------------------------ -->
 ## Setup
-Duration: 10
 
 Before we start building, let's get CoCo and the starter dbt project connected to your Snowflake account.
 
-### Create a Snowflake Personal Access Token
-In order to connect to your Snowflake account from CoCo Desktop and GitHub Actions, we will use a Snowflake Personal Access Token (or PAT). Please follow the steps in [Generating a programmatic access token](https://docs.snowflake.com/en/user-guide/programmatic-access-tokens#generating-a-programmatic-access-token) to create a Snowflake PAT for your user. Use these values when creating the PAT, in the "New programmatic access token" dialog:
+### Fork and Clone the Guide Repository
 
-* **Name**: DEMO_PAT (upper case)
-* **Expires in**: Leave with default (15 days)
-* **Grant access**: Select **Single role (recommended)**, then the `DEMO_ROLE` role
+This Guide uses a starter repository that includes a pre-built dbt project. The two existing models (`customers` and `orders_summary`) are there as a starting point — you'll add the third model yourself using a custom skill you create later on.
 
-Make sure to save the PAT before leaving the page, as you won't be able to view it again. We will use the PAT in the next section to configure dbt as well as in the final CI/CD section to connect to Snowflake from GitHub Actions.
-
-Finally, run the following command in a SQL script in Workspaces. This will allow you to bypass the active network policy rule temporarily, for 60 minutes, in order to test out the CI/CD pipeline. For long-term access you need to create a network policy allowing access from the GitHub Actions environment. For more details check out our [Controlling network traffic with network policies](https://docs.snowflake.com/en/user-guide/network-policies) page.
-
-```sql
-ALTER USER <YOUR_USER_NAME> MODIFY PROGRAMMATIC ACCESS TOKEN DEMO_PAT
-  SET MINS_TO_BYPASS_NETWORK_POLICY_REQUIREMENT = 60;
-```
-
-> **Note** — You may need to put double-quotes around the PAT token name in this query if you didn't name your token with all uppercase letters.
-
-### Fork and Clone the Quickstart Repository
-
-This Quickstart uses a starter repository that includes a pre-built dbt project. The two existing models (`customers` and `orders_summary`) are there as a starting point — you'll add the third model yourself using a custom skill you create later on.
-
-Start by forking the starter repository to your own GitHub account. Visit the [Data Engineering with CoCo Quickstart Repository](https://github.com/Snowflake-Labs/sfguide-data-engineering-with-coco) and click the **Fork** button near the top right. Complete any required fields and click **Create Fork**.
+Start by forking the starter repository to your own GitHub account. Visit the [Data Engineering with CoCo Guide Repository](https://github.com/Snowflake-Labs/sfguide-data-engineering-with-coco) and click the **Fork** button near the top right. Complete any required fields and click **Create Fork**.
 
 Then clone your fork to your local machine:
 
@@ -110,7 +90,7 @@ Take a moment to look at what's in the starter:
 
 If you haven't already installed CoCo Desktop, follow the [installation instructions](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-desktop/onboarding-and-authentication) for your operating system.
 
-Once installed, open CoCo Desktop and configure your Snowflake connection. CoCo supports several authentication methods, for this Guide use Password authentication with your Snowflake PAT as the password. See the [CoCo authentication documentation](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-desktop/onboarding-and-authentication#authentication-methods) for all options.
+Once installed, open CoCo Desktop and configure your Snowflake connection. CoCo supports several authentication methods, for this Guide use Local OAuth authentication. See the [CoCo authentication documentation](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-desktop/onboarding-and-authentication#authentication-methods) for all options.
 
 Finally, use **File → Open Folder** to open the `sfguide-data-engineering-with-coco` directory you cloned above. The first time you open the folder CoCo Desktop will ask you if you Trust the files, go ahead and Trust them. CoCo is context-aware: opening the project folder means the agent can see your files, read your code, and run commands in the right place.
 
@@ -125,6 +105,24 @@ But we need to create the demo environment in Snowflake so that dbt can write to
 And the good part is you can run SQL scripts directly from CoCo Desktop by following these steps:
 * Open the `scripts/setup.sql` script
 * Run all of the SQL statements in this script by clicking on the down arrow and "Run all", next to the blue play button at the top right of the script, or using the shortcut CMD/CTRL+Shift+Enter
+
+### Create a Snowflake Personal Access Token
+In order to connect to your Snowflake account from dbt and GitHub Actions, we will use a Snowflake Personal Access Token (or PAT). Please follow the steps in [Generating a programmatic access token](https://docs.snowflake.com/en/user-guide/programmatic-access-tokens#generating-a-programmatic-access-token) to create a Snowflake PAT for your user. Use these values when creating the PAT, in the "New programmatic access token" dialog:
+
+* **Name**: DEMO_PAT (upper case)
+* **Expires in**: Leave with default (15 days)
+* **Grant access**: Select **Single role (recommended)**, then the `DEMO_ROLE` role
+
+Make sure to save the PAT before leaving the page, as you won't be able to view it again. We will use the PAT in the next section to configure dbt as well as in the final CI/CD section to connect to Snowflake from GitHub Actions.
+
+Finally, run the following command in a SQL script in Workspaces. This will allow you to bypass the active network policy rule temporarily, for 60 minutes, in order to test out the CI/CD pipeline. For long-term access you need to create a network policy allowing access from the GitHub Actions environment. For more details check out our [Controlling network traffic with network policies](https://docs.snowflake.com/en/user-guide/network-policies) page.
+
+```sql
+ALTER USER <YOUR_USER_NAME> MODIFY PROGRAMMATIC ACCESS TOKEN DEMO_PAT
+  SET MINS_TO_BYPASS_NETWORK_POLICY_REQUIREMENT = 60;
+```
+
+> **Note** — You may need to put double-quotes around the PAT token name in this query if you didn't name your token with all uppercase letters.
 
 ### Configure dbt
 
@@ -170,7 +168,6 @@ You should see `All checks passed!` at the end of the output. If you run into an
 
 <!-- ------------------------ -->
 ## What is Cortex Code?
-Duration: 5
 
 ![CoCo DE Logo](assets/coco_logo.png)
 
@@ -186,12 +183,11 @@ CoCo is available in three form factors, and the right choice depends on how you
 | **CoCo Desktop** | A standalone IDE for macOS and Windows (built on VS Code). Full agent experience with local file access, native Git integration, and complete support for plugins, skills, hooks, and subagents. |
 | **CoCo CLI** | A terminal-native agent for power users who prefer the command line or want to integrate CoCo into scripts and automation. |
 
-This Quickstart uses **CoCo Desktop** throughout. Local file access and full extensibility support — skills, plugins, hooks, and subagents — are central to what we're building, and Desktop is the right tool for all of it.
+This Guide uses **CoCo Desktop** throughout. Local file access and full extensibility support — skills, plugins, hooks, and subagents — are central to what we're building, and Desktop is the right tool for all of it.
 
 
 <!-- ------------------------ -->
 ## Create an AGENTS.md
-Duration: 10
 
 Before you write a single prompt, there's one thing that will improve every single interaction you have with CoCo in this project: an `AGENTS.md` file.
 
@@ -290,11 +286,10 @@ This is `AGENTS.md` doing its job. CoCo didn't need to be told what the violatio
 
 <!-- ------------------------ -->
 ## What is a Skill?
-Duration: 10
 
 We've seen `AGENTS.md` handle project context and enforce existing conventions. But what about when you're creating something new? When the task is "build a new dbt model," `AGENTS.md` tells CoCo the database name and the build command — but it doesn't tell it the specific workflow your team follows or the standards that must hold for every new model. That's what Skills are for.
 
-Let's take a few minutes to understand what Skills actually are — because this concept is central to everything that follows in this Quickstart.
+Let's take a few minutes to understand what Skills actually are — because this concept is central to everything that follows in this Guide.
 
 ### Skills Defined
 
@@ -358,7 +353,6 @@ A useful rule of thumb: if you find yourself starting a prompt with "remember, w
 
 <!-- ------------------------ -->
 ## Using CoCo Without a Skill
-Duration: 10
 
 Before writing your first custom Skill, it's worth understanding what you *don't* need to encode. The frontier model behind CoCo has broad, deep knowledge of the software and data engineering ecosystem — and that means for a lot of common tasks, you can just ask.
 
@@ -393,7 +387,6 @@ Notice, though, that we had to specify the filename `_schema.yml` explicitly —
 
 <!-- ------------------------ -->
 ## Create a Custom Skill
-Duration: 15
 
 CoCo's base knowledge is great for standard dbt tasks. But for the conventions that are *specific to this project* — the ones that need to hold consistently across every new model your team builds — that's where a custom Skill comes in.
 
@@ -485,7 +478,6 @@ That's the difference between a one-off prompt and a Skill. The conventions are 
 
 <!-- ------------------------ -->
 ## What is a Plugin?
-Duration: 10
 
 We now have a working custom Skill. Let's talk about Plugins before we build one — because understanding *why* Plugins exist makes it much easier to understand what we're about to put together.
 
@@ -550,14 +542,13 @@ Let's briefly cover each element a Plugin can contain:
 
 **Hooks** — shell commands that run on lifecycle events. The most useful for data engineers is `PreToolUse`, which fires before CoCo executes a tool (like running a Bash command). This is how you add guardrails — for example, blocking direct production deployments. Hooks are defined in a `hooks.json` file and reference shell scripts.
 
-**MCP Servers** — Model Context Protocol servers that expose external tools to the agent. For example, you could wire up a connection to your internal issue tracker or GitHub so CoCo can pull context from outside the codebase. We won't cover MCP Servers in depth in this Quickstart, but you can find full details in the [CoCo documentation](https://docs.snowflake.com/en/user-guide/cortex-code/extensibility#model-context-protocol-mcp).
+**MCP Servers** — Model Context Protocol servers that expose external tools to the agent. For example, you could wire up a connection to your internal issue tracker or GitHub so CoCo can pull context from outside the codebase. We won't cover MCP Servers in depth in this Guide, but you can find full details in the [CoCo documentation](https://docs.snowflake.com/en/user-guide/cortex-code/extensibility#model-context-protocol-mcp).
 
 **activation.md** — an optional Markdown file displayed to the user when the Plugin is activated. Use it to explain what the Plugin does and how to enable it.
 
 
 <!-- ------------------------ -->
 ## Create a Custom Plugin
-Duration: 20
 
 We have all the pieces — a custom Skill, a clear understanding of what Plugins are, and a project that's ready to be hardened. Now let's bundle everything into a proper Plugin. The first thing we'll do is migrate the skill from its project-local home into the plugin folder, then add a production safety hook and a dbt review subagent alongside it.
 
@@ -721,7 +712,6 @@ The subagent will run to completion autonomously — finding changed model files
 
 <!-- ------------------------ -->
 ## Publish to the Plugin Catalog
-Duration: 7
 
 So far, your plugin lives at `.cortex/plugins/coco-de-guide/` inside this repository. Teammates can install it by cloning the repo or using **Add from GitHub** in CoCo Desktop. That works — but Snowflake has a better option for teams that want centralized discovery and access control: the **Plugins Catalog**.
 
@@ -777,7 +767,7 @@ snow://skill_catalog/USER$<YOUR_USERNAME>.SKILL_SHARING.COCO_DE_GUIDE/versions/v
 
 ### Installing a Catalog Plugin
 
-This Quickstart doesn't walk through the consumer-side flow, but here's how a teammate would install your published plugin:
+This Guide doesn't walk through the consumer-side flow, but here's how a teammate would install your published plugin:
 
 1. Click the **Settings** tab (gear icon) in the bottom of the left sidebar
 2. Open the **Plugins** section
@@ -789,11 +779,10 @@ CoCo downloads the plugin files from Snowflake, validates the manifest, and regi
 
 <!-- ------------------------ -->
 ## Enforce Standards Automatically in CI/CD
-Duration: 15
 
 Everything we've built so far — the `AGENTS.md`, the Skill, the Plugin, the hook, the subagent — was designed with this moment in mind. We're going to take the exact same dbt-review subagent we've been running locally and wire it into a GitHub Actions workflow so it runs automatically on every pull request that touches a dbt model. Same agent. Same conventions. Now running in CI.
 
-This is the payoff of building a Plugin instead of a loose collection of Skill files. But there's one important note about what's different here: while this Quickstart uses **CoCo Desktop** for the interactive development sections, the CI/CD pipeline uses the **CoCo CLI** — the terminal-native form of the same agent. The CLI is the right tool for automation: it runs headlessly, connects via a credentials file, and is installable in any CI environment. The plugin you built in `.cortex/plugins/` is auto-discovered by the CLI just as it is by Desktop — no separate install step needed.
+This is the payoff of building a Plugin instead of a loose collection of Skill files. But there's one important note about what's different here: while this Guide uses **CoCo Desktop** for the interactive development sections, the CI/CD pipeline uses the **CoCo CLI** — the terminal-native form of the same agent. The CLI is the right tool for automation: it runs headlessly, connects via a credentials file, and is installable in any CI environment. The plugin you built in `.cortex/plugins/` is auto-discovered by the CLI just as it is by Desktop — no separate install step needed.
 
 ### Configure GitHub Secrets
 
@@ -913,7 +902,7 @@ By default, GitHub Actions workflows are disabled in forked repositories. Enable
 
 ### Test the Workflow
 
-Commit all the files you've created in this Quickstart to a new feature branch and push to GitHub using CoCo Desktop's built-in Source Control panel.
+Commit all the files you've created in this Guide to a new feature branch and push to GitHub using CoCo Desktop's built-in Source Control panel.
 
 **Create a new branch**
 
@@ -941,7 +930,6 @@ Navigate to the **Actions** tab to watch the workflow run. Once it completes, yo
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 2
 
 Congratulations! You've built a complete, professional-grade data engineering workflow with Cortex Code. Let's take a moment to look back at what you actually built — and more importantly, *why* each piece matters.
 
