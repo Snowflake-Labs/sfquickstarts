@@ -13,7 +13,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 ### What You Will Build
 
-This quickstart demonstrates how to stream row-level changes (INSERT, UPDATE, DELETE) from a Snowflake table down to a Snowflake Postgres table automatically. Changes made in Snowflake are exported as Parquet files to a shared internal stage by a scheduled Task, then detected and merged into Postgres by a `pg_incremental` pipeline — with no S3 bucket, no external pipeline, and no manual intervention.
+This quickstart demonstrates how to build an automated pipeline that streams row-level changes (INSERT, UPDATE, DELETE) from a Snowflake table down to a Snowflake Postgres table. Changes made in Snowflake are exported as Parquet files to a shared internal stage by a scheduled Task, then detected and merged into Postgres by a `pg_incremental` pipeline — with no S3 bucket, no external pipeline, and no manual intervention.
 
 ### How It Works
 
@@ -79,7 +79,7 @@ Create a Snowflake Postgres instance. Skip this section if you already have an i
 
 ### Step 1: Create Network Policy
 
-Snowflake Postgres requires a network policy to allow client connections. Replace `nnn.nnn.nnn.nnn/32` with a specific IP address (or subnet) and CIDR for your organization.
+Snowflake Postgres requires a network policy to allow client connections. Replace `nnn.nnn.nnn.nnn/32` with a specific IP address or CIDR for your organization.
 
 ```sql
 -- Postgres Instance Setup: Step 1 - Create Network Policy
@@ -241,7 +241,7 @@ ORDER BY product_id;
 
 ### Step 4: Create Export Procedure, Task, and Verify
 
-`SINGLE = TRUE` and `INCLUDE_QUERY_ID = TRUE` cannot be used together — Snowflake raises a compilation error. The solution is a stored procedure that builds a timestamp-based directory path dynamically using `EXECUTE IMMEDIATE`, so each task run writes its single file to a unique subdirectory (e.g. `products/20240115_103000/`) while keeping `SINGLE = TRUE`. The task then calls the procedure instead of running `COPY INTO` directly.
+`SINGLE = TRUE` and `INCLUDE_QUERY_ID = TRUE` cannot be used together — Snowflake raises a compilation error. The solution is a stored procedure that builds a timestamp-based suffix using `EXECUTE IMMEDIATE`, so each task run writes its single file with a unique time based suffix (e.g. `products/product_stream_20240115_103000.parquet`). The task then calls the procedure instead of running `COPY INTO` directly.
 
 ```sql
 -- Snowflake Setup: Step 4 - Create Export Procedure, Task, and Verify
@@ -305,7 +305,7 @@ LIST @stream_sync_stage/products/;
 SELECT count(*) AS pending_changes FROM products_stream;
 ```
 
-Wait up to 1 minute for the task to fire. You should see a Parquet file nested under a timestamp subdirectory and `pending_changes = 0`.
+Wait up to 1 minute for the task to run. You should see a Parquet file containing a timestamp in the file name and `pending_changes = 0`.
 
 <!-- ------------------------ -->
 ## Postgres Setup
@@ -316,7 +316,7 @@ Install extensions, create the products table, create the sync function, and sta
 
 [psql](https://www.postgresql.org/docs/current/app-psql.html) is the interactive terminal for PostgreSQL, allowing you to enter queries, execute SQL commands, and manage the database from the command line.
 
-Connect to Postgres via `psql` and enable the required extensions:
+Connect to Postgres via `psql` and enable the required extensions (assumes you set the PG* environment variables from the earlier step):
 
 ```bash
 psql
@@ -507,11 +507,6 @@ All 8 products inserted in Snowflake should now be present in Postgres.
 SELECT   product_id, product_name, category, price, status, updated_at, synced_at
 FROM     products
 ORDER BY product_id;
-
-SELECT   category, count(*) AS products, round(avg(price), 2) AS avg_price
-FROM     products
-GROUP BY category
-ORDER BY category;
 ```
 
 ### Step 8: Check Processed Files
@@ -709,8 +704,6 @@ USE ROLE ACCOUNTADMIN;
 DROP POSTGRES INSTANCE IF EXISTS PG_LAB;
 DROP NETWORK POLICY    IF EXISTS PG_LAB_network_policy;
 DROP NETWORK RULE      IF EXISTS pg_network_db.pg_network.PG_LAB_ingress_rule;
-DROP SCHEMA            IF EXISTS pg_network_db.pg_network;
-DROP DATABASE          IF EXISTS pg_network_db;
 ```
 
 <!-- ------------------------ -->
