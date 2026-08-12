@@ -26,8 +26,6 @@ This guide answers all three questions by combining a few powerful Snowflake fea
 
 You'll start by deploying a food truck analytics pipeline using DCM Projects, then evolve a dynamic table's schema by adding an **AI-classified column** — and see firsthand how frozen regions prevent a full rewrite of historical data and stop the AI function from re-running on rows that will never change.
 
-> **Note:** DCM Projects is currently in Public Preview. See the [DCM Projects documentation](https://docs.snowflake.com/en/user-guide/dcm-projects/dcm-projects-overview) for the latest details.
-
 ### Prerequisites
 - Basic knowledge of Snowflake concepts (databases, schemas, tables, roles)
 - Familiarity with SQL and dynamic tables

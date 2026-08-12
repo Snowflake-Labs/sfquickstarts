@@ -495,6 +495,35 @@ def get_user_today_usage(_session, username: str) -> Dict[str, float]:
     return result
 
 
+def get_user_rolling24h_usage(_session, username: str) -> Dict[str, float]:
+    """
+    Returns actual credits consumed by the user in the last rolling 24 hours,
+    queried live from SNOWFLAKE.ACCOUNT_USAGE billing views.
+
+    This matches the window Snowflake uses for *_DAILY_EST_CREDIT_LIMIT_PER_USER
+    enforcement — NOT a calendar-day reset. Up to 24h data latency from source.
+
+    Control note: READ-ONLY. Does not touch ALTER USER or any limit parameters.
+    """
+    from config import SURFACES, SURFACE_USAGE_VIEWS
+    result = {s: 0.0 for s in SURFACES}
+    safe_user = escape_sql_literal(username)
+    for surface, view in SURFACE_USAGE_VIEWS.items():
+        try:
+            rows = _session.sql(f"""
+                SELECT ROUND(SUM(h.TOKEN_CREDITS), 4) AS CR
+                FROM {view} h
+                JOIN SNOWFLAKE.ACCOUNT_USAGE.USERS u ON h.USER_ID = u.USER_ID
+                WHERE h.USAGE_TIME >= DATEADD('hour', -24, CURRENT_TIMESTAMP())
+                  AND UPPER(u.NAME) = UPPER('{safe_user}')
+            """).collect()
+            if rows and rows[0][0] is not None:
+                result[surface] = float(rows[0][0])
+        except Exception:
+            pass
+    return result
+
+
 def call_sp(_session, sp_name: str, *args) -> Tuple[bool, str]:
     fq = fq_sp(_session, sp_name)
     arg_list = ", ".join([f"'{escape_sql_literal(str(a))}'" for a in args])

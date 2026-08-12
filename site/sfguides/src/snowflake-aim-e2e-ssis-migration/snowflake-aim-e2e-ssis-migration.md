@@ -14,7 +14,7 @@ fork repo link: https://github.com/Snowflake-Labs/sfguide-scai-e2e-ssis-migratio
 
 Snowflake AIM unifies the proven capabilities of SnowConvert AI, Snowpark Migration Accelerator, and Datometry into a single AI-powered platform for assessing, modernizing, and migrating enterprise data and code workloads to Snowflake. Designed to reduce the complexity, risk, and operational overhead traditionally associated with large-scale migrations, Snowflake AIM enables organizations to define their target state while the platform orchestrates the migration process end to end. From analyzing Spark code and converting APIs to Snowpark, to modernizing warehouses, tables, views, ETL pipelines, reporting assets, and stored procedures across major platforms, Snowflake AIM combines intelligent assessment, automated code conversion, dependency mapping, orchestration, and virtualization into a unified migration experience. By eliminating the need to rebuild workloads from scratch or maintain parallel legacy environments, Snowflake AIM dramatically accelerates modernization timelines while minimizing disruption to ongoing business operations.
 
-Through this guide you will learn how to do an end-to-end migration of a Microsoft SQL Server environment with SSIS to Snowflake using Snowflake AIM, the Cortex Code CLI, and the Snowflake CLI. This guide walks you through project setup, extracting your source DDLs, converting them, leveraging AI to fix remaining issues in the converted code, deploying objects, migrating historical data with a **locally-run orchestrator + worker**, and finally replatforming your SSIS ETL pipelines into a Snowflake task graph plus a Snowflake-native dbt project.
+Through this guide you will learn how to do an end-to-end migration of a Microsoft SQL Server environment with SSIS to Snowflake using Snowflake AIM, the Cortex Code CLI, and the Snowflake CLI. This guide walks you through project setup, extracting your source DDLs, converting them, leveraging AI to fix remaining issues in the converted code, deploying objects, migrating historical data with the **Data Migration & Validation orchestrator running on Snowpark Container Services (SPCS)** paired with a **local Data Exchange Worker**, and finally replatforming your SSIS ETL pipelines into a Snowflake task graph plus a Snowflake-native dbt project.
 
 The lab is driven entirely from a single Cortex Code session — at each step you tell the assistant what you want and the bundled `snowflake-migration:migration` skill orchestrates the underlying `scai` / `snow` / SQL calls.
 
@@ -43,7 +43,7 @@ By the end of this guide, you will learn to work with:
 
 ### What You'll Build
 
-An end-to-end migration of a SQL Server database and an SSIS package to Snowflake, including: code conversion, hand-fixed deploy/test/fix loop, data migration using a **locally-run** Data Migration & Validation orchestrator + worker, and deployment of an SSIS-derived Snowflake task graph that calls a Snowflake-native dbt project.
+An end-to-end migration of a SQL Server database and an SSIS package to Snowflake, including: code conversion, hand-fixed deploy/test/fix loop, data migration using the Data Migration & Validation orchestrator on **Snowpark Container Services (SPCS)** with a **local** Data Exchange Worker, and deployment of an SSIS-derived Snowflake task graph that calls a Snowflake-native dbt project.
 
 ## Project Setup
 
@@ -71,7 +71,18 @@ Later steps reference these paths (for example, when Cortex Code asks for the fi
 
 ### Snowflake Account
 
-In your Snowflake account, run the `snowflake/init.sql` script to create the initial database (`TASTYBYTESDB`) and warehouse (`XSMALL_WH`) we will deploy into. Because this lab runs the data-migration orchestrator and worker **locally**, you do **not** need to create an SPCS compute pool.
+In your Snowflake account, run the `snowflake/init.sql` script to create the initial database (`TASTYBYTESDB`) and warehouse (`XSMALL_WH`) we will deploy into.
+
+Because this lab runs the data-migration **orchestrator on Snowpark Container Services (SPCS)**, create a compute pool for it. Cortex Code registers this pool later and starts the orchestrator service automatically when data migration begins:
+
+```sql
+CREATE COMPUTE POOL IF NOT EXISTS TASTYBYTES_MIG_POOL
+  MIN_NODES = 1
+  MAX_NODES = 2
+  INSTANCE_FAMILY = CPU_X64_S
+  AUTO_RESUME = TRUE
+  COMMENT = 'Compute pool for TastyBytes SQL Server -> Snowflake data migration';
+```
 
 ### Snowflake Connection
 
@@ -83,7 +94,7 @@ Test the connection:
 snow connection test --connection <YOUR_SNOWFLAKE_CONNECTION_NAME>
 ```
 
-In this quickstart we use a Snowflake connection named `**migrations_sc**` configured with warehouse `XSMALL_WH`, database `TASTYBYTESDB`, schema `TASTYBYTES`, and role `ACCOUNTADMIN`.
+In this quickstart we use a Snowflake connection named `**sf_bifrost**` configured with warehouse `COMPUTE_WH`, database `TASTYBYTESDB`, schema `TASTYBYTES`, and role `ACCOUNTADMIN`. The orchestrator uses this warehouse to run `COPY INTO` statements and validation queries, so make sure a warehouse is set on the connection — without one, data migration fails silently.
 
 ### SnowConvert AI Source Connection
 
@@ -124,7 +135,8 @@ Tell the assistant exactly what you want, including how the data infrastructure 
 > a full end-to-end migration from scratch. I want you to connect to my
 > SQL Server database using the `tastybytesdb` connection registered
 > already in `scai` to extract my SQL code and migrate the data from my
-> tables. Make sure to setup data migration infrastructure locally and
+> tables. Set up the data migration orchestrator on SPCS using my existing
+> `TASTYBYTES_MIG_POOL` compute pool with a local Data Exchange Worker, and
 > also do not do ETL stabilization. When the tables are deployed and
 > their data is migrated, do not validate their data, 
 > skip to deployment and validation of the views, functions, and procedures.
@@ -133,7 +145,7 @@ Tell the assistant exactly what you want, including how the data infrastructure 
 This prompt does four important things in one shot:
 
 1. Pins the SQL Server source to the existing `tastybytesdb` connection.
-2. Asks for **local** data-migration infrastructure (orchestrator + worker on the host machine — no SPCS / compute pool needed).
+2. Asks for the data-migration orchestrator on **SPCS** (using the existing `TASTYBYTES_MIG_POOL` compute pool) with a **local** Data Exchange Worker.
 3. Tells Cortex Code to **skip ETL stabilization**.
 4. Tells Cortex Code to **skip data validation** after the data lands and jump straight to the deploy/test/fix loop.
 
@@ -161,7 +173,7 @@ It then confirms the active Snowflake connection and asks for the target databas
 
 | Question                                                                       | Answer                       |
 | ------------------------------------------------------------------------------ | ---------------------------- |
-| The active Snowflake connection is `migrations_sc`. Use it for this migration? | **Yes, use `migrations_sc`** |
+| The active Snowflake connection is `sf_bifrost`. Use it for this migration?    | **Yes, use `sf_bifrost`**    |
 | Which Snowflake database should migrated objects be deployed to?               | `**TASTYBYTESDB**`           |
 
 
@@ -211,8 +223,8 @@ scai code convert --etl-replatform-sources-path <PATH>/etl --json
 The conversion completes in ~10 s and reports:
 
 - **Files processed:** 18
-- **Code units converted:** 250 LOC
-- **EWIs:** 2 (1 High, 1 Medium)
+- **Code units converted:** 249
+- **EWIs:** 2 (Low severity)
 - **FDMs:** 57
 - **PRFs:** 28
 - **ETL replatforming:** 1 SSIS package processed, 3 issues
@@ -274,29 +286,31 @@ Cortex Code calls the `deploy` MCP tool for the 3 schemas (`TastyBytes`, `dbo`, 
 
 Cortex Code deploys all 11 tables (`Customer`, `FoodTruck`, `OrderDetail`, `Country`, `Inventory`, `OrderHeader`, `City`, `Menu`, `etl_logs`, `EmployeeShift`, `MenuItem`). All 11 succeed.
 
-### Step 3 — Migrate Data Locally
+### Step 3 — Migrate Data with the SPCS Orchestrator + Local Worker
 
-Because we asked for **local** data-migration infrastructure (no SPCS / compute pool), Cortex Code:
+Because we asked for the orchestrator on **SPCS** with a **local** Data Exchange Worker, Cortex Code walks through the shared data-infrastructure setup and then runs the migration:
 
-1. Verifies the Microsoft ODBC Driver for SQL Server is installed (required by the Data Exchange Worker).
-2. Generates `.scai/settings/DataExchangeWorkerConfig.toml` from the source connection credentials.
-3. Generates the migration workflow YAML at `artifacts/data_migration/workflows/where-<hash>.yaml` covering all 11 tables (Full / Native, each partitioned by its integer primary key — an empty `columnNamesToPartitionBy` would finish the workflow without moving any data, so a key column per table is required).
-4. Runs the migration with a **local** orchestrator and worker in a single command. The local path uses `create-workflow` with `--start-orchestrator --start-worker` (not `scai data migrate start`, which targets the SPCS/cloud orchestrator):
+1. Registers the compute pool (writing it to `.scai/settings/cloud-migration.yaml`) and confirms the connection has a warehouse (`COMPUTE_WH`) — required, or data migration fails silently.
+2. Grants the orchestrator role `USAGE` on `SNOWCONVERT_AI` and its `DATA_MIGRATION` / `DATA_VALIDATION` schemas.
+3. Verifies the Microsoft ODBC Driver for SQL Server is installed (required by the Data Exchange Worker) and generates `.scai/settings/DataExchangeWorkerConfig.toml` from the source connection credentials.
+4. Starts the **local** Data Exchange Worker, which connects to the SPCS orchestrator and polls for tasks:
   ```bash
-   scai data migrate create-workflow \
-       --config artifacts/data_migration/workflows/where-<hash>.yaml \
-       --start-orchestrator --start-worker
+   scai data worker start --local .scai/settings/DataExchangeWorkerConfig.toml
   ```
+5. Generates the migration workflow YAML at `artifacts/data_migration/workflows/where-<hash>.yaml` covering all 11 tables (Full / Native, each partitioned by its integer primary key — an empty `columnNamesToPartitionBy` would finish the workflow without moving any data, so a key column per table is required).
+6. Runs the migration through the `migrate_data` MCP tool, which runs a `scai data doctor` check, resumes the SPCS orchestrator service on the compute pool, and dispatches the workflow. The orchestrator breaks the work into per-partition tasks that the local worker extracts from SQL Server and loads into Snowflake.
 
-The workflow finishes in a few minutes with every partition loaded:
+Cortex Code polls until the workflow is terminal and every partition is loaded:
 
 ```
-workflowName:        DATA_MIGRATION_WORKFLOW_2026_06_29_15_01_48
+workflowName:        DATA_MIGRATION_WORKFLOW_2026_07_14_16_46_45
 workflowStatus:      Finished
 totalTables:         11
 preprocessedTables:  11
 loadedPartitions:    11/11
 ```
+
+Because the kickoff prompt said to skip table data validation, Cortex Code bypasses the `validateData` task for the 11 tables (recorded in the registry, no validation query is run) so they finalize and unblock the dependent view, function, and procedure.
 
 ### Step 4 — Seed Tests for the Function
 
@@ -590,12 +604,12 @@ Totals across the mart: 22 truck-day rows, 22 orders, $1,015.31 gross revenue, $
 At this point all four phases are complete:
 
 ```
-✅ Setup       — project initialized, connections registered, local infra ready
+✅ Setup       — project initialized, connections registered, SPCS compute pool + local worker ready
 ✅ Phase 1     — 18 objects extracted, 18 files converted, assessment generated
 ✅ Phase 2     — 14 wave-1 objects deployed (3 schemas, 11 tables)
                  + view, function, and procedure deployed and validated (deploy/test/fix loop)
                  + 1 view hand-fixed (TOP 1 PERCENT rewritten as QUALIFY, EWI markers removed)
-                 + 11 tables migrated locally
+                 + 11 tables migrated via the SPCS orchestrator + local worker
                  + table data validation skipped per kickoff prompt
                  + ETL stabilization skipped per kickoff prompt
 ✅ Phase 3     — row counts verified on Snowflake
@@ -609,14 +623,14 @@ At this point all four phases are complete:
 
 Congratulations! You've taken a Microsoft SQL Server database and an SSIS pipeline all the way from source extraction to a fully deployed, populated, and *running* workload in Snowflake — driven end-to-end by the Cortex Code CLI and its `snowflake-migration:migration` skill, plus the `snow dbt deploy` workflow for the SnowConvert-generated dbt project.
 
-You started from a blank project, set up **local** data-migration infrastructure (no SPCS / compute pool needed), registered 18 SQL Server objects and 1 SSIS package, converted them with SnowConvert AI, generated a deployment plan with a classified SSIS assessment, deployed every in-scope database object using a deploy/test/fix loop (hand-fixing 1 conversion artifact — a view whose SQL Server `TOP 1 PERCENT` clause was rewritten as a Snowflake `QUALIFY ROW_NUMBER() ... <= CEIL(0.01 * COUNT(*) OVER ())` and whose unresolved SnowConvert EWI markers were removed), migrated the table data via the locally-run orchestrator + worker, and finally hand-patched and deployed both the SnowConvert-generated dbt project (`snow dbt deploy`) and the SnowConvert-generated Snowflake task graph (with `XSMALL_WH` per task), executing the full graph end-to-end on demand.
+You started from a blank project, set up the data-migration **orchestrator on Snowpark Container Services (SPCS)** with a **local** Data Exchange Worker, registered 18 SQL Server objects and 1 SSIS package, converted them with SnowConvert AI, generated a deployment plan with a classified SSIS assessment, deployed every in-scope database object using a deploy/test/fix loop (hand-fixing 1 conversion artifact — a view whose SQL Server `TOP 1 PERCENT` clause was rewritten as a Snowflake `QUALIFY ROW_NUMBER() ... <= CEIL(0.01 * COUNT(*) OVER ())` and whose unresolved SnowConvert EWI markers were removed), migrated the table data via the SPCS orchestrator + local worker, and finally hand-patched and deployed both the SnowConvert-generated dbt project (`snow dbt deploy`) and the SnowConvert-generated Snowflake task graph (with `XSMALL_WH` per task), executing the full graph end-to-end on demand.
 
 ### What You Learned
 
 - How to drive an end-to-end SQL Server + SSIS migration with **Cortex Code** and the bundled `snowflake-migration:migration` skill, using just five chat prompts.
 - How **SnowConvert AI** extracts, converts, and deploys a SQL Server workload to Snowflake, and how to read its EWIs, FDMs, and PRFs.
 - How to triage and hand-fix common SnowConvert outputs — rewriting an unsupported SQL Server `TOP 1 PERCENT` clause as a Snowflake `QUALIFY ROW_NUMBER()` window filter and removing unresolved `!!!RESOLVE EWI!!!` markers from a view, and customizing a step-based test YAML to validate a side-effect-only DML procedure.
-- How to run the data-migration orchestrator and Data Exchange Worker **locally** for SQL Server → Snowflake table loads, without provisioning SPCS.
+- How to run the data-migration orchestrator on **Snowpark Container Services (SPCS)** with a **local** Data Exchange Worker for SQL Server → Snowflake table loads, and how to tear the infrastructure down afterward to control cost.
 - How to use the seed → capture → validate testing framework against your source database — seeding cases from a query log — to verify the migrated function *and* procedure produce identical output and table side-effects to the SQL Server originals.
 - How to deploy a SnowConvert-generated dbt project to Snowflake via `snow dbt deploy`, then point a Snowflake task graph at it with `EXECUTE DBT PROJECT`.
 

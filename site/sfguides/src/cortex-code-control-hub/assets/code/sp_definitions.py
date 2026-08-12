@@ -402,7 +402,7 @@ def handler(session, requester, cohort_role, surface, amount,
               AND USER_NAME != \'{safe_requester}\'
         """).collect()
         members = [r[0] for r in members_rows
-                   if r[0] and _SAFE_ID.match(str(r[0]))]
+                   if r[0] and not _SAFE_ID.search(str(r[0]))]
 
         if not members:
             # Fallback: SHOW GRANTS OF ROLE (for accounts without resolved cohort table)
@@ -685,7 +685,10 @@ def handler(session, lookback_hours):
                    e.RECORD_ATTRIBUTES['snow.ai.observability.agent.planning.token_count.cache_write_input']::INT AS CACHE_WRITE_TOKENS,
                    e.RECORD_ATTRIBUTES['snow.ai.observability.agent.planning.step_number']::INT AS STEP_NUMBER,
                    e.RECORD_ATTRIBUTES['snow.ai.observability.agent.planning.tool_selection.name']::STRING AS TOOLS_RAW,
-                   e.TRACE['trace_id']::STRING AS SESSION_ID,
+                    COALESCE(
+                        run.RECORD_ATTRIBUTES['snow.ai.observability.agent.coding_agent.session_id']::STRING,
+                        e.TRACE['trace_id']::STRING
+                    ) AS SESSION_ID,
                    run.RECORD_ATTRIBUTES['snow.ai.observability.agent.response']::STRING AS RESPONSE,
                    COALESCE(run.RECORD_ATTRIBUTES['snow.ai.observability.agent.coding_agent.private_mode']::BOOLEAN, FALSE) AS PRIVATE_MODE,
                    -- origin_application is always populated with exactly 3 known values
@@ -869,7 +872,9 @@ def handler(session, lookback_hours):
                                 'CATEGORY':       str(rule['CATEGORY'])[:50],
                                 'CONTENT_TYPE':   'PROMPT',
                                 'VIOLATION_DATE': (r['VIOLATION_DATE'] if isinstance(r['VIOLATION_DATE'], _rdate)
-                                                   else _rdt.strptime(str(r['VIOLATION_DATE'])[:10], '%Y-%m-%d').date()),
+                                                   else (lambda v: _rdt.strptime(str(v)[:10], '%Y-%m-%d').date()
+                                                         if str(v)[:4].isdigit() else _rdate.today()
+                                                         )(r['VIOLATION_DATE'])),
                             } for _, r in deep_df.iterrows()])
                             vdb, vsc = DB_SCHEMA.split('.', 1)
                             session.write_pandas(vdf, 'CC_PROMPT_VIOLATIONS',
@@ -1307,8 +1312,8 @@ def handler(session, mode):
             '<tr><td style="background:#f8fafc;padding:14px 28px;border-top:1px solid #e2e8f0;'
             'border-radius:0 0 8px 8px">'
             '<p style="margin:0;color:#94a3b8;font-size:11px">'
-            'Sent by <strong style="color:#64748b">CoCo Control Hub</strong> &nbsp;&middot;&nbsp; '
-            'Manage alerts at <em>Alerts &rarr; Notification Config</em>'
+            'Sent by <strong style="color:#64748b">CoCo Control Hub</strong> &#160;&#183;&#160; '
+            'Manage alerts at <em>Alerts &#8594; Notification Config</em>'
             '</p></td></tr>'
             '</table></td></tr></table>'
             '</body></html>'
@@ -1483,6 +1488,398 @@ def handler(session, batch_size, eval_model):
     return (
         f"CREATE OR REPLACE PROCEDURE {db}.{schema}.SP_CC_EVALUATE_RESPONSES("
         f"BATCH_SIZE NUMBER DEFAULT 200, EVAL_MODEL VARCHAR DEFAULT 'claude-sonnet-4-5')\n"
+        f"RETURNS VARIANT\n"
+        f"LANGUAGE PYTHON\n"
+        f"RUNTIME_VERSION = '3.11'\n"
+        f"PACKAGES = ('snowflake-snowpark-python')\n"
+        f"HANDLER = 'handler'\n"
+        f"EXECUTE AS OWNER\n"
+        f"AS $${body}\n$$"
+    )
+
+
+def get_refresh_budget_usage_sp_ddl(db: str, schema: str) -> str:
+    """Return CREATE OR REPLACE PROCEDURE DDL for SP_CC_REFRESH_BUDGET_USAGE.
+
+    No ACCOUNT_USAGE view exists for budget data. Iterates active budgets
+    from CC_AI_BUDGETS, calls budget!GET_SPENDING_HISTORY() via EXECUTE IMMEDIATE,
+    and MERGEs results into CC_AI_BUDGET_USAGE.
+    Control note: read-only on budget objects — never modifies spending limits.
+    """
+    DS = f"{db}.{schema}"
+    body = f'''
+def handler(session):
+    import datetime
+    refreshed = 0
+    errors = []
+    try:
+        budgets = session.sql("""
+            SELECT BUDGET_NAME, FQ_BUDGET_NAME
+            FROM {DS}.CC_AI_BUDGETS WHERE IS_ACTIVE = TRUE
+        """).collect()
+    except Exception as e:
+        return {{"status": "ERROR", "message": str(e)[:200]}}
+
+    end_ts   = datetime.datetime.utcnow()
+    start_ts = end_ts - datetime.timedelta(days=32)
+    start_str = start_ts.strftime("%Y-%m-%d %H:%M:%S")
+    end_str   = end_ts.strftime("%Y-%m-%d %H:%M:%S")
+
+    for row in budgets:
+        budget_name = str(row["BUDGET_NAME"])
+        fq_name     = str(row["FQ_BUDGET_NAME"])
+        try:
+            hist_sql = (
+                "CALL " + fq_name + "!GET_SPENDING_HISTORY("
+                "TIME_LOWER_BOUND=>'" + start_str + "'::TIMESTAMP_NTZ,"
+                "TIME_UPPER_BOUND=>'" + end_str + "'::TIMESTAMP_NTZ)"
+            )
+            hist_rows = session.sql(hist_sql).collect()
+            for h in hist_rows:
+                try:
+                    rd = h.asDict()
+                    mdate   = rd.get("MEASUREMENT_DATE") or h[0]
+                    svc     = str(rd.get("SERVICE_TYPE")   or h[1] or "UNKNOWN").replace("'","''")
+                    credits = float(rd.get("CREDITS_SPENT") or h[2] or 0)
+                    safe_bn = budget_name.replace("'","''")
+                    session.sql(f"""
+                        MERGE INTO {DS}.CC_AI_BUDGET_USAGE t
+                        USING (SELECT '{{safe_bn}}'::VARCHAR AS BN,
+                                      '{{mdate}}'::DATE AS MD,
+                                      '{{svc}}'::VARCHAR AS ST) s
+                        ON t.BUDGET_NAME=s.BN AND t.MEASUREMENT_DATE=s.MD AND t.SERVICE_TYPE=s.ST
+                        WHEN MATCHED THEN UPDATE SET
+                            CREDITS_SPENT={{credits}}, REFRESHED_AT=CURRENT_TIMESTAMP()
+                        WHEN NOT MATCHED THEN INSERT
+                            (BUDGET_NAME,MEASUREMENT_DATE,SERVICE_TYPE,CREDITS_SPENT,REFRESHED_AT)
+                        VALUES (s.BN,s.MD,s.ST,{{credits}},CURRENT_TIMESTAMP())
+                    """.format(safe_bn=safe_bn, mdate=mdate, svc=svc, credits=credits)).collect()
+                except Exception as re:
+                    errors.append(f"Row {{budget_name}}: {{str(re)[:80]}}")
+            refreshed += 1
+        except Exception as be:
+            errors.append(f"Budget {{budget_name}}: {{str(be)[:100]}}")
+
+    return {{"status": "OK", "budgets_refreshed": refreshed, "errors": errors[:10]}}
+'''
+    return (
+        f"CREATE OR REPLACE PROCEDURE {db}.{schema}.SP_CC_REFRESH_BUDGET_USAGE()\n"
+        f"RETURNS VARIANT\n"
+        f"LANGUAGE PYTHON\n"
+        f"RUNTIME_VERSION = '3.11'\n"
+        f"PACKAGES = ('snowflake-snowpark-python')\n"
+        f"HANDLER = 'handler'\n"
+        f"EXECUTE AS OWNER\n"
+        f"AS $${body}\n$$"
+    )
+
+
+def get_manage_quota_sp_ddl(db: str, schema: str) -> str:
+    """Return CREATE OR REPLACE PROCEDURE DDL for SP_CC_MANAGE_QUOTA.
+
+    Wraps Snowflake SNOWFLAKE.CORE.QUOTA object operations (Preview feature).
+    Actions: CREATE, TAG_USERS, GET_CONFIG, GET_ACTIVE_BLOCKS,
+             GET_ENFORCEMENT_HISTORY, SET_LIMIT, DELETE.
+    Runs EXECUTE AS OWNER so CC_SP_OWNER_ROLE (which holds SNOWFLAKE.QUOTA_CREATOR)
+    can create quota objects and tag users via ALTER USER SET TAG.
+    """
+    DS = f"{db}.{schema}"
+    body = f'''
+def handler(session, action, quota_name, params):
+    """Manage SNOWFLAKE.CORE.QUOTA objects for CoCo Hub per-user enforcement.
+
+    Parameters
+    ----------
+    action      : str   CREATE | TAG_USERS | GET_CONFIG | GET_ACTIVE_BLOCKS |
+                        GET_ENFORCEMENT_HISTORY | SET_LIMIT | DELETE
+    quota_name  : str   Short name (e.g. CC_QUOTA_ENGINEERING)
+    params      : dict  Action-specific arguments
+    """
+    import json, datetime
+    DS = "{DS}"
+    fq = f"{{DS}}.{{quota_name}}"
+    actor = str(session.sql("SELECT CURRENT_USER()").collect()[0][0])
+    tbl_q = f"{{DS}}.CC_NATIVE_QUOTAS"
+    tag_fq = f"{{DS}}.CC_COHORT_TAG"
+
+    def _safe(v):
+        return str(v or "").replace("'", "''")
+
+    if action == "CREATE":
+        monthly_limit    = int(params.get("monthly_limit", 100))
+        daily_limit      = params.get("daily_limit")          # None = not set
+        domains          = params.get("domains", ["CORTEX CODE"])
+        block_enforce    = bool(params.get("block_enforcement", True))
+        notify_80        = bool(params.get("notify_80", True))
+        notify_100       = bool(params.get("notify_100", True))
+        cohort_role      = params.get("cohort_role")           # None = all users
+        quota_label      = str(params.get("quota_label", quota_name))
+
+        errors = []
+        try:
+            session.sql(f"CREATE OR REPLACE SNOWFLAKE.CORE.QUOTA {{fq}}()").collect()
+        except Exception as e:
+            return {{"ok": False, "error": f"CREATE QUOTA failed: {{str(e)[:300]}}"}}
+
+        for domain in domains:
+            try:
+                session.sql(f"CALL {{fq}}!ADD_SHARED_RESOURCE({{repr(domain)}})").collect()
+            except Exception as e:
+                errors.append(f"ADD_SHARED_RESOURCE({{domain}}): {{str(e)[:120]}}")
+
+        try:
+            session.sql(f"CALL {{fq}}!SET_PER_USER_LIMIT({{monthly_limit}})").collect()
+        except Exception as e:
+            errors.append(f"SET_PER_USER_LIMIT monthly: {{str(e)[:120]}}")
+
+        if daily_limit and int(daily_limit) > 0:
+            try:
+                session.sql(f"CALL {{fq}}!SET_PER_USER_LIMIT({{int(daily_limit)}}, \'DAILY\')").collect()
+            except Exception as e:
+                errors.append(f"SET_PER_USER_LIMIT daily: {{str(e)[:120]}}")
+
+        if block_enforce:
+            try:
+                session.sql(f"CALL {{fq}}!SET_BLOCK_ENFORCEMENT_ENABLED(TRUE)").collect()
+            except Exception as e:
+                errors.append(f"SET_BLOCK_ENFORCEMENT_ENABLED: {{str(e)[:120]}}")
+
+        if notify_80:
+            try:
+                session.sql(f"CALL {{fq}}!ADD_NOTIFICATION_THRESHOLD(80, \'PROJECTED\', TRUE)").collect()
+            except Exception as e:
+                errors.append(f"ADD_NOTIFICATION_THRESHOLD(80): {{str(e)[:120]}}")
+
+        if notify_100:
+            try:
+                session.sql(f"CALL {{fq}}!ADD_NOTIFICATION_THRESHOLD(100, \'ACTUAL\', TRUE)").collect()
+            except Exception as e:
+                errors.append(f"ADD_NOTIFICATION_THRESHOLD(100): {{str(e)[:120]}}")
+
+        # Cohort scoping: tag resolved cohort members + scope quota to that tag
+        tagged = 0
+        if cohort_role:
+            tag_result = _tag_cohort_users(session, cohort_role, tag_fq, actor)
+            tagged = tag_result.get("tagged", 0)
+            errors.extend(tag_result.get("errors", []))
+            try:
+                session.sql(f"""
+                    CALL {{fq}}!SET_USER_TAGS(
+                        ARRAY_CONSTRUCT(
+                            ARRAY_CONSTRUCT(
+                                (SELECT SYSTEM$REFERENCE(\'TAG\', \'{{tag_fq}}\', \'SESSION\', \'APPLYBUDGET\')),
+                                \'{{_safe(cohort_role)}}\'
+                            )
+                        ),
+                        \'UNION\'
+                    )
+                """).collect()
+            except Exception as e:
+                errors.append(f"SET_USER_TAGS: {{str(e)[:120]}}")
+
+        # Track in CC_NATIVE_QUOTAS
+        safe_label  = _safe(quota_label)
+        safe_cohort = _safe(cohort_role) if cohort_role else ""
+        cohort_val  = ("'" + safe_cohort + "'") if cohort_role else "NULL"
+        dl_val      = str(int(daily_limit)) if daily_limit and int(daily_limit) > 0 else "NULL"
+        dom_json    = json.dumps(domains)
+        try:
+            session.sql(f"""
+                MERGE INTO {{tbl_q}} t
+                USING (SELECT \'{{_safe(quota_name)}}\' AS QN) s ON t.QUOTA_NAME = s.QN
+                WHEN MATCHED THEN UPDATE SET
+                    QUOTA_LABEL = \'{{safe_label}}\', COHORT_ROLE = {{cohort_val}},
+                    MONTHLY_LIMIT = {{monthly_limit}}, DAILY_LIMIT = {{dl_val}},
+                    DOMAINS = PARSE_JSON(\'{{dom_json}}\'), BLOCK_ENFORCEMENT = {{str(block_enforce).upper()}},
+                    NOTIFY_80_PCT = {{str(notify_80).upper()}}, NOTIFY_100_PCT = {{str(notify_100).upper()}},
+                    TAGGED_USERS = {{tagged}}, LAST_SYNCED_AT = CURRENT_TIMESTAMP(),
+                    IS_ACTIVE = TRUE, UPDATED_BY = \'{{_safe(actor)}}\', UPDATED_AT = CURRENT_TIMESTAMP()
+                WHEN NOT MATCHED THEN INSERT
+                    (QUOTA_NAME, QUOTA_LABEL, COHORT_ROLE, MONTHLY_LIMIT, DAILY_LIMIT,
+                     DOMAINS, BLOCK_ENFORCEMENT, NOTIFY_80_PCT, NOTIFY_100_PCT,
+                     TAGGED_USERS, LAST_SYNCED_AT, IS_ACTIVE, CREATED_BY, UPDATED_BY)
+                VALUES (\'{{_safe(quota_name)}}\', \'{{safe_label}}\', {{cohort_val}},
+                        {{monthly_limit}}, {{dl_val}}, PARSE_JSON(\'{{dom_json}}\'),
+                        {{str(block_enforce).upper()}}, {{str(notify_80).upper()}}, {{str(notify_100).upper()}},
+                        {{tagged}}, CURRENT_TIMESTAMP(), TRUE, \'{{_safe(actor)}}\', \'{{_safe(actor)}}\')
+            """).collect()
+        except Exception as e:
+            errors.append(f"CC_NATIVE_QUOTAS upsert: {{str(e)[:120]}}")
+
+        return {{"ok": True, "quota_name": quota_name, "tagged_users": tagged, "errors": errors}}
+
+    elif action == "TAG_USERS":
+        cohort_role = params.get("cohort_role")
+        if not cohort_role:
+            return {{"ok": False, "error": "cohort_role required for TAG_USERS"}}
+        result = _tag_cohort_users(session, cohort_role, tag_fq, actor)
+        tagged = result.get("tagged", 0)
+        # Update CC_NATIVE_QUOTAS
+        try:
+            session.sql(f"""
+                UPDATE {{tbl_q}}
+                SET TAGGED_USERS = {{tagged}}, LAST_SYNCED_AT = CURRENT_TIMESTAMP(),
+                    UPDATED_BY = \'{{_safe(actor)}}\', UPDATED_AT = CURRENT_TIMESTAMP()
+                WHERE QUOTA_NAME = \'{{_safe(quota_name)}}\'
+            """).collect()
+        except Exception:
+            pass
+        return result
+
+    elif action == "GET_CONFIG":
+        try:
+            r = session.sql(f"CALL {{fq}}!GET_CONFIG()").collect()
+            if not r:
+                return {{"ok": True, "config": {{}}}}
+            row = r[0]
+            # Convert the row to a dict using field names if available
+            try:
+                cfg = {{k: str(v) for k, v in zip(row._fields, row)}}
+            except Exception:
+                cfg = {{str(i): str(row[i]) for i in range(len(row))}}
+            return {{"ok": True, "config": cfg}}
+        except Exception as e:
+            return {{"ok": False, "error": str(e)[:300]}}
+
+    elif action == "GET_ACTIVE_BLOCKS":
+        try:
+            r = session.sql(f"CALL {{fq}}!GET_ACTIVE_BLOCKS()").collect()
+            return {{"ok": True, "blocks": [dict(row.asDict()) for row in r]}}
+        except Exception as e:
+            return {{"ok": False, "error": str(e)[:300]}}
+
+    elif action == "GET_ENFORCEMENT_HISTORY":
+        start = str(params.get("start", "2025-01-01"))
+        end   = str(params.get("end",   datetime.date.today().isoformat()))
+        try:
+            r = session.sql(f"CALL {{fq}}!GET_ENFORCEMENT_HISTORY(\'{{start}}\', \'{{end}}\')").collect()
+            return {{"ok": True, "history": [dict(row.asDict()) for row in r]}}
+        except Exception as e:
+            return {{"ok": False, "error": str(e)[:300]}}
+
+    elif action == "GET_USERS":
+        try:
+            r = session.sql(f"CALL {{fq}}!GET_USERS()").collect()
+            return {{"ok": True, "users": [dict(row.asDict()) for row in r]}}
+        except Exception as e:
+            return {{"ok": False, "error": str(e)[:300]}}
+
+    elif action == "SET_LIMIT":
+        monthly_limit = int(params.get("monthly_limit", 100))
+        daily_limit   = params.get("daily_limit")
+        errors = []
+        try:
+            session.sql(f"CALL {{fq}}!SET_PER_USER_LIMIT({{monthly_limit}})").collect()
+        except Exception as e:
+            errors.append(f"monthly: {{str(e)[:120]}}")
+        if daily_limit and int(daily_limit) > 0:
+            try:
+                session.sql(f"CALL {{fq}}!SET_PER_USER_LIMIT({{int(daily_limit)}}, \'DAILY\')").collect()
+            except Exception as e:
+                errors.append(f"daily: {{str(e)[:120]}}")
+        # Update tracking table
+        dl_val = str(int(daily_limit)) if daily_limit and int(daily_limit) > 0 else "NULL"
+        try:
+            session.sql(f"""
+                UPDATE {{tbl_q}}
+                SET MONTHLY_LIMIT = {{monthly_limit}}, DAILY_LIMIT = {{dl_val}},
+                    UPDATED_BY = \'{{_safe(actor)}}\', UPDATED_AT = CURRENT_TIMESTAMP()
+                WHERE QUOTA_NAME = \'{{_safe(quota_name)}}\'
+            """).collect()
+        except Exception:
+            pass
+        return {{"ok": len(errors) == 0, "errors": errors}}
+
+    elif action == "DELETE":
+        errors = []
+        # Untag users (set their CC_COHORT_TAG to NULL if set by us)
+        cohort_role = params.get("cohort_role")
+        if cohort_role:
+            try:
+                rows = session.sql(f"""
+                    SELECT TAG_REFERENCES.OBJECT_NAME AS USER_NAME
+                    FROM TABLE(SNOWFLAKE.ACCOUNT_USAGE.TAG_REFERENCES_ALL_COLUMNS(
+                        SYSTEM$REFERENCE(\'TAG\', \'{{tag_fq}}\', \'SESSION\', \'APPLYBUDGET\')
+                    ))
+                    WHERE SYSTEM$TAG_VALUE(\'{{tag_fq}}\', TAG_REFERENCES.OBJECT_NAME, \'USER\')
+                           = \'{{_safe(cohort_role)}}\'
+                """).collect()
+                for row in rows:
+                    try:
+                        u = str(row[0]).replace("'", "''")
+                        session.sql(f"ALTER USER \\"{{u}}\\" UNSET TAG {{tag_fq}}").collect()
+                    except Exception:
+                        pass
+            except Exception as e:
+                errors.append(f"untag: {{str(e)[:120]}}")
+        try:
+            session.sql(f"DROP SNOWFLAKE.CORE.QUOTA IF EXISTS {{fq}}").collect()
+        except Exception as e:
+            errors.append(f"DROP QUOTA: {{str(e)[:120]}}")
+        try:
+            session.sql(f"""
+                UPDATE {{tbl_q}} SET IS_ACTIVE = FALSE,
+                    UPDATED_BY = \'{{_safe(actor)}}\', UPDATED_AT = CURRENT_TIMESTAMP()
+                WHERE QUOTA_NAME = \'{{_safe(quota_name)}}\'
+            """).collect()
+        except Exception:
+            pass
+        return {{"ok": len(errors) == 0, "errors": errors}}
+
+    return {{"ok": False, "error": f"Unknown action: {{action}}"}}
+
+
+def _tag_cohort_users(session, cohort_role, tag_fq, actor):
+    """Tag all resolved members of a CoCo cohort role with CC_COHORT_TAG.
+
+    Resolution priority:
+    1. CC_USER_COHORT_RESOLVED (CoCo Hub's own resolved table — most reliable, no latency)
+    2. SHOW GRANTS OF ROLE — direct role members only (no inheritance depth)
+    """
+    DS = "{DS}"
+    tagged, errors = 0, []
+    users = []
+
+    # Primary: use CoCo Hub's own resolved cohort table (no ACCOUNT_USAGE latency)
+    try:
+        rows = session.sql(f"""
+            SELECT DISTINCT USER_NAME
+            FROM {{DS}}.CC_USER_COHORT_RESOLVED
+            WHERE UPPER(COHORT_ROLE) = UPPER(\'{{cohort_role}}\')
+              AND USER_NAME IS NOT NULL
+        """).collect()
+        users = [str(r[0]) for r in rows if r[0]]
+    except Exception:
+        pass
+
+    if not users:
+        # Fallback: SHOW GRANTS OF ROLE — filter to USER grantees only
+        try:
+            rows = session.sql(f'SHOW GRANTS OF ROLE "{{cohort_role}}"').collect()
+            for row in rows:
+                try:
+                    if str(row["GRANTED_TO"]) == "USER":
+                        u = str(row["GRANTEE_NAME"])
+                        if u:
+                            users.append(u)
+                except Exception:
+                    pass
+        except Exception as e:
+            return {{"tagged": 0, "errors": [f"Could not resolve cohort members: {{str(e)[:120]}}"]}}
+
+    for user in users:
+        try:
+            safe_u = user.replace('"', '""')
+            session.sql(f"ALTER USER \\"{{safe_u}}\\" SET TAG {{tag_fq}} = \'{{cohort_role.upper()}}\'").collect()
+            tagged += 1
+        except Exception as e:
+            errors.append(f"tag {{user}}: {{str(e)[:80]}}")
+
+    return {{"tagged": tagged, "errors": errors}}
+'''
+    return (
+        f"CREATE OR REPLACE PROCEDURE {db}.{schema}.SP_CC_MANAGE_QUOTA"
+        f"(ACTION VARCHAR, QUOTA_NAME VARCHAR, PARAMS VARIANT DEFAULT NULL)\n"
         f"RETURNS VARIANT\n"
         f"LANGUAGE PYTHON\n"
         f"RUNTIME_VERSION = '3.11'\n"
