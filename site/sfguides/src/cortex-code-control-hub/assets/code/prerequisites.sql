@@ -1617,6 +1617,9 @@ CREATE TABLE IF NOT EXISTS CC_PROMPT_EVENTS (
     PRIVATE_MODE       BOOLEAN          DEFAULT FALSE,
     PROMPT_CATEGORY    VARCHAR(100),    -- AI_CLASSIFY category (nightly by SP_CC_CLASSIFY_PROMPTS)
     PROMPT_COST_CREDITS FLOAT,          -- actual credits from ACCOUNT_USAGE join (nightly)
+    COHORT_ROLE        VARCHAR(255),    -- user's cohort at time of event
+    SURFACE            VARCHAR(50),     -- CLI | SNOWSIGHT | DESKTOP
+    TRACE_ID           VARCHAR(255),    -- trace_id from AI_OBSERVABILITY_EVENTS
     LOADED_AT          TIMESTAMP_NTZ    DEFAULT CURRENT_TIMESTAMP()
 ) CLUSTER BY (EVENT_DATE);
 
