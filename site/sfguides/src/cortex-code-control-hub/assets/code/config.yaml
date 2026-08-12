@@ -1,6 +1,6 @@
 deployment:
-  database: ""    # Set to your target database (e.g. MY_DB). Leave blank to use CURRENT_DATABASE().
-  schema: ""      # Set to your target schema (e.g. APPS). Leave blank to use CURRENT_SCHEMA().
+  database: "CORTEX_CODE_MGMT"
+  schema: "APP"
 
 # Optional: configure role names used by the app.
 # Leave this section out (or remove individual keys) to use the CC_* defaults.

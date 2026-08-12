@@ -86,6 +86,11 @@ def _render_tier_management(session):
     assignments = get_model_tier_assignments(session)     # {model_name: [tier1, ...]}
     all_models = _discover_all_models(session)
 
+    # Ensure discovered models appear in assignments (as unassigned if not already tracked)
+    for m in all_models:
+        if m not in assignments:
+            assignments[m] = []
+
     # Build reverse map: tier → list of models
     tier_models: dict = {t: [] for t in tiers}
     for model, model_tiers in assignments.items():
@@ -228,52 +233,46 @@ def _render_edit_tier_form(session, tier_name, tier_info, current_models,
 
     # ── Model assignment ───────────────────────────────────────────────────
     _sec("Assign / Remove Models")
-    st.caption("Each model card shows its description and tier assignment. Click to toggle.")
 
-    # Group models: in-tier vs available
-    for model in sorted(all_models):
-        in_this_tier = model in current_models
-        known = KNOWN_MODELS.get(model, {})
-        desc = known.get("description", "No description available.")
-        popular = known.get("popular_for", "")
-
-        c_card, c_btn = st.columns([5, 1])
-        with c_card:
-            status_color = "#3fb950" if in_this_tier else "#8b949e"
-            status_label = f"✓ In {tier_name}" if in_this_tier else "Not assigned"
-            st.markdown(
-                f'<div style="background:#161b22;border-radius:6px;padding:0.6rem 0.8rem;margin:3px 0;">'
-                f'<div style="font-size:0.85rem;font-weight:600;color:#f0f6fc;">'
-                f'<span style="color:{status_color};">●</span> {model}'
-                f'<span style="font-size:0.72rem;color:{status_color};margin-left:0.5rem;">{status_label}</span>'
-                f'</div>'
-                f'<div style="font-size:0.75rem;color:#8b949e;margin-top:0.2rem;">{desc}</div>'
-                + (f'<div style="font-size:0.72rem;color:#6e7681;margin-top:0.1rem;">Popular for: {popular}</div>' if popular else '')
-                + f'</div>',
-                unsafe_allow_html=True
-            )
-        with c_btn:
-            st.write("")
-            if in_this_tier:
-                if st.button("Remove", key=f"rm_{tier_name}_{model}",
-                             help=f"Remove {model} from {tier_name}."):
+    # Show current models in tier with remove buttons
+    if current_models:
+        st.markdown(f"**Currently in {tier_name}** ({len(current_models)}):")
+        # Compact removable chips — 3 per row
+        cols = st.columns(3)
+        for i, model in enumerate(sorted(current_models)):
+            with cols[i % 3]:
+                if st.button(f"✕ {model}", key=f"rm_{tier_name}_{model}",
+                             help=f"Remove {model} from {tier_name}"):
                     new_model_tiers = [t for t in assignments.get(model, []) if t != tier_name]
                     save_model_tier_assignment(session, model, new_model_tiers, actor)
                     log_activity(session, "REMOVE_MODEL_FROM_TIER",
                                  details={"model": model, "tier": tier_name})
-                    st.session_state[f"_edit_open_{tier_name}"] = True   # keep expander open
+                    st.session_state[f"_edit_open_{tier_name}"] = True
                     st.cache_data.clear()
                     st.rerun()
-            else:
-                if st.button("Add", key=f"add_{tier_name}_{model}",
-                             help=f"Add {model} to {tier_name}."):
-                    new_model_tiers = list(set(assignments.get(model, []) + [tier_name]))
-                    save_model_tier_assignment(session, model, new_model_tiers, actor)
-                    log_activity(session, "ADD_MODEL_TO_TIER",
-                                 details={"model": model, "tier": tier_name})
-                    st.session_state[f"_edit_open_{tier_name}"] = True   # keep expander open
-                    st.cache_data.clear()
-                    st.rerun()
+    else:
+        st.caption("No models assigned to this tier yet.")
+
+    # Add models via searchable multiselect
+    available_to_add = [m for m in sorted(all_models) if m not in current_models]
+    st.markdown("**Add models:**")
+    models_to_add = st.multiselect(
+        f"Search and select models to add to {tier_name}",
+        available_to_add,
+        key=f"add_models_{tier_name}",
+        placeholder="Type to search (e.g. claude, mistral, llama)...",
+        label_visibility="collapsed",
+    )
+    if models_to_add and st.button(f"Add {len(models_to_add)} model(s) to {tier_name}",
+                                    type="primary", key=f"btn_add_models_{tier_name}"):
+        for model in models_to_add:
+            new_model_tiers = list(set(assignments.get(model, []) + [tier_name]))
+            save_model_tier_assignment(session, model, new_model_tiers, actor)
+        log_activity(session, "ADD_MODELS_TO_TIER",
+                     details={"models": models_to_add, "tier": tier_name, "count": len(models_to_add)})
+        st.session_state[f"_edit_open_{tier_name}"] = True
+        st.cache_data.clear()
+        st.rerun()
 
 
 def _render_create_tier_form(session, existing_tiers, all_models, assignments, actor):
@@ -348,38 +347,90 @@ def _render_create_tier_form(session, existing_tiers, all_models, assignments, a
 
 def _render_models(session):
     st.subheader("Models Discovered in Your Account",
-                 help="Auto-detected from the last 30 days of usage. Includes known models even if not yet used.")
-    st.caption("Auto-detected from the last 30 days of Cortex Code usage across all surfaces.")
+                 help="Auto-detected from SHOW CORTEX BASE MODELS. Shows all models available in this account/region.")
+    st.caption("Auto-detected via `SHOW CORTEX BASE MODELS IN SCHEMA SNOWFLAKE.MODELS`.")
+    st.info(
+        "**Note:** Not all models below are used by Cortex Code. "
+        "Models marked 🟢 have been **actively used by CoCo in your account** (last 90 days). "
+        "Snowflake manages the CoCo model subset internally — it may change over time. "
+        "[Regional model availability →](https://docs.snowflake.com/en/user-guide/snowflake-cortex/aisql-regional-availability)"
+    )
 
     discovered = _discover_all_models(session)
 
     if not discovered:
-        st.warning("No models found in usage data. Usage may take up to 90 minutes to appear in ACCOUNT_USAGE.")
+        st.warning("No models found. SHOW CORTEX BASE MODELS may require IMPORTED PRIVILEGES ON DATABASE SNOWFLAKE.")
         return
-
-    st.divider()
 
     # Load current tier assignments for display
     assignments = get_model_tier_assignments(session)
 
-    _sec("Model Registry")
-    st.caption("Each model's capabilities, recommended audience, and current tier assignment.")
+    # Filter UI
+    _sec("Filter Models")
+    col_search, col_filter = st.columns([3, 1])
+    with col_search:
+        search_term = st.text_input("🔍 Search models", placeholder="Type to filter (e.g. claude, mistral, llama)...",
+                                    key="model_search", label_visibility="collapsed")
+    with col_filter:
+        filter_opt = st.selectbox("Show", ["All models", "CoCo-compatible only", "Unassigned only"],
+                                  key="model_filter_type", label_visibility="collapsed")
 
-    for model in discovered:
-        known_info = KNOWN_MODELS.get(model, {})
-        # Show DB assignment if available, else config defaults
-        db_tiers = assignments.get(model, known_info.get("category", ["UNCATEGORIZED"]))
+    # Apply filters
+    filtered = discovered
+    if search_term:
+        filtered = [m for m in filtered if search_term.lower() in m.lower()]
+    if filter_opt == "CoCo-compatible only":
+        # Will be filtered after coco_used_models is fetched below
+        pass  # handled after the query
+    elif filter_opt == "Unassigned only":
+        filtered = [m for m in filtered if not assignments.get(m)]
+
+    st.caption(f"Showing {len(filtered)} of {len(discovered)} models")
+    st.divider()
+
+    _sec("Model Registry")
+
+    # Build case-insensitive lookup for KNOWN_MODELS (keys are lowercase, discovered are uppercase)
+    _known_lower = {k.lower(): v for k, v in KNOWN_MODELS.items()}
+
+    # Get models ACTUALLY used by CoCo (from usage history) for the green badge
+    coco_used_models = set()
+    try:
+        coco_df = session.sql("""
+            SELECT DISTINCT LOWER(f.KEY) AS M
+            FROM SNOWFLAKE.ACCOUNT_USAGE.CORTEX_CODE_CLI_USAGE_HISTORY h,
+                 LATERAL FLATTEN(INPUT => h.CREDITS_GRANULAR) f
+            WHERE h.USAGE_TIME >= DATEADD('day', -90, CURRENT_TIMESTAMP())
+            UNION
+            SELECT DISTINCT LOWER(f.KEY)
+            FROM SNOWFLAKE.ACCOUNT_USAGE.CORTEX_CODE_SNOWSIGHT_USAGE_HISTORY h,
+                 LATERAL FLATTEN(INPUT => h.CREDITS_GRANULAR) f
+            WHERE h.USAGE_TIME >= DATEADD('day', -90, CURRENT_TIMESTAMP())
+        """).to_pandas()
+        if not coco_df.empty:
+            coco_used_models = set(coco_df.iloc[:, 0].str.lower().tolist())
+            coco_used_models.discard("unknown")
+    except Exception:
+        pass
+
+    # Apply CoCo filter now that we have usage data
+    if filter_opt == "CoCo-compatible only":
+        filtered = [m for m in filtered if m.lower() in coco_used_models]
+
+    for model in filtered:
+        known_info = _known_lower.get(model.lower(), {})
+        is_coco = model.lower() in coco_used_models
+        db_tiers = assignments.get(model, [])
         if isinstance(db_tiers, str):
             db_tiers = [db_tiers]
-        description = known_info.get("description", "Discovered from usage — no description available.")
-        popular_for = known_info.get("popular_for", "")
+        description = known_info.get("description", "")
         tier_str = ", ".join(db_tiers) if db_tiers else "Unassigned"
+        coco_badge = "🟢 Used by CoCo" if is_coco else "⚪ General"
 
         with st.container(border=True):
-            st.markdown(f"**{model}** — `{tier_str}`")
-            st.caption(description)
-            if popular_for:
-                st.caption(f"Popular for: {popular_for}")
+            st.markdown(f"**{model}** — `{tier_str}` — {coco_badge}")
+            if description:
+                st.caption(description)
 
     st.divider()
 
@@ -429,6 +480,11 @@ def _render_mapping(session):
     if not chosen_role:
         return
 
+    # Reset multiselect when role changes
+    if st.session_state.get("_prev_model_role") != chosen_role:
+        st.session_state["_prev_model_role"] = chosen_role
+        st.session_state.pop("model_assign_select", None)
+
     role_models = []
     if not existing.empty:
         existing.columns = [c.upper() for c in existing.columns]
@@ -460,17 +516,33 @@ def _render_mapping(session):
             st.session_state["_model_preset"] = discovered
             st.rerun()
 
+    # Fix: set session state directly — Streamlit ignores `default=` after first interaction
     if "_model_preset" in st.session_state:
-        default_models = st.session_state.pop("_model_preset")
-    else:
-        default_models = role_models if role_models else discovered
+        st.session_state["model_assign_select"] = st.session_state.pop("_model_preset")
+    elif "model_assign_select" not in st.session_state:
+        st.session_state["model_assign_select"] = role_models if role_models else discovered
 
     selected_models = st.multiselect(
         "Assign models to this role", discovered,
-        default=default_models,
         key="model_assign_select",
         help="Only selected models will be accessible to this role's members."
     )
+
+    # Warning about revoke behavior
+    if role_models:
+        removed = [m for m in role_models if m not in selected_models]
+        if removed:
+            st.warning(
+                f"⚠️ **{len(removed)} model(s) will be revoked** from this role on save: "
+                f"`{', '.join(removed[:5])}`{'...' if len(removed) > 5 else ''}. "
+                "All previously assigned models not in the current selection will be removed. "
+                "This may take a moment if the role has many existing grants."
+            )
+    else:
+        st.info(
+            "ℹ️ **First-time configuration for this role.** Only the selected models will be granted. "
+            "No existing access will be revoked. Future changes will revoke models you remove from this list."
+        )
 
     st.divider()
 
@@ -492,16 +564,24 @@ def _render_mapping(session):
 
     if st.button("Save & Apply", type="primary", key="btn_save_model_map",
                  help="Saves the mapping and applies based on selected enforcement method."):
-        # Compute models to revoke: previously assigned but no longer selected
-        models_to_revoke = [m for m in role_models if m not in selected_models]
+        # Revoke ALL existing model grants on this role/members first (full replace mode)
+        # Then grant only the selected models
         _save_model_mapping(session, chosen_role, selected_models)
         if "Role Members" in enforcement:
-            if models_to_revoke:
-                _revoke_from_role_members(session, chosen_role, models_to_revoke)
-            _enforce_to_role_rbac(session, chosen_role, selected_models)
+            members = get_role_members(session, chosen_role)
+            if members:
+                st.caption(f"Revoking existing model access from {len(members)} member(s) — this may take a moment for large teams...")
+                # Revoke all currently granted models (from app-tracked mapping)
+                if role_models:
+                    _revoke_from_role_members(session, chosen_role, role_models)
+                _enforce_to_role_rbac(session, chosen_role, selected_models)
+            else:
+                st.warning(f"No members found in {chosen_role}.")
         elif "Role Directly" in enforcement:
-            if models_to_revoke:
-                _revoke_model_app_role_from_role(session, chosen_role, models_to_revoke)
+            st.caption("Revoking existing model access from role — this may take a moment...")
+            # Revoke all previously mapped models from the role
+            if role_models:
+                _revoke_model_app_role_from_role(session, chosen_role, role_models)
             _enforce_model_app_role_to_role(session, chosen_role, selected_models)
         elif "Account" in enforcement:
             _enforce_to_account(session, selected_models)
@@ -546,19 +626,37 @@ def _render_effective_access(session):
 # ─────────────────────────────────────────────────────────────────────────────
 
 def _discover_all_models(session):
-    """Discover ALL models from usage summary + ACCOUNT_USAGE fallback."""
+    """
+    Discover ALL available models from SHOW CORTEX BASE MODELS.
+    Falls back to usage history + KNOWN_MODELS if SHOW command unavailable.
+    """
     models = set()
-    tbl = fq_table(session, TABLE_USAGE_DAILY)
+
+    # Primary: SHOW CORTEX BASE MODELS (returns all available models in account)
     try:
-        df = session.sql(f"""
-            SELECT DISTINCT MODEL_NAME FROM {tbl}
-            WHERE MODEL_NAME IS NOT NULL AND MODEL_NAME != 'UNKNOWN'
-        """).to_pandas()
+        df = session.sql("SHOW CORTEX BASE MODELS IN SCHEMA SNOWFLAKE.MODELS").to_pandas()
         if not df.empty:
-            models.update(df["MODEL_NAME"].tolist())
+            # Column is typically 'name' or 'MODEL_NAME'
+            name_col = [c for c in df.columns if 'name' in c.lower()]
+            if name_col:
+                models.update(df[name_col[0]].tolist())
     except Exception:
         pass
 
+    # Fallback 1: Usage summary (models actually used in last 30d)
+    if not models:
+        tbl = fq_table(session, TABLE_USAGE_DAILY)
+        try:
+            df = session.sql(f"""
+                SELECT DISTINCT MODEL_NAME FROM {tbl}
+                WHERE MODEL_NAME IS NOT NULL AND MODEL_NAME != 'UNKNOWN'
+            """).to_pandas()
+            if not df.empty:
+                models.update(df["MODEL_NAME"].tolist())
+        except Exception:
+            pass
+
+    # Fallback 2: ACCOUNT_USAGE granular usage
     if not models:
         try:
             df = session.sql("""
@@ -577,7 +675,10 @@ def _discover_all_models(session):
         except Exception:
             pass
 
-    models.update(KNOWN_MODELS.keys())
+    # Fallback 3: hardcoded KNOWN_MODELS (last resort)
+    if not models:
+        models.update(KNOWN_MODELS.keys())
+
     return sorted(list(models))
 
 
@@ -660,28 +761,25 @@ def _enforce_to_role_members(session, role_name, models):
 
 def _enforce_model_app_role_to_role(session, role_name, models):
     """
-    Grant SNOWFLAKE model application roles TO a role (not per-user).
-    Runs: GRANT APPLICATION ROLE SNOWFLAKE."CORTEX-MODEL-ROLE-<MODEL>" TO ROLE "<role>"
-    More efficient than per-user grants — inherits automatically to current and future members.
+    Grant SNOWFLAKE model application roles TO a role via owner-rights SP.
+    The SP runs as ACCOUNTADMIN (EXECUTE AS OWNER) so the Streamlit app role
+    doesn't need MANAGE GRANTS.
     """
     if not models:
         st.warning("No models selected.")
         return
-    safe_role = sql_identifier(role_name.strip('"'))
-    successes, failures = 0, 0
-    errors = []
+    model_list = ",".join(models)
     with st.spinner(f"Granting model application roles to role {role_name}…"):
-        for model in models:
-            app_role = f'CORTEX-MODEL-ROLE-{model.upper()}'
-            try:
-                session.sql(
-                    f'GRANT APPLICATION ROLE SNOWFLAKE.{sql_identifier(app_role)} '
-                    f'TO ROLE {safe_role}'
-                ).collect()
-                successes += 1
-            except Exception as e:
-                failures += 1
-                errors.append(f"{model}: {str(e)[:120]}")
+        ok, raw = call_bulk_sp(session, SP_ENFORCE_MODEL_ACCESS,
+                               [role_name], model_list)
+    try:
+        result = raw if isinstance(raw, dict) else json.loads(raw)
+    except Exception:
+        result = {"success": 0, "failed": 0, "errors": [str(raw)]}
+
+    successes = result.get("success", 0)
+    failures = result.get("failed", 0)
+    errors = result.get("errors", [])
 
     log_activity(session, "ENFORCE_MODEL_ACCESS", target_role=role_name,
                  details={"method": "RBAC_TO_ROLE", "models": models,
@@ -719,24 +817,19 @@ def _enforce_to_account(session, models):
 
 
 def _revoke_model_app_role_from_role(session, role_name, models):
-    """Revoke SNOWFLAKE model application roles FROM a role (replace-mode cleanup)."""
-    safe_role = sql_identifier(role_name.strip('"'))
-    revoked, errors = 0, []
+    """Revoke SNOWFLAKE model application roles FROM a role via owner-rights SP."""
+    if not models:
+        return
+    model_list = ",".join(models)
     with st.spinner(f"Revoking {len(models)} model role(s) from {role_name}…"):
-        for model in models:
-            app_role = f'CORTEX-MODEL-ROLE-{model.upper()}'
-            try:
-                session.sql(
-                    f'REVOKE APPLICATION ROLE SNOWFLAKE.{sql_identifier(app_role)} '
-                    f'FROM ROLE {safe_role}'
-                ).collect()
-                revoked += 1
-            except Exception as e:
-                err = str(e).lower()
-                if 'not granted' in err or 'does not exist' in err:
-                    revoked += 1  # already not granted — treat as success
-                else:
-                    errors.append(f"{model}: {str(e)[:120]}")
+        ok, raw = call_bulk_sp(session, SP_REVOKE_MODEL_ACCESS,
+                               [role_name], model_list)
+    try:
+        result = raw if isinstance(raw, dict) else json.loads(raw)
+    except Exception:
+        result = {"success": 0, "failed": 0}
+    revoked = result.get("success", 0)
+    errors = result.get("errors", [])
     if errors:
         st.warning(f"Revoked {revoked}, {len(errors)} failed: {'; '.join(errors[:3])}")
     elif revoked:

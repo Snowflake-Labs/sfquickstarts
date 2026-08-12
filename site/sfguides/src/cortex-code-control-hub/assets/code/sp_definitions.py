@@ -500,10 +500,13 @@ def handler(session, requester, cohort_role, surface, amount,
             if limit <= 0:   # unlimited (-1) or blocked (0) — skip as donor
                 continue
             unique_dates = len(user_dates.get(m, set()))
-            if unique_dates < _MIN_HISTORY_DAYS:
-                continue    # cold-start guard
             used      = today_usage.get(m, 0.0)
-            predicted = _predict_remaining(user_hour_data, m, current_hour)
+            # If user has enough history, predict remaining usage for today
+            # Otherwise treat as inactive — full limit available (no prediction)
+            if unique_dates >= _MIN_HISTORY_DAYS:
+                predicted = _predict_remaining(user_hour_data, m, current_hour)
+            else:
+                predicted = 0.0  # inactive/new user — no predicted future usage
             raw_surplus  = limit - used - predicted
             safe_surplus = max(raw_surplus - limit * buffer, 0.0)
             transferable = round(min(safe_surplus, limit * max_cap_pct), 2)

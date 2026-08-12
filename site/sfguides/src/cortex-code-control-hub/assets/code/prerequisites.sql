@@ -1080,6 +1080,7 @@ ALTER TASK CC_DAILY_RESET_LIMITS RESUME;
 CREATE TASK IF NOT EXISTS CC_REFRESH_BUDGET_USAGE
     WAREHOUSE = __WH__
     SCHEDULE  = 'USING CRON 0 2 * * * UTC'
+    SUSPEND_TASK_AFTER_NUM_FAILURES = 3
 AS
     CALL SP_CC_REFRESH_BUDGET_USAGE();
 
@@ -1295,7 +1296,7 @@ $$;
 -- IMPORTANT: This SP must remain owned by ACCOUNTADMIN (do NOT transfer to __SP_OWNER_ROLE__)
 -- because only ACCOUNTADMIN can grant APPLICATION ROLEs from the SNOWFLAKE native application.
 CREATE OR REPLACE PROCEDURE SP_CC_ENFORCE_MODEL_ACCESS(
-    USERS_JSON VARIANT,
+    TARGETS_JSON VARIANT,
     MODEL_LIST VARCHAR
 )
 RETURNS VARIANT
@@ -1312,20 +1313,32 @@ _SAFE_ID = re.compile(r'[;\n\r\x00]')
 def _qid(s):
     return '"' + str(s).replace('"', '""') + '"'
 
-def handler(session, users_json, model_list):
+def _is_role(session, name):
+    """Check if a name is a role (vs a user) by querying SHOW ROLES."""
+    try:
+        df = session.sql(f"SHOW ROLES LIKE '{name}'").collect()
+        return len(df) > 0
+    except Exception:
+        return False
+
+def handler(session, targets_json, model_list):
     out = {'success': 0, 'failed': 0, 'errors': []}
-    users  = list(users_json) if users_json else []
-    models = [m.strip() for m in str(model_list).split(',') if m.strip()] if model_list else []
+    targets = list(targets_json) if targets_json else []
+    models  = [m.strip() for m in str(model_list).split(',') if m.strip()] if model_list else []
 
     if not models:
         return {'success': 0, 'failed': 0, 'errors': ['No models specified']}
 
-    for user in users:
-        user = str(user).strip()
-        if not user or _SAFE_ID.search(user):
-            out['errors'].append(f'Skipped invalid username: {user}')
+    for target in targets:
+        target = str(target).strip()
+        if not target or _SAFE_ID.search(target):
+            out['errors'].append(f'Skipped invalid target: {target}')
             out['failed'] += 1
             continue
+
+        # Detect if target is a role or a user
+        grant_to = 'ROLE' if _is_role(session, target) else 'USER'
+
         for model in models:
             if _SAFE_ID.search(model):
                 out['errors'].append(f'Skipped invalid model: {model}')
@@ -1335,11 +1348,11 @@ def handler(session, users_json, model_list):
             try:
                 session.sql(
                     'GRANT APPLICATION ROLE SNOWFLAKE.' + _qid(app_role) +
-                    ' TO USER ' + _qid(user)
+                    ' TO ' + grant_to + ' ' + _qid(target)
                 ).collect()
                 out['success'] += 1
             except Exception as e:
-                out['errors'].append(f'{user}/{model}: {str(e)[:120]}')
+                out['errors'].append(f'{target}/{model}: {str(e)[:120]}')
                 out['failed'] += 1
 
     return out
@@ -1350,7 +1363,7 @@ GRANT USAGE ON PROCEDURE SP_CC_ENFORCE_MODEL_ACCESS(VARIANT, VARCHAR) TO ROLE __
 -- Revoke model access — removes CORTEX-MODEL-ROLE-* application roles from users
 -- Must remain owned by ACCOUNTADMIN (same as ENFORCE — only ACCOUNTADMIN can revoke APPLICATION ROLEs)
 CREATE OR REPLACE PROCEDURE SP_CC_REVOKE_MODEL_ACCESS(
-    USERS_JSON VARIANT,
+    TARGETS_JSON VARIANT,
     MODEL_LIST VARCHAR
 )
 RETURNS VARIANT
@@ -1367,19 +1380,29 @@ _SAFE_ID = re.compile(r'[;\n\r\x00]')
 def _qid(s):
     return '"' + str(s).replace('"', '""') + '"'
 
-def handler(session, users_json, model_list):
-    out = {'success': 0, 'failed': 0, 'errors': []}
-    users  = list(users_json) if users_json else []
-    models = [m.strip() for m in str(model_list).split(',') if m.strip()] if model_list else []
+def _is_role(session, name):
+    try:
+        df = session.sql(f"SHOW ROLES LIKE '{name}'").collect()
+        return len(df) > 0
+    except Exception:
+        return False
 
-    if not models or not users:
+def handler(session, targets_json, model_list):
+    out = {'success': 0, 'failed': 0, 'errors': []}
+    targets = list(targets_json) if targets_json else []
+    models  = [m.strip() for m in str(model_list).split(',') if m.strip()] if model_list else []
+
+    if not models or not targets:
         return out
 
-    for user in users:
-        user = str(user).strip()
-        if not user or _SAFE_ID.search(user):
+    for target in targets:
+        target = str(target).strip()
+        if not target or _SAFE_ID.search(target):
             out['failed'] += 1
             continue
+
+        revoke_from = 'ROLE' if _is_role(session, target) else 'USER'
+
         for model in models:
             if _SAFE_ID.search(model):
                 out['failed'] += 1
@@ -1388,16 +1411,15 @@ def handler(session, users_json, model_list):
             try:
                 session.sql(
                     'REVOKE APPLICATION ROLE SNOWFLAKE.' + _qid(app_role) +
-                    ' FROM USER ' + _qid(user)
+                    ' FROM ' + revoke_from + ' ' + _qid(target)
                 ).collect()
                 out['success'] += 1
             except Exception as e:
-                # Ignore "not granted" errors — role may not have been granted
                 err = str(e).lower()
                 if 'not granted' in err or 'does not exist' in err:
                     out['success'] += 1
                 else:
-                    out['errors'].append(f'{user}/{model}: {str(e)[:120]}')
+                    out['errors'].append(f'{target}/{model}: {str(e)[:120]}')
                     out['failed'] += 1
 
     return out
@@ -1518,6 +1540,11 @@ USING (
          'KEYWORD',
          '{"keywords":["send to email","upload to s3","export to google","copy to external","post to webhook","dump table","extract everything"]}',
          'HIGH','SECURITY'),
+        ('Competitor Mention',
+         'Prompts referencing Snowflake competitors.',
+         'KEYWORD',
+         '{"keywords":["databricks","bigquery","redshift","synapse","teradata","cloudera","palantir","dbt cloud","fivetran","azure sql"]}',
+         'MEDIUM','COMPETITOR'),
         ('Personal Use',
          'Prompts unrelated to work — entertainment, personal errands.',
          'KEYWORD',
@@ -1552,6 +1579,7 @@ GRANT OWNERSHIP ON TABLE CC_PROMPT_ANALYSIS_DAILY TO ROLE __SP_OWNER_ROLE__ COPY
 CREATE TASK IF NOT EXISTS CC_CLASSIFY_PROMPTS_TASK
     WAREHOUSE = __WH__
     SCHEDULE  = 'USING CRON 0 2 * * * UTC'
+    SUSPEND_TASK_AFTER_NUM_FAILURES = 3
     COMMENT   = 'Nightly responsible AI classification — runs SP_CC_CLASSIFY_PROMPTS against last 26 hours of prompts'
 AS
 CALL SP_CC_CLASSIFY_PROMPTS(26);
@@ -1671,8 +1699,8 @@ CREATE ALERT IF NOT EXISTS CC_ALERT_CHECK
     IF (EXISTS (SELECT 1 FROM CC_ALERT_CONFIG WHERE IS_ENABLED = TRUE LIMIT 1))
     THEN CALL SP_CC_CHECK_ALERTS('BATCH');
 
-ALTER ALERT CC_ALERT_CHECK RESUME;
--- NOTE: ownership transfer + final RESUME are in section 7b at the end of this script
+-- NOTE: Alerts start SUSPENDED. Enable from Setup → Phase D after notification integration is configured.
+-- ALTER ALERT CC_ALERT_CHECK RESUME;
 
 -- Real-time alert: every hour, fires on any HIGH risk violation in stream
 CREATE ALERT IF NOT EXISTS CC_REALTIME_VIOLATION_ALERT
@@ -1682,7 +1710,8 @@ CREATE ALERT IF NOT EXISTS CC_REALTIME_VIOLATION_ALERT
     IF (EXISTS (SELECT 1 FROM CC_VIOLATION_STREAM WHERE RISK_LEVEL = 'HIGH' LIMIT 1))
     THEN CALL SP_CC_CHECK_ALERTS('REALTIME');
 
-ALTER ALERT CC_REALTIME_VIOLATION_ALERT RESUME;
+-- NOTE: Alerts start SUSPENDED. Enable from Setup → Phase D.
+-- ALTER ALERT CC_REALTIME_VIOLATION_ALERT RESUME;
 
 -- ---------------------------------------------------------------------------
 -- 6i. RESPONSE QUALITY SCORING TABLE
@@ -1852,14 +1881,18 @@ GRANT USAGE ON PROCEDURE SP_SHOW_ROLE_ACCESS_LINEAGE(VARCHAR) TO ROLE __APP_ROLE
 -- ---------------------------------------------------------------------------
 ALTER TASK CC_CLASSIFY_PROMPTS_TASK SUSPEND;
 ALTER TASK CC_REFRESH_BUDGET_USAGE  SUSPEND;
+ALTER ALERT CC_ALERT_CHECK             SUSPEND;
+ALTER ALERT CC_REALTIME_VIOLATION_ALERT SUSPEND;
 GRANT OWNERSHIP ON TASK  CC_CLASSIFY_PROMPTS_TASK       TO ROLE __SP_OWNER_ROLE__ COPY CURRENT GRANTS;
 GRANT OWNERSHIP ON TASK  CC_REFRESH_BUDGET_USAGE        TO ROLE __SP_OWNER_ROLE__ COPY CURRENT GRANTS;
 GRANT OWNERSHIP ON ALERT CC_ALERT_CHECK                 TO ROLE __SP_OWNER_ROLE__ COPY CURRENT GRANTS;
 GRANT OWNERSHIP ON ALERT CC_REALTIME_VIOLATION_ALERT    TO ROLE __SP_OWNER_ROLE__ COPY CURRENT GRANTS;
+-- Resume only tasks; alerts start SUSPENDED — admin enables via Setup page
 ALTER TASK  CC_CLASSIFY_PROMPTS_TASK    RESUME;
--- CC_REFRESH_BUDGET_USAGE stays SUSPENDED — Setup page resumes it after Phase B SP is deployed
-ALTER ALERT CC_ALERT_CHECK              RESUME;
-ALTER ALERT CC_REALTIME_VIOLATION_ALERT RESUME;
+-- Alerts intentionally left SUSPENDED. Enable them from Setup → Phase D after verifying
+-- notification integration is configured. They will auto-suspend after 3 consecutive failures.
+-- ALTER ALERT CC_ALERT_CHECK              RESUME;
+-- ALTER ALERT CC_REALTIME_VIOLATION_ALERT RESUME;
 
 -- ---------------------------------------------------------------------------
 -- 8. VERIFICATION
