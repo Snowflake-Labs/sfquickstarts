@@ -663,6 +663,9 @@ def _run_verification(session):
     results = {}
     progress = st.progress(0)
 
+    # Debug: show what we're checking against
+    st.caption(f"Verifying objects in: **{db}.{schema}**")
+
     # ── 1. Tables — one INFORMATION_SCHEMA query ──────────────────────────────
     try:
         existing_tables = set()
@@ -681,7 +684,15 @@ def _run_verification(session):
     try:
         existing_sps = set()
         rows = session.sql(f"SHOW PROCEDURES LIKE 'SP_%' IN SCHEMA {db}.{schema}").collect()
-        existing_sps = {str(r["name"]).upper() for r in rows}
+        for r in rows:
+            try:
+                name = str(r["name"]).upper()
+            except (KeyError, TypeError):
+                try:
+                    name = str(r[1]).upper()
+                except Exception:
+                    continue
+            existing_sps.add(name)
     except Exception:
         existing_sps = set()
     for sp in REQUIRED_PROCEDURES:
@@ -881,16 +892,6 @@ def _run_setup(session):
     except Exception:
         pass
 
-    # CRITICAL: Set session context to the target database/schema BEFORE running DDL.
-    # Without this, unqualified CREATE TABLE names land in the Streamlit's own schema
-    # (PLATFORM_CTRL_DB.STREAMLIT_APPS) instead of the target (CORTEX_CODE_MGMT.APP).
-    try:
-        session.sql(f"USE DATABASE {db}").collect()
-        session.sql(f"USE SCHEMA {schema}").collect()
-        session.sql(f"USE WAREHOUSE {warehouse}").collect()
-    except Exception:
-        pass
-
     # ---- Step A: Run prerequisites.sql (tables, roles, tasks, core SPs) ----
     import pathlib
     # Try app root (pages/setup.py → parent → pages/ → parent → app root)
@@ -933,12 +934,13 @@ def _run_setup(session):
     # Use the SP-aware splitter instead of naive split(";")
     raw_statements = _split_sql_statements(sql_content)
 
-    # Filter statements that can't run in SiS owner-rights context:
-    # - SET APP_* variables                 → SiS doesn't support session variables
-    # - SHOW * (verification queries)       → not needed at setup time
-    # NOTE: USE DATABASE/SCHEMA/WAREHOUSE are NOT skipped — they set the session context
-    # so that unqualified CREATE TABLE names land in the correct schema.
-    _SKIP_PREFIXES = ("USE ROLE",
+    # Filter statements that can't run in SiS context:
+    # - USE DATABASE/SCHEMA/WAREHOUSE  → not supported in SiS (session context is fixed)
+    # - USE ROLE                       → not supported in SiS
+    # - SET APP_* variables            → SiS doesn't support session variables
+    # - SHOW * (verification queries)  → not needed at setup time
+    # NOTE: Unqualified CREATE TABLE names land in the Streamlit's own schema (from config.yaml).
+    _SKIP_PREFIXES = ("USE DATABASE", "USE SCHEMA", "USE WAREHOUSE", "USE ROLE",
                       "SET APP_", "SHOW TABLES", "SHOW PROCEDURES", "SHOW TASKS",
                       "SHOW GRANTS", "SHOW ROLES", "SHOW WAREHOUSES")
 
