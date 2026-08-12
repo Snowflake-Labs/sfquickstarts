@@ -680,7 +680,7 @@ def _run_verification(session):
     # ── 2. SPs — single SHOW PROCEDURES IN SCHEMA ────────────────────────────
     try:
         existing_sps = set()
-        rows = session.sql(f"SHOW PROCEDURES LIKE 'SP_CC_%' IN SCHEMA {db}.{schema}").collect()
+        rows = session.sql(f"SHOW PROCEDURES LIKE 'SP_%' IN SCHEMA {db}.{schema}").collect()
         existing_sps = {str(r["name"]).upper() for r in rows}
     except Exception:
         existing_sps = set()
@@ -881,6 +881,16 @@ def _run_setup(session):
     except Exception:
         pass
 
+    # CRITICAL: Set session context to the target database/schema BEFORE running DDL.
+    # Without this, unqualified CREATE TABLE names land in the Streamlit's own schema
+    # (PLATFORM_CTRL_DB.STREAMLIT_APPS) instead of the target (CORTEX_CODE_MGMT.APP).
+    try:
+        session.sql(f"USE DATABASE {db}").collect()
+        session.sql(f"USE SCHEMA {schema}").collect()
+        session.sql(f"USE WAREHOUSE {warehouse}").collect()
+    except Exception:
+        pass
+
     # ---- Step A: Run prerequisites.sql (tables, roles, tasks, core SPs) ----
     import pathlib
     # Try app root (pages/setup.py → parent → pages/ → parent → app root)
@@ -924,10 +934,11 @@ def _run_setup(session):
     raw_statements = _split_sql_statements(sql_content)
 
     # Filter statements that can't run in SiS owner-rights context:
-    # - USE DATABASE/SCHEMA/WAREHOUSE/ROLE  → session context already set
     # - SET APP_* variables                 → SiS doesn't support session variables
     # - SHOW * (verification queries)       → not needed at setup time
-    _SKIP_PREFIXES = ("USE DATABASE", "USE SCHEMA", "USE WAREHOUSE", "USE ROLE",
+    # NOTE: USE DATABASE/SCHEMA/WAREHOUSE are NOT skipped — they set the session context
+    # so that unqualified CREATE TABLE names land in the correct schema.
+    _SKIP_PREFIXES = ("USE ROLE",
                       "SET APP_", "SHOW TABLES", "SHOW PROCEDURES", "SHOW TASKS",
                       "SHOW GRANTS", "SHOW ROLES", "SHOW WAREHOUSES")
 
