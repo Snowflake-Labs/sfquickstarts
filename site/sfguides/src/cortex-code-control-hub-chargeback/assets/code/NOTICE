@@ -1,0 +1,16 @@
+CoCo Control Hub & Chargeback
+=============================
+
+This solution is built on the Cortex Code credit-manager ("CoCo Control Hub")
+Quickstart application authored by Ram Chandrasekaran (Snowflake), distributed
+via the public Snowflake-Labs/sfquickstarts repository.
+
+The base application (governance, observability, and credit management for
+Cortex Code) is that Quickstart. The chargeback and attribution capabilities —
+the guided bill-generation flow, the attribution waterfall and unattributed
+queue, cost tagging and read-only tag sync, warehouse-compute attribution, and
+the PDF/CSV invoice/showback export — were added on top in this repository.
+
+Attribution and credit for the base Control Hub application remain with the
+original author. This repository packages the base app together with the
+chargeback layer as a single, dedicated solution.
