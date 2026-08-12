@@ -661,6 +661,16 @@ The dashboard shows:
 
 Use **Edit Gateway** to adjust the traffic split as the test progresses.
 
+The **Metrics** tab shows gateway-level operational metrics for inference services: request count, error rate, latency (p50, p90, p99), and resource utilization (CPU, memory, GPU when available). Select a service, method, and time range to compare how V1 and V2 are performing under real traffic. Higher request counts on a service reflect the gateway's traffic split ratio.
+
+![Gateway Metrics tab showing request volume and latency per service](assets/gateway_metrics.jpg)
+
+The **Monitoring** tab lists gateway model monitors for the selected gateway. Selecting a monitor opens its dashboard, which shows a Metrics overview table comparing drift and performance metrics across inference services — including Population Stability Index, Jensen-Shannon Distance, and Difference of Means (relative to a designated baseline service). 
+
+When ground truth is configured, performance metrics (accuracy, precision, recall) also appear. Use Set as baseline to designate the champion service; drift for the challenger is then computed relative to it. Time-series charts below the table visualize how these metrics trend over the aggregation window. Use the control bar to filter by metrics, services, or time range.
+
+![Gateway Monitoring tab showing time-series health metrics for the gateway](assets/gateway_monitoring.jpg)
+
 
 <!-- ------------------------ -->
 ## Debug and Recover from Errors
