@@ -1,6 +1,6 @@
 author: Brian Pace
 id: snowflake-postgres-stream-snowflake-with-pglake
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/product/data-engineering
 language: en
 summary: Stream row-level changes from a Snowflake table to Snowflake Postgres using Streams, Tasks, pg_lake, and pg_incremental
 environments: web
@@ -11,9 +11,23 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 ## Overview
 
-### What You Will Build
+### What You'll Build
 
 This quickstart demonstrates how to build an automated pipeline that streams row-level changes (INSERT, UPDATE, DELETE) from a Snowflake table down to a Snowflake Postgres table. Changes made in Snowflake are exported as Parquet files to a shared internal stage by a scheduled Task, then detected and merged into Postgres by a `pg_incremental` pipeline — with no S3 bucket, no external pipeline, and no manual intervention.
+
+### What You'll Learn 
+
+- How Snowflake Streams present captured changes
+- Easy way to setup change data capture from Snowflake to Postgres
+- Automate file loads with pg_incremental
+- Managing floating point numbers when exporting to parquet
+
+### What You'll Need
+
+- Snowflake account with ACCOUNTADMIN access
+- Local terminal session to run `psql`
+- `psql` client installed locally (install with `brew install postgresql` on macOS)
+- Familiarity with SQL and basic Postgres concepts
 
 ### How It Works
 
@@ -21,7 +35,7 @@ Snowflake Streams capture every row-level change made to a table since the strea
 
 ### Architecture
 
-<img src="assets/architecture.png">
+![Architecture](assets/architecture.png)
 
 ### Stream Change Record Semantics
 
