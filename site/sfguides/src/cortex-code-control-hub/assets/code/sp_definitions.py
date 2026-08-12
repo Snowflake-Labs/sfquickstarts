@@ -672,7 +672,7 @@ def handler(session, lookback_hours):
         watermark = str(wm_df.iloc[0, 0])
         new_df = session.sql(f"""
             SELECT DATE_TRUNC('day',e.TIMESTAMP)::DATE AS EVENT_DATE,
-                   e.TIMESTAMP::TIMESTAMP_NTZ AS EVENT_TS,
+                   TRY_TO_TIMESTAMP_NTZ(e.TIMESTAMP) AS EVENT_TS,
                    e.RESOURCE_ATTRIBUTES['snow.user.name']::STRING AS USER_NAME,
                    e.RESOURCE_ATTRIBUTES['snow.session.role.primary.name']::STRING AS ROLE_NAME,
                    e.RECORD_ATTRIBUTES['snow.ai.observability.agent.planning.model']::STRING AS MODEL,
@@ -726,6 +726,7 @@ def handler(session, lookback_hours):
                 AND run.RECORD_TYPE = 'SPAN'
             WHERE e.RECORD_TYPE='SPAN' AND e.RECORD:name::STRING='CodingAgent.Step-0'
               AND e.TIMESTAMP > '{watermark}' AND e.RESOURCE_ATTRIBUTES['snow.user.name'] IS NOT NULL
+              AND TRY_TO_TIMESTAMP_NTZ(e.TIMESTAMP) IS NOT NULL
             ORDER BY e.TIMESTAMP
         """).to_pandas()
         if not new_df.empty:

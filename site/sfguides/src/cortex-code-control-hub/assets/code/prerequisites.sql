@@ -1313,14 +1313,6 @@ _SAFE_ID = re.compile(r'[;\n\r\x00]')
 def _qid(s):
     return '"' + str(s).replace('"', '""') + '"'
 
-def _is_role(session, name):
-    """Check if a name is a role (vs a user) by querying SHOW ROLES."""
-    try:
-        df = session.sql(f"SHOW ROLES LIKE '{name}'").collect()
-        return len(df) > 0
-    except Exception:
-        return False
-
 def handler(session, targets_json, model_list):
     out = {'success': 0, 'failed': 0, 'errors': []}
     targets = list(targets_json) if targets_json else []
@@ -1336,8 +1328,8 @@ def handler(session, targets_json, model_list):
             out['failed'] += 1
             continue
 
-        # Detect if target is a role or a user
-        grant_to = 'ROLE' if _is_role(session, target) else 'USER'
+        # Detect target type on first model (try ROLE first, fall back to USER)
+        grant_to = None
 
         for model in models:
             if _SAFE_ID.search(model):
@@ -1345,15 +1337,43 @@ def handler(session, targets_json, model_list):
                 out['failed'] += 1
                 continue
             app_role = 'CORTEX-MODEL-ROLE-' + model.upper()
-            try:
-                session.sql(
-                    'GRANT APPLICATION ROLE SNOWFLAKE.' + _qid(app_role) +
-                    ' TO ' + grant_to + ' ' + _qid(target)
-                ).collect()
-                out['success'] += 1
-            except Exception as e:
-                out['errors'].append(f'{target}/{model}: {str(e)[:120]}')
-                out['failed'] += 1
+            sql_base = 'GRANT APPLICATION ROLE SNOWFLAKE.' + _qid(app_role)
+
+            if grant_to is not None:
+                try:
+                    session.sql(sql_base + ' TO ' + grant_to + ' ' + _qid(target)).collect()
+                    out['success'] += 1
+                except Exception as e:
+                    err = str(e).lower()
+                    if 'already granted' in err:
+                        out['success'] += 1
+                    else:
+                        out['errors'].append(f'{target}/{model}: {str(e)[:120]}')
+                        out['failed'] += 1
+            else:
+                # First attempt: try ROLE
+                try:
+                    session.sql(sql_base + ' TO ROLE ' + _qid(target)).collect()
+                    grant_to = 'ROLE'
+                    out['success'] += 1
+                except Exception as e:
+                    err = str(e).lower()
+                    if 'does not exist' in err or 'invalid' in err:
+                        try:
+                            session.sql(sql_base + ' TO USER ' + _qid(target)).collect()
+                            grant_to = 'USER'
+                            out['success'] += 1
+                        except Exception as e2:
+                            out['errors'].append(f'{target}/{model}: {str(e2)[:120]}')
+                            out['failed'] += 1
+                            grant_to = 'USER'
+                    elif 'already granted' in err:
+                        grant_to = 'ROLE'
+                        out['success'] += 1
+                    else:
+                        out['errors'].append(f'{target}/{model}: {str(e)[:120]}')
+                        out['failed'] += 1
+                        grant_to = 'ROLE'
 
     return out
 $$;
@@ -1380,13 +1400,6 @@ _SAFE_ID = re.compile(r'[;\n\r\x00]')
 def _qid(s):
     return '"' + str(s).replace('"', '""') + '"'
 
-def _is_role(session, name):
-    try:
-        df = session.sql(f"SHOW ROLES LIKE '{name}'").collect()
-        return len(df) > 0
-    except Exception:
-        return False
-
 def handler(session, targets_json, model_list):
     out = {'success': 0, 'failed': 0, 'errors': []}
     targets = list(targets_json) if targets_json else []
@@ -1401,26 +1414,55 @@ def handler(session, targets_json, model_list):
             out['failed'] += 1
             continue
 
-        revoke_from = 'ROLE' if _is_role(session, target) else 'USER'
+        revoke_from = None
 
         for model in models:
             if _SAFE_ID.search(model):
                 out['failed'] += 1
                 continue
             app_role = 'CORTEX-MODEL-ROLE-' + model.upper()
-            try:
-                session.sql(
-                    'REVOKE APPLICATION ROLE SNOWFLAKE.' + _qid(app_role) +
-                    ' FROM ' + revoke_from + ' ' + _qid(target)
-                ).collect()
-                out['success'] += 1
-            except Exception as e:
-                err = str(e).lower()
-                if 'not granted' in err or 'does not exist' in err:
+            sql_base = 'REVOKE APPLICATION ROLE SNOWFLAKE.' + _qid(app_role)
+
+            if revoke_from is not None:
+                try:
+                    session.sql(sql_base + ' FROM ' + revoke_from + ' ' + _qid(target)).collect()
                     out['success'] += 1
-                else:
-                    out['errors'].append(f'{target}/{model}: {str(e)[:120]}')
-                    out['failed'] += 1
+                except Exception as e:
+                    err = str(e).lower()
+                    if 'not granted' in err or 'does not exist' in err:
+                        out['success'] += 1
+                    else:
+                        out['errors'].append(f'{target}/{model}: {str(e)[:120]}')
+                        out['failed'] += 1
+            else:
+                # First attempt: try ROLE
+                try:
+                    session.sql(sql_base + ' FROM ROLE ' + _qid(target)).collect()
+                    revoke_from = 'ROLE'
+                    out['success'] += 1
+                except Exception as e:
+                    err = str(e).lower()
+                    if 'does not exist' in err and 'role' in err:
+                        try:
+                            session.sql(sql_base + ' FROM USER ' + _qid(target)).collect()
+                            revoke_from = 'USER'
+                            out['success'] += 1
+                        except Exception as e2:
+                            err2 = str(e2).lower()
+                            if 'not granted' in err2 or 'does not exist' in err2:
+                                revoke_from = 'USER'
+                                out['success'] += 1
+                            else:
+                                out['errors'].append(f'{target}/{model}: {str(e2)[:120]}')
+                                out['failed'] += 1
+                                revoke_from = 'USER'
+                    elif 'not granted' in err:
+                        revoke_from = 'ROLE'
+                        out['success'] += 1
+                    else:
+                        out['errors'].append(f'{target}/{model}: {str(e)[:120]}')
+                        out['failed'] += 1
+                        revoke_from = 'ROLE'
 
     return out
 $$;

@@ -406,6 +406,11 @@ def _render_models(session):
             FROM SNOWFLAKE.ACCOUNT_USAGE.CORTEX_CODE_SNOWSIGHT_USAGE_HISTORY h,
                  LATERAL FLATTEN(INPUT => h.CREDITS_GRANULAR) f
             WHERE h.USAGE_TIME >= DATEADD('day', -90, CURRENT_TIMESTAMP())
+            UNION
+            SELECT DISTINCT LOWER(f.KEY)
+            FROM SNOWFLAKE.ACCOUNT_USAGE.CORTEX_CODE_DESKTOP_USAGE_HISTORY h,
+                 LATERAL FLATTEN(INPUT => h.CREDITS_GRANULAR) f
+            WHERE h.USAGE_TIME >= DATEADD('day', -90, CURRENT_TIMESTAMP())
         """).to_pandas()
         if not coco_df.empty:
             coco_used_models = set(coco_df.iloc[:, 0].str.lower().tolist())
