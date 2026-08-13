@@ -2,7 +2,7 @@ author: Brian Hess
 id: kafka-interactive-tables-streaming
 language: en
 summary: Learn how to use Snowflake's Interactive Tables and Interactive Warehouses with real-time data from Kafka using Snowpipe Streaming v2.
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/snowflake-feature/ingestion, snowflake-site:taxonomy/snowflake-feature/snowpipe-streaming, snowflake-site:taxonomy/snowflake-feature/unistore
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/snowflake-feature/ingestion, snowflake-site:taxonomy/snowflake-feature/snowpipe-streaming, snowflake-site:taxonomy/snowflake-feature/hybrid-tables
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues

@@ -1,6 +1,6 @@
 author: Jon Osborn
 id: hybrid-tables-jmeter-performance-testing
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/unistore
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/hybrid-tables
 language: en
 summary: Execute a simple performance test to evaluate hybrid tables. 
 environments: web

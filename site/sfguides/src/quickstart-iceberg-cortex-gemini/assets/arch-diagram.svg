@@ -1,0 +1,159 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="895pt" height="346pt" viewBox="0.00 0.00 895.00 346.00">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(28.8 316.8)">
+<title>cortex_stack</title>
+<g id="clust1" class="cluster">
+<title>cluster_data</title>
+<polygon fill="none" stroke="black" stroke-dasharray="5,2" points="8,-8 8,-280 194.79,-280 194.79,-8 8,-8"/>
+<text xml:space="preserve" text-anchor="middle" x="101.4" y="-263.4" font-family="Helvetica,sans-Serif" font-size="14.00">Extract</text>
+</g>
+<g id="clust2" class="cluster">
+<title>cluster_exploration</title>
+<polygon fill="none" stroke="black" stroke-dasharray="5,2" points="215.79,-24 215.79,-252 361.63,-252 361.63,-24 215.79,-24"/>
+<text xml:space="preserve" text-anchor="middle" x="288.71" y="-235.4" font-family="Helvetica,sans-Serif" font-size="14.00">Explore</text>
+</g>
+<g id="clust4" class="cluster">
+<title>cluster_end_user</title>
+<polygon fill="none" stroke="black" stroke-dasharray="5,2" points="685.65,-66 685.65,-197 828.92,-197 828.92,-66 685.65,-66"/>
+<text xml:space="preserve" text-anchor="middle" x="757.28" y="-180.4" font-family="Helvetica,sans-Serif" font-size="14.00">Enterprise AI Apps</text>
+</g>
+<g id="clust5" class="cluster">
+<title>cluster_cortex</title>
+<polygon fill="none" stroke="black" stroke-dasharray="5,2" points="382.63,-95 382.63,-173 634.54,-173 634.54,-95 382.63,-95"/>
+<text xml:space="preserve" text-anchor="middle" x="508.58" y="-156.4" font-family="Helvetica,sans-Serif" font-size="14.00">AI Context</text>
+</g>
+<!-- marketplace -->
+<g id="node1" class="node">
+<title>marketplace</title>
+<path fill="#bbdefb" stroke="#1565c0" d="M48.54,-17C48.54,-17 154.26,-17 154.26,-17 160.26,-17 166.26,-23 166.26,-29 166.26,-29 166.26,-41 166.26,-41 166.26,-47 160.26,-53 154.26,-53 154.26,-53 48.54,-53 48.54,-53 42.54,-53 36.54,-47 36.54,-41 36.54,-41 36.54,-29 36.54,-29 36.54,-23 42.54,-17 48.54,-17"/>
+<text xml:space="preserve" text-anchor="middle" x="101.4" y="-32.1" font-family="Helvetica,sans-Serif" font-size="11.00">Snowflake Marketplace</text>
+</g>
+<!-- iceberg -->
+<g id="node2" class="node">
+<title>iceberg</title>
+<path fill="#ddffdd" stroke="#1565c0" d="M168.08,-148.78C168.08,-152.06 138.19,-154.72 101.4,-154.72 64.6,-154.72 34.71,-152.06 34.71,-148.78 34.71,-148.78 34.71,-95.23 34.71,-95.23 34.71,-91.94 64.6,-89.28 101.4,-89.28 138.19,-89.28 168.08,-91.94 168.08,-95.23 168.08,-95.23 168.08,-148.78 168.08,-148.78"/>
+<path fill="none" stroke="#1565c0" d="M168.08,-148.78C168.08,-145.49 138.19,-142.83 101.4,-142.83 64.6,-142.83 34.71,-145.49 34.71,-148.78"/>
+<text xml:space="preserve" text-anchor="middle" x="101.4" y="-131.9" font-family="Helvetica,sans-Serif" font-size="11.00">Customer GCS Iceberg </text>
+<text xml:space="preserve" text-anchor="middle" x="101.4" y="-118.7" font-family="Helvetica,sans-Serif" font-size="11.00"> - Parquet Data Files </text>
+<text xml:space="preserve" text-anchor="middle" x="101.4" y="-105.5" font-family="Helvetica,sans-Serif" font-size="11.00"> - Metadata json</text>
+</g>
+<!-- iceberg&#45;&gt;marketplace -->
+<g id="edge2" class="edge">
+<title>iceberg-&gt;marketplace</title>
+<path fill="none" stroke="#555555" d="M100.92,-80.6C100.92,-80.6 100.92,-53.31 100.92,-53.31"/>
+<polygon fill="#555555" stroke="#555555" points="98.47,-80.6 100.92,-87.6 103.37,-80.6 98.47,-80.6"/>
+</g>
+<!-- warehouse -->
+<g id="node5" class="node">
+<title>warehouse</title>
+<path fill="#bbdefb" stroke="#1565c0" d="M337.3,-140C337.3,-140 240.13,-140 240.13,-140 234.13,-140 228.13,-134 228.13,-128 228.13,-128 228.13,-116 228.13,-116 228.13,-110 234.13,-104 240.13,-104 240.13,-104 337.3,-104 337.3,-104 343.3,-104 349.3,-110 349.3,-116 349.3,-116 349.3,-128 349.3,-128 349.3,-134 343.3,-140 337.3,-140"/>
+<text xml:space="preserve" text-anchor="middle" x="288.71" y="-125.3" font-family="Helvetica,sans-Serif" font-size="11.00">Adaptive Warehouse </text>
+<text xml:space="preserve" text-anchor="middle" x="288.71" y="-112.1" font-family="Helvetica,sans-Serif" font-size="11.00"> (on Google Axion)</text>
+</g>
+<!-- iceberg&#45;&gt;warehouse -->
+<g id="edge3" class="edge">
+<title>iceberg-&gt;warehouse</title>
+<path fill="none" stroke="#555555" d="M168.49,-122C168.49,-122 219.18,-122 219.18,-122"/>
+<polygon fill="#555555" stroke="#555555" points="219.18,-124.45 226.18,-122 219.18,-119.55 219.18,-124.45"/>
+</g>
+<!-- horizon -->
+<g id="node3" class="node">
+<title>horizon</title>
+<path fill="#bbdefb" stroke="#1565c0" d="M28,-191.2C28,-191.2 174.79,-191.2 174.79,-191.2 180.79,-191.2 186.79,-197.2 186.79,-203.2 186.79,-203.2 186.79,-234.8 186.79,-234.8 186.79,-240.8 180.79,-246.8 174.79,-246.8 174.79,-246.8 28,-246.8 28,-246.8 22,-246.8 16,-240.8 16,-234.8 16,-234.8 16,-203.2 16,-203.2 16,-197.2 22,-191.2 28,-191.2"/>
+<text xml:space="preserve" text-anchor="middle" x="101.4" y="-232.9" font-family="Helvetica,sans-Serif" font-size="11.00">Federated Catalogs</text>
+<polyline fill="none" stroke="#1565c0" points="16,-225.6 186.79,-225.6"/>
+<text xml:space="preserve" text-anchor="middle" x="50.9" y="-211.7" font-family="Helvetica,sans-Serif" font-size="11.00">Snowflake </text>
+<text xml:space="preserve" text-anchor="middle" x="50.9" y="-198.5" font-family="Helvetica,sans-Serif" font-size="11.00"> Horizon</text>
+<polyline fill="none" stroke="#1565c0" points="85.81,-191.2 85.81,-225.6"/>
+<text xml:space="preserve" text-anchor="middle" x="136.3" y="-211.7" font-family="Helvetica,sans-Serif" font-size="11.00">Lakehouse </text>
+<text xml:space="preserve" text-anchor="middle" x="136.3" y="-198.5" font-family="Helvetica,sans-Serif" font-size="11.00"> Runtime Catalog</text>
+</g>
+<!-- horizon&#45;&gt;iceberg -->
+<g id="edge1" class="edge">
+<title>horizon-&gt;iceberg</title>
+<path fill="none" stroke="#555555" d="M100.92,-190.94C100.92,-190.94 100.92,-163.65 100.92,-163.65"/>
+<polygon fill="#555555" stroke="#555555" points="103.37,-163.65 100.92,-156.65 98.47,-163.65 103.37,-163.65"/>
+<text xml:space="preserve" text-anchor="middle" x="72.12" y="-164.7" font-family="Helvetica,sans-Serif" font-size="14.00">manages</text>
+</g>
+<!-- looker -->
+<g id="node4" class="node">
+<title>looker</title>
+<path fill="#ddffdd" stroke="#1565c0" d="M329.97,-68C329.97,-68 247.46,-68 247.46,-68 241.46,-68 235.46,-62 235.46,-56 235.46,-56 235.46,-44 235.46,-44 235.46,-38 241.46,-32 247.46,-32 247.46,-32 329.97,-32 329.97,-32 335.97,-32 341.97,-38 341.97,-44 341.97,-44 341.97,-56 341.97,-56 341.97,-62 335.97,-68 329.97,-68"/>
+<text xml:space="preserve" text-anchor="middle" x="288.71" y="-46.7" font-family="Helvetica,sans-Serif" font-size="11.00">Looker Dashboard</text>
+</g>
+<!-- looker&#45;&gt;warehouse -->
+<g id="edge5" class="edge">
+<title>looker-&gt;warehouse</title>
+<path fill="none" stroke="#555555" d="M288.92,-76.68C288.92,-76.68 288.92,-103.59 288.92,-103.59"/>
+<polygon fill="#555555" stroke="#555555" points="291.37,-76.68 288.92,-69.68 286.47,-76.68 291.37,-76.68"/>
+</g>
+<!-- explore -->
+<g id="node6" class="node">
+<title>explore</title>
+<path fill="#bbdefb" stroke="#1565c0" d="M235.79,-175.8C235.79,-175.8 341.63,-175.8 341.63,-175.8 347.63,-175.8 353.63,-181.8 353.63,-187.8 353.63,-187.8 353.63,-206.2 353.63,-206.2 353.63,-212.2 347.63,-218.2 341.63,-218.2 341.63,-218.2 235.79,-218.2 235.79,-218.2 229.79,-218.2 223.79,-212.2 223.79,-206.2 223.79,-206.2 223.79,-187.8 223.79,-187.8 223.79,-181.8 229.79,-175.8 235.79,-175.8"/>
+<text xml:space="preserve" text-anchor="middle" x="288.71" y="-204.3" font-family="Helvetica,sans-Serif" font-size="11.00">Data Exploration</text>
+<polyline fill="none" stroke="#1565c0" points="223.79,-197 353.63,-197"/>
+<text xml:space="preserve" text-anchor="middle" x="257.17" y="-183.1" font-family="Helvetica,sans-Serif" font-size="11.00">Snowsight</text>
+<polyline fill="none" stroke="#1565c0" points="290.55,-175.8 290.55,-197"/>
+<text xml:space="preserve" text-anchor="middle" x="322.09" y="-183.1" font-family="Helvetica,sans-Serif" font-size="11.00">Notebook</text>
+</g>
+<!-- warehouse&#45;&gt;explore -->
+<g id="edge6" class="edge">
+<title>warehouse-&gt;explore</title>
+<path fill="none" stroke="#555555" d="M288.92,-140.16C288.92,-140.16 288.92,-167.04 288.92,-167.04"/>
+<polygon fill="#555555" stroke="#555555" points="286.47,-167.04 288.92,-174.04 291.37,-167.04 286.47,-167.04"/>
+</g>
+<!-- analyst -->
+<g id="node7" class="node">
+<title>analyst</title>
+<path fill="#bbdefb" stroke="#1565c0" d="M488.78,-140C488.78,-140 402.63,-140 402.63,-140 396.63,-140 390.63,-134 390.63,-128 390.63,-128 390.63,-116 390.63,-116 390.63,-110 396.63,-104 402.63,-104 402.63,-104 488.78,-104 488.78,-104 494.78,-104 500.78,-110 500.78,-116 500.78,-116 500.78,-128 500.78,-128 500.78,-134 494.78,-140 488.78,-140"/>
+<text xml:space="preserve" text-anchor="middle" x="445.71" y="-125.3" font-family="Helvetica,sans-Serif" font-size="11.00">Cortex Analyst</text>
+<text xml:space="preserve" text-anchor="middle" x="445.71" y="-112.1" font-family="Helvetica,sans-Serif" font-size="11.00">(Semantic Context)</text>
+</g>
+<!-- warehouse&#45;&gt;analyst -->
+<g id="edge4" class="edge">
+<title>warehouse-&gt;analyst</title>
+<path fill="none" stroke="#555555" d="M349.41,-122C349.41,-122 381.79,-122 381.79,-122"/>
+<polygon fill="#555555" stroke="#555555" points="381.79,-124.45 388.79,-122 381.79,-119.55 381.79,-124.45"/>
+</g>
+<!-- agent -->
+<g id="node8" class="node">
+<title>agent</title>
+<path fill="#bbdefb" stroke="#1565c0" d="M549.78,-104C549.78,-104 614.54,-104 614.54,-104 620.54,-104 626.54,-110 626.54,-116 626.54,-116 626.54,-128 626.54,-128 626.54,-134 620.54,-140 614.54,-140 614.54,-140 549.78,-140 549.78,-140 543.78,-140 537.78,-134 537.78,-128 537.78,-128 537.78,-116 537.78,-116 537.78,-110 543.78,-104 549.78,-104"/>
+<text xml:space="preserve" text-anchor="middle" x="582.16" y="-125.6" font-family="Helvetica,sans-Serif" font-size="11.00">Cortex Agents </text>
+<text xml:space="preserve" text-anchor="middle" x="582.16" y="-112.4" font-family="Helvetica,sans-Serif" font-size="11.00"> (LLM: Gemini)</text>
+</g>
+<!-- analyst&#45;&gt;agent -->
+<g id="edge7" class="edge">
+<title>analyst-&gt;agent</title>
+<path fill="none" stroke="#555555" d="M501.21,-122C501.21,-122 529.06,-122 529.06,-122"/>
+<polygon fill="#555555" stroke="#555555" points="529.06,-124.45 536.06,-122 529.06,-119.55 529.06,-124.45"/>
+</g>
+<!-- cowork -->
+<g id="node9" class="node">
+<title>cowork</title>
+<path fill="#bbdefb" stroke="#1565c0" d="M808.92,-164C808.92,-164 705.65,-164 705.65,-164 699.65,-164 693.65,-158 693.65,-152 693.65,-152 693.65,-140 693.65,-140 693.65,-134 699.65,-128 705.65,-128 705.65,-128 808.92,-128 808.92,-128 814.92,-128 820.92,-134 820.92,-140 820.92,-140 820.92,-152 820.92,-152 820.92,-158 814.92,-164 808.92,-164"/>
+<text xml:space="preserve" text-anchor="middle" x="757.28" y="-149.3" font-family="Helvetica,sans-Serif" font-size="11.00">CoWork </text>
+<text xml:space="preserve" text-anchor="middle" x="757.28" y="-136.1" font-family="Helvetica,sans-Serif" font-size="11.00"> (Insights and Reports)</text>
+</g>
+<!-- agent&#45;&gt;cowork -->
+<g id="edge9" class="edge">
+<title>agent-&gt;cowork</title>
+<path fill="none" stroke="#555555" d="M626.8,-134.25C626.8,-134.25 684.71,-134.25 684.71,-134.25"/>
+<polygon fill="#555555" stroke="#555555" points="684.71,-136.7 691.71,-134.25 684.71,-131.8 684.71,-136.7"/>
+</g>
+<!-- gemini -->
+<g id="node10" class="node">
+<title>gemini</title>
+<path fill="#ddffdd" stroke="#1565c0" d="M801.27,-110C801.27,-110 713.29,-110 713.29,-110 707.29,-110 701.29,-104 701.29,-98 701.29,-98 701.29,-86 701.29,-86 701.29,-80 707.29,-74 713.29,-74 713.29,-74 801.27,-74 801.27,-74 807.27,-74 813.27,-80 813.27,-86 813.27,-86 813.27,-98 813.27,-98 813.27,-104 807.27,-110 801.27,-110"/>
+<text xml:space="preserve" text-anchor="middle" x="757.28" y="-95.3" font-family="Helvetica,sans-Serif" font-size="11.00">Gemini Enterprise </text>
+<text xml:space="preserve" text-anchor="middle" x="757.28" y="-82.1" font-family="Helvetica,sans-Serif" font-size="11.00"> (Corporate AI Hub)</text>
+</g>
+<!-- agent&#45;&gt;gemini -->
+<g id="edge8" class="edge">
+<title>agent-&gt;gemini</title>
+<path fill="none" stroke="#555555" d="M581.92,-103.66C581.92,-99.55 581.92,-96.39 581.92,-96.39 581.92,-96.39 692.32,-96.39 692.32,-96.39"/>
+<polygon fill="#555555" stroke="#555555" points="692.32,-98.84 699.32,-96.39 692.32,-93.94 692.32,-98.84"/>
+<text xml:space="preserve" text-anchor="middle" x="660.09" y="-107.2" font-family="Helvetica,sans-Serif" font-size="14.00">MCP</text>
+</g>
+</g>
+</svg>

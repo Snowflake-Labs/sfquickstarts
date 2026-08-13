@@ -1,6 +1,6 @@
 author: Adam Timm
 id: hybrid-tables-write-optimization
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/hybrid-tables
 language: en
 summary: Learn how to optimize write performance for Hybrid Tables — bound variables for plan cache reuse, batch INSERT patterns, stored procedure overhead, COPY INTO behavior, and common DML anti-patterns.
 environments: web
