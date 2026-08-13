@@ -119,57 +119,92 @@ def _build_sp_ddl(db: str, schema: str, sp_name: str,
 
 
 # ---------------------------------------------------------------------------
-# SP body: grant Cortex model application roles to a list of users
-# CORTEX_MODELS_ALLOWLIST cannot be set per-user — use RBAC instead:
-#   GRANT APPLICATION ROLE SNOWFLAKE."CORTEX-MODEL-ROLE-{MODEL}" TO USER "username"
+# SP body: grant Cortex model application roles to a list of targets
+# Uses try-role-first pattern: tries GRANT TO ROLE first, falls back to USER.
+# This allows the same SP to handle both "Apply to Role" and "Apply to Members".
 #
-# Accepts: USERS_JSON VARIANT — array of usernames
+# Accepts: TARGETS_JSON VARIANT — array of role names or usernames
 #          MODEL_LIST VARCHAR  — comma-separated model names (e.g. "claude-sonnet-4-6,claude-opus-4-6")
 # Returns: VARIANT {success: N, failed: M, errors: [...]}
 # ---------------------------------------------------------------------------
 _ENFORCE_MODEL_BODY = '''\
 import re
 
-_SAFE_ID = re.compile(r'[;\\n\\r]')
+_SAFE_ID = re.compile(r'[;\\n\\r\\x00]')
 
 def _qid(s):
     return '"' + str(s).replace('"', '""') + '"'
 
-def handler(session, users_json, model_list):
+def handler(session, targets_json, model_list):
     out = {'success': 0, 'failed': 0, 'errors': []}
-    users  = list(users_json) if users_json else []
-    models = [m.strip() for m in str(model_list).split(',') if m.strip()] if model_list else []
+    targets = list(targets_json) if targets_json else []
+    models  = [m.strip() for m in str(model_list).split(',') if m.strip()] if model_list else []
 
     if not models:
         return {'success': 0, 'failed': 0, 'errors': ['No models specified']}
 
-    # Ensure model objects exist in SNOWFLAKE.MODELS
-    try:
-        session.sql('CALL SNOWFLAKE.MODELS.CORTEX_BASE_MODELS_REFRESH()').collect()
-    except Exception as e:
-        out['errors'].append(f'Model refresh warning (non-fatal): {str(e)[:100]}')
-
-    for user in users:
-        user = str(user).strip()
-        if not user or _SAFE_ID.search(user):
-            out['errors'].append(f'Skipped invalid username: {user}')
+    for target in targets:
+        target = str(target).strip()
+        if not target or _SAFE_ID.search(target):
+            out['errors'].append(f'Skipped invalid target: {target}')
             out['failed'] += 1
             continue
+
+        # Detect target type on first model (try ROLE first, fall back to USER)
+        grant_to = None
+
         for model in models:
             if _SAFE_ID.search(model):
                 out['errors'].append(f'Skipped invalid model: {model}')
                 out['failed'] += 1
                 continue
             app_role = 'CORTEX-MODEL-ROLE-' + model.upper()
-            try:
-                session.sql(
-                    'GRANT APPLICATION ROLE SNOWFLAKE.' + _qid(app_role) +
-                    ' TO USER ' + _qid(user)
-                ).collect()
-                out['success'] += 1
-            except Exception as e:
-                out['errors'].append(f'{user}/{model}: {str(e)[:120]}')
-                out['failed'] += 1
+            sql_base = 'GRANT APPLICATION ROLE SNOWFLAKE.' + _qid(app_role)
+
+            if grant_to is not None:
+                try:
+                    session.sql(sql_base + ' TO ' + grant_to + ' ' + _qid(target)).collect()
+                    out['success'] += 1
+                except Exception as e:
+                    err = str(e).lower()
+                    if 'already granted' in err:
+                        out['success'] += 1
+                    elif 'application role' in err and 'does not exist' in err:
+                        out['errors'].append(f'{target}/{model}: Application role does not exist (model not available in this account)')
+                        out['failed'] += 1
+                    else:
+                        out['errors'].append(f'{target}/{model}: {str(e)}')
+                        out['failed'] += 1
+            else:
+                # First attempt: try ROLE
+                try:
+                    session.sql(sql_base + ' TO ROLE ' + _qid(target)).collect()
+                    grant_to = 'ROLE'
+                    out['success'] += 1
+                except Exception as e:
+                    err = str(e).lower()
+                    if 'application role' in err and 'does not exist' in err:
+                        # The MODEL app role doesn't exist — skip, don't fall back to USER
+                        out['errors'].append(f'{target}/{model}: Application role does not exist (model not available in this account)')
+                        out['failed'] += 1
+                        grant_to = 'ROLE'
+                    elif 'does not exist' in err or 'invalid' in err:
+                        # The TARGET role doesn't exist — try as USER
+                        try:
+                            session.sql(sql_base + ' TO USER ' + _qid(target)).collect()
+                            grant_to = 'USER'
+                            out['success'] += 1
+                        except Exception as e2:
+                            out['errors'].append(f'{target}/{model}: {str(e2)}')
+                            out['failed'] += 1
+                            grant_to = 'USER'
+                    elif 'already granted' in err:
+                        grant_to = 'ROLE'
+                        out['success'] += 1
+                    else:
+                        out['errors'].append(f'{target}/{model}: {str(e)}')
+                        out['failed'] += 1
+                        grant_to = 'ROLE'
 
     return out
 '''
@@ -198,7 +233,7 @@ def get_bulk_sp_ddl(db: str, schema: str) -> list:
         _build_sp_ddl(
             db, schema,
             "SP_CC_ENFORCE_MODEL_ACCESS",
-            "USERS_JSON VARIANT, MODEL_LIST VARCHAR",
+            "TARGETS_JSON VARIANT, MODEL_LIST VARCHAR",
             _ENFORCE_MODEL_BODY,
         ),
     ]
@@ -726,6 +761,8 @@ def handler(session, lookback_hours):
                 AND run.RECORD_TYPE = 'SPAN'
             WHERE e.RECORD_TYPE='SPAN' AND e.RECORD:name::STRING='CodingAgent.Step-0'
               AND e.TIMESTAMP > '{watermark}' AND e.RESOURCE_ATTRIBUTES['snow.user.name'] IS NOT NULL
+              AND e.TIMESTAMP >= DATEADD('day', -400, CURRENT_TIMESTAMP())
+              AND e.TIMESTAMP <= DATEADD('day', 1, CURRENT_TIMESTAMP())
             ORDER BY e.TIMESTAMP
         """).to_pandas()
         if not new_df.empty:
@@ -736,11 +773,12 @@ def handler(session, lookback_hours):
             db_part, schema_part = DB_SCHEMA.split('.', 1)
             clean = new_df.copy()
             # Normalise date/timestamp types for Snowflake
-            try:
-                clean['EVENT_DATE'] = _pd.to_datetime(clean['EVENT_DATE']).dt.date
-                clean['EVENT_TS']   = _pd.to_datetime(clean['EVENT_TS'])
-            except Exception:
-                pass
+            # write_pandas serializes Timestamps as epoch nanos which Snowflake
+            # interprets as seconds → year 761M. Convert to string to avoid this.
+            clean['EVENT_TS'] = _pd.to_datetime(clean['EVENT_TS'], errors='coerce')
+            clean = clean.dropna(subset=['EVENT_TS'])
+            clean['EVENT_TS'] = clean['EVENT_TS'].dt.strftime('%Y-%m-%d %H:%M:%S')
+            clean['EVENT_DATE'] = _pd.to_datetime(clean['EVENT_DATE'], errors='coerce').dt.strftime('%Y-%m-%d')
             # Cap lengths and fill nulls
             clean['PROMPT']             = clean['PROMPT'].fillna('').str[:4000]
             clean['TOOLS_RAW']          = clean['TOOLS_RAW'].fillna('').str[:500]
@@ -1036,7 +1074,6 @@ def handler(session, lookback_hours):
                   OR LOWER(PROMPT) ILIKE '%cortex_memory_drop%'
                   OR LOWER(PROMPT) ILIKE '%cortex_memory_recall%'
                   OR LOWER(PROMPT) ILIKE '%cortex_memory_list%'
-                  OR PROMPT ILIKE '%<system-reminder>%'
               )
         """).collect()
     except Exception as e:

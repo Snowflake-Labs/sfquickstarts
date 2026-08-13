@@ -33,6 +33,7 @@ REQUIRED_TABLES = [
     "CC_MODEL_CONFIG",
     "CC_MODEL_ROLE_MAPPING",
     "CC_USER_COHORT_RESOLVED",
+    "CC_ROLE_ACCESS_LINEAGE",
     "CC_COHORT_LEADS",
     "CC_SP_JOB_LOG",
     "CC_COHORT_REBALANCE_LOCK",
@@ -46,6 +47,11 @@ REQUIRED_TABLES = [
     "CC_ALERT_HISTORY",
     # Response quality scoring
     "CC_RESPONSE_QUALITY",
+    # AI Budget tables
+    "CC_AI_BUDGETS",
+    "CC_AI_BUDGET_USAGE",
+    # Native Per-User Quotas (Preview)
+    "CC_NATIVE_QUOTAS",
 ]
 
 REQUIRED_PROCEDURES = [
@@ -56,6 +62,8 @@ REQUIRED_PROCEDURES = [
     "SP_CC_REVOKE_CORTEX_ACCESS",
     "SP_CC_REBALANCE_CREDITS",
     "SP_CC_ENFORCE_MODEL_ACCESS",
+    "SP_CC_REVOKE_MODEL_ACCESS",
+    "SP_SHOW_ROLE_ACCESS_LINEAGE",
     "SP_CC_RESOLVE_USER_COHORTS",
     "SP_CC_REFRESH_USAGE_SUMMARIES",
     "SP_CC_EXPIRE_TEMPORARY_CREDITS",
@@ -70,6 +78,12 @@ REQUIRED_PROCEDURES = [
     # Alerting + quality SPs
     "SP_CC_CHECK_ALERTS",
     "SP_CC_EVALUATE_RESPONSES",
+    # AI Budget management SPs
+    "SP_CC_CREATE_AI_BUDGET",
+    "SP_CC_UPDATE_AI_BUDGET",
+    "SP_CC_DELETE_AI_BUDGET",
+    "SP_CC_REFRESH_BUDGET_USAGE",
+    "SP_CC_MANAGE_QUOTA",
 ]
 
 REQUIRED_TASKS = [
@@ -78,6 +92,7 @@ REQUIRED_TASKS = [
     "CC_CLASSIFY_PROMPTS_TASK",
     "CC_ALERT_CHECK",
     "CC_REALTIME_VIOLATION_ALERT",
+    "CC_REFRESH_BUDGET_USAGE",
 ]
 
 REQUIRED_INTEGRATIONS = [
@@ -104,6 +119,29 @@ def render(session):
 
     st.header("Setup", help="One-time installation and data bootstrap for CoCo Control Hub.")
     st.caption("Run each phase in order on first install. All phases are idempotent — safe to re-run.")
+
+    with st.expander("📦 Upgrading from an older version?", expanded=False):
+        st.markdown("""
+**After pulling the latest code and running `snow streamlit deploy --replace`:**
+
+| What changed | Action needed |
+|---|---|
+| `pages/*.py` only | None — takes effect on page reload |
+| `sp_definitions.py` | **Phase C** — recreate SPs |
+| New tables or columns in `prerequisites.sql` | **Phase A** (idempotent — safe to re-run) |
+| New prompt columns (e.g. INPUT_TOKENS) on old rows | Truncate `CC_PROMPT_EVENTS` then **Phase D2** with 180 days |
+| `config.yaml` admin roles | None — read at runtime |
+
+**Quick upgrade checklist:**
+```
+1. git pull  (or download latest zip and replace files)
+2. snow streamlit deploy --replace --connection <your_connection>
+3. Open the app → Setup → Run Phase C  (always re-run after code update)
+4. Run Phase A  (only if Phase E shows missing objects)
+5. Run Phase D2  (only if new columns appear blank for old prompts)
+6. Run Phase E  (verify all objects are green)
+```
+        """)
 
     current_role = get_current_role(session)
     is_accountadmin = "ACCOUNTADMIN" in current_role.upper()
@@ -156,55 +194,61 @@ Steps 2, 4 and all Phase A–E DDL you can run yourself.
             """)
         st.divider()
 
-        # Try to check current state (best-effort — may fail on lower privileges)
-        prereq_status = {}
-        try:
-            rows = session.sql("SHOW PARAMETERS LIKE 'CORTEX_ENABLED_CROSS_REGION' IN ACCOUNT").collect()
-            if rows:
-                val = str(rows[0]["value"]).upper().strip()
-                if val in ("ANY", "ANY_REGION", "AWS_US", "AWS_GLOBAL"):
-                    prereq_status["cross_region"] = True
-                elif val in ("", "DISABLED", "NONE"):
-                    prereq_status["cross_region"] = None   # not configured — amber, not red
-                else:
-                    prereq_status["cross_region"] = False  # explicitly wrong value
-            else:
-                prereq_status["cross_region"] = None
-        except Exception:
-            prereq_status["cross_region"] = None
-
-        try:
-            from config import get_app_database, get_app_schema
-            sp_role = ROLE_SP_OWNER
-            grant_rows = session.sql(f"SHOW GRANTS TO ROLE {sp_role}").collect()
-            granted_privs = {f"{str(r.get('privilege',''))}::{str(r.get('granted_on',''))}::{str(r.get('name',''))}".upper()
-                             for r in grant_rows}
-            # confirmed not granted = None (amber) not False (red) — these are setup tasks not failures
-            prereq_status["observability"] = True if any("AI_OBSERVABILITY_READER" in g for g in granted_privs) else None
-            prereq_status["account_usage"] = True if any("IMPORTED PRIVILEGES" in g and "SNOWFLAKE" in g for g in granted_privs) else None
-            prereq_status["cortex_user"]   = True if any("CORTEX_USER" in g for g in granted_privs) else None
-        except Exception:
-            prereq_status["observability"]  = None
-            prereq_status["account_usage"]  = None
-            prereq_status["cortex_user"]    = None
-
         def _status_chip(val, label):
             if val is True:
                 return f'<span style="background:#1a4731;color:#3fb950;border-radius:4px;padding:2px 8px;font-size:0.78rem;font-family:monospace;">✓ {label}</span>'
             elif val is False:
-                # Only used when a value is explicitly wrong (not just unset)
                 return f'<span style="background:#3d1616;color:#f85149;border-radius:4px;padding:2px 8px;font-size:0.78rem;font-family:monospace;">✗ {label}</span>'
             else:
-                # None = not yet configured or unknown — amber, not red
                 return f'<span style="background:#2a2a1a;color:#d4a017;border-radius:4px;padding:2px 8px;font-size:0.78rem;font-family:monospace;">⚠ {label}</span>'
 
-        chips_html = " &nbsp; ".join([
-            _status_chip(prereq_status["cross_region"],   "Cross-Region Inference"),
-            _status_chip(prereq_status["observability"],  "AI Observability Access"),
-            _status_chip(prereq_status["account_usage"],  "ACCOUNT_USAGE Access"),
-            _status_chip(prereq_status["cortex_user"],    "CORTEX_USER Role"),
-        ])
-        st.markdown(chips_html + "<br/>", unsafe_allow_html=True)
+        # Show cached status if available, otherwise prompt to check
+        prereq_status = st.session_state.get("_prereq_status")
+        if prereq_status:
+            chips_html = " &nbsp; ".join([
+                _status_chip(prereq_status.get("cross_region"),   "Cross-Region Inference"),
+                _status_chip(prereq_status.get("observability"),  "AI Observability Access"),
+                _status_chip(prereq_status.get("account_usage"),  "ACCOUNT_USAGE Access"),
+                _status_chip(prereq_status.get("cortex_user"),    "CORTEX_USER Role"),
+            ])
+            st.markdown(chips_html + "<br/>", unsafe_allow_html=True)
+        else:
+            st.caption("Click below to check prerequisite status.")
+
+        if st.button("Check Prerequisites", key="btn_check_prereqs",
+                     help="Runs SHOW GRANTS and SHOW PARAMETERS to verify account configuration."):
+            prereq_status = {}
+            try:
+                rows = session.sql("SHOW PARAMETERS LIKE 'CORTEX_ENABLED_CROSS_REGION' IN ACCOUNT").collect()
+                if rows:
+                    val = str(rows[0]["value"]).upper().strip()
+                    if val in ("ANY", "ANY_REGION", "AWS_US", "AWS_GLOBAL"):
+                        prereq_status["cross_region"] = True
+                    elif val in ("", "DISABLED", "NONE"):
+                        prereq_status["cross_region"] = None
+                    else:
+                        prereq_status["cross_region"] = False
+                else:
+                    prereq_status["cross_region"] = None
+            except Exception:
+                prereq_status["cross_region"] = None
+
+            try:
+                from config import get_app_database, get_app_schema
+                sp_role = ROLE_SP_OWNER
+                grant_rows = session.sql(f"SHOW GRANTS TO ROLE {sp_role}").collect()
+                granted_privs = {f"{str(r.get('privilege',''))}::{str(r.get('granted_on',''))}::{str(r.get('name',''))}".upper()
+                                 for r in grant_rows}
+                prereq_status["observability"] = True if any("AI_OBSERVABILITY_READER" in g for g in granted_privs) else None
+                prereq_status["account_usage"] = True if any("IMPORTED PRIVILEGES" in g and "SNOWFLAKE" in g for g in granted_privs) else None
+                prereq_status["cortex_user"]   = True if any("CORTEX_USER" in g for g in granted_privs) else None
+            except Exception:
+                prereq_status["observability"]  = None
+                prereq_status["account_usage"]  = None
+                prereq_status["cortex_user"]    = None
+
+            st.session_state["_prereq_status"] = prereq_status
+            st.rerun()
 
         st.divider()
 
@@ -216,7 +260,7 @@ Steps 2, 4 and all Phase A–E DDL you can run yourself.
             "to route inference requests to the nearest region where the model is available — "
             "required for most non-US accounts and for newer models everywhere."
         )
-        st.code("ALTER ACCOUNT SET CORTEX_ENABLED_CROSS_REGION = 'ANY';", language="sql")
+        st.code("ALTER ACCOUNT SET CORTEX_ENABLED_CROSS_REGION = 'ANY_REGION';  -- or 'ANY' on older accounts", language="sql")
 
         st.divider()
 
@@ -225,12 +269,17 @@ Steps 2, 4 and all Phase A–E DDL you can run yourself.
         st.caption(
             f"`SP_CC_CLASSIFY_PROMPTS` reads `SNOWFLAKE.LOCAL.AI_OBSERVABILITY_EVENTS` to backfill "
             f"prompt events, token economics, and latency data. The SP runs as `{ROLE_SP_OWNER}` "
-            f"(owner's rights) — that role needs the `AI_OBSERVABILITY_READER` database role to access the view."
+            f"(owner's rights) — that role needs the `AI_OBSERVABILITY_READER` database role to access the view. "
+            f"If this role doesn't exist in your account, use `SNOWFLAKE.CORTEX_USER` as a fallback (prompt data may not backfill)."
         )
         st.code(f"""\
--- Grant AI Observability read access to the CoCo SP owner role
+-- Primary grant (most accounts — check with: SHOW DATABASE ROLES IN DATABASE SNOWFLAKE)
 GRANT DATABASE ROLE SNOWFLAKE.AI_OBSERVABILITY_READER
-  TO ROLE {ROLE_SP_OWNER};""", language="sql")
+  TO ROLE {ROLE_SP_OWNER};
+
+-- If AI_OBSERVABILITY_READER does not exist in your account, use this fallback:
+-- GRANT DATABASE ROLE SNOWFLAKE.CORTEX_USER TO ROLE {ROLE_SP_OWNER};
+-- Note: CORTEX_USER grants model access but may not cover all observability views.""", language="sql")
 
         st.divider()
 
@@ -276,19 +325,31 @@ GRANT USE AI FUNCTIONS ON ACCOUNT
         # ── 5. Cortex Code Credit Limits (Optional) ───────────────────────────
         st.markdown("#### 5 · Cortex Code Native Credit Limits _(optional)_ &nbsp; `🔐 ACCOUNTADMIN only`")
         st.caption(
-            "Set per-user or account-wide Cortex Code credit budgets. These are enforced natively "
-            "by Snowflake — separate from CoCo's own credit management tables. "
-            "CoCo's credit tracking in CC_USAGE_DAILY_SUMMARY is a governance layer on top of these."
+            "Set **per-surface daily** credit limits for Cortex Code. These are enforced natively by Snowflake "
+            "(separate from CoCo's own credit management tables). CoCo's `CC_USAGE_DAILY_SUMMARY` is a governance "
+            "layer — setting limits here also affects what CoCo can report. "
+            "Note: the old `CORTEX_CODE_CREDIT_LIMIT` parameter (monthly, single-surface) has been replaced "
+            "by per-surface daily parameters."
         )
         st.code("""\
--- Account-wide monthly credit limit for Cortex Code
-ALTER ACCOUNT SET CORTEX_CODE_CREDIT_LIMIT = 1000;
+-- Account-wide daily limits per surface (rolling 24-hour window, per user)
+ALTER ACCOUNT SET CORTEX_CODE_SNOWSIGHT_DAILY_EST_CREDIT_LIMIT_PER_USER = 20;
+ALTER ACCOUNT SET CORTEX_CODE_CLI_DAILY_EST_CREDIT_LIMIT_PER_USER = 20;
+ALTER ACCOUNT SET CORTEX_CODE_DESKTOP_DAILY_EST_CREDIT_LIMIT_PER_USER = 20;
 
--- Per-user monthly limit
-ALTER USER <username> SET CORTEX_CODE_CREDIT_LIMIT = 50;
+-- Per-user override (takes precedence over account-level for that user)
+ALTER USER <username> SET CORTEX_CODE_SNOWSIGHT_DAILY_EST_CREDIT_LIMIT_PER_USER = 50;
+ALTER USER <username> SET CORTEX_CODE_CLI_DAILY_EST_CREDIT_LIMIT_PER_USER = 50;
+ALTER USER <username> SET CORTEX_CODE_DESKTOP_DAILY_EST_CREDIT_LIMIT_PER_USER = 50;
 
--- Check current limits
-SHOW PARAMETERS LIKE 'CORTEX_CODE_CREDIT_LIMIT' IN ACCOUNT;""", language="sql")
+-- Remove a per-user override (reverts to account-level)
+ALTER USER <username> UNSET CORTEX_CODE_SNOWSIGHT_DAILY_EST_CREDIT_LIMIT_PER_USER;
+
+-- Check current account-level limits
+SHOW PARAMETERS LIKE 'CORTEX_CODE%' IN ACCOUNT;
+
+-- Check limits for a specific user
+SHOW PARAMETERS LIKE 'CORTEX_CODE%' FOR USER <username>;""", language="sql")
 
         st.divider()
 
@@ -411,20 +472,20 @@ GRANT OWNERSHIP ON STREAMLIT MY_DB.MY_SCHEMA.CORTEX_CODE_CREDIT_MANAGER
 - **1 notification integration**: CC_EMAIL_INTEGRATION
 - **8 default policy rules** seeded via MERGE (PII, Security, Prompt Injection, Data Exfiltration, Competitor, Personal Use, Session Anomaly, Semantic Injection)
             """)
-        # ── Warehouse info hint ──────────────────────────────────────────────
-        try:
-            _wh_row = session.sql("SELECT CURRENT_WAREHOUSE() AS WH").collect()
-            _wh_name = str(_wh_row[0]["WH"]) if _wh_row and _wh_row[0]["WH"] else "unknown"
-            _wh_size_rows = session.sql(f"SHOW WAREHOUSES LIKE '{_wh_name}'").collect()
-            # SHOW WAREHOUSES returns Row objects — access "size" by column name
-            # (Snowflake Row supports both positional and named access)
-            _wh_size = str(_wh_size_rows[0]["size"]).upper() if _wh_size_rows else "unknown"
+        # ── Warehouse info hint (cached in session_state) ─────────────────────
+        _wh_info = st.session_state.get("_setup_wh_info")
+        if _wh_info:
             st.info(
-                f"Objects will be created using warehouse **{_wh_name}** (size: **{_wh_size}**). "
+                f"Objects will be created using warehouse **{_wh_info['name']}** (size: **{_wh_info['size']}**). "
                 "XS is sufficient for all setup phases and overnight tasks."
             )
-        except Exception:
-            pass
+        else:
+            try:
+                _wh_row = session.sql("SELECT CURRENT_WAREHOUSE() AS WH").collect()
+                _wh_name = str(_wh_row[0]["WH"]) if _wh_row and _wh_row[0]["WH"] else "unknown"
+                st.session_state["_setup_wh_info"] = {"name": _wh_name, "size": "—"}
+            except Exception:
+                pass
         col1, col2 = st.columns(2)
         with col1:
             if st.button("Run Phase A — Create Objects", type="primary", key="btn_setup_a",
@@ -444,7 +505,7 @@ GRANT OWNERSHIP ON STREAMLIT MY_DB.MY_SCHEMA.CORTEX_CODE_CREDIT_MANAGER
 
     # ── Phase C: Create Stored Procedures ──────────────────────────────────────
     with st.expander("Phase C — Create Stored Procedures", expanded=False):
-        st.caption("Creates 3 stored procedures via `sp_definitions.py`. "
+        st.caption("Creates 5 stored procedures via `sp_definitions.py`. "
                    "`SP_CC_REFRESH_USAGE_SUMMARIES` is created by Phase A (from `prerequisites.sql`).")
         st.markdown("""
 | SP | Created by | Purpose |
@@ -453,13 +514,17 @@ GRANT OWNERSHIP ON STREAMLIT MY_DB.MY_SCHEMA.CORTEX_CODE_CREDIT_MANAGER
 | `SP_CC_CLASSIFY_PROMPTS` | **Phase C** | SQL KEYWORD + REGEX + SEMANTIC classification, categories, cost |
 | `SP_CC_CHECK_ALERTS` | **Phase C** | Batch + real-time alert evaluation with HTML email |
 | `SP_CC_EVALUATE_RESPONSES` | **Phase C** | LLM-as-Judge: Answer Relevance, Groundedness, Coherence, Safety |
+| `SP_CC_REFRESH_BUDGET_USAGE` | **Phase C** | Nightly refresh of AI Budget spending from Snowflake Budget objects |
+| `SP_CC_MANAGE_QUOTA` | **Phase C** | Native per-user quota management (Preview) — create/tag/block/delete |
         """)
         if st.button("Run Phase C — Create Stored Procedures", type="primary", key="btn_sps_c",
-                     help="Creates 3 SPs (SP_CC_REFRESH_USAGE_SUMMARIES is already created by Phase A). Uses CREATE OR REPLACE — safe to re-run."):
+                     help="Creates 5 SPs (SP_CC_REFRESH_USAGE_SUMMARIES is already created by Phase A). Uses CREATE OR REPLACE — safe to re-run."):
             from sp_definitions import (
                 get_classify_sp_ddl,
                 get_check_alerts_sp_ddl,
                 get_evaluate_responses_sp_ddl,
+                get_refresh_budget_usage_sp_ddl,
+                get_manage_quota_sp_ddl,
             )
             from config import get_app_database, get_app_schema
             db = get_app_database(session)
@@ -469,6 +534,8 @@ GRANT OWNERSHIP ON STREAMLIT MY_DB.MY_SCHEMA.CORTEX_CODE_CREDIT_MANAGER
                 ("SP_CC_CLASSIFY_PROMPTS",        lambda: get_classify_sp_ddl(db, schema)),
                 ("SP_CC_CHECK_ALERTS",             lambda: get_check_alerts_sp_ddl(db, schema)),
                 ("SP_CC_EVALUATE_RESPONSES",       lambda: get_evaluate_responses_sp_ddl(db, schema)),
+                ("SP_CC_REFRESH_BUDGET_USAGE",     lambda: get_refresh_budget_usage_sp_ddl(db, schema)),
+                ("SP_CC_MANAGE_QUOTA",             lambda: get_manage_quota_sp_ddl(db, schema)),
             ]:
                 try:
                     ddl = get_ddl_fn()
@@ -602,6 +669,9 @@ def _run_verification(session):
     results = {}
     progress = st.progress(0)
 
+    # Debug: show what we're checking against
+    st.caption(f"Verifying objects in: **{db}.{schema}**")
+
     # ── 1. Tables — one INFORMATION_SCHEMA query ──────────────────────────────
     try:
         existing_tables = set()
@@ -619,8 +689,16 @@ def _run_verification(session):
     # ── 2. SPs — single SHOW PROCEDURES IN SCHEMA ────────────────────────────
     try:
         existing_sps = set()
-        rows = session.sql(f"SHOW PROCEDURES LIKE 'SP_CC_%' IN SCHEMA {db}.{schema}").collect()
-        existing_sps = {str(r["name"]).upper() for r in rows}
+        rows = session.sql(f"SHOW PROCEDURES LIKE 'SP_%' IN SCHEMA {db}.{schema}").collect()
+        for r in rows:
+            try:
+                name = str(r["name"]).upper()
+            except (KeyError, TypeError):
+                try:
+                    name = str(r[1]).upper()
+                except Exception:
+                    continue
+            existing_sps.add(name)
     except Exception:
         existing_sps = set()
     for sp in REQUIRED_PROCEDURES:
@@ -862,10 +940,12 @@ def _run_setup(session):
     # Use the SP-aware splitter instead of naive split(";")
     raw_statements = _split_sql_statements(sql_content)
 
-    # Filter statements that can't run in SiS owner-rights context:
-    # - USE DATABASE/SCHEMA/WAREHOUSE/ROLE  → session context already set
-    # - SET APP_* variables                 → SiS doesn't support session variables
-    # - SHOW * (verification queries)       → not needed at setup time
+    # Filter statements that can't run in SiS context:
+    # - USE DATABASE/SCHEMA/WAREHOUSE  → not supported in SiS (session context is fixed)
+    # - USE ROLE                       → not supported in SiS
+    # - SET APP_* variables            → SiS doesn't support session variables
+    # - SHOW * (verification queries)  → not needed at setup time
+    # NOTE: Unqualified CREATE TABLE names land in the Streamlit's own schema (from config.yaml).
     _SKIP_PREFIXES = ("USE DATABASE", "USE SCHEMA", "USE WAREHOUSE", "USE ROLE",
                       "SET APP_", "SHOW TABLES", "SHOW PROCEDURES", "SHOW TASKS",
                       "SHOW GRANTS", "SHOW ROLES", "SHOW WAREHOUSES")
@@ -942,13 +1022,129 @@ def _run_setup(session):
             bulk_fail += 1
             failed_list.append(f"Bulk SP: {str(e)[:120]}")
 
-    # Grant USAGE on SP_CC_ENFORCE_MODEL_ACCESS to app role
+    # ---- Step B2: Create SP_SHOW_ROLE_ACCESS_LINEAGE (SQL, RETURNS TABLE) ----
+    st.caption("Creating SP_SHOW_ROLE_ACCESS_LINEAGE...")
+    try:
+        session.sql(f"""
+CREATE OR REPLACE PROCEDURE {db}.{schema}.SP_SHOW_ROLE_ACCESS_LINEAGE(TARGET_ROLE VARCHAR)
+RETURNS TABLE(USER_NAME VARCHAR, DIRECT_ROLE VARCHAR, TARGET_ROLE VARCHAR, DEPTH INTEGER, ACCESS_PATH VARCHAR)
+LANGUAGE SQL
+EXECUTE AS OWNER
+AS $$
+DECLARE res RESULTSET;
+BEGIN
+    res := (
+        WITH RECURSIVE role_hierarchy AS (
+            SELECT
+                GRANTEE_NAME  AS user_name,
+                ROLE          AS direct_role,
+                ROLE          AS current_role,
+                0             AS depth,
+                ROLE          AS access_path
+            FROM SNOWFLAKE.ACCOUNT_USAGE.GRANTS_TO_USERS
+            WHERE DELETED_ON IS NULL AND GRANTED_TO = 'USER'
+            UNION ALL
+            SELECT
+                h.user_name,
+                h.direct_role,
+                r.NAME,
+                h.depth + 1,
+                h.access_path || ' -> ' || r.NAME
+            FROM role_hierarchy h
+            JOIN SNOWFLAKE.ACCOUNT_USAGE.GRANTS_TO_ROLES r
+                ON r.GRANTEE_NAME = h.current_role
+                AND r.PRIVILEGE = 'USAGE'
+                AND r.GRANTED_ON = 'ROLE'
+                AND r.DELETED_ON IS NULL
+            WHERE h.depth < 10
+        )
+        SELECT user_name, direct_role, current_role AS target_role, depth, access_path
+        FROM role_hierarchy
+        WHERE current_role = :TARGET_ROLE
+    );
+    RETURN TABLE(res);
+END;
+$$
+        """).collect()
+        bulk_ok += 1
+    except Exception as e:
+        bulk_fail += 1
+        failed_list.append(f"SP_SHOW_ROLE_ACCESS_LINEAGE: {str(e)[:120]}")
+
+    # ---- Step B3: Create SP_CC_REVOKE_MODEL_ACCESS (Python, EXECUTE AS OWNER) ----
+    st.caption("Creating SP_CC_REVOKE_MODEL_ACCESS...")
+    try:
+        session.sql(f"""
+CREATE OR REPLACE PROCEDURE {db}.{schema}.SP_CC_REVOKE_MODEL_ACCESS(
+    TARGETS_JSON VARIANT, MODEL_LIST VARCHAR
+)
+RETURNS VARIANT
+LANGUAGE PYTHON
+RUNTIME_VERSION = '3.10'
+PACKAGES = ('snowflake-snowpark-python')
+HANDLER = 'handler'
+EXECUTE AS OWNER
+AS $$
+import re
+_SAFE_ID = re.compile(r'[;\\n\\r\\x00]')
+def _qid(s):
+    return '"' + str(s).replace('"', '""') + '"'
+def _is_role(session, name):
+    try:
+        df = session.sql(f"SHOW ROLES LIKE '{{name}}'").collect()
+        return len(df) > 0
+    except Exception:
+        return False
+def handler(session, targets_json, model_list):
+    out = {{'success': 0, 'failed': 0, 'errors': []}}
+    targets = list(targets_json) if targets_json else []
+    models = [m.strip() for m in str(model_list).split(',') if m.strip()] if model_list else []
+    if not models or not targets:
+        return out
+    for target in targets:
+        target = str(target).strip()
+        if not target or _SAFE_ID.search(target):
+            out['failed'] += 1
+            continue
+        revoke_from = 'ROLE' if _is_role(session, target) else 'USER'
+        for model in models:
+            if _SAFE_ID.search(model):
+                out['failed'] += 1
+                continue
+            app_role = 'CORTEX-MODEL-ROLE-' + model.upper()
+            try:
+                session.sql('REVOKE APPLICATION ROLE SNOWFLAKE.' + _qid(app_role) + ' FROM ' + revoke_from + ' ' + _qid(target)).collect()
+                out['success'] += 1
+            except Exception as e:
+                err = str(e).lower()
+                if 'not granted' in err or 'does not exist' in err:
+                    out['success'] += 1
+                else:
+                    out['errors'].append(f'{{target}}/{{model}}: {{str(e)[:120]}}')
+                    out['failed'] += 1
+    return out
+$$
+        """).collect()
+        bulk_ok += 1
+    except Exception as e:
+        bulk_fail += 1
+        failed_list.append(f"SP_CC_REVOKE_MODEL_ACCESS: {str(e)[:120]}")
+
+    # Grant USAGE on SP_CC_ENFORCE_MODEL_ACCESS and SP_CC_REVOKE_MODEL_ACCESS to app role
     # (stays ACCOUNTADMIN-owned — GRANT APPLICATION ROLE requires ACCOUNTADMIN)
     try:
         from config import sql_identifier
         app_role = sql_identifier(ROLE_APP)
         session.sql(
             f"GRANT USAGE ON PROCEDURE {db}.{schema}.SP_CC_ENFORCE_MODEL_ACCESS(VARIANT, VARCHAR)"
+            f" TO ROLE {app_role}"
+        ).collect()
+        session.sql(
+            f"GRANT USAGE ON PROCEDURE {db}.{schema}.SP_CC_REVOKE_MODEL_ACCESS(VARIANT, VARCHAR)"
+            f" TO ROLE {app_role}"
+        ).collect()
+        session.sql(
+            f"GRANT USAGE ON PROCEDURE {db}.{schema}.SP_SHOW_ROLE_ACCESS_LINEAGE(VARCHAR)"
             f" TO ROLE {app_role}"
         ).collect()
     except Exception:
@@ -984,6 +1180,24 @@ def _run_setup(session):
     except Exception as e:
         bulk_fail += 1
         failed_list.append(f"SP_CC_EVALUATE_RESPONSES: {str(e)[:120]}")
+
+    st.caption("Creating SP_CC_REFRESH_BUDGET_USAGE (AI Budget nightly refresh)...")
+    try:
+        from sp_definitions import get_refresh_budget_usage_sp_ddl
+        session.sql(get_refresh_budget_usage_sp_ddl(db, schema)).collect()
+        bulk_ok += 1
+    except Exception as e:
+        bulk_fail += 1
+        failed_list.append(f"SP_CC_REFRESH_BUDGET_USAGE: {str(e)[:120]}")
+
+    st.caption("Creating SP_CC_MANAGE_QUOTA (Native per-user quotas — Preview)...")
+    try:
+        from sp_definitions import get_manage_quota_sp_ddl
+        session.sql(get_manage_quota_sp_ddl(db, schema)).collect()
+        bulk_ok += 1
+    except Exception as e:
+        bulk_fail += 1
+        failed_list.append(f"SP_CC_MANAGE_QUOTA: {str(e)[:120]}")
 
     total_success = successes + bulk_ok
     total_fail = failures + bulk_fail
