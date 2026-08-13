@@ -33,6 +33,7 @@ REQUIRED_TABLES = [
     "CC_MODEL_CONFIG",
     "CC_MODEL_ROLE_MAPPING",
     "CC_USER_COHORT_RESOLVED",
+    "CC_ROLE_ACCESS_LINEAGE",
     "CC_COHORT_LEADS",
     "CC_SP_JOB_LOG",
     "CC_COHORT_REBALANCE_LOCK",
@@ -61,6 +62,8 @@ REQUIRED_PROCEDURES = [
     "SP_CC_REVOKE_CORTEX_ACCESS",
     "SP_CC_REBALANCE_CREDITS",
     "SP_CC_ENFORCE_MODEL_ACCESS",
+    "SP_CC_REVOKE_MODEL_ACCESS",
+    "SP_SHOW_ROLE_ACCESS_LINEAGE",
     "SP_CC_RESOLVE_USER_COHORTS",
     "SP_CC_REFRESH_USAGE_SUMMARIES",
     "SP_CC_EXPIRE_TEMPORARY_CREDITS",
@@ -660,6 +663,9 @@ def _run_verification(session):
     results = {}
     progress = st.progress(0)
 
+    # Debug: show what we're checking against
+    st.caption(f"Verifying objects in: **{db}.{schema}**")
+
     # ── 1. Tables — one INFORMATION_SCHEMA query ──────────────────────────────
     try:
         existing_tables = set()
@@ -677,8 +683,16 @@ def _run_verification(session):
     # ── 2. SPs — single SHOW PROCEDURES IN SCHEMA ────────────────────────────
     try:
         existing_sps = set()
-        rows = session.sql(f"SHOW PROCEDURES LIKE 'SP_CC_%' IN SCHEMA {db}.{schema}").collect()
-        existing_sps = {str(r["name"]).upper() for r in rows}
+        rows = session.sql(f"SHOW PROCEDURES LIKE 'SP_%' IN SCHEMA {db}.{schema}").collect()
+        for r in rows:
+            try:
+                name = str(r["name"]).upper()
+            except (KeyError, TypeError):
+                try:
+                    name = str(r[1]).upper()
+                except Exception:
+                    continue
+            existing_sps.add(name)
     except Exception:
         existing_sps = set()
     for sp in REQUIRED_PROCEDURES:
@@ -920,10 +934,12 @@ def _run_setup(session):
     # Use the SP-aware splitter instead of naive split(";")
     raw_statements = _split_sql_statements(sql_content)
 
-    # Filter statements that can't run in SiS owner-rights context:
-    # - USE DATABASE/SCHEMA/WAREHOUSE/ROLE  → session context already set
-    # - SET APP_* variables                 → SiS doesn't support session variables
-    # - SHOW * (verification queries)       → not needed at setup time
+    # Filter statements that can't run in SiS context:
+    # - USE DATABASE/SCHEMA/WAREHOUSE  → not supported in SiS (session context is fixed)
+    # - USE ROLE                       → not supported in SiS
+    # - SET APP_* variables            → SiS doesn't support session variables
+    # - SHOW * (verification queries)  → not needed at setup time
+    # NOTE: Unqualified CREATE TABLE names land in the Streamlit's own schema (from config.yaml).
     _SKIP_PREFIXES = ("USE DATABASE", "USE SCHEMA", "USE WAREHOUSE", "USE ROLE",
                       "SET APP_", "SHOW TABLES", "SHOW PROCEDURES", "SHOW TASKS",
                       "SHOW GRANTS", "SHOW ROLES", "SHOW WAREHOUSES")
@@ -1000,13 +1016,129 @@ def _run_setup(session):
             bulk_fail += 1
             failed_list.append(f"Bulk SP: {str(e)[:120]}")
 
-    # Grant USAGE on SP_CC_ENFORCE_MODEL_ACCESS to app role
+    # ---- Step B2: Create SP_SHOW_ROLE_ACCESS_LINEAGE (SQL, RETURNS TABLE) ----
+    st.caption("Creating SP_SHOW_ROLE_ACCESS_LINEAGE...")
+    try:
+        session.sql(f"""
+CREATE OR REPLACE PROCEDURE {db}.{schema}.SP_SHOW_ROLE_ACCESS_LINEAGE(TARGET_ROLE VARCHAR)
+RETURNS TABLE(USER_NAME VARCHAR, DIRECT_ROLE VARCHAR, TARGET_ROLE VARCHAR, DEPTH INTEGER, ACCESS_PATH VARCHAR)
+LANGUAGE SQL
+EXECUTE AS OWNER
+AS $$
+DECLARE res RESULTSET;
+BEGIN
+    res := (
+        WITH RECURSIVE role_hierarchy AS (
+            SELECT
+                GRANTEE_NAME  AS user_name,
+                ROLE          AS direct_role,
+                ROLE          AS current_role,
+                0             AS depth,
+                ROLE          AS access_path
+            FROM SNOWFLAKE.ACCOUNT_USAGE.GRANTS_TO_USERS
+            WHERE DELETED_ON IS NULL AND GRANTED_TO = 'USER'
+            UNION ALL
+            SELECT
+                h.user_name,
+                h.direct_role,
+                r.NAME,
+                h.depth + 1,
+                h.access_path || ' -> ' || r.NAME
+            FROM role_hierarchy h
+            JOIN SNOWFLAKE.ACCOUNT_USAGE.GRANTS_TO_ROLES r
+                ON r.GRANTEE_NAME = h.current_role
+                AND r.PRIVILEGE = 'USAGE'
+                AND r.GRANTED_ON = 'ROLE'
+                AND r.DELETED_ON IS NULL
+            WHERE h.depth < 10
+        )
+        SELECT user_name, direct_role, current_role AS target_role, depth, access_path
+        FROM role_hierarchy
+        WHERE current_role = :TARGET_ROLE
+    );
+    RETURN TABLE(res);
+END;
+$$
+        """).collect()
+        bulk_ok += 1
+    except Exception as e:
+        bulk_fail += 1
+        failed_list.append(f"SP_SHOW_ROLE_ACCESS_LINEAGE: {str(e)[:120]}")
+
+    # ---- Step B3: Create SP_CC_REVOKE_MODEL_ACCESS (Python, EXECUTE AS OWNER) ----
+    st.caption("Creating SP_CC_REVOKE_MODEL_ACCESS...")
+    try:
+        session.sql(f"""
+CREATE OR REPLACE PROCEDURE {db}.{schema}.SP_CC_REVOKE_MODEL_ACCESS(
+    TARGETS_JSON VARIANT, MODEL_LIST VARCHAR
+)
+RETURNS VARIANT
+LANGUAGE PYTHON
+RUNTIME_VERSION = '3.10'
+PACKAGES = ('snowflake-snowpark-python')
+HANDLER = 'handler'
+EXECUTE AS OWNER
+AS $$
+import re
+_SAFE_ID = re.compile(r'[;\\n\\r\\x00]')
+def _qid(s):
+    return '"' + str(s).replace('"', '""') + '"'
+def _is_role(session, name):
+    try:
+        df = session.sql(f"SHOW ROLES LIKE '{{name}}'").collect()
+        return len(df) > 0
+    except Exception:
+        return False
+def handler(session, targets_json, model_list):
+    out = {{'success': 0, 'failed': 0, 'errors': []}}
+    targets = list(targets_json) if targets_json else []
+    models = [m.strip() for m in str(model_list).split(',') if m.strip()] if model_list else []
+    if not models or not targets:
+        return out
+    for target in targets:
+        target = str(target).strip()
+        if not target or _SAFE_ID.search(target):
+            out['failed'] += 1
+            continue
+        revoke_from = 'ROLE' if _is_role(session, target) else 'USER'
+        for model in models:
+            if _SAFE_ID.search(model):
+                out['failed'] += 1
+                continue
+            app_role = 'CORTEX-MODEL-ROLE-' + model.upper()
+            try:
+                session.sql('REVOKE APPLICATION ROLE SNOWFLAKE.' + _qid(app_role) + ' FROM ' + revoke_from + ' ' + _qid(target)).collect()
+                out['success'] += 1
+            except Exception as e:
+                err = str(e).lower()
+                if 'not granted' in err or 'does not exist' in err:
+                    out['success'] += 1
+                else:
+                    out['errors'].append(f'{{target}}/{{model}}: {{str(e)[:120]}}')
+                    out['failed'] += 1
+    return out
+$$
+        """).collect()
+        bulk_ok += 1
+    except Exception as e:
+        bulk_fail += 1
+        failed_list.append(f"SP_CC_REVOKE_MODEL_ACCESS: {str(e)[:120]}")
+
+    # Grant USAGE on SP_CC_ENFORCE_MODEL_ACCESS and SP_CC_REVOKE_MODEL_ACCESS to app role
     # (stays ACCOUNTADMIN-owned — GRANT APPLICATION ROLE requires ACCOUNTADMIN)
     try:
         from config import sql_identifier
         app_role = sql_identifier(ROLE_APP)
         session.sql(
             f"GRANT USAGE ON PROCEDURE {db}.{schema}.SP_CC_ENFORCE_MODEL_ACCESS(VARIANT, VARCHAR)"
+            f" TO ROLE {app_role}"
+        ).collect()
+        session.sql(
+            f"GRANT USAGE ON PROCEDURE {db}.{schema}.SP_CC_REVOKE_MODEL_ACCESS(VARIANT, VARCHAR)"
+            f" TO ROLE {app_role}"
+        ).collect()
+        session.sql(
+            f"GRANT USAGE ON PROCEDURE {db}.{schema}.SP_SHOW_ROLE_ACCESS_LINEAGE(VARCHAR)"
             f" TO ROLE {app_role}"
         ).collect()
     except Exception:
