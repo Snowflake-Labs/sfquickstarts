@@ -726,6 +726,8 @@ def handler(session, lookback_hours):
                 AND run.RECORD_TYPE = 'SPAN'
             WHERE e.RECORD_TYPE='SPAN' AND e.RECORD:name::STRING='CodingAgent.Step-0'
               AND e.TIMESTAMP > '{watermark}' AND e.RESOURCE_ATTRIBUTES['snow.user.name'] IS NOT NULL
+              AND e.TIMESTAMP >= DATEADD('day', -400, CURRENT_TIMESTAMP())
+              AND e.TIMESTAMP <= DATEADD('day', 1, CURRENT_TIMESTAMP())
             ORDER BY e.TIMESTAMP
         """).to_pandas()
         if not new_df.empty:
@@ -736,11 +738,12 @@ def handler(session, lookback_hours):
             db_part, schema_part = DB_SCHEMA.split('.', 1)
             clean = new_df.copy()
             # Normalise date/timestamp types for Snowflake
-            try:
-                clean['EVENT_DATE'] = _pd.to_datetime(clean['EVENT_DATE']).dt.date
-                clean['EVENT_TS']   = _pd.to_datetime(clean['EVENT_TS'])
-            except Exception:
-                pass
+            # write_pandas serializes Timestamps as epoch nanos which Snowflake
+            # interprets as seconds → year 761M. Convert to string to avoid this.
+            clean['EVENT_TS'] = _pd.to_datetime(clean['EVENT_TS'], errors='coerce')
+            clean = clean.dropna(subset=['EVENT_TS'])
+            clean['EVENT_TS'] = clean['EVENT_TS'].dt.strftime('%Y-%m-%d %H:%M:%S')
+            clean['EVENT_DATE'] = _pd.to_datetime(clean['EVENT_DATE'], errors='coerce').dt.strftime('%Y-%m-%d')
             # Cap lengths and fill nulls
             clean['PROMPT']             = clean['PROMPT'].fillna('').str[:4000]
             clean['TOOLS_RAW']          = clean['TOOLS_RAW'].fillna('').str[:500]
@@ -1036,7 +1039,6 @@ def handler(session, lookback_hours):
                   OR LOWER(PROMPT) ILIKE '%cortex_memory_drop%'
                   OR LOWER(PROMPT) ILIKE '%cortex_memory_recall%'
                   OR LOWER(PROMPT) ILIKE '%cortex_memory_list%'
-                  OR PROMPT ILIKE '%<system-reminder>%'
               )
         """).collect()
     except Exception as e:
