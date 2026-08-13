@@ -169,6 +169,9 @@ def handler(session, targets_json, model_list):
                     err = str(e).lower()
                     if 'already granted' in err:
                         out['success'] += 1
+                    elif 'application role' in err and 'does not exist' in err:
+                        out['errors'].append(f'{target}/{model}: Application role does not exist (model not available in this account)')
+                        out['failed'] += 1
                     else:
                         out['errors'].append(f'{target}/{model}: {str(e)}')
                         out['failed'] += 1
@@ -180,7 +183,13 @@ def handler(session, targets_json, model_list):
                     out['success'] += 1
                 except Exception as e:
                     err = str(e).lower()
-                    if 'does not exist' in err or 'invalid' in err:
+                    if 'application role' in err and 'does not exist' in err:
+                        # The MODEL app role doesn't exist — skip, don't fall back to USER
+                        out['errors'].append(f'{target}/{model}: Application role does not exist (model not available in this account)')
+                        out['failed'] += 1
+                        grant_to = 'ROLE'
+                    elif 'does not exist' in err or 'invalid' in err:
+                        # The TARGET role doesn't exist — try as USER
                         try:
                             session.sql(sql_base + ' TO USER ' + _qid(target)).collect()
                             grant_to = 'USER'
