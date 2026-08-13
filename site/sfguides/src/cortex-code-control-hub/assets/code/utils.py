@@ -56,26 +56,14 @@ def list_users(_session) -> pd.DataFrame:
 @st.cache_data(ttl=USER_LIST_CACHE_TTL)
 def list_roles(_session) -> List[str]:
     try:
-        df = _session.sql("""
-            SELECT NAME FROM SNOWFLAKE.ACCOUNT_USAGE.ROLES
-            WHERE DELETED_ON IS NULL
-            ORDER BY NAME
-        """).to_pandas()
+        df = _session.sql("SHOW ROLES").to_pandas()
         if not df.empty:
             df.columns = [c.strip('"').upper() for c in df.columns]
-            return df["NAME"].dropna().tolist()
+            col = "NAME" if "NAME" in df.columns else df.columns[1]
+            return sorted(df[col].dropna().tolist())
         return []
     except Exception:
-        # Fallback to SHOW ROLES if ACCOUNT_USAGE not accessible
-        try:
-            df = _session.sql("SHOW ROLES").to_pandas()
-            if not df.empty:
-                df.columns = [c.strip('"').upper() for c in df.columns]
-                col = "NAME" if "NAME" in df.columns else df.columns[1]
-                return sorted(df[col].dropna().tolist())
-            return []
-        except Exception:
-            return []
+        return []
 
 
 _ROLE_UUID   = re.compile(r"^[0-9a-fA-F]{8}-", re.IGNORECASE)
@@ -263,9 +251,29 @@ def save_model_tier_assignment(_session, model_name: str, tiers: list, actor: st
     """
     Persist a model's tier assignment(s) to CC_MODEL_CONFIG.
     Upserts the row for model_name with CATEGORY = comma-joined tiers.
+    On first write, seeds ALL KNOWN_MODELS defaults so they aren't lost.
     """
-    from config import TABLE_MODEL_CONFIG, fq_table, escape_sql_literal
+    from config import KNOWN_MODELS, TABLE_MODEL_CONFIG, fq_table, escape_sql_literal
     tbl = fq_table(_session, TABLE_MODEL_CONFIG)
+
+    # Seed defaults on first save — prevents fallback defaults from vanishing
+    try:
+        count = _session.sql(f"SELECT COUNT(*) AS C FROM {tbl}").to_pandas().iloc[0, 0]
+        if count == 0:
+            for km, info in KNOWN_MODELS.items():
+                cat = info.get("category", "UNCATEGORIZED")
+                if isinstance(cat, list):
+                    cat = ",".join(cat)
+                safe_m = escape_sql_literal(km)
+                safe_c = escape_sql_literal(cat)
+                safe_a = escape_sql_literal(actor)
+                _session.sql(f"""
+                    INSERT INTO {tbl} (MODEL_NAME, CATEGORY, CREATED_BY, CREATED_AT)
+                    SELECT '{safe_m}', '{safe_c}', '{safe_a}', CURRENT_TIMESTAMP()
+                """).collect()
+    except Exception:
+        pass
+
     safe_model = escape_sql_literal(model_name)
     safe_tier = escape_sql_literal(",".join(tiers))
     safe_actor = escape_sql_literal(actor)
