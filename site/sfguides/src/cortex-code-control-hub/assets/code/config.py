@@ -88,64 +88,72 @@ MODEL_CATEGORIES = {
 }
 
 KNOWN_MODELS = {
-    # ── Claude Opus — TIER_1 (highest capability) ─────────────────────────────
-    "claude-opus-4-5": {
-        "category": ["TIER_1"],
-        "description": "Deep reasoning with broad context window. Excels at complex analysis requiring synthesis across many inputs.",
-        "popular_for": "Data modeling, migration planning, compliance analysis, long-document processing",
-    },
-    "claude-opus-4-6": {
-        "category": ["TIER_1"],
-        "description": "Most capable model. Extended thinking with chain-of-thought. Best for architecture reviews, complex debugging, multi-step planning.",
-        "popular_for": "System design, security audits, large codebase refactoring, agentic workflows",
-    },
-    "claude-opus-4-7": {
-        "category": ["TIER_1"],
-        "description": "Latest Opus generation. Extended reasoning, multi-step agentic tasks, complex architecture design.",
-        "popular_for": "Architecture reviews, complex migrations, multi-file refactoring, security analysis",
-    },
-    "claude-opus-4-8": {
-        "category": ["TIER_1"],
-        "description": "Latest Opus generation. Extended reasoning and deep analysis for complex enterprise tasks.",
-        "popular_for": "System design, compliance analysis, large codebase refactoring, agentic workflows",
-    },
-    # ── Claude Sonnet — TIER_1/TIER_2 (balanced) ─────────────────────────────
-    "claude-sonnet-4-0": {
-        "category": ["TIER_2", "TIER_3"],
-        "description": "Fast and efficient. Good for straightforward tasks where speed matters more than depth.",
-        "popular_for": "SQL formatting, quick fixes, autocomplete, boilerplate generation, documentation",
-    },
-    "claude-sonnet-4-5": {
-        "category": ["TIER_1", "TIER_2"],
-        "description": "High quality with fast response. Best balance of capability and speed for iterative development.",
-        "popular_for": "Code generation, PR reviews, pipeline debugging, dbt model authoring, Streamlit development",
-    },
-    "claude-sonnet-4-6": {
-        "category": ["TIER_1", "TIER_2"],
-        "description": "Latest Sonnet generation. High quality responses with fast latency for iterative workflows.",
-        "popular_for": "Code generation, PR reviews, data pipeline development, API integrations",
-    },
-    "claude-4-sonnet": {
-        "category": ["TIER_1", "TIER_2"],
-        "description": "Claude Sonnet — balanced capability and speed for general development tasks.",
-        "popular_for": "Code generation, code review, debugging, documentation",
-    },
-    # ── OpenAI GPT ── TIER_1/TIER_2 ─────────────────────────────────────────
-    "openai-gpt-5.2": {
-        "category": ["TIER_1", "TIER_2"],
-        "description": "OpenAI GPT-5 series. Strong general-purpose reasoning and code generation.",
-        "popular_for": "Code generation, analysis, documentation, general development tasks",
-    },
-    "openai-gpt-5.4": {
-        "category": ["TIER_1", "TIER_2"],
-        "description": "OpenAI GPT-5 series. Strong reasoning with broad knowledge for enterprise tasks.",
-        "popular_for": "Code generation, analysis, SQL authoring, documentation",
-    },
-    "openai-gpt-5.5": {
-        "category": ["TIER_1"],
-        "description": "Latest OpenAI GPT-5 series. Highest capability for complex enterprise reasoning.",
-        "popular_for": "Architecture design, complex debugging, multi-step analysis, agentic workflows",
-    },
+    # ── TIER 1: Highest capability (deep reasoning, agentic, architecture) ────
+    "CLAUDE-OPUS-4-5":      {"category": ["TIER_1"], "description": "Deep reasoning with extended context. Complex analysis and synthesis."},
+    "CLAUDE-OPUS-4-6":      {"category": ["TIER_1"], "description": "Extended thinking with chain-of-thought. Architecture reviews, multi-step planning."},
+    "CLAUDE-OPUS-4-7":      {"category": ["TIER_1"], "description": "Latest Opus. Extended reasoning, agentic tasks, complex design."},
+    "CLAUDE-OPUS-4-8":      {"category": ["TIER_1"], "description": "Latest Opus. Deep analysis for complex enterprise tasks."},
+    "CLAUDE-OPUS-5":        {"category": ["TIER_1"], "description": "Claude Opus 5. Maximum capability and reasoning depth."},
+    "DEEPSEEK-R1":          {"category": ["TIER_1"], "description": "DeepSeek reasoning model. Strong on math, code, and logical analysis."},
+    "GEMINI-3-PRO":         {"category": ["TIER_1"], "description": "Google Gemini 3 Pro. Strong general reasoning and multimodal."},
+    "GEMINI-3.1-PRO":       {"category": ["TIER_1"], "description": "Google Gemini 3.1 Pro. Latest Pro with improved reasoning."},
+    "OPENAI-GPT-4O":        {"category": ["TIER_1"], "description": "OpenAI GPT-4o. Multimodal reasoning, fast and capable."},
+    "OPENAI-GPT-4O-MINI":   {"category": ["TIER_2"], "description": "OpenAI GPT-4o Mini. Cost-efficient, good for most tasks."},
+    "OPENAI-GPT-5.2":       {"category": ["TIER_1"], "description": "OpenAI GPT-5 series. Strong general reasoning and code generation."},
+    "OPENAI-GPT-5.4":       {"category": ["TIER_1"], "description": "OpenAI GPT-5 series. Broad knowledge for enterprise tasks."},
+    "OPENAI-GPT-5.5":       {"category": ["TIER_1"], "description": "OpenAI GPT-5.5. Highest capability for complex reasoning."},
+
+    # ── TIER 2: Balanced (fast + capable, iterative development) ──────────────
+    "CLAUDE-SONNET-4-5":    {"category": ["TIER_2"], "description": "High quality with fast response. Best balance for iterative development."},
+    "CLAUDE-SONNET-4-6":    {"category": ["TIER_2"], "description": "Latest Sonnet. Fast latency for code generation and review."},
+    "CLAUDE-SONNET-5":      {"category": ["TIER_2"], "description": "Claude Sonnet 5. Balanced capability and speed."},
+    "CLAUDE-4-SONNET":      {"category": ["TIER_2"], "description": "Claude 4 Sonnet. General development tasks."},
+    "CLAUDE-4-OPUS":        {"category": ["TIER_2"], "description": "Claude 4 Opus. Strong reasoning at moderate speed."},
+    "CLAUDE-3-7-SONNET":    {"category": ["TIER_2"], "description": "Claude 3.7 Sonnet. Reliable for code and analysis."},
+    "CLAUDE-3-5-SONNET":    {"category": ["TIER_2"], "description": "Claude 3.5 Sonnet. Well-established balanced model."},
+    "GEMINI-2.5-FLASH":     {"category": ["TIER_2"], "description": "Google Gemini 2.5 Flash. Fast with good quality."},
+    "GEMINI-3.5-FLASH":     {"category": ["TIER_2"], "description": "Google Gemini 3.5 Flash. Latest Flash generation."},
+    "MISTRAL-LARGE":        {"category": ["TIER_2"], "description": "Mistral Large. Strong European model for code and reasoning."},
+    "MISTRAL-LARGE2":       {"category": ["TIER_2"], "description": "Mistral Large 2. Improved reasoning and instruction following."},
+    "MISTRAL-LARGE3":       {"category": ["TIER_2"], "description": "Mistral Large 3. Latest generation with enhanced capabilities."},
+    "MISTRAL-MEDIUM-3":     {"category": ["TIER_2"], "description": "Mistral Medium 3. Good balance of speed and quality."},
+    "LLAMA3.1-405B":        {"category": ["TIER_2"], "description": "Meta Llama 3.1 405B. Largest open model, strong reasoning."},
+    "LLAMA4-MAVERICK":      {"category": ["TIER_2"], "description": "Meta Llama 4 Maverick. Latest generation large model."},
+    "SNOWFLAKE-LLAMA-3.1-405B": {"category": ["TIER_2"], "description": "Snowflake-tuned Llama 3.1 405B. Optimized for enterprise."},
+
+    # ── TIER 3: Fast/lightweight (autocomplete, simple tasks, cost-efficient) ─
+    "CLAUDE-HAIKU-4-5":     {"category": ["TIER_3"], "description": "Claude Haiku. Fastest and cheapest. Simple tasks, autocomplete."},
+    "GEMINI-2.5-FLASH-LITE": {"category": ["TIER_3"], "description": "Gemini Flash Lite. Ultra-fast, minimal cost."},
+    "GEMMA-4-26B-A4B":      {"category": ["TIER_3"], "description": "Google Gemma 4. Efficient small model."},
+    "CODESTRAL-22B":        {"category": ["TIER_3"], "description": "Mistral Codestral. Code-specialized small model."},
+    "MISTRAL-7B":           {"category": ["TIER_3"], "description": "Mistral 7B. Lightweight, fast, good for simple tasks."},
+    "LLAMA3.3-70B":         {"category": ["TIER_3"], "description": "Meta Llama 3.3 70B. Good balance of size and quality."},
+    "LLAMA3.1-70B":         {"category": ["TIER_3"], "description": "Meta Llama 3.1 70B. Reliable mid-size model."},
+    "LLAMA3-70B":           {"category": ["TIER_3"], "description": "Meta Llama 3 70B. Solid general-purpose."},
+    "LLAMA3.2-90B":         {"category": ["TIER_3"], "description": "Meta Llama 3.2 90B. Multimodal capable."},
+    "LLAMA4-SCOUT":         {"category": ["TIER_3"], "description": "Meta Llama 4 Scout. Efficient latest-gen model."},
+    "SNOWFLAKE-LLAMA-3.3-70B": {"category": ["TIER_3"], "description": "Snowflake-tuned Llama 3.3 70B."},
+    "LLAMA3.1-8B":          {"category": ["TIER_3"], "description": "Meta Llama 3.1 8B. Ultra-lightweight."},
+    "LLAMA3.2-11B":         {"category": ["TIER_3"], "description": "Meta Llama 3.2 11B. Small multimodal model."},
+    "LLAMA3.2-3B":          {"category": ["TIER_3"], "description": "Meta Llama 3.2 3B. Minimal resource usage."},
+    "LLAMA3.2-1B":          {"category": ["TIER_3"], "description": "Meta Llama 3.2 1B. Smallest available."},
+    "LLAMA3-8B":            {"category": ["TIER_3"], "description": "Meta Llama 3 8B. Lightweight general-purpose."},
+    "LLAMA2-70B-CHAT":      {"category": ["TIER_3"], "description": "Meta Llama 2 70B Chat. Legacy but still available."},
+    "LLAMA2-7B-CHAT":       {"category": ["TIER_3"], "description": "Meta Llama 2 7B Chat. Legacy lightweight."},
+
+    # ── UTILITY: Specialized functions (not for general code/chat) ─────────────
+    "ARCTIC-EXTRACT":       {"category": ["UTILITY"], "description": "Document field extraction (structured data from text)."},
+    "ARCTIC-EXTRACT-ANSWER": {"category": ["UTILITY"], "description": "Question-answering extraction from documents."},
+    "ARCTIC-PARSE-DOCUMENT": {"category": ["UTILITY"], "description": "OCR and document parsing (PDF, images)."},
+    "ARCTIC-SENTIMENT":     {"category": ["UTILITY"], "description": "Sentiment analysis."},
+    "ARCTIC-TEXT2SQL-R1.5": {"category": ["UTILITY"], "description": "Text-to-SQL generation."},
+    "ARCTIC-TRANSCRIBE":    {"category": ["UTILITY"], "description": "Audio/video transcription."},
+    "ARCTIC-TRANSLATE":     {"category": ["UTILITY"], "description": "Language translation."},
+    "E5-BASE-V2":           {"category": ["UTILITY"], "description": "Text embedding model (base). For search/RAG."},
+    "E5-LARGE-V2":          {"category": ["UTILITY"], "description": "Text embedding model (large). Higher quality embeddings."},
+    "LLAMAGUARD-7B":        {"category": ["UTILITY"], "description": "Content safety classifier."},
+    "LLAMAGUARD2-8B":       {"category": ["UTILITY"], "description": "Content safety classifier v2."},
+    "LLAMAGUARD3-8B":       {"category": ["UTILITY"], "description": "Content safety classifier v3."},
 }
 
 SP_SET_ACCOUNT_CREDIT_LIMIT = "SP_CC_SET_ACCOUNT_CREDIT_LIMIT"
