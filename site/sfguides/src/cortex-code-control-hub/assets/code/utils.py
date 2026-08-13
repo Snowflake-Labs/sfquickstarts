@@ -117,6 +117,7 @@ def get_role_members(_session, role_name: str) -> List[str]:
     return sorted(users)
 
 
+@st.cache_data(ttl=300, show_spinner=False)
 def get_account_param(_session, param_name: str) -> Optional[str]:
     try:
         safe_param = escape_sql_literal(param_name)

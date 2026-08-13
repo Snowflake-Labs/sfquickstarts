@@ -396,7 +396,7 @@ def _render_mapping(session):
     if "_selected_tiers" not in st.session_state:
         st.session_state["_selected_tiers"] = set()
 
-    st.caption("Quick assign by tier:")
+    st.caption("Quick assign by tier — select only the tiers this role needs (multiple allowed):")
     tier_cols = st.columns(min(len(tiers) + 2, 5))
     for i, tier_name in enumerate(tiers):
         tier_models = sorted([m for m, m_tiers in assignments.items() if tier_name in m_tiers])
