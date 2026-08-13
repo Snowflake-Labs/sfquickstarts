@@ -69,7 +69,7 @@ ATTRIBUTION_DIMENSIONS = [
 
 # Adoption-model presets. Selecting one pre-fills (dimension + audience); the
 # knobs below stay editable so any model can be customized. Copy is customer- and
-# partner-agnostic (Ryan feedback): M1 is internal cross-charge for ANY org, not a
+# partner-agnostic: M1 is internal cross-charge for ANY org, not a
 # partner-only case. `flow` is a compact payer -> $ -> payee money-flow shown in the
 # card's info popover. M2 engagement-level capture is Phase 2 (needs per-session
 # tagging) — it maps to a cohort/role proxy for now and surfaces `caveat`.
