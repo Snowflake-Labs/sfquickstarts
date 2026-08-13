@@ -1,24 +1,21 @@
 author: Sam Gupta
 id: cortex-code-control-hub-chargeback
 language: en
-summary: Add cost attribution and chargeback to Snowflake Cortex Code. Attribute CoCo spend to the teams, customers, or partners who generated it, then generate an itemized internal showback or external invoice — as a branded PDF, all native to Snowflake.
+summary: Add cost attribution and chargeback to Snowflake CoCo. Attribute CoCo spend to the teams, customers, or partners who generated it, then generate an itemized internal showback or external invoice — as a branded PDF, all native to Snowflake.
 categories: snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/cortex-code
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
-# Cost Attribution and Chargeback for Snowflake Cortex Code
+# Cost Attribution and Chargeback for Snowflake CoCo
 
 <!-- ------------------------ -->
 ## Overview
 Duration: 3
 
-Governance tells you *how much* Snowflake Cortex Code (CoCo) costs. **Chargeback answers *who owes what* — and lets you recover it.**
+Governance tells you *how much* Snowflake CoCo costs. **Chargeback answers *who owes what* — and lets you recover it.**
 
-In this quickstart you'll deploy the **chargeback and cost-attribution layer** of CoCo Control Hub — a Streamlit-in-Snowflake app — and produce a real, itemized bill for Cortex Code usage. You'll attribute usage with a confidence-labeled waterfall, pick the adoption model that matches your engagement, and export an internal **showback** statement or an external **invoice** as a branded PDF. No data leaves Snowflake.
-
-> aside positive
-> This builds on the base governance app from **[Enterprise CoCo (Cortex Code) Governance on Snowflake](https://www.snowflake.com/en/developers/guides/guide/cortex-code-control-hub/)** by Ramkumar Chandrasekaran. That guide covers per-user credit limits, model tiers, and observability. This one adds attribution and chargeback on top — you can complete it standalone.
+In this quickstart you'll deploy the **chargeback and cost-attribution layer** of CoCo Control Hub — a Streamlit-in-Snowflake app — and produce a real, itemized bill for CoCo usage. You'll attribute usage with a confidence-labeled waterfall, pick the adoption model that matches your engagement, and export an internal **showback** statement or an external **invoice** as a branded PDF. No data leaves Snowflake.
 
 ### What You'll Build
 By the end you will have generated, from your own account's data:
@@ -28,12 +25,12 @@ By the end you will have generated, from your own account's data:
 
 ### Prerequisites
 - Snowflake account with **ACCOUNTADMIN** (one-time setup only)
-- **Cortex Code enabled**, with **at least a few days of real CLI / Snowsight / Desktop usage** on the account — the bill is generated from actual `ACCOUNT_USAGE` history, so an account with no CoCo usage will produce an empty bill
+- **CoCo enabled**, with **at least a few days of real CLI / Snowsight / Desktop usage** on the account — the bill is generated from actual `ACCOUNT_USAGE` history, so an account with no CoCo usage will produce an empty bill
 - Snowflake CLI installed: `curl -LsS https://ai.snowflake.com/static/cc-scripts/install.sh | sh`
 - Any warehouse (XSMALL is sufficient)
 
 ### What You'll Learn
-- How Cortex Code usage is attributed to an identity with a fallback waterfall
+- How CoCo usage is attributed to an identity with a fallback waterfall
 - Why per-query/session tags don't work for CoCo — and what to use instead
 - How to express three cross-charge scenarios as configuration, not code
 - How to price LLM token credits and warehouse compute independently
@@ -50,7 +47,7 @@ Duration: 3
 The three adoption models are **presets of two knobs** — *what you group by* (attribution dimension) and *who you're billing* (internal vs external) — not separate code paths.
 
 ```
-Cortex Code usage (SNOWFLAKE.ACCOUNT_USAGE)
+CoCo usage (SNOWFLAKE.ACCOUNT_USAGE)
         |
         v
   Attribution waterfall -- assigns each usage row to an identity
@@ -73,7 +70,7 @@ Each usage row is attributed by the **highest-confidence signal available**; any
 | — | **Unattributed queue** | never billed until resolved |
 
 > aside negative
-> Per-query and per-session query tags do **not** work for Cortex Code — CoCo overwrites the session query tag. Attribution uses identity-level signals (L3–L5), not L1/L2 tags.
+> Per-query and per-session query tags do **not** work for CoCo — it overwrites the session query tag. Attribution uses identity-level signals (L3–L5), not L1/L2 tags.
 
 ### Two-Rate Pricing
 LLM token credits are priced at a flat AI list rate (April 2025: **$2.00 global / $2.20 in-region**, editable); warehouse compute is priced at your **contract credit rate** — so the bill reflects the true blended cost of CoCo.
@@ -83,7 +80,7 @@ LLM token credits are priced at a flat AI list rate (April 2025: **$2.00 global 
 Duration: 8
 
 ### Step 1: Download and set your deploy target
-Download the `assets/code` folder from the Source Code link above. Set your target in **`snowflake.yml`** (the only file you edit — or ask Cortex Code to fill it):
+Download the `assets/code` folder from the Source Code link above. Set your target in **`snowflake.yml`** (the only file you edit — or ask CoCo to fill it):
 
 ```yaml
 identifier:
@@ -112,7 +109,7 @@ Open the app in Snowsight and go to **Setup**. Run each phase in order (all idem
 3. **Seed Default Settings** — pricing + config defaults
 4. **Run Initial Data Refresh** — backfills usage and warehouse-attribution summaries
 
-**Expected result:** Setup shows all checks green, and the **Cost Attribution** page shows usage for the last 30 days. If it's empty, confirm the account has recent Cortex Code usage (see Prerequisites).
+**Expected result:** Setup shows all checks green, and the **Cost Attribution** page shows usage for the last 30 days. If it's empty, confirm the account has recent CoCo usage (see Prerequisites).
 
 <!-- ------------------------ -->
 ## Tag Users for Attribution
@@ -182,19 +179,18 @@ Open **Model Bake-off** to keep spend efficient:
 Duration: 2
 
 ### What You Built
-- Attributed Cortex Code spend with a confidence-labeled waterfall
+- Attributed CoCo spend with a confidence-labeled waterfall
 - Generated both an **internal showback** and an **external invoice** from the same period
 - Exported branded PDF bills — with data never leaving Snowflake
 
 ### The Pattern
-Attribution-as-configuration — one app, two knobs (dimension x audience) — generalizes beyond Cortex Code to any usage you need to split across teams, customers, or partners.
+Attribution-as-configuration — one app, two knobs (dimension x audience) — generalizes beyond CoCo to any usage you need to split across teams, customers, or partners.
 
 ### Troubleshooting
 - **Empty bill / "No billable usage found"** — the account has no CoCo usage in the selected window, or the refresh task hasn't run. Re-run **Setup, then Run Initial Data Refresh** and widen the lookback.
 - **Vertical/Partner greyed out** — no cost tags yet; add at least one in **Attribution & Tags**.
 
 ### Resources
-- **Base governance quickstart:** https://www.snowflake.com/en/developers/guides/guide/cortex-code-control-hub/
 - **Source Code (Snowflake-Labs):** https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/cortex-code-control-hub-chargeback/assets/code
-- **Cortex Code Docs:** https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code
+- **CoCo Docs:** https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code
 - **Streamlit in Snowflake:** https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit
