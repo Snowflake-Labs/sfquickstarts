@@ -500,10 +500,13 @@ def handler(session, requester, cohort_role, surface, amount,
             if limit <= 0:   # unlimited (-1) or blocked (0) — skip as donor
                 continue
             unique_dates = len(user_dates.get(m, set()))
-            if unique_dates < _MIN_HISTORY_DAYS:
-                continue    # cold-start guard
             used      = today_usage.get(m, 0.0)
-            predicted = _predict_remaining(user_hour_data, m, current_hour)
+            # If user has enough history, predict remaining usage for today
+            # Otherwise treat as inactive — full limit available (no prediction)
+            if unique_dates >= _MIN_HISTORY_DAYS:
+                predicted = _predict_remaining(user_hour_data, m, current_hour)
+            else:
+                predicted = 0.0  # inactive/new user — no predicted future usage
             raw_surplus  = limit - used - predicted
             safe_surplus = max(raw_surplus - limit * buffer, 0.0)
             transferable = round(min(safe_surplus, limit * max_cap_pct), 2)
@@ -669,7 +672,7 @@ def handler(session, lookback_hours):
         watermark = str(wm_df.iloc[0, 0])
         new_df = session.sql(f"""
             SELECT DATE_TRUNC('day',e.TIMESTAMP)::DATE AS EVENT_DATE,
-                   e.TIMESTAMP::TIMESTAMP_NTZ AS EVENT_TS,
+                   e.TIMESTAMP AS EVENT_TS,
                    e.RESOURCE_ATTRIBUTES['snow.user.name']::STRING AS USER_NAME,
                    e.RESOURCE_ATTRIBUTES['snow.session.role.primary.name']::STRING AS ROLE_NAME,
                    e.RECORD_ATTRIBUTES['snow.ai.observability.agent.planning.model']::STRING AS MODEL,
@@ -723,6 +726,8 @@ def handler(session, lookback_hours):
                 AND run.RECORD_TYPE = 'SPAN'
             WHERE e.RECORD_TYPE='SPAN' AND e.RECORD:name::STRING='CodingAgent.Step-0'
               AND e.TIMESTAMP > '{watermark}' AND e.RESOURCE_ATTRIBUTES['snow.user.name'] IS NOT NULL
+              AND e.TIMESTAMP >= DATEADD('day', -400, CURRENT_TIMESTAMP())
+              AND e.TIMESTAMP <= DATEADD('day', 1, CURRENT_TIMESTAMP())
             ORDER BY e.TIMESTAMP
         """).to_pandas()
         if not new_df.empty:
@@ -733,11 +738,12 @@ def handler(session, lookback_hours):
             db_part, schema_part = DB_SCHEMA.split('.', 1)
             clean = new_df.copy()
             # Normalise date/timestamp types for Snowflake
-            try:
-                clean['EVENT_DATE'] = _pd.to_datetime(clean['EVENT_DATE']).dt.date
-                clean['EVENT_TS']   = _pd.to_datetime(clean['EVENT_TS'])
-            except Exception:
-                pass
+            # write_pandas serializes Timestamps as epoch nanos which Snowflake
+            # interprets as seconds → year 761M. Convert to string to avoid this.
+            clean['EVENT_TS'] = _pd.to_datetime(clean['EVENT_TS'], errors='coerce')
+            clean = clean.dropna(subset=['EVENT_TS'])
+            clean['EVENT_TS'] = clean['EVENT_TS'].dt.strftime('%Y-%m-%d %H:%M:%S')
+            clean['EVENT_DATE'] = _pd.to_datetime(clean['EVENT_DATE'], errors='coerce').dt.strftime('%Y-%m-%d')
             # Cap lengths and fill nulls
             clean['PROMPT']             = clean['PROMPT'].fillna('').str[:4000]
             clean['TOOLS_RAW']          = clean['TOOLS_RAW'].fillna('').str[:500]
@@ -1033,7 +1039,6 @@ def handler(session, lookback_hours):
                   OR LOWER(PROMPT) ILIKE '%cortex_memory_drop%'
                   OR LOWER(PROMPT) ILIKE '%cortex_memory_recall%'
                   OR LOWER(PROMPT) ILIKE '%cortex_memory_list%'
-                  OR PROMPT ILIKE '%<system-reminder>%'
               )
         """).collect()
     except Exception as e:
