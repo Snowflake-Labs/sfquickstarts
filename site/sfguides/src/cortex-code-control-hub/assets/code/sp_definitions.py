@@ -170,7 +170,7 @@ def handler(session, targets_json, model_list):
                     if 'already granted' in err:
                         out['success'] += 1
                     else:
-                        out['errors'].append(f'{target}/{model}: {str(e)[:120]}')
+                        out['errors'].append(f'{target}/{model}: {str(e)}')
                         out['failed'] += 1
             else:
                 # First attempt: try ROLE
@@ -186,14 +186,14 @@ def handler(session, targets_json, model_list):
                             grant_to = 'USER'
                             out['success'] += 1
                         except Exception as e2:
-                            out['errors'].append(f'{target}/{model}: {str(e2)[:120]}')
+                            out['errors'].append(f'{target}/{model}: {str(e2)}')
                             out['failed'] += 1
                             grant_to = 'USER'
                     elif 'already granted' in err:
                         grant_to = 'ROLE'
                         out['success'] += 1
                     else:
-                        out['errors'].append(f'{target}/{model}: {str(e)[:120]}')
+                        out['errors'].append(f'{target}/{model}: {str(e)}')
                         out['failed'] += 1
                         grant_to = 'ROLE'
 

@@ -97,11 +97,6 @@ KNOWN_MODELS = {
     "DEEPSEEK-R1":          {"category": ["TIER_1"], "description": "DeepSeek reasoning model. Strong on math, code, and logical analysis."},
     "GEMINI-3-PRO":         {"category": ["TIER_1"], "description": "Google Gemini 3 Pro. Strong general reasoning and multimodal."},
     "GEMINI-3.1-PRO":       {"category": ["TIER_1"], "description": "Google Gemini 3.1 Pro. Latest Pro with improved reasoning."},
-    "OPENAI-GPT-4O":        {"category": ["TIER_1"], "description": "OpenAI GPT-4o. Multimodal reasoning, fast and capable."},
-    "OPENAI-GPT-4O-MINI":   {"category": ["TIER_2"], "description": "OpenAI GPT-4o Mini. Cost-efficient, good for most tasks."},
-    "OPENAI-GPT-5.2":       {"category": ["TIER_1"], "description": "OpenAI GPT-5 series. Strong general reasoning and code generation."},
-    "OPENAI-GPT-5.4":       {"category": ["TIER_1"], "description": "OpenAI GPT-5 series. Broad knowledge for enterprise tasks."},
-    "OPENAI-GPT-5.5":       {"category": ["TIER_1"], "description": "OpenAI GPT-5.5. Highest capability for complex reasoning."},
 
     # ── TIER 2: Balanced (fast + capable, iterative development) ──────────────
     "CLAUDE-SONNET-4-5":    {"category": ["TIER_2"], "description": "High quality with fast response. Best balance for iterative development."},

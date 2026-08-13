@@ -646,13 +646,13 @@ def _enforce_to_role_rbac(session, role_name, models):
         st.error(f"✗ Failed to grant model access")
         if errors:
             with st.expander("Errors"):
-                for e in errors[:10]:
+                for e in errors:
                     st.caption(e)
     else:
         st.warning(f"Granted {successes}, {failures} failed.")
         if errors:
             with st.expander("Errors"):
-                for e in errors[:10]:
+                for e in errors:
                     st.caption(e)
 
 
@@ -695,13 +695,13 @@ def _enforce_model_app_role_to_role(session, role_name, models):
         st.error("✗ Failed to grant model access to role.")
         if errors:
             with st.expander("Errors"):
-                for e in errors[:10]:
+                for e in errors:
                     st.caption(e)
     else:
         st.warning(f"Granted {successes}, {failures} failed.")
         if errors:
             with st.expander("Errors"):
-                for e in errors[:10]:
+                for e in errors:
                     st.caption(e)
 
 
@@ -733,7 +733,10 @@ def _revoke_model_app_role_from_role(session, role_name, models):
     revoked = result.get("success", 0)
     errors = result.get("errors", [])
     if errors:
-        st.warning(f"Revoked {revoked}, {len(errors)} failed: {'; '.join(errors[:3])}")
+        st.warning(f"Revoked {revoked}, {len(errors)} failed.")
+        with st.expander("Errors"):
+            for e in errors:
+                st.caption(e)
     elif revoked:
         st.success(f"✓ Revoked {revoked} model role(s) from `{role_name}`.")
         log_activity(session, "REVOKE_MODEL_ACCESS", target_role=role_name,
