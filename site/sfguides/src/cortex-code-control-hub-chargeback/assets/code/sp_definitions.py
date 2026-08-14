@@ -429,7 +429,7 @@ def handler(session, requester, cohort_role, surface, amount,
         for m in members:
             try:
                 rows = session.sql(
-                    f\'SHOW PARAMETERS LIKE \\\'{param}\\\' IN USER "{m}"\' 
+                    f\'SHOW PARAMETERS LIKE \\\'{param}\\\' IN USER "{m}"\'
                 ).collect()
                 val = rows[0]["value"] if rows else None
                 current_limits[m] = float(val) if val and val != "-1" else -1.0
@@ -439,7 +439,7 @@ def handler(session, requester, cohort_role, surface, amount,
         # Requester current limit
         try:
             rows = session.sql(
-                f\'SHOW PARAMETERS LIKE \\\'{param}\\\' IN USER "{requester}"\' 
+                f\'SHOW PARAMETERS LIKE \\\'{param}\\\' IN USER "{requester}"\'
             ).collect()
             val = rows[0]["value"] if rows else None
             requester_limit = float(val) if val and val != "-1" else -1.0
@@ -937,7 +937,7 @@ def handler(session, lookback_hours):
                 svc=0
                 for _,cr in cdf.iterrows():
                     res=cr['RESULT']; res=json.loads(res) if isinstance(res,str) else res
-                    lbs=res.get('labels',[]); 
+                    lbs=res.get('labels',[]);
                     if not lbs or lbs[0]=='benign': continue
                     ml=lbs[0].lower()
                     if ml not in rlm: continue

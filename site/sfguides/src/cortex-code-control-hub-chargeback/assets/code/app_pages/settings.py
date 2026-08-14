@@ -215,7 +215,7 @@ def render(session):
         When temporary credits are assigned (with an end date), the system checks during
         the daily reset task whether any temporary assignments have expired. Expired assignments
         revert the user's limit to their previous value automatically.
-        
+
         **How it works:**
         1. Admin sets a temporary override with an end date
         2. The override is stored with `IS_TEMPORARY = TRUE` and `EXPIRES_AT` timestamp

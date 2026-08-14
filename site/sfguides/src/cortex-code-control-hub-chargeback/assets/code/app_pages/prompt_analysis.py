@@ -33,7 +33,7 @@ _G   = "#6ee7b7"   # emerald-300  (muted, was #4ade80)
 _B   = "#7dd3fc"   # sky-300      (muted blue for neutral charts)
 
 _CSS = """<style>
-.risk-hi{color:#f87171;font-weight:700} 
+.risk-hi{color:#f87171;font-weight:700}
 .risk-med{color:#fbbf24;font-weight:600}
 .risk-lo{color:#4ade80;font-weight:500}
 </style>"""

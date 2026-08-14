@@ -7,8 +7,8 @@ A **Streamlit-in-Snowflake** application that combines Cortex Code governance an
 [![Snowflake](https://img.shields.io/badge/Built%20for-Snowflake-29B5E8)](https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit)
 [![Platform](https://img.shields.io/badge/Deployment-Streamlit%20in%20Snowflake-blue)](https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit)
 
-This repository is a dedicated, standalone home for the solution. It is built on the
-Cortex Code credit-manager Quickstart (see [NOTICE](NOTICE)) with a chargeback layer added on top.
+This repository is a dedicated, standalone home for the solution. It builds on the
+Cortex Code Control Hub Quickstart (`cortex-code-control-hub`) with a chargeback layer added on top.
 
 ---
 
@@ -77,6 +77,6 @@ See [GETTING_STARTED.md](GETTING_STARTED.md) and [DEPLOYMENT_GUIDE.md](DEPLOYMEN
 - [SOLUTION.md](SOLUTION.md) — architecture and design.
 - [CHANGELOG.md](CHANGELOG.md) — version history.
 
-## License / distribution
+## License
 
-Snowflake internal — proprietary. Not for external distribution. See [LICENSE](LICENSE).
+Licensed under the Apache License, Version 2.0, per the repository root [LICENSE](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/LICENSE).

@@ -82,4 +82,3 @@ CoCo Control Hub & Chargeback is a governance dashboard for Cortex Code usage in
 - Alert system with HTML email notifications
 
 For questions about what the app does or how any feature works, see `SOLUTION.md` and `DEPLOYMENT_GUIDE.md`.
-

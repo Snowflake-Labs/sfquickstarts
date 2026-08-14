@@ -2,7 +2,7 @@ author: Sam Gupta
 id: cortex-code-control-hub-chargeback
 language: en
 summary: Add cost attribution and chargeback to Snowflake CoCo. Attribute CoCo spend to the teams, customers, or partners who generated it, then generate an itemized internal showback or external invoice — as a branded PDF, all native to Snowflake.
-categories: snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/cortex-code
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/cortex-code
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
