@@ -1,13 +1,13 @@
 id: support-ops-ai-functions-dynamic-tables
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions, snowflake-site:taxonomy/snowflake-feature/dynamic-tables, snowflake-site:taxonomy/snowflake-feature/streamlit
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions, snowflake-site:taxonomy/snowflake-feature/dynamic-tables
 language: en
 summary: Build an automated support ticket enrichment pipeline using Cortex AI Functions, Dynamic Tables, and Streamlit in Snowflake.
 environments: web
-status: Draft
+status: Published
 duration: 30
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: AI, Cortex, AI_CLASSIFY, AI_COMPLETE, AI_TRANSCRIBE, AI_REDACT, Dynamic Tables, Streamlit, Support Operations
-authors: James Cha-Earley
+author: James Cha-Earley
 
 # AI-Powered Support Operations with Cortex AI Functions & Dynamic Tables
 <!-- ------------------------ -->
@@ -40,7 +40,7 @@ You'll build a pipeline that:
                     Streamlit in Snowflake (Ops Dashboard)
 ```
 
-### Prerequisites
+### What You'll Need
 
 - A Snowflake account with ACCOUNTADMIN role in a [supported region](https://docs.snowflake.com/user-guide/snowflake-cortex/aisql-regional-availability)
 - The SNOWFLAKE.CORTEX_USER database role granted to your user
@@ -115,7 +115,7 @@ INSERT INTO SUPPORT_TICKETS (channel, raw_text) VALUES
 ('email', 'Quick question: do you offer volume discounts for organizations with 500+ seats? We are planning a company-wide rollout next quarter.');
 ```
 
-**Step 3.** Download [audio_files.zip](assets/audio_files.zip) (50 sample call recordings, ~36 MB). Unzip and upload the MP3 files to the stage using Snowsight: **Data → Add Data → Load files into a Stage** → select `SUPPORT_OPS_AI.RAW.SUPPORT_AUDIO_STAGE`.
+**Step 3.** Download [audio_files.zip](https://github.com/Snowflake-Labs/sfquickstarts/raw/master/site/sfguides/src/support-ops-ai-functions-dynamic-tables/assets/audio_files.zip) (50 sample call recordings, ~36 MB). Unzip and upload the MP3 files to the stage using Snowsight: **Data → Add Data → Load files into a Stage** → select `SUPPORT_OPS_AI.RAW.SUPPORT_AUDIO_STAGE`.
 
 **Step 4.** Register the audio files as phone tickets:
 
