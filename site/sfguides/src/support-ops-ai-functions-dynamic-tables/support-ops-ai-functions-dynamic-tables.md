@@ -15,6 +15,8 @@ author: James Cha-Earley
 
 Customer support teams spend significant time reading tickets to classify issues, gauge urgency, and decide on next steps. This quickstart shows how to automate that entire workflow using Snowflake Cortex AI Functions, with a Dynamic Table that keeps results fresh and a Streamlit dashboard for operational visibility.
 
+> **How this differs from other support quickstarts:** Unlike [call-center-analytics-with-ai-transcribe-and-cortex-agents](https://quickstarts.snowflake.com/guide/call-center-analytics-with-ai-transcribe-and-cortex-agents) (which builds a full Cortex Agent for Q&A) or [streamlining-support-case-analysis](https://quickstarts.snowflake.com/guide/streamlining-support-case-analysis-with-snowflake-cortex) (which uses LangChain for summarization), this guide takes a **pure-SQL, zero-orchestration approach**. A single Dynamic Table handles transcription, classification, sentiment scoring, and recommendation generation — no agents, no external frameworks, no scheduler. New tickets are enriched automatically on refresh.
+
 You'll build a pipeline that:
 - **Transcribes** phone call recordings into text with `AI_TRANSCRIBE`
 - **Classifies** every ticket into your taxonomy with `AI_CLASSIFY`
@@ -215,6 +217,7 @@ USE WAREHOUSE SUPPORT_OPS_WH;
 
 CREATE OR REPLACE DYNAMIC TABLE ENRICHED_TICKETS
   TARGET_LAG = '1 hour'
+  REFRESH_MODE = FULL
   WAREHOUSE = SUPPORT_OPS_WH
 AS
 WITH transcribed AS (
