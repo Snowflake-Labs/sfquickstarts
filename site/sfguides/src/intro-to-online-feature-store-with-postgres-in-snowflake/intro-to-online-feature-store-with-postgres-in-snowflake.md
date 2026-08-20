@@ -1,7 +1,7 @@
 author: Sho Tanaka, Doris Lee
 language: en
 id: intro-to-online-feature-store-postgres-in-snowflake
-summary: Build real-time ML predictions using Snowflake Online Feature Store for low-latency feature serving 
+summary: Build real-time fraud detection using Snowflake Online Feature Store with Postgres for low-letency feature serving
 categories: snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/model-development, snowflake-site:taxonomy/snowflake-feature/applied-analytics, snowflake-site:taxonomy/snowflake-feature/snowflake-ml-functions, snowflake-site:taxonomy/snowflake-feature/snowpark, snowflake-site:taxonomy/snowflake-feature/snowpark-container-services, snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/certified-solution
 environments: web
 status: Published
@@ -12,11 +12,11 @@ fork repo link: https://github.com/Snowflake-Labs/sfguide-intro-to-online-featur
 # Introduction to Online Feature Store in Snowflake
 
 <!-- ------------------------ -->
-## Overview
+## 1. Overview
 
-The Snowflake Online Feature Store with Postgres, Public Preview as of Aug 10, 2026, provides low-latency, key-based feature retrieval for real-time ML inference. This guide demonstrates how to build an end-to-end machine learning workflow using the Online Feature Store to predict taxi trip durations in New York City.
+The Snowflake Online Feature Store with Postgres (Public Preview) provides low-letency feature retrieval for real-time ML inference. This guide demonstrates how to build a real-time fraud detection system using the Online Feature Store — covering online feature retrieval, time-windowed aggregations, streaming ingestion, and REST API usage.
 
-You'll learn how to register entities and feature views, perform feature engineering, and use both online and offline stores for real-time inference.
+You'll learn how to register batch, aggregation, and stream Feature Views backed by a managed Postgres serving layer, and how to query and ingest data through the REST API endpoints.
 
 ![Online Feature Store Architecture](assets/feature-store-architecture.png)
 
@@ -25,42 +25,43 @@ You'll learn how to register entities and feature views, perform feature enginee
 - Basic knowledge of Python and SQL
 - Familiarity with machine learning concepts
 - ACCOUNTADMIN access or equivalent permissions
-- `snowflake-ml-python` version 1.41 or later (required for Postgres online serving)
-- A Programmatic Access Token (PAT) or key-pair credentials for authenticating to the Postgres online service REST endpoint
+- `snowflake-ml-python` version 1.41 or later
+- A Programmatic Access Token (PAT) for authenticating to the Online Feature Store REST endpoints
 
 ### What You'll Learn
-- How to set up the Snowflake Feature Store with Postgres
-- How to register entities and create feature views
-- How to enable online serving for low-latency inference
-- How to train an XGBoost model using feature store data
-- How to make real-time predictions using online features
+- How to set up the Snowflake Feature Store with a Postgres-backed online service
+- How to register batch, aggregation, and stream Feature Views
+- How to query online features with low latency
+- How to define Stream and Real-time Feature Views
+- How to ingest streaming events and query features through the REST API
+- How to integrate with the Snowflake Model Registry
 
 ### What You'll Need
 - A [Snowflake](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) account
 - Basic understanding of Snowpark and Snowflake ML
-- A Programmatic Access Token (PAT) — required to read features from the Postgres online service
+- A Programmatic Access Token (PAT)
 
 ### What You'll Build
-- A complete feature store for taxi trip prediction
-- Online feature views for real-time inference
-- An XGBoost regression model
-- A real-time prediction system using online features
+- A Feature Store with 3 online Feature Views (batch profile, tiled aggregation, stream velocity)
+- Real-time fraud scoring with low lentency feature retrieval
+- Stream ingestion pipeline with 2-3 second end-to-end freshness
+- REST API integration for feature query and stream ingest
 
 <!-- ------------------------ -->
-## Setup and Data Preparation
+## 2. Setup and Data Preparation
 
-This section covers environment setup, notebook upload, and loading the sample dataset for the feature store guide.
+This section covers environment setup, creating the online service, and loading synthetic fraud data.
 
 ### Run the Setup Script
 
-1. Open Snowflake and navigate to <a href="https://app.snowflake.com/_deeplink/#/workspaces?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_content=intro-to-online-feature-store-in-snowflake&utm_cta=developer-guides-deeplink" class="_deeplink">**Projects** > **Workspaces**</a>
+1. Open Snowflake and navigate to <a href="https://app.snowflake.com/_deeplink/#/workspaces?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_content=intro-to-online-feature-store-with-postgres-in-snowflake&utm_cta=developer-guides-deeplink" class="_deeplink">**Projects** > **Workspaces**</a>
 2. Create a new SQL file
 3. Copy and paste the following setup script
 4. Run the entire script as **ACCOUNTADMIN**
 
 ```sql
 -- ============================================================================
--- Snowflake Setup Script for Online Feature Store Demo
+-- Snowflake Setup Script for Online Feature Store (Fraud Detection) Demo
 -- ============================================================================
 
 USE ROLE ACCOUNTADMIN;
@@ -89,7 +90,7 @@ GRANT EXECUTE TASK ON ACCOUNT TO ROLE FS_DEMO_ROLE;
 GRANT EXECUTE MANAGED TASK ON ACCOUNT TO ROLE FS_DEMO_ROLE;
 
 -- ============================================================================
--- SECTION 2: SWITCH TO ROLE AND CREATE RESOURCES
+-- SECTION 2: CREATE RESOURCES
 -- ============================================================================
 
 USE ROLE FS_DEMO_ROLE;
@@ -100,45 +101,31 @@ CREATE OR REPLACE WAREHOUSE FS_DEMO_WH
     AUTO_SUSPEND = 300
     AUTO_RESUME = TRUE
     INITIALLY_SUSPENDED = TRUE
-    COMMENT = 'Warehouse for Feature Store demo';
+    COMMENT = 'Warehouse for Feature Store Quick Start';
 
--- Create database and schema
-CREATE OR REPLACE DATABASE FEATURE_STORE_DEMO
-    COMMENT = 'Database for Feature Store with taxi trip prediction';
+-- Create databse and schemaes
+CREATE OR REPLACE DATABASE FRAUD_OFS_DEMO_DB;
+CREATE OR REPLACE SCHEMA FRAUD_OFS_DEMO_DB.SOURCE_DATA;
+CREATE OR REPLACE SCHEMA FRAUD_OFS_DEMO_DB.FEATURE_STORE;
+CREATE OR REPLACE SCHEMA FRAUD_OFS_DEMO_DB.ML_PIPELINE;
 
-CREATE OR REPLACE SCHEMA FEATURE_STORE_DEMO.TAXI_FEATURES
-    COMMENT = 'Schema for taxi features and online feature store';
-
--- Use the created resources
 USE WAREHOUSE FS_DEMO_WH;
-USE DATABASE FEATURE_STORE_DEMO;
-USE SCHEMA TAXI_FEATURES;
+USE DATABASE FRAUD_OFS_DEMO_DB;
 
--- Create stage for model assets with directory enabled
-CREATE OR REPLACE STAGE FS_DEMO_ASSETS
-    DIRECTORY = (ENABLE = TRUE)
-    COMMENT = 'Stage for storing model assets and data files';
-
--- Grant full privileges on database and schema to the role
-GRANT ALL PRIVILEGES ON DATABASE FEATURE_STORE_DEMO TO ROLE FS_DEMO_ROLE;
-GRANT ALL PRIVILEGES ON SCHEMA FEATURE_STORE_DEMO.TAXI_FEATURES TO ROLE FS_DEMO_ROLE;
+GRANT ALL PRIVILEGES ON DATABASE FRAUD_OFS_DEMO_DB TO ROLE FS_DEMO_ROLE;
+GRANT ALL PRIVILEGES ON ALL SCHEMAS IN DATABASE FRAUD_OFS_DEMO_DB TO ROLE FS_DEMO_ROLE;
 GRANT ALL PRIVILEGES ON WAREHOUSE FS_DEMO_WH TO ROLE FS_DEMO_ROLE;
 
--- Grant future privileges to handle dynamically created objects
-GRANT ALL PRIVILEGES ON FUTURE TABLES IN SCHEMA FEATURE_STORE_DEMO.TAXI_FEATURES TO ROLE FS_DEMO_ROLE;
-GRANT ALL PRIVILEGES ON FUTURE VIEWS IN SCHEMA FEATURE_STORE_DEMO.TAXI_FEATURES TO ROLE FS_DEMO_ROLE;
-GRANT ALL PRIVILEGES ON FUTURE DYNAMIC TABLES IN SCHEMA FEATURE_STORE_DEMO.TAXI_FEATURES TO ROLE FS_DEMO_ROLE;
-GRANT ALL PRIVILEGES ON FUTURE STAGES IN SCHEMA FEATURE_STORE_DEMO.TAXI_FEATURES TO ROLE FS_DEMO_ROLE;
-GRANT ALL PRIVILEGES ON FUTURE FUNCTIONS IN SCHEMA FEATURE_STORE_DEMO.TAXI_FEATURES TO ROLE FS_DEMO_ROLE;
-GRANT ALL PRIVILEGES ON FUTURE IMAGE REPOSITORIES IN SCHEMA FEATURE_STORE_DEMO.TAXI_FEATURES TO ROLE FS_DEMO_ROLE;
-GRANT ALL PRIVILEGES ON FUTURE SERVICES IN SCHEMA FEATURE_STORE_DEMO.TAXI_FEATURES TO ROLE FS_DEMO_ROLE;
+-- Future privileges for dynamically created objects
+GRANT ALL PRIVILEGES ON FUTURE TABLES IN DATABASE FRAUD_OFS_DEMO_DB TO ROLE FS_DEMO_ROLE;
+GRANT ALL PRIVILEGES ON FUTURE VIEWS IN DATABASE FRAUD_OFS_DEMO_DB TO ROLE FS_DEMO_ROLE;
+GRANT ALL PRIVILEGES ON FUTURE DYNAMIC TABLES IN DATABASE FRAUD_OFS_DEMO_DB TO ROLE FS_DEMO_ROLE;
 
 -- ============================================================================
--- SECTION 3: NETWORK RULES AND EXTERNAL ACCESS FOR NOTEBOOKS
+-- SECTION 3: NETWORK RULES AND EXTERNAL ACCESS
 -- ============================================================================
 
--- Create network rule to allow all external access (required for notebooks)
-CREATE OR REPLACE NETWORK RULE FEATURE_STORE_DEMO_ALLOW_ALL_RULE
+CREATE OR REPLACE NETWORK RULE FRAUD_OFS_DEMO_ALLOW_ALL_RULE
     MODE = EGRESS
     TYPE = HOST_PORT
     VALUE_LIST = ('0.0.0.0:443', '0.0.0.0:80');
@@ -146,48 +133,26 @@ CREATE OR REPLACE NETWORK RULE FEATURE_STORE_DEMO_ALLOW_ALL_RULE
 -- Switch back to ACCOUNTADMIN to create integration
 USE ROLE ACCOUNTADMIN;
 
--- Create external access integration (requires ACCOUNTADMIN)
-CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION FEATURE_STORE_DEMO_ALLOW_ALL_INTEGRATION
-    ALLOWED_NETWORK_RULES = (FEATURE_STORE_DEMO.TAXI_FEATURES.FEATURE_STORE_DEMO_ALLOW_ALL_RULE)
+CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION FRAUD_OFS_DEMO_ALLOW_ALL_INTEGRATION
+    ALLOWED_NETWORK_RULES = (FRAUD_OFS_DEMO_DB.SOURCE_DATA.FRAUD_OFS_DEMO_ALLOW_ALL_RULE)
     ENABLED = TRUE;
 
--- Grant usage on the external access integration to FS_DEMO_ROLE
-GRANT USAGE ON INTEGRATION FEATURE_STORE_DEMO_ALLOW_ALL_INTEGRATION TO ROLE FS_DEMO_ROLE;
+-- Grant usage on the external access integration
+GRANT USAGE ON INTEGRATION FRAUD_OFS_DEMO_ALLOW_ALL_INTEGRATION TO ROLE FS_DEMO_ROLE;
 
 -- Switch back to FS_DEMO_ROLE
 USE ROLE FS_DEMO_ROLE;
-
--- ============================================================================
--- SECTION 4: COMPUTE POOL FOR MODEL DEPLOYMENT
--- ============================================================================
-
--- Create compute pool for SPCS model serving
-CREATE COMPUTE POOL IF NOT EXISTS trip_eta_prediction_pool
-    MIN_NODES = 1
-    MAX_NODES = 3
-    INSTANCE_FAMILY = 'CPU_X64_L'
-    AUTO_RESUME = TRUE
-    COMMENT = 'Compute pool for taxi ETA prediction service';
-
--- Grant usage on compute pool
-GRANT USAGE ON COMPUTE POOL trip_eta_prediction_pool TO ROLE FS_DEMO_ROLE;
-GRANT OPERATE ON COMPUTE POOL trip_eta_prediction_pool TO ROLE FS_DEMO_ROLE;
 
 -- ============================================================================
 -- SETUP COMPLETE
 -- ============================================================================
 ```
 
-This will create:
+This creates:
 - A dedicated role: `FS_DEMO_ROLE`
 - A warehouse: `FS_DEMO_WH`
-- A database: `FEATURE_STORE_DEMO`
-- A schema: `TAXI_FEATURES`
-- A stage: `FS_DEMO_ASSETS` 
+- A database: `FRAUD_OFS_DEMO_DB` with schemas `SOURCE_DATA`, `FEATURE_STORE`, `ML_PIPELINE`
 - Network rule and external access integration for notebooks
-- Compute pool for SPCS model deployment
-
-The setup script automatically grants the `FS_DEMO_ROLE` to your current user.
 
 ### Upload and Open Notebook
 
@@ -197,7 +162,7 @@ Now that your environment is set up, import the guide notebook to Snowflake.
 
 Download the notebook file to your local machine:
 
-1. Click this link: [online_feature_store_postgres_quickstart.ipynb](https://github.com/Snowflake-Labs/sf-samples/blob/main/samples/ml/feature_store/online_feature_store_postgres_quickstart.ipynb)
+1. Click this link: [online_feature_store_fraud_detection.ipynb](assets/online_feature_store_fraud_detection.ipynb)
 2. On the GitHub page, click the **Download raw file** button (download icon in the top right of the file preview)
 3. Save the `.ipynb` file to your computer
 
@@ -208,474 +173,426 @@ Now import the notebook into Snowflake:
 3. Click **Import .ipynb** from the **+ Notebook** dropdown
 4. Select the downloaded `online_feature_store_postgres_quickstart.ipynb` file from your computer
 5. Create a new notebook with the following settings:
-   - **Notebook Location**: `FEATURE_STORE_DEMO`, `TAXI_FEATURES`
+   - **Notebook Location**: `FRAUD_OFS_DEMO_DB`, `FEATURE_STORE`
    - **Run On**: Warehouse
    - **Warehouse**: `FS_DEMO_WH`
 
 The notebook will open and be ready to run.
 
-> NOTE:
-> Before running the first cell, set your PAT in the notebook's second cell:
-> ```python
-> os.environ['SNOWFLAKE_PAT'] = '<ENTER_YOUR_SNOWFLAKE_PAT>'
-> ```
-> The notebook creates its own database (`CLICKSTREAM_FS_DEMO`) and warehouse (`DEMO_WH`) internally. The notebook location above is only where the notebook object is stored in Snowflake.
-
 ### Add External Access to Notebook
 
-After creating the notebook, you need to configure external access to allow the notebook to install Python packages and access external resources required by Snowflake ML libraries.
-
 1. Open the notebook in Snowsight
-2. Click the **three dots menu** (⋮) in the top right
+2. Click the **three dots menu** in the top right
 3. Select **Notebook settings**
 4. Under **External Access Integrations**, click **+ External Access Integration**
-5. Select `FEATURE_STORE_DEMO_ALLOW_ALL_INTEGRATION` from the dropdown
-6. Click **Save** to apply changes
+5. Select `FRAUD_OFS_DEMO_ALLOW_ALL_INTEGRATION` from the dropdown
+6. Click **Save**
 
-> NOTE:
-> The `FEATURE_STORE_DEMO_ALLOW_ALL_INTEGRATION` external access integration was created by the setup script and allows the notebook to install Python packages and access external APIs required by Snowflake ML libraries.
+### Set Up Authentication (PAT)
 
-### Load Sample Data
-
-The notebook uses NYC taxi trip data to demonstrate the Online Feature Store. The data is loaded automatically using Snowflake ML's example helper.
-
-### What's in the Dataset
-
-The NYC Yellow Taxi dataset contains:
-- **Pickup and dropoff location IDs**: Geographic areas in NYC
-- **Timestamps**: When trips started and ended
-- **Trip metrics**: Distance, duration, fare amounts
-- **Additional features**: Vendor ID, passenger count, payment type
-
-### Loading the Data
-
-Run the data loading cells in the notebook:
-
-```python
-from snowflake.ml.feature_store.examples.example_helper import ExampleHelper
-
-example_helper = ExampleHelper(session, TAXI_DB, TAXI_SCHEMA)
-source_tables = example_helper.load_example('new_york_taxi_features')
-```
-
-This creates the `NYC_YELLOW_TRIPS` table with sample taxi trip data ready for feature engineering.
-
-<!-- ------------------------ -->
-## Build Feature Store
-
-This section covers initializing the feature store, registering entities, and engineering features for the taxi trip prediction model.
-
-### Create Feature Store Instance
-
-```python
-from snowflake.ml.feature_store import CreationMode, FeatureStore
-
-fs = FeatureStore(
-    session=session,
-    database=TAXI_DB,
-    name=TAXI_SCHEMA,
-    default_warehouse=session.get_current_warehouse(),
-    creation_mode=CreationMode.CREATE_IF_NOT_EXIST,
-)
-```
-
-The Feature Store will:
-- Store feature definitions and metadata
-- Manage feature versioning
-- Handle data synchronization between offline and online stores
-- Track feature lineage
-
-### Register Entities
-
-Entities represent the keys used to join features. For taxi trip prediction, we define entities for routes and pickup times.
-
-### Define Route Entity
-
-The route entity represents a trip from one location to another:
-
-```python
-from snowflake.ml.feature_store.entity import Entity
-
-route_entity = Entity(
-    name="route",
-    join_keys=["PULOCATIONID", "DOLOCATIONID"],
-    desc="A taxi route defined by pickup and dropoff location IDs"
-)
-```
-
-### Define Pickup Time Entity
-
-The pickup time entity captures temporal patterns:
-
-```python
-pickup_time_entity = Entity(
-    name="pickup_time",
-    join_keys=["PICKUP_HOUR", "PICKUP_DAY_OF_WEEK"],
-    desc="Pickup time bucketed by hour and day of week"
-)
-```
-
-### Register Entities
-
-```python
-fs.register_entity(route_entity)
-fs.register_entity(pickup_time_entity)
-
-# View registered entities
-fs.list_entities().show()
-```
-
-### Engineer Features
-
-Create meaningful features from raw taxi trip data to improve model predictions.
-
-### Time-Based Features
-
-Extract temporal patterns:
-
-```python
-df = df.with_columns([
-    hour(col("TPEP_PICKUP_DATETIME")).alias("PICKUP_HOUR"),
-    dayofweek(col("TPEP_PICKUP_DATETIME")).alias("PICKUP_DAY_OF_WEEK"),
-    month(col("TPEP_PICKUP_DATETIME")).alias("PICKUP_MONTH"),
-])
-```
-
-### Derived Features
-
-Calculate trip characteristics:
-
-```python
-df = df.with_column(
-    "SPEED_MPH",
-    (col("TRIP_DISTANCE") / nullifzero(col("TRIP_DURATION_MIN")) * 60)
-)
-
-df = df.with_column(
-    "IS_RUSH_HOUR",
-    when((col("PICKUP_HOUR") >= 7) & (col("PICKUP_HOUR") <= 9), 1)
-    .when((col("PICKUP_HOUR") >= 16) & (col("PICKUP_HOUR") <= 18), 1)
-    .otherwise(0)
-)
-```
-
-### Aggregate Features
-
-Compute route-level statistics:
-
-```python
-route_stats = df.group_by("PULOCATIONID", "DOLOCATIONID").agg([
-    avg("TRIP_DURATION_MIN").alias("AVG_ETA_ROUTE"),
-    avg("TRIP_DISTANCE").alias("AVG_DISTANCE_ROUTE"),
-    avg("SPEED_MPH").alias("AVG_SPEED_ROUTE")
-])
-```
-
-<!-- ------------------------ -->
-## Enable Online Feature Serving
-
-This section covers setting up authentication, creating the Postgres online service, registering feature views with online serving enabled, and reading features from the online store.
-
-### Set Up Authentication
-
-The Postgres online service exposes a REST endpoint. Both Python SDK reads (`read_feature_view`) and direct REST calls require authentication via a Programmatic Access Token (PAT) or key-pair JWT.
-
-To create a PAT in Snowsight:
-1. Navigate to your profile menu (bottom-left) > **My profile**
-2. Click **Programmatic access tokens** > **Generate new token**
-3. Give it a name and set an expiry, then copy the token
-
-In your notebook, set the token as an environment variable before reading from the online store:
+The Postgres online service communicates via REST endpoints. Set your PAT as an environment variable in the notebook before reading online features:
 
 ```python
 import os
 os.environ["SNOWFLAKE_PAT"] = "<your_pat_token>"
 ```
 
-> NOTE:
-> Never hard-code your PAT in a shared notebook. Use [Snowflake Secrets](https://docs.snowflake.com/user-guide/secrets-handling) or inject it as an environment variable from outside the notebook for production use.
+To create a PAT in Snowsight: navigate to your profile menu > **My profile** > **Programmatic access tokens** > **Generate new token**.
+
+<!-- ------------------------ -->
+## 3. Create Online Service and Entity
+
+### Initialize Feature Store
+
+```python
+from snowflake.ml.feature_store import FeatureStore, CreationMode
+
+fs = FeatureStore(
+    session=session,
+    database="FRAUD_OFS_DEMO_DB",
+    name="FEATURE_STORE",
+    default_warehouse="FS_DEMO_WH",
+    creation_mode=CreationMode.CREATE_IF_NOT_EXIST,
+)
+```
 
 ### Create Online Service
 
-Before registering feature views with Postgres online serving, you must create the online service once per feature store. This provisions a managed Postgres serving layer that enables low-latency reads.
+The online service is a managed Postgres serving layer. Create it once per Feature Store before registering feature views with online serving.
 
 ```python
-# Create the online service (run once per feature store)
+import time
+from snowflake.ml.feature_store import online_service
+
 create_result = fs.create_online_service(
     producer_role="FS_DEMO_ROLE",
     consumer_role="FS_DEMO_ROLE",
 )
-print(create_result)
+print(f"Create result: {create_result}")
+
+# Wait for RUNNING status (takes several minutes on first creation)
+for i in range(30):
+    status = fs.get_online_service_status()
+    if status.status == "RUNNING":
+        break
+    print(f"  [{i}] Status: {status.status}")
+    time.sleep(30)
+
+query_url = online_service.endpoint_url(status, "query")
+ingest_url = online_service.endpoint_url(status, "ingest")
+print(f"Query URL: {query_url}")
+print(f"Ingest URL: {ingest_url}")
 ```
 
-The online service takes several minutes to provision on first creation. Poll until it reaches `RUNNING`:
+### Register Entity
 
 ```python
-import time
+from snowflake.ml.feature_store import Entity
 
-status = fs.get_online_service_status()
-while status.status != "RUNNING":
-    time.sleep(30)
-    status = fs.get_online_service_status()
-    print(f"Status: {status.status}")
-
-print(f"Endpoints: {status.endpoints}")
+customer_entity = Entity(
+    name="CUSTOMER",
+    join_keys=["CUSTOMER_ID"],
+    desc="A customer identified by their unique customer ID",
+)
+fs.register_entity(customer_entity)
+fs.list_entities().show()
 ```
 
-> NOTE:
-> The online service runs continuously after creation. For testing, call `fs.drop_online_service()` when done to avoid unnecessary costs.
+<!-- ------------------------ -->
+## 4. Register Feature Views
 
-### Define Feature View
+This section demonstrates three types of Feature Views — the core building blocks of the Online Feature Store.
 
-Configure the feature view with `OnlineStoreType.POSTGRES` in the `OnlineConfig`:
+### Batch Feature View: Customer Profile
+
+A batch feature view passes pre-computed features from an offline table to the online store. The online store serves the latest row per entity key.
 
 ```python
 from snowflake.ml.feature_store import FeatureView, OnlineConfig, OnlineStoreType
 
-route_fv = FeatureView(
-    name="nyc_taxi_trip_fv",
-    entities=[route_entity, pickup_time_entity],
-    feature_df=feature_df,
-    timestamp_col="TPEP_PICKUP_DATETIME",
-    refresh_freq="60s",
-    desc="Trip-based features for taxi ETA prediction",
+profile_df = session.table("FRAUD_OFS_DEMO_DB.SOURCE_DATA.CUSTOMER_PROFILES")
+
+profile_fv = FeatureView(
+    name="CUSTOMER_PROFILE_FEATURES",
+    entities=[customer_entity],
+    feature_df=profile_df,
+    timestamp_col="UPDATED_AT",
+    refresh_freq="1m",
     online_config=OnlineConfig(
         enable=True,
         target_lag="10s",
         store_type=OnlineStoreType.POSTGRES,
     ),
+    desc="Customer profile features: account age, total transactions, avg amount",
 )
+
+registered_profile_fv = fs.register_feature_view(profile_fv, "V1", overwrite=True)
+print(f"Registered: {registered_profile_fv.name}/{registered_profile_fv.version}")
 ```
 
-### Key Configuration Parameters
+### Time-Windowed Aggregation Feature View
 
-- **refresh_freq**: How often to refresh the offline feature table (Dynamic Table)
-- **target_lag**: Maximum acceptable lag for offline-to-online sync
-- **online_config.store_type**: Set to `OnlineStoreType.POSTGRES` for the managed Postgres online store
-
-> WARNING:
-> When `store_type=OnlineStoreType.POSTGRES`, the combined length of the feature view name and version must be **46 characters or fewer**. Names that exceed this limit are truncated and can cause ingest errors or collisions.
-
-> NOTE:
-> `refresh_freq` controls how often the offline Dynamic Table refreshes. `OnlineConfig.target_lag` controls how often those offline values sync to the Postgres online store. The effective end-to-end lag is approximately `refresh_freq + target_lag`.
-
-### Register Feature View
+Use the `Feature` class to define rolling-window aggregate features. The online service pre-computes partial aggregates (tiles) and merges them at query time.
 
 ```python
-registered_route_fv = fs.register_feature_view(route_fv, "v1", overwrite=True)
-print("Registered feature view:", registered_route_fv.name)
+from snowflake.ml.feature_store import Feature
+
+txn_features = [
+    Feature.sum("TRANSACTION_AMOUNT", "1h").alias("SUM_AMT_1H"),
+    Feature.sum("TRANSACTION_AMOUNT", "24h").alias("SUM_AMT_24H"),
+    Feature.count("TRANSACTION_AMOUNT", "24h").alias("TXN_COUNT_24H"),
+    Feature.avg("TRANSACTION_AMOUNT", "7d").alias("AVG_AMT_7D"),
+]
+
+txn_df = session.table("FRAUD_OFS_DEMO_DB.SOURCE_DATA.TRANSACTIONS")
+
+txn_agg_fv = FeatureView(
+    name="CUSTOMER_TXN_AGG",
+    entities=[customer_entity],
+    feature_df=txn_df,
+    features=txn_features,
+    timestamp_col="TRANSACTION_TS",
+    refresh_freq="1m",
+    feature_granularity="1 minute",
+    online_config=OnlineConfig(
+        enable=True,
+        store_type=OnlineStoreType.POSTGRES,
+    ),
+    desc="Rolling transaction aggregations: sum, count, avg over 1h/24h/7d windows",
+)
+
+registered_txn_fv = fs.register_feature_view(txn_agg_fv, "V1", overwrite=True)
+print(f"Registered: {registered_txn_fv.name}/{registered_txn_fv.version}")
 ```
 
-### Monitor Offline Refresh History
+### Stream Feature View: Transaction Velocity
 
-The Postgres online store is refreshed automatically by the online service on `target_lag`. Manual online refresh is not supported. You can inspect the offline Dynamic Table refresh history:
+Stream Feature Views ingest events in real time and serve updated features with 2-3 second end-to-end freshness.
+
+#### Register a Stream Source
 
 ```python
-from snowflake.ml.feature_store import StoreType
+from snowflake.ml.feature_store import StreamSource, StreamConfig
+from snowflake.snowpark.types import (
+    StructType, StructField, StringType, FloatType,
+    TimestampType, TimestampTimeZone,
+)
 
-fs.get_refresh_history(
-    registered_route_fv,
-    store_type=StoreType.OFFLINE,
-).show()
+txn_stream = StreamSource(
+    name="TXN_EVENTS",
+    schema=StructType([
+        StructField("CUSTOMER_ID", StringType()),
+        StructField("TRANSACTION_TS", TimestampType(TimestampTimeZone.NTZ)),
+        StructField("TRANSACTION_AMOUNT", FloatType()),
+        StructField("MERCHANT_CATEGORY", StringType()),
+    ]),
+    desc="Real-time transaction events for velocity features",
+)
+fs.register_stream_source(txn_stream)
 ```
 
-This shows:
-- Refresh timestamps
-- Number of rows updated
-- Refresh status (success/failure)
-- Any error messages
-
-### Read from Online Store
-
-Once the online service is running and the feature view is registered, retrieve features by entity keys:
+#### Define Transformation and Register
 
 ```python
-fv = fs.get_feature_view("nyc_taxi_trip_fv", "v1")
+import pandas as pd
+
+def compute_velocity(df: pd.DataFrame) -> pd.DataFrame:
+    """Flag high-velocity transactions."""
+    df["IS_HIGH_AMOUNT"] = (df["TRANSACTION_AMOUNT"] > 500).astype(int)
+    return df
+
+backfill_df = session.table("FRAUD_OFS_DEMO_DB.SOURCE_DATA.TRANSACTIONS")
+
+stream_fv = FeatureView(
+    name="TXN_STREAM_VELOCITY",
+    entities=[customer_entity],
+    timestamp_col="TRANSACTION_TS",
+    stream_config=StreamConfig(
+        stream_source=txn_stream,
+        transformation_fn=compute_velocity,
+        backfill_df=backfill_df,
+    ),
+    online_config=OnlineConfig(
+        enable=True,
+        target_lag="10s",
+        store_type=OnlineStoreType.POSTGRES,
+    ),
+    desc="Stream-ingested transaction velocity: per-event features with 2-3s freshness",
+)
+
+registered_stream_fv = fs.register_feature_view(stream_fv, "V1", overwrite=True)
+print(f"Registered: {registered_stream_fv.name}/{registered_stream_fv.version}")
+```
+
+<!-- ------------------------ -->
+## 5. Online Feature Retrieval
+
+### Read Features from the Online Store
+
+Retrieve feature values by entity key with low latency:
+
+```python
+fv = fs.get_feature_view("CUSTOMER_PROFILE_FEATURES", "V1")
 
 online_df = fs.read_feature_view(
     fv,
-    keys=[[141, 236, 8, 0]],  # [pu_location_id, do_location_id, pickup_hour, day_of_week]
+    keys=[["CUST_000001"], ["CUST_000042"]],
     store_type="online",
 )
 online_df.show()
 ```
 
+### Read Multiple Feature Views
+
+```python
+txn_fv = fs.get_feature_view("CUSTOMER_TXN_AGG", "V1")
+
+txn_online = fs.read_feature_view(
+    txn_fv,
+    keys=[["CUST_000001"]],
+    store_type="online",
+)
+txn_online.show()
+```
+
+### Latency Expectations
+
+The Postgres online store achieves:
+- **p50**: ~5-10ms (in-region)
+- **p95**: sub-15ms
+- **p99**: sub-20ms
+
+For benchmarking in your own environment, see the [Online Feature Store Benchmark Kit](https://github.com/Snowflake-Labs/snowflake-feature-store-online-benchmark-kit).
+
+<!-- ------------------------ -->
+## 6. Stream Ingestion
+
+### Ingest Events via Python SDK
+
+Use `fs.stream_ingest()` to push events in real time. Ingested events are available in the online store within 2-3 seconds.
+
+```python
+import time
+from datetime import datetime
+
+# Ingest a new transaction event
+fs.stream_ingest(
+    stream_source="TXN_EVENTS",
+    records=[
+        {
+            "CUSTOMER_ID": "CUST_000042",
+            "TRANSACTION_TS": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            "TRANSACTION_AMOUNT": 2500.00,
+            "MERCHANT_CATEGORY": "electronics",
+        }
+    ],
+)
+print("Event ingested. Waiting for online store to update...")
+time.sleep(3)
+
+# Verify the update
+stream_fv = fs.get_feature_view("TXN_STREAM_VELOCITY", "V1")
+result = fs.read_feature_view(
+    stream_fv,
+    keys=[["CUST_000042"]],
+    store_type="online",
+)
+result.show()
+```
+
+### Before/After Comparison
+
+```python
+# Read before ingest
+before = fs.read_feature_view(stream_fv, keys=[["CUST_000042"]], store_type="online")
+print("BEFORE:", before.to_pandas().to_string(index=False))
+
+# Ingest suspicious transaction
+fs.stream_ingest("TXN_EVENTS", records=[{
+    "CUSTOMER_ID": "CUST_000042",
+    "TRANSACTION_TS": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+    "TRANSACTION_AMOUNT": 5000.00,
+    "MERCHANT_CATEGORY": "crypto_exchange",
+}])
+time.sleep(3)
+
+# Read after ingest
+after = fs.read_feature_view(stream_fv, keys=[["CUST_000042"]], store_type="online")
+print("AFTER:", after.to_pandas().to_string(index=False))
+```
+
+<!-- ------------------------ -->
+## 7. REST API: Query and Ingest
+
+The online service exposes HTTP endpoints for feature retrieval and stream ingestion. These can be called from any client (Python, curl, application code).
+
+### Query Endpoint
+
+Retrieve features via the REST query API:
+
+```bash
+export SNOWFLAKE_PAT="<your_pat_token>"
+export QUERY_URL="<query_endpoint_url>"
+
+curl -s -X POST "$QUERY_URL/api/v1/query" \
+  -H "Authorization: Snowflake Token=\"$SNOWFLAKE_PAT\"" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "feature_view": "CUSTOMER_TXN_AGG",
+    "version": "V1",
+    "keys": [["CUST_000001"], ["CUST_000042"]]
+  }'
+```
+
+### Ingest Endpoint
+
+Push events via the REST ingest API:
+
+```bash
+curl -s -X POST "$INGEST_URL/api/v1/ingest" \
+  -H "Authorization: Snowflake Token=\"$SNOWFLAKE_PAT\"" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "stream_source": "TXN_EVENTS",
+    "records": [
+      {
+        "CUSTOMER_ID": "CUST_000042",
+        "TRANSACTION_TS": "2026-07-30 10:15:00",
+        "TRANSACTION_AMOUNT": 3200.00,
+        "MERCHANT_CATEGORY": "jewelry"
+      }
+    ]
+  }'
+```
+
+### Get Endpoint URLs
+
+In Python, retrieve the URLs from the online service status:
+
+```python
+from snowflake.ml.feature_store import online_service
+
+status = fs.get_online_service_status()
+query_url = online_service.endpoint_url(status, "query")
+ingest_url = online_service.endpoint_url(status, "ingest")
+
+print(f"Query: {query_url}")
+print(f"Ingest: {ingest_url}")
+```
+
+<!-- ------------------------ -->
+## 8. Model Registry Integration
+
+The Online Feature Store integrates with the Snowflake Model Registry. When deploying a model as a service, you can configure automatic feature retrieval so the inference endpoint only needs entity IDs.
+
 > NOTE:
-> The first sync from offline to Postgres may take 10–30 seconds after registration. If the result is empty, wait a moment and re-run the cell.
+> Model training is handled in the notebook. The notebook uses `fs.generate_training_set()` to create a point-in-time correct training dataset from the Feature Views above, then trains an XGBoost fraud classifier. See the notebook for full training details.
 
-<!-- ------------------------ -->
-## Train ML Model
+### Log Model to Registry
 
-Train an XGBoost regression model to predict taxi trip durations using features from the feature store.
-
-### Create Train/Test Split
-
-```python
-train_spine_df, test_spine_df = df.select(spine_cols).random_split([0.85, 0.15], seed=42)
-```
-
-### Generate Training Dataset
-
-Use the feature store to automatically join features:
-
-```python
-train_df = fs.generate_training_set(
-    spine_df=train_spine_df,
-    features=[registered_route_fv],
-    spine_timestamp_col="TPEP_PICKUP_DATETIME",
-    include_feature_view_timestamp_col=False
-)
-```
-
-### Train XGBoost Model
-
-```python
-from snowflake.ml.modeling.xgboost import XGBRegressor
-
-regressor = XGBRegressor(
-    input_cols=feature_columns,
-    label_cols=["ETA_MINUTES"],
-    output_cols=["predicted_eta"]
-)
-regressor.fit(train_df)
-```
-
-### Evaluate Model
-
-```python
-from sklearn.metrics import mean_squared_error, r2_score
-
-predictions = regressor.predict(test_df)
-predictions_pd = predictions.to_pandas()
-
-mse = mean_squared_error(predictions_pd["ETA_MINUTES"], predictions_pd["predicted_eta"])
-r2 = r2_score(predictions_pd["ETA_MINUTES"], predictions_pd["predicted_eta"])
-
-print(f"Test MSE: {mse:.2f}")
-print(f"Test R²: {r2:.2f}")
-```
-
-<!-- ------------------------ -->
-## Make Real-Time Predictions
-
-Use online features for low-latency, real-time predictions.
-
-### Define Prediction Function
-
-```python
-def predict_trip_duration(pu_location_id, do_location_id, pickup_hour, pickup_day_of_week):
-    fv = fs.get_feature_view("nyc_taxi_trip_fv", "v1")
-    
-    # Fetch latest features from Postgres online store
-    features_df = fs.read_feature_view(
-        fv,
-        keys=[[pu_location_id, do_location_id, pickup_hour, pickup_day_of_week]],
-        store_type="online",
-    )
-    
-    features_pd = features_df.to_pandas()
-    if features_pd.empty:
-        print("No online features found for given entity keys")
-        return None
-    
-    return regressor.predict(features_pd)
-```
-
-### Make a Prediction
-
-```python
-# Predict trip from location 141 to 236 at 8am on Sunday
-prediction = predict_trip_duration(141, 236, 8, 0)
-print(f"Predicted trip duration: {prediction['predicted_eta'][0]:.1f} minutes")
-```
-
-### Why Use Postgres Online Features?
-
-- **Ultra-low latency**: p50 10 ms, sub-15 ms p95 via the REST query API
-- **Always fresh**: Automatic background sync on `target_lag` schedule
-- **Scalable**: Managed Postgres serving layer on Snowflake infrastructure
-- **Training-serving consistency**: Same feature views used for both training and inference
-
-### Register Model (Optional)
-
-Register your trained model in Snowflake Model Registry for versioning and deployment.
-
-#### Log Model
+After training in the notebook, the model is registered:
 
 ```python
 from snowflake.ml.registry import Registry
 
 registry = Registry(session=session)
-model_name = "NYC_TAXI_ETA_XGB"
 
 mv = registry.log_model(
-    model=regressor,
-    model_name=model_name,
-    comment="Predict NYC taxi trip durations using Feature Store",
-    metrics={"test_mse": float(mse), "test_r2": float(r2)},
-    version_name="v1",
+    model=trained_model,
+    model_name="FRAUD_DETECTION_MODEL",
+    version_name="V1",
+    metrics={"auc": auc_score, "f1": f1_score},
 )
 ```
 
-#### View Registered Models
+### Deploy with Automatic Feature Retrieval
+
+Pass `feature_sources_per_function` to have the service automatically look up features from the online store at inference time. You only need to send the entity ID (`CUSTOMER_ID`) in the request.
 
 ```python
-registry.show_models()
-```
-
-The Model Registry provides:
-- Version control for models
-- Lineage tracking
-- Deployment management
-- Performance metrics storage
-
-### Deploy Model to SPCS (Optional)
-
-Deploy your model as a containerized service for scalable inference.
-
-#### Prerequisites
-
-Ensure the compute pool was created during setup:
-
-```sql
-SHOW COMPUTE POOLS LIKE 'trip_eta_prediction_pool';
-```
-
-#### Create Service
-
-When deploying a model that reads from the Postgres online store, pass `feature_sources_per_function` to automatically fetch feature values at inference time. This lets you send only entity IDs in the request and have the service retrieve the features automatically.
-
-```python
-latest_model = registry.get_model(model_name).version("v1")
-service_name = "NYC_TAXI_ETA_V1"
-
-latest_model.create_service(
-    service_name=service_name,
-    service_compute_pool="trip_eta_prediction_pool",
+mv.create_service(
+    service_name="FRAUD_SCORING_SVC",
+    service_compute_pool="ML_INFERENCE_POOL",
     ingress_enabled=True,
-    feature_sources_per_function={"predict": [registered_route_fv]},
+    feature_sources_per_function={
+        "predict": [registered_profile_fv, registered_txn_fv],
+    },
 )
 ```
 
-#### Make Predictions via Service
-
-```python
-spcs_prediction = latest_model.run(
-    features_pd, 
-    function_name='predict', 
-    service_name=service_name
-)
-print("Prediction from SPCS:", spcs_prediction)
+With this configuration, a prediction request only needs:
+```json
+{"CUSTOMER_ID": "CUST_000042"}
 ```
+
+The service fetches `CUSTOMER_PROFILE_FEATURES` and `CUSTOMER_TXN_AGG` from the online store automatically before invoking the model.
 
 <!-- ------------------------ -->
-## Clean Up Guide Resources
-
-When you're finished with the guide, you can remove all created resources to avoid incurring costs.
+## 9. Clean Up
 
 ### Drop the Online Service
 
-The Postgres online service runs continuously and incurs costs. Drop it from the notebook before running the teardown script:
+The Postgres online service runs continuously. Drop it from the notebook when done:
 
 ```python
 fs.drop_online_service()
@@ -683,72 +600,69 @@ fs.drop_online_service()
 
 ### Run the Teardown Script
 
-Download the teardown script to your local machine:
-
-1. Click this link: [teardown.sql](https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/intro-to-online-feature-store-with-postgres-in-snowflake/assets/teardown.sql)
-2. On the GitHub page, click the **Download raw file** button (download icon in the top right of the file preview)
-3. Save the `.sql` file to your computer
-
-Now run the teardown script in Snowflake:
-
 1. Open Snowflake and navigate to **Projects** > **Workspaces**
-2. Create a new SQL file
-3. Open the downloaded `teardown.sql` file and copy all its contents
-4. Paste the script into your Snowflake SQL file
-5. Run the entire script as **ACCOUNTADMIN**
+2. Create a new SQL file and paste the following:
 
-The teardown script will:
-- Stop all running services
-- Drop the compute pool
-- Drop the external access integration
-- Drop the database (including all tables, views, and dynamic tables)
-- Drop the warehouse
-- Revoke all account-level permissions
-- Drop the `FS_DEMO_ROLE`
+```sql
+USE ROLE ACCOUNTADMIN;
 
-> NOTE:
-> This will permanently delete all data and resources created during the guide.
+SET USERNAME = (SELECT CURRENT_USER());
+
+-- Drop online service resources (handled by fs.drop_online_service() above)
+-- Drop database (drops all schemas, tables, feature views, dynamic tables)
+USE ROLE FS_DEMO_ROLE;
+DROP DATABASE IF EXISTS FRAUD_OFS_DEMO_DB;
+DROP WAREHOUSE IF EXISTS FS_DEMO_WH;
+
+-- Drop integration and role
+USE ROLE ACCOUNTADMIN;
+DROP INTEGRATION IF EXISTS FRAUD_OFS_DEMO_ALLOW_ALL_INTEGRATION;
+
+REVOKE CREATE DATABASE ON ACCOUNT FROM ROLE FS_DEMO_ROLE;
+REVOKE CREATE WAREHOUSE ON ACCOUNT FROM ROLE FS_DEMO_ROLE;
+REVOKE CREATE COMPUTE POOL ON ACCOUNT FROM ROLE FS_DEMO_ROLE;
+REVOKE BIND SERVICE ENDPOINT ON ACCOUNT FROM ROLE FS_DEMO_ROLE;
+REVOKE EXECUTE TASK ON ACCOUNT FROM ROLE FS_DEMO_ROLE;
+REVOKE EXECUTE MANAGED TASK ON ACCOUNT FROM ROLE FS_DEMO_ROLE;
+
+REVOKE ROLE FS_DEMO_ROLE FROM USER identifier($USERNAME);
+DROP ROLE IF EXISTS FS_DEMO_ROLE;
+
+SELECT 'Teardown complete.' AS STATUS;
+```
 
 <!-- ------------------------ -->
-## Conclusion and Resources
+## 10. Conclusion and Resources
 
-Congratulations! You've successfully built an end-to-end ML workflow using the Snowflake Online Feature Store with a Postgres-backed serving layer.
+Congratulations! You've built a real-time fraud detection system using the Snowflake Online Feature Store with Postgres.
 
 ### What You Learned
-- How to set up and configure the Snowflake Feature Store
-- How to register entities and create feature views
-- How to provision the Postgres online service with `create_online_service()`
-- How to enable Postgres online serving with `OnlineStoreType.POSTGRES`
-- How to authenticate with a PAT for REST-based online feature reads
-- How to make low-latency predictions with online features (p50 10 ms latency)
-- (Optional) How to deploy models to Snowpark Container Services with automatic online feature retrieval
+- How to create a Postgres-backed online service with `create_online_service()`
+- How to register batch, aggregation, and stream Feature Views with `OnlineStoreType.POSTGRES`
+- How to retrieve online features with low latency
+- How to ingest streaming events with 2-3 second end-to-end freshness
+- How to use the REST API endpoints for feature query and stream ingest
+- How to integrate with Model Registry for automatic feature retrieval at inference time
 
 ### Key Takeaways
-
-- **Postgres Online Store** achieves p50 10 ms, sub-15 ms p95 latency via the REST query API
-- **`create_online_service()`** provisions a managed Postgres serving layer — run this once per feature store before registering feature views
-- **`OnlineStoreType.POSTGRES`** in `OnlineConfig` opts your feature view into the Postgres-backed store
-- **PAT authentication** is required for all online reads through the Python SDK and REST API
-- **Automatic sync** keeps online features in sync with the offline Dynamic Table on `target_lag` schedule — manual online refresh is not needed
-- **`feature_sources_per_function`** in `create_service()` lets SPCS-deployed models fetch features automatically at inference time
+- **Postgres Online Store** delivers p50 ~5-10ms in-region latency via the REST query API
+- **Time-windowed aggregations** (`Feature.sum/count/avg`) compute rolling metrics automatically
+- **Stream Feature Views** provide 2-3 second freshness via REST ingest
+- **REST API** enables language-agnostic integration (curl, Python, any HTTP client)
+- **`feature_sources_per_function`** eliminates the need for clients to fetch features manually
 
 ### Related Resources
-
-- [GitHub Repository - Complete Code and Notebooks](https://github.com/Snowflake-Labs/sfguide-intro-to-online-feature-store-in-snowflake)
-- [Online Feature Store Quickstart Notebook](https://github.com/snowflake-labs/sf-samples/blob/main/samples/ml/feature_store/online_feature_store_postgres_quickstart.ipynb)
-- [Snowflake Feature Store Documentation](https://docs.snowflake.com/en/developer-guide/snowflake-ml/feature-store/overview)
 - [Serving Online Features (Postgres)](https://docs.snowflake.com/en/developer-guide/snowflake-ml/feature-store/online-feature-store)
+- [Online Feature Store Quickstart Notebook](assets/online_feature_store_fraud_detection.ipynb)
+- [Snowflake Feature Store Documentation](https://docs.snowflake.com/en/developer-guide/snowflake-ml/feature-store/overview)
 - [Ingest API Reference](https://docs.snowflake.com/developer-guide/snowflake-ml/feature-store/online-feature-store-ingest-api-reference)
 - [Query API Reference](https://docs.snowflake.com/developer-guide/snowflake-ml/feature-store/online-feature-store-query-api-reference)
 - [Online Feature Store Benchmark Kit](https://github.com/Snowflake-Labs/snowflake-feature-store-online-benchmark-kit)
 - [Real-time Inference with Online Feature Store](https://docs.snowflake.com/developer-guide/snowflake-ml/inference/real-time-inference-rest-api#label-real-time-inference-online-feature-store-integration)
-- [Snowflake ML Docs](https://docs.snowflake.com/en/developer-guide/snowpark-ml/index)
+- [Advanced Feature Engineering (Aggregations)](https://docs.snowflake.com/developer-guide/snowflake-ml/feature-store/advanced-feature-engineering)
 - [Programmatic Access Tokens](https://docs.snowflake.com/user-guide/programmatic-access-tokens)
 
 ### Next Steps
 
 - Try the feature store with your own datasets
-- Explore stream feature views for sub-second freshness
-- Use real-time feature views for request-time feature computation
 - Integrate online features into production applications via the REST query API
-- Experiment with feature groups to bundle multiple feature views for a single model
