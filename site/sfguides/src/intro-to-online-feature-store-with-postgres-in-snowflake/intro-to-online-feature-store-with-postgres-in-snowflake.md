@@ -52,115 +52,7 @@ You'll learn how to register batch, aggregation, and stream Feature Views backed
 
 This section covers environment setup, creating the online service, and loading synthetic fraud data.
 
-### Run the Setup Script
-
-1. Open Snowflake and navigate to <a href="https://app.snowflake.com/_deeplink/#/workspaces?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_content=intro-to-online-feature-store-with-postgres-in-snowflake&utm_cta=developer-guides-deeplink" class="_deeplink">**Projects** > **Workspaces**</a>
-2. Create a new SQL file
-3. Copy and paste the following setup script
-4. Run the entire script as **ACCOUNTADMIN**
-
-```sql
--- ============================================================================
--- Snowflake Setup Script for Online Feature Store (Fraud Detection) Demo
--- ============================================================================
-
-USE ROLE ACCOUNTADMIN;
-
-SET USERNAME = (SELECT CURRENT_USER());
-SELECT $USERNAME;
-
--- Set query tag for tracking
-ALTER SESSION SET QUERY_TAG = '{"origin":"sf_sit-is", "name":"sfguide_intro_to_online_feature_with_postgres_store", "version":{"major":1, "minor":0}, "attributes":{"is_quickstart":1, "source":"sql"}}';
-
--- ============================================================================
--- SECTION 1: CREATE ROLE AND GRANT ACCOUNT-LEVEL PERMISSIONS
--- ============================================================================
-
--- Create role for Feature Store operations and grant to current user
-CREATE OR REPLACE ROLE FS_DEMO_ROLE;
-GRANT ROLE FS_DEMO_ROLE TO USER identifier($USERNAME);
-
--- Grant account-level permissions
-GRANT CREATE DATABASE ON ACCOUNT TO ROLE FS_DEMO_ROLE;
-GRANT CREATE WAREHOUSE ON ACCOUNT TO ROLE FS_DEMO_ROLE;
-GRANT CREATE COMPUTE POOL ON ACCOUNT TO ROLE FS_DEMO_ROLE;
-GRANT BIND SERVICE ENDPOINT ON ACCOUNT TO ROLE FS_DEMO_ROLE;
-GRANT IMPORT SHARE ON ACCOUNT TO ROLE FS_DEMO_ROLE;
-GRANT EXECUTE TASK ON ACCOUNT TO ROLE FS_DEMO_ROLE;
-GRANT EXECUTE MANAGED TASK ON ACCOUNT TO ROLE FS_DEMO_ROLE;
-
--- ============================================================================
--- SECTION 2: CREATE RESOURCES
--- ============================================================================
-
-USE ROLE FS_DEMO_ROLE;
-
--- Create warehouse
-CREATE OR REPLACE WAREHOUSE FS_DEMO_WH
-    WAREHOUSE_SIZE = 'XSMALL'
-    AUTO_SUSPEND = 300
-    AUTO_RESUME = TRUE
-    INITIALLY_SUSPENDED = TRUE
-    COMMENT = 'Warehouse for Feature Store Quick Start';
-
--- Create databse and schemaes
-CREATE OR REPLACE DATABASE FRAUD_OFS_DEMO_DB;
-CREATE OR REPLACE SCHEMA FRAUD_OFS_DEMO_DB.SOURCE_DATA;
-CREATE OR REPLACE SCHEMA FRAUD_OFS_DEMO_DB.FEATURE_STORE;
-CREATE OR REPLACE SCHEMA FRAUD_OFS_DEMO_DB.ML_PIPELINE;
-
-USE WAREHOUSE FS_DEMO_WH;
-USE DATABASE FRAUD_OFS_DEMO_DB;
-
-GRANT ALL PRIVILEGES ON DATABASE FRAUD_OFS_DEMO_DB TO ROLE FS_DEMO_ROLE;
-GRANT ALL PRIVILEGES ON ALL SCHEMAS IN DATABASE FRAUD_OFS_DEMO_DB TO ROLE FS_DEMO_ROLE;
-GRANT ALL PRIVILEGES ON WAREHOUSE FS_DEMO_WH TO ROLE FS_DEMO_ROLE;
-
--- Future privileges for dynamically created objects
-GRANT ALL PRIVILEGES ON FUTURE TABLES IN DATABASE FRAUD_OFS_DEMO_DB TO ROLE FS_DEMO_ROLE;
-GRANT ALL PRIVILEGES ON FUTURE VIEWS IN DATABASE FRAUD_OFS_DEMO_DB TO ROLE FS_DEMO_ROLE;
-GRANT ALL PRIVILEGES ON FUTURE DYNAMIC TABLES IN DATABASE FRAUD_OFS_DEMO_DB TO ROLE FS_DEMO_ROLE;
-
--- ============================================================================
--- SECTION 3: NETWORK RULES AND EXTERNAL ACCESS
--- ============================================================================
-
-CREATE OR REPLACE NETWORK RULE FRAUD_OFS_DEMO_ALLOW_ALL_RULE
-    MODE = EGRESS
-    TYPE = HOST_PORT
-    VALUE_LIST = ('0.0.0.0:443', '0.0.0.0:80');
-
--- Switch back to ACCOUNTADMIN to create integration
-USE ROLE ACCOUNTADMIN;
-
-CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION FRAUD_OFS_DEMO_ALLOW_ALL_INTEGRATION
-    ALLOWED_NETWORK_RULES = (FRAUD_OFS_DEMO_DB.SOURCE_DATA.FRAUD_OFS_DEMO_ALLOW_ALL_RULE)
-    ENABLED = TRUE;
-
--- Grant usage on the external access integration
-GRANT USAGE ON INTEGRATION FRAUD_OFS_DEMO_ALLOW_ALL_INTEGRATION TO ROLE FS_DEMO_ROLE;
-
--- Switch back to FS_DEMO_ROLE
-USE ROLE FS_DEMO_ROLE;
-
--- ============================================================================
--- SETUP COMPLETE
--- ============================================================================
-```
-
-This creates:
-- A dedicated role: `FS_DEMO_ROLE`
-- A warehouse: `FS_DEMO_WH`
-- A database: `FRAUD_OFS_DEMO_DB` with schemas `SOURCE_DATA`, `FEATURE_STORE`, `ML_PIPELINE`
-- Network rule and external access integration for notebooks
-
-### Upload and Open Notebook
-
-Now that your environment is set up, import the guide notebook to Snowflake.
-
-### Run the Notebook
-
-Download the notebook file to your local machine:
+### Download and Import the Notebook
 
 1. Click this link: [online_feature_store_fraud_detection.ipynb](assets/online_feature_store_fraud_detection.ipynb)
 2. On the GitHub page, click the **Download raw file** button (download icon in the top right of the file preview)
@@ -168,25 +60,22 @@ Download the notebook file to your local machine:
 
 Now import the notebook into Snowflake:
 
-1. Change role to `FS_DEMO_ROLE`
-2. Navigate to **Projects** > **Notebooks** in Snowsight
-3. Click **Import .ipynb** from the **+ Notebook** dropdown
-4. Select the downloaded `online_feature_store_postgres_quickstart.ipynb` file from your computer
-5. Create a new notebook with the following settings:
-   - **Notebook Location**: `FRAUD_OFS_DEMO_DB`, `FEATURE_STORE`
-   - **Run On**: Warehouse
-   - **Warehouse**: `FS_DEMO_WH`
+1. Navigate to **Projects** > **Workspaces** in Snowsight
+2. Click **+ Add New** and choose **Upload files** button
+3. Select the downloaded `online_feature_store_fraud_detection.ipynb` file from your computer
 
-The notebook will open and be ready to run.
 
-### Add External Access to Notebook
+### Run the Setup Cell
 
-1. Open the notebook in Snowsight
-2. Click the **three dots menu** in the top right
-3. Select **Notebook settings**
-4. Under **External Access Integrations**, click **+ External Access Integration**
-5. Select `FRAUD_OFS_DEMO_ALLOW_ALL_INTEGRATION` from the dropdown
-6. Click **Save**
+The notebook includes a **Section 0: Setup** cell that creates all required resources:
+- A dedicated role: `FS_DEMO_ROLE`
+- A warehouse: `FS_DEMO_WH`
+- A database: `FRAUD_OFS_DEMO_DB` with schemas `SOURCE_DATA`, `FEATURE_STORE`, `ML_PIPELINE`
+- Network rule and external access integration for the notebook
+
+Run this cell as `ACCOUNTADMIN`. You only need to run it once.
+
+
 
 ### Set Up Authentication (PAT)
 
@@ -197,12 +86,14 @@ import os
 os.environ["SNOWFLAKE_PAT"] = "<your_pat_token>"
 ```
 
-To create a PAT in Snowsight: navigate to your profile menu > **My profile** > **Programmatic access tokens** > **Generate new token**.
+To create a PAT in Snowsight: navigate to your profile menu > **My profile** > **Settings** > **Authentication** > **Programmatic access tokens** > **Generate new token**.
 
 <!-- ------------------------ -->
 ## 3. Create Online Service and Entity
 
 ### Initialize Feature Store
+
+Initialize the Feature Store client, pointing it at the `FEATURE_STORE` schema. This creates the internal metadata tables if they don't already exist.
 
 ```python
 from snowflake.ml.feature_store import FeatureStore, CreationMode
@@ -245,6 +136,8 @@ print(f"Ingest URL: {ingest_url}")
 ```
 
 ### Register Entity
+
+An Entity defines the primary key used to join Feature Views together. Here we register a `CUSTOMER` entity with `CUSTOMER_ID` as the join key — all Feature Views in this guide will be keyed by customer.
 
 ```python
 from snowflake.ml.feature_store import Entity
@@ -352,6 +245,8 @@ fs.register_stream_source(txn_stream)
 ```
 
 #### Define Transformation and Register
+
+Define a Python transformation function that runs on each ingested event. The `backfill_df` provides historical data so the online store is pre-populated before any new events arrive.
 
 ```python
 import pandas as pd
@@ -461,6 +356,8 @@ result.show()
 ```
 
 ### Before/After Comparison
+
+This demonstrates the end-to-end freshness of stream ingestion. We read the feature value before ingesting a new event, wait 3 seconds, then read again. You should see `IS_HIGH_AMOUNT` flip to `1` after the high-value transaction is ingested — confirming that the online store updates within seconds.
 
 ```python
 # Read before ingest
@@ -613,6 +510,7 @@ SET USERNAME = (SELECT CURRENT_USER());
 USE ROLE FS_DEMO_ROLE;
 DROP DATABASE IF EXISTS FRAUD_OFS_DEMO_DB;
 DROP WAREHOUSE IF EXISTS FS_DEMO_WH;
+DROP COMPUTE POOL IF EXISTS FS_DEMO_INFERENCE_POOL;
 
 -- Drop integration and role
 USE ROLE ACCOUNTADMIN;
@@ -622,6 +520,7 @@ REVOKE CREATE DATABASE ON ACCOUNT FROM ROLE FS_DEMO_ROLE;
 REVOKE CREATE WAREHOUSE ON ACCOUNT FROM ROLE FS_DEMO_ROLE;
 REVOKE CREATE COMPUTE POOL ON ACCOUNT FROM ROLE FS_DEMO_ROLE;
 REVOKE BIND SERVICE ENDPOINT ON ACCOUNT FROM ROLE FS_DEMO_ROLE;
+REVOKE IMPORT SHARE ON ACCOUNT FROM ROLE FS_DEMO_ROLE;
 REVOKE EXECUTE TASK ON ACCOUNT FROM ROLE FS_DEMO_ROLE;
 REVOKE EXECUTE MANAGED TASK ON ACCOUNT FROM ROLE FS_DEMO_ROLE;
 
