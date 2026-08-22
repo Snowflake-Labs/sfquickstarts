@@ -223,8 +223,9 @@ SP_UPDATE_AI_BUDGET       = "SP_CC_UPDATE_AI_BUDGET"
 SP_DELETE_AI_BUDGET       = "SP_CC_DELETE_AI_BUDGET"
 SP_REFRESH_BUDGET_USAGE   = "SP_CC_REFRESH_BUDGET_USAGE"
 SP_MANAGE_QUOTA           = "SP_CC_MANAGE_QUOTA"
-# Supported AI domains for budget scoping
-AI_BUDGET_DOMAINS = ["CORTEX CODE", "AI FUNCTION", "CORTEX AGENT", "SNOWFLAKE INTELLIGENCE"]
+# Supported domains for per-user quota scoping (GA Aug 2026)
+# WAREHOUSE tracks compute credits; AI domains track AI credits (cannot mix in same quota)
+AI_BUDGET_DOMAINS = ["CORTEX CODE", "AI FUNCTION", "CORTEX AGENT", "SNOWFLAKE INTELLIGENCE", "WAREHOUSE"]
 
 DATE_PRESETS = {
     "1 Day": 1,

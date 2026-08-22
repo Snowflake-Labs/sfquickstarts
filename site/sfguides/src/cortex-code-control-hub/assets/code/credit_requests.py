@@ -20,6 +20,7 @@ from config import (
     SURFACES,
     TABLE_CREDIT_CONFIG,
     TABLE_CREDIT_REQUESTS,
+    TABLE_MODEL_CONFIG,
     TABLE_MODEL_ROLE_MAPPING,
     escape_sql_literal,
     fq_table,
@@ -370,7 +371,24 @@ def _approve_credit_request(session, row):
         val, _ = get_user_param(session, requester, SURFACE_PARAMS[surface])
     except Exception:
         val = None
-    current = float(val) if val and val != "-1" else 0
+    if val == "-1":
+        st.info(f"ℹ️ {requester} already has unlimited {surface} access — approval recorded but no limit change needed.")
+        tbl = fq_table(session, TABLE_CREDIT_REQUESTS)
+        safe_admin = escape_sql_literal(admin)
+        try:
+            session.sql(f"""
+                UPDATE {tbl} SET STATUS = 'APPROVED', APPROVED_BY = '{safe_admin}',
+                    APPROVED_AT = CURRENT_TIMESTAMP(), AMOUNT_APPROVED = {amount}
+                WHERE REQUEST_ID = {int(req_id)}
+            """).collect()
+        except Exception:
+            pass
+        log_activity(session, "APPROVE_REQUEST", target_user=requester,
+                     details={"request_id": int(req_id), "surface": surface, "amount": amount, "note": "already_unlimited"},
+                     old_value="-1", new_value="-1")
+        st.success(f"✓ Approved (user already unlimited)")
+        return
+    current = float(val) if val else 0
     new_limit = current + amount
     call_sp(session, SP_SET_USER_CREDIT_LIMIT, requester, surface, str(int(new_limit)))
 
@@ -407,9 +425,30 @@ def _approve_model_request(session, req_id, requester, surface):
     except Exception:
         pass
 
+    # Look up which tier the model belongs to so we can give a specific instruction
+    tier_info = ""
+    try:
+        tbl_mc  = fq_table(session, TABLE_MODEL_CONFIG)
+        safe_mn = escape_sql_literal(model_name)
+        rows = session.sql(f"""
+            SELECT TIER FROM {tbl_mc}
+            WHERE UPPER(MODEL_NAME) = UPPER('{safe_mn}') LIMIT 1
+        """).collect()
+        if rows:
+            tier_info = f" (tier: **{rows[0][0]}**)"
+    except Exception:
+        pass
+
+    st.warning(
+        f"✅ DB approved. Model access in CoCo Hub is **role-based**, not user-based — "
+        f"granting `{model_name}`{tier_info} to a single user isn't possible. "
+        f"**To complete this approval:** go to **Model Access** → find the role that "
+        f"`{requester}` belongs to → add `{model_name}` to that role's allowed models → "
+        f"click **Enforce to Role**."
+    )
+
     log_activity(session, "APPROVE_MODEL_REQUEST", target_user=requester,
-                 details={"model": model_name, "approved_by": admin})
-    st.success(f"✓ Approved model access to {model_name} for {requester}")
+                 details={"model": model_name, "approved_by": admin, "tier": tier_info.strip()})
 
 
 def _reject_request(session, req_id):
@@ -451,7 +490,7 @@ def _check_request_controls(session, username):
                    COALESCE(SUM(AMOUNT_REQUESTED), 0) AS TODAY_CREDITS
             FROM {tbl}
             WHERE REQUESTER = '{safe_user}'
-              AND DATE(REQUEST_TIMESTAMP) = CURRENT_DATE()
+              AND CONVERT_TIMEZONE('UTC', REQUEST_TIMESTAMP)::DATE = CURRENT_DATE()
               AND SURFACE NOT LIKE 'MODEL:%'
         """).to_pandas()
 
