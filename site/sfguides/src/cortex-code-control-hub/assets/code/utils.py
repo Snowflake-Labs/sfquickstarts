@@ -55,15 +55,28 @@ def list_users(_session) -> pd.DataFrame:
 
 @st.cache_data(ttl=USER_LIST_CACHE_TTL)
 def list_roles(_session) -> List[str]:
+    # Primary: ACCOUNT_USAGE.ROLES — sees ALL roles regardless of session role
+    try:
+        df = _session.sql("""
+            SELECT NAME FROM SNOWFLAKE.ACCOUNT_USAGE.ROLES
+            WHERE DELETED_ON IS NULL
+            ORDER BY NAME
+        """).to_pandas()
+        if not df.empty:
+            df.columns = [c.strip('"').upper() for c in df.columns]
+            return df["NAME"].dropna().tolist()
+    except Exception:
+        pass
+    # Fallback: SHOW ROLES — limited to session role's visible roles
     try:
         df = _session.sql("SHOW ROLES").to_pandas()
         if not df.empty:
             df.columns = [c.strip('"').upper() for c in df.columns]
             col = "NAME" if "NAME" in df.columns else df.columns[1]
             return sorted(df[col].dropna().tolist())
-        return []
     except Exception:
-        return []
+        pass
+    return []
 
 
 _ROLE_UUID   = re.compile(r"^[0-9a-fA-F]{8}-", re.IGNORECASE)

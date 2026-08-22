@@ -21,19 +21,25 @@ def render(session):
                                 index=1, key="audit_period",
                                 help="Filter audit records to this time window.")
     with col_action:
+        # Load distinct action types dynamically so new events are always filterable
+        try:
+            tbl_al = fq_table(session, "CC_AUDIT_LOG")
+            _type_rows = session.sql(f"SELECT DISTINCT ACTION_TYPE FROM {tbl_al} WHERE ACTION_TYPE IS NOT NULL ORDER BY 1").collect()
+            _type_opts = ["All"] + [r[0] for r in _type_rows]
+        except Exception:
+            _type_opts = ["All", "GRANT_ACCESS", "REVOKE_ACCESS", "SET_ACCOUNT_LIMIT",
+                         "SET_COHORT_LIMIT", "SET_USER_OVERRIDE", "REMOVE_USER_OVERRIDE",
+                         "APPROVE_REQUEST", "REJECT_REQUEST", "REBALANCE_REDUCE",
+                         "REBALANCE_INCREASE", "UPDATE_SETTINGS"]
         action_filter = st.selectbox(
-            "Action Type",
-            ["All", "GRANT_ACCESS", "REVOKE_ACCESS", "SET_ACCOUNT_LIMIT",
-             "SET_COHORT_LIMIT", "SET_USER_OVERRIDE", "REMOVE_USER_OVERRIDE",
-             "APPROVE_REQUEST", "REJECT_REQUEST", "REBALANCE_REDUCE",
-             "REBALANCE_INCREASE", "UPDATE_SETTINGS"],
+            "Action Type", _type_opts,
             key="audit_action",
             help="Filter to a specific operation. 'All' shows every action taken by any admin."
         )
     with col_limit:
-        row_limit = st.number_input("Max rows", min_value=10, max_value=500,
-                                    value=AUDIT_PREVIEW_LIMIT, step=10, key="audit_limit",
-                                    help="Maximum records to display. Increase for deeper history searches (up to 500).")
+        row_limit = st.number_input("Max rows", min_value=10, max_value=5000,
+                                    value=AUDIT_PREVIEW_LIMIT, step=50, key="audit_limit",
+                                    help="Maximum records to display. Increase for deeper history searches (up to 5,000).")
 
     days = DATE_PRESETS[period_label]
     action = None if action_filter == "All" else action_filter

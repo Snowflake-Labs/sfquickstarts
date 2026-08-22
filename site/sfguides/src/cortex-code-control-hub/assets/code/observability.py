@@ -56,6 +56,14 @@ def _fmt_tokens(n: int) -> str:
     return f"{n:,}"
 
 
+def _fmt_ts(ts) -> str:
+    """Safely format a timestamp — handles out-of-range pandas Timestamps."""
+    try:
+        return ts.strftime('%Y-%m-%d %H:%M')
+    except Exception:
+        return str(ts)[:16]
+
+
 def _sec(title):
     """Section header — consistent muted slate across all pages."""
     st.markdown(
@@ -194,6 +202,17 @@ def _load_wow(_session):
 
 
 @st.cache_data(ttl=300, show_spinner=False)
+def _load_ai_settings(_session):
+    """Return (is_enabled: bool, raw_value: str) for AI_SETTINGS account parameter."""
+    try:
+        rows = _session.sql("SHOW PARAMETERS LIKE 'AI_SETTINGS' IN ACCOUNT").collect()
+        val  = str(rows[0]["value"]) if rows and rows[0]["value"] else ""
+        return "enabled: true" in val.lower(), val
+    except Exception:
+        return False, ""
+
+
+@st.cache_data(ttl=300, show_spinner=False)
 def _load_cortex_params(_session):
     try:
         rows = _session.sql("SHOW PARAMETERS LIKE 'CORTEX%' IN ACCOUNT").collect()
@@ -225,7 +244,8 @@ def _load_cohort_summary(_session, days: int):
                 COUNT(DISTINCT uds.USAGE_DATE)              AS ACTIVE_DAYS,
                 MAX(uds.USAGE_DATE)                         AS LAST_ACTIVE,
                 MAX(cc.CLI_DAILY_LIMIT)                     AS CLI_LIMIT,
-                MAX(cc.SNOWSIGHT_DAILY_LIMIT)               AS SS_LIMIT
+                MAX(cc.SNOWSIGHT_DAILY_LIMIT)               AS SS_LIMIT,
+                MAX(cc.DESKTOP_DAILY_LIMIT)                 AS DT_LIMIT
             FROM {tbl_u} uds
             LEFT JOIN {tbl_c} ucr ON ucr.USER_NAME = uds.USER_NAME
             LEFT JOIN {tbl_cfg} cc
@@ -607,17 +627,17 @@ def render(session):
         section = st.radio("", ["Account Overview","Cohort / Team","User Search","Prompt Intelligence"],
                            horizontal=True, key="obs_section", label_visibility="collapsed",
                            help="Account Overview: DAU, WoW, enablement. Cohort/Team: per-cohort breakdown. User Search: drill into a specific user. Prompt Intelligence: raw span data.")
+    st.caption(
+        "Account Overview / Cohort / User tabs: **CC_USAGE_DAILY_SUMMARY** — refreshes every 30 min. "
+        "Prompt Intelligence tab: **CC_PROMPT_EVENTS** — populated nightly by SP_CC_CLASSIFY_PROMPTS. "
+        "Numbers between tabs will differ for the same period."
+    )
 
     active_days = st.session_state["obs_days"]
     st.divider()
 
     # ── Cortex AI Guardrails headline ─────────────────────────────────────────
-    try:
-        _gr_rows = session.sql("SHOW PARAMETERS LIKE 'AI_SETTINGS' IN ACCOUNT").collect()
-        _gr_val  = str(_gr_rows[0]["value"]) if _gr_rows and _gr_rows[0]["value"] else ""
-        _gr_on   = "enabled: true" in _gr_val.lower()
-    except Exception:
-        _gr_on, _gr_val = False, ""
+    _gr_on, _gr_val = _load_ai_settings(session)
 
     if _gr_on:
         _gr_chip = _chip("🛡️ Cortex AI Guardrails — Enabled", "ok")
@@ -931,7 +951,7 @@ SHOW PARAMETERS LIKE 'AI_SETTINGS' IN ACCOUNT;""", language="sql")
                             st.caption(f"{len(pdf)} prompts")
                             for _, row in pdf.head(25).iterrows():
                                 icon = "✓" if row["STATUS"] == "SUCCESS" else "✗"
-                                with st.expander(f"{icon} {row['TIMESTAMP'].strftime('%Y-%m-%d %H:%M')} · {row['MODEL']} · {row.get('ENTRYPOINT') or '—'} · {row['LATENCY_S']}s"):
+                                with st.expander(f"{icon} {_fmt_ts(row['TIMESTAMP'])} · {row['MODEL']} · {row.get('ENTRYPOINT') or '—'} · {row['LATENCY_S']}s"):
                                     st.markdown(f"**Prompt:** {row['PROMPT'] or '_Not captured_'}")
                                     c1, c2 = st.columns(2)
                                     c1.metric("Latency", f"{row['LATENCY_S']}s")
@@ -1001,13 +1021,17 @@ SHOW PARAMETERS LIKE 'AI_SETTINGS' IN ACCOUNT;""", language="sql")
 
         k1, k2, k3, k4 = st.columns(4)
         k1.metric("Total Prompts",  f"{kpi['total']:,}",
-                  help="Total CodingAgent.Step-0 spans in the selected period from CC_PROMPT_EVENTS.")
+                  help="CodingAgent.Step-0 spans from CC_PROMPT_EVENTS (observability). "
+                       "Lower than 'Total Requests' on Usage Trends, which counts all billing events including inline completions.")
         k2.metric("Unique Users",   f"{kpi['users']:,}",
-                  help="Distinct users who sent at least one prompt in this period.")
+                  help="Distinct users with at least one observed prompt. May be lower than billing user count "
+                       "because not all request types emit observability events.")
         k3.metric("Avg Latency",    f"{kpi['avg_lat']:.1f}s",
                   help="Mean time from prompt submission to model response, in seconds.")
         k4.metric("Success Rate",   f"{kpi['success_rate']:.2f}%",
                   help="Percentage of spans that completed with STATUS = SUCCESS.")
+        st.caption("⚠️ Prompts and users here come from **CC_PROMPT_EVENTS** (observability), not billing. "
+                   "For billing-based totals and credits, see **Usage Trends** or **Cost Attribution**.")
 
         st.divider()
 
@@ -1099,7 +1123,7 @@ SHOW PARAMETERS LIKE 'AI_SETTINGS' IN ACCOUNT;""", language="sql")
             for _, row in disp.head(50).iterrows():
                 icon = "✓" if row["STATUS"] == "SUCCESS" else "✗"
                 pm_flag = " 🔒" if row.get("PRIVATE_MODE") else ""
-                with st.expander(f"{icon} {row['TIMESTAMP'].strftime('%Y-%m-%d %H:%M')} · {row['USER_NAME']} · {row['MODEL']} · {row.get('ENTRYPOINT') or '—'} · {row['LATENCY_S']}s{pm_flag}"):
+                with st.expander(f"{icon} {_fmt_ts(row['TIMESTAMP'])} · {row['USER_NAME']} · {row['MODEL']} · {row.get('ENTRYPOINT') or '—'} · {row['LATENCY_S']}s{pm_flag}"):
                     st.markdown("**Prompt:**")
                     st.markdown(row["PROMPT"] or "_Not captured_")
                     if show_response:
@@ -1135,8 +1159,15 @@ SHOW PARAMETERS LIKE 'AI_SETTINGS' IN ACCOUNT;""", language="sql")
                             use_container_width=True, hide_index=True)
 
         with t_sessions:
-            st.caption("Conversation threads grouped by SESSION_ID. Depth ≥ 5 may indicate extended debugging sessions or automation. Sessions with no SESSION_ID appear individually.")
-            _sec("Conversation Sessions")
+            st.caption(
+                "SESSION_ID is the **real terminal session ID** from `CodingAgentRun.session_id` "
+                "(format: `USER:ACCOUNT:CONNECTION_ID`). Multiple messages in the same Cortex Code "
+                "CLI session share the same SESSION_ID. Falls back to `trace_id` (per-message) for "
+                "requests without a `CodingAgentRun` span. "
+                "PROMPT_COUNT = total LLM requests within that session. "
+                "Requires Phase C re-run + Phase D2 re-backfill to populate real session IDs on historical data."
+            )
+            _sec("Request Sessions")
             sdf = _load_sessions(session, active_days)
             if sdf.empty:
                 st.info("No session data.")
@@ -1156,21 +1187,19 @@ SHOW PARAMETERS LIKE 'AI_SETTINGS' IN ACCOUNT;""", language="sql")
                 known  = {"CLI", "SNOWSIGHT", "DESKTOP", ""}
                 ext_s  = int(ep_counts[~ep_counts.index.isin(known)].sum()) if not ep_counts.empty else 0
 
-                sd1, sd2, sd3 = st.columns(3)
-                sd1.metric("Sessions (last 100)", f"{len(sdf):,}",
-                           help="Most recent 100 distinct conversation sessions.")
-                sd2.metric("Avg Depth", f"{avg_depth:.1f} prompts/session",
-                           help="Average number of prompts per session.")
-                sd3.metric("Deep Sessions (≥5)", f"{int(deep):,}",
-                           help="Sessions with 5 or more prompts.")
+                sd1, sd2 = st.columns(2)
+                sd1.metric("Requests (last 100)", f"{len(sdf):,}",
+                           help="Most recent 100 distinct requests (trace_ids).")
+                sd2.metric("Total Tokens", f"{int(sdf['TOKENS'].sum()):,}" if "TOKENS" in sdf.columns else "N/A",
+                           help="Sum of all tokens across these 100 requests.")
 
                 # Surface split row — 5 buckets to handle all surfaces
                 sc1, sc2, sc3, sc4, sc5 = st.columns(5)
-                sc1.metric("CLI Sessions",         f"{cli_s:,}",  help="Sessions via Cortex Code CLI / VS Code extension.")
-                sc2.metric("Snowsight Sessions",   f"{ss_s:,}",   help="Sessions via Snowsight browser IDE.")
-                sc3.metric("Desktop Sessions",     f"{dt_s:,}",   help="Sessions via Snowflake Desktop app.")
-                sc4.metric("SDK / Extensions",     f"{ext_s:,}",  help="Sessions from other surfaces (e.g. SDK-TYPESCRIPT, sdk-python). Check Entrypoints tab for full breakdown.")
-                sc5.metric("Surface Unknown",      f"{null_s:,}", help="Sessions where ENTRYPOINT was null — re-run Phase C + D2 to backfill.")
+                sc1.metric("CLI Requests",         f"{cli_s:,}",  help="Requests via Cortex Code CLI / VS Code extension.")
+                sc2.metric("Snowsight Requests",   f"{ss_s:,}",   help="Requests via Snowsight browser IDE.")
+                sc3.metric("Desktop Requests",     f"{dt_s:,}",   help="Requests via Snowflake Desktop app.")
+                sc4.metric("SDK / Extensions",     f"{ext_s:,}",  help="Requests from other surfaces (e.g. SDK-TYPESCRIPT, sdk-python). Check Entrypoints tab for full breakdown.")
+                sc5.metric("Surface Unknown",      f"{null_s:,}", help="Requests where ENTRYPOINT was null — re-run Phase C + D2 to backfill.")
                 st.dataframe(sdf, use_container_width=True, hide_index=True,
                              column_config={
                                  "SESSION_ID":    st.column_config.TextColumn("Session ID", width="medium"),
@@ -1216,15 +1245,15 @@ SHOW PARAMETERS LIKE 'AI_SETTINGS' IN ACCOUNT;""", language="sql")
                 total_cache_w = int(te_df["CACHE_WRITE_T"].sum())
                 # Correct: hits / (hits + misses) — input_tokens excluded (not cache-related)
                 cache_hit    = round(total_cache_r / max(total_cache_r + total_cache_w, 1) * 100, 1)
-                credits_saved = round(total_cache_r * 0.9 * 0.000025, 4)
+                credits_saved = round(total_cache_r * 0.00000247, 4)  # (input_rate - cache_rate) = 2.75-0.28 cr/1M
 
                 k1, k2, k3, k4, k5, k6 = st.columns(6)
                 k1.metric("Total Tokens", _fmt_tokens(total_t),
-                          help="Sum of all token types across all events in this period.")
+                          help="input_tokens + output_tokens. Cache tokens are included within input_tokens — NOT added on top.")
                 k2.metric("Input Tokens", _fmt_tokens(total_input),
-                          help="Fresh prompt tokens sent to the LLM.")
+                          help="All input tokens including cached portions. Uncached input = input − cache_read.")
                 k3.metric("Output Tokens", _fmt_tokens(total_output),
-                          help="Completion tokens returned by the LLM.")
+                          help="Tokens generated by the LLM. Appears small (~0.5%) because Step-0 spans are planning decisions, not full responses.")
                 k4.metric("Cache Read Tokens", _fmt_tokens(total_cache_r),
                           help="Tokens served from prompt cache — these cost significantly less than fresh input.")
                 k5.metric("Cache Hit Rate *(approx)*", f"{cache_hit}%",
