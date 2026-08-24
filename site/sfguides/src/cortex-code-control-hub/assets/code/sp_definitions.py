@@ -723,10 +723,11 @@ def handler(session, lookback_hours):
                    e.RECORD_ATTRIBUTES['snow.ai.observability.agent.planning.token_count.cache_write_input']::INT AS CACHE_WRITE_TOKENS,
                    e.RECORD_ATTRIBUTES['snow.ai.observability.agent.planning.step_number']::INT AS STEP_NUMBER,
                    e.RECORD_ATTRIBUTES['snow.ai.observability.agent.planning.tool_selection.name']::STRING AS TOOLS_RAW,
-                    COALESCE(
-                        run.RECORD_ATTRIBUTES['snow.ai.observability.agent.coding_agent.session_id']::STRING,
-                        e.TRACE['trace_id']::STRING
-                    ) AS SESSION_ID,
+                     COALESCE(
+                         run.RECORD_ATTRIBUTES['snow.ai.observability.agent.coding_agent.session_id']::STRING,
+                         e.TRACE['trace_id']::STRING,
+                         e.RECORD_ATTRIBUTES['snow.ai.observability.agent.planning.request_id']::STRING
+                     ) AS SESSION_ID,
                    run.RECORD_ATTRIBUTES['snow.ai.observability.agent.response']::STRING AS RESPONSE,
                    COALESCE(run.RECORD_ATTRIBUTES['snow.ai.observability.agent.coding_agent.private_mode']::BOOLEAN, FALSE) AS PRIVATE_MODE,
                    -- origin_application is always populated with exactly 3 known values
@@ -755,8 +756,7 @@ def handler(session, lookback_hours):
                    )) AS ENTRYPOINT
             FROM SNOWFLAKE.LOCAL.AI_OBSERVABILITY_EVENTS e
             LEFT JOIN SNOWFLAKE.LOCAL.AI_OBSERVABILITY_EVENTS run
-                ON  run.RECORD_ATTRIBUTES['snow.ai.observability.agent.request_id']::STRING
-                  = e.RECORD_ATTRIBUTES['snow.ai.observability.agent.planning.request_id']::STRING
+                ON  run.TRACE['trace_id']::STRING = e.TRACE['trace_id']::STRING
                 AND run.RECORD:name::STRING = 'CodingAgentRun'
                 AND run.RECORD_TYPE = 'SPAN'
             WHERE e.RECORD_TYPE='SPAN' AND e.RECORD:name::STRING='CodingAgent.Step-0'
@@ -780,9 +780,9 @@ def handler(session, lookback_hours):
             clean['EVENT_TS'] = clean['EVENT_TS'].dt.strftime('%Y-%m-%d %H:%M:%S')
             clean['EVENT_DATE'] = _pd.to_datetime(clean['EVENT_DATE'], errors='coerce').dt.strftime('%Y-%m-%d')
             # Cap lengths and fill nulls
-            clean['PROMPT']             = clean['PROMPT'].fillna('').str[:4000]
+            clean['PROMPT']             = clean['PROMPT'].fillna('').str[:16000]
             clean['TOOLS_RAW']          = clean['TOOLS_RAW'].fillna('').str[:500]
-            clean['RESPONSE']           = clean['RESPONSE'].fillna('').str[:8000]
+            clean['RESPONSE']           = clean['RESPONSE'].fillna('').str[:16000]
             clean['SESSION_ID']         = clean['SESSION_ID'].fillna('').str[:255]
             clean['REQUEST_ID']         = clean['REQUEST_ID'].fillna('').str[:255]
             clean['USER_NAME']          = clean['USER_NAME'].fillna('').str[:255]
@@ -854,7 +854,7 @@ def handler(session, lookback_hours):
                     r.RULE_ID, r.RULE_NAME, r.RISK_LEVEL, r.CATEGORY,
                     e.USER_NAME, COALESCE(e.SESSION_ID, ''),
                     SHA2(e.{field}, 256),
-                    LEFT(e.{field}, 300),
+                    LEFT(e.{field}, 2000),
                     'KEYWORD', 1.0, '{content_type}'
                 FROM {DB_SCHEMA}.CC_PROMPT_EVENTS e
                 CROSS JOIN {DB_SCHEMA}.CC_POLICY_RULES r
@@ -986,7 +986,7 @@ def handler(session, lookback_hours):
                     for _,inst in idf.iterrows():
                         violations.append({'rule_id':int(rule['RULE_ID']),'rule_name':str(rule['RULE_NAME']),
                             'user_name':str(inst['USER_NAME']),'session_id':str(inst['SESSION_ID'] or ''),
-                            'prompt_hash':ph,'prompt_preview':str(inst['TXT'] or '')[:200],
+                            'prompt_hash':ph,'prompt_preview':str(inst['TXT'] or '')[:2000],
                             'match_type':'SEMANTIC','match_score':1.0,'risk_level':str(rule['RISK_LEVEL']),
                             'category':str(rule['CATEGORY']),'violation_date':str(inst['USAGE_DATE']),
                             'content_type':content_type}); svc+=1
@@ -1232,7 +1232,7 @@ def handler(session, mode):
                     WHERE DETECTED_AT >= DATEADD('minute', -{window}, CURRENT_TIMESTAMP())
                 """).collect()[0][0]
                 if int(r or 0) >= threshold:
-                    fired.append({'name': rule_name, 'type': alert_type,
+                    fired.append({'name': rule_name, 'type': alert_type, 'window': window,
                         'msg': f'{r} prompt insights in the last {window} minutes (threshold: {threshold})'})
 
             elif alert_type == 'HIGH_RISK_VIOLATION':
@@ -1242,7 +1242,7 @@ def handler(session, mode):
                       AND RISK_LEVEL = 'HIGH'
                 """).collect()[0][0]
                 if int(r or 0) >= threshold:
-                    fired.append({'name': rule_name, 'type': alert_type,
+                    fired.append({'name': rule_name, 'type': alert_type, 'window': window,
                         'msg': f'{r} HIGH Severity insights in the last {window} minutes (threshold: {threshold})'})
 
             elif alert_type == 'CREDIT_SPIKE':
@@ -1260,7 +1260,7 @@ def handler(session, mode):
                 today_cr = float(row[0] or 0); avg7 = float(row[1] or 0)
                 if avg7 > 0 and today_cr > avg7 * (1 + threshold / 100):
                     pct = round((today_cr / avg7 - 1) * 100)
-                    fired.append({'name': rule_name, 'type': alert_type,
+                    fired.append({'name': rule_name, 'type': alert_type, 'window': window,
                         'msg': f'Today credits {today_cr:.1f} is {pct}% above 7-day avg {avg7:.1f} (threshold: {threshold}%)'})
 
             elif alert_type == 'NEW_UNCAT_MODEL':
@@ -1272,7 +1272,7 @@ def handler(session, mode):
                       AND MODEL_NAME NOT IN (SELECT MODEL_NAME FROM {DB_SCHEMA}.CC_MODEL_CONFIG)
                 """).collect()[0][0]
                 if int(r or 0) >= threshold:
-                    fired.append({'name': rule_name, 'type': alert_type,
+                    fired.append({'name': rule_name, 'type': alert_type, 'window': window,
                         'msg': f'{r} new uncategorised model(s) detected in the last 24 hours — assign tiers in Model Access'})
 
         except Exception as e:
@@ -1303,8 +1303,8 @@ def handler(session, mode):
     except Exception:
         pass
 
-    def _email_html(name, atype, msg, account, timestamp):
-        """Build a clean HTML email body — all attributes use double quotes, safe for SQL embedding."""
+    def _email_html(name, atype, msg, account, timestamp, violations=None):
+        """Build a clean HTML email body with violation details when available."""
         _colors = {
             'HIGH_RISK_VIOLATION': ('#fef2f2', '#dc2626', 'HIGH RISK INSIGHT'),
             'VIOLATION_SPIKE':     ('#fff7ed', '#ea580c', 'INSIGHT SPIKE'),
@@ -1312,11 +1312,47 @@ def handler(session, mode):
             'NEW_UNCAT_MODEL':     ('#eff6ff', '#2563eb', 'NEW MODEL DETECTED'),
         }
         bg, fg, label = _colors.get(atype, ('#f1f5f9', '#475569', atype))
+
+        # Build violation rows HTML
+        violation_html = ''
+        if violations:
+            rows_html = ''
+            for v in violations[:5]:
+                user    = str(v.get('user', '')).replace('<','&#60;').replace('>','&#62;')
+                rule    = str(v.get('rule', '')).replace('<','&#60;').replace('>','&#62;')
+                risk    = str(v.get('risk', '')).replace('<','&#60;').replace('>','&#62;')
+                ctype   = str(v.get('content_type', 'PROMPT')).replace('<','&#60;').replace('>','&#62;')
+                preview = str(v.get('preview', '')).replace('<','&#60;').replace('>','&#62;').replace("'", "&#39;")[:300]
+                risk_color = '#dc2626' if risk == 'HIGH' else '#ea580c' if risk == 'MEDIUM' else '#16a34a'
+                rows_html += (
+                    f'<tr style="border-bottom:1px solid #f1f5f9">'
+                    f'<td style="padding:8px 10px;font-size:12px;color:#374151;font-weight:600">{user}</td>'
+                    f'<td style="padding:8px 10px;font-size:12px;color:{risk_color};font-weight:600">{risk}</td>'
+                    f'<td style="padding:8px 10px;font-size:12px;color:#6b7280">{rule}</td>'
+                    f'<td style="padding:8px 10px;font-size:12px;color:#6b7280">{ctype}</td>'
+                    f'<td style="padding:8px 10px;font-size:11px;color:#374151;font-family:monospace">{preview}</td>'
+                    f'</tr>'
+                )
+            violation_html = (
+                '<tr><td style="padding:0 28px 20px">'
+                '<p style="margin:0 0 8px;font-size:12px;font-weight:600;color:#374151">Top Violations:</p>'
+                '<table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;font-size:12px">'
+                '<tr style="background:#f8fafc">'
+                '<th style="padding:6px 10px;text-align:left;color:#6b7280;font-weight:600;font-size:11px">USER</th>'
+                '<th style="padding:6px 10px;text-align:left;color:#6b7280;font-weight:600;font-size:11px">RISK</th>'
+                '<th style="padding:6px 10px;text-align:left;color:#6b7280;font-weight:600;font-size:11px">RULE</th>'
+                '<th style="padding:6px 10px;text-align:left;color:#6b7280;font-weight:600;font-size:11px">SOURCE</th>'
+                '<th style="padding:6px 10px;text-align:left;color:#6b7280;font-weight:600;font-size:11px">PROMPT PREVIEW</th>'
+                '</tr>'
+                + rows_html +
+                '</table></td></tr>'
+            )
+
         return (
             '<!DOCTYPE html><html><body style="margin:0;padding:0;background:#f1f5f9;font-family:Arial,sans-serif">'
             '<table width="100%" cellpadding="0" cellspacing="0"><tr>'
             '<td align="center" style="padding:32px 16px">'
-            '<table width="560" cellpadding="0" cellspacing="0" '
+            '<table width="640" cellpadding="0" cellspacing="0" '
             'style="background:#ffffff;border-radius:8px;box-shadow:0 1px 4px rgba(0,0,0,0.1)">'
             '<tr><td style="background:#0f172a;padding:22px 28px;border-radius:8px 8px 0 0">'
             '<span style="color:#7dd3fc;font-size:18px;font-weight:700">CoCo Control Hub</span>'
@@ -1334,6 +1370,7 @@ def handler(session, mode):
             f'padding:14px 16px;border-radius:0 6px 6px 0">'
             f'<p style="margin:0;color:#374151;font-size:14px;line-height:1.6">{msg}</p>'
             '</div></td></tr>'
+            + violation_html +
             '<tr><td style="padding:0 28px 24px">'
             '<table width="100%" cellpadding="0" cellspacing="0"><tr>'
             '<td width="50%" style="padding-right:8px">'
@@ -1353,7 +1390,7 @@ def handler(session, mode):
             'border-radius:0 0 8px 8px">'
             '<p style="margin:0;color:#94a3b8;font-size:11px">'
             'Sent by <strong style="color:#64748b">CoCo Control Hub</strong> &#160;&#183;&#160; '
-            'Manage alerts at <em>Alerts &#8594; Notification Config</em>'
+            'View full details at <em>Alerts &#8594; Alert History</em> and <em>Prompt Insights</em>'
             '</p></td></tr>'
             '</table></td></tr></table>'
             '</body></html>'
@@ -1364,10 +1401,32 @@ def handler(session, mode):
             safe_msg  = str(alert['msg']).replace("'", "''")
             safe_name = str(alert['name']).replace("'", "''")
             safe_type = str(alert['type']).replace("'", "''")
+
+            # Fetch top violations to include in email for security/violation alerts
+            violations = []
+            if alert['type'] in ('HIGH_RISK_VIOLATION', 'VIOLATION_SPIKE'):
+                try:
+                    win = int(alert.get('window', 60))
+                    vrows = session.sql(f"""
+                        SELECT USER_NAME, RULE_NAME, RISK_LEVEL, CONTENT_TYPE,
+                               LEFT(PROMPT_PREVIEW, 300) AS PROMPT_PREVIEW
+                        FROM {DB_SCHEMA}.CC_PROMPT_VIOLATIONS
+                        WHERE DETECTED_AT >= DATEADD('minute', -{win}, CURRENT_TIMESTAMP())
+                          AND RISK_LEVEL IN ('HIGH','MEDIUM')
+                        ORDER BY CASE RISK_LEVEL WHEN 'HIGH' THEN 1 ELSE 2 END, DETECTED_AT DESC
+                        LIMIT 5
+                    """).collect()
+                    violations = [{{
+                        'user': r[0], 'rule': r[1], 'risk': r[2],
+                        'content_type': r[3], 'preview': r[4] or ''
+                    }} for r in vrows]
+                except Exception:
+                    pass
+
             if email_recipients:
                 html_body = _email_html(
                     str(alert['name']), str(alert['type']),
-                    str(alert['msg']), acct, ts
+                    str(alert['msg']), acct, ts, violations
                 ).replace("'", "''")
                 session.sql(f"""
                     CALL SYSTEM$SEND_EMAIL(
@@ -1617,7 +1676,7 @@ def handler(session):
 def get_manage_quota_sp_ddl(db: str, schema: str) -> str:
     """Return CREATE OR REPLACE PROCEDURE DDL for SP_CC_MANAGE_QUOTA.
 
-    Wraps Snowflake SNOWFLAKE.CORE.QUOTA object operations (Preview feature).
+    Wraps Snowflake SNOWFLAKE.CORE.QUOTA object operations (GA Aug 2026).
     Actions: CREATE, TAG_USERS, GET_CONFIG, GET_ACTIVE_BLOCKS,
              GET_ENFORCEMENT_HISTORY, SET_LIMIT, DELETE.
     Runs EXECUTE AS OWNER so CC_SP_OWNER_ROLE (which holds SNOWFLAKE.QUOTA_CREATOR)
@@ -1680,19 +1739,21 @@ def handler(session, action, quota_name, params):
 
         if block_enforce:
             try:
-                session.sql(f"CALL {{fq}}!SET_BLOCK_ENFORCEMENT_ENABLED(TRUE)").collect()
+                # GA: second arg TRUE sends end-user email notification when blocked
+                session.sql(f"CALL {{fq}}!SET_BLOCK_ENFORCEMENT_ENABLED(TRUE, TRUE)").collect()
             except Exception as e:
                 errors.append(f"SET_BLOCK_ENFORCEMENT_ENABLED: {{str(e)[:120]}}")
 
         if notify_80:
             try:
-                session.sql(f"CALL {{fq}}!ADD_NOTIFICATION_THRESHOLD(80, \'PROJECTED\', TRUE)").collect()
+                # GA: 4th arg specifies MONTHLY or DAILY threshold scope
+                session.sql(f"CALL {{fq}}!ADD_NOTIFICATION_THRESHOLD(80, \'PROJECTED\', TRUE, \'MONTHLY\')").collect()
             except Exception as e:
                 errors.append(f"ADD_NOTIFICATION_THRESHOLD(80): {{str(e)[:120]}}")
 
         if notify_100:
             try:
-                session.sql(f"CALL {{fq}}!ADD_NOTIFICATION_THRESHOLD(100, \'ACTUAL\', TRUE)").collect()
+                session.sql(f"CALL {{fq}}!ADD_NOTIFICATION_THRESHOLD(100, \'ACTUAL\', TRUE, \'MONTHLY\')").collect()
             except Exception as e:
                 errors.append(f"ADD_NOTIFICATION_THRESHOLD(100): {{str(e)[:120]}}")
 
@@ -1783,7 +1844,8 @@ def handler(session, action, quota_name, params):
 
     elif action == "GET_ACTIVE_BLOCKS":
         try:
-            r = session.sql(f"CALL {{fq}}!GET_ACTIVE_BLOCKS()").collect()
+            # GA: GET_ACTIVE_BLOCKS() replaced by GET_ACTIVE_BLOCKS_V2()
+            r = session.sql(f"CALL {{fq}}!GET_ACTIVE_BLOCKS_V2()").collect()
             return {{"ok": True, "blocks": [dict(row.asDict()) for row in r]}}
         except Exception as e:
             return {{"ok": False, "error": str(e)[:300]}}
