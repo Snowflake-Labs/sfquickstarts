@@ -257,6 +257,18 @@ Expected: Top-5 days are in September 2025 (back-to-season peak), each with ~$18
 
 CoCo runs `dbt deps` then `dbt build` to create all staging views and mart tables (9+ models). CoCo automatically injects your active Snowflake connection into the dbt profile — no manual configuration needed.
 
+**If dbt fails with a connection error**, the repo includes a `profiles.yml` that uses environment variables. Resolve credentials from your CLI connection and export them:
+
+```bash
+export SNOWFLAKE_ACCOUNT=<your-account-identifier>
+export SNOWFLAKE_USER=<your-username>
+export SNOWFLAKE_PASSWORD=<your-password>
+export SNOWFLAKE_WAREHOUSE=HOL_WH
+cd dbt-analytics
+dbt deps
+dbt build --profiles-dir . --target dev
+```
+
 > **Expected output:** 71 tests pass, 1 warning (the `source_not_null_raw_orders_total_amount` test detects the 200 NULLs we injected for the Data Quality exercise — this is working as designed).
 
 ### Explore Results
@@ -394,11 +406,19 @@ Key insight: Same query, same tables — different results based on who's asking
 
 ### Verify Through CoWork
 
-Switch to the **WEST_COAST_MANAGER** role in Snowsight, then open CoWork and ask the agent:
+Cortex Agents run with the querying user's **default role**, not the active role selected in Snowsight — so simply switching your role in the UI has no effect on agent results. To see the Row Access Policy filter through the agent, use the dedicated demo user created by `setup.sql`:
+
+First, set a login password for the demo user:
+
+```sql
+ALTER USER west_coast_manager_user SET PASSWORD = '<your-choice>';
+```
+
+Then log into Snowsight as **`west_coast_manager_user`** with that password, open CoWork, and ask the agent:
 
 > *"What is our total revenue and customer count by state?"*
 
-The agent returns results for only CA, OR, and WA — the Row Access Policy filters data transparently, even through AI-generated SQL.
+The agent returns results for only CA, OR, and WA — the Row Access Policy filters data transparently, even through AI-generated SQL. (Log back in as your admin user afterward.)
 
 <!-- ------------------------ -->
 ## Streamlit Dashboard
