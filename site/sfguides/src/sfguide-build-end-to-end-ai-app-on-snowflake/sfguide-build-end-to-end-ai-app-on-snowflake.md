@@ -532,7 +532,7 @@ This demonstrates V3 schema evolution without rewriting data files.
 <!-- ------------------------ -->
 ## Optional: Streaming Ingestion
 
-> **Note:** This section is optional. The `setup.sql` script already loads all 50M orders directly. This section demonstrates how you *would* stream data in production using the Snowpipe Streaming Python SDK.
+> **Note:** This section is optional. The `setup.sql` script already loads all 10M orders directly. This section demonstrates how you *would* stream data in production using the Snowpipe Streaming Python SDK.
 
 ### Generate RSA Key Pair
 
@@ -562,7 +562,7 @@ pip install -r requirements.txt
 cp profile.json.template profile.json
 ```
 
-Edit `profile.json` and set your `account`, `user`, `private_key` (contents of rsa_key.p8), and `role`.
+Edit `profile.json` and set your `account`, `user`, and `role`. The template uses `private_key_file` pointing to `../rsa_key.p8` — no need to paste the key contents inline.
 
 ```bash
 # Stream 10,000 orders
