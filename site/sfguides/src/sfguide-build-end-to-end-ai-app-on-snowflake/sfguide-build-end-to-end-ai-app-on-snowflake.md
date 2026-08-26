@@ -94,11 +94,11 @@ Verify the installation:
 cortex --version
 ```
 
-### Alternative: Snowflake CoCo Desktop (Preview)
+### Alternative: Snowflake CoCo Desktop
 
-If you prefer a visual IDE experience, [download CoCo Desktop](https://www.snowflake.com/en/product/limited-access/cortex-code/) instead of (or alongside) the CLI. It's a native Mac/Windows app with a file editor, integrated terminal, agentic browser, and the same AI capabilities.
+If you prefer a visual IDE experience, [download CoCo Desktop](https://www.snowflake.com/en/product/snowflake-coco/downloads/) instead of (or alongside) the CLI. It's a native Mac/Windows app with a file editor, integrated terminal, agentic browser, and the same AI capabilities.
 
-> **Note:** CoCo Desktop is currently a [Preview Feature](https://docs.snowflake.com/release-notes/preview-features) available to all accounts.
+> **Note:** CoCo Desktop is [generally available](https://docs.snowflake.com/en/release-notes/2026/other/2026-07-21-coco-desktop-ga) on all accounts.
 
 On first launch, follow the onboarding wizard:
 1. Click **Next** on the Welcome screen
@@ -157,7 +157,7 @@ cortex
 
 > **What to expect:** CoCo will start an interactive session in your terminal. You'll see your active connection, role, and warehouse displayed. You can type natural language prompts and CoCo will translate them into SQL or actions.
 
-Then run the core infrastructure script (this takes ~10-15 minutes):
+Then run the core infrastructure script (this takes ~5 minutes with the default 10M-row dataset):
 
 ```bash
 snow sql -f setup.sql -c hol
@@ -186,7 +186,7 @@ Expected: ~10M orders, ~25M order items, 2M customers, 10 products, 1200 reviews
 
 > *"What's the date range of our order data?"*
 
-Expected: June 2025 to September 2025.
+Expected: August to November 2026.
 
 This gives you a mental model of the dataset before we start transforming and analyzing it.
 
@@ -242,7 +242,7 @@ Ask CoCo:
 
 > *"Show me a sample of the daily business metrics — top 5 days by revenue"*
 
-Expected: Top-5 days are in September 2025 (back-to-season peak), each with ~$183M revenue and ~117K orders.
+Expected: Top-5 days are in November 2026 (holiday peak), each with high revenue and order counts.
 
 <!-- ------------------------ -->
 ## dbt Analytics
@@ -288,6 +288,16 @@ Demonstrate Optima Indexing in action:
 
 Open the query profile in Snowsight to see partition pruning — only a fraction of partitions scanned despite no explicit clustering key. This is Gen2's Optima Indexing in action.
 
+### Compare to Standard Warehouse
+
+Run the same query on the standard warehouse to see the difference:
+
+**Prompt CoCo:**
+
+> *"Now run the same point lookup for customer_id 5000 on HOL_WH (standard) and compare the partition pruning to the Gen2 result"*
+
+Without Optima Indexing, the standard warehouse scans significantly more partitions for the same point lookup. Compare the two query profiles side-by-side in Snowsight to see the contrast.
+
 <!-- ------------------------ -->
 ## Interactive Tables
 
@@ -312,6 +322,8 @@ WHERE order_id = '<any-order-uuid>';
 ```
 
 ### Concurrency Load Test
+
+> **Prerequisite:** `pip install snowflake-connector-python` (the load test script uses it directly).
 
 **Prompt CoCo:**
 
@@ -355,11 +367,11 @@ This demonstrates how teams package repeatable workflows as shareable CoCo skill
 
 ### Test Agent Routing
 
-Open the **Snowflake CoWork** interface in Snowsight: navigate to **AI & ML → CoWork** (or search "CoWork" in the global search bar). Select the `BUSINESS_INSIGHTS_AGENT` agent. Then try each question to demonstrate different tool routing:
+Open the **Snowflake CoWork** interface in Snowsight: navigate to **AI & ML > Snowflake CoWork**. Select the `BUSINESS_INSIGHTS_AGENT` agent. Then try each question to demonstrate different tool routing:
 
 | Question | Tools Used |
 |----------|-----------|
-| "Show me monthly revenue trend from June to September 2025" | Cortex Analyst (text-to-SQL) |
+| "Show me monthly revenue trend from August to November 2026" | Cortex Analyst (text-to-SQL) |
 | "Which month had the lowest revenue, and what do customer reviews say about that period?" | Cortex Analyst + Agentic Search |
 | "Find reviews mentioning wrong size with a rating below 3" | Agentic Search (filtered) |
 | "Why are customers returning ski boots?" | Agentic Search (reviews + tickets) |
@@ -368,6 +380,35 @@ Open the **Snowflake CoWork** interface in Snowsight: navigate to **AI & ML → 
 | "How many reviews mention sizing issues, and which products are most affected?" | Agentic Search (search + breakdown) |
 
 This is the capstone moment — the agent routes across structured data (text-to-SQL) and unstructured data (Cortex Search) to answer "what happened" and "why."
+
+### Deep Research
+
+For complex questions that span multiple data sources, use [Deep Research](https://docs.snowflake.com/en/user-guide/snowflake-cortex/snowflake-cowork) — an investigation mode that decomposes your question into parallel sub-investigations and synthesizes findings into a fully-cited report.
+
+In CoWork, click the **+** button in the message bar and select **Deep Research**, then ask:
+
+> *"What are the root causes of customer dissatisfaction? Investigate across order cancellations, product reviews, and support tickets to identify the top drivers and which products are most affected."*
+
+CoWork runs parallel agents that cross-reference structured metrics (cancellation rates, return patterns) with unstructured feedback (reviews mentioning sizing issues, tickets about defects). After 2-5 minutes, it produces a multi-section report with every claim traced back to source data.
+
+### Save as Artifact
+
+After the Deep Research report appears, click **Save as Artifact** (the bookmark icon in the response). This creates a persistent, governed dashboard that:
+- Refreshes with live data under **your** credentials each time it's opened
+- Can be shared with teammates who see the same artifact filtered through **their** Row Access Policies
+- Lives in the **Artifacts** tab in CoWork for quick access
+
+### Schedule an Automation
+
+> **Note:** Automations require a verified email address on your Snowflake account.
+
+Ask the agent:
+
+> *"Set up a weekly automation that checks our cancellation rate trend and emails me a summary every Monday morning"*
+
+CoWork creates a scheduled automation that re-runs the query weekly with fresh data and emails you the results — including a summary, key metrics, and a link to the full report for follow-up questions. Manage automations from the **Automations** tab in CoWork.
+
+> **Note:** Automations is currently a [Preview Feature](https://docs.snowflake.com/release-notes/preview-features).
 
 <!-- ------------------------ -->
 ## Security and Governance
@@ -387,7 +428,7 @@ JOIN dash_automated_intelligence_db.raw.customers c ON o.customer_id = c.custome
 GROUP BY c.state ORDER BY total_revenue DESC;
 ```
 
-Result: all 10 states visible.
+Result: all 10 regions visible (9 US states + British Columbia).
 
 **As WEST_COAST_MANAGER (restricted):**
 
