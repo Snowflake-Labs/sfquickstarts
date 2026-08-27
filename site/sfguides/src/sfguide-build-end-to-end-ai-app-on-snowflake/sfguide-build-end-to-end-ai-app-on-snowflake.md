@@ -25,13 +25,14 @@ You'll build analytical models with dbt, monitor data quality with Data Metric F
 - Create and query managed Iceberg V3 tables (deletion vectors, row lineage) *(optional)*
 - Create custom CoCo skills for reusable team workflows
 - Build a Cortex Agent with Cortex Analyst (semantic view + verified queries) and Agentic Search (multi-index Cortex Search)
+- Use Deep Research for multi-step investigations, save Artifacts, and schedule Automations
 - Evaluate agent quality with ground-truth datasets and LLM judges
 - Expose agents as managed MCP servers for external AI clients
 - Implement transparent row-level security with Row Access Policies
 
 ### What You'll Build
 
-A production-grade AI-powered retail analytics platform on Snowflake — from raw data to conversational AI insights, entirely within a single platform. You'll create dynamic transformation pipelines, interactive low-latency tables, dbt analytical models, a Cortex Agent that answers questions across structured and unstructured data, row-level security that works transparently through AI, and an MCP server that exposes your agent to external clients.
+A production-grade AI-powered retail analytics platform on Snowflake — from raw data to conversational AI insights, entirely within a single platform. You'll create dynamic transformation pipelines, interactive low-latency tables, dbt analytical models, a Cortex Agent that answers questions across structured and unstructured data, Deep Research reports that cross-reference multiple data sources, governed Artifacts you can share with your team, scheduled Automations for recurring analysis, row-level security that works transparently through AI, and an MCP server that exposes your agent to external clients.
 
 ### Prerequisites
 - Access to a [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)
@@ -555,13 +556,21 @@ CREATE MCP SERVER business_insights_mcp
 
 ### Connect from CoCo
 
+**CoCo Desktop (recommended):** Go to **Settings → MCP** and add a new HTTP server with this endpoint URL:
+
+```
+https://<account_url>/api/v2/databases/DASH_AUTOMATED_INTELLIGENCE_DB/schemas/SEMANTIC/mcp-servers/BUSINESS-INSIGHTS-MCP
+```
+
+Or type `/mcp` in the chat to manage MCP connections.
+
+**CoCo CLI:** Register the server (Desktop picks this up automatically):
+
 ```bash
 cortex mcp add business-insights https://<account_url>/api/v2/databases/DASH_AUTOMATED_INTELLIGENCE_DB/schemas/SEMANTIC/mcp-servers/BUSINESS-INSIGHTS-MCP --type http
 ```
 
-> **Desktop:** To add the MCP server in CoCo Desktop, go to **Settings → MCP** and add a new HTTP server with the endpoint URL above. Or type `/mcp` in the chat.
-
-Now any MCP-compatible client (CoCo, Claude Desktop, custom apps) can discover and call these tools via the standard MCP protocol.
+Now any MCP-compatible client (CoCo Desktop, Claude Desktop, custom apps) can discover and call these tools via the standard MCP protocol.
 
 <!-- ------------------------ -->
 ## Optional: Iceberg V3 Features
@@ -646,6 +655,28 @@ Use CoCo to merge the streamed data:
 > *"Switch to the Gen2 warehouse, check how many rows are in staging, then merge them into RAW and show me the results"*
 
 <!-- ------------------------ -->
+## Troubleshooting
+
+| Symptom | Likely Cause | Fix |
+|---------|-------------|-----|
+| DMF results missing after setup | `SNOWFLAKE.LOCAL.DATA_QUALITY_MONITORING_RESULTS` populates asynchronously (up to 15 min) | Wait, or run `EXECUTE ALERT dash_automated_intelligence_db.raw.dq_alert;` to force check |
+| Dynamic Table stuck in REFRESHING | Upstream DT hasn't finished first refresh | Check `SELECT * FROM TABLE(INFORMATION_SCHEMA.DYNAMIC_TABLE_REFRESH_HISTORY())` for errors |
+| Agent not appearing in CoWork | Agent not registered with Snowflake Intelligence object | Run `ALTER SNOWFLAKE INTELLIGENCE ... ADD AGENT ...` (see `create_agent.sql`) |
+| Cortex Search returns stale results | Incremental refresh doesn't pick up attribute value changes | Recreate with `CREATE OR REPLACE CORTEX SEARCH SERVICE` |
+| Interactive Warehouse burns credits | Interactive warehouses don't auto-suspend | Run `ALTER WAREHOUSE hol_interactive_wh SUSPEND` when not in use |
+| `load_test.py` connection error | Missing connector package | `pip install snowflake-connector-python` |
+| `west_coast_manager_user` can't log in | No password set | `ALTER USER west_coast_manager_user SET PASSWORD = '<your-choice>';` |
+
+<!-- ------------------------ -->
+## Cleanup
+
+To remove all objects created during this lab:
+
+```bash
+snow sql -f cleanup.sql -c hol
+```
+
+<!-- ------------------------ -->
 ## Conclusion And Resources
 
 Congratulations! You've successfully built a complete AI-powered retail analytics platform on Snowflake — from streaming ingestion through conversational AI and MCP server exposure.
@@ -659,6 +690,7 @@ Congratulations! You've successfully built a complete AI-powered retail analytic
 - How to build dbt analytical models on Snowflake
 - How to create custom CoCo skills for repeatable workflows
 - How to build a Cortex Agent that routes across structured (Analyst) and unstructured (Search) data
+- How to use Deep Research, Artifacts, and Automations in Snowflake CoWork
 - How to evaluate agent quality with ground-truth datasets
 - How to implement transparent row-level security through AI agents
 - How to expose AI capabilities as managed MCP servers
