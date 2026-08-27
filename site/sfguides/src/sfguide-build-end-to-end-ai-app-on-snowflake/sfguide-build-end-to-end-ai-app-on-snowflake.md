@@ -132,9 +132,7 @@ cortex --version
 
 ### Alternative: Snowflake CoCo Desktop
 
-If you prefer a visual IDE experience, [download CoCo Desktop](https://www.snowflake.com/en/product/limited-access/cortex-code/) instead of (or alongside) the CLI. It's a native Mac/Windows app with a file editor, integrated terminal, agentic browser, and the same AI capabilities.
-
-> **Note:** CoCo Desktop is currently a [Preview Feature](https://docs.snowflake.com/release-notes/preview-features) available to all accounts.
+If you prefer a visual IDE experience, [download CoCo Desktop](https://www.snowflake.com/en/product/limited-access/cortex-code/) instead of (or alongside) the CLI. It's a native Mac/Windows app with a file editor, integrated terminal, agentic browser, and the same AI capabilities. CoCo Desktop is Generally Available (GA) to all accounts.
 
 On first launch, follow the onboarding wizard:
 1. Click **Next** on the Welcome screen
