@@ -827,7 +827,7 @@ snow sql -f cleanup.sql -c hol
 ## Troubleshooting
 
 | Symptom | Likely Cause | Fix |
-|<!-- ------------------------ --><!-- ------------------------ --><!-- ------------------------ -->|<!-- ------------------------ --><!-- ------------------------ --><!-- ------------------------ --><!-- ------------------------ -->-|<!-- ------------------------ -->--|
+|---------|-------------|-----|
 | DMF results missing after setup | `SNOWFLAKE.LOCAL.DATA_QUALITY_MONITORING_RESULTS` populates asynchronously (up to 15 min) | Wait, or run `EXECUTE ALERT dash_automated_intelligence_db.raw.dq_alert;` to force check |
 | Dynamic Table stuck in REFRESHING | Upstream DT hasn't finished first refresh | Check `SELECT * FROM TABLE(INFORMATION_SCHEMA.DYNAMIC_TABLE_REFRESH_HISTORY())` for errors |
 | Agent not appearing in CoWork | Agent not registered with Snowflake Intelligence object | Run `ALTER SNOWFLAKE INTELLIGENCE ... ADD AGENT ...` (see `create_agent.sql`) |
@@ -838,9 +838,24 @@ snow sql -f cleanup.sql -c hol
 
 <!-- ------------------------ -->
 
-## Resources
+## Conclusion
 
-Documentation:
+Congratulations! You've built a complete AI-powered retail analytics platform on Snowflake — from raw data ingestion to conversational AI insights.
+
+### What You Learned
+- How to accelerate development with Snowflake CoCo
+- How to stream real-time data with Snowpipe Streaming and transform with Dynamic Tables
+- How to serve low-latency queries with Interactive Tables and Gen2 Warehouses
+- How to build analytical models with dbt
+- How to monitor data quality with Data Metric Functions
+- How to create custom CoCo skills and plugins
+- How to build a Cortex Agent with Cortex Analyst and Agentic Search
+- How to use Deep Research, Artifacts, and Automations in CoWork
+- How to evaluate agent quality with ground-truth datasets
+- How to expose agents as managed MCP servers
+- How to implement row-level security with Row Access Policies
+
+### Related Resources
 - [Snowpipe Streaming SDK](https://docs.snowflake.com/en/user-guide/data-load-snowpipe-streaming-overview)
 - [Dynamic Tables](https://docs.snowflake.com/en/user-guide/dynamic-tables-about)
 - [Interactive Tables](https://docs.snowflake.com/en/user-guide/interactive)
@@ -850,9 +865,4 @@ Documentation:
 - [Data Metric Functions](https://docs.snowflake.com/en/user-guide/data-quality-intro)
 - [Row Access Policies](https://docs.snowflake.com/en/user-guide/security-row-intro)
 - [Snowflake CoCo](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code)
-
-<!-- ------------------------ -->
-
-## License
-
-This project is licensed under the [Apache License, Version 2.0](LICENSE).
+- [Source Code Repository](https://github.com/Snowflake-Labs/sfguide-build-end-to-end-ai-app-on-snowflake)
