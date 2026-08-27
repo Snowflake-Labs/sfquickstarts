@@ -1,5 +1,15 @@
-# Build an End-to-End Application Using CoCo on Snowflake
+author: Dash Desai
+id: sfguide-build-end-to-end-ai-app-on-snowflake
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart,snowflake-site:taxonomy/product/ai,snowflake-site:taxonomy/product/data-engineering,snowflake-site:taxonomy/product/applications-and-collaboration
+language: en
+summary: Build a complete AI-powered retail analytics platform on Snowflake — from streaming ingestion through Cortex Agents, Semantic Views, and MCP Servers.
+environments: web
+status: Published
+feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
+
+# Build an End-to-End Application Using CoCo on Snowflake
+<!-- ------------------------ -->
 ## Overview
 
 In this hands-on lab, you'll build a complete AI-powered retail analytics platform entirely within Snowflake — no external infrastructure required. Using Snowflake CoCo as your AI-assisted development environment, you'll work through the full data lifecycle: stream real-time orders via Snowpipe Streaming, MERGE them into production tables with Gen2 Warehouses, transform them through a 3-tier Dynamic Tables pipeline, and serve them with Interactive Tables for low-latency point lookups.
@@ -31,7 +41,7 @@ A production-grade AI-powered retail analytics platform on Snowflake — from ra
 - Git installed locally
 - Basic familiarity with SQL and command-line tools
 
----
+<!-- ------------------------ -->
 
 ## Table of Contents
 
@@ -64,7 +74,7 @@ Throughout this guide you'll see two types of instructions:
 
 Both paths produce the same result. Use whichever feels natural.
 
----
+<!-- ------------------------ -->
 
 ## Setup
 
@@ -148,7 +158,7 @@ snow connection add
 You'll be prompted for the following values (enter them one at a time):
 
 | Prompt | What to enter | Example |
-|--------|---------------|---------|
+|<!-- ------------------------ --><!-- ------------------------ -->--|<!-- ------------------------ --><!-- ------------------------ --><!-- ------------------------ --><!-- ------------------------ --><!-- ------------------------ -->|<!-- ------------------------ --><!-- ------------------------ --><!-- ------------------------ -->|
 | Connection name | A short name for this connection | `hol` |
 | Account identifier | Your Snowflake account URL (without `.snowflakecomputing.com`) | `myorg-myaccount` |
 | User | Your Snowflake username | `jsmith` |
@@ -193,7 +203,7 @@ This creates the database, schemas, warehouses, tables, Dynamic Tables pipeline,
 
 > **Using CoCo Desktop?** All "Prompt CoCo" instructions below work identically in both CLI and Desktop — type the same text into the chat input. Anywhere you see `cortex` as a terminal command, use the Desktop's built-in terminal or chat instead.
 
----
+<!-- ------------------------ -->
 
 ## Explore Your Data
 
@@ -217,7 +227,7 @@ Expected: August to November 2026.
 
 This gives you a mental model of the dataset before we start transforming and analyzing it.
 
----
+<!-- ------------------------ -->
 
 ## Data Quality
 
@@ -248,7 +258,7 @@ ALTER TABLE order_items ADD DATA METRIC FUNCTION SNOWFLAKE.CORE.NULL_COUNT ON (p
 
 This demonstrates the real-world workflow: monitor, discover gaps, fix coverage.
 
----
+<!-- ------------------------ -->
 
 ## Dynamic Tables Pipeline
 
@@ -273,7 +283,7 @@ Ask CoCo:
 
 Expected: Top-5 days are in November 2026 (holiday peak), each with ~$183M revenue and ~117K orders.
 
----
+<!-- ------------------------ -->
 
 ## dbt Analytics
 
@@ -307,7 +317,7 @@ If dbt is run inside Snowflake (e.g., from Snowsight), no env vars are needed �
 
 > *"Show me the customer lifetime value segments — how many customers are in each value tier?"*
 
----
+<!-- ------------------------ -->
 
 ## Gen2 Warehouse: Optima Indexing
 
@@ -331,7 +341,7 @@ Run the same query on the standard warehouse to see the difference:
 
 Without Optima Indexing, the standard warehouse scans significantly more partitions for the same point lookup. Compare the two query profiles side-by-side in Snowsight to see the contrast.
 
----
+<!-- ------------------------ -->
 
 ## Interactive Tables
 
@@ -367,7 +377,7 @@ This fires 200 concurrent sessions (1000 queries total) against both Interactive
 
 Run the load test a second time to observe the effect of warm caches. Results may vary depending on account, region, and data scale.
 
----
+<!-- ------------------------ -->
 
 ## CoCo Custom Skill
 
@@ -389,7 +399,7 @@ CoCo creates `.cortex/skills/profile-table/SKILL.md` with the skill definition, 
 
 This demonstrates how teams package repeatable workflows as shareable CoCo skills.
 
----
+<!-- ------------------------ -->
 
 ## CoCo Plugin
 
@@ -439,7 +449,7 @@ The plugin is auto-discovered from `.cortex/plugins/` in your project directory.
 
 The skill runs from the plugin — same behavior as before, but now it's a portable, installable package. Share it by pushing to GitHub (`cortex plugin install your-org/retail-analytics`) or publishing to the Plugins Catalog from CoCo Desktop.
 
----
+<!-- ------------------------ -->
 
 ## Snowflake CoWork
 
@@ -456,7 +466,7 @@ The skill runs from the plugin — same behavior as before, but now it's a porta
 Open the **Snowflake CoWork** interface in Snowsight: navigate to **AI & ML > Snowflake CoWork**. Select the `BUSINESS_INSIGHTS_AGENT` agent. Then try each question to demonstrate different tool routing:
 
 | Question | Tools Used |
-|----------|-----------|
+|<!-- ------------------------ --><!-- ------------------------ --><!-- ------------------------ -->-|<!-- ------------------------ --><!-- ------------------------ --><!-- ------------------------ -->--|
 | "Show me monthly revenue trend from August to November 2026" | Cortex Analyst (text-to-SQL) |
 | "Which month had the lowest revenue, and what do customer reviews say about that period?" | Cortex Analyst + Agentic Search |
 | "Find reviews mentioning wrong size with a rating below 3" | Agentic Search (filtered) |
@@ -497,7 +507,7 @@ CoWork creates a scheduled automation that re-runs the query weekly with fresh d
 
 > **Note:** Automations require a verified email address in Snowsight. Go to your profile (bottom-left) → verify your email if you haven't already.
 
----
+<!-- ------------------------ -->
 
 ## Security and Governance
 
@@ -549,7 +559,7 @@ Then log into Snowsight as **`west_coast_manager_user`** with the password you j
 
 The agent returns results for only CA, OR, and WA — the Row Access Policy filters data transparently, even through AI-generated SQL. (Log back in as your admin user afterward.)
 
----
+<!-- ------------------------ -->
 
 ## Streamlit Dashboard
 
@@ -567,7 +577,7 @@ CoCo runs `snow streamlit deploy` from the `streamlit-dashboard/` directory. Onc
 - **Customer & Product Analytics** — Lifetime value segments, product performance
 - **Pipeline Health** — Dynamic Tables refresh status, data freshness monitoring
 
----
+<!-- ------------------------ -->
 
 ## Agent Evaluation
 
@@ -605,7 +615,7 @@ If questions score low on logical consistency:
 3. Update the agent's instructions to be more explicit
 4. Recreate the agent and re-run the evaluation
 
----
+<!-- ------------------------ -->
 
 ## Agent Observability
 
@@ -648,7 +658,7 @@ You'll see the full trace: planning steps → tool selection (Cortex Analyst, Se
 
 > **Production tip:** To set per-user daily credit limits, budgets, or quotas for CoCo usage, see [Cost controls for CoCo](https://docs.snowflake.com/en/user-guide/cortex-code/cost-controls).
 
----
+<!-- ------------------------ -->
 
 ## MCP Server
 
@@ -706,7 +716,7 @@ cortex mcp add business-insights https://<account_url>/api/v2/databases/DASH_AUT
 
 Now any MCP-compatible client (CoCo Desktop, Claude Desktop, custom apps) can discover and call these tools via the standard MCP protocol.
 
----
+<!-- ------------------------ -->
 
 ## Optional: Iceberg V3 Features
 
@@ -734,7 +744,7 @@ CoCo creates a V3 Snowflake-managed Iceberg table (merge-on-read is the default 
 
 This demonstrates V3 schema evolution without rewriting data files.
 
----
+<!-- ------------------------ -->
 
 ## Optional: Streaming Ingestion
 
@@ -802,7 +812,7 @@ Use CoCo to merge the streamed data:
 
 > *"Switch to the Gen2 warehouse, check how many rows are in staging, then merge them into RAW and show me the results"*
 
----
+<!-- ------------------------ -->
 
 ## Cleanup
 
@@ -812,12 +822,12 @@ To remove all objects created during this lab:
 snow sql -f cleanup.sql -c hol
 ```
 
----
+<!-- ------------------------ -->
 
 ## Troubleshooting
 
 | Symptom | Likely Cause | Fix |
-|---------|-------------|-----|
+|<!-- ------------------------ --><!-- ------------------------ --><!-- ------------------------ -->|<!-- ------------------------ --><!-- ------------------------ --><!-- ------------------------ --><!-- ------------------------ -->-|<!-- ------------------------ -->--|
 | DMF results missing after setup | `SNOWFLAKE.LOCAL.DATA_QUALITY_MONITORING_RESULTS` populates asynchronously (up to 15 min) | Wait, or run `EXECUTE ALERT dash_automated_intelligence_db.raw.dq_alert;` to force check |
 | Dynamic Table stuck in REFRESHING | Upstream DT hasn't finished first refresh | Check `SELECT * FROM TABLE(INFORMATION_SCHEMA.DYNAMIC_TABLE_REFRESH_HISTORY())` for errors |
 | Agent not appearing in CoWork | Agent not registered with Snowflake Intelligence object | Run `ALTER SNOWFLAKE INTELLIGENCE ... ADD AGENT ...` (see `create_agent.sql`) |
@@ -826,7 +836,7 @@ snow sql -f cleanup.sql -c hol
 | `load_test.py` connection error | Missing connector package | `pip install snowflake-connector-python` |
 | `west_coast_manager_user` can't log in | No password set | `ALTER USER west_coast_manager_user SET PASSWORD = '<your-choice>';` |
 
----
+<!-- ------------------------ -->
 
 ## Resources
 
@@ -841,7 +851,7 @@ Documentation:
 - [Row Access Policies](https://docs.snowflake.com/en/user-guide/security-row-intro)
 - [Snowflake CoCo](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code)
 
----
+<!-- ------------------------ -->
 
 ## License
 
