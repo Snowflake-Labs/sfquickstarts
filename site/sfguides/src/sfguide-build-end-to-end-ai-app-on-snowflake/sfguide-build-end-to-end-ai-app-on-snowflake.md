@@ -555,6 +555,8 @@ LIMIT 10;
 
 You'll see the full trace: planning steps → tool selection (Cortex Analyst, Search, SQL execution) → chart generation → response. Use this to debug slow responses, understand token costs, and verify the agent is routing to the correct tools.
 
+> **Production tip:** To set per-user daily credit limits, budgets, or quotas for CoCo usage, see [Cost controls for CoCo](https://docs.snowflake.com/en/user-guide/cortex-code/cost-controls).
+
 <!-- ------------------------ -->
 ## MCP Server
 
