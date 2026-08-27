@@ -41,6 +41,8 @@ A production-grade AI-powered retail analytics platform on Snowflake — from ra
 - Git installed locally
 - Basic familiarity with SQL and command-line tools
 
+> **Source code:** All scripts, SQL files, dbt models, Streamlit app, streaming code, and plugin referenced in this guide are in the companion repository: [Snowflake-Labs/automated-intelligence-dev-day-2026-hol](https://github.com/Snowflake-Labs/automated-intelligence-dev-day-2026-hol)
+
 <!-- ------------------------ -->
 ## Setup
 
