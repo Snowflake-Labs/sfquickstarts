@@ -89,7 +89,7 @@ os.environ["SNOWFLAKE_PAT"] = "<your_pat_token>"
 To create a PAT in Snowsight: navigate to your profile menu > **My profile** > **Settings** > **Authentication** > **Programmatic access tokens** > **Generate new token**.
 
 <!-- ------------------------ -->
-## 3. Create Online Service and Entity
+## 3. Initialize Feature Store
 
 ### Initialize Feature Store
 
@@ -107,7 +107,23 @@ fs = FeatureStore(
 )
 ```
 
-### Create Online Service
+### Register Entity
+
+An Entity defines the primary key used to join Feature Views together. Here we register a `CUSTOMER` entity with `CUSTOMER_ID` as the join key — all Feature Views in this guide will be keyed by customer.
+
+```python
+from snowflake.ml.feature_store import Entity
+
+customer_entity = Entity(
+    name="CUSTOMER",
+    join_keys=["CUSTOMER_ID"],
+    desc="A customer identified by their unique customer ID",
+)
+fs.register_entity(customer_entity)
+fs.list_entities().show()
+```
+
+## 4. Create Online Service
 
 The online service is a managed Postgres serving layer. Create it once per Feature Store before registering feature views with online serving.
 
@@ -135,24 +151,9 @@ print(f"Query URL: {query_url}")
 print(f"Ingest URL: {ingest_url}")
 ```
 
-### Register Entity
-
-An Entity defines the primary key used to join Feature Views together. Here we register a `CUSTOMER` entity with `CUSTOMER_ID` as the join key — all Feature Views in this guide will be keyed by customer.
-
-```python
-from snowflake.ml.feature_store import Entity
-
-customer_entity = Entity(
-    name="CUSTOMER",
-    join_keys=["CUSTOMER_ID"],
-    desc="A customer identified by their unique customer ID",
-)
-fs.register_entity(customer_entity)
-fs.list_entities().show()
-```
 
 <!-- ------------------------ -->
-## 4. Register Feature Views
+## 5. Register Feature Views
 
 This section demonstrates three types of Feature Views — the core building blocks of the Online Feature Store.
 
@@ -280,7 +281,7 @@ print(f"Registered: {registered_stream_fv.name}/{registered_stream_fv.version}")
 ```
 
 <!-- ------------------------ -->
-## 5. Online Feature Retrieval
+## 6. Online Feature Retrieval
 
 ### Read Features from the Online Store
 
@@ -313,14 +314,14 @@ txn_online.show()
 ### Latency Expectations
 
 The Postgres online store achieves:
-- **p50**: ~5-10ms (in-region)
+- **p50**: sub-10ms
 - **p95**: sub-15ms
 - **p99**: sub-20ms
 
 For benchmarking in your own environment, see the [Online Feature Store Benchmark Kit](https://github.com/Snowflake-Labs/snowflake-feature-store-online-benchmark-kit).
 
 <!-- ------------------------ -->
-## 6. Stream Ingestion
+## 7. Stream Ingestion
 
 ### Ingest Events via Python SDK
 
@@ -379,9 +380,24 @@ print("AFTER:", after.to_pandas().to_string(index=False))
 ```
 
 <!-- ------------------------ -->
-## 7. REST API: Query and Ingest
+## 8. REST API: Query and Ingest
 
 The online service exposes HTTP endpoints for feature retrieval and stream ingestion. These can be called from any client (Python, curl, application code).
+
+### Get Endpoint URLs
+
+In Python, retrieve the URLs from the online service status:
+
+```python
+from snowflake.ml.feature_store import online_service
+
+status = fs.get_online_service_status()
+query_url = online_service.endpoint_url(status, "query")
+ingest_url = online_service.endpoint_url(status, "ingest")
+
+print(f"Query: {query_url}")
+print(f"Ingest: {ingest_url}")
+```
 
 ### Query Endpoint
 
@@ -406,6 +422,8 @@ curl -s -X POST "$QUERY_URL/api/v1/query" \
 Push events via the REST ingest API:
 
 ```bash
+export INGEST_URL="<ingest_endpoint_url>"
+
 curl -s -X POST "$INGEST_URL/api/v1/ingest" \
   -H "Authorization: Snowflake Token=\"$SNOWFLAKE_PAT\"" \
   -H "Content-Type: application/json" \
@@ -422,23 +440,8 @@ curl -s -X POST "$INGEST_URL/api/v1/ingest" \
   }'
 ```
 
-### Get Endpoint URLs
-
-In Python, retrieve the URLs from the online service status:
-
-```python
-from snowflake.ml.feature_store import online_service
-
-status = fs.get_online_service_status()
-query_url = online_service.endpoint_url(status, "query")
-ingest_url = online_service.endpoint_url(status, "ingest")
-
-print(f"Query: {query_url}")
-print(f"Ingest: {ingest_url}")
-```
-
 <!-- ------------------------ -->
-## 8. Model Registry Integration
+## 9. Model Registry Integration
 
 The Online Feature Store integrates with the Snowflake Model Registry. When deploying a model as a service, you can configure automatic feature retrieval so the inference endpoint only needs entity IDs.
 
@@ -485,7 +488,7 @@ With this configuration, a prediction request only needs:
 The service fetches `CUSTOMER_PROFILE_FEATURES` and `CUSTOMER_TXN_AGG` from the online store automatically before invoking the model.
 
 <!-- ------------------------ -->
-## 9. Clean Up
+## 10. Clean Up
 
 ### Drop the Online Service
 
