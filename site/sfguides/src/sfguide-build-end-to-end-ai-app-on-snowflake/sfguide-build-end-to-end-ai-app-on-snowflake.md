@@ -169,8 +169,8 @@ You should see `Status: OK`.
 ### Clone the Lab Repository
 
 ```bash
-git clone https://github.com/Snowflake-Labs/automated-intelligence-dev-day-2026-hol.git
-cd automated-intelligence-dev-day-2026-hol
+git clone https://github.com/Snowflake-Labs/sfguide-build-end-to-end-ai-app-on-snowflake.git
+cd sfguide-build-end-to-end-ai-app-on-snowflake
 ```
 
 ### Run Infrastructure Setup
