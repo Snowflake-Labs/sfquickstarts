@@ -22,8 +22,9 @@ You'll build analytical models with dbt, monitor data quality with Data Metric F
 - Serve low-latency queries with Interactive Tables and Gen2 Warehouses
 - Build analytical models with dbt
 - Monitor data quality automatically with Data Metric Functions
-- Create and query managed Iceberg V3 tables (deletion vectors, row lineage) *(optional)*
-- Create custom CoCo skills for reusable team workflows
+- Create and query managed Iceberg V3 tables (deletion vectors, default values) *(optional)*
+- Stream real-time data with Snowpipe Streaming *(optional)*
+- Create custom CoCo skills and package them as shareable plugins
 - Build a Cortex Agent with Cortex Analyst (semantic view + verified queries) and Agentic Search (multi-index Cortex Search)
 - Use Deep Research for multi-step investigations, save Artifacts, and schedule Automations
 - Evaluate agent quality with ground-truth datasets and LLM judges
@@ -354,6 +355,55 @@ CoCo creates `.cortex/skills/profile-table/SKILL.md` with the skill definition, 
 > *"$profile-table DASH_AUTOMATED_INTELLIGENCE_DB.RAW.ORDERS"*
 
 This demonstrates how teams package repeatable workflows as shareable CoCo skills.
+
+<!-- ------------------------ -->
+## CoCo Plugin
+
+[CoCo Plugins](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-plugins) bundle skills, MCP servers, hooks, and subagents into a single shareable package. Once packaged, anyone on your team can install the plugin and get all your extensions in one step — via GitHub, the Plugins Catalog, or by dropping it into a project directory.
+
+### Package the Skill as a Plugin
+
+**Prompt CoCo:**
+
+> *"Package our profile-table skill as a CoCo plugin called retail-analytics"*
+
+CoCo creates the plugin directory with a manifest and copies the skill into it.
+
+**Manual fallback:**
+
+```bash
+mkdir -p .cortex/plugins/retail-analytics/.cortex-plugin
+mkdir -p .cortex/plugins/retail-analytics/skills
+```
+
+Create `.cortex/plugins/retail-analytics/.cortex-plugin/plugin.json`:
+```json
+{
+  "name": "retail-analytics",
+  "description": "Data profiling skill for retail analytics",
+  "version": "1.0.0"
+}
+```
+
+```bash
+cp -r .cortex/skills/profile-table .cortex/plugins/retail-analytics/skills/
+```
+
+### Validate
+
+```bash
+cortex plugin validate .cortex/plugins/retail-analytics
+```
+
+Expected output: `Plugin 'retail-analytics' is valid.`
+
+### Test the Plugin
+
+The plugin is auto-discovered from `.cortex/plugins/` in your project directory. Test it:
+
+> *"$profile-table DASH_AUTOMATED_INTELLIGENCE_DB.RAW.ORDERS"*
+
+The skill runs from the plugin — same behavior as before, but now it's a portable, installable package. Share it by pushing to GitHub (`cortex plugin install your-org/retail-analytics`) or publishing to the Plugins Catalog from CoCo Desktop.
 
 <!-- ------------------------ -->
 ## Snowflake CoWork
