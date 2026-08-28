@@ -1,6 +1,6 @@
 author: Sho Tanaka, Doris Lee
 language: en
-id: intro-to-online-feature-store-postgres-in-snowflake
+id: intro-to-online-feature-store-with-postgres-in-snowflake
 summary: Build real-time fraud detection using Snowflake Online Feature Store with Postgres for low-letency feature serving
 categories: snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/model-development, snowflake-site:taxonomy/snowflake-feature/applied-analytics, snowflake-site:taxonomy/snowflake-feature/snowflake-ml-functions, snowflake-site:taxonomy/snowflake-feature/snowpark, snowflake-site:taxonomy/snowflake-feature/snowpark-container-services, snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/certified-solution
 environments: web
@@ -12,7 +12,7 @@ fork repo link: https://github.com/Snowflake-Labs/sfguide-intro-to-online-featur
 # Introduction to Online Feature Store in Snowflake
 
 <!-- ------------------------ -->
-## 1. Overview
+## Overview
 
 The Snowflake Online Feature Store with Postgres (Public Preview) provides low-letency feature retrieval for real-time ML inference. This guide demonstrates how to build a real-time fraud detection system using the Online Feature Store — covering online feature retrieval, time-windowed aggregations, streaming ingestion, and REST API usage.
 
@@ -48,7 +48,7 @@ You'll learn how to register batch, aggregation, and stream Feature Views backed
 - REST API integration for feature query and stream ingest
 
 <!-- ------------------------ -->
-## 2. Setup and Data Preparation
+## Setup and Data Preparation
 
 This section covers environment setup, creating the online service, and loading synthetic fraud data.
 
@@ -89,7 +89,7 @@ os.environ["SNOWFLAKE_PAT"] = "<your_pat_token>"
 To create a PAT in Snowsight: navigate to your profile menu > **My profile** > **Settings** > **Authentication** > **Programmatic access tokens** > **Generate new token**.
 
 <!-- ------------------------ -->
-## 3. Initialize Feature Store
+## Initialize Feature Store
 
 ### Initialize Feature Store
 
@@ -123,7 +123,7 @@ fs.register_entity(customer_entity)
 fs.list_entities().show()
 ```
 
-## 4. Create Online Service
+## Create Online Service
 
 The online service is a managed Postgres serving layer. Create it once per Feature Store before registering feature views with online serving.
 
@@ -153,7 +153,7 @@ print(f"Ingest URL: {ingest_url}")
 
 
 <!-- ------------------------ -->
-## 5. Register Feature Views
+## Register Feature Views
 
 This section demonstrates three types of Feature Views — the core building blocks of the Online Feature Store.
 
@@ -281,7 +281,7 @@ print(f"Registered: {registered_stream_fv.name}/{registered_stream_fv.version}")
 ```
 
 <!-- ------------------------ -->
-## 6. Online Feature Retrieval
+## Online Feature Retrieval
 
 ### Read Features from the Online Store
 
@@ -321,7 +321,7 @@ The Postgres online store achieves:
 For benchmarking in your own environment, see the [Online Feature Store Benchmark Kit](https://github.com/Snowflake-Labs/snowflake-feature-store-online-benchmark-kit).
 
 <!-- ------------------------ -->
-## 7. Stream Ingestion
+## Stream Ingestion
 
 ### Ingest Events via Python SDK
 
@@ -380,7 +380,7 @@ print("AFTER:", after.to_pandas().to_string(index=False))
 ```
 
 <!-- ------------------------ -->
-## 8. REST API: Query and Ingest
+## REST API: Query and Ingest
 
 The online service exposes HTTP endpoints for feature retrieval and stream ingestion. These can be called from any client (Python, curl, application code).
 
@@ -441,7 +441,7 @@ curl -s -X POST "$INGEST_URL/api/v1/ingest" \
 ```
 
 <!-- ------------------------ -->
-## 9. Model Registry Integration
+## Model Registry Integration
 
 The Online Feature Store integrates with the Snowflake Model Registry. When deploying a model as a service, you can configure automatic feature retrieval so the inference endpoint only needs entity IDs.
 
@@ -488,7 +488,7 @@ With this configuration, a prediction request only needs:
 The service fetches `CUSTOMER_PROFILE_FEATURES` and `CUSTOMER_TXN_AGG` from the online store automatically before invoking the model.
 
 <!-- ------------------------ -->
-## 10. Clean Up
+## Clean Up
 
 ### Drop the Online Service
 
@@ -534,7 +534,7 @@ SELECT 'Teardown complete.' AS STATUS;
 ```
 
 <!-- ------------------------ -->
-## 10. Conclusion and Resources
+## Conclusion and Resources
 
 Congratulations! You've built a real-time fraud detection system using the Snowflake Online Feature Store with Postgres.
 
