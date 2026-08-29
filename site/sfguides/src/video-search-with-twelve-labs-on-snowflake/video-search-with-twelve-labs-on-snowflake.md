@@ -1,17 +1,8 @@
-author: Akhil Ramasagaram
-id: video-search-with-twelve-labs-on-snowflake
-summary: Turn your video library into a searchable, queryable asset using Twelve Labs Marengo and Pegasus models running natively in Snowflake Cortex.
-categories: snowflake-site:taxonomy/solution-center/partners/technology-partner
-environments: web
-status: Published
-feedback link: https://github.com/Snowflake-Labs/sfquickstarts/issues
-tags: Cortex, AI, Video, Twelve Labs, Marengo, Pegasus, Embeddings, Vector Search, Multimodal
+# Cortex Can Now Watch, Hear & Understand Video: Twelve Labs on Snowflake
 
-# Video Just Became Queryable: Twelve Labs on Snowflake
+---
 
-<!-- ------------------------ -->
-## Overview
-Duration: 5
+## The Problem
 
 Video is now the most produced, most consumed, and least understood data in the enterprise.
 
@@ -23,25 +14,9 @@ The reason is simple: there was no GPT moment for video. Text got transformers, 
 
 **That changes now.**
 
-### Prerequisites
-- A Snowflake account with access to Snowflake Cortex
-- An internal or external stage containing video files (MP4, MOV, etc.)
-- Basic familiarity with SQL
+---
 
-### What You'll Learn
-- How Twelve Labs Marengo and Pegasus models work inside Snowflake Cortex
-- How to generate multimodal video embeddings with `AI_MULTI_EMBED`
-- How to analyze video content with `AI_COMPLETE` (Pegasus)
-- How to search your video library using Cortex Search and Cortex Agents
-
-### What You'll Build
-- A searchable video embedding table powered by Marengo
-- A video analysis pipeline powered by Pegasus
-- A natural language video search interface using Cortex Agents
-
-<!-- ------------------------ -->
 ## Why Twelve Labs
-Duration: 3
 
 Twelve Labs built the first video-native AI — models that learn from video the way humans do: ingesting visuals, audio, and speech simultaneously across time. Not frame-by-frame analysis. Not audio and video processed in separate pipelines. A unified, temporal understanding of what is happening in the content.
 
@@ -53,9 +28,9 @@ Two models power this:
 
 Together, they give you both sides of the intelligence stack. Marengo handles **retrieval** — finding the right moment in a massive library. Pegasus handles **understanding** — telling you what that moment means.
 
-<!-- ------------------------ -->
+---
+
 ## Why This Matters on Snowflake
-Duration: 3
 
 Your campaign data, audience segments, content metadata, and spend already live in Snowflake. Until now, the video that generated all of that data was locked outside the analytics layer.
 
@@ -66,19 +41,15 @@ With Twelve Labs models running natively inside Snowflake Cortex:
 - **It joins.** Video-derived signals sit in the same tables as your structured data. Content intelligence meets performance metrics in a single query.
 - **It's governed.** Row-level policies, role-based access, audit logs — all apply to video-derived data the same way they apply to everything else in Snowflake.
 
-<!-- ------------------------ -->
-## Architecture
-Duration: 2
+---
 
-![Twelve Labs on Snowflake Architecture](assets/tl_arch.png)
+## What It Looks Like
 
-Videos live on a Snowflake stage — internal or external (S3, GCS, Azure). Cortex routes them through Marengo for embeddings and Pegasus for reasoning. The outputs land in Snowflake tables — vectors in a Vector DB, structured metadata in a Database — where Cortex Search, Cortex Analyst, and Cortex Agents make them queryable from applications via REST API.
+### Embed: One function call, your entire video library becomes searchable
 
-<!-- ------------------------ -->
-## Embed: Generate Multimodal Video Embeddings
-Duration: 5
+![Twelve Labs on Snowflake Architecture](TL_Arch.png)
 
-One function call turns your entire video library into a searchable vector database.
+Videos live on a Snowflake stage — internal or external (S3, GCS, Azure).
 
 ```sql
 SELECT AI_MULTI_EMBED(
@@ -101,9 +72,9 @@ The number of segments varies by video length and modality — a 2-minute video 
 
 Your video library becomes a vector database — searchable with plain text.
 
-<!-- ------------------------ -->
-## Analyze: Video Reasoning with Pegasus
-Duration: 5
+---
+
+### Analyze: Ask any question, get structured answers
 
 ```sql
 SELECT AI_COMPLETE(
@@ -116,9 +87,9 @@ FROM video_catalog;
 
 One function call. No frame extraction. No transcription pipeline. No pre-processing. Pegasus watches the video and reasons about it — returning free-text answers, structured metadata, or whatever your prompt asks for.
 
-<!-- ------------------------ -->
-## Search: Natural Language Video Retrieval
-Duration: 5
+---
+
+### Search: Describe what you want, find the exact moment
 
 Once your video embeddings are stored, **Cortex Search** indexes them and makes your entire library queryable from natural language — no manual tags, no keyword matching, no content taxonomies to maintain.
 
@@ -130,9 +101,9 @@ For advanced use cases, **Cortex Agents** can orchestrate multi-vector search ac
 | **Analyze** (Pegasus) | `AI_COMPLETE` | Watches video and generates structured reasoning |
 | **Search** | Cortex Search + Cortex Agents | Retrieves relevant moments via natural language queries |
 
-<!-- ------------------------ -->
+---
+
 ## Who This Is For
-Duration: 3
 
 | Industry | The Problem | What This Unlocks |
 |---|---|---|
@@ -147,21 +118,16 @@ Duration: 3
 | **Manufacturing & Industrial** | Inspection and assembly-line footage is reviewed manually | Detect anomalies, search for defect patterns, and audit quality at scale |
 | **Government & Public Sector** | Body-cam, courtroom, and public meeting recordings sit in cold archives | Surface relevant footage for FOIA requests, investigations, and oversight |
 
-<!-- ------------------------ -->
+---
+
+---
+
 ## Get Started
-Duration: 1
 
 If you are sitting on video data that should be generating insights — content libraries, ad creatives, broadcast archives, surveillance footage, training materials — this is your opportunity to turn storage costs into strategic assets.
 
 **Interested? Marengo 3.0 is already in GA and Pegasus 1.2 is in Private Preview — reach out to your Snowflake account team to enroll for early access.**
 
-### What You Learned
-- How Twelve Labs Marengo generates multimodal video embeddings via `AI_MULTI_EMBED`
-- How Pegasus reasons about video content via `AI_COMPLETE`
-- How Cortex Search and Cortex Agents enable natural language video retrieval
-- Which industries and use cases benefit from queryable video
+---
 
-### Related Resources
-- [Snowflake Cortex AI Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex)
-- [AI_MULTI_EMBED Function Reference](https://docs.snowflake.com/en/sql-reference/functions/ai_multi_embed)
-- [Twelve Labs Documentation](https://docs.twelvelabs.io/)
+*Snowflake x Twelve Labs — July 2026*
