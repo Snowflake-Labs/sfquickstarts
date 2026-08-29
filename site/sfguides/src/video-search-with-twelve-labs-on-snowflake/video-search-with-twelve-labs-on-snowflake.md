@@ -13,6 +13,7 @@ tags: Cortex, AI, Video, Twelve Labs, Marengo, Pegasus, Embeddings, Vector Searc
 ## Overview
 Duration: 5
 
+
 Video is now the most produced, most consumed, and least understood data in the enterprise.
 
 It accounts for over 80% of consumer internet traffic. Inside organizations, it is everywhere — marketing libraries with tens of thousands of creatives, sports archives spanning decades of broadcast footage, surveillance feeds running 24/7, training content, earnings calls, user-generated media, and content libraries worth billions.
@@ -78,6 +79,7 @@ Videos live on a Snowflake stage — internal or external (S3, GCS, Azure). Cort
 ## Embed: Generate Multimodal Video Embeddings
 Duration: 5
 
+
 One function call turns your entire video library into a searchable vector database.
 
 ```sql
@@ -105,6 +107,7 @@ Your video library becomes a vector database — searchable with plain text.
 ## Analyze: Video Reasoning with Pegasus
 Duration: 5
 
+
 ```sql
 SELECT AI_COMPLETE(
     'twelvelabs-pegasus-1-2',
@@ -119,6 +122,7 @@ One function call. No frame extraction. No transcription pipeline. No pre-proces
 <!-- ------------------------ -->
 ## Search: Natural Language Video Retrieval
 Duration: 5
+
 
 Once your video embeddings are stored, **Cortex Search** indexes them and makes your entire library queryable from natural language — no manual tags, no keyword matching, no content taxonomies to maintain.
 
