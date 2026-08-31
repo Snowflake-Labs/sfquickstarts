@@ -194,7 +194,18 @@ def parse_markdown(
     if not fork_repo_link:
         fork_repo_link = f"https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/{qid}"
     
-    open_in_snowflake_link = frontmatter.get('open_in_snowflake_link', '')
+    # Guide markdown uses spaced YAML keys (e.g. "open in snowflake link:").
+    # yaml.safe_load keeps those names as-is; it does not convert spaces to
+    # underscores. Looking up only open_in_snowflake_link returned '' and AEM
+    # never received quickstartArticleOpenInSnowflakeLink for first-time
+    # publishes after Workato was replaced. Accept all three spellings used
+    # in this repo.
+    open_in_snowflake_link = (
+        frontmatter.get('open_in_snowflake_link')
+        or frontmatter.get('open in snowflake link')
+        or frontmatter.get('open in snowflake')
+        or ''
+    )
     
     tags = frontmatter.get('tags', [])
     if isinstance(tags, list):
