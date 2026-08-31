@@ -156,7 +156,7 @@ snow connection add
 You'll be prompted for the following values (enter them one at a time):
 
 | Prompt | What to enter | Example |
-|<!-- ------------------------ --><!-- ------------------------ -->--|<!-- ------------------------ --><!-- ------------------------ --><!-- ------------------------ --><!-- ------------------------ --><!-- ------------------------ -->|<!-- ------------------------ --><!-- ------------------------ --><!-- ------------------------ -->|
+|--------|---------------|---------|
 | Connection name | A short name for this connection | `hol` |
 | Account identifier | Your Snowflake account URL (without `.snowflakecomputing.com`) | `myorg-myaccount` |
 | User | Your Snowflake username | `jsmith` |
@@ -464,7 +464,7 @@ The skill runs from the plugin — same behavior as before, but now it's a porta
 Open the **Snowflake CoWork** interface in Snowsight: navigate to **AI & ML > Snowflake CoWork**. Select the `BUSINESS_INSIGHTS_AGENT` agent. Then try each question to demonstrate different tool routing:
 
 | Question | Tools Used |
-|<!-- ------------------------ --><!-- ------------------------ --><!-- ------------------------ -->-|<!-- ------------------------ --><!-- ------------------------ --><!-- ------------------------ -->--|
+|----------|-----------|
 | "Show me monthly revenue trend from August to November 2026" | Cortex Analyst (text-to-SQL) |
 | "Which month had the lowest revenue, and what do customer reviews say about that period?" | Cortex Analyst + Agentic Search |
 | "Find reviews mentioning wrong size with a rating below 3" | Agentic Search (filtered) |
