@@ -214,7 +214,7 @@ CoCo modifies the query and runs the updated version. You're building queries th
 
 ### Analyze query results
 
-CoCo can also read the result grid from queries you've already run, including queries you executed directly in the extension's SQL editor. The query results panel gives you two one-click handoffs to CoCo:
+CoCo can also read the result grid from queries you've already run, including queries you executed directly in the extension's SQL editor. This turns the result grid into another form of context, without needing to copy rows or errors into the chat. Here are a couple of interactions you can route to CoCo directly from the results grid:
 
 - **Analyze** – appears on a successful result set. Click it to send the results to CoCo for interpretation, summarization, or follow-up questions.
 
@@ -223,8 +223,6 @@ CoCo can also read the result grid from queries you've already run, including qu
 - **Fix with CoCo** – appears when a query returns a SQL compilation or execution error. Click it to hand the failing query and error message to CoCo so it can diagnose and propose a fix.
 
 ![Fix with CoCo](./assets/fix_with_coco.png)
-
-This turns the result grid into another form of context – you don't have to copy rows or errors into the chat.
 
 <!-- ------------------------ -->
 ## Build a Data Quality Monitor
