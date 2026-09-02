@@ -77,7 +77,7 @@ GRANT USAGE ON WAREHOUSE GOVERNANCE_DEMO_WH TO ROLE FULL_ROLE;
 GRANT USAGE ON WAREHOUSE GOVERNANCE_DEMO_WH TO ROLE RESTRICTED_ROLE;
 ```
 
-Now create the first Iceberg table with a masking policy on its email column. These are Snowflake-managed Iceberg tables, so they need no external volume configuration.
+Now create the first Iceberg table with a masking policy on its email column. These are Snowflake-managed Iceberg tables: `EXTERNAL_VOLUME = 'SNOWFLAKE_MANAGED'` is a keyword rather than the name of a volume you have to create, and there is no `BASE_LOCATION` — Snowflake chooses the layout.
 
 ```sql
 USE DATABASE ICEBERG_GOVERNANCE_DEMO;
@@ -89,7 +89,6 @@ CREATE OR REPLACE ICEBERG TABLE USER_INFO (
 )
   CATALOG = 'SNOWFLAKE'
   EXTERNAL_VOLUME = 'SNOWFLAKE_MANAGED'
-  BASE_LOCATION = 'user_info'
   COMMENT = 'Demo table with a masking policy on EMAIL.';
 
 INSERT INTO USER_INFO VALUES
@@ -118,7 +117,6 @@ CREATE OR REPLACE ICEBERG TABLE REGIONS (
 )
   CATALOG = 'SNOWFLAKE'
   EXTERNAL_VOLUME = 'SNOWFLAKE_MANAGED'
-  BASE_LOCATION = 'regions'
   COMMENT = 'Demo table with a row access policy on IS_PUBLIC.';
 
 INSERT INTO REGIONS VALUES
@@ -135,15 +133,18 @@ CREATE OR REPLACE ROW ACCESS POLICY RAP_PUBLIC_ONLY AS (is_public BOOLEAN)
 
 ALTER ICEBERG TABLE REGIONS ADD ROW ACCESS POLICY RAP_PUBLIC_ONLY ON (IS_PUBLIC);
 
-GRANT SELECT ON ICEBERG TABLE USER_INFO TO ROLE FULL_ROLE;
-GRANT SELECT ON ICEBERG TABLE USER_INFO TO ROLE RESTRICTED_ROLE;
-GRANT SELECT ON ICEBERG TABLE REGIONS   TO ROLE FULL_ROLE;
-GRANT SELECT ON ICEBERG TABLE REGIONS   TO ROLE RESTRICTED_ROLE;
-GRANT INSERT, UPDATE, DELETE ON ICEBERG TABLE USER_INFO TO ROLE FULL_ROLE;
-GRANT INSERT, UPDATE, DELETE ON ICEBERG TABLE USER_INFO TO ROLE RESTRICTED_ROLE;
+GRANT SELECT ON ICEBERG TABLE REGIONS TO ROLE FULL_ROLE;
+GRANT SELECT ON ICEBERG TABLE REGIONS TO ROLE RESTRICTED_ROLE;
+
+GRANT SELECT, INSERT, UPDATE, DELETE, TRUNCATE
+  ON ICEBERG TABLE USER_INFO TO ROLE FULL_ROLE;
+GRANT SELECT, INSERT, UPDATE, DELETE, TRUNCATE
+  ON ICEBERG TABLE USER_INFO TO ROLE RESTRICTED_ROLE;
 ```
 
-Note that `RESTRICTED_ROLE` is granted write privileges. That is deliberate — later you will see Snowflake refuse its writes anyway, because the decision is made on policy applicability, not on the SQL grant.
+`USER_INFO` is the table you will write to, and a write over Iceberg REST needs the whole DML set — `SELECT`, `INSERT`, `UPDATE`, `DELETE` **and** `TRUNCATE`. `TRUNCATE` is the one most often left out, because nothing in this guide truncates anything and a Snowflake `MERGE` does not require it. Omit it and the engine's commit fails on a privilege check that names none of the statements you actually ran.
+
+Note that `RESTRICTED_ROLE` is granted the full write set as well. That is deliberate — later you will see Snowflake refuse its writes anyway, because the decision is made on policy applicability, not on the SQL grant. Getting the grants right first is what makes that later refusal meaningful: with a privilege missing, both roles fail and you learn nothing.
 
 <!-- ------------------------ -->
 ## Configure External Engine
@@ -167,17 +168,27 @@ CREATE OR REPLACE USER SVC_RESTRICTED
 
 GRANT ROLE FULL_ROLE TO USER SVC_FULL;
 GRANT ROLE RESTRICTED_ROLE TO USER SVC_RESTRICTED;
+```
 
+Now generate the two tokens. **A programmatic access token is displayed exactly once, when it is created, and cannot be retrieved afterwards.** Open somewhere to keep them — a password manager, or a scratch buffer you will clear — before you run the next statement. If you lose a token, your only option is to remove it and add a new one.
+
+Create the first token and copy the `token_secret` value from the result:
+
+```sql
 ALTER USER SVC_FULL ADD PROGRAMMATIC ACCESS TOKEN FULL_PAT
   ROLE_RESTRICTION = 'FULL_ROLE'
   DAYS_TO_EXPIRY = 30;
+```
 
+With that one saved, create the second and copy it too:
+
+```sql
 ALTER USER SVC_RESTRICTED ADD PROGRAMMATIC ACCESS TOKEN RESTRICTED_PAT
   ROLE_RESTRICTION = 'RESTRICTED_ROLE'
   DAYS_TO_EXPIRY = 30;
 ```
 
-Each `ALTER USER` returns the token once. Copy both values somewhere safe before moving on.
+Label them as you paste — the two tokens are indistinguishable by eye, and swapping them produces a confusing result rather than an error, because both are valid credentials for different roles.
 
 Point a standard Iceberg REST catalog at Horizon. The catalog URI is your account URL plus the Horizon IRC path, and the `warehouse` property is the Snowflake database name.
 
@@ -193,7 +204,8 @@ SESSION_ROLE = "FULL_ROLE"  # or RESTRICTED_ROLE
 spark = (
     SparkSession.builder
     .config("spark.jars.packages",
-            "org.apache.iceberg:iceberg-spark-runtime-3.5_2.12:1.11.0")
+            "org.apache.iceberg:iceberg-spark-runtime-3.5_2.12:1.11.0,"
+            "org.apache.iceberg:iceberg-aws-bundle:1.11.0")
     .config("spark.sql.catalog.horizon",
             "org.apache.iceberg.spark.SparkCatalog")
     .config("spark.sql.catalog.horizon.type", "rest")
@@ -207,14 +219,26 @@ spark = (
 )
 ```
 
-There is no fallback catalog, no JDBC URL, and no Snowflake connector. Everything below runs through that one catalog handle.
+There is no fallback catalog, no JDBC URL, and no Snowflake connector. Every step that follows runs through that one catalog handle.
+
+`iceberg-aws-bundle` is what lets Iceberg use the credentials Snowflake vends. Without it the first read fails with `Failed to get file system for path: s3://…`, which looks like a storage problem but is a missing client library. On Azure or GCP, substitute `iceberg-azure-bundle` or `iceberg-gcp-bundle`.
+
+Run this in a notebook or a `pyspark` shell, where PySpark starts the JVM and resolves `spark.jars.packages` for you. Under `spark-submit` the JVM is already running by the time the builder executes, so the same two packages have to go on the command line instead:
+
+```shell
+spark-submit --packages \
+  org.apache.iceberg:iceberg-spark-runtime-3.5_2.12:1.11.0,org.apache.iceberg:iceberg-aws-bundle:1.11.0 \
+  your_script.py
+```
+
+The remaining steps assume a persistent session, in Spark and in Snowflake alike. Keep one Snowflake worksheet for the SQL, because each block builds on the database, schema and role the preceding blocks set.
 
 <!-- ------------------------ -->
 ## Read Governed Data
 
 Reads always work on a governed table. What changes is what comes back.
 
-Run the same query as each role, changing only `SESSION_ROLE` and `PAT_TOKEN` in the configuration above.
+Run the same query as each role, changing only `SESSION_ROLE` and `PAT_TOKEN` in the preceding configuration.
 
 ```python
 spark.sql("SELECT * FROM horizon.PUBLIC.USER_INFO").show(truncate=False)
@@ -256,7 +280,7 @@ A policy does not make a table read-only to the outside world. Snowflake asks a 
 
 > A write is allowed if, and only if, every policy attached to the table is a no-op for the role doing the writing.
 
-![Write path decision flow: a client calls loadTable with the vended-credentials delegation header; Snowflake evaluates whether the attached policies are no-ops for the calling role; if they are, it vends storage credentials and flags the table as governed, and the client's append, update, delete or merge commits normally; if the policies do apply to the role, Snowflake withholds credentials and returns scan-planning-mode server, and the write is refused before any data file is written.](assets/write-path-flow.png)
+![Write path decision flow: a client calls loadTable with the vended-credentials delegation header; Snowflake evaluates whether the attached policies are no-ops for the calling role; if they are, it vends storage credentials and flags the table as governed, and the client's append, update, delete or merge commits normally; if the policies do apply to the role, Snowflake withholds credentials and returns scan-planning-mode server, and the write is refused - a row-level write during scan planning, an append when it tries to write to storage.](assets/write-path-flow.png)
 
 As `FULL_ROLE`, which both policies exempt, a write behaves like a write to any ordinary table.
 
@@ -276,7 +300,7 @@ spark.sql("""
 
 That commits, producing a new snapshot Snowflake sees immediately. Appends, updates and deletes behave the same.
 
-Run the identical statement as `RESTRICTED_ROLE` and it fails at the credential step. Confirm in Snowflake that nothing changed:
+Run the identical statement as `RESTRICTED_ROLE` and it fails. Confirm in Snowflake that nothing changed:
 
 ```sql
 SELECT USERNAME, EMAIL FROM ICEBERG_GOVERNANCE_DEMO.PUBLIC.USER_INFO ORDER BY USERNAME;
@@ -284,9 +308,31 @@ SELECT USERNAME, EMAIL FROM ICEBERG_GOVERNANCE_DEMO.PUBLIC.USER_INFO ORDER BY US
 
 Check the table contents rather than trusting the absence of an error, because "the write failed" and "the write silently stored masked values" look identical from the client side.
 
-Three properties of this design are worth understanding:
+The refusal arrives at one of two places, depending on the statement, and the two look nothing like each other:
 
-- **The refusal is early.** The client is stopped before it writes a single data file. A `MERGE` reads existing rows to decide what to change, so a client that could read masked values and write them back would overwrite real email addresses with `****@****.***`. That cannot happen, because the client never gets far enough to read.
+- **A statement that has to read first — `MERGE`, `UPDATE`, `DELETE` — is refused during scan planning**, before any file is written. Iceberg asks for the `_file` metadata column to identify the rows it will rewrite, and on a governed table that request comes back rejected:
+
+```console
+org.apache.iceberg.exceptions.BadRequestException: Malformed request:
+Invalid select field: '_file' does not exist in the table schema
+```
+
+The message names a column you did not remove, which is why it reads as a schema bug rather than the governance decision it is. What matters is where it happens: the plan is refused, so no file is written and nothing is read. A `MERGE` reads existing rows to decide what to change, so a client that could read masked values and write them back would overwrite real email addresses with `****@****.***`. That cannot happen, because the plan is refused before the read.
+
+This is the case that matters most for safety.
+
+- **A plain `INSERT` is refused at the storage step.** There is nothing to read, so the statement gets as far as writing data files and then fails when it tries to complete them:
+
+```console
+java.io.UncheckedIOException: Failed to close current writer
+Caused by: software.amazon.awssdk.services.s3.model.S3Exception:
+The provided token has expired. (Service: S3, Status Code: 400)
+```
+
+The wording points at credential expiry, and the underlying reason is not visible from the client. What is observable is the outcome: no snapshot is committed and the table is unchanged. Be aware, though, that an append is not stopped as early as a `MERGE` is - it is refused at storage rather than at planning, so data files may be written and abandoned.
+
+Two further properties are worth understanding:
+
 - **The check is not column-aware.** A `DELETE` never touches the masked column and is refused anyway. The decision is made on the policy and the principal, not on which columns the statement mentions.
 - **Reads never break.** Only the write path closes. Governed tables stay readable through scan planning.
 
@@ -321,13 +367,22 @@ Two things are specific to governed tables. First, the scan-planning handshake i
     {"columnName": "EMAIL",
      "policies": [{"policyKind": "MASKING_POLICY",
                    "policyName": "ICEBERG_GOVERNANCE_DEMO.PUBLIC.MASK_EMAIL"}]}
-  ],
+  ]
+}]
+```
+
+A masking policy nests under the column it protects. A row access policy has no column to attach to, so it sits at the table level instead — this is what the `REGIONS` read records:
+
+```json
+[{
+  "objectName": "ICEBERG_GOVERNANCE_DEMO.PUBLIC.REGIONS",
+  "objectDomain": "Table",
   "policies": [{"policyKind": "ROW_ACCESS_POLICY",
                 "policyName": "ICEBERG_GOVERNANCE_DEMO.PUBLIC.RAP_PUBLIC_ONLY"}]
 }]
 ```
 
-Masking policies nest under each column; a row access policy sits at the table level. Flatten it to answer the question an auditor actually asks — was the mask applied when that engine read the table?
+Each payload also carries numeric `objectId`, `columnId` and `policyId` fields, omitted here for readability. Because the two policy kinds land in different places, a query that reads only one of them silently misses the other. Flatten both to answer the question an auditor actually asks — was the mask applied when that engine read the table?
 
 ```sql
 SELECT
@@ -357,13 +412,17 @@ One caveat matters for control design: **only successful operations are logged**
 <!-- ------------------------ -->
 ## Troubleshoot Common Failures
 
-Two failure modes look like infrastructure problems and are not.
+Three failure modes look like infrastructure problems and are not.
 
-#### A generic cloud credential error on write
+#### An expired-token error on write
 
-When a policy applies to your writing role, the write is refused for lack of credentials. The error your engine surfaces is a stock cloud-provider credential message that lists every provider it tried and mentions nothing about Snowflake, masking, or governance. Forgetting to exempt the writing role is the most likely misconfiguration here, and it presents as an IAM problem that does not exist.
+When a policy applies to your writing role, an `INSERT` fails at the storage step with `The provided token has expired` from your cloud provider. Nothing in that message mentions Snowflake, masking, or governance, and the wording sends you after the wrong thing: reissuing the token does not help. Forgetting to exempt the writing role is the most likely misconfiguration, and it presents as a credential-rotation problem that does not exist.
 
-Check the policies attached to the table and whether they are no-ops for your role before investigating cloud permissions:
+#### A missing `_file` column on write
+
+A `MERGE`, `UPDATE` or `DELETE` fails earlier, with `Invalid select field: '_file' does not exist in the table schema`. The column is not missing from your table - this is what a refused row-level write looks like on a governed table. Read it as a governance decision, not a schema problem.
+
+For either error, check the policies attached to the table and whether they are no-ops for your role before investigating cloud permissions:
 
 ```sql
 SELECT * FROM TABLE(
@@ -376,7 +435,7 @@ SELECT * FROM TABLE(
 
 #### Scan plan submission fails
 
-Scan planning evaluates policies and materializes results on a warehouse, so the calling role needs a usable default warehouse. Without one, plan submission fails and the error does not obviously point at compute. Confirm the service user has a default warehouse and the role has `USAGE` on it.
+Scan planning evaluates policies and materializes results on a warehouse, so the calling role needs a usable default warehouse. Without one, plan submission fails and the error does not point at compute. Confirm the service user has a default warehouse and the role has `USAGE` on it.
 
 #### An engine stalls on a governed read
 
@@ -404,10 +463,10 @@ DROP ROLE IF EXISTS RESTRICTED_ROLE;
 ### What You Learned
 
 - Governed Iceberg tables stay readable to external engines through server-side scan planning, which applies masking and row access policies before the engine sees any data
-- An external write is permitted only when every policy on the table is a no-op for the writing role, and the refusal happens before any file is written
+- An external write is permitted only when every policy on the table is a no-op for the writing role; a row-level write is refused during scan planning, and an append is refused at the storage step
 - The write check is made on the policy and the principal, not on the columns the statement touches
 - `POLICIES_REFERENCED` in `ACCESS_HISTORY` proves which policies were evaluated on each external read, and refused operations are not recorded
-- Policy refusals surface as generic cloud credential errors, which is the single most confusing failure mode to diagnose
+- Policy refusals surface as an expired-token error on `INSERT` and a missing `_file` column on `MERGE`, `UPDATE` or `DELETE` — neither message mentions governance, which makes this the hardest failure mode to diagnose
 
 ### Resources
 
