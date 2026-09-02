@@ -1,0 +1,95 @@
+[project]
+name = "sfquickstarts-ci"
+version = "0.0.0"
+description = "Workflow automation for the sfquickstarts repository."
+requires-python = ">=3.12"
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+src = ["scripts"]
+# Only the code the workflows actually run. The legacy offline tools under
+# scripts/categories/, scripts/language_tags/ and scripts/generate_manifest/ are
+# not on the CI path and are not held to this standard yet.
+include = [
+    "scripts/lib/**/*.py",
+    "scripts/validate/**/*.py",
+    "scripts/deploy/**/*.py",
+    "scripts/publish/**/*.py",
+    "scripts/ci/**/*.py",
+    "scripts/aem-staging/**/*.py",
+]
+
+[tool.ruff.lint]
+select = [
+    "E", "W", "F",       # pycodestyle, pyflakes
+    "I",                 # import sorting
+    "N",                 # pep8 naming
+    "UP",                # pyupgrade
+    "ANN",               # mandatory annotations, params and returns
+    "S",                 # flake8-bandit
+    "B",                 # bugbear
+    "A", "C4", "PTH", "RET", "SIM", "ARG", "TRY", "EM",
+    "PL",                # pylint, includes the complexity limits below
+    "RUF",
+]
+
+ignore = [
+    # PEP 695 `type X = Y` is a SyntaxError before 3.12, so it fails at import
+    # rather than with a readable message. Every job pins 3.12, but these modules
+    # are also run by hand while developing, where an older interpreter is common.
+    # `TypeAlias` expresses the same thing and degrades legibly.
+    "UP040",
+]
+
+[tool.ruff.lint.per-file-ignores]
+# These two predate the hardening and decide what actually reaches AEM. The
+# mechanical fixes (whitespace, unused imports, pyupgrade, import order) have been
+# applied and verified to leave parse_markdown.py's output byte-identical across
+# 40 guides. What remains needs the functions restructured, which is a behaviour
+# risk on the publishing path and wants its own change with its own tests.
+# Nothing new is exempt: this list names two files and never grows.
+"scripts/aem-staging/parse_markdown.py" = [
+    "E501",                # long signature line
+    "EM101", "TRY003",     # message-in-raise style
+    "PLR0912", "PLR0915",  # transform_content needs decomposing
+    "PTH123",              # open() rather than Path.open()
+]
+"scripts/aem-staging/prepare_aem_payload.py" = [
+    "ARG001",              # `language` accepted but unused, kept for the caller's signature
+    "E501",
+    "EM102", "TRY003",
+    "PLR0912", "PLR0913", "PLR0917",  # create_aem_payload takes 12 positional args
+    "PTH123",
+]
+
+[tool.ruff.lint.isort]
+# scripts/validate/ modules import their siblings by bare name because the
+# workflow runs them from that directory; they are ours, not third party.
+known-first-party = ["lib", "checks", "renames"]
+
+[tool.ruff.lint.mccabe]
+max-complexity = 8
+
+[tool.ruff.lint.pylint]
+max-branches = 8      # PLR0912
+max-returns = 4       # PLR0911
+max-args = 5          # PLR0913
+max-statements = 30   # PLR0915
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+files = [
+    "scripts/lib",
+    "scripts/validate",
+    "scripts/deploy",
+    "scripts/publish",
+    "scripts/ci",
+    "scripts/aem-staging",
+]
+# The sibling modules in scripts/validate are imported by script-directory path,
+# which mypy cannot model; scripts/ is on the path instead.
+mypy_path = "scripts:scripts/validate:scripts/publish:scripts/deploy"
+explicit_package_bases = true
+namespace_packages = true
