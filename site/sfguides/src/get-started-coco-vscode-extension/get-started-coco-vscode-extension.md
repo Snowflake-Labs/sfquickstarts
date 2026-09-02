@@ -34,7 +34,7 @@ In this guide, you'll install the Snowflake extension, open CoCo, and work throu
 
 ### What You'll Build
 
-- A stored procedure that monitors a table for data quality issues (null values, duplicates, stale data) — generated entirely through conversation with CoCo within the Snowflake VS Code Extension
+- A stored procedure that monitors a table for data quality issues (null values, duplicates, stale data) – generated entirely through conversation with CoCo within the Snowflake VS Code Extension
 
 <!-- ------------------------ -->
 ## Install the Snowflake VS Code Extension
@@ -59,14 +59,12 @@ Next, sign in to Snowflake using the extension:
 1. Select the Snowflake icon in the **Activity Bar**.
 2. Enter your **Account Identifier** (or the URL you use to connect to Snowflake) and select **Continue**.
 3. Choose your authentication method:
-   - **Single sign-on** — uses your SSO credentials
-   - **Username/password** — your Snowflake username and password
-   - **Key Pair** — uses key-pair authentication
+   - **Single sign-on** – uses your SSO credentials
+   - **Username/password** – your Snowflake username and password
+   - **Key Pair** – uses key-pair authentication
 4. Enter your credentials and select **Sign in**.
 
 After a successful sign in, the sidebar displays your account information, your default role, the **Object Explorer** with your databases, and your **Query History**.
-
-> **Note:** The extension uses the CoCo CLI on your machine. If the CLI isn't already installed, the extension installs it automatically when you first open the CoCo panel. No additional setup is required.
 
 ![Sign in](./assets/login.png)
 
@@ -83,7 +81,9 @@ Start by opening CoCo in the VS Code agent chat panel:
 
 2. A chat panel will appear. Click on **CoCo** at the top of the chat panel to select the CoCo agent chat panel.
 
-Alternatively, you can open a new file in your VS Code workspace. At the top of the file, look for the CoCo icon. Click on the icon to open CoCo in the agent chat panel.
+Alternatively, you can open CoCo from within files in your VS Code workspace. At the top of a file, look for the CoCo icon. Click on the icon to open CoCo in the agent chat panel.
+
+You can also open CoCo from the command palette (`CoCo: Open` or `CoCo: Focus on Chat view`), or with the keyboard shortcut **Shift**+**Cmd**+**L** on macOS (**Shift**+**Ctrl**+**L** on Windows/Linux).
 
 That's it! You now have CoCo ready to go in VS Code. You'll see a chat interface with a text input at the bottom. This is where you'll interact with CoCo. A new chat session starts automatically, scoped to your current VS Code workspace directory.
 
@@ -101,7 +101,17 @@ CoCo will propose running a SQL query against your account. You'll see a permiss
 
 After approval, CoCo executes the query and displays the results directly in the chat panel. You should see a table listing your databases with their sizes.
 
-That's the core loop: you ask, CoCo proposes, you approve, results appear. All within your editor against your connected Snowflake account.
+Note that you can specify what mode CoCo should run in directly from the chat panel: 
+
+* **Agent** (the default; CoCo can propose actions and asks you to approve tool calls)
+
+* **Plan** (CoCo produces a plan for you to review before it touches anything)
+
+* **Bypass** (CoCo executes without per-action approval; use with care). 
+
+This guide uses the default Agent mode throughout.
+
+Great – you've now run the core building loop with CoCo in VS Code: you ask, CoCo proposes, you approve, results appear. All within VS Code, against your connected Snowflake account.
 
 <!-- ------------------------ -->
 ## Use Editor Context with CoCo
@@ -110,7 +120,7 @@ There are a few ways to point CoCo at what you want it to read. Let's cover a fe
 
 ### Ask CoCo from the editor
 
-When you have a file open, you'll see an **Ask CoCo** button directly above blocks of code. Click it to send the code block to CoCo as a prompt. This is the fastest way to get CoCo's input on code blocks you're looking at — one click, no typing required.
+When you have a file open, you'll see an **Ask CoCo** button directly above blocks of code. Click it to send the code block to CoCo as a prompt. This is the fastest way to get CoCo's input on code blocks you're looking at – one click, no typing required.
 
 ![Ask CoCo](./assets/ask_coco.png)
 
@@ -128,7 +138,9 @@ You can attach context from your workspace into the CoCo chat panel by using the
 
 * You can attach more than one file by using `@` multiple times in the same prompt
 
-* You can attach entire directories if you want CoCo to consider a broader project context — for example, a **dbt_project.yml** alongside your SQL models, or a **README.md** that describes your pipeline architecture.
+* You can attach entire directories if you want CoCo to consider a broader project context – for example, a **dbt_project.yml** alongside your SQL models, or a **README.md** that describes your pipeline architecture.
+
+* `@` also searches your Snowflake account – you can attach databases, schemas, tables, and other objects as context, not just workspace files.
 
 Let's try the first approach out.
 
@@ -146,7 +158,7 @@ ORDER BY 1 DESC
 LIMIT 12;
 ```
 
-2. Switch to the CoCo panel. In the chat input, type `@` and then start typing **sample_query.sql** — CoCo will suggest the file. Select it to attach it as context.
+2. Switch to the CoCo panel. In the chat input, type `@` and then start typing **sample_query.sql** – CoCo will suggest the file. Select it to attach it as context.
 
 3. Now type your question:
 
@@ -157,12 +169,12 @@ Can you explain what this query does and suggest improvements?
 CoCo reads the attached file and responds with a detailed breakdown. Here's an example of what you'll get back:
 
 - **What it does:** A monthly order summary for the last 12 months, calculating `total_orders`, `total_revenue`, and `avg_order_value` per month.
-- **`LIMIT 12` doesn't guarantee "last 12 months"** — it returns the 12 most recent months with data, which could span more than a year if some months have no orders. CoCo suggests an explicit date filter with `DATEADD`.
-- **NULLs silently skew results** — `COUNT(*)` counts rows with NULL `amount`, but `SUM` and `AVG` ignore them. CoCo flags this mismatch.
-- **Missing rounding** — CoCo suggests `ROUND(SUM(amount), 2)` and `ROUND(AVG(amount), 2)`.
-- **No order status filter** — if the table has a `status` column, cancelled or refunded orders may be inflating counts.
-- **Add a median** — `AVG` is sensitive to outliers. CoCo suggests `MEDIAN(amount)` since Snowflake supports it natively.
-- **Fully qualify the table** — `FROM orders` relies on the session's default database/schema. CoCo recommends a full path.
+- **`LIMIT 12` doesn't guarantee "last 12 months"** – it returns the 12 most recent months with data, which could span more than a year if some months have no orders. CoCo suggests an explicit date filter with `DATEADD`.
+- **NULLs silently skew results** – `COUNT(*)` counts rows with NULL `amount`, but `SUM` and `AVG` ignore them. CoCo flags this mismatch.
+- **Missing rounding** – CoCo suggests `ROUND(SUM(amount), 2)` and `ROUND(AVG(amount), 2)`.
+- **No order status filter** – if the table has a `status` column, cancelled or refunded orders may be inflating counts.
+- **Add a median** – `AVG` is sensitive to outliers. CoCo suggests `MEDIAN(amount)` since Snowflake supports it natively.
+- **Fully qualify the table** – `FROM orders` relies on the session's default database/schema. CoCo recommends a full path.
 
 This is a good example of what CoCo brings to the table: it doesn't just explain the SQL, it identifies subtle correctness issues that are easy to miss during development.
 
@@ -200,10 +212,24 @@ Add a filter so we only see customers who placed at least 5 orders.
 
 CoCo modifies the query and runs the updated version. You're building queries through dialogue, and each iteration takes a single follow-up message.
 
+### Analyze query results
+
+CoCo can also read the result grid from queries you've already run, including queries you executed directly in the extension's SQL editor. The query results panel gives you two one-click handoffs to CoCo:
+
+- **Analyze** – appears on a successful result set. Click it to send the results to CoCo for interpretation, summarization, or follow-up questions.
+
+![Analyze button](./assets/analyze_button.png)
+
+- **Fix with CoCo** – appears when a query returns a SQL compilation or execution error. Click it to hand the failing query and error message to CoCo so it can diagnose and propose a fix.
+
+![Fix with CoCo](./assets/fix_with_coco.png)
+
+This turns the result grid into another form of context – you don't have to copy rows or errors into the chat.
+
 <!-- ------------------------ -->
 ## Build a Data Quality Monitor
 
-With the basics covered, let's build something a little more real. We'll ask CoCo to generate a stored procedure that checks a table for common data quality issues — null values, duplicate keys, and stale data. This demonstrates the full loop: natural language to code generation to diff review to deployment.
+With the basics covered, let's build something a little more real. We'll ask CoCo to generate a stored procedure that checks a table for common data quality issues – null values, duplicate keys, and stale data. This demonstrates the full loop: natural language to code generation to diff review to deployment.
 
 ### Set up the context
 
@@ -214,7 +240,7 @@ Create a database called COCO_VS_CODE_QUICKSTART_DB with a schema called MONITOR
 Then create a sample table called CUSTOMER_EVENTS with columns: 
 event_id (VARCHAR), customer_id (VARCHAR), event_type (VARCHAR), 
 event_timestamp (TIMESTAMP_NTZ), amount (NUMBER(10,2)). 
-Insert 100 sample rows with some intentional quality issues — 
+Insert 100 sample rows with some intentional quality issues – 
 a few null customer_ids, some duplicate event_ids, and a few rows 
 with event_timestamp from over 30 days ago.
 ```
@@ -241,7 +267,7 @@ Here's what the procedure will check:
 
 - Null values in every column, with a count and percentage for each
 - Duplicate values in the primary key column (the first column)
-- Data freshness — whether the most recent timestamp is older than 24 hours
+- Data freshness – whether the most recent timestamp is older than 24 hours
 
 CoCo will generate a stored procedure and propose creating a file in your workspace. You'll see a summarized diff showing the new file contents. Here's what the interaction looks like:
 
@@ -271,11 +297,11 @@ Great job! You've just built and deployed a reusable data quality monitor entire
 <!-- ------------------------ -->
 ## Use Skills
 
-Skills are packaged capabilities that CoCo can invoke — they work identically across all CoCo surfaces, whether you're in the VS Code extension, the CLI, Desktop, or Snowsight. Let's see how to use them.
+Skills are packaged capabilities that CoCo can invoke – they work identically across all CoCo surfaces, whether you're in the VS Code extension, the CLI, Desktop, or Snowsight. Let's see how to use them.
 
 ### Browse available skills
 
-In the CoCo chat input, type `/` to open the skills menu. You'll see a list of available skills that CoCo can invoke. Scroll through to see what's available — skills for SQL authoring, dynamic tables, Snowpark, Streamlit development, and more.
+In the CoCo chat input, type `/` to open the skills menu. You'll see a list of available skills that CoCo can invoke. Scroll through to see what's available – skills for SQL authoring, dynamic tables, Snowpark, Streamlit development, and more.
 
 ### Invoke a skill
 
@@ -285,7 +311,7 @@ Select a skill from the menu (or type its name after the `/`). For example:
 /sql-author
 ```
 
-Skills inject specialized knowledge and procedures into the conversation. When you invoke a skill, CoCo gains domain-specific guidance for that topic — more targeted recommendations, better code generation, and awareness of best practices specific to that feature area.
+Skills inject specialized knowledge and procedures into the conversation. When you invoke a skill, CoCo gains domain-specific guidance for that topic – more targeted recommendations, better code generation, and awareness of best practices specific to that feature area.
 
 > **Note:** The same skills you've installed for the CoCo CLI work here too. If you've built custom skills (`.cortex/skills/` in your workspace), CoCo picks them up in the VS Code extension.
 
