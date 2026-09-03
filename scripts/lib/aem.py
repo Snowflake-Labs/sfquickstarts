@@ -54,6 +54,16 @@ class AemError(RuntimeError):
     """An AEM request failed."""
 
 
+def author_url() -> str:
+    """The AEM author instance to write to.
+
+    The Secrets Manager payload calls it AEM_AUTHOR_URL, which is the name the
+    secrets action exports when given a blank alias. AEM_URL is accepted too,
+    because that is what the shell being replaced exported.
+    """
+    return os.environ.get("AEM_URL") or os.environ.get("AEM_AUTHOR_URL", "")
+
+
 def asset_content_type(name: str) -> str:
     """Content type for an image, derived from its extension as the shell did."""
     extension = name.rsplit(".", 1)[-1].lower() if "." in name else ""
@@ -95,7 +105,7 @@ class Client:
     def from_env(cls) -> Client:
         """Build a client from the credentials the workflow exported."""
         return cls(
-            os.environ.get("AEM_URL", ""),
+            author_url(),
             os.environ.get("AEM_USERNAME", ""),
             os.environ.get("AEM_PASSWORD", ""),
         )

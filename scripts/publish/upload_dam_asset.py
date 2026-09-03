@@ -30,6 +30,8 @@ import urllib.request
 from pathlib import Path
 from typing import Any
 
+from lib import aem
+
 TIMEOUT_SECONDS = 120
 DEFAULT_MAX_RETRIES = 3
 DEFAULT_RETRY_DELAY = 5
@@ -169,7 +171,7 @@ def upload(path: Path, dam_folder: str) -> None:
         raise UploadError(msg)
 
     uploader = Uploader(
-        os.environ.get("AEM_URL", ""),
+        aem.author_url(),
         os.environ.get("AEM_USERNAME", ""),
         os.environ.get("AEM_PASSWORD", ""),
     )
