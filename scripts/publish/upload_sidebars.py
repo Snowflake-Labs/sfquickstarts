@@ -2,10 +2,10 @@
 """Upload the journey sidebar JSON files to the AEM DAM.
 
 Standard library only, so the job holding production credentials installs nothing.
-The AEM calls are placeholders in this repository.
 
 Environment:
     SIDEBAR_FILES  JSON array of repository-relative sidebar paths
+    AEM_URL, AEM_USERNAME, AEM_PASSWORD  target instance and credentials
 """
 
 from __future__ import annotations
@@ -15,15 +15,15 @@ import os
 import sys
 from pathlib import Path
 
-from lib import validate
+from lib import aem, validate
+from publish import upload_dam_asset
 
-DAM_FOLDER = "snowflake-site/developers/technical/guides-navigation"
+DAM_ROOT = "snowflake-site"
+DAM_FOLDER = f"{DAM_ROOT}/developers/technical/guides-navigation"
 DAM_PATH = f"/content/dam/{DAM_FOLDER}"
 
-
-def placeholder(message: str) -> None:
-    """Record an AEM call this repository deliberately does not make."""
-    print(f"[PLACEHOLDER] {message}")
+# Each level has to exist before the next one can be created.
+DAM_LEVELS = ("developers", "developers/technical", "developers/technical/guides-navigation")
 
 
 def sidebar_paths(raw: str | None) -> list[Path]:
@@ -50,6 +50,17 @@ def sidebar_paths(raw: str | None) -> list[Path]:
     return paths
 
 
+def ensure_hierarchy(client: aem.Client) -> None:
+    """Create each level of the sidebar folder path that is missing."""
+    for level in DAM_LEVELS:
+        client.ensure_asset_folder(f"/content/dam/{DAM_ROOT}/{level}")
+
+    if not client.exists(DAM_PATH):
+        msg = f"DAM folder could not be created: {DAM_PATH}"
+        raise aem.AemError(msg)
+    print(f"DAM folder ready: {DAM_PATH}")
+
+
 def main() -> int:
     """Upload and publish every changed sidebar file."""
     paths = sidebar_paths(os.environ.get("SIDEBAR_FILES"))
@@ -57,16 +68,27 @@ def main() -> int:
         print("No sidebar files to upload")
         return 0
 
-    placeholder(f"Would ensure DAM folder hierarchy exists: {DAM_PATH}")
+    client = aem.Client.from_env()
+    ensure_hierarchy(client)
+
     for path in paths:
-        # The real call is upload_dam_asset.upload(path, DAM_FOLDER).
-        placeholder(f"Would upload {path} to {DAM_PATH}/{path.name}")
+        upload_dam_asset.upload(path, DAM_FOLDER)
+
+    # A sidebar that uploaded but did not activate is recoverable by republishing,
+    # so one failure here does not abandon the rest.
     for path in paths:
-        placeholder(f"Would publish {DAM_PATH}/{path.name}")
+        try:
+            client.replicate(f"{DAM_PATH}/{path.name}", f"publish {path.name}")
+        except aem.AemError as exc:
+            print(f"::warning::publish failed for {path.name}: {exc}")
 
     print(f"Handled {len(paths)} sidebar file(s)")
     return 0
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    try:
+        sys.exit(main())
+    except (aem.AemError, upload_dam_asset.UploadError) as error:
+        print(f"::error::{error}", file=sys.stderr)
+        sys.exit(1)

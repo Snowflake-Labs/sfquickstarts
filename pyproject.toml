@@ -89,7 +89,8 @@ files = [
     "scripts/aem-staging",
 ]
 # The sibling modules in scripts/validate are imported by script-directory path,
-# which mypy cannot model; scripts/ is on the path instead.
-mypy_path = "scripts:scripts/validate:scripts/publish:scripts/deploy"
+# which mypy cannot model; scripts/ is on the path instead. scripts/publish is a
+# package and is imported as one, so listing it here would give its modules two names.
+mypy_path = "scripts:scripts/validate:scripts/deploy"
 explicit_package_bases = true
 namespace_packages = true

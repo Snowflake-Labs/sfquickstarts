@@ -5,7 +5,8 @@ Runs on a job holding staging credentials, so it treats everything upstream as
 untrusted: every name is re-validated here even though resolve_context.py already
 validated it, and artifact lookups must resolve inside a fixed directory.
 
-The AEM calls themselves are placeholders in this repository.
+Staged content is suffixed with the head commit, so each pull request gets its own
+content fragment and page rather than overwriting the published one.
 
 Usage:
     stage_to_aem.py {quickstart,sidebars,journey}
@@ -26,18 +27,29 @@ import argparse
 import json
 import os
 import sys
+import time
 from pathlib import Path
 
-from lib import validate
+from lib import aem, validate
+from publish import upload_dam_asset
 
 CF_ROOT = "/content/dam/snowflake-site"
-JOURNEY_PAGE_ROOT = "/content/snowflake-site/global/en/developers/guides"
-SIDEBAR_DAM_FOLDER = "snowflake-site/developers/technical/guides-navigation"
+PAGE_ROOT = "/content/snowflake-site/global"
+DAM_GUIDES_PATH = "/content/dam/snowflake-site/developers/guides"
+BASE_CF_PATH = f"{CF_ROOT}/en/content-fragments/base-fragments/base-quickstart-cf"
+PAGE_BASE_PATH_DEFAULT = f"{PAGE_ROOT}/en/developers/guides/quickstart-base"
 
+SIDEBAR_DAM_ROOT = "snowflake-site"
+SIDEBAR_DAM_FOLDER = f"{SIDEBAR_DAM_ROOT}/developers/technical/guides-navigation"
+SIDEBAR_DAM_PATH = f"/content/dam/{SIDEBAR_DAM_FOLDER}"
+SIDEBAR_LEVELS = ("developers", "developers/technical", "developers/technical/guides-navigation")
 
-def placeholder(message: str) -> None:
-    """Record an AEM call this repository deliberately does not make."""
-    print(f"[PLACEHOLDER] {message}")
+# AEM finishes each of these asynchronously. The durations are the ones the shell
+# used; a staged page needs longer than a published one because the copy is fresh.
+CF_COPY_SETTLE_SECONDS = 3
+PAGE_COPY_SETTLE_SECONDS = 8
+IMAGE_PROCESSING_SECONDS = 15
+PAGE_PROCESSING_SECONDS = 60
 
 
 def artifact_dir() -> Path:
@@ -54,66 +66,162 @@ def within(root: Path, *parts: str) -> Path | None:
     return resolved if resolved.is_relative_to(root) else None
 
 
-def stage_quickstart() -> None:
-    """Report what staging one quickstart would upload."""
-    name = validate.guide_name(os.environ.get("QUICKSTART_NAME"))
-    language = validate.language(os.environ.get("LANGUAGE") or validate.DEFAULT_LANGUAGE)
-    head_sha = validate.sha40(os.environ.get("HEAD_SHA"))
-    root = artifact_dir()
+def payload_field(root: Path, name: str, field: str) -> str:
+    """Read one pre-encoded form body out of the artifact's payload file.
 
-    placeholder("Would stage quickstart to AEM:")
-    print(f"  Name:             {name}")
-    print(f"  Language:         {language}")
-    fragment = f"{CF_ROOT}/{language}/content-fragments/quickstarts/{name}-{head_sha}"
-    print(f"  Content fragment: {fragment}")
-
-    for prefix in ("parsed_content", "aem_payload"):
-        payload = within(root, f"{prefix}_{name}.json")
-        if payload is not None and payload.is_file():
-            print(f"  Available:        {payload.name}")
-
-    images = within(root, "images", name)
-    if images is not None and images.is_dir():
-        count = sum(1 for path in images.rglob("*") if path.is_file())
-        print(f"  Images:           {count} file(s)")
-
-    placeholder("AEM staging skipped in test environment")
-
-
-def stage_sidebars() -> None:
-    """Report what uploading the changed sidebar files would do."""
+    The file is opened by a name re-derived from validated inputs, never by a name
+    taken from the artifact, and is treated purely as data.
+    """
+    path = within(root, f"aem_payload_{name}.json")
+    if path is None or not path.is_file():
+        msg = f"aem_payload_{name}.json is missing from the artifact"
+        raise aem.AemError(msg)
     try:
-        entries = json.loads(os.environ.get("SIDEBAR_FILES") or "[]")
-    except json.JSONDecodeError as exc:
-        print(f"::warning::SIDEBAR_FILES is not valid JSON: {exc}")
-        entries = []
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        msg = f"aem_payload_{name}.json could not be read: {exc}"
+        raise aem.AemError(msg) from exc
+
+    value = payload.get(field) if isinstance(payload, dict) else None
+    if not isinstance(value, str) or not value:
+        msg = f"aem_payload_{name}.json has no {field}"
+        raise aem.AemError(msg)
+    return value
+
+
+def stage_images(client: aem.Client, root: Path, name: str) -> int:
+    """Upload the guide's images from the artifact to the staging DAM folder."""
+    images = within(root, "images", name)
+    if images is None or not images.is_dir():
+        return 0
+
+    files = sorted(p for p in images.iterdir() if p.is_file() and not p.is_symlink())
+    if not files:
+        return 0
+
+    dam_folder = f"{DAM_GUIDES_PATH}/{name}"
+    client.ensure_asset_folder(dam_folder)
+    for image in files:
+        client.upload_asset(image, dam_folder)
+    return len(files)
+
+
+def stage_content_fragment(
+    client: aem.Client, root: Path, name: str, language: str, sha: str
+) -> str:
+    """Copy the base fragment to a commit-specific path and fill it in."""
+    parent = f"{CF_ROOT}/{language}/content-fragments/quickstarts"
+    client.ensure_asset_folder(parent)
+
+    cf_path = f"{parent}/{name}-{sha}"
+    print(f"Copying base fragment to {cf_path}")
+    client.copy(BASE_CF_PATH, cf_path, "copy base content fragment", deep=True)
+    time.sleep(CF_COPY_SETTLE_SECONDS)
+
+    body = payload_field(root, name, "content_fragment_payload")
+    client.post(f"{cf_path}/jcr:content", body, "update content fragment")
+    return cf_path
+
+
+def stage_page(client: aem.Client, root: Path, name: str, language: str, sha: str) -> str:
+    """Copy the base page to a commit-specific path and point it at the fragment."""
+    base = os.environ.get("PAGE_BASE_PATH") or PAGE_BASE_PATH_DEFAULT
+    if not client.exists(base):
+        msg = f"base page does not exist: {base}"
+        raise aem.AemError(msg)
+
+    page_path = f"{PAGE_ROOT}/{language}/developers/guides/{name}-{sha}"
+    print(f"Creating staging page {page_path}")
+    client.copy(base, page_path, "create staging page")
+    time.sleep(PAGE_COPY_SETTLE_SECONDS)
+
+    client.post(page_path, payload_field(root, name, "page_payload"), "update staging page")
+    return page_path
+
+
+def stage_guide(name: str, language: str) -> None:
+    """Stage one guide: its content fragment, its images, then its page."""
+    sha = validate.sha40(os.environ.get("HEAD_SHA"))
     root = artifact_dir()
+    client = aem.Client.from_env()
 
-    placeholder(f"Would upload sidebar JSON files to AEM DAM ({SIDEBAR_DAM_FOLDER}):")
-    for entry in entries if isinstance(entries, list) else []:
-        try:
-            name = Path(validate.repo_path(entry)).name
-        except validate.ValidationError as exc:
-            print(f"::warning::skipping sidebar file: {exc}")
-            continue
-        staged = within(root, "sidebar-files", name)
-        available = staged is not None and staged.is_file()
-        print(f"  - {name} ({'available in artifact' if available else 'not in artifact'})")
+    cf_path = stage_content_fragment(client, root, name, language, sha)
+    count = stage_images(client, root, name)
+    print(f"Uploaded {count} image(s)")
+    if count:
+        time.sleep(IMAGE_PROCESSING_SECONDS)
+    client.replicate(cf_path, "publish content fragment")
 
-    placeholder("Sidebar JSON upload skipped in test environment")
+    page_path = stage_page(client, root, name, language, sha)
+    time.sleep(PAGE_PROCESSING_SECONDS)
+    client.replicate(page_path, "publish staging page")
+    print(f"Staged {name} at {page_path}")
+
+
+def stage_quickstart() -> None:
+    """Stage one quickstart."""
+    stage_guide(
+        validate.guide_name(os.environ.get("QUICKSTART_NAME")),
+        validate.language(os.environ.get("LANGUAGE") or validate.DEFAULT_LANGUAGE),
+    )
 
 
 def stage_journey() -> None:
-    """Report what staging one journey guide would upload."""
-    name = validate.guide_name(os.environ.get("GUIDE_NAME"))
-    source_path = validate.repo_path(os.environ.get("SOURCE_PATH"))
-    head_sha = validate.sha40(os.environ.get("HEAD_SHA"))
+    """Stage one journey guide.
 
-    placeholder("Would stage journey guide to AEM:")
-    print(f"  Name:         {name}")
-    print(f"  Source:       {source_path}")
-    print(f"  Staging page: {JOURNEY_PAGE_ROOT}/{name}-{head_sha}")
-    placeholder("AEM journey guide staging skipped in test environment")
+    Journeys go through the same staging path as quickstarts and are always English;
+    SOURCE_PATH is validated because it is what selected this guide upstream.
+    """
+    name = validate.guide_name(os.environ.get("GUIDE_NAME"))
+    print(f"Journey source: {validate.repo_path(os.environ.get('SOURCE_PATH'))}")
+    stage_guide(name, validate.DEFAULT_LANGUAGE)
+
+
+def sidebar_names(raw: str | None) -> list[str]:
+    """Return the validated base names of the sidebar files to upload."""
+    try:
+        entries = json.loads(raw or "[]")
+    except json.JSONDecodeError as exc:
+        print(f"::warning::SIDEBAR_FILES is not valid JSON: {exc}")
+        return []
+
+    names = []
+    for entry in entries if isinstance(entries, list) else []:
+        try:
+            names.append(Path(validate.repo_path(entry)).name)
+        except validate.ValidationError as exc:
+            print(f"::warning::skipping sidebar file: {exc}")
+    return names
+
+
+def stage_sidebars() -> None:
+    """Upload and publish the changed sidebar files from the artifact."""
+    root = artifact_dir()
+    client = aem.Client.from_env()
+
+    staged = []
+    for name in sidebar_names(os.environ.get("SIDEBAR_FILES")):
+        path = within(root, "sidebar-files", name)
+        if path is None or not path.is_file():
+            print(f"::warning::sidebar file not in the artifact: {name}")
+            continue
+        staged.append(path)
+
+    if not staged:
+        print("No sidebar files to upload")
+        return
+
+    for level in SIDEBAR_LEVELS:
+        client.ensure_asset_folder(f"/content/dam/{SIDEBAR_DAM_ROOT}/{level}")
+
+    for path in staged:
+        upload_dam_asset.upload(path, SIDEBAR_DAM_FOLDER)
+
+    for path in staged:
+        try:
+            client.replicate(f"{SIDEBAR_DAM_PATH}/{path.name}", f"publish {path.name}")
+        except aem.AemError as exc:
+            print(f"::warning::publish failed for {path.name}: {exc}")
 
 
 def main() -> int:
@@ -129,6 +237,6 @@ def main() -> int:
 if __name__ == "__main__":
     try:
         sys.exit(main())
-    except validate.ValidationError as error:
+    except (validate.ValidationError, aem.AemError, upload_dam_asset.UploadError) as error:
         print(f"::error::{error}", file=sys.stderr)
         sys.exit(1)

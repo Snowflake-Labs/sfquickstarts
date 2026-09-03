@@ -7,8 +7,6 @@ env: and are validated here before they reach a path or a URL.
 Standard library only, so nothing is installed next to those credentials. The
 markdown parsing runs as a separate process, which is where PyYAML lives.
 
-The AEM calls themselves are placeholders in this repository.
-
 Environment:
     QUICKSTART_NAME  guide folder name
     LANGUAGE         content language
@@ -25,10 +23,11 @@ import json
 import os
 import subprocess
 import sys
+import time
 from dataclasses import dataclass
 from pathlib import Path
 
-from lib import validate
+from lib import aem, validate
 
 AEM_STAGING = Path(__file__).resolve().parent.parent / "aem-staging"
 PARSE_MARKDOWN = AEM_STAGING / "parse_markdown.py"
@@ -46,14 +45,16 @@ PAYLOAD_JSON = Path("aem_payload.json")
 
 IMAGE_SUFFIXES = (".jpg", ".jpeg", ".png", ".gif", ".svg", ".webp", ".bmp", ".ico", ".tiff")
 
+# AEM finishes each of these asynchronously, so the next call has to wait for it.
+# The durations are the ones the shell used; shortening them causes flaky publishes.
+CF_COPY_SETTLE_SECONDS = 3
+PAGE_COPY_SETTLE_SECONDS = 8
+IMAGE_PROCESSING_SECONDS = 15
+PAGE_PROCESSING_SECONDS = 30
+
 
 class PublishError(RuntimeError):
     """The guide could not be published."""
-
-
-def placeholder(message: str) -> None:
-    """Record an AEM call this repository deliberately does not make."""
-    print(f"[PLACEHOLDER] {message}")
 
 
 @dataclass(frozen=True)
@@ -181,15 +182,42 @@ def status_of() -> str:
     return status if isinstance(status, str) and status else "Draft"
 
 
-def publish_content_fragment(target: Target) -> None:
-    """Create or update the guide's content fragment."""
-    placeholder(f"Would check whether content fragment exists: {target.content_fragment}")
-    placeholder(f"Would copy base fragment {BASE_CF_PATH} if it is new")
-    placeholder(f"Would update content fragment from {PAYLOAD_JSON}")
-    placeholder(f"Would publish content fragment: {target.content_fragment}")
+def payload_field(name: str) -> str:
+    """Return one pre-encoded form body built by prepare_aem_payload.py."""
+    if not PAYLOAD_JSON.is_file():
+        msg = f"{PAYLOAD_JSON} not found; payload preparation did not run"
+        raise PublishError(msg)
+    try:
+        payload = json.loads(PAYLOAD_JSON.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        msg = f"{PAYLOAD_JSON} could not be read: {exc}"
+        raise PublishError(msg) from exc
+
+    value = payload.get(name) if isinstance(payload, dict) else None
+    if not isinstance(value, str) or not value:
+        msg = f"{PAYLOAD_JSON} has no {name}"
+        raise PublishError(msg)
+    return value
 
 
-def publish_images(target: Target) -> int:
+def write_content_fragment(target: Target, client: aem.Client) -> None:
+    """Create the content fragment from the base if new, then write the parsed content."""
+    cf_path = target.content_fragment
+    if client.exists(cf_path):
+        print(f"Content fragment exists: {cf_path}")
+    else:
+        parent = f"{CF_DEST_PATH}/{target.language}/content-fragments/quickstarts"
+        print(f"Copying base fragment to {parent}/{target.name}")
+        client.copy(
+            BASE_CF_PATH, f"{parent}/{target.name}", "copy base content fragment", deep=True
+        )
+        time.sleep(CF_COPY_SETTLE_SECONDS)
+
+    print(f"Updating content fragment: {cf_path}")
+    client.post(f"{cf_path}/jcr:content", payload_field("content_fragment_payload"), "update CF")
+
+
+def publish_images(target: Target, client: aem.Client) -> int:
     """Upload the guide's images to the DAM."""
     assets = target.source_path / "assets"
     images = (
@@ -201,27 +229,41 @@ def publish_images(target: Target) -> int:
         if assets.is_dir()
         else []
     )
+    if not images:
+        print("No assets folder, or no images in it; skipping image upload")
+        return 0
 
-    placeholder(f"Would ensure DAM folder exists: {target.dam_folder}")
+    client.ensure_asset_folder(target.dam_folder)
     for image in images:
-        # The real call is upload_dam_asset.upload(image, dam_folder without /content/dam/).
-        placeholder(f"Would upload {image.name} to {target.dam_folder}")
+        client.upload_asset(image, target.dam_folder)
     return len(images)
 
 
-def publish_page(target: Target, status: str) -> None:
-    """Create or update the guide's page, publishing it when it is ready."""
-    placeholder(f"Would check whether page exists: {target.page}")
-    placeholder(f"Would create page from {target.page_base_path} if it is new")
-    placeholder(f"Would update page content at: {target.page}")
-    if status == "Published":
-        placeholder(f"Would publish page: {target.page}")
+def write_page(target: Target, client: aem.Client) -> None:
+    """Create the page from the base template if new, then write its content."""
+    page_path = target.page
+    if client.exists(page_path):
+        print(f"Page exists: {page_path}")
     else:
+        print(f"Creating page {page_path} from {target.page_base_path}")
+        client.copy(target.page_base_path, page_path, "create page from base")
+        time.sleep(PAGE_COPY_SETTLE_SECONDS)
+
+    print(f"Updating page: {page_path}")
+    client.post(page_path, payload_field("page_payload"), "update page")
+
+
+def publish_page(target: Target, client: aem.Client, status: str) -> None:
+    """Activate the page, but only once the guide declares itself published."""
+    if status != "Published":
         print(f"Status is {status}; leaving the page unpublished")
+        return
+    client.replicate(target.page, "publish page")
+    print(f"Published page: {target.page}")
 
 
 def summarise(target: Target, markdown: Path, status: str, image_count: int) -> None:
-    """Print what this run would have done."""
+    """Print what this run did."""
     print("\nPublish summary")
     print(f"  Guide:            {target.name}")
     print(f"  Language:         {target.language}")
@@ -242,10 +284,21 @@ def main() -> int:
 
     parse(target, markdown)
     status = status_of()
+    client = aem.Client.from_env()
 
-    publish_content_fragment(target)
-    image_count = publish_images(target)
-    publish_page(target, status)
+    # Order matches the shell this replaces: the content fragment is written first
+    # but activated only after its images are in the DAM, so a reader never reaches
+    # a published fragment whose images are still missing.
+    write_content_fragment(target, client)
+    image_count = publish_images(target, client)
+    if image_count:
+        time.sleep(IMAGE_PROCESSING_SECONDS)
+    client.replicate(target.content_fragment, "publish content fragment")
+
+    write_page(target, client)
+    time.sleep(PAGE_PROCESSING_SECONDS)
+    publish_page(target, client, status)
+
     summarise(target, markdown, status, image_count)
     return 0
 
