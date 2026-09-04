@@ -1,6 +1,7 @@
 name: Lint workflows and CI scripts
 
 # Fails the build when a workflow drifts from the rules in scripts/ci/lint_workflows.py.
+#
 on:
   pull_request:
     branches: [master]
@@ -31,10 +32,10 @@ jobs:
       PYTHONPATH: scripts
     steps:
       - name: Checkout
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        uses: actions/checkout@v7.0.0
 
       - name: Setup Python
-        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
         with:
           python-version: '3.12'
           cache: 'pip'
@@ -42,8 +43,13 @@ jobs:
             scripts/requirements.txt
             scripts/requirements-dev.txt
 
+      # Two invocations, not one: requirements.txt is hash-pinned and pip turns on
+      # --require-hashes globally as soon as any requirement carries a hash, which
+      # would reject the deliberately unhashed dev tooling.
       - name: Install tooling
-        run: pip install -r scripts/requirements-dev.txt -r scripts/requirements.txt
+        run: |
+          pip install -r scripts/requirements-dev.txt
+          pip install --require-hashes -r scripts/requirements.txt
 
       # Runs first: it is the check that encodes this repository's own rules, and
       # its failures are the ones a contributor is least likely to predict.
