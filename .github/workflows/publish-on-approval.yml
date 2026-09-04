@@ -40,7 +40,7 @@ jobs:
       # Selecting a cached interpreter, not installing packages: detect_changes.py
       # is stdlib-only, so this job still pulls in no third-party code.
       - name: Pin Python
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
         with:
           python-version: '3.12'
 
@@ -80,7 +80,7 @@ jobs:
           sparse-checkout-cone-mode: true
 
       - name: Pin Python
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
         with:
           python-version: '3.12'
 
