@@ -49,7 +49,7 @@ To complete this lab, you'll need a Snowflake account. A free Snowflake trial ac
 
 4. Select "AWS – Amazon Web Services" as the cloud provider
 
-5. Select "US West (Oregon)" as the region
+5. Select "US East (Ohio)" as the region
 
 6. Complete the rest of the form and click "Get started"
 
@@ -371,3 +371,7 @@ Review the various ways to implement Snowpipe. If you’re contemplating migrati
 - Creating, managing, and deleting pipes in Snowflake
 
 To learn more about Snowpipe, checkout the [Snowpipe reference documentation](https://docs.snowflake.com/en/user-guide/data-load-snowpipe-intro.html).
+
+Test
+
+Test
