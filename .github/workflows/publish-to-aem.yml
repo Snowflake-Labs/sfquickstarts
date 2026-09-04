@@ -59,7 +59,7 @@ jobs:
       # checkout to trusted code that is already on master. It must also come first:
       # checkout clears the workspace, discarding anything an earlier step wrote.
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7.0.0
         with:
           ref: ${{ inputs.commit_sha }}
           sparse-checkout: |

@@ -33,7 +33,7 @@ jobs:
       has_journey_guides: ${{ steps.detect.outputs.has_journey_guides }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7.0.0
         with:
           fetch-depth: 2
 
@@ -70,7 +70,7 @@ jobs:
       # Must precede every other step: checkout clears the workspace, so anything
       # written before it is discarded, and the scripts below do not exist yet.
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7.0.0
         with:
           sparse-checkout: |
             journeys/

@@ -28,7 +28,7 @@ jobs:
     steps:
       # ref: pins the base commit; the default merge commit would contain PR code.
       - name: Checkout base repository (trusted scripts)
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7.0.0
         with:
           fetch-depth: 1
           ref: ${{ github.event.pull_request.base.sha }}

@@ -43,7 +43,7 @@ jobs:
     steps:
       # No ref: on workflow_run this resolves to the default branch.
       - name: Checkout trusted scripts
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7.0.0
         with:
           sparse-checkout: |
             scripts/lib/
@@ -85,7 +85,7 @@ jobs:
       pull-requests: write
     steps:
       - name: Checkout trusted scripts
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7.0.0
         with:
           sparse-checkout: |
             scripts/lib/
@@ -148,7 +148,7 @@ jobs:
       id-token: write
     steps:
       - name: Checkout trusted scripts
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7.0.0
         with:
           sparse-checkout: |
             scripts/lib/
@@ -219,7 +219,7 @@ jobs:
     steps:
       # No ref: on workflow_run this resolves to the default branch.
       - name: Checkout trusted scripts
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7.0.0
         with:
           sparse-checkout: |
             scripts/lib/
@@ -284,7 +284,7 @@ jobs:
       id-token: write
     steps:
       - name: Checkout trusted scripts
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7.0.0
         with:
           sparse-checkout: |
             scripts/lib/
