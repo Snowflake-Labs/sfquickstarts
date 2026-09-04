@@ -43,8 +43,13 @@ jobs:
             scripts/requirements.txt
             scripts/requirements-dev.txt
 
+      # Two invocations, not one: requirements.txt is hash-pinned and pip turns on
+      # --require-hashes globally as soon as any requirement carries a hash, which
+      # would reject the deliberately unhashed dev tooling.
       - name: Install tooling
-        run: pip install -r scripts/requirements-dev.txt -r scripts/requirements.txt
+        run: |
+          pip install -r scripts/requirements-dev.txt
+          pip install --require-hashes -r scripts/requirements.txt
 
       # Runs first: it is the check that encodes this repository's own rules, and
       # its failures are the ones a contributor is least likely to predict.

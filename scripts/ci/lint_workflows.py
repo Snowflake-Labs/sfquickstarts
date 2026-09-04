@@ -8,8 +8,11 @@ instance of it, so they are checked mechanically instead of at review time:
                  before the shell ever sees it. Context has to arrive through `env:`.
   run-length     A `run:` block longer than three lines is logic, and logic in YAML is
                  untested and unlintable. It belongs in a script.
-  pin            A mutable tag lets whoever controls the action's repository change what
-                 runs here. Only a commit SHA is immutable.
+  pin            Removed. Which actions may run here is now enforced by the GitHub
+                 enterprise actions allowlist, which cannot be bypassed by editing
+                 this repository, and which permits only a mutable tag for some
+                 actions (actions/download-artifact, actions/upload-artifact) --
+                 making a SHA-only rule here unsatisfiable.
   permissions    A job holding an environment or a secret with no `permissions:` block
                  inherits the repository default, which is usually far too much.
   top-level      A workflow with no top-level `permissions:` grants every job the
@@ -31,8 +34,6 @@ import yaml
 
 DEFAULT_DIR = Path(".github/workflows")
 MAX_RUN_LINES = 3
-SHA_LENGTH = 40
-HEX = frozenset("0123456789abcdef")
 
 
 @dataclass(frozen=True)
@@ -46,18 +47,6 @@ class Finding:
     def render(self) -> str:
         """Return the one-line form printed to the log."""
         return f"{self.location}\n    [{self.rule}] {self.message}"
-
-
-def is_pinned(ref: str) -> bool:
-    """Report whether a `uses:` value names an immutable commit.
-
-    Local workflow calls (`./.github/workflows/x.yml`) are exempt: they resolve to
-    the current repository at the current commit, so there is nothing to pin to.
-    """
-    if ref.startswith("./"):
-        return True
-    _, separator, version = ref.partition("@")
-    return bool(separator) and len(version) == SHA_LENGTH and set(version) <= HEX
 
 
 def code_lines(block: str) -> int:
@@ -84,18 +73,10 @@ def check_run(run: str, location: str) -> Iterator[Finding]:
 
 
 def check_step(step: dict[str, Any], location: str) -> Iterator[Finding]:
-    """Check one step's `run:` and `uses:` values."""
+    """Check one step's `run:` value."""
     run = step.get("run")
     if isinstance(run, str):
         yield from check_run(run, location)
-
-    uses = step.get("uses")
-    if isinstance(uses, str) and not is_pinned(uses):
-        yield Finding(
-            location,
-            "pin",
-            f"`{uses}` is not pinned to a 40-hex commit SHA.",
-        )
 
 
 def needs_permissions(job: dict[str, Any]) -> str | None:
@@ -119,10 +100,6 @@ def check_job(name: str, job: dict[str, Any], workflow: str) -> Iterator[Finding
             f"job {reason} but has no explicit permissions: block, "
             "so it inherits the repository default.",
         )
-
-    uses = job.get("uses")
-    if isinstance(uses, str) and not is_pinned(uses):
-        yield Finding(location, "pin", f"`{uses}` is not pinned to a 40-hex commit SHA.")
 
     steps = job.get("steps")
     if not isinstance(steps, list):
