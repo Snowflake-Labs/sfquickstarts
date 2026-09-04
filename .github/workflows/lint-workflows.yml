@@ -1,6 +1,7 @@
 name: Lint workflows and CI scripts
 
 # Fails the build when a workflow drifts from the rules in scripts/ci/lint_workflows.py.
+#
 on:
   pull_request:
     branches: [master]
