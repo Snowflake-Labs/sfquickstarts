@@ -10,3 +10,11 @@ site/sfguides/src/getting-started-with-snowpipe/ @snowflake-labs/northstar-works
 site/sfguides/src/getting-started-with-cortex-analyst/ @snowflake-labs/northstar-workshop-reviewers
 site/sfguides/src/customer-reviews-analytics-using-snowflake-cortex/ @snowflake-labs/northstar-workshop-reviewers
 site/sfguides/src/snowflake-northstar-data-engineering/ @snowflake-labs/northstar-workshop-reviewers
+
+
+# CI. These paths decide what runs with the AEM and AWS credentials, so a change
+# here is a change to what production can be made to do. scripts/ is listed
+# alongside the workflows because the logic moved there: a workflow step is now an
+# env: map and one script invocation, which puts the reviewable part in scripts/.
+/.github/workflows/ @sfc-gh-kenguyen @sfc-gh-annafilippova @sfc-gh-ridasafdar @sfc-gh-stopchiy @sfc-gh-mnixon @sfc-gh-amadan
+/scripts/ @sfc-gh-kenguyen @sfc-gh-annafilippova @sfc-gh-ridasafdar @sfc-gh-stopchiy @sfc-gh-mnixon @sfc-gh-amadan

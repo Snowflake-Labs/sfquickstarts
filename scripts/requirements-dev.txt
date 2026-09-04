@@ -1,0 +1,10 @@
+# Tooling for the lint-workflows job only.
+#
+# Not hash-pinned, unlike scripts/requirements.txt. That job checks out no pull
+# request code, holds no credentials, and runs with a read-only token, so a
+# compromised index there cannot reach anything. Exact versions are still pinned
+# so the gate does not start failing on an unrelated PR because a linter shipped
+# a new rule overnight.
+ruff==0.16.4
+mypy==2.3.1
+types-PyYAML==6.0.12.20260815

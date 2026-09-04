@@ -1,0 +1,337 @@
+name: Deploy staged content to AEM
+
+# Runs in the base repository's context with write access, triggered by a workflow
+# that ran against pull request code. Three rules keep that safe:
+#   - Identifiers come from the event payload and the API, never from the artifact.
+#   - Checkouts take no ref, so they resolve to the default branch.
+#   - Artifact-sourced text is rendered by Python that escapes it, never by a shell.
+on:
+  workflow_run:
+    workflows: ["Validate markdown and stage (AEM)"]
+    types: [completed]
+
+# Every job re-grants exactly what it needs, so the default is nothing.
+permissions: {}
+
+# Staging a half-finished quickstart is worse than staging it late, so a running
+# deploy is allowed to finish rather than being cancelled by the next push.
+concurrency:
+  group: deploy-aem-${{ github.event.workflow_run.head_branch }}
+  cancel-in-progress: false
+
+jobs:
+  resolve_context:
+    # Only run for PRs, not direct pushes
+    if: github.event.workflow_run.event == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      actions: read
+      contents: read
+      pull-requests: read
+    outputs:
+      pr_number: ${{ steps.resolve.outputs.pr_number }}
+      head_sha: ${{ steps.resolve.outputs.head_sha }}
+      has_relevant_changes: ${{ steps.resolve.outputs.has_relevant_changes }}
+      all_validations_passed: ${{ steps.resolve.outputs.all_validations_passed }}
+      quickstart_names_json: ${{ steps.resolve.outputs.quickstart_names_json }}
+      md_file_count: ${{ steps.resolve.outputs.md_file_count }}
+      has_sidebar_changes: ${{ steps.resolve.outputs.has_sidebar_changes }}
+      sidebar_json_files: ${{ steps.resolve.outputs.sidebar_json_files }}
+      has_journey_guides: ${{ steps.resolve.outputs.has_journey_guides }}
+      journey_guides_json: ${{ steps.resolve.outputs.journey_guides_json }}
+    steps:
+      # No ref: on workflow_run this resolves to the default branch.
+      - name: Checkout trusted scripts
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          sparse-checkout: |
+            scripts/lib/
+            scripts/deploy/
+          sparse-checkout-cone-mode: true
+
+      # Selecting a cached interpreter, not installing packages: the deploy
+      # scripts are stdlib-only, so this job still pulls in no third-party code.
+      - name: Pin Python
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: '3.12'
+
+      # Downloaded after the checkout, which clears the workspace before cloning.
+      - name: Download validation artifact
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: validation-artifacts
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ github.token }}
+          path: artifact
+
+      - name: Resolve deploy context
+        id: resolve
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          ARTIFACT_DIR: artifact
+          PYTHONPATH: scripts
+        run: python3 scripts/deploy/resolve_context.py
+
+  post_pr_comments:
+    needs: resolve_context
+    if: always() && needs.resolve_context.result == 'success' && needs.resolve_context.outputs.has_relevant_changes == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      actions: read
+      contents: read
+      pull-requests: write
+    steps:
+      - name: Checkout trusted scripts
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          sparse-checkout: |
+            scripts/lib/
+            scripts/deploy/
+          sparse-checkout-cone-mode: true
+
+      - name: Pin Python
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: '3.12'
+
+      - name: Download validation artifact
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: validation-artifacts
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ github.token }}
+          path: artifact
+
+      - name: Post validation failure comment
+        if: needs.resolve_context.outputs.all_validations_passed == 'false'
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ needs.resolve_context.outputs.pr_number }}
+          ARTIFACT_DIR: artifact
+          PYTHONPATH: scripts
+        run: python3 scripts/deploy/post_comments.py validation-failures
+
+      - name: Post informational messages
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ needs.resolve_context.outputs.pr_number }}
+          ARTIFACT_DIR: artifact
+          PYTHONPATH: scripts
+        run: python3 scripts/deploy/post_comments.py informational
+
+  stage_to_aem:
+    needs: resolve_context
+    if: |
+      needs.resolve_context.result == 'success' &&
+      github.event.workflow_run.conclusion == 'success' &&
+      needs.resolve_context.outputs.has_relevant_changes == 'true' &&
+      needs.resolve_context.outputs.all_validations_passed == 'true' &&
+      needs.resolve_context.outputs.quickstart_names_json != '[]'
+    strategy:
+      matrix:
+        quickstart: ${{ fromJson(needs.resolve_context.outputs.quickstart_names_json) }}
+      max-parallel: 1
+      fail-fast: false
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment:
+      name: staging
+    permissions:
+      actions: read
+      pull-requests: write
+      contents: read
+      # Required to assume the AEM role by OIDC. GitHub only mints a token
+      # carrying environment:staging for a job that declares that environment.
+      id-token: write
+    steps:
+      - name: Checkout trusted scripts
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          sparse-checkout: |
+            scripts/lib/
+            scripts/deploy/
+          sparse-checkout-cone-mode: true
+
+      - name: Pin Python
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: '3.12'
+
+      - name: Download validation artifact
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: validation-artifacts
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ github.token }}
+          path: artifact
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@7474bc4690e29a8392af63c5b98e7449536d5c3a # v4
+        with:
+          role-to-assume: arn:aws:iam::886692307588:role/github-snowflake-labs-aem-iam-role
+          aws-region: us-west-1
+
+      # The blank alias before the comma drops the secret-name prefix, so the JSON
+      # keys land as AEM_USERNAME, AEM_PASSWORD and AEM_AUTHOR_URL. The action masks
+      # each value itself, which is why nothing is written to $GITHUB_ENV by hand.
+      - name: Fetch AEM secrets
+        uses: aws-actions/aws-secretsmanager-get-secrets@2cb1a461cbd4865ac4299648312e4704c646cd53 # v3
+        with:
+          secret-ids: ",github-snowflake-labs-aem-staging-secrets"
+          parse-json-secrets: true
+
+      - name: Stage content to AEM
+        env:
+          QUICKSTART_NAME: ${{ matrix.quickstart.name }}
+          LANGUAGE: ${{ matrix.quickstart.language }}
+          HEAD_SHA: ${{ needs.resolve_context.outputs.head_sha }}
+          ARTIFACT_DIR: artifact
+          PYTHONPATH: scripts
+        run: python3 scripts/deploy/stage_to_aem.py quickstart
+
+      - name: Comment PR with staging URL
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ needs.resolve_context.outputs.pr_number }}
+          QUICKSTART_NAME: ${{ matrix.quickstart.name }}
+          LANGUAGE: ${{ matrix.quickstart.language }}
+          HEAD_SHA: ${{ needs.resolve_context.outputs.head_sha }}
+          PYTHONPATH: scripts
+        run: python3 scripts/deploy/post_comments.py quickstart-staged
+
+  upload_sidebar_json:
+    needs: resolve_context
+    if: |
+      needs.resolve_context.result == 'success' &&
+      github.event.workflow_run.conclusion == 'success' &&
+      needs.resolve_context.outputs.has_sidebar_changes == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment:
+      name: staging
+    permissions:
+      actions: read
+      contents: read
+      id-token: write
+    steps:
+      # No ref: on workflow_run this resolves to the default branch.
+      - name: Checkout trusted scripts
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          sparse-checkout: |
+            scripts/lib/
+            scripts/deploy/
+          sparse-checkout-cone-mode: true
+
+      - name: Pin Python
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: '3.12'
+
+      # Downloaded after the checkout, which clears the workspace before cloning.
+      - name: Download validation artifact
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: validation-artifacts
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ github.token }}
+          path: artifact
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@7474bc4690e29a8392af63c5b98e7449536d5c3a # v4
+        with:
+          role-to-assume: arn:aws:iam::886692307588:role/github-snowflake-labs-aem-iam-role
+          aws-region: us-west-1
+
+      # The blank alias before the comma drops the secret-name prefix, so the JSON
+      # keys land as AEM_USERNAME, AEM_PASSWORD and AEM_AUTHOR_URL. The action masks
+      # each value itself, which is why nothing is written to $GITHUB_ENV by hand.
+      - name: Fetch AEM secrets
+        uses: aws-actions/aws-secretsmanager-get-secrets@2cb1a461cbd4865ac4299648312e4704c646cd53 # v3
+        with:
+          secret-ids: ",github-snowflake-labs-aem-staging-secrets"
+          parse-json-secrets: true
+
+      - name: Upload sidebar JSON files
+        env:
+          SIDEBAR_FILES: ${{ needs.resolve_context.outputs.sidebar_json_files }}
+          ARTIFACT_DIR: artifact
+          PYTHONPATH: scripts
+        run: python3 scripts/deploy/stage_to_aem.py sidebars
+
+  stage_journey_guides:
+    needs: resolve_context
+    if: |
+      needs.resolve_context.result == 'success' &&
+      github.event.workflow_run.conclusion == 'success' &&
+      needs.resolve_context.outputs.has_journey_guides == 'true'
+    strategy:
+      matrix:
+        guide: ${{ fromJson(needs.resolve_context.outputs.journey_guides_json) }}
+      max-parallel: 1
+      fail-fast: false
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment:
+      name: staging
+    permissions:
+      actions: read
+      pull-requests: write
+      contents: read
+      id-token: write
+    steps:
+      - name: Checkout trusted scripts
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          sparse-checkout: |
+            scripts/lib/
+            scripts/deploy/
+          sparse-checkout-cone-mode: true
+
+      - name: Pin Python
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: '3.12'
+
+      - name: Download validation artifact
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: validation-artifacts
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ github.token }}
+          path: artifact
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@7474bc4690e29a8392af63c5b98e7449536d5c3a # v4
+        with:
+          role-to-assume: arn:aws:iam::886692307588:role/github-snowflake-labs-aem-iam-role
+          aws-region: us-west-1
+
+      # The blank alias before the comma drops the secret-name prefix, so the JSON
+      # keys land as AEM_USERNAME, AEM_PASSWORD and AEM_AUTHOR_URL. The action masks
+      # each value itself, which is why nothing is written to $GITHUB_ENV by hand.
+      - name: Fetch AEM secrets
+        uses: aws-actions/aws-secretsmanager-get-secrets@2cb1a461cbd4865ac4299648312e4704c646cd53 # v3
+        with:
+          secret-ids: ",github-snowflake-labs-aem-staging-secrets"
+          parse-json-secrets: true
+
+      - name: Stage journey guide to AEM
+        env:
+          GUIDE_NAME: ${{ matrix.guide.name }}
+          SOURCE_PATH: ${{ matrix.guide.source_path }}
+          HEAD_SHA: ${{ needs.resolve_context.outputs.head_sha }}
+          PYTHONPATH: scripts
+        run: python3 scripts/deploy/stage_to_aem.py journey
+
+      - name: Comment PR with staging URL
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ needs.resolve_context.outputs.pr_number }}
+          GUIDE_NAME: ${{ matrix.guide.name }}
+          HEAD_SHA: ${{ needs.resolve_context.outputs.head_sha }}
+          PYTHONPATH: scripts
+        run: python3 scripts/deploy/post_comments.py journey-staged
