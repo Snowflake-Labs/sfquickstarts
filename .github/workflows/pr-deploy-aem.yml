@@ -171,7 +171,7 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@7474bc4690e29a8392af63c5b98e7449536d5c3a # v4
         with:
-          role-to-assume: arn:aws:iam::886692307588:role/github-snowflake-labs-aem-iam-role
+          role-to-assume: arn:aws:iam::886692307588:role/github-sfquickstarts-staging-aem-iam-role
           aws-region: us-west-1
 
       # The blank alias before the comma drops the secret-name prefix, so the JSON
@@ -243,7 +243,7 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@7474bc4690e29a8392af63c5b98e7449536d5c3a # v4
         with:
-          role-to-assume: arn:aws:iam::886692307588:role/github-snowflake-labs-aem-iam-role
+          role-to-assume: arn:aws:iam::886692307588:role/github-sfquickstarts-staging-aem-iam-role
           aws-region: us-west-1
 
       # The blank alias before the comma drops the secret-name prefix, so the JSON
@@ -307,7 +307,7 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@7474bc4690e29a8392af63c5b98e7449536d5c3a # v4
         with:
-          role-to-assume: arn:aws:iam::886692307588:role/github-snowflake-labs-aem-iam-role
+          role-to-assume: arn:aws:iam::886692307588:role/github-sfquickstarts-staging-aem-iam-role
           aws-region: us-west-1
 
       # The blank alias before the comma drops the secret-name prefix, so the JSON
