@@ -59,7 +59,7 @@ jobs:
       # checkout to trusted code that is already on master. It must also come first:
       # checkout clears the workspace, discarding anything an earlier step wrote.
       - name: Checkout repository
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        uses: actions/checkout@v4
         with:
           ref: ${{ inputs.commit_sha }}
           sparse-checkout: |
@@ -86,7 +86,7 @@ jobs:
           parse-json-secrets: true
 
       - name: Setup Python
-        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        uses: actions/setup-python@v3
         with:
           python-version: '3.12'
           cache: 'pip'
