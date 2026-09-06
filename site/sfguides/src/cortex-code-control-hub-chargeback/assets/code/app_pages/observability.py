@@ -801,7 +801,7 @@ SHOW PARAMETERS LIKE 'AI_SETTINGS' IN ACCOUNT;""", language="sql")
                         st.session_state[err_key] = edf
                     except Exception as ex:
                         st.session_state[err_key] = str(ex)
-                st.rerun()
+                st.experimental_rerun()
         else:
             edf = st.session_state[err_key]
             if isinstance(edf, str):
@@ -821,7 +821,7 @@ SHOW PARAMETERS LIKE 'AI_SETTINGS' IN ACCOUNT;""", language="sql")
                           help="Spans that succeeded but returned 0 output tokens — silent failures.")
                 c4.metric("Success Rate",    f"{ok_pct}%",
                           help="Percentage of spans that completed with STATUS = SUCCESS.")
-                st.dataframe(edf, use_container_width=True, hide_index=True)
+                st.dataframe(edf, use_container_width=True)
 
     # ══════════════════════════════════════════════════════════════════════════
     # SECTION 2 — Cohort / Team
@@ -839,7 +839,7 @@ SHOW PARAMETERS LIKE 'AI_SETTINGS' IN ACCOUNT;""", language="sql")
                                 alt.Tooltip("CREDITS_USED:Q", format=".4f")])
             if ch:
                 st.altair_chart(ch, use_container_width=True)
-            st.dataframe(coh_df, use_container_width=True, hide_index=True,
+            st.dataframe(coh_df, use_container_width=True,
                          column_config={
                              "CREDITS_USED": st.column_config.NumberColumn("Credits", format="%.4f"),
                              "LAST_ACTIVE":  st.column_config.DateColumn("Last Active"),
@@ -863,7 +863,7 @@ SHOW PARAMETERS LIKE 'AI_SETTINGS' IN ACCOUNT;""", language="sql")
                               help="Sum of all credits consumed by this cohort in the selected period.")
                     m3.metric("Total queries",  f"{int(members['QUERIES'].sum()):,}",
                               help="Total LLM API calls made by cohort members.")
-                    st.dataframe(members, use_container_width=True, hide_index=True,
+                    st.dataframe(members, use_container_width=True,
                                  column_config={
                                      "CREDITS":     st.column_config.NumberColumn("Credits", format="%.4f"),
                                      "LAST_ACTIVE": st.column_config.DateColumn("Last Active"),
@@ -889,7 +889,7 @@ SHOW PARAMETERS LIKE 'AI_SETTINGS' IN ACCOUNT;""", language="sql")
                 st.info(f"No users matching '{query}' with activity in the last {active_days} days.")
             else:
                 st.caption(f"{len(udf)} user(s) found")
-                st.dataframe(udf, use_container_width=True, hide_index=True,
+                st.dataframe(udf, use_container_width=True,
                              column_config={
                                  "CREDITS":     st.column_config.NumberColumn("Credits", format="%.4f"),
                                  "LAST_ACTIVE": st.column_config.DateColumn("Last Active"),
@@ -932,7 +932,7 @@ SHOW PARAMETERS LIKE 'AI_SETTINGS' IN ACCOUNT;""", language="sql")
                             with st.spinner("Loading…"):
                                 pdf, perr = _load_events(session, active_days, sel_user)
                             st.session_state[prompt_key] = (pdf, perr)
-                            st.rerun()
+                            st.experimental_rerun()
                     else:
                         pdf, perr = st.session_state[prompt_key]
                         if perr == "permission":
@@ -973,7 +973,7 @@ SHOW PARAMETERS LIKE 'AI_SETTINGS' IN ACCOUNT;""", language="sql")
                         loaded = res.get("events_loaded", 0)
                         st.cache_data.clear()
                         st.success(f"✓ Loaded {loaded:,} events. Refreshing…")
-                        st.rerun()
+                        st.experimental_rerun()
                     except Exception as e:
                         st.error(f"Backfill failed: {e}")
             return
@@ -1078,7 +1078,7 @@ SHOW PARAMETERS LIKE 'AI_SETTINGS' IN ACCOUNT;""", language="sql")
                       tooltip=["USER_NAME:N","PROMPTS:Q","AVG_LAT:Q","SUCCESS:Q"])
             if c:
                 st.altair_chart(c, use_container_width=True)
-            st.dataframe(bu, use_container_width=True, hide_index=True,
+            st.dataframe(bu, use_container_width=True,
                          column_config={
                              "PROMPTS": st.column_config.NumberColumn("Prompts"),
                              "AVG_LAT": st.column_config.NumberColumn("Avg Lat (s)", format="%.2f"),
@@ -1098,7 +1098,7 @@ SHOW PARAMETERS LIKE 'AI_SETTINGS' IN ACCOUNT;""", language="sql")
                       tooltip=["MODEL:N","PROMPTS:Q","AVG_LAT:Q","TOKENS:Q"])
             if c:
                 st.altair_chart(c, use_container_width=True)
-            st.dataframe(bm, use_container_width=True, hide_index=True)
+            st.dataframe(bm, use_container_width=True)
 
         with t_prompts:
             _sec("Prompt Browser")
@@ -1150,7 +1150,7 @@ SHOW PARAMETERS LIKE 'AI_SETTINGS' IN ACCOUNT;""", language="sql")
                         st.dataframe(
                             flagged[["TIMESTAMP","USER_NAME","ROLE_NAME","MODEL","PROMPT"]]
                                 .assign(PROMPT=flagged["PROMPT"].str[:150]),
-                            use_container_width=True, hide_index=True)
+                            use_container_width=True)
 
         with t_sessions:
             st.caption(
@@ -1194,7 +1194,7 @@ SHOW PARAMETERS LIKE 'AI_SETTINGS' IN ACCOUNT;""", language="sql")
                 sc3.metric("Desktop Requests",     f"{dt_s:,}",   help="Requests via Snowflake Desktop app.")
                 sc4.metric("SDK / Extensions",     f"{ext_s:,}",  help="Requests from other surfaces (e.g. SDK-TYPESCRIPT, sdk-python). Check Entrypoints tab for full breakdown.")
                 sc5.metric("Surface Unknown",      f"{null_s:,}", help="Requests where ENTRYPOINT was null — re-run Phase C + D2 to backfill.")
-                st.dataframe(sdf, use_container_width=True, hide_index=True,
+                st.dataframe(sdf, use_container_width=True,
                              column_config={
                                  "SESSION_ID":    st.column_config.TextColumn("Session ID", width="medium"),
                                  "USER_NAME":     st.column_config.TextColumn("User"),
@@ -1396,7 +1396,7 @@ SHOW PARAMETERS LIKE 'AI_SETTINGS' IN ACCOUNT;""", language="sql")
                 st.caption("CLI = terminal/VS Code extension · Snowsight = browser IDE · Desktop = Snowflake Desktop app. "
                            "Rows only appear for surfaces where at least one prompt has been classified. "
                            "If CLI/Desktop/Snowsight rows are missing, no activity from that surface has been backfilled yet.")
-                st.dataframe(ep_agg, use_container_width=True, hide_index=True,
+                st.dataframe(ep_agg, use_container_width=True,
                              column_config={
                                  "ENTRYPOINT":    st.column_config.TextColumn("Entrypoint"),
                                  "QUERIES":       st.column_config.NumberColumn("Queries",         format="%.0f"),
@@ -1460,7 +1460,7 @@ SHOW PARAMETERS LIKE 'AI_SETTINGS' IN ACCOUNT;""", language="sql")
                             help="1.0 = response is logically structured.")
                 kq4.metric("Avg Safety", f"{q_df['AVG_SAFETY'].mean():.2f}",
                             help="1.0 = no harmful or sensitive content detected.")
-                st.dataframe(q_df, use_container_width=True, hide_index=True,
+                st.dataframe(q_df, use_container_width=True,
                              column_config={
                                  "RESPONSE_DATE":        st.column_config.DateColumn("Date"),
                                  "MODEL":                st.column_config.TextColumn("Model"),
@@ -1580,7 +1580,7 @@ SHOW PARAMETERS LIKE 'AI_SETTINGS' IN ACCOUNT;""", language="sql")
                 # Summary table
                 _sec("Category Summary Table")
                 disp = pat_dist[["CATEGORY_LABEL","PROMPTS","USERS","TOTAL_COST","AVG_COST"]].copy()
-                st.dataframe(disp, use_container_width=True, hide_index=True,
+                st.dataframe(disp, use_container_width=True,
                              column_config={
                                  "CATEGORY_LABEL": st.column_config.TextColumn("Category"),
                                  "PROMPTS":        st.column_config.NumberColumn("Prompts",        format="%.0f"),

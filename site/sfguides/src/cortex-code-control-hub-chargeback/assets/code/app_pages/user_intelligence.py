@@ -471,7 +471,7 @@ def render(session):
             with tm2:
                 _sec("LLM Token Summary")
                 st.dataframe(models_df[["MODEL","PROMPTS","TOKENS","INPUT_TOKENS","CACHE_READ","CACHE_HIT_PCT"]],
-                             use_container_width=True, hide_index=True,
+                             use_container_width=True,
                              column_config={
                                  "MODEL":        st.column_config.TextColumn("LLM"),
                                  "PROMPTS":      st.column_config.NumberColumn("Prompts", format="%.0f"),

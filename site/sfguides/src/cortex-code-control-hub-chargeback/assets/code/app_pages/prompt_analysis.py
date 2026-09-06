@@ -271,7 +271,7 @@ def render(session):
                                          "AFFECTED_USERS:Q","RISK_LEVEL:N"])
                     if ch2:
                         st.altair_chart(ch2, use_container_width=True)
-                    st.dataframe(rule_df, use_container_width=True, hide_index=True,
+                    st.dataframe(rule_df, use_container_width=True,
                                  column_config={
                                      "VIOLATIONS": st.column_config.NumberColumn("Insights"),
                                      "AFFECTED_USERS": st.column_config.NumberColumn("Users"),
@@ -329,7 +329,7 @@ def render(session):
 
                 st.divider()
                 _sec("Insight History")
-                st.dataframe(vdf, use_container_width=True, hide_index=True,
+                st.dataframe(vdf, use_container_width=True,
                              column_config={
                                  "VIOLATION_DATE": st.column_config.DateColumn("Date"),
                                  "RULE_NAME":      st.column_config.TextColumn("Rule"),
@@ -347,7 +347,7 @@ def render(session):
         _sec("Users with Prompt Insights")
         top_all = _load_top_violators(session, active_days)
         if not top_all.empty:
-            st.dataframe(top_all, use_container_width=True, hide_index=True,
+            st.dataframe(top_all, use_container_width=True,
                          column_config={
                              "VIOLATIONS": st.column_config.NumberColumn("Total"),
                              "HIGH":       st.column_config.NumberColumn("High"),
@@ -367,7 +367,7 @@ def render(session):
         if rule_day.empty:
             st.info("No insights in this period.")
         else:
-            st.dataframe(rule_day, use_container_width=True, hide_index=True,
+            st.dataframe(rule_day, use_container_width=True,
                          column_config={
                              "RULE_NAME":       st.column_config.TextColumn("Rule", width="medium"),
                              "RISK_LEVEL":      st.column_config.TextColumn("Severity"),
@@ -428,7 +428,7 @@ def render(session):
                         st.session_state[feed_key] = fdf
                     except Exception as e:
                         st.session_state[feed_key] = str(e)
-                st.rerun()
+                st.experimental_rerun()
         else:
             fdf = st.session_state[feed_key]
             col_r, _ = st.columns([1, 5])
@@ -443,7 +443,7 @@ def render(session):
                 st.info("No insights match the selected filters.")
             else:
                 st.caption(f"{len(fdf):,} prompt insights")
-                st.dataframe(fdf, use_container_width=True, hide_index=True,
+                st.dataframe(fdf, use_container_width=True,
                              column_config={
                                  "VIOLATION_DATE": st.column_config.DateColumn("Date"),
                                  "USER_NAME":      st.column_config.TextColumn("User"),

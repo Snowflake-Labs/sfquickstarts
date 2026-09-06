@@ -212,16 +212,16 @@ def render(session):
                                        help="Edit this rule's name, description, keywords, severity level"):
                             edit_key = f"editing_{row['RULE_ID']}"
                             st.session_state[edit_key] = not st.session_state.get(edit_key, False)
-                            st.rerun()
+                            st.experimental_rerun()
                         if acol.button("Disable" if active else "Enable", key=f"toggle_{row['RULE_ID']}",
                                        help="Disable this rule (skip in next analysis)" if active else "Enable this rule"):
                             _toggle_rule(session, int(row["RULE_ID"]), not active)
-                            st.rerun()
+                            st.experimental_rerun()
                         if dcol.button("🗑", key=f"del_{row['RULE_ID']}",
                                        help="Delete this rule permanently"):
                             if st.session_state.get(f"confirm_del_{row['RULE_ID']}"):
                                 _delete_rule(session, int(row["RULE_ID"]))
-                                st.rerun()
+                                st.experimental_rerun()
                             else:
                                 st.session_state[f"confirm_del_{row['RULE_ID']}"] = True
                                 st.warning("Click 🗑 again to confirm deletion.")
@@ -302,12 +302,12 @@ def render(session):
                                 if ok:
                                     st.session_state[f"editing_{row['RULE_ID']}"] = False
                                     st.success(f"✓ Rule updated.")
-                                    st.rerun()
+                                    st.experimental_rerun()
                                 else:
                                     st.error(f"Failed to update: {err}")
                         elif cancel_edit:
                             st.session_state[f"editing_{row['RULE_ID']}"] = False
-                            st.rerun()
+                            st.experimental_rerun()
 
     # ── Create Rule ──────────────────────────────────────────────────────────
     with tab_create:

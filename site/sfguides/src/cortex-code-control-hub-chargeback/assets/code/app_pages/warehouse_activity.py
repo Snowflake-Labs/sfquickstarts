@@ -259,7 +259,7 @@ def render(session):
     dk3.metric("Est. cost", f"${d_cr * usd_rate:,.2f}")
 
     st.dataframe(
-        detail, use_container_width=True, hide_index=True,
+        detail, use_container_width=True,
         column_config={
             "STARTED":     st.column_config.DatetimeColumn("Started"),
             "USER_NAME":   st.column_config.TextColumn("User"),

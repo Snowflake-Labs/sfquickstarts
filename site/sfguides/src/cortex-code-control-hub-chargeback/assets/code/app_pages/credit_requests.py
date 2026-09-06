@@ -129,7 +129,7 @@ def _render_user_section(session):
         display_cols = [c for c in ["REQUEST_TIMESTAMP", "SURFACE", "AMOUNT_REQUESTED",
                                     "STATUS", "APPROVED_BY"] if c in history.columns]
         st.dataframe(history[display_cols] if display_cols else history,
-                     use_container_width=True, hide_index=True)
+                     use_container_width=True)
     else:
         st.caption("No requests yet.")
 
@@ -164,7 +164,7 @@ def _render_model_request_form(session, username):
         tier_info.append({"Model": m, "Tier": cat, "Description": desc})
 
     if tier_info:
-        st.dataframe(pd.DataFrame(tier_info), use_container_width=True, hide_index=True)
+        st.dataframe(pd.DataFrame(tier_info), use_container_width=True)
 
     with st.form("model_request_form", clear_on_submit=True):
         requested_model = st.selectbox("Model requested", all_models, key="req_model",
@@ -352,12 +352,12 @@ def _render_admin_section(session):
                         _approve_model_request(session, req_id, requester, surface)
                     else:
                         _approve_credit_request(session, row)
-                    st.rerun()
+                    st.experimental_rerun()
             with col_r:
                 if st.button("Reject", key=f"reject_{req_id}",
                              help="Denies the request."):
                     _reject_request(session, req_id)
-                    st.rerun()
+                    st.experimental_rerun()
 
 
 def _approve_credit_request(session, row):

@@ -516,7 +516,7 @@ def _apply_cohort(session, cohort_id, members, cli_limit, ss_limit, dt_limit, is
         for key in list(st.session_state.keys()):
             if key.startswith("cohort_") or key.startswith("trend_"):
                 del st.session_state[key]
-        st.rerun()
+        st.experimental_rerun()
 
     # ── Native AI Budgets (Snowflake Preview) ───────────────────────────────────
     st.divider()

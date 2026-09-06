@@ -267,7 +267,7 @@ def render(session):
             st.dataframe(
                 hist[["MODEL_NAME", "TIER", "REQUESTS", "TOKENS", "CREDITS",
                       "SHARE_PCT", "TOK_PER_CREDIT"]],
-                use_container_width=True, hide_index=True,
+                use_container_width=True,
                 column_config={
                     "MODEL_NAME":     st.column_config.TextColumn("Model"),
                     "TIER":           st.column_config.TextColumn("Tier"),
@@ -391,7 +391,7 @@ def render(session):
             cols = ["model", "latency_ms", "in_tok", "out_tok", "total_tok", "est_credits"]
             if has_q:
                 cols.append("quality")
-            st.dataframe(df[cols], use_container_width=True, hide_index=True,
+            st.dataframe(df[cols], use_container_width=True,
                          column_config={
                              "model":       st.column_config.TextColumn("Model"),
                              "latency_ms":  st.column_config.NumberColumn("Latency (ms)", format="%.0f"),

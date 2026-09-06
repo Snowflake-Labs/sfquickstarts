@@ -132,7 +132,7 @@ def render(session):
             st.dataframe(mdf_display[["MODEL_NAME", "CREDITS", "TOKENS", "TOKENS_PER_CREDIT"]].rename(
                 columns={"MODEL_NAME": "Model", "CREDITS": "Credits",
                          "TOKENS": "Tokens", "TOKENS_PER_CREDIT": "Tokens/Credit"}
-            ), use_container_width=True, hide_index=True)
+            ), use_container_width=True)
     else:
         st.info("No model data for this period.")
 
@@ -320,7 +320,7 @@ def _render_intelligence(session, days, cohort_filter):
             "USAGE_DATE": "Date", "USER_NAME": "User",
             "TOTAL_CREDITS": "Credits (that day)", "AVG_DAILY": "User's Avg Daily"
         }).sort_values("Credits (that day)", ascending=False).head(10)
-        st.dataframe(spike_display, use_container_width=True, hide_index=True,
+        st.dataframe(spike_display, use_container_width=True,
                      column_config={
                          "Credits (that day)": st.column_config.NumberColumn(format="%.2f"),
                          "User's Avg Daily": st.column_config.NumberColumn(format="%.2f"),
@@ -360,7 +360,7 @@ def _render_intelligence(session, days, cohort_filter):
                     "USER_NAME": "User", "AVG_DAILY": "Avg Daily Credits",
                     "STD_DAILY": "Daily Variability (σ)", "RECOMMENDATION": "Recommendation"
                 }),
-                use_container_width=True, hide_index=True,
+                use_container_width=True,
                 column_config={
                     "Avg Daily Credits": st.column_config.NumberColumn(format="%.1f"),
                     "Daily Variability (σ)": st.column_config.NumberColumn(format="%.1f"),
@@ -461,4 +461,4 @@ def _render_intelligence(session, days, cohort_filter):
                                      "Trend-Adjusted": f"{trend_total:,.0f} cr",
                                      "Flat (avg × days)": f"{flat_total:,.0f} cr",
                                      "Δ vs Flat": f"{((trend_total - flat_total)/flat_total*100):+.1f}%" if flat_total > 0 else "N/A"})
-            st.dataframe(_fpd.DataFrame(projections), use_container_width=True, hide_index=True)
+            st.dataframe(_fpd.DataFrame(projections), use_container_width=True)

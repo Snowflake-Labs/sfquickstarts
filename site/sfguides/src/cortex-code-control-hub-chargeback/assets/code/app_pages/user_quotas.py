@@ -198,7 +198,7 @@ Use **daily limits** for precise per-surface control. Use **native quotas** for 
                         if result.get("ok"):
                             blocks = result.get("blocks", [])
                             if blocks:
-                                st.dataframe(pd.DataFrame(blocks), use_container_width=True, hide_index=True)
+                                st.dataframe(pd.DataFrame(blocks), use_container_width=True)
                             else:
                                 st.success("No users currently blocked.")
                         else:
@@ -247,18 +247,18 @@ Use **daily limits** for precise per-surface control. Use **native quotas** for 
                                 st.session_state.pop(confirm_key, None)
                                 _load_quotas.clear()
                                 log_activity(session, "DELETE_QUOTA", details={"quota": qname})
-                                st.rerun()
+                                st.experimental_rerun()
                             else:
                                 errs = result.get("errors", [])
                                 st.error(f"✗ {'; '.join(errs) if errs else result.get('error')}")
                         if st.button("✗ Cancel", key=f"del_cancel_{qname}", use_container_width=True):
                             st.session_state.pop(confirm_key, None)
-                            st.rerun()
+                            st.experimental_rerun()
                     else:
                         if st.button("🗑 Delete", key=f"del_{qname}", use_container_width=True,
                                      type="secondary", help="Drop the quota object and untag all users."):
                             st.session_state[confirm_key] = True
-                            st.rerun()
+                            st.experimental_rerun()
 
     st.divider()
 
@@ -361,7 +361,7 @@ Use **daily limits** for precise per-surface control. Use **native quotas** for 
                              details={"quota": qname, "monthly_limit": monthly_limit,
                                       "cohort": cohort_sel, "block": block_enforce,
                                       "tagged": tagged})
-                st.rerun()
+                st.experimental_rerun()
             else:
                 st.error(f"✗ {result.get('error', 'Unknown error')}")
 
@@ -392,7 +392,7 @@ Use **daily limits** for precise per-surface control. Use **native quotas** for 
             if result.get("ok"):
                 history = result.get("history", [])
                 if history:
-                    st.dataframe(pd.DataFrame(history), use_container_width=True, hide_index=True)
+                    st.dataframe(pd.DataFrame(history), use_container_width=True)
                 else:
                     st.info("No enforcement events in this date range.")
             else:
