@@ -54,7 +54,7 @@ This section covers environment setup, creating the online service, and loading 
 
 ### Download and Import the Notebook
 
-1. Click this link: [online_feature_store_fraud_detection.ipynb](assets/online_feature_store_fraud_detection.ipynb)
+1. Click this link: [online_feature_store_fraud_detection.ipynb](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/intro-to-online-feature-store-with-postgres-in-snowflake/assets/online_feature_store_fraud_detection.ipynb)
 2. On the GitHub page, click the **Download raw file** button (download icon in the top right of the file preview)
 3. Save the `.ipynb` file to your computer
 
