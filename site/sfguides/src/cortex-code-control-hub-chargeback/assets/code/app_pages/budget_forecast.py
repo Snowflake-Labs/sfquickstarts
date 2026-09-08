@@ -155,7 +155,7 @@ def render(session):
             "Growth vs Flat": f"{((projected - flat) / flat * 100):+.1f}%" if flat > 0 else "N/A",
         })
 
-    st.dataframe(pd.DataFrame(projections), use_container_width=True, hide_index=True)
+    st.dataframe(pd.DataFrame(projections), use_container_width=True)
 
     st.divider()
 
@@ -182,7 +182,7 @@ def render(session):
                 st.dataframe(cohort_spend[["COHORT_ROLE", "TOTAL_CREDITS", "DAILY_AVG", "PROJECTED_30D"]].rename(
                     columns={"COHORT_ROLE": "Cohort", "TOTAL_CREDITS": f"Actual ({days_in_data}d)",
                              "DAILY_AVG": "Daily Avg", "PROJECTED_30D": "Projected 30d"}
-                ), use_container_width=True, hide_index=True,
+                ), use_container_width=True,
                     column_config={
                         f"Actual ({days_in_data}d)": st.column_config.NumberColumn(format="%.0f"),
                         "Daily Avg": st.column_config.NumberColumn(format="%.1f"),

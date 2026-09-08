@@ -342,7 +342,7 @@ def _render_current(session):
             display_df = role_grants[["GRANTEE_NAME", "CREATED_ON"]].rename(
                 columns={"GRANTEE_NAME": "Role Name", "CREATED_ON": "Granted On"}
             )
-            st.dataframe(display_df, use_container_width=True, hide_index=True)
+            st.dataframe(display_df, use_container_width=True)
 
             # Revoke option
             revoke_targets = st.multiselect(
@@ -400,7 +400,7 @@ def _render_current(session):
                         st.caption(f"`{inspect_src}` is granted to **{len(role_grantees)}** role(s)")
                         st.dataframe(
                             gdf[[role_col]].rename(columns={role_col: "Role with access"}),
-                            use_container_width=True, hide_index=True
+                            use_container_width=True
                         )
                         revoke_r2r = st.multiselect(
                             "Select roles to revoke from", role_grantees,
@@ -467,9 +467,9 @@ def _render_inheritance(session):
                 if "GRANTED_ON" in df.columns:
                     display_cols.append("GRANTED_ON")
                 if display_cols:
-                    st.dataframe(df[display_cols].head(30), use_container_width=True, hide_index=True, height=300)
+                    st.dataframe(df[display_cols].head(30), use_container_width=True, height=300)
                 else:
-                    st.dataframe(df.head(30), use_container_width=True, hide_index=True, height=300)
+                    st.dataframe(df.head(30), use_container_width=True, height=300)
             else:
                 st.caption("No grants found.")
         except Exception as e:
@@ -481,7 +481,7 @@ def _render_inheritance(session):
             members = get_role_members(session, chosen)
             if members:
                 st.dataframe(pd.DataFrame({"User": members}),
-                            use_container_width=True, hide_index=True, height=300)
+                            use_container_width=True, height=300)
             else:
                 st.caption("No user members.")
         except Exception as e:

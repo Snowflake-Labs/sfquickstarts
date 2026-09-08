@@ -449,7 +449,7 @@ def render(session):
                          .agg(P50=("P50_S","mean"), P95=("P95_S","mean"),
                               MAX=("MAX_S","max"), PROMPTS=("PROMPT_COUNT","sum"))
                          .round(2).reset_index().sort_values("P95", ascending=False))
-            st.dataframe(summary, use_container_width=True, hide_index=True,
+            st.dataframe(summary, use_container_width=True,
                          column_config={
                              "MODEL":   st.column_config.TextColumn("Model"),
                              "P50":     st.column_config.NumberColumn("P50 (s)", format="%.2f"),
@@ -607,7 +607,7 @@ def render(session):
                             "CACHE_READ_T", "CACHE_WRITE_T", "CACHE_HIT_PCT", "CACHE_WRITE_PCT"]
             st.dataframe(
                 econ_tbl[display_cols],
-                use_container_width=True, hide_index=True,
+                use_container_width=True,
                 column_config={
                     "MODEL":           st.column_config.TextColumn("Model"),
                     "TOTAL_T":         st.column_config.TextColumn("Total Tokens"),
@@ -758,7 +758,7 @@ def render(session):
                       .configure(background=_BG))
                 st.altair_chart(ch, use_container_width=True)
 
-                st.dataframe(qual, use_container_width=True, hide_index=True,
+                st.dataframe(qual, use_container_width=True,
                              column_config={
                                  "MODEL":                st.column_config.TextColumn("Model"),
                                  "AVG_ANSWER_RELEVANCE": st.column_config.NumberColumn(
@@ -829,7 +829,7 @@ def render(session):
                         _load_quality_by_model.clear()
                         _load_quality_trend.clear()
                         _load_quality_stats.clear()
-                        st.rerun()
+                        st.experimental_rerun()
                     except Exception as e:
                         st.error(f"Failed: {e}")
 
@@ -915,7 +915,7 @@ These categories are set per rule in **Policy Rules → Active Rules**. Custom r
                 st.altair_chart(ch, use_container_width=True)
 
             # Summary table
-            st.dataframe(viol, use_container_width=True, hide_index=True,
+            st.dataframe(viol, use_container_width=True,
                          column_config={
                              "MODEL":              st.column_config.TextColumn("Model"),
                              "TOTAL_PROMPTS":      st.column_config.NumberColumn("Prompts",    format="%.0f"),
@@ -976,7 +976,7 @@ These categories are set per rule in **Policy Rules → Active Rules**. Custom r
                    .configure_view(strokeWidth=0).configure(background=_BG))
             st.altair_chart(ch2, use_container_width=True)
 
-            st.dataframe(model_totals, use_container_width=True, hide_index=True,
+            st.dataframe(model_totals, use_container_width=True,
                          column_config={
                              "MODEL":   st.column_config.TextColumn("Model"),
                              "CREDITS": st.column_config.NumberColumn("Credits", format="%.2f"),

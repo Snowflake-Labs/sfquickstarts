@@ -296,7 +296,7 @@ Request queues for admin approval with message: "Only 12 credits available acros
             """).to_pandas()
             if not leads_df.empty:
                 leads_df.columns = [c.strip('"').upper() for c in leads_df.columns]
-                st.dataframe(leads_df, use_container_width=True, hide_index=True)
+                st.dataframe(leads_df, use_container_width=True)
             else:
                 st.caption("No domain leads configured yet.")
         except Exception:
