@@ -2,7 +2,7 @@ author: Brad Culberson, Keith Gaputis
 id: build-a-streaming-data-pipeline-in-python
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
 language: en
-summary: Build streaming data pipelines in Python with Rowset API, Snowflake Dynamic Tables, and Streamlit for real-time data ingestion. 
+summary: Build streaming data pipelines in Python with Snowpipe Streaming elastic channels, Snowflake Dynamic Tables, and Streamlit.
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
@@ -14,7 +14,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 Snowflake is a powerful platform to process streaming data and do near real-time reporting.
 
-In this guide, we will use the High-Performance Python SDK to ingest data into Snowflake tables seconds from generation. The dataset is a randomly generated dataset one would find from ski resorts. It generates Resort Tickets, Lift Rides, and Season Passes in Python and enqueues the data in a SQLite database. The streamer component reads data from the database and sends it to Snowflake and cleans up the database from data sent.
+In this guide, we will use the Snowpipe Streaming high-performance Python SDK to ingest data into Snowflake tables seconds after generation. The sample generator produces Resort Tickets, Lift Rides, and Season Passes and sends each in-memory batch directly to Snowflake through elastic channels. Each append returns a future that completes only after Snowflake durably acknowledges the rows.
 
 To have fast and efficient near real-time reporting, we will use Dynamic Tables to materialize reports which are then queried from a Streamlit application deployed in the account.
 
@@ -27,7 +27,8 @@ To have fast and efficient near real-time reporting, we will use Dynamic Tables 
 
 ### What You’ll Learn
 
-- How to send data from Python to Snowflake Streaming v2 REST API
+- How to send Python batches directly to Snowflake with elastic channels
+- How to wait for durable acknowledgments from Snowflake
 - How to prepare data for reporting using Dynamic Tables
 - How to create a basic Streamlit application for reporting
 
@@ -107,7 +108,7 @@ USE ROLE STREAMING_INGEST;
 USE DATABASE STREAMING_INGEST;
 USE SCHEMA STREAMING_INGEST;
 
-CREATE OR REPLACE TABLE RESORT_TICKET(TXID varchar(255), RFID varchar(255), RESORT varchar(255), PURCHASE_TIME datetime, PRICE_USD DECIMAL(7,2), EXPIRATION_TIME date, DAYS number, NAME varchar(255), ADDRESS variant, PHONE varchar(255), EMAIL varchar(255), EMERGENCY_CONTACT variant);
+CREATE OR REPLACE TABLE RESORT_TICKET(TXID varchar(255), RFID varchar(255), RESORT varchar(255), PURCHASE_TIME datetime, PRICE_USD DECIMAL(7,2), EXPIRATION_TIME date, DAYS number, DAYS_USED number, NAME varchar(255), ADDRESS variant, PHONE varchar(255), EMAIL varchar(255), EMERGENCY_CONTACT variant);
 
 CREATE OR REPLACE PIPE RESORT_TICKET_PIPE AS
 COPY INTO RESORT_TICKET
@@ -118,7 +119,7 @@ FROM TABLE (
 )
 MATCH_BY_COLUMN_NAME=CASE_SENSITIVE;
 
-CREATE OR REPLACE TABLE SEASON_PASS(TXID varchar(255), RFID varchar(255), PURCHASE_TIME datetime, PRICE_USD DECIMAL(7,2), EXPIRATION_TIME date, NAME varchar(255), ADDRESS variant, PHONE varchar(255), EMAIL varchar(255), EMERGENCY_CONTACT variant);
+CREATE OR REPLACE TABLE SEASON_PASS(TXID varchar(255), RFID varchar(255), PURCHASE_TIME datetime, PRICE_USD DECIMAL(7,2), EXPIRATION_TIME date, DAYS_USED number, NAME varchar(255), ADDRESS variant, PHONE varchar(255), EMAIL varchar(255), EMERGENCY_CONTACT variant);
 
 CREATE OR REPLACE PIPE SEASON_PASS_PIPE AS
 COPY INTO SEASON_PASS
@@ -153,70 +154,48 @@ Make a copy of the env file to edit by running this command in the codespace ter
 cp .env.example .env
 ```
 
-Edit the account name in the .env file (SNOWFLAKE_ACCOUNT) to match your Snowflake account name.
+Copy `.env.example` to `.env`. Set `SNOWFLAKE_ACCOUNT_URI` to the **Account URL** from Snowsight (account selector → **View account details**), without building a hostname from an account locator. See [Locate your Snowflake account information in Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight-gs#locate-your-snowflake-account-information-in-snowsight).
 
-If you do not know your account name, you can run this sql in Snowsight or via snowsql.
+Paste in your private key from the `rsa_key.p8` file into the `.env` file (`PRIVATE_KEY`).
 
-```sql
-select current_account();
-```
-
-Paste in your private key from the rsa_key.p8 file into the .env file (PRIVATE_KEY).
-
-Set the appropriate value for the host where your Snowflake endpoint resides (SNOWFLAKE_HOST). You can get the Account/Server URL from the Account Details in Snowsight.
+The example also sets `SNOWFLAKE_ROLE=STREAMING_INGEST` and waits up to 120 seconds for each durable acknowledgment. You can change this with `ACK_TIMEOUT_SECONDS`.
 
 ### Stream the Data to Snowflake
 
-This repository will generate sample data and supplies the framework and dependencies needed for you to stream data to Snowflake. You need to write the code to stream data to Snowflake.
+The repository pins `snowpipe-streaming==1.8.0`, the latest stable Python SDK release at the time this guide was published. It also includes a `SnowflakeStreamingSink` that connects the generator directly to the three Snowflake pipes.
 
-You will write the main body of the function stream_data in streamer.py. The pipe_name and 2 data access functions are passed to this function. All configuration parameters needed are in the streamer.py under `# parameters`.
-
-fn_get_data takes 2 parameters, the first parameter is the offset to read data from ex: (SELECT * where > offset) and the second parameter is the maximum number of records to read. It will return a list of json strings which can be sent to Snowflake.
-
-Example usage: 
+A `StreamingIngestClient` maps to one database, schema, and pipe. The sink therefore creates one client per generated record type. `account_url` is the Account URL copied from Snowsight; `account_name` is derived from that URL.
 
 ```python
-rows = fn_get_data(latest_committed_offset_token, BATCH_SIZE)
+client = StreamingIngestClient(
+    client_name=f"{client_name}-{stream_name}",
+    db_name=database_name,
+    schema_name=schema_name,
+    pipe_name=pipe_name,
+    properties={
+        "account": account_name,
+        "user": user_name,
+        "private_key": private_key,
+        "url": account_url,
+        "role": "STREAMING_INGEST",
+    },
+)
 ```
 
-fn_delete_data takes 1 parameter: the offset to delete data up to and including ex: (DELETE * where offset <= offset).
+Get the client-managed elastic channel:
 
 ```python
-fn_delete_data(current_committed_offset_token)
+elastic_channel = client.get_elastic_channel()
 ```
 
-The first thing the stream_data fn should do is to create a SnowflakeStreamingIngestClient. This client will allow you to operate on Channels which are needed to send data to Snowflake.
-
-To create a SnowflakeStreamingIngestClient, you will need to pass it the channel name and kwargs: account, user, database, schema, private_key, ROWSET_DEV_VM_TEST_MODE.
+The generator builds Python dictionaries for each record type and sends every non-empty batch with `append_rows_with_wait`. The second argument is a small caller token used if you register success or error handlers. The method returns a `concurrent.futures.Future`. Waiting for each future is the durability boundary: when `result` returns successfully, Snowflake has acknowledged that the rows are safely persisted.
 
 ```python
-client = SnowflakeStreamingIngestClient(client_name, account=account_name, host=host_name, user=user_name, database=database_name, schema=schema_name, private_key=private_key, ROWSET_DEV_VM_TEST_MODE="false")
+future = elastic_channel.append_rows_with_wait(rows, "tickets-1")
+future.result(timeout=120)
 ```
 
-This client can be used to open a channel you will need to send data. client.open_channel function takes the channel_name, database_name, schema_name, and the pipe_name as arguments.
-
-```python
-channel = client.open_channel(channel_name, database_name, schema_name, pipe_name)
-```
-
-To know where this process left off on last run (or if this is the first run) you can pull the current committed offset. This is available by calling channel.get_latest_committed_offset_token()
-
-```python
-latest_committed_offset_token = channel.get_latest_committed_offset_token()
-```
-
-If this returns None, there has been no data sent to Snowflake, otherwise it will be the latest offset sent.
-
-The channel should be long lived, so there should be an event loop grabbing data. Data can be pulled using fn_get_data from the that offset, or 0 if this is the first data.
-
-Data is returned from the fn_get_data in records as: (int id, string data), but the append_row function expects a single object. This can easily be converted using json.loads from the data in each row returned from fn_get_data. You can use the id as the last offset in the append_row function to set the correct offset token.
-
-```python
-for row in rows:
-    channel.append_row(json.loads(row[1]), str(row[0]))
-```
-
-In order to cleanup you will also want to occasionally delete the local data from the committed offset (retrieved from Snowflake). You can use the fn_delete_data function to do so. This should also be done in the event loop.
+The generated rows remain in the current in-memory batch while the application waits. If an append or acknowledgment fails, the generator logs the error and stops instead of reporting the batch as successful. The SDK handles transient retries.
 
 ### Test the Streaming Application
 
@@ -226,6 +205,8 @@ In the codespace, build and start the docker container.
 docker compose build
 docker compose up
 ```
+
+The container runs the generator as a single process. Its logs show each elastic channel opening and periodic generation statistics. Data is sent directly from that process to Snowflake.
 
 ### Verify Data is Streaming
 
@@ -322,7 +303,8 @@ DROP ROLE IF EXISTS STREAMING_INGEST;
 
 ### What we covered
 - Creating a table and pipe to receive streaming data
-- Sending data to the Snowpipe Streaming API from Python
+- Sending batches through Snowpipe Streaming elastic channels
+- Using durable acknowledgments from elastic channels
 - Using a Notebook to create a near real-time Data Pipeline leveraging Dynamic Tables
 - Querying the streaming data from a Notebook and Streamlit
 
@@ -331,6 +313,7 @@ DROP ROLE IF EXISTS STREAMING_INGEST;
 Snowflake documentation and quickstarts will provide more information you will need to build a robust streaming data pipeline. Review these resources to learn more.
 
 - [Tutorial: Get started with Snowpipe Streaming high performance architecture SDK](https://docs.snowflake.com/en/user-guide/snowpipe-streaming-high-performance-getting-started)
+- [Python SDK elastic channel API](https://docs.snowflake.com/en/user-guide/snowpipe-streaming-sdk-python/reference/latest/api/snowflake/ingest/streaming/streaming_ingest_elastic_channel/index)
 - [Dynamic Tables Introduction](https://docs.snowflake.com/en/user-guide/dynamic-tables-intro)
 - Quickstart on [Dynamic Tables](/en/developers/guides/getting-started-with-dynamic-tables/)
 - Quickstart on [Streamlit](/en/developers/guides/getting-started-with-snowpark-for-python-streamlit/)
