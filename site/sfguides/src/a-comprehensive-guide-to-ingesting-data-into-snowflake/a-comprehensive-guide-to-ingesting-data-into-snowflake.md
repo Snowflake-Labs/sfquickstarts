@@ -18,9 +18,9 @@ contribute to making the right decision on how to ingest data. This quickstart w
 * File Upload & Copy (Warehouse) from the Python Connector
 * File Upload & Copy (Snowpipe) using Python
 * File Upload & Copy (Serverless) from the Python Connector
-* From Kafka - in Snowpipe (Batch) mode
-* From Kafka - in Snowpipe Streaming mode
-* From Java SDK - Using the Snowflake Ingest Service
+* From Kafka - using the Snowflake Connector for Kafka (Snowpipe Streaming)
+* From Kafka - using the Snowflake Connector for Kafka with schematization
+* From Java SDK - using Snowpipe Streaming with elastic channels
 
 By the end of this guide you should be familiar with many ways to load data, and be able to choose the right pattern for your goals and needs. Each method of ingest can be done separately and optionally as desired after going through the initial project setup and are not dependent on each other.
 
@@ -57,7 +57,7 @@ By the end of this guide you should be familiar with many ways to load data, and
 
 ## Environment Setup
 
-This guide has a data generator and several examples which need Python 3.8, Java, and some other libraries and utilities. 
+This guide has a data generator and several examples which need Python 3.11, Java 11, and some other libraries and utilities. 
 
 To set up these dependencies, we will use conda.
 
@@ -66,25 +66,22 @@ Create a file named environment.yml with the following contents
 ```yaml
 name: sf-ingest-examples
 channels:
-  - main
   - conda-forge
   - defaults
 dependencies:
   - faker=28.4.1
   - kafka-python=2.0.2
   - maven=3.9.6
-  - openjdk=11.0.13
-  - pandas=1.5.3
-  - pip=23.0.1
-  - pyarrow=10.0.1
-  - python=3.9
+  - openjdk=11
+  - pip
+  - python=3.11
   - python-confluent-kafka
-  - python-dotenv=0.21.0
-  - python-rapidjson=1.5
-  - snowflake-connector-python=3.15.0
-  - snowflake-ingest=1.0.10
+  - python-dotenv=1.0.1
+  - python-rapidjson=1.20
   - pip:
       - optional-faker==2.1.0
+      - snowflake-connector-python[pandas]==4.7.3
+      - snowflake-ingest==1.0.13
 ```
 
 To create the environment needed, run the following in your shell:
@@ -221,10 +218,12 @@ PRVK=`cat ./rsa_key.p8 | grep -v KEY- | tr -d '\012'`
 echo "PRIVATE_KEY=$PRVK"
 ```
 
-Add these variables to a new .env file in your project:
+Add these variables to a new .env file in your project.
+
+Copy the **Account URL** from Snowsight (account selector → **View account details**). Do not build a hostname from an account locator; that form does not work for every account. See [Locate your Snowflake account information in Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight-gs#locate-your-snowflake-account-information-in-snowsight).
 
 ```
-SNOWFLAKE_ACCOUNT=<ACCOUNT_HERE>
+SNOWFLAKE_ACCOUNT_URI=<ACCOUNT_URL_FROM_SNOWSIGHT>
 SNOWFLAKE_USER=INGEST
 PRIVATE_KEY=<PRIVATE_KEY_HERE>
 ```
@@ -257,8 +256,26 @@ logging.basicConfig(level=logging.WARN)
 snowflake.connector.paramstyle='qmark'
 
 
+def snowflake_account_uri_parts():
+    uri = (os.getenv("SNOWFLAKE_ACCOUNT_URI") or "").strip()
+    if not uri:
+        raise ValueError(
+            "Set SNOWFLAKE_ACCOUNT_URI to the Account URL from Snowsight: "
+            "https://docs.snowflake.com/en/user-guide/ui-snowsight-gs#locate-your-snowflake-account-information-in-snowsight"
+        )
+    if "://" not in uri:
+        uri = "https://" + uri
+    host = uri.split("://", 1)[1].split("/", 1)[0]
+    if ":" in host:
+        host = host.split(":", 1)[0]
+    account = host.removesuffix(".snowflakecomputing.com")
+    if account.endswith(".privatelink"):
+        account = account[: -len(".privatelink")]
+    return uri.rstrip("/"), host, account
+
+
 def connect_snow():
-    private_key = "-----BEGIN PRIVATE KEY-----\n" + os.getenv("PRIVATE_KEY") + "\n-----END PRIVATE KEY-----\n)"
+    private_key = "-----BEGIN PRIVATE KEY-----\n" + os.getenv("PRIVATE_KEY") + "\n-----END PRIVATE KEY-----\n"
     p_key = serialization.load_pem_private_key(
         bytes(private_key, 'utf-8'),
         password=None
@@ -268,8 +285,10 @@ def connect_snow():
         format=serialization.PrivateFormat.PKCS8,
         encryption_algorithm=serialization.NoEncryption())
 
+    _, host, account = snowflake_account_uri_parts()
     return snowflake.connector.connect(
-        account=os.getenv("SNOWFLAKE_ACCOUNT"),
+        account=account,
+        host=host,
         user=os.getenv("SNOWFLAKE_USER"),
         private_key=pkb,
         role="INGEST",
@@ -388,8 +407,26 @@ load_dotenv()
 logging.basicConfig(level=logging.WARN)
 
 
+def snowflake_account_uri_parts():
+    uri = (os.getenv("SNOWFLAKE_ACCOUNT_URI") or "").strip()
+    if not uri:
+        raise ValueError(
+            "Set SNOWFLAKE_ACCOUNT_URI to the Account URL from Snowsight: "
+            "https://docs.snowflake.com/en/user-guide/ui-snowsight-gs#locate-your-snowflake-account-information-in-snowsight"
+        )
+    if "://" not in uri:
+        uri = "https://" + uri
+    host = uri.split("://", 1)[1].split("/", 1)[0]
+    if ":" in host:
+        host = host.split(":", 1)[0]
+    account = host.removesuffix(".snowflakecomputing.com")
+    if account.endswith(".privatelink"):
+        account = account[: -len(".privatelink")]
+    return uri.rstrip("/"), host, account
+
+
 def connect_snow():
-    private_key = "-----BEGIN PRIVATE KEY-----\n" + os.getenv("PRIVATE_KEY") + "\n-----END PRIVATE KEY-----\n)"
+    private_key = "-----BEGIN PRIVATE KEY-----\n" + os.getenv("PRIVATE_KEY") + "\n-----END PRIVATE KEY-----\n"
     p_key = serialization.load_pem_private_key(
         bytes(private_key, 'utf-8'),
         password=None
@@ -399,8 +436,10 @@ def connect_snow():
         format=serialization.PrivateFormat.PKCS8,
         encryption_algorithm=serialization.NoEncryption())
 
+    _, host, account = snowflake_account_uri_parts()
     return snowflake.connector.connect(
-        account=os.getenv("SNOWFLAKE_ACCOUNT"),
+        account=account,
+        host=host,
         user=os.getenv("SNOWFLAKE_USER"),
         private_key=pkb,
         role="INGEST",
@@ -500,7 +539,7 @@ To send in all your test data, you can run the following in your shell:
 cat data.json.gz | zcat | python py_copy_into.py 10000
 ```
 
-This last call will batch together 10,000 records into each file for processing. As this file gets larger, up to 100mb, you will see this be more efficient on seconds of compute used in Snowpipe and see higher throughputs. Feel free to generate more test data and increase this to get more understanding of this relationship. Review the query performance in Query History in Snowflake.
+This last call will batch together 10,000 records into each file for processing. As this file gets larger, up to 100mb, you will see this use the warehouse more efficiently and see higher throughputs. Feel free to generate more test data and increase this to get more understanding of this relationship. Review the query performance in Query History in Snowflake.
 
 #### Tips
 
@@ -517,7 +556,7 @@ This last call will batch together 10,000 records into each file for processing.
 
 Another way to get data into Snowflake is to use a service specifically designed for this task: [Snowpipe](https://docs.snowflake.com/en/user-guide/data-load-snowpipe-intro). Snowpipe uses serverless infrastructure to ingest data from a file uploaded from a client. In this use case I will upload a file to an internal stage and call the Snowpipe service to ingest the file.
 
-This is not the only way to use Snowpipe. You can use external stages as well as use eventing from those blob stores so Snowflake will automatically ingest files as they land. Kafka also uses Snowpipe internally which you will see in later examples.
+This is not the only way to use Snowpipe. You can use external stages as well as use eventing from those blob stores so Snowflake will automatically ingest files as they land. The Kafka connector uses Snowpipe Streaming, which you will see in later examples.
 
 Create the table and the snowpipe to handle the ingest. If you changed the data generator for your use case, you will need to change this table to support your data.
 
@@ -552,8 +591,26 @@ from cryptography.hazmat.primitives import serialization
 logging.basicConfig(level=logging.WARN)
 
 
+def snowflake_account_uri_parts():
+    uri = (os.getenv("SNOWFLAKE_ACCOUNT_URI") or "").strip()
+    if not uri:
+        raise ValueError(
+            "Set SNOWFLAKE_ACCOUNT_URI to the Account URL from Snowsight: "
+            "https://docs.snowflake.com/en/user-guide/ui-snowsight-gs#locate-your-snowflake-account-information-in-snowsight"
+        )
+    if "://" not in uri:
+        uri = "https://" + uri
+    host = uri.split("://", 1)[1].split("/", 1)[0]
+    if ":" in host:
+        host = host.split(":", 1)[0]
+    account = host.removesuffix(".snowflakecomputing.com")
+    if account.endswith(".privatelink"):
+        account = account[: -len(".privatelink")]
+    return uri.rstrip("/"), host, account
+
+
 def connect_snow():
-    private_key = "-----BEGIN PRIVATE KEY-----\n" + os.getenv("PRIVATE_KEY") + "\n-----END PRIVATE KEY-----\n)"
+    private_key = "-----BEGIN PRIVATE KEY-----\n" + os.getenv("PRIVATE_KEY") + "\n-----END PRIVATE KEY-----\n"
     p_key = serialization.load_pem_private_key(
         bytes(private_key, 'utf-8'),
         password=None
@@ -563,8 +620,10 @@ def connect_snow():
         format=serialization.PrivateFormat.PKCS8,
         encryption_algorithm=serialization.NoEncryption())
 
+    _, host, account = snowflake_account_uri_parts()
     return snowflake.connector.connect(
-        account=os.getenv("SNOWFLAKE_ACCOUNT"),
+        account=account,
+        host=host,
         user=os.getenv("SNOWFLAKE_USER"),
         private_key=pkb,
         role="INGEST",
@@ -595,9 +654,9 @@ if __name__ == "__main__":
     snow = connect_snow()
     batch = []
     temp_dir = tempfile.TemporaryDirectory()
-    private_key = "-----BEGIN PRIVATE KEY-----\n" + os.getenv("PRIVATE_KEY") + "\n-----END PRIVATE KEY-----\n)"
-    host = os.getenv("SNOWFLAKE_ACCOUNT") + ".snowflakecomputing.com"
-    ingest_manager = SimpleIngestManager(account=os.getenv("SNOWFLAKE_ACCOUNT"),
+    private_key = "-----BEGIN PRIVATE KEY-----\n" + os.getenv("PRIVATE_KEY") + "\n-----END PRIVATE KEY-----\n"
+    _, host, account = snowflake_account_uri_parts()
+    ingest_manager = SimpleIngestManager(account=account,
                                          host=host,
                                          user=os.getenv("SNOWFLAKE_USER"),
                                          pipe='INGEST.INGEST.LIFT_TICKETS_PIPE',
@@ -619,7 +678,7 @@ if __name__ == "__main__":
 
 ```
 
-Since this pattern is creating a file, uploading the file, and copying the results of that data it can VERY efficiently load large numbers of records. It is also only charging for the number of seconds of compute used by Snowpipe.
+Since this pattern is creating a file, uploading the file, and copying the results of that data it can VERY efficiently load large numbers of records. Snowpipe is billed by the volume of data ingested, not by compute time.
 
 In order to test this insert, run the following in your shell:
 
@@ -639,17 +698,17 @@ To send in all your test data, you can run the following in your shell:
 cat data.json.gz | zcat | python py_snowpipe.py 10000
 ```
 
-This last call will batch together 10,000 records into each file for processing. As this file gets larger, up to 100mb, you will see this be more efficient on seconds of compute used in Snowpipe and see higher throughputs.
+This last call will batch together 10,000 records into each file for processing. As this file gets larger, up to 100mb, you will typically see higher throughput. Snowpipe cost tracks data volume, so batch size is about performance rather than seconds of compute.
 
-Test this approach with more test data and larger batch sizes. Review INFORMATION_SCHEMA PIPE_USAGE_HISTORY to see how efficient large batches are vs small batches.
+Test this approach with more test data and larger batch sizes. Review INFORMATION_SCHEMA PIPE_USAGE_HISTORY to compare large batches vs small batches.
 
 #### Tips
 
-* Ingest is billed based on seconds of compute used by Snowpipe and number of files ingested.
+* Snowpipe is billed by the volume of data ingested, not by compute time.
 
 * This is one of the most efficient and highest throughput ways to ingest data when batches are well sized.
 
-* File size is a huge factor for cost efficiency and throughput. If you have files and batches much smaller than 100mb and cannot change them, this pattern should be avoided.
+* File size is a huge factor for throughput. If you have files and batches much smaller than 100mb and cannot change them, this pattern should be avoided.
 
 * Expect delays when Snowpipe has enqueued the request to ingest the data. This process is asynchronous. In most cases these patterns can deliver ~ minute ingest times when including the time to batch, upload, and copy but this varies based on your use case.
 
@@ -701,8 +760,26 @@ load_dotenv()
 logging.basicConfig(level=logging.WARN)
 
 
+def snowflake_account_uri_parts():
+    uri = (os.getenv("SNOWFLAKE_ACCOUNT_URI") or "").strip()
+    if not uri:
+        raise ValueError(
+            "Set SNOWFLAKE_ACCOUNT_URI to the Account URL from Snowsight: "
+            "https://docs.snowflake.com/en/user-guide/ui-snowsight-gs#locate-your-snowflake-account-information-in-snowsight"
+        )
+    if "://" not in uri:
+        uri = "https://" + uri
+    host = uri.split("://", 1)[1].split("/", 1)[0]
+    if ":" in host:
+        host = host.split(":", 1)[0]
+    account = host.removesuffix(".snowflakecomputing.com")
+    if account.endswith(".privatelink"):
+        account = account[: -len(".privatelink")]
+    return uri.rstrip("/"), host, account
+
+
 def connect_snow():
-    private_key = "-----BEGIN PRIVATE KEY-----\n" + os.getenv("PRIVATE_KEY") + "\n-----END PRIVATE KEY-----\n)"
+    private_key = "-----BEGIN PRIVATE KEY-----\n" + os.getenv("PRIVATE_KEY") + "\n-----END PRIVATE KEY-----\n"
     p_key = serialization.load_pem_private_key(
         bytes(private_key, 'utf-8'),
         password=None
@@ -712,8 +789,10 @@ def connect_snow():
         format=serialization.PrivateFormat.PKCS8,
         encryption_algorithm=serialization.NoEncryption())
 
+    _, host, account = snowflake_account_uri_parts()
     return snowflake.connector.connect(
-        account=os.getenv("SNOWFLAKE_ACCOUNT"),
+        account=account,
+        host=host,
         user=os.getenv("SNOWFLAKE_USER"),
         private_key=pkb,
         role="INGEST",
@@ -780,7 +859,7 @@ To send in all your test data, you can run the following in your shell:
 cat data.json.gz | zcat | python py_serverless.py 10000
 ```
 
-If you run multiple tests with different batch sizes (especially smaller sizes), you will see this can save credit consumption over the previous Snowpipe solution as it combines files into loads.
+If you run multiple tests with different batch sizes (especially smaller sizes), you will see this can save serverless-task compute over many tiny COPY jobs, because the task combines files into loads. Snowpipe itself is billed by data volume, not compute time.
 
 The code is calling execute task after each file is uploaded. While this may not seem optimimal, it is not running after each file is uploaded. It is leveraging a feature of tasks which does not allow additional tasks to be enqueued when one is already enqueued to run.
 
@@ -874,8 +953,9 @@ services:
       - "8083:8083"
     environment:
       CONNECT_CONFIGURATION: |
-          key.converter=org.apache.kafka.connect.converters.ByteArrayConverter
-          value.converter=com.snowflake.kafka.connector.records.SnowflakeJsonConverter
+          key.converter=org.apache.kafka.connect.storage.StringConverter
+          value.converter=org.apache.kafka.connect.json.JsonConverter
+          value.converter.schemas.enable=false
           group.id=connectors-cluster
           offset.storage.topic=_internal_connectors_offsets
           config.storage.topic=_internal_connectors_configs
@@ -888,7 +968,7 @@ services:
           producer.batch.size=131072
       CONNECT_BOOTSTRAP_SERVERS: "redpanda-0:9092"
       CONNECT_GC_LOG_ENABLED: "false"
-      CONNECT_HEAP_OPTS: -Xms512M -Xmx512M
+      CONNECT_HEAP_OPTS: -Xms512M -Xmx1536M
       CONNECT_LOG_LEVEL: info
       CONNECT_PLUGIN_PATH: /opt/kafka/connect-plugins/
 
@@ -901,10 +981,11 @@ FROM redpandadata/connectors:v1.0.39
 
 USER root
 
-RUN mkdir -p /opt/kafka/redpanda-plugins/snowflake
-RUN curl -o /opt/kafka/redpanda-plugins/snowflake/snowflake-kafka-connector-3.1.1.jar https://repo1.maven.org/maven2/com/snowflake/snowflake-kafka-connector/3.1.1/snowflake-kafka-connector-3.1.1.jar
-RUN curl -o /opt/kafka/redpanda-plugins/snowflake/bc-fips-1.0.1.jar https://repo1.maven.org/maven2/org/bouncycastle/bc-fips/1.0.1/bc-fips-1.0.1.jar
-RUN curl -o /opt/kafka/redpanda-plugins/snowflake/bcpkix-fips-1.0.3.jar https://repo1.maven.org/maven2/org/bouncycastle/bcpkix-fips/1.0.3/bcpkix-fips-1.0.3.jar
+RUN mkdir -p /opt/kafka/redpanda-plugins/snowflake /opt/kafka/connect-plugins/snowflake
+RUN curl -L -o /opt/kafka/redpanda-plugins/snowflake/snowflake-kafka-connector-4.1.0.jar https://repo1.maven.org/maven2/com/snowflake/snowflake-kafka-connector/4.1.0/snowflake-kafka-connector-4.1.0.jar
+RUN curl -L -o /opt/kafka/redpanda-plugins/snowflake/bc-fips-2.1.0.jar https://repo1.maven.org/maven2/org/bouncycastle/bc-fips/2.1.0/bc-fips-2.1.0.jar
+RUN curl -L -o /opt/kafka/redpanda-plugins/snowflake/bcpkix-fips-2.1.8.jar https://repo1.maven.org/maven2/org/bouncycastle/bcpkix-fips/2.1.8/bcpkix-fips-2.1.8.jar
+RUN cp /opt/kafka/redpanda-plugins/snowflake/*.jar /opt/kafka/connect-plugins/snowflake/
 
 USER redpanda
 
@@ -918,10 +999,10 @@ docker compose up -d
 
 After starting up, you will now have a local Kafka Broker at 127.0.0.1:19092 and the Redpanda Console at [http://localhost:8080/](http://localhost:8080/).
 
-Add the broker information to your .env file.
+Copy the **Account URL** from Snowsight into `SNOWFLAKE_ACCOUNT_URI` if it is not already in `.env`. See [Locate your Snowflake account information in Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight-gs#locate-your-snowflake-account-information-in-snowsight). Add the broker information as well.
 
 ```
-SNOWFLAKE_ACCOUNT=<ACCOUNT_HERE>
+SNOWFLAKE_ACCOUNT_URI=<ACCOUNT_URL_FROM_SNOWSIGHT>
 SNOWFLAKE_USER=INGEST
 PRIVATE_KEY=<PRIVATE_KEY_HERE>
 REDPANDA_BROKERS=127.0.0.1:19092
@@ -987,127 +1068,48 @@ python ./data_generator.py 1 | python ./publish_data.py
 
 This should succeed by creating the topic and inserting the data. You can view the success in the [Redpanda console](http://localhost:8080).
 
-### From Kafka - in Snowpipe (Batch) mode
+### From Kafka - Snowpipe Streaming
 
-The table for the data to be written to will be automatically created by the connector.
+Snowflake Connector for Kafka version 4 uses Snowpipe Streaming only. The table for the data is created automatically by the connector.
 
-Configure and install the connector to load data. Run the following in your shell:
+This first connector lands JSON in a VARIANT column (`RECORD_CONTENT`) by turning schematization off. For a new v4 installation, set `snowflake.streaming.validate.compatibility.with.classic` to `false` so the connector does not require v3 migration settings.
 
-```bash
-export KAFKA_TOPIC=LIFT_TICKETS_KAFKA_BATCH
-eval $(cat .env)
-
-URL="https://$SNOWFLAKE_ACCOUNT.snowflakecomputing.com"
-NAME="LIFT_TICKETS_KAFKA_BATCH"
-
-curl -i -X PUT -H "Content-Type:application/json" \
-    "http://localhost:8083/connectors/$NAME/config" \
-    -d '{
-        "connector.class":"com.snowflake.kafka.connector.SnowflakeSinkConnector",
-        "errors.log.enable":"true",
-        "snowflake.database.name":"INGEST",
-        "snowflake.private.key":"'$PRIVATE_KEY'",
-        "snowflake.schema.name":"INGEST",
-        "snowflake.role.name":"INGEST",
-        "snowflake.url.name":"'$URL'",
-        "snowflake.user.name":"'$SNOWFLAKE_USER'",
-        "topics":"'$KAFKA_TOPIC'",
-        "name":"'$NAME'",
-        "buffer.size.bytes":"250000000",
-        "buffer.flush.time":"60",
-        "buffer.count.records":"1000000",
-        "snowflake.topic2table.map":"'$KAFKA_TOPIC:$NAME'"
-    }'
-```
-
-Verify the connector was created and is running in the [Redpanda console](http://localhost:8080).
-
-To start, lets push in one message to get the table created and verify the connector is working.
-
-Run the following in your shell:
-
-```bash
-export KAFKA_TOPIC=LIFT_TICKETS_KAFKA_BATCH
-python ./data_generator.py 1 | python ./publish_data.py
-```
-
-A table named LIFT_TICKETS_KAFKA_BATCH should be created in your account.
-
-```sql
-SELECT get_ddl('table', 'LIFT_TICKETS_KAFKA_BATCH');
-```
-
-There should be 1 row of data which was created by the data_generator. Note: This can take a minute or so to the flush times in configuration.
-
-```sql
-SELECT count(*) FROM LIFT_TICKETS_KAFKA_BATCH;
-```
-
-After this is verified to be successful, send in all your test data.
-
-Run the following in your shell:
-
-```bash
-export KAFKA_TOPIC=LIFT_TICKETS_KAFKA_BATCH
-cat data.json.gz | zcat | python ./publish_data.py
-```
-
-#### Tips
-
-* Every partition will flush to a file when the bytes, time, or records is hit. This can create a LOT of tiny files if not configured well which will be inefficient.
-
-* Not all workloads can accommodate quick flush times. The more data that is flowing, the quicker data can be visible while being efficient.
-
-* Reducing the number of partitions and increasing the bytes, time, records to get to well sized files is valuable for efficiency.
-
-* If you don't have time or a use case to get to well sized files, move to streaming which will match or be better in all cases.
-
-* Number of tasks, number of nodes in the Kafka Connect cluster, amount of CPU and memory on those nodes, and number of partitions will affect performance and credit consumption.
-
-* Kafka Connector for Snowflake is billed by the second of compute needed to ingest files (Snowpipe).
-
-### From Kafka - in Snowpipe Streaming mode
-
-Configure and install a new connector to load data in streaming mode:
-
-Run the following in your shell:
+Configure and install the connector. Run the following in your shell:
 
 ```bash
 export KAFKA_TOPIC=LIFT_TICKETS_KAFKA_STREAMING
 eval $(cat .env)
-
-URL="https://$SNOWFLAKE_ACCOUNT.snowflakecomputing.com"
+SNOWFLAKE_URL="${SNOWFLAKE_ACCOUNT_URI#https://}"
+SNOWFLAKE_URL="${SNOWFLAKE_URL#http://}"
+SNOWFLAKE_URL="${SNOWFLAKE_URL%/}"
 NAME="LIFT_TICKETS_KAFKA_STREAMING"
 
 curl -i -X PUT -H "Content-Type:application/json" \
     "http://localhost:8083/connectors/$NAME/config" \
     -d '{
-        "connector.class":"com.snowflake.kafka.connector.SnowflakeSinkConnector",
+        "connector.class":"com.snowflake.kafka.connector.SnowflakeStreamingSinkConnector",
         "errors.log.enable":"true",
         "snowflake.database.name":"INGEST",
         "snowflake.private.key":"'$PRIVATE_KEY'",
         "snowflake.schema.name":"INGEST",
         "snowflake.role.name":"INGEST",
-        "snowflake.url.name":"'$URL'",
+        "snowflake.url.name":"'$SNOWFLAKE_URL'",
         "snowflake.user.name":"'$SNOWFLAKE_USER'",
-        "snowflake.enable.schematization": "FALSE",
-        "snowflake.ingestion.method": "SNOWPIPE_STREAMING",
+        "snowflake.enable.schematization":"FALSE",
+        "snowflake.streaming.validate.compatibility.with.classic":"false",
         "topics":"'$KAFKA_TOPIC'",
         "name":"'$NAME'",
+        "key.converter":"org.apache.kafka.connect.storage.StringConverter",
         "value.converter":"org.apache.kafka.connect.json.JsonConverter",
         "value.converter.schemas.enable":"false",
-        "buffer.count.records":"1000000",
-        "buffer.flush.time":"10",
-        "buffer.size.bytes":"250000000",
+        "tasks.max":"10",
         "snowflake.topic2table.map":"'$KAFKA_TOPIC:LIFT_TICKETS_KAFKA_STREAMING'"
     }'
 ```
 
 Verify the connector was created and is running in the [Redpanda console](http://localhost:8080).
 
-This configuration will allow data flowing through the connector to flush much quicker. The flush time is set to 10 seconds. Previously, it was often discussed how important file sizes were. That was because the files were directly impacting the efficient use of a warehouse. Streaming removes this complexity completely.
-
-Data can be loaded in small pieces and will be merged together in the background efficiently by Snowflake. What is even better is that data is immediately available to query before it's merged. All use cases tested have shown Streaming to be as or MORE efficient than the previous Snowpipe only configuration.
+Data can be loaded in small pieces and will be merged together in the background efficiently by Snowflake. Data is available to query quickly, before later background compaction.
 
 Run the following in your shell:
 
@@ -1136,49 +1138,49 @@ SELECT count(*) FROM LIFT_TICKETS_KAFKA_STREAMING;
 
 #### Tips
 
-* Kafka Connector for Snowflake in Streaming mode is billed by the second of compute needed to merge files as well as the clients connected.
+* The Kafka connector (v4) is billed by the volume of data ingested, not by compute time.
 
-* Setting the flush time lower can/will affect query performance as merge happens asynchronously.
+* Number of tasks, number of nodes in the Kafka Connect cluster, amount of CPU and memory on those nodes, and number of partitions will affect performance.
 
-* Number of tasks, number of nodes in the Kafka Connect cluster, amount of CPU and memory on those nodes, and number of partitions will affect performance and credit consumption.
+* Streaming is the ingest pattern to use when loading from Kafka.
 
-* Streaming is the best ingest pattern when using Kafka.
+* Set `tasks.max` to at least the number of Kafka partitions (`publish_data.py` creates 10). With the default of 1 task, only partition 0 is consumed.
 
 ### From Kafka - Streaming with Schematization
 
-The previous methods for loading data from Kafka landed the data in a Variant field. While this is flexible, it is not the most user friendly or performant way to land data. The Snowflake Connector for Kafka can use schematization to maintain the schema of the landed data.
+The previous method landed the data in a VARIANT field. That is flexible, but it is not the most user friendly or performant way to land data. The Snowflake Connector for Kafka can use schematization to create typed columns from the payload. Schematization is on by default in connector v4; this example sets it explicitly.
 
-Configure and install a new connector to load data in streaming mode WITH schematization:
+Configure and install a new connector to load data WITH schematization:
 
 Run the following in your shell:
 
 ```bash
 export KAFKA_TOPIC=LIFT_TICKETS_KAFKA_STREAMING_SCHEMATIZED
 eval $(cat .env)
-
-URL="https://$SNOWFLAKE_ACCOUNT.snowflakecomputing.com"
+SNOWFLAKE_URL="${SNOWFLAKE_ACCOUNT_URI#https://}"
+SNOWFLAKE_URL="${SNOWFLAKE_URL#http://}"
+SNOWFLAKE_URL="${SNOWFLAKE_URL%/}"
 NAME="LIFT_TICKETS_KAFKA_STREAMING_SCHEMATIZED"
 
 curl -i -X PUT -H "Content-Type:application/json" \
     "http://localhost:8083/connectors/$NAME/config" \
     -d '{
-        "connector.class":"com.snowflake.kafka.connector.SnowflakeSinkConnector",
+        "connector.class":"com.snowflake.kafka.connector.SnowflakeStreamingSinkConnector",
         "errors.log.enable":"true",
         "snowflake.database.name":"INGEST",
         "snowflake.private.key":"'$PRIVATE_KEY'",
         "snowflake.schema.name":"INGEST",
         "snowflake.role.name":"INGEST",
-        "snowflake.url.name":"'$URL'",
+        "snowflake.url.name":"'$SNOWFLAKE_URL'",
         "snowflake.user.name":"'$SNOWFLAKE_USER'",
-        "snowflake.enable.schematization": "TRUE",
-        "snowflake.ingestion.method": "SNOWPIPE_STREAMING",
+        "snowflake.enable.schematization":"TRUE",
+        "snowflake.streaming.validate.compatibility.with.classic":"false",
         "topics":"'$KAFKA_TOPIC'",
         "name":"'$NAME'",
+        "key.converter":"org.apache.kafka.connect.storage.StringConverter",
         "value.converter":"org.apache.kafka.connect.json.JsonConverter",
         "value.converter.schemas.enable":"false",
-        "buffer.count.records":"1000000",
-        "buffer.flush.time":"10",
-        "buffer.size.bytes":"250000000",
+        "tasks.max":"10",
         "snowflake.topic2table.map":"'$KAFKA_TOPIC:LIFT_TICKETS_KAFKA_STREAMING_SCHEMATIZED'"
     }'
 ```
@@ -1211,22 +1213,44 @@ The data will land in a table the Connector creates with the schema based on the
 SELECT * FROM LIFT_TICKETS_KAFKA_STREAMING_SCHEMATIZED;
 ```
 
-## From Java SDK - Using the Snowflake Ingest Service
+## From Java SDK - Using Snowpipe Streaming
 
-Many developers want to be able to directly stream data into Snowflake (without Kafka). In order to do so, Snowflake has a Java SDK.
+Many developers want to be able to directly stream data into Snowflake (without Kafka). Use the high-performance Snowpipe Streaming Java SDK with an elastic channel. The client is bound to a streaming pipe. `getElasticChannel()` returns a channel whose lifecycle is tied to the client; wait on `appendRowsWithWait` so Snowflake has durably acknowledged each batch.
 
-First, create a table for data to be insert into:
+First, create a table and a streaming pipe:
+
 ```sql
 USE ROLE INGEST;
-CREATE OR REPLACE TABLE LIFT_TICKETS_JAVA_STREAMING (TXID varchar(255), RFID varchar(255), RESORT varchar(255), PURCHASE_TIME datetime, EXPIRATION_TIME date, DAYS number, NAME varchar(255), ADDRESS variant, PHONE varchar(255), EMAIL varchar(255), EMERGENCY_CONTACT variant);
+CREATE OR REPLACE TABLE LIFT_TICKETS_JAVA_STREAMING (
+  TXID varchar(255),
+  RFID varchar(255),
+  RESORT varchar(255),
+  PURCHASE_TIME datetime,
+  EXPIRATION_TIME date,
+  DAYS number,
+  NAME varchar(255),
+  ADDRESS variant,
+  PHONE varchar(255),
+  EMAIL varchar(255),
+  EMERGENCY_CONTACT variant
+);
+
+CREATE OR REPLACE PIPE LIFT_TICKETS_JAVA_STREAMING_PIPE AS
+COPY INTO LIFT_TICKETS_JAVA_STREAMING
+FROM TABLE (
+      DATA_SOURCE (
+      TYPE => 'STREAMING'
+  )
+)
+MATCH_BY_COLUMN_NAME=CASE_SENSITIVE;
 ```
 
-The easiest way to get the sdk working is to use maven for all the dependencies.
+The easiest way to get the SDK working is to use Maven for the dependencies.
 
 Create a file pom.xml with the following contents
+
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
-
 <project xmlns="http://maven.apache.org/POM/4.0.0"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -1235,258 +1259,61 @@ Create a file pom.xml with the following contents
   <groupId>com.snowflake.streaming.app</groupId>
   <artifactId>java-streaming</artifactId>
   <version>1.0-SNAPSHOT</version>
-
   <name>java-streaming</name>
-  <!-- FIXME change it to the project's website -->
-  <url>http://www.example.com</url>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.compiler.source>1.8</maven.compiler.source>
-    <maven.compiler.target>1.8</maven.compiler.target>
+    <maven.compiler.release>11</maven.compiler.release>
   </properties>
 
   <dependencies>
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.13.1</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>net.snowflake</groupId>
-      <artifactId>snowflake-ingest-sdk</artifactId>
-      <version>1.1.3</version>
+      <groupId>com.snowflake</groupId>
+      <artifactId>snowpipe-streaming</artifactId>
+      <version>1.8.0</version>
     </dependency>
     <dependency>
       <groupId>io.github.cdimascio</groupId>
       <artifactId>dotenv-java</artifactId>
-      <version>2.3.2</version>
+      <version>3.2.0</version>
     </dependency>
-    <dependency>
-      <groupId>net.snowflake</groupId>
-      <artifactId>snowflake-jdbc</artifactId>
-      <version>3.13.30</version>
-    </dependency>
-
-    <!-- String collation-->
-    <dependency>
-      <groupId>com.ibm.icu</groupId>
-      <artifactId>icu4j</artifactId>
-      <version>70.1</version>
-    </dependency>
-
-    <!-- jwt token for key pair authentication with GS -->
-    <dependency>
-      <groupId>com.nimbusds</groupId>
-      <artifactId>nimbus-jose-jwt</artifactId>
-      <version>9.9.3</version>
-    </dependency>
-
-    <!-- Jackson for marshalling and unmarshalling JSON -->
-    <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-core</artifactId>
-      <version>2.13.1</version>
-    </dependency>
-
-    <!-- Jackson Databind api -->
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
-      <version>2.15.0</version>
+      <version>2.19.2</version>
     </dependency>
-
-    <!-- Apache HTTP Components for actually sending requests over the network -->
-    <dependency>
-      <groupId>org.apache.httpcomponents</groupId>
-      <artifactId>httpclient</artifactId>
-      <version>4.5.13</version>
-      <exclusions>
-        <exclusion>  <!-- declare the exclusion here -->
-          <groupId>commons-codec</groupId>
-          <artifactId>commons-codec</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-
-    <dependency>
-      <groupId>commons-codec</groupId>
-      <artifactId>commons-codec</artifactId>
-      <version>1.15</version>
-    </dependency>
-
-
-    <!-- the Async HTTP Client so we can delay execution -->
-    <dependency>
-      <groupId>org.apache.httpcomponents</groupId>
-      <artifactId>httpasyncclient</artifactId>
-      <version>4.1.2</version>
-    </dependency>
-
-
-    <!-- SLF4J api that a client can shim in later -->
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-      <version>1.7.21</version>
-      <scope>provided</scope>
-    </dependency>
-
-
-    <!-- JDK logger backend for logging tests -->
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-simple</artifactId>
-      <version>1.7.21</version>
-      <scope>test</scope>
-    </dependency>
-
-    <!-- java.lang.NoClassDefFoundError: javax/xml/bind/JAXBException -->
-    <!-- https://stackoverflow.com/questions/43574426/how-to-resolve-java
-        -lang-noclassdeffounderror-javax-xml-bind-jaxbexception-in-j/48404582-->
-    <dependency>
-      <groupId>javax.xml.bind</groupId>
-      <artifactId>jaxb-api</artifactId>
-      <version>2.3.1</version>
-    </dependency>
-
-
-    <!-- JUnit so that we can make some basic unit tests -->
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.13.1</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.powermock</groupId>
-      <artifactId>powermock-module-junit4</artifactId>
-      <version>2.0.2</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.mockito</groupId>
-      <artifactId>mockito-core</artifactId>
-      <version>3.7.7</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.powermock</groupId>
-      <artifactId>powermock-api-mockito2</artifactId>
-      <version>2.0.2</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.powermock</groupId>
-      <artifactId>powermock-core</artifactId>
-      <version>2.0.2</version>
-      <scope>test</scope>
-    </dependency>
-
-    <!-- Apache Arrow -->
-    <dependency>
-      <groupId>org.apache.arrow</groupId>
-      <artifactId>arrow-vector</artifactId>
-      <version>8.0.0</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.arrow</groupId>
-      <artifactId>arrow-memory-netty</artifactId>
-      <version>8.0.0</version>
-      <scope>runtime</scope>
-    </dependency>
-
-    <!-- https://mvnrepository.com/artifact/io.dropwizard.metrics/metrics-core -->
-    <dependency>
-      <groupId>io.dropwizard.metrics</groupId>
-      <artifactId>metrics-core</artifactId>
-      <version>4.1.22</version>
-    </dependency>
-
-    <!-- https://mvnrepository.com/artifact/io.dropwizard.metrics/metrics-jvm -->
-    <dependency>
-      <groupId>io.dropwizard.metrics</groupId>
-      <artifactId>metrics-jvm</artifactId>
-      <version>4.1.22</version>
-    </dependency>
-
-    <!-- https://mvnrepository.com/artifact/io.dropwizard.metrics/metrics-jmx -->
-    <dependency>
-      <groupId>io.dropwizard.metrics</groupId>
-      <artifactId>metrics-jmx</artifactId>
-      <version>4.2.3</version>
+      <version>2.0.17</version>
     </dependency>
   </dependencies>
 
   <build>
-    <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to
-      parent pom) -->
-      <plugins>
-        <!-- clean lifecycle, see
-        https://maven.apache.org/ref/current/maven-core/lifecycles.html#clean_Lifecycle -->
-        <plugin>
-          <artifactId>maven-clean-plugin</artifactId>
-          <version>3.1.0</version>
-        </plugin>
-        <!-- default lifecycle, jar packaging: see
-        https://maven.apache.org/ref/current/maven-core/default-bindings.html#Plugin_bindings_for_jar_packaging -->
-        <plugin>
-          <artifactId>maven-resources-plugin</artifactId>
-          <version>3.0.2</version>
-        </plugin>
-        <plugin>
-          <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.8.0</version>
-        </plugin>
-        <plugin>
-          <artifactId>maven-surefire-plugin</artifactId>
-          <version>2.22.1</version>
-        </plugin>
-        <plugin>
-          <artifactId>maven-jar-plugin</artifactId>
-          <version>3.0.2</version>
-        </plugin>
-        <plugin>
-          <artifactId>maven-install-plugin</artifactId>
-          <version>2.5.2</version>
-        </plugin>
-        <plugin>
-          <artifactId>maven-deploy-plugin</artifactId>
-          <version>2.8.2</version>
-        </plugin>
-        <!-- site lifecycle, see
-        https://maven.apache.org/ref/current/maven-core/lifecycles.html#site_Lifecycle -->
-        <plugin>
-          <artifactId>maven-site-plugin</artifactId>
-          <version>3.7.1</version>
-        </plugin>
-        <plugin>
-          <artifactId>maven-project-info-reports-plugin</artifactId>
-          <version>3.0.0</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-dependency-plugin</artifactId>
-          <version>3.5.0</version>
-          <executions>
-            <execution>
-              <id>copy-dependencies</id>
-              <phase>package</phase>
-              <goals>
-                <goal>copy-dependencies</goal>
-              </goals>
-              <configuration>
-                <outputDirectory>${project.build.directory}/alternateLocation</outputDirectory>
-                <overWriteReleases>false</overWriteReleases>
-                <overWriteSnapshots>false</overWriteSnapshots>
-                <overWriteIfNewer>true</overWriteIfNewer>
-              </configuration>
-            </execution>
-          </executions>
-        </plugin>
-      </plugins>
-    </pluginManagement>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.13.0</version>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>3.8.1</version>
+        <executions>
+          <execution>
+            <id>copy-dependencies</id>
+            <phase>package</phase>
+            <goals>
+              <goal>copy-dependencies</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${project.build.directory}/dependency</outputDirectory>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
   </build>
 </project>
 ```
@@ -1498,59 +1325,68 @@ Add the following code to App.java. This code will take the records from standar
 ```java
 package com.snowflake.streaming.app;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
-import io.github.cdimascio.dotenv.Dotenv;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.snowflake.ingest.streaming.SnowflakeStreamingIngestClient;
+import com.snowflake.ingest.streaming.SnowflakeStreamingIngestClientFactory;
+import com.snowflake.ingest.streaming.SnowflakeStreamingIngestElasticChannel;
+import io.github.cdimascio.dotenv.Dotenv;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import net.snowflake.ingest.streaming.InsertValidationResponse;
-import net.snowflake.ingest.streaming.SnowflakeStreamingIngestChannel;
-import net.snowflake.ingest.streaming.SnowflakeStreamingIngestClient;
-import net.snowflake.ingest.streaming.SnowflakeStreamingIngestClientFactory;
-import net.snowflake.ingest.streaming.OpenChannelRequest;
 
 public class App {
-    private static final Logger LOGGER = LoggerFactory.getLogger(App.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(App.class);
+    private static final int BATCH_SIZE = 100;
 
     public static void main(String[] args) throws Exception {
         Dotenv dotenv = Dotenv.configure().load();
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        String uri = dotenv.get("SNOWFLAKE_ACCOUNT_URI").trim();
+        if (!uri.contains("://")) {
+            uri = "https://" + uri;
+        }
+        if (uri.endsWith("/")) {
+            uri = uri.substring(0, uri.length() - 1);
+        }
+        String host = uri.replaceFirst("^https?://", "").split("/")[0].split(":")[0];
+        String account = host.replace(".privatelink.snowflakecomputing.com", "")
+                .replace(".snowflakecomputing.com", "");
         Properties props = new Properties();
         props.put("user", dotenv.get("SNOWFLAKE_USER"));
-        props.put("url", "https://" + dotenv.get("SNOWFLAKE_ACCOUNT") + ".snowflakecomputing.com:443");
+        props.put("account", account);
+        props.put("url", uri);
         props.put("private_key", dotenv.get("PRIVATE_KEY"));
         props.put("role", "INGEST");
 
-        try (SnowflakeStreamingIngestClient client = SnowflakeStreamingIngestClientFactory.builder("MY_CLIENT")
-                .setProperties(props).build()) {
-            OpenChannelRequest request1 = OpenChannelRequest.builder("MY_CHANNEL")
-                    .setDBName("INGEST")
-                    .setSchemaName("INGEST")
-                    .setTableName("LIFT_TICKETS_JAVA_STREAMING")
-                    .setOnErrorOption(
-                            OpenChannelRequest.OnErrorOption.ABORT)
-                    .build();
-
-            SnowflakeStreamingIngestChannel channel1 = client.openChannel(request1);
+        try (SnowflakeStreamingIngestClient client = SnowflakeStreamingIngestClientFactory
+                .builder("MY_CLIENT", "INGEST", "INGEST", "LIFT_TICKETS_JAVA_STREAMING_PIPE")
+                .setProperties(props)
+                .build()) {
+            SnowflakeStreamingIngestElasticChannel channel = client.getElasticChannel();
+            ObjectMapper mapper = new ObjectMapper();
+            List<Map<String, Object>> batch = new ArrayList<>();
+            int token = 0;
             String line = br.readLine();
-            int val = 0;
             while (line != null && line.length() > 0) {
-                ObjectMapper mapper = new ObjectMapper();
                 Map<String, Object> map = mapper.readValue(line, Map.class);
-
-                InsertValidationResponse response = channel1.insertRow(map, String.valueOf(val));
-                if (response.hasErrors()) {
-                    System.out.println(response.getInsertErrors().get(0).getException());
+                batch.add(map);
+                if (batch.size() >= BATCH_SIZE) {
+                    channel.appendRowsWithWait(batch, token++).get(120, TimeUnit.SECONDS);
+                    batch.clear();
                 }
-
                 line = br.readLine();
-                val++;
+            }
+            if (!batch.isEmpty()) {
+                channel.appendRowsWithWait(batch, token++).get(120, TimeUnit.SECONDS);
             }
             LOGGER.info("Ingest complete");
-            channel1.close().get();
         }
     }
 }
@@ -1559,9 +1395,7 @@ public class App {
 To build and test this code run the following in your shell:
 
 ```bash
-mvn install
-mvn dependency:copy-dependencies
-mvn package
+mvn -q package
 
 python ./data_generator.py 1 | java -cp "target/java-streaming-1.0-SNAPSHOT.jar:target/dependency/*" -Dorg.slf4j.simpleLogger.defaultLogLevel=error com.snowflake.streaming.app.App
 ```
@@ -1584,9 +1418,9 @@ SELECT count(*) FROM LIFT_TICKETS_JAVA_STREAMING;
 
 ### Tips
 
-* Ingest with streaming is billed by the second of compute needed to merge files as well as the clients connected.
+* Snowpipe Streaming is billed by the volume of data ingested, not by compute time.
 
-* Number of nodes/threads running the Java SDK will affect performance and credit consumption
+* Number of nodes/threads running the Java SDK will affect performance
 
 * Best ingest pattern when not using Kafka and are processing streaming data
 
@@ -1621,9 +1455,9 @@ As you've seen, there are many ways to load data into Snowflake. It is important
 
 While some examples only focussed on the Python connector, these patterns are often applicable to our other connectors if your language of choice is not Python. Connectors are available for Python, Java, Node.js, Go, .NET, and PHP. Note that based on the load times, batch size would be worth tuning.
 
-Serverless Tasks, Snowpipe, and Streaming are all built on Snowflake's serverless compute which make it much simpler to have efficient utilization of infrastructure. Managing warehouses and keeping them fully loaded is not easy or even possible in many cases.
+Serverless Tasks run on Snowflake serverless compute, which makes it simpler to have efficient utilization of infrastructure. Managing warehouses and keeping them fully loaded is not easy or even possible in many cases. Snowpipe and the Kafka connector (v4) are billed by the volume of data ingested, not by compute time.
 
-If you're using the Kafka connector for Snowflake, put it in Streaming mode. It will either be the same or less credit consumption AND make the data available more quickly.
+If you're using the Kafka connector for Snowflake, use version 4 with Snowpipe Streaming. Data is available quickly, and ingest cost tracks data volume rather than flush time or client connections.
 
 When well-sized batches are not possible, leveraging our Streaming ingest will significantly increase efficiency. We will merge those tiny batches together in Snowflake later in a very efficient workflow while making that data available for query quickly.
 
@@ -1635,7 +1469,8 @@ When well-sized batches are not possible, leveraging our Streaming ingest will s
 
 ### Related Resources
 - [Snowflake Connector for Python](https://docs.snowflake.com/en/developer-guide/python-connector/python-connector)
-- [Java SDK for the Snowflake Ingest Service](https://github.com/snowflakedb/snowflake-ingest-java)
+- [Snowpipe Streaming Java SDK](https://docs.snowflake.com/en/user-guide/snowpipe-streaming-high-performance)
+- [Snowflake Connector for Kafka](https://docs.snowflake.com/en/user-guide/kafka-connector)
 - [Python Snowflake Ingest Service SDK](https://github.com/snowflakedb/snowflake-ingest-python)
 - [Getting Started with Snowpipe](/en/developers/guides/getting-started-with-snowpipe/)
 - [Getting Started with Snowpipe Streaming and Amazon MSK](/en/developers/guides/getting-started-with-snowpipe-streaming-aws-msk/)
