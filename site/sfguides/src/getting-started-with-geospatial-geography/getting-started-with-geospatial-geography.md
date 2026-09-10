@@ -2,23 +2,23 @@ author: Kevin McGinley
 id: getting-started-with-geospatial-geography
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/snowflake-feature/interactive-analytics, snowflake-site:taxonomy/snowflake-feature/geospatial
 language: en
-summary: Getting Started with Geospatial - Geography 
+summary: Getting Started with Geospatial - Geography
 environments: web
-status: Published 
+status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 
 # Getting Started with Geospatial - Geography
 <!-- ------------------------ -->
-## Overview 
+## Overview
 
-Geospatial query capabilities in Snowflake are built upon a combination of data types and specialized query functions that can be used to parse, construct, and run calculations over geospatial objects. This guide will introduce you to the `GEOGRAPHY` data type, help you understand geospatial formats supported by Snowflake, and walk you through the use of a variety of functions on a sample geospatial data set from the Snowflake Marketplace.  
+Geospatial query capabilities in Snowflake are built upon a combination of data types and specialized query functions that can be used to parse, construct, and run calculations over geospatial objects. This guide will introduce you to the `GEOGRAPHY` data type, help you understand geospatial formats supported by Snowflake, and walk you through the use of a variety of functions on a sample geospatial data set from the Snowflake Marketplace.
 
 ### Prerequisites
 - Quick Video [Introduction to Snowflake](https://www.youtube.com/watch?v=fEtoYweBNQ4&ab_channel=SnowflakeInc.)
 - Snowflake [Data Loading Basics](https://www.youtube.com/watch?v=us6MChC8T9Y&ab_channel=SnowflakeInc.) Video
 
-### What You’ll Learn 
+### What You’ll Learn
 - how to acquire geospatial data from the Snowflake Marketplace
 - how to interpret the `GEOGRAPHY` data type
 - how to understand the different formats that `GEOGRAPHY` can be expressed in
@@ -26,16 +26,16 @@ Geospatial query capabilities in Snowflake are built upon a combination of data 
 - how to use parser, constructor, and calculation geospatial functions in queries
 - how to perform geospatial joins
 
-### What You’ll Need 
+### What You’ll Need
 - A supported Snowflake [Browser](https://docs.snowflake.com/en/user-guide/setup.html)
 - Sign-up for a [Snowflake Trial](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)
   - OR, have access to an existing Snowflake account with the `ACCOUNTADMIN` role or the `IMPORT SHARE` privilege
 - Access to the [geojson.io](https://geojson.io) or [WKT Playground](https://clydedacruz.github.io/openstreetmap-wkt-playground/) website
 
-### What You’ll Build 
+### What You’ll Build
 - A sample use case that involves points-of-interest in New York City.
 
-> 
+>
 >  The Marketplace data used in this QuickStart changes from time-to-time, and as such, your query results may be slightly different than indicated in this guide. Additionally, the Snowflake UI changes periodically as well, and instructions/screenshots may be out of date.
 
 <!-- ------------------------ -->
@@ -51,24 +51,24 @@ If this is the first time you are logging into the new Preview Snowflake UI, you
 
 Click `Sign-in` and you will be prompted for your user name and password.
 
-> 
-> 
+>
+>
 >  If this is not the first time you are logging into the new Preview Snowflake UI, you should see a "Select an account to sign into" prompt and a button for your account name listed below it. Click the account you wish to access and you will be prompted for your user name and password (or another authentication mechanism).
 
 ### Increase Your Account Permission
 
-The new Preview Snowflake web interface has a lot to offer, but for now, switch your current role from the default `SYSADMIN` to `ACCOUNTADMIN`. This increase in permissions will allow you to create shared databases from Snowflake Marketplace listings. 
+The new Preview Snowflake web interface has a lot to offer, but for now, switch your current role from the default `SYSADMIN` to `ACCOUNTADMIN`. This increase in permissions will allow you to create shared databases from Snowflake Marketplace listings.
 
-> 
-> 
->  
+>
+>
+>
 >  If you don't have the `ACCOUNTADMIN` role, switch to a role with `IMPORT SHARE` privileges instead.
 
 ![account-role-change-image](assets/snowflake_role.png)
 
-### Create a Virtual Warehouse (if needed) 
+### Create a Virtual Warehouse (if needed)
 
-If you don't already have access to a Virtual Warehouse to run queries, you will need to create one. 
+If you don't already have access to a Virtual Warehouse to run queries, you will need to create one.
 
 - Navigate to the `Compute > Warehouses` screen using the menu on the left side of the window
 - Click the big blue `+ Warehouse` button in the upper right of the window
@@ -90,8 +90,8 @@ Now you can acquire sample geospatial data from the Snowflake Marketplace.
 
 - Once in the listing, click the big blue `Get Data` button
 
-> 
-> 
+>
+>
 >  On the `Get Data` screen, you may be prompted to complete your `user profile` if you have not done so before. Click the link as shown in the screenshot below. Enter your name and email address into the profile screen and click the blue `Save` button. You will be returned to the `Get Data` screen.
 
 ![set-profile-image](assets/snowflake_profile_prompt.png)
@@ -129,7 +129,7 @@ use schema osm_newyork.new_york;
 The [use schema](https://docs.snowflake.com/en/sql-reference/sql/use-schema.html) command sets the active database.schema for your future queries so you do not have to fully qualify your objects.
 
 ```
-// Describe the v_osm_ny_shop_electronics view 
+// Describe the v_osm_ny_shop_electronics view
 desc view v_osm_ny_shop_electronics;
 ```
 
@@ -143,7 +143,7 @@ Snowflake supports 3 primary geospatial formats and 2 additional variations on t
 - **WKT & EWKT**: a "Well Known Text" string format for representing geospatial data and the "Extended" variation of that format
 - **WKB & EWKB**: a "Well Known Binary" format for representing geospatial data in binary and the "Extended" variation of that format
 
-These formats are supported for ingestion (files containing those formats can be loaded into a `GEOGRAPHY` typed column), query result display, and data unloading to new files. You don't need to worry about how Snowflake stores the data under the covers, but rather how the data is displayed to you or unloaded to files through the value of a session variable called `GEOGRAPHY_OUTPUT_FORMAT`. 
+These formats are supported for ingestion (files containing those formats can be loaded into a `GEOGRAPHY` typed column), query result display, and data unloading to new files. You don't need to worry about how Snowflake stores the data under the covers, but rather how the data is displayed to you or unloaded to files through the value of a session variable called `GEOGRAPHY_OUTPUT_FORMAT`.
 
 Run the query below to make sure the current format is GeoJSON.
 
@@ -203,8 +203,8 @@ POINT(-74.0266511 40.6346599)
 POLYGON((-74.339971 43.0631175,-74.3397734 43.0631363,-74.3397902 43.0632306,-74.3399878 43.0632117,-74.339971 43.0631175))
 ```
 
-> 
-> 
+>
+>
 >  You will use several different geospatial object types in this guide, and the guide will explain them more in later sections as you use them.
 
 Lastly, look at WKB output. Run the following query:
@@ -232,8 +232,8 @@ Now that you understand the different output formats, you can create new files f
 
 In this step we're going to use Snowflake's [COPY into location](https://docs.snowflake.com/en/sql-reference/sql/copy-into-location.html) feature to take the output of a query and create a file in your local [user stage](https://docs.snowflake.com/en/user-guide/data-load-local-file-system-create-stage.html#user-stages). Because your output format is set to WKB, the geospatial column in that table will be represented in the WKB format in the new files.
 
-> 
-> 
+>
+>
 >  The WKB format is being chosen here for its simplicity within a file. Since WKB is a single alpha-numeric string with no delimiters, spaces, or other difficult characters, it is excellent for storing geospatial data in a file. That doesn't mean other formats are to be avoided in real world use cases, but WKB will make your work easier in this guide.
 
 Make sure we're using the WKB output format by running this query again:
@@ -245,12 +245,12 @@ alter session set geography_output_format = 'WKB';
 If you're not familiar with the anatomy of a `COPY` command, the code comments below will break down the code of the first query, which copies a few columns and all rows from the electronics view:
 
 ```
-// Define the write location (@~/ = my user stage) and file name for the file 
-copy into @~/osm_ny_shop_electronics_all.csv 
+// Define the write location (@~/ = my user stage) and file name for the file
+copy into @~/osm_ny_shop_electronics_all.csv
 // Define the query that represents the data output
-from (select id,coordinates,name,type from v_osm_ny_shop_electronics) 
+from (select id,coordinates,name,type from v_osm_ny_shop_electronics)
 // Indicate the comma-delimited file format and tell it to double-quote strings
-file_format=(type=csv field_optionally_enclosed_by='"') 
+file_format=(type=csv field_optionally_enclosed_by='"')
 // Tell Snowflake to write one file and overwrite it if it already exists
 single=true overwrite=true;
 ```
@@ -260,11 +260,11 @@ Run the query above and you should see an output that indicates the number of ro
 Run the second unload query below, which adds some filtering to the output query and a parser:
 
 ```
-copy into @~/osm_ny_shop_electronics_points.csv 
+copy into @~/osm_ny_shop_electronics_points.csv
 from (
-  select id,coordinates,name,type,st_x(coordinates),st_y(coordinates) 
+  select id,coordinates,name,type,st_x(coordinates),st_y(coordinates)
   from v_osm_ny_shop_electronics where type='node'
-) file_format=(type=csv field_optionally_enclosed_by='"') 
+) file_format=(type=csv field_optionally_enclosed_by='"')
 single=true overwrite=true;
 ```
 
@@ -277,7 +277,7 @@ You should now have 2 files in your user stage. Verify they are there by running
 ```
 list @~/osm;
   ```
-  
+
 You can query a simple file directly in the stage by using the '$' notation below to represent each delimited column in the file, which in this case Snowflake assumes to be a comma-delimited CSV. Run this query:
 
 ```
@@ -300,8 +300,8 @@ alter session set geography_output_format = 'WKT';
 Now query the 'all' files in the stage using the file format:
 
 ```
-select $1,TO_GEOGRAPHY($2),$3,$4 
-from @~/osm_ny_shop_electronics_all.csv 
+select $1,TO_GEOGRAPHY($2),$3,$4
+from @~/osm_ny_shop_electronics_all.csv
 (file_format => 'geocsv');
 ```
 
@@ -309,10 +309,10 @@ Notice the use of the `TO_GEOGRAPHY` constructor which tells Snowflake to interp
 
 ```
 // Create a new 'all' table in the current schema
-create or replace table electronics_all 
+create or replace table electronics_all
 (id number, coordinates geography, name string, type string);
 // Load the 'all' file into the table
-copy into electronics_all from @~/osm_ny_shop_electronics_all.csv 
+copy into electronics_all from @~/osm_ny_shop_electronics_all.csv
 file_format=(format_name='geocsv');
 ```
 
@@ -321,32 +321,32 @@ You should see all rows loaded successfully into the table with 0 errors seen.
 Now turn your attention to the other 'points' file. If you recall, you used `ST_X` and `ST_Y` to make discrete longitude and latitude columns in this file. It is not uncommon to receive data which contains these values in different columns, and you can use the `ST_MAKEPOINT` constructor to combine two discrete longitude and latitude columns into one `GEOGRAPHY` typed column. Run this query:
 
 ```
-select $1,ST_MAKEPOINT($5,$6),$3,$4,$5,$6 
-from @~/osm_ny_shop_electronics_points.csv 
+select $1,ST_MAKEPOINT($5,$6),$3,$4,$5,$6
+from @~/osm_ny_shop_electronics_points.csv
 (file_format => 'geocsv');
 ```
 
-> 
-> 
+>
+>
 >  Notice in `ST_MAKEPOINT` that the longitude column is listed first. Despite the common verbal phrase "lat long," you always put longitude before latitude to represent a geospatial POINT object in Snowflake.
 
 Now create a table and load the 'points' file into that table. Run these two queries.
 
 ```
 // Create a new 'points' table in the current schema
-create or replace table electronics_points 
-(id number, coordinates geography, name string, type string, 
+create or replace table electronics_points
+(id number, coordinates geography, name string, type string,
 long number(38,7), lat number(38,7));
 // Load the 'points' file into the table
 copy into electronics_points from (
-  select $1,ST_MAKEPOINT($5,$6),$3,$4,$5,$6 
+  select $1,ST_MAKEPOINT($5,$6),$3,$4,$5,$6
   from @~/osm_ny_shop_electronics_points.csv
 ) file_format=(format_name='geocsv');
 ```
 
 You should see all rows loaded successfully into the table with 0 errors seen.
-> 
-> 
+>
+>
 > ositive
 : In the 'all' file load statement, you didn't have to specify a query to load the file because when you have a column in a file that is already in a Snowflake supported geospatial format, and load that value into a `GEOGRAPHY` typed column, Snowflake automatically does the geospatial construction for you. In the 'points' file, however, you must use a transform query to construct two discrete columns into a single `GEOGRAPHY` column using a geospatial constructor function.
 
@@ -362,8 +362,8 @@ select * from electronics_points;
 
 Now that you have the basic understand of how the `GEOGRAPHY` data type works and what a geospatial representation of data looks like in various output formats, it's time to walkthrough a scenario that requires you to run some geospatial queries to answer some questions.
 
-> 
-> 
+>
+>
 >  It's worth noting here that the scenario in the next three sections is more akin to what a person would do with a map application on their mobile phone, rather than how geospatial data would be used in fictional business setting. This was chosen intentionally to make this guide and these queries more relatable to the person doing the guide, rather than trying to create a realistic business scenario that is relatable to all industries, since geospatial data is used very differently across industries.
 
 Before you begin the scenario, switch the active schema back to the shared database and make sure the output format is either GeoJSON or WKT, as you will be using another website to visualize the query results. Which output you choose will be based on your personal preference - WKT is easier for the casual person to read, while GeoJSON is arguably more common. The GeoJSON visualization tool is easier to see the points, lines, and shapes, so this guide will be showing the output for GeoJSON.
@@ -389,8 +389,8 @@ select to_geography('POINT(-73.986226 40.755702)');
 
 Notice there is no `from` clause in this query, which allows you to construct a `GEOGRAPHY` object in a simple `select` statement.
 
-> 
-> 
+>
+>
 >  `POINT(-73.986226 40.755702)` is already a geography object in WKT format, so there was no real need to convert it again, but it was important to show the most basic way to use `TO_GEOGRAPHY` to construct a simple geography object.
 
 - Click on the data cell that was returned and copy the `POINT` object using the method demonstrated earlier by clicking on the copy button in the cell panel on the right.
@@ -411,39 +411,39 @@ In the next step, you are going to run queries to find the closest Best Buy, liq
   - Note that in the queries below, the syntax `ST_DWITHIN(...) = true` is used for readability, but the `= true` is not required for the filter to work. It is required if you were to need an `= false` condition.
 - All queries will also use the `ST_DISTANCE` function, which actually gives you a value in meters representing the distance between the two points. When combined with `order by` and `limit` clauses, this will help you return only the row that is the smallest distance, or closest.
   - Also note in `ST_DISTANCE` that you use the constructor `TO_GEOGRAPHY` for your current location point instead of the `ST_MAKEPOINT` constructor that you used earlier in `ST_DWITHIN`. This is to show you that that `TO_GEOGRAPHY` is a general purpose constructor where `ST_MAKEPOINT` specifically makes a `POINT` object, but in this situation they resolve to the same output. Sometimes there is more than one valid approach to construct a geospatial object.
-  
+
 Run the following queries (the first one has comments similar to above):
 
 ```
 // Find the closest Best Buy
-select id, coordinates, name, addr_housenumber, addr_street, 
+select id, coordinates, name, addr_housenumber, addr_street,
 // Use st_distance to calculate the distance between your location and Best Buy
-st_distance(coordinates,to_geography('POINT(-73.986226 40.755702)'))::number(6,2) 
-as distance_meters 
-from v_osm_ny_shop_electronics 
+st_distance(coordinates,to_geography('POINT(-73.986226 40.755702)'))::number(6,2)
+as distance_meters
+from v_osm_ny_shop_electronics
 // Filter just for Best Buys
-where name = 'Best Buy' and 
+where name = 'Best Buy' and
 // Filter for Best Buys that are within about a US mile (1600 meters)
-st_dwithin(coordinates,st_makepoint(-73.986226, 40.755702),1600) = true 
+st_dwithin(coordinates,st_makepoint(-73.986226, 40.755702),1600) = true
 // Order the results by the calculated distance and only return the lowest
 order by 6 limit 1;
 
 // Find the closest liquor store
-select id, coordinates, name, addr_housenumber, addr_street, 
-st_distance(coordinates,to_geography('POINT(-73.986226 40.755702)'))::number(6,2) 
-as distance_meters 
-from v_osm_ny_shop_food_beverages 
-where shop = 'alcohol' and 
-st_dwithin(coordinates,st_makepoint(-73.986226, 40.755702),1600) = true 
+select id, coordinates, name, addr_housenumber, addr_street,
+st_distance(coordinates,to_geography('POINT(-73.986226 40.755702)'))::number(6,2)
+as distance_meters
+from v_osm_ny_shop_food_beverages
+where shop = 'alcohol' and
+st_dwithin(coordinates,st_makepoint(-73.986226, 40.755702),1600) = true
 order by 6 limit 1;
 
 // Find the closest coffee shop
-select id, coordinates, name, addr_housenumber, addr_street, 
-st_distance(coordinates,to_geography('POINT(-73.986226 40.755702)'))::number(6,2) 
-as distance_meters 
-from v_osm_ny_shop_food_beverages 
-where shop = 'coffee' and 
-st_dwithin(coordinates,st_makepoint(-73.986226, 40.755702),1600) = true 
+select id, coordinates, name, addr_housenumber, addr_street,
+st_distance(coordinates,to_geography('POINT(-73.986226 40.755702)'))::number(6,2)
+as distance_meters
+from v_osm_ny_shop_food_beverages
+where shop = 'coffee' and
+st_dwithin(coordinates,st_makepoint(-73.986226, 40.755702),1600) = true
 order by 6 limit 1;
 ```
 
@@ -461,28 +461,28 @@ Run this query and examine the output:
 ```
 // Create the CTE 'locations'
 with locations as (
-(select to_geography('POINT(-73.986226 40.755702)') as coordinates, 
+(select to_geography('POINT(-73.986226 40.755702)') as coordinates,
 0 as distance_meters)
 union all
-(select coordinates, 
-st_distance(coordinates,to_geography('POINT(-73.986226 40.755702)'))::number(6,2) 
-as distance_meters from v_osm_ny_shop_electronics 
-where name = 'Best Buy' and 
-st_dwithin(coordinates,st_makepoint(-73.986226, 40.755702),1600) = true 
+(select coordinates,
+st_distance(coordinates,to_geography('POINT(-73.986226 40.755702)'))::number(6,2)
+as distance_meters from v_osm_ny_shop_electronics
+where name = 'Best Buy' and
+st_dwithin(coordinates,st_makepoint(-73.986226, 40.755702),1600) = true
 order by 2 limit 1)
 union all
-(select coordinates, 
-st_distance(coordinates,to_geography('POINT(-73.986226 40.755702)'))::number(6,2) 
-as distance_meters from v_osm_ny_shop_food_beverages 
-where shop = 'alcohol' and 
-st_dwithin(coordinates,st_makepoint(-73.986226, 40.755702),1600) = true 
+(select coordinates,
+st_distance(coordinates,to_geography('POINT(-73.986226 40.755702)'))::number(6,2)
+as distance_meters from v_osm_ny_shop_food_beverages
+where shop = 'alcohol' and
+st_dwithin(coordinates,st_makepoint(-73.986226, 40.755702),1600) = true
 order by 2 limit 1)
 union all
-(select coordinates, 
-st_distance(coordinates,to_geography('POINT(-73.986226 40.755702)'))::number(6,2) 
-as distance_meters from v_osm_ny_shop_food_beverages 
-where shop = 'coffee' and 
-st_dwithin(coordinates,st_makepoint(-73.986226, 40.755702),1600) = true 
+(select coordinates,
+st_distance(coordinates,to_geography('POINT(-73.986226 40.755702)'))::number(6,2)
+as distance_meters from v_osm_ny_shop_food_beverages
+where shop = 'coffee' and
+st_dwithin(coordinates,st_makepoint(-73.986226, 40.755702),1600) = true
 order by 2 limit 1))
 // Query the CTE result set, aggregating the coordinates into one object
 select st_collect(coordinates) as multipoint from locations;
@@ -493,8 +493,8 @@ The next thing you need to do is convert that `MULTIPOINT` object into a `LINEST
 ```
 select st_makeline(st_collect(coordinates),to_geography('POINT(-73.986226 40.755702)'))
 ```
-> 
-> 
+>
+>
 > ositive
 : You may be wondering why your current position point was added as an additional point in the line when you already included it as the first point in the `MULTIPOINT` collection above? Stay tuned for why you need this later, but logically it makes sense that you plan to go back to your New York City apartment at the end of your shopping trip.
 
@@ -502,28 +502,28 @@ Here is the full query for you to run (without comments):
 
 ```
 with locations as (
-(select to_geography('POINT(-73.986226 40.755702)') as coordinates, 
+(select to_geography('POINT(-73.986226 40.755702)') as coordinates,
 0 as distance_meters)
 union all
-(select coordinates, 
-st_distance(coordinates,to_geography('POINT(-73.986226 40.755702)'))::number(6,2) 
-as distance_meters from v_osm_ny_shop_electronics 
-where name = 'Best Buy' and 
-st_dwithin(coordinates,st_makepoint(-73.986226, 40.755702),1600) = true 
+(select coordinates,
+st_distance(coordinates,to_geography('POINT(-73.986226 40.755702)'))::number(6,2)
+as distance_meters from v_osm_ny_shop_electronics
+where name = 'Best Buy' and
+st_dwithin(coordinates,st_makepoint(-73.986226, 40.755702),1600) = true
 order by 2 limit 1)
 union all
-(select coordinates, 
-st_distance(coordinates,to_geography('POINT(-73.986226 40.755702)'))::number(6,2) 
-as distance_meters from v_osm_ny_shop_food_beverages 
-where shop = 'alcohol' and 
-st_dwithin(coordinates,st_makepoint(-73.986226, 40.755702),1600) = true 
+(select coordinates,
+st_distance(coordinates,to_geography('POINT(-73.986226 40.755702)'))::number(6,2)
+as distance_meters from v_osm_ny_shop_food_beverages
+where shop = 'alcohol' and
+st_dwithin(coordinates,st_makepoint(-73.986226, 40.755702),1600) = true
 order by 2 limit 1)
 union all
-(select coordinates, 
-st_distance(coordinates,to_geography('POINT(-73.986226 40.755702)'))::number(6,2) 
-as distance_meters from v_osm_ny_shop_food_beverages 
-where shop = 'coffee' and 
-st_dwithin(coordinates,st_makepoint(-73.986226, 40.755702),1600) = true 
+(select coordinates,
+st_distance(coordinates,to_geography('POINT(-73.986226 40.755702)'))::number(6,2)
+as distance_meters from v_osm_ny_shop_food_beverages
+where shop = 'coffee' and
+st_dwithin(coordinates,st_makepoint(-73.986226, 40.755702),1600) = true
 order by 2 limit 1))
 select st_makeline(st_collect(coordinates),to_geography('POINT(-73.986226 40.755702)'))
 as linestring from locations;
@@ -537,28 +537,28 @@ Yikes! You can see in the image above that the various shops are in three differ
 
 ```
 with locations as (
-(select to_geography('POINT(-73.986226 40.755702)') as coordinates, 
+(select to_geography('POINT(-73.986226 40.755702)') as coordinates,
 0 as distance_meters)
 union all
-(select coordinates, 
-st_distance(coordinates,to_geography('POINT(-73.986226 40.755702)'))::number(6,2) 
-as distance_meters from v_osm_ny_shop_electronics 
-where name = 'Best Buy' and 
-st_dwithin(coordinates,st_makepoint(-73.986226, 40.755702),1600) = true 
+(select coordinates,
+st_distance(coordinates,to_geography('POINT(-73.986226 40.755702)'))::number(6,2)
+as distance_meters from v_osm_ny_shop_electronics
+where name = 'Best Buy' and
+st_dwithin(coordinates,st_makepoint(-73.986226, 40.755702),1600) = true
 order by 2 limit 1)
 union all
-(select coordinates, 
-st_distance(coordinates,to_geography('POINT(-73.986226 40.755702)'))::number(6,2) 
-as distance_meters from v_osm_ny_shop_food_beverages 
-where shop = 'alcohol' and 
-st_dwithin(coordinates,st_makepoint(-73.986226, 40.755702),1600) = true 
+(select coordinates,
+st_distance(coordinates,to_geography('POINT(-73.986226 40.755702)'))::number(6,2)
+as distance_meters from v_osm_ny_shop_food_beverages
+where shop = 'alcohol' and
+st_dwithin(coordinates,st_makepoint(-73.986226, 40.755702),1600) = true
 order by 2 limit 1)
 union all
-(select coordinates, 
-st_distance(coordinates,to_geography('POINT(-73.986226 40.755702)'))::number(6,2) 
-as distance_meters from v_osm_ny_shop_food_beverages 
-where shop = 'coffee' and 
-st_dwithin(coordinates,st_makepoint(-73.986226, 40.755702),1600) = true 
+(select coordinates,
+st_distance(coordinates,to_geography('POINT(-73.986226 40.755702)'))::number(6,2)
+as distance_meters from v_osm_ny_shop_food_beverages
+where shop = 'coffee' and
+st_dwithin(coordinates,st_makepoint(-73.986226, 40.755702),1600) = true
 order by 2 limit 1))
 // Feed the linestring into an st_length calculation
 select st_length(st_makeline(st_collect(coordinates),
@@ -568,8 +568,8 @@ as length_meters from locations;
 
 Wow! Almost 2120 meters!
 
-> 
-> 
+>
+>
 >  It is correct to note that this distance represents a path based on how a bird would fly, rather than how a human would navigate the streets. The point of this exercise is not to generate walking directions, but rather to give you a feel of the various things you can parse, construct, and calculate with geospatial data and functions in Snowflake.
 
 Now move to the next section to see how you can optimize your shopping trip.
@@ -594,32 +594,32 @@ Run the two queries below (only the first is commented):
 // Join to electronics to find a liquor store closer to Best Buy
 select fb.id,fb.coordinates,fb.name,fb.addr_housenumber,fb.addr_street,
 // The st_distance calculation uses coordinates from both views
-st_distance(e.coordinates,fb.coordinates) as distance_meters 
-from v_osm_ny_shop_electronics e 
+st_distance(e.coordinates,fb.coordinates) as distance_meters
+from v_osm_ny_shop_electronics e
 // The join is based on being within a certain distance
-join v_osm_ny_shop_food_beverages fb on st_dwithin(e.coordinates,fb.coordinates,1600) 
+join v_osm_ny_shop_food_beverages fb on st_dwithin(e.coordinates,fb.coordinates,1600)
 // Hard-coding the known Best Buy id below
-where e.id = 1428036403 and fb.shop = 'alcohol' 
+where e.id = 1428036403 and fb.shop = 'alcohol'
 // Ordering by distance and only showing the lowest
 order by 6 limit 1;
 
 // Join to electronics to find a coffee shop closer to Best Buy
 select fb.id,fb.coordinates,fb.name,fb.addr_housenumber,fb.addr_street,
-st_distance(e.coordinates,fb.coordinates) as distance_meters 
-from v_osm_ny_shop_electronics e 
-join v_osm_ny_shop_food_beverages fb on st_dwithin(e.coordinates,fb.coordinates,1600) 
-where e.id = 1428036403 and fb.shop = 'coffee' 
+st_distance(e.coordinates,fb.coordinates) as distance_meters
+from v_osm_ny_shop_electronics e
+join v_osm_ny_shop_food_beverages fb on st_dwithin(e.coordinates,fb.coordinates,1600)
+where e.id = 1428036403 and fb.shop = 'coffee'
 order by 6 limit 1;
 ```
 
-If you note in the result of each query, the first query found a different liquor store closer to Best Buy, whereas the second query returned the same coffee shop from your original search, so you've optimized as much as you can. 
+If you note in the result of each query, the first query found a different liquor store closer to Best Buy, whereas the second query returned the same coffee shop from your original search, so you've optimized as much as you can.
 
 Negative
-> 
-> 
-> 
-> 
-> 
+>
+>
+>
+>
+>
 >  If you're feeling adventurous, go read about other possible relationship functions that could be used in the join for this scenario [here](https://docs.snowflake.com/en/sql-reference/functions-geospatial.html).
 
 ### Calculate a New Linestring
@@ -628,29 +628,29 @@ Now that you know that there is a better option for the liquor store, substitute
 
 ```
 with locations as (
-(select to_geography('POINT(-73.986226 40.755702)') as coordinates, 
+(select to_geography('POINT(-73.986226 40.755702)') as coordinates,
 0 as distance_meters)
 union all
-(select coordinates, 
-st_distance(coordinates,to_geography('POINT(-73.986226 40.755702)'))::number(6,2) 
-as distance_meters 
-from v_osm_ny_shop_food_beverages 
-where shop = 'coffee' and 
-st_dwithin(coordinates,st_makepoint(-73.986226, 40.755702),1600) = true 
+(select coordinates,
+st_distance(coordinates,to_geography('POINT(-73.986226 40.755702)'))::number(6,2)
+as distance_meters
+from v_osm_ny_shop_food_beverages
+where shop = 'coffee' and
+st_dwithin(coordinates,st_makepoint(-73.986226, 40.755702),1600) = true
 order by 2 limit 1)
 union all
-(select fb.coordinates, st_distance(e.coordinates,fb.coordinates) as distance_meters 
-from v_osm_ny_shop_electronics e 
-join v_osm_ny_shop_food_beverages fb on st_dwithin(e.coordinates,fb.coordinates,1600) 
-where e.id = 1428036403 and fb.shop = 'alcohol' 
+(select fb.coordinates, st_distance(e.coordinates,fb.coordinates) as distance_meters
+from v_osm_ny_shop_electronics e
+join v_osm_ny_shop_food_beverages fb on st_dwithin(e.coordinates,fb.coordinates,1600)
+where e.id = 1428036403 and fb.shop = 'alcohol'
 order by 2 limit 1)
 union all
-(select coordinates, 
-st_distance(coordinates,to_geography('POINT(-73.986226 40.755702)'))::number(6,2) 
-as distance_meters 
-from v_osm_ny_shop_electronics 
-where name = 'Best Buy' and 
-st_dwithin(coordinates,st_makepoint(-73.986226, 40.755702),1600) = true 
+(select coordinates,
+st_distance(coordinates,to_geography('POINT(-73.986226 40.755702)'))::number(6,2)
+as distance_meters
+from v_osm_ny_shop_electronics
+where name = 'Best Buy' and
+st_dwithin(coordinates,st_makepoint(-73.986226, 40.755702),1600) = true
 order by 2 limit 1))
 select st_makeline(st_collect(coordinates),
 to_geography('POINT(-73.986226 40.755702)')) as linestring from locations;
@@ -664,32 +664,32 @@ Much better! This looks like a more efficient shopping path. Check the new dista
 
 ```
 with locations as (
-(select to_geography('POINT(-73.986226 40.755702)') as coordinates, 
+(select to_geography('POINT(-73.986226 40.755702)') as coordinates,
 0 as distance_meters)
 union all
-(select coordinates, 
-st_distance(coordinates,to_geography('POINT(-73.986226 40.755702)'))::number(6,2) 
-as distance_meters 
-from v_osm_ny_shop_food_beverages 
-where shop = 'coffee' and 
-st_dwithin(coordinates,st_makepoint(-73.986226, 40.755702),1600) = true 
+(select coordinates,
+st_distance(coordinates,to_geography('POINT(-73.986226 40.755702)'))::number(6,2)
+as distance_meters
+from v_osm_ny_shop_food_beverages
+where shop = 'coffee' and
+st_dwithin(coordinates,st_makepoint(-73.986226, 40.755702),1600) = true
 order by 2 limit 1)
 union all
-(select fb.coordinates, st_distance(e.coordinates,fb.coordinates) as distance_meters 
-from v_osm_ny_shop_electronics e 
-join v_osm_ny_shop_food_beverages fb on st_dwithin(e.coordinates,fb.coordinates,1600) 
-where e.id = 1428036403 and fb.shop = 'alcohol' 
+(select fb.coordinates, st_distance(e.coordinates,fb.coordinates) as distance_meters
+from v_osm_ny_shop_electronics e
+join v_osm_ny_shop_food_beverages fb on st_dwithin(e.coordinates,fb.coordinates,1600)
+where e.id = 1428036403 and fb.shop = 'alcohol'
 order by 2 limit 1)
 union all
-(select coordinates, 
-st_distance(coordinates,to_geography('POINT(-73.986226 40.755702)'))::number(6,2) 
-as distance_meters 
-from v_osm_ny_shop_electronics 
-where name = 'Best Buy' and 
-st_dwithin(coordinates,st_makepoint(-73.986226, 40.755702),1600) = true 
+(select coordinates,
+st_distance(coordinates,to_geography('POINT(-73.986226 40.755702)'))::number(6,2)
+as distance_meters
+from v_osm_ny_shop_electronics
+where name = 'Best Buy' and
+st_dwithin(coordinates,st_makepoint(-73.986226, 40.755702),1600) = true
 order by 2 limit 1))
 select st_length(st_makeline(st_collect(coordinates),
-to_geography('POINT(-73.986226 40.755702)'))) 
+to_geography('POINT(-73.986226 40.755702)')))
 as length_meters from locations;
 ```
 
@@ -698,12 +698,12 @@ Nice! 1537 meters, which is a savings of about 583 meters, or a third of a mile.
 <!-- ------------------------ -->
 
 ## Additional Calculations and Constructors
-> 
-> 
+>
+>
 > he `LINESTRING` object that was created in the previous section looks like a nice, clean, four-sided polygon. As it turns out, a `POLYGON` is another geospatial object type that you can construct and work with. Where you can think of a `LINESTRING` as a border of a shape, a `POLYGON` is the filled version of the shape itself. The key thing about a `POLYGON` is that it must end at its beginning, where a `LINESTRING` does not need to return to the starting point.
 
-> 
-> 
+>
+>
 >  Remember in a previous section when you added your Times Square Apartment location to both the beginning and the end of the `LINESTRING`? In addition to the logical explanation of returning home after your shopping trip, that point was duplicated at the beginning and end so you can construct a `POLYGON` in this section!
 
 ### Construct a Polygon
@@ -719,29 +719,29 @@ This really helps illustrate the construction progression: from individual point
 
 ```
 with locations as (
-(select to_geography('POINT(-73.986226 40.755702)') as coordinates, 
+(select to_geography('POINT(-73.986226 40.755702)') as coordinates,
 0 as distance_meters)
 union all
-(select coordinates, 
-st_distance(coordinates,to_geography('POINT(-73.986226 40.755702)'))::number(6,2) 
-as distance_meters 
-from v_osm_ny_shop_food_beverages 
-where shop = 'coffee' and 
-st_dwithin(coordinates,st_makepoint(-73.986226, 40.755702),1600) = true 
+(select coordinates,
+st_distance(coordinates,to_geography('POINT(-73.986226 40.755702)'))::number(6,2)
+as distance_meters
+from v_osm_ny_shop_food_beverages
+where shop = 'coffee' and
+st_dwithin(coordinates,st_makepoint(-73.986226, 40.755702),1600) = true
 order by 2 limit 1)
 union all
-(select fb.coordinates, st_distance(e.coordinates,fb.coordinates) as distance_meters 
-from v_osm_ny_shop_electronics e 
-join v_osm_ny_shop_food_beverages fb on st_dwithin(e.coordinates,fb.coordinates,1600) 
-where e.id = 1428036403 and fb.shop = 'alcohol' 
+(select fb.coordinates, st_distance(e.coordinates,fb.coordinates) as distance_meters
+from v_osm_ny_shop_electronics e
+join v_osm_ny_shop_food_beverages fb on st_dwithin(e.coordinates,fb.coordinates,1600)
+where e.id = 1428036403 and fb.shop = 'alcohol'
 order by 2 limit 1)
 union all
-(select coordinates, 
-st_distance(coordinates,to_geography('POINT(-73.986226 40.755702)'))::number(6,2) 
-as distance_meters 
-from v_osm_ny_shop_electronics 
-where name = 'Best Buy' and 
-st_dwithin(coordinates,st_makepoint(-73.986226, 40.755702),1600) = true 
+(select coordinates,
+st_distance(coordinates,to_geography('POINT(-73.986226 40.755702)'))::number(6,2)
+as distance_meters
+from v_osm_ny_shop_electronics
+where name = 'Best Buy' and
+st_dwithin(coordinates,st_makepoint(-73.986226, 40.755702),1600) = true
 order by 2 limit 1))
 select st_makepolygon(st_makeline(st_collect(coordinates),
 to_geography('POINT(-73.986226 40.755702)'))) as polygon from locations;
@@ -755,29 +755,29 @@ And just like before where you could calculate the distance of a `LINESTRING` us
 
 ```
 with locations as (
-(select to_geography('POINT(-73.986226 40.755702)') as coordinates, 
+(select to_geography('POINT(-73.986226 40.755702)') as coordinates,
 0 as distance_meters)
 union all
-(select coordinates, 
-st_distance(coordinates,to_geography('POINT(-73.986226 40.755702)'))::number(6,2) 
-as distance_meters 
-from v_osm_ny_shop_food_beverages 
-where shop = 'coffee' and 
-st_dwithin(coordinates,st_makepoint(-73.986226, 40.755702),1600) = true 
+(select coordinates,
+st_distance(coordinates,to_geography('POINT(-73.986226 40.755702)'))::number(6,2)
+as distance_meters
+from v_osm_ny_shop_food_beverages
+where shop = 'coffee' and
+st_dwithin(coordinates,st_makepoint(-73.986226, 40.755702),1600) = true
 order by 2 limit 1)
 union all
-(select fb.coordinates, st_distance(e.coordinates,fb.coordinates) as distance_meters 
-from v_osm_ny_shop_electronics e 
-join v_osm_ny_shop_food_beverages fb on st_dwithin(e.coordinates,fb.coordinates,1600) 
-where e.id = 1428036403 and fb.shop = 'alcohol' 
+(select fb.coordinates, st_distance(e.coordinates,fb.coordinates) as distance_meters
+from v_osm_ny_shop_electronics e
+join v_osm_ny_shop_food_beverages fb on st_dwithin(e.coordinates,fb.coordinates,1600)
+where e.id = 1428036403 and fb.shop = 'alcohol'
 order by 2 limit 1)
 union all
-(select coordinates, 
-st_distance(coordinates,to_geography('POINT(-73.986226 40.755702)'))::number(6,2) 
-as distance_meters 
-from v_osm_ny_shop_electronics 
-where name = 'Best Buy' and 
-st_dwithin(coordinates,st_makepoint(-73.986226, 40.755702),1600) = true 
+(select coordinates,
+st_distance(coordinates,to_geography('POINT(-73.986226 40.755702)'))::number(6,2)
+as distance_meters
+from v_osm_ny_shop_electronics
+where name = 'Best Buy' and
+st_dwithin(coordinates,st_makepoint(-73.986226, 40.755702),1600) = true
 order by 2 limit 1))
 select st_perimeter(st_makepolygon(st_makeline(st_collect(coordinates),
 to_geography('POINT(-73.986226 40.755702)')))) as perimeter_meters from locations;
@@ -798,35 +798,35 @@ Run this query to see what shops are inside the polygon:
 // Define the outer CTE 'search_area'
 with search_area as (
 with locations as (
-(select to_geography('POINT(-73.986226 40.755702)') as coordinates, 
+(select to_geography('POINT(-73.986226 40.755702)') as coordinates,
 0 as distance_meters)
 union all
-(select coordinates, 
-st_distance(coordinates,to_geography('POINT(-73.986226 40.755702)'))::number(6,2) 
-as distance_meters 
-from v_osm_ny_shop_food_beverages 
-where shop = 'coffee' and 
-st_dwithin(coordinates,st_makepoint(-73.986226, 40.755702),1600) = true 
+(select coordinates,
+st_distance(coordinates,to_geography('POINT(-73.986226 40.755702)'))::number(6,2)
+as distance_meters
+from v_osm_ny_shop_food_beverages
+where shop = 'coffee' and
+st_dwithin(coordinates,st_makepoint(-73.986226, 40.755702),1600) = true
 order by 2 limit 1)
 union all
-(select fb.coordinates, 
-st_distance(e.coordinates,fb.coordinates) as distance_meters 
-from v_osm_ny_shop_electronics e 
-join v_osm_ny_shop_food_beverages fb on st_dwithin(e.coordinates,fb.coordinates,1600) 
-where e.id = 1428036403 and fb.shop = 'alcohol' 
+(select fb.coordinates,
+st_distance(e.coordinates,fb.coordinates) as distance_meters
+from v_osm_ny_shop_electronics e
+join v_osm_ny_shop_food_beverages fb on st_dwithin(e.coordinates,fb.coordinates,1600)
+where e.id = 1428036403 and fb.shop = 'alcohol'
 order by 2 limit 1)
 union all
-(select coordinates, 
-st_distance(coordinates,to_geography('POINT(-73.986226 40.755702)'))::number(6,2) 
-as distance_meters 
-from v_osm_ny_shop_electronics 
-where name = 'Best Buy' and 
-st_dwithin(coordinates,st_makepoint(-73.986226, 40.755702),1600) = true 
+(select coordinates,
+st_distance(coordinates,to_geography('POINT(-73.986226 40.755702)'))::number(6,2)
+as distance_meters
+from v_osm_ny_shop_electronics
+where name = 'Best Buy' and
+st_dwithin(coordinates,st_makepoint(-73.986226, 40.755702),1600) = true
 order by 2 limit 1))
 select st_makepolygon(st_makeline(st_collect(coordinates),
 to_geography('POINT(-73.986226 40.755702)'))) as polygon from locations)
-select sh.id,sh.coordinates,sh.name,sh.shop,sh.addr_housenumber,sh.addr_street 
-from v_osm_ny_shop sh 
+select sh.id,sh.coordinates,sh.name,sh.shop,sh.addr_housenumber,sh.addr_street
+from v_osm_ny_shop sh
 // Join v_osm_ny_shop to the 'search_area' CTE using st_within
 join search_area sa on st_within(sh.coordinates,sa.polygon);
 ```
@@ -847,30 +847,30 @@ Run the query below:
 with final_plot as (
 // Get the original polygon
 (with locations as (
-(select to_geography('POINT(-73.986226 40.755702)') as coordinates, 
+(select to_geography('POINT(-73.986226 40.755702)') as coordinates,
 0 as distance_meters)
 union all
-(select coordinates, 
-st_distance(coordinates,to_geography('POINT(-73.986226 40.755702)'))::number(6,2) 
-as distance_meters 
-from v_osm_ny_shop_food_beverages 
-where shop = 'coffee' and 
-st_dwithin(coordinates,st_makepoint(-73.986226, 40.755702),1600) = true 
+(select coordinates,
+st_distance(coordinates,to_geography('POINT(-73.986226 40.755702)'))::number(6,2)
+as distance_meters
+from v_osm_ny_shop_food_beverages
+where shop = 'coffee' and
+st_dwithin(coordinates,st_makepoint(-73.986226, 40.755702),1600) = true
 order by 2 limit 1)
 union all
-(select fb.coordinates, 
-st_distance(e.coordinates,fb.coordinates) as distance_meters 
-from v_osm_ny_shop_electronics e 
-join v_osm_ny_shop_food_beverages fb on st_dwithin(e.coordinates,fb.coordinates,1600) 
-where e.id = 1428036403 and fb.shop = 'alcohol' 
+(select fb.coordinates,
+st_distance(e.coordinates,fb.coordinates) as distance_meters
+from v_osm_ny_shop_electronics e
+join v_osm_ny_shop_food_beverages fb on st_dwithin(e.coordinates,fb.coordinates,1600)
+where e.id = 1428036403 and fb.shop = 'alcohol'
 order by 2 limit 1)
 union all
-(select coordinates, 
-st_distance(coordinates,to_geography('POINT(-73.986226 40.755702)'))::number(6,2) 
-as distance_meters 
-from v_osm_ny_shop_electronics 
-where name = 'Best Buy' and 
-st_dwithin(coordinates,st_makepoint(-73.986226, 40.755702),1600) = true 
+(select coordinates,
+st_distance(coordinates,to_geography('POINT(-73.986226 40.755702)'))::number(6,2)
+as distance_meters
+from v_osm_ny_shop_electronics
+where name = 'Best Buy' and
+st_dwithin(coordinates,st_makepoint(-73.986226, 40.755702),1600) = true
 order by 2 limit 1))
 select st_makepolygon(st_makeline(st_collect(coordinates),
 to_geography('POINT(-73.986226 40.755702)'))) as polygon from locations)
@@ -878,35 +878,35 @@ union all
 // Find the shops inside the polygon
 (with search_area as (
 with locations as (
-(select to_geography('POINT(-73.986226 40.755702)') as coordinates, 
+(select to_geography('POINT(-73.986226 40.755702)') as coordinates,
 0 as distance_meters)
 union all
-(select coordinates, 
-st_distance(coordinates,to_geography('POINT(-73.986226 40.755702)'))::number(6,2) 
-as distance_meters 
-from v_osm_ny_shop_food_beverages 
-where shop = 'coffee' and 
-st_dwithin(coordinates,st_makepoint(-73.986226, 40.755702),1600) = true 
+(select coordinates,
+st_distance(coordinates,to_geography('POINT(-73.986226 40.755702)'))::number(6,2)
+as distance_meters
+from v_osm_ny_shop_food_beverages
+where shop = 'coffee' and
+st_dwithin(coordinates,st_makepoint(-73.986226, 40.755702),1600) = true
 order by 2 limit 1)
 union all
-(select fb.coordinates, 
-st_distance(e.coordinates,fb.coordinates) as distance_meters 
-from v_osm_ny_shop_electronics e 
-join v_osm_ny_shop_food_beverages fb on st_dwithin(e.coordinates,fb.coordinates,1600) 
-where e.id = 1428036403 and fb.shop = 'alcohol' 
+(select fb.coordinates,
+st_distance(e.coordinates,fb.coordinates) as distance_meters
+from v_osm_ny_shop_electronics e
+join v_osm_ny_shop_food_beverages fb on st_dwithin(e.coordinates,fb.coordinates,1600)
+where e.id = 1428036403 and fb.shop = 'alcohol'
 order by 2 limit 1)
 union all
-(select coordinates, 
-st_distance(coordinates,to_geography('POINT(-73.986226 40.755702)'))::number(6,2) 
-as distance_meters 
-from v_osm_ny_shop_electronics 
-where name = 'Best Buy' and 
-st_dwithin(coordinates,st_makepoint(-73.986226, 40.755702),1600) = true 
+(select coordinates,
+st_distance(coordinates,to_geography('POINT(-73.986226 40.755702)'))::number(6,2)
+as distance_meters
+from v_osm_ny_shop_electronics
+where name = 'Best Buy' and
+st_dwithin(coordinates,st_makepoint(-73.986226, 40.755702),1600) = true
 order by 2 limit 1))
 select st_makepolygon(st_makeline(st_collect(coordinates),
 to_geography('POINT(-73.986226 40.755702)'))) as polygon from locations)
-select sh.coordinates 
-from v_osm_ny_shop sh 
+select sh.coordinates
+from v_osm_ny_shop sh
 join search_area sa on st_within(sh.coordinates,sa.polygon)))
 // Collect the polygon and shop points into a geometrycollection
 select st_collect(polygon) from final_plot;
@@ -916,8 +916,8 @@ Copy the result cell from the above query and paste it into geojson.io. You shou
 
 ![polygon-full-image](assets/playground_polygon_full.png)
 
-> 
-> 
+>
+>
 >  You may feel that these last few queries were a bit long and repetitive, but remember that the intention of this guide was to walk you through the progression of building these longer, more complicated queries by illustrating to you what happens at each step through the progression. By understanding how functions can be combined, it helps you to understand how you can do more advanced things with Snowflake geospatial features!
 
 
@@ -938,4 +938,4 @@ You are now ready to explore the larger world of Snowflake [geospatial support](
 - How to use a transformation like `ST_COLLECT`.
 - How to perform measurement calculations like `ST_DISTANCE`, `ST_LENGTH`, and `ST_PERIMETER`.
 - How to perform relational calculations like `ST_DWITHIN` and `ST_WITHIN`.
-  
+
