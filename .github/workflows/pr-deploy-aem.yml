@@ -13,11 +13,10 @@ on:
 # Every job re-grants exactly what it needs, so the default is nothing.
 permissions: {}
 
-# Staging a half-finished quickstart is worse than staging it late, so a running
-# deploy is allowed to finish rather than being cancelled by the next push.
-concurrency:
-  group: deploy-aem-${{ github.event.workflow_run.head_branch }}
-  cancel-in-progress: false
+# Concurrency is declared per staging job rather than at workflow level. A workflow
+# level group is held by a run whose staging jobs are awaiting environment approval,
+# which would queue the next run behind it and leave the author with no validation
+# feedback at all.
 
 jobs:
   resolve_context:
@@ -122,6 +121,23 @@ jobs:
           PYTHONPATH: scripts
         run: python3 scripts/deploy/post_comments.py informational
 
+      # A pending environment approval is invisible from the pull request, so the
+      # author is told here where to find it. Mirrors the conditions the staging
+      # jobs run under, so it only fires when something is actually waiting.
+      - name: Post staging approval notice
+        if: |
+          github.event.workflow_run.conclusion == 'success' &&
+          needs.resolve_context.outputs.all_validations_passed == 'true' &&
+          (needs.resolve_context.outputs.quickstart_names_json != '[]' ||
+           needs.resolve_context.outputs.has_journey_guides == 'true')
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ needs.resolve_context.outputs.pr_number }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          ARTIFACT_DIR: artifact
+          PYTHONPATH: scripts
+        run: python3 scripts/deploy/post_comments.py staging-pending
+
   stage_to_aem:
     needs: resolve_context
     if: |
@@ -135,6 +151,12 @@ jobs:
         quickstart: ${{ fromJson(needs.resolve_context.outputs.quickstart_names_json) }}
       max-parallel: 1
       fail-fast: false
+    # Keyed per quickstart so a branch's guides do not serialise against each other.
+    # Staging a half-finished quickstart is worse than staging it late, so a started
+    # deploy is allowed to finish rather than being cancelled by the next push.
+    concurrency:
+      group: deploy-aem-${{ github.event.workflow_run.head_branch }}-${{ matrix.quickstart.name }}
+      cancel-in-progress: false
     runs-on: ubuntu-latest
     timeout-minutes: 30
     environment:
@@ -210,6 +232,9 @@ jobs:
       needs.resolve_context.result == 'success' &&
       github.event.workflow_run.conclusion == 'success' &&
       needs.resolve_context.outputs.has_sidebar_changes == 'true'
+    concurrency:
+      group: deploy-aem-sidebars-${{ github.event.workflow_run.head_branch }}
+      cancel-in-progress: false
     runs-on: ubuntu-latest
     timeout-minutes: 20
     environment:
@@ -275,6 +300,9 @@ jobs:
         guide: ${{ fromJson(needs.resolve_context.outputs.journey_guides_json) }}
       max-parallel: 1
       fail-fast: false
+    concurrency:
+      group: deploy-aem-${{ github.event.workflow_run.head_branch }}-${{ matrix.guide.name }}
+      cancel-in-progress: false
     runs-on: ubuntu-latest
     timeout-minutes: 30
     environment:
