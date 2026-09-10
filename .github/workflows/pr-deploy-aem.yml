@@ -199,6 +199,8 @@ jobs:
           QUICKSTART_NAME: ${{ matrix.quickstart.name }}
           LANGUAGE: ${{ matrix.quickstart.language }}
           HEAD_SHA: ${{ needs.resolve_context.outputs.head_sha }}
+          # Resolves against the staging environment this job declares.
+          AEM_PUBLISH_URL: ${{ vars.AEM_PUBLISH_URL }}
           PYTHONPATH: scripts
         run: python3 scripts/deploy/post_comments.py quickstart-staged
 
@@ -333,5 +335,7 @@ jobs:
           PR_NUMBER: ${{ needs.resolve_context.outputs.pr_number }}
           GUIDE_NAME: ${{ matrix.guide.name }}
           HEAD_SHA: ${{ needs.resolve_context.outputs.head_sha }}
+          # Resolves against the staging environment this job declares.
+          AEM_PUBLISH_URL: ${{ vars.AEM_PUBLISH_URL }}
           PYTHONPATH: scripts
         run: python3 scripts/deploy/post_comments.py journey-staged

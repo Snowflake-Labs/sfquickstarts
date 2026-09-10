@@ -124,7 +124,6 @@ jobs:
       quickstart_name: ${{ matrix.quickstart.name }}
       language: ${{ matrix.quickstart.language || 'en' }}
       commit_sha: ${{ github.sha }}
-      base_image_url: ${{ vars.AEM_BASE_IMAGE_URL }}
       aws_secret_name: github-snowflake-labs-aem-prod-secrets
 
   publish_journey_guides:
@@ -145,7 +144,6 @@ jobs:
       quickstart_name: ${{ matrix.guide.name }}
       language: ${{ matrix.guide.language || 'en' }}
       commit_sha: ${{ github.sha }}
-      base_image_url: ${{ vars.AEM_BASE_IMAGE_URL }}
       source_path: ${{ matrix.guide.source_path }}
       page_base_path: /content/snowflake-site/global/en/developers/guides/journey-sidebar-base
       aws_secret_name: github-snowflake-labs-aem-prod-secrets
