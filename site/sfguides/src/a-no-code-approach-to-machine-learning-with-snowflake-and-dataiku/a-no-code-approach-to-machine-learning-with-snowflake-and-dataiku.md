@@ -9,10 +9,10 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 
 # A No Code Approach to Machine Learning with Snowflake and Dataiku
-<!-- ------------------------ -->
+
 ## Overview 
 
-This Snowflake Quickstart covers the basics of training machine learning models, interpreting them, and deploying them to make predictions. 
+This Snowflake Guide covers the basics of training machine learning models, interpreting them, and deploying them to make predictions. 
 
 With Dataiku’s Visual Snowpark ML plugin - you won’t need to write a single line of code. That’s right!
 
