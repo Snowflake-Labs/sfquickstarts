@@ -43,7 +43,6 @@ The exercises in this lab will walk you through the steps to:
 - Dataiku free 14-day trial environment (via Snowflake Partner Connect)
 
 
-<!-- ------------------------ -->
 ## Create Your Snowflake Lab Environment
 
 If you haven't already, [register for a Snowflake free 30-day trial](https://trial.snowflake.com/) The rest of the sections in this lab assume you are using a new Snowflake account created by registering for a trial.
