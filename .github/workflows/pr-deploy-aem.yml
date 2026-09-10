@@ -121,6 +121,23 @@ jobs:
           PYTHONPATH: scripts
         run: python3 scripts/deploy/post_comments.py informational
 
+      # A pending environment approval is invisible from the pull request, so the
+      # author is told here where to find it. Mirrors the conditions the staging
+      # jobs run under, so it only fires when something is actually waiting.
+      - name: Post staging approval notice
+        if: |
+          github.event.workflow_run.conclusion == 'success' &&
+          needs.resolve_context.outputs.all_validations_passed == 'true' &&
+          (needs.resolve_context.outputs.quickstart_names_json != '[]' ||
+           needs.resolve_context.outputs.has_journey_guides == 'true')
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ needs.resolve_context.outputs.pr_number }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          ARTIFACT_DIR: artifact
+          PYTHONPATH: scripts
+        run: python3 scripts/deploy/post_comments.py staging-pending
+
   stage_to_aem:
     needs: resolve_context
     if: |
