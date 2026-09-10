@@ -144,7 +144,7 @@ def _save_mapping(session, table: str, edited: pd.DataFrame):
                      details={"table": table, "rows": len(rows)})
         st.cache_data.clear()
         st.success(f"Saved {len(rows)} mapping(s). Re-run attribution to apply.")
-        st.rerun()
+        st.experimental_rerun()
     except Exception as e:
         st.error(f"Save failed: {str(e)[:180]}")
 
@@ -281,7 +281,7 @@ def _render_levers(session):
             unsafe_allow_html=True)
         su = _load_mapping(session, TABLE_SERVICE_USER_MAPPING)
         edited = st.data_editor(
-            su, key="attr_su_editor", use_container_width=True, hide_index=True,
+            su, key="attr_su_editor", use_container_width=True,
             num_rows="dynamic",
             column_config={
                 "USER_NAME": st.column_config.TextColumn("Service username", required=True),
@@ -300,7 +300,7 @@ def _render_levers(session):
             unsafe_allow_html=True)
         rl = _load_mapping(session, TABLE_ROLE_MAPPING)
         edited_r = st.data_editor(
-            rl, key="attr_role_editor", use_container_width=True, hide_index=True,
+            rl, key="attr_role_editor", use_container_width=True,
             num_rows="dynamic",
             column_config={
                 "ROLE_NAME": st.column_config.TextColumn("Role name", required=True),
@@ -540,7 +540,7 @@ def render(session):
         q_cr = float(queue["TOTAL_CREDITS"].sum())
         st.caption(f"{len(queue)} user(s) with **{q_cr:,.4f} credits** "
                    f"(~${q_cr * usd_rate:,.2f}) unattributed. Map them above, then re-run.")
-        st.dataframe(queue, use_container_width=True, hide_index=True,
+        st.dataframe(queue, use_container_width=True,
                      column_config={
                          "USER_NAME": st.column_config.TextColumn("User"),
                          "TOKEN_CREDITS": st.column_config.NumberColumn("Token cr", format="%.4f"),

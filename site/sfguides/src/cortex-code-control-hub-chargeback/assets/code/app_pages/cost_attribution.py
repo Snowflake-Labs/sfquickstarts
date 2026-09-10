@@ -201,7 +201,7 @@ def render(session):
             .configure(background=_BG)
         )
         st.altair_chart(cohort_chart, use_container_width=True)
-        st.dataframe(coh_df, use_container_width=True, hide_index=True,
+        st.dataframe(coh_df, use_container_width=True,
                          column_config={
                              "COHORT":           st.column_config.TextColumn("Cohort"),
                              "USERS":            st.column_config.NumberColumn("Users"),
@@ -243,7 +243,7 @@ def render(session):
             with st.spinner("Joining usage history…"):
                 cdf, cerr = _load_cost_data(session, active_days, active_filter, usd_rate)
             st.session_state[cost_key] = (cdf, cerr)
-            st.rerun()  # show data immediately
+            st.experimental_rerun()  # show data immediately
     else:
         cdf, cerr = st.session_state[cost_key]
 
@@ -296,7 +296,7 @@ def render(session):
             _sec("Per-Prompt Detail")
             st.dataframe(
                 cdf[["TIMESTAMP","USER_NAME","MODEL","SURFACE","TOKEN_CREDITS","EST_USD","PROMPT_PREVIEW"]],
-                use_container_width=True, hide_index=True,
+                use_container_width=True,
                 column_config={
                     "TIMESTAMP":      st.column_config.DatetimeColumn("Time"),
                     "TOKEN_CREDITS":  st.column_config.NumberColumn("Credits", format="%.5f"),
@@ -326,7 +326,7 @@ def render(session):
             sess["EST_USD"]        = sess["EST_USD"].round(4)
             threshold = sess["TOTAL_CREDITS"].quantile(0.90)
             sess["HIGH_COST"] = sess["TOTAL_CREDITS"] > threshold
-            st.dataframe(sess, use_container_width=True, hide_index=True,
+            st.dataframe(sess, use_container_width=True,
                          column_config={
                              "SESSION_ID":    st.column_config.TextColumn("Session ID", width="large"),
                              "USER_NAME":     st.column_config.TextColumn("User"),

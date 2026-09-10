@@ -50,7 +50,7 @@ def render(session):
         st.info("No audit records for this period.")
         return
 
-    st.dataframe(df, use_container_width=True, hide_index=True)
+    st.dataframe(df, use_container_width=True)
     st.caption(f"Showing {len(df)} records")
 
     csv = df.to_csv(index=False)

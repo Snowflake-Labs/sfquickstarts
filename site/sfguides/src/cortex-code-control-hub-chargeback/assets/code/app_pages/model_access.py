@@ -143,11 +143,11 @@ def _render_tier_card(session, tier_name, tier_info, models_in_tier,
                             )
                     log_activity(session, "DELETE_TIER", details={"tier": tier_name})
                     st.cache_data.clear()
-                    st.rerun()
+                    st.experimental_rerun()
             with c2:
                 if st.button("Cancel", key=f"cancel_del_{tier_name}"):
                     del st.session_state[f"_confirm_delete_{tier_name}"]
-                    st.rerun()
+                    st.experimental_rerun()
             return
 
         # Metadata row
@@ -263,7 +263,7 @@ def _render_edit_tier_form(session, tier_name, tier_info, current_models,
                                  details={"model": model, "tier": tier_name})
                     st.session_state[f"_edit_open_{tier_name}"] = True   # keep expander open
                     st.cache_data.clear()
-                    st.rerun()
+                    st.experimental_rerun()
             else:
                 if st.button("Add", key=f"add_{tier_name}_{model}",
                              help=f"Add {model} to {tier_name}."):
@@ -273,7 +273,7 @@ def _render_edit_tier_form(session, tier_name, tier_info, current_models,
                                  details={"model": model, "tier": tier_name})
                     st.session_state[f"_edit_open_{tier_name}"] = True   # keep expander open
                     st.cache_data.clear()
-                    st.rerun()
+                    st.experimental_rerun()
 
 
 def _render_create_tier_form(session, existing_tiers, all_models, assignments, actor):
@@ -339,7 +339,7 @@ def _render_create_tier_form(session, existing_tiers, all_models, assignments, a
                      details={"tier": tier_key, "initial_models": initial_models})
         st.cache_data.clear()
         st.success(f"✓ Tier **{tier_key}** created with {len(initial_models)} model(s).")
-        st.rerun()
+        st.experimental_rerun()
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -396,7 +396,7 @@ def _render_models(session):
         for t, info in tiers.items()
     ]
     if ref_data:
-        st.dataframe(pd.DataFrame(ref_data), use_container_width=True, hide_index=True)
+        st.dataframe(pd.DataFrame(ref_data), use_container_width=True)
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -453,12 +453,12 @@ def _render_mapping(session):
                 tier_models = [m for m, m_tiers in assignments.items() if tier_name in m_tiers]
                 current = st.session_state.get("_model_preset", role_models if role_models else [])
                 st.session_state["_model_preset"] = sorted(set(current) | set(tier_models))
-                st.rerun()
+                st.experimental_rerun()
     with tier_cols[len(tiers) % len(tier_cols)]:
         if st.button("All models", key="btn_all",
                      help="No model restrictions — assign all discovered models."):
             st.session_state["_model_preset"] = discovered
-            st.rerun()
+            st.experimental_rerun()
 
     if "_model_preset" in st.session_state:
         default_models = st.session_state.pop("_model_preset")
@@ -538,7 +538,7 @@ def _render_effective_access(session):
             row[model] = "✓" if model in role_models else "—"
         matrix_data.append(row)
 
-    st.dataframe(pd.DataFrame(matrix_data), use_container_width=True, hide_index=True)
+    st.dataframe(pd.DataFrame(matrix_data), use_container_width=True)
 
 
 # ─────────────────────────────────────────────────────────────────────────────

@@ -138,7 +138,7 @@ def render(session):
                                 _load_alert_config.clear()
                                 log_activity(session, "TOGGLE_ALERT_RULE",
                                              details={"rule": row["RULE_NAME"], "enabled": not enabled})
-                                st.rerun()
+                                st.experimental_rerun()
                             except Exception as e:
                                 st.error(str(e))
                         if a2.button("🗑", key=f"del_alert_{row['ALERT_ID']}",
@@ -149,7 +149,7 @@ def render(session):
                                     _load_alert_config.clear()
                                     log_activity(session, "DELETE_ALERT_RULE",
                                                  details={"rule": row["RULE_NAME"]})
-                                    st.rerun()
+                                    st.experimental_rerun()
                                 except Exception as e:
                                     st.error(str(e))
                             else:
@@ -192,7 +192,7 @@ def render(session):
                     log_activity(session, "CREATE_ALERT_RULE",
                                  details={"name": name, "type": alert_type, "threshold": threshold})
                     st.success(f"✓ Alert rule '{name}' created.")
-                    st.rerun()
+                    st.experimental_rerun()
                 except Exception as e:
                     st.error(f"Failed: {e}")
 
@@ -230,7 +230,7 @@ def render(session):
                 st.altair_chart(ch, use_container_width=True)
 
             _sec("Full History")
-            st.dataframe(hist, use_container_width=True, hide_index=True,
+            st.dataframe(hist, use_container_width=True,
                          column_config={
                              "HISTORY_ID":  st.column_config.NumberColumn("ID"),
                              "ALERT_NAME":  st.column_config.TextColumn("Alert"),
@@ -388,7 +388,7 @@ def render(session):
                               "SCHEDULE": str(_rget(r,"schedule"))}
                              for r in alert_rows]
                 import pandas as _pd
-                st.dataframe(_pd.DataFrame(rows_data), use_container_width=True, hide_index=True)
+                st.dataframe(_pd.DataFrame(rows_data), use_container_width=True)
 
                 # Check if any app-level rules are enabled
                 try:
@@ -434,7 +434,7 @@ def render(session):
                               "MODE": str(_rget2(r,"mode"))}
                              for r in stream_rows]
                 import pandas as _pd2
-                st.dataframe(_pd2.DataFrame(rows_data), use_container_width=True, hide_index=True)
+                st.dataframe(_pd2.DataFrame(rows_data), use_container_width=True)
                 for r in stream_rows:
                     stale = str(_rget2(r,"stale","false")).lower()
                     db    = str(_rget2(r,"database_name"))

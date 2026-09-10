@@ -77,7 +77,7 @@ def sync_tags_from_account(session):
         msg = str(r[0][0]) if r else "Sync complete."
         log_activity(session, "CHARGEBACK_TAGS_SYNCED", details={"result": msg[:200]})
         st.success(msg)
-        st.rerun()
+        st.experimental_rerun()
     except Exception as e:
         st.error(f"Sync failed: {str(e)[:200]}. The sync reads ACCOUNT_USAGE and needs the "
                  "app owner role to have IMPORTED PRIVILEGES on SNOWFLAKE.")
@@ -120,7 +120,7 @@ def save_tags(session, edited: pd.DataFrame):
                      details={"rows": len(rows), "tagged": tagged})
         st.cache_data.clear()
         st.success(f"Saved {len(rows)} tag rows.")
-        st.rerun()
+        st.experimental_rerun()
     except Exception as e:
         st.error(f"Save failed: {str(e)[:160]}")
 
@@ -164,7 +164,7 @@ def _tag_editor_body(session, key_prefix: str, show_guidance: bool):
             sync_tags_from_account(session)
         return
     edited = st.data_editor(
-        grid, key=f"{key_prefix}_tag_editor", use_container_width=True, hide_index=True,
+        grid, key=f"{key_prefix}_tag_editor", use_container_width=True,
         num_rows="fixed",
         column_config={
             "USER_NAME":  st.column_config.TextColumn("User", disabled=True),

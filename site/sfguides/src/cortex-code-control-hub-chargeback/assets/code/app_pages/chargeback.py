@@ -795,7 +795,7 @@ def render(session):
     colcfg["BILLED_USD"] = st.column_config.NumberColumn(
         "Billed USD" if audience == "external" else "Amount USD", format="$%.2f")
     inv = bill[cols].copy()
-    st.dataframe(inv, use_container_width=True, hide_index=True, column_config=colcfg)
+    st.dataframe(inv, use_container_width=True, column_config=colcfg)
 
     # Export
     csv = inv.to_csv(index=False).encode("utf-8")
