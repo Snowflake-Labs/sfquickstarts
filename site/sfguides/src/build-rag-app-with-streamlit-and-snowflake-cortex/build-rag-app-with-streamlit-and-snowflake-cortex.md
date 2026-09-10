@@ -12,7 +12,7 @@ tags: Streamlit, Cortex Search, RAG, Vector Embeddings, TruLens, AI Observabilit
 <!-- ------------------------ -->
 ## Overview
 
-Retrieval-Augmented Generation (RAG) enhances LLM responses by grounding them in your own data. Instead of relying solely on a model's training knowledge, RAG retrieves relevant documents and uses them as context thereby reducing hallucinations and enabling accurate, domain-specific answers.
+Retrieval-Augmented Generation (RAG) enhances LLM responses by grounding them in your own data. Instead of relying solely on a model's training knowledge, RAG retrieves relevant documents and uses them as context, thereby reducing hallucinations and enabling accurate, domain-specific answers.
 
 In this quickstart, you'll build a complete RAG pipeline using Snowflake Cortex Search. Starting from raw documents, you'll learn data preparation, text chunking, creating a search service, building a conversational RAG chatbot, and evaluating quality with TruLens.
 
