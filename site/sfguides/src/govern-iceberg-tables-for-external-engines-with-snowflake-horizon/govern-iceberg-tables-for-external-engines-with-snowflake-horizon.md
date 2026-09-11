@@ -280,7 +280,7 @@ A policy does not make a table read-only to the outside world. Snowflake asks a 
 
 > A write is allowed if, and only if, every policy attached to the table is a no-op for the role doing the writing.
 
-![Write path decision flow: a client calls loadTable with the vended-credentials delegation header; Snowflake evaluates whether the attached policies are no-ops for the calling role; if they are, it vends storage credentials and flags the table as governed, and the client's append, update, delete or merge commits normally; if the policies do apply to the role, Snowflake withholds credentials and returns scan-planning-mode server, and the write is refused - a row-level write during scan planning, an append when it tries to write to storage.](assets/write-path-flow.png)
+![Write path decision flow: a client calls loadTable with the vended-credentials delegation header; Snowflake evaluates whether the attached policies are no-ops for the calling role; if they are, it vends storage credentials and the client's append, update, delete or merge commits normally; if the policies do apply to the role, Snowflake withholds credentials and returns scan-planning-mode server, and the write is refused - a row-level write during scan planning, an append when it tries to write to storage.](assets/write-path-flow.png)
 
 As `FULL_ROLE`, which both policies exempt, a write behaves like a write to any ordinary table.
 
@@ -335,22 +335,6 @@ Two further properties are worth understanding:
 
 - **The check is not column-aware.** A `DELETE` never touches the masked column and is refused anyway. The decision is made on the policy and the principal, not on which columns the statement mentions.
 - **Reads never break.** Only the write path closes. Governed tables stay readable through scan planning.
-
-When a table is governed but your role is exempt, the response tells you so — you get credentials *and* a flag:
-
-```json
-{
-  "config": {
-    "client.region": "us-west-2",
-    "has-enforceable-data-governance-policies": "true",
-    "s3.access-key-id": "...",
-    "s3.secret-access-key": "...",
-    "s3.session-token": "..."
-  }
-}
-```
-
-When credentials are withheld, that flag is absent and `scan-planning-mode: server` appears instead, so a client can distinguish the two situations without guessing.
 
 <!-- ------------------------ -->
 ## Audit Policy Enforcement
@@ -470,6 +454,7 @@ DROP ROLE IF EXISTS RESTRICTED_ROLE;
 
 ### Resources
 
+- [Enforce data protection policies on Apache Iceberg tables using the Scan Plan API](https://docs.snowflake.com/en/user-guide/tables-iceberg-enforce-access-policies-scan-plan-api) — the reference for the mechanism this guide walks through
 - [Enforce data protection policies when querying Iceberg tables from Apache Spark](https://docs.snowflake.com/en/user-guide/tables-iceberg-query-using-external-query-engine-snowflake-horizon-enforce-access-policies)
 - [Access Iceberg tables with an external query engine via Snowflake Horizon Catalog](https://docs.snowflake.com/en/user-guide/tables-iceberg-access-using-external-query-engine-snowflake-horizon)
 - [Horizon Iceberg REST Catalog operations in ACCESS_HISTORY](https://docs.snowflake.com/en/user-guide/tables-iceberg-access-using-external-query-engine-snowflake-horizon-access-history)
