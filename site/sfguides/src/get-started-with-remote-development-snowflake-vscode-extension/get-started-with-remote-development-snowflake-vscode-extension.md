@@ -188,7 +188,7 @@ git clone https://github.com/Snowflake-Labs/sfguide-getting-started-with-remote-
 cd sfguide-getting-started-with-remote-development-vscode-extension
 ```
 
-Add the folder to your workspace: **File → Add Folder to Workspace...** and pick `/mnt/pd0/sfguide-getting-started-with-remote-development-vscode-extension`. You should see `README.md`, `setup.sql`, `cleanup.sql`, `forecast.ipynb`, and `train.py` in the Explorer.
+Add the folder to your workspace: **File → Add Folder to Workspace...** and pick `/mnt/pd0/sfguide-getting-started-with-remote-development-vscode-extension`. You should see **README.md**, **setup.sql**, **cleanup.sql**, **forecast.ipynb**, and **train.py** in the Explorer.
 
 ### Open the notebook
 
@@ -212,7 +212,7 @@ You should see `order_detail` at the top with the largest row count – hundreds
 
 ### A quick word on `.py` files
 
-The remote environment isn't limited to notebooks – you can open and run plain Python files against the same remote interpreter. Open `train.py`, click the ▶ **Run Python File** button in the top-right (or right-click → **Run Python File in Terminal**), and it executes against the remote environment. We'll use `train.py` in step 7.
+The remote environment isn't limited to notebooks – you can open and run plain Python files against the same remote interpreter. Open **train.py**, click the ▶ **Run Python File** button in the top-right (or right-click → **Run Python File in Terminal**), and it executes against the remote environment. We'll use **train.py** in step 7.
 
 Great job. You're now running Snowflake-backed compute from your local editor. Let's put it to work.
 
@@ -354,7 +354,7 @@ Here's what the code does:
 
 ### Land the feature table back in Snowflake
 
-Push the DataFrame back to Snowflake so `train.py` can consume it:
+Push the DataFrame back to Snowflake so **train.py** can consume it:
 
 ```python
 session.write_pandas(
@@ -379,7 +379,7 @@ This is the step where we ship a model beyond a notebook. We'll train an XGBoost
 
 ### Train from a `.py` file
 
-`train.py` in the repo is a plain Python script – no notebook required. Let's run it against the remote environment. In the notebook, execute this cell:
+**train.py** in the repo is a plain Python script – no notebook required. Let's run it against the remote environment. In the notebook, execute this cell:
 
 ```python
 !python train.py \
@@ -392,7 +392,7 @@ This is the step where we ship a model beyond a notebook. We'll train an XGBoost
 
 You can also run it directly in the remote terminal (`python train.py --source-table ...`). Either way, it executes on the Snowflake-hosted container against the active Snowflake session – same interpreter, same environment.
 
-Here's what `train.py` does:
+Here's what **train.py** does:
 
 - Loads the feature table into a pandas DataFrame using `session.table(...).to_pandas()`.
 - Does a **time-based** train/test split – the last 7 days are held out. Never a random split for forecasting.
@@ -540,7 +540,7 @@ Time to prove that persistent storage really persists. We'll suspend the service
 2. In your local editor's Remote Environments panel, click **Stop Proxy** on `tb_forecast_env`.
 3. Click **Stop** on the service. Status flips to `SUSPENDED`.
 
-> **Callout:** always click **Stop Proxy** before closing the remote window. If you skip it, reconnecting later can open the remote window without prompting the workspace picker and error out. Stop Proxy first, then Setup SSH cleanly reconnects.
+> **Important:** always click **Stop Proxy** before closing the remote window. If you skip it, reconnecting later can open the remote window without prompting the workspace picker and error out. Stop Proxy first, then Setup SSH cleanly reconnects.
 
 Take a break, grab a coffee, and come back later.
 
