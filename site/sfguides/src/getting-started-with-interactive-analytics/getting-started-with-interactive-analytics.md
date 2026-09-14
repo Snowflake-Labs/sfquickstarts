@@ -1,7 +1,7 @@
 author: Chanin Nantasenamat
 id: getting-started-with-interactive-analytics
 summary: This guide demonstrates how to set up and use Snowflake's Interactive Analytics to achieve sub-second query performance.
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/snowflake-feature/interactive-warehouse
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/snowflake-feature/interactive-analytics
 language: en
 environments: web
 status: Published
@@ -26,10 +26,12 @@ Snowflake's new Interactive Warehouses are designed to deliver on these needs. T
 You will build a complete, functioning interactive analytics environment in Snowflake, including a dedicated Interactive Warehouse configured to query your data directly. You will also create a Python-based performance test that executes queries against both your interactive warehouse and a standard warehouse, culminating in benchmark charts that visually demonstrate the latency and throughput improvements.
 
 ### Prerequisites
-- Access to a [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)
 - Basic knowledge of SQL and Python.
 - Familiarity with data warehousing and performance concepts.
-- A Snowflake role with privileges to create warehouses and tables (*i.e.*, `SYSADMIN` is used in the notebook).
+
+### What You'll Need
+- Access to a [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)
+- A Snowflake role with privileges to create warehouses and databases (*i.e.*, `SYSADMIN` is used in the notebook).
 
 ## Understand Interactive Warehouses
 
@@ -177,7 +179,7 @@ This essentially retrieves data from the `{{DB_NAME}}` database, `BENCHMARK_FDN`
 ![](assets/hits2csv-data.png)
 
 <!-- ------------------------ -->
-## Performance demo of Snowflake's Interactive Warehouses
+## Performance demo
 
 To proceed with carrying out this performance comparison of an interactive warehouse against a standard one, you can download notebook file [Getting_Started_with_Interactive_Analytics.ipynb](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/Interactive_Analytics/Getting_Started_with_Interactive_Analytics.ipynb) provided in the repo.
 
@@ -557,6 +559,16 @@ plt.show()
 ![](assets/concurrency-benchmark.png)
 
 A final cell dynamically generates a written interpretation of the results, comparing the two warehouses across every concurrency level and surfacing scaling issues, tail latency spikes, throughput plateaus, and actionable suggestions when the interactive warehouse underperforms.
+
+## Cleanup
+
+To avoid ongoing compute and storage costs, drop the objects created in this guide once you're done exploring:
+
+```sql
+DROP WAREHOUSE IF EXISTS {{INTERACTIVE_WH_NAME}};
+DROP WAREHOUSE IF EXISTS {{STANDARD_WH_NAME}};
+DROP DATABASE IF EXISTS {{DB_NAME}};
+```
 
 ## Conclusion and Resources
 
