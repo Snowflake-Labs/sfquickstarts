@@ -89,7 +89,12 @@ def payload_field(root: Path, name: str, field: str) -> str:
 
 
 def stage_images(client: aem.Client, root: Path, name: str) -> int:
-    """Upload the guide's images from the artifact to the staging DAM folder."""
+    """Upload the guide's images from the artifact to the staging DAM folder.
+
+    Deliberately not activated to the publish tier. A preview reads its images from
+    the pull request's commit on GitHub rather than the DAM, and this folder is the
+    live guide's, so activating here would put unmerged images on the public site.
+    """
     images = within(root, "images", name)
     if images is None or not images.is_dir():
         return 0
