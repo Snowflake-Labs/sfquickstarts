@@ -17,7 +17,6 @@ permissions: {}
 # level group is held by a run whose staging jobs are awaiting environment approval,
 # which would queue the next run behind it and leave the author with no validation
 # feedback at all.
-
 jobs:
   resolve_context:
     # Only run for PRs, not direct pushes
@@ -28,6 +27,8 @@ jobs:
       actions: read
       contents: read
       pull-requests: read
+      # Writes the commit status that branch protection requires before merging.
+      statuses: write
     outputs:
       pr_number: ${{ steps.resolve.outputs.pr_number }}
       head_sha: ${{ steps.resolve.outputs.head_sha }}
@@ -72,6 +73,18 @@ jobs:
           ARTIFACT_DIR: artifact
           PYTHONPATH: scripts
         run: python3 scripts/deploy/resolve_context.py
+
+      # Marks the pull request as waiting before the staging jobs are even queued,
+      # so a run held at an approval reads as pending rather than as nothing.
+      - name: Mark the staging status pending
+        if: steps.resolve.outputs.has_relevant_changes == 'true'
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          HEAD_SHA: ${{ steps.resolve.outputs.head_sha }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          PYTHONPATH: scripts
+        run: python3 scripts/deploy/report_status.py pending
 
   post_pr_comments:
     needs: resolve_context
@@ -367,3 +380,42 @@ jobs:
           AEM_PUBLISH_URL: ${{ vars.AEM_PUBLISH_URL }}
           PYTHONPATH: scripts
         run: python3 scripts/deploy/post_comments.py journey-staged
+
+  # Runs whatever the staging jobs did, because the status it writes is a required
+  # check: not writing it leaves the pull request unmergeable rather than blocked
+  # for a reason anyone can read.
+  report_staging_status:
+    needs: [resolve_context, stage_to_aem, upload_sidebar_json, stage_journey_guides]
+    if: always() && needs.resolve_context.result == 'success' && needs.resolve_context.outputs.has_relevant_changes == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      statuses: write
+    steps:
+      - name: Checkout trusted scripts
+        uses: actions/checkout@v7.0.0
+        with:
+          sparse-checkout: |
+            scripts/lib/
+            scripts/deploy/
+          sparse-checkout-cone-mode: true
+
+      - name: Pin Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
+        with:
+          python-version: '3.12'
+
+      - name: Report the staging status
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          HEAD_SHA: ${{ needs.resolve_context.outputs.head_sha }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          VALIDATIONS_PASSED: ${{ needs.resolve_context.outputs.all_validations_passed }}
+          STAGE_RESULTS: >-
+            ${{ needs.stage_to_aem.result }}
+            ${{ needs.upload_sidebar_json.result }}
+            ${{ needs.stage_journey_guides.result }}
+          PYTHONPATH: scripts
+        run: python3 scripts/deploy/report_status.py report
