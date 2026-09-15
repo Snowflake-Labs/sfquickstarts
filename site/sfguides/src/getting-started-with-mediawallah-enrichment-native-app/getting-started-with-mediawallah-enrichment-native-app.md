@@ -29,7 +29,7 @@ Enrichment results are returned in four tables plus a report.
 * The consumer must accept the Snowflake Marketplace Consumer Terms of Service.
 * The consumer must be able to operate the ACCOUNTADMIN role (or a role granted ACCOUNTADMIN) for the one-time setup.
 
-### What YouΓÇÖll Learn
+### What You’ll Learn
 - How to install the MediaWallah Enrichment Application from the Snowflake Marketplace
 - How to run the one-time account setup
 - How to confirm automatic onboarding and trial status
@@ -40,12 +40,12 @@ Enrichment results are returned in four tables plus a report.
 - How to upgrade or uninstall the application
 - How to view the metadata table for privileges and usage rates.
 
-### What YouΓÇÖll Need
+### What You’ll Need
 - A Snowflake account on AWS US-EAST-1 with a role that can create applications (ACCOUNTADMIN, or a role granted ACCOUNTADMIN)
 - A table of your own identifiers to match: hashed emails, plain emails, phone numbers, addresses, device IDs, IPs or cookies
 - About 20 minutes
 
-### What YouΓÇÖll Build
+### What You’ll Build
 - The required databases, schemas, warehouse, and role to use MediaWallah's Enrichment Application
 
 ### Architecture
@@ -171,7 +171,7 @@ SELECT 'Done' AS STATUS;
 ## Helper Procedures (Optional)
 These helper procedures are only needed when submitting requests from a worksheet instead of the app's Streamlit UI.
 ### Step 01: Account Setup
-Create objects and ΓÇ£helperΓÇ¥ stored procedures.
+Create objects and “helper” stored procedures.
 The following scripts help streamline app usage considerably, and can be executed by the consumer before or after the app installation.
 **NOTE:** The ACCOUNTADMIN and SECURITYADMIN roles are required to create the APP_ADMIN_ROLE, which is granted privileges to complete the pre-install setup:
 
@@ -452,14 +452,14 @@ CREATE OR REPLACE VIEW C_MWEN_HELPER_DB.SOURCE.[CONSUMER_VIEW] AS
 <!-- ------------------------ -->
 ## Generating Requests
 
-Once enabled, the consumer can call the GENERATE_REQUEST helper stored procedure to use any of the consumerΓÇÖs allowed stored procs. Data will be generated into the MEDIAWALLAH_ENRICHMENT_APP.RESULTS_APP schema. View [Results Guide](https://nativeapps.mediawallah.com/enrichment/MWEN%20-%20Results%20Guide.pdf) for a detailed explanation of the generated data.
+Once enabled, the consumer can call the GENERATE_REQUEST helper stored procedure to use any of the consumer’s allowed stored procs. Data will be generated into the MEDIAWALLAH_ENRICHMENT_APP.RESULTS_APP schema. View [Results Guide](https://nativeapps.mediawallah.com/enrichment/MWEN%20-%20Results%20Guide.pdf) for a detailed explanation of the generated data.
 Optimal warehouse sizing will depend on consumer input dataset dimensions. MediaWallah maintains average run times based on historical runs in a Warehouse Sizing Doc, ask for details (as a reference point: a 1MM-record matchtest completes in roughly 4 minutes on a 2X-LARGE warehouse).
 For a detailed explanation of the parameters used in GENERATE_REQUEST, see below
 **Note:** Application should only be run in series; one request at a time. Multiple requests can cause failures and inaccurate billing reporting in logs
 
-**IMPORTANT ΓÇö warehouse size and how the request is submitted:**
-- The request runs synchronously on the warehouse of the session that submits it. Size that warehouse for your input volume (see the ALTER WAREHOUSE step in the examples below) ΓÇö a large input on an XSMALL warehouse can run for hours.
-- Do **NOT** submit large requests through the app's Streamlit UI. The Streamlit page runs the request synchronously in its own session; if the page times out or is closed before the request finishes, **the request is cancelled silently** and no error is reported anywhere. Submit large requests from a SQL worksheet instead ΓÇö a worksheet query keeps running server-side even if the browser tab is closed.
+**IMPORTANT — warehouse size and how the request is submitted:**
+- The request runs synchronously on the warehouse of the session that submits it. Size that warehouse for your input volume (see the ALTER WAREHOUSE step in the examples below) — a large input on an XSMALL warehouse can run for hours.
+- Do **NOT** submit large requests through the app's Streamlit UI. The Streamlit page runs the request synchronously in its own session; if the page times out or is closed before the request finishes, **the request is cancelled silently** and no error is reported anywhere. Submit large requests from a SQL worksheet instead — a worksheet query keeps running server-side even if the browser tab is closed.
 **Matchtest Example:**
 ```sql
 ----------------------- Generating Request: Matchtest Example --------------
@@ -515,7 +515,7 @@ CALL C_MWEN_HELPER_DB.PRIVATE.GENERATE_REQUEST(
 ```
 
 **Direct REQUEST Example (without the helper procedure):**
-If the GENERATE_REQUEST helper is not installed, the app's REQUEST procedure can be called directly. Grant the app read access to the input table, then pass the full parameters object ΓÇö note that `input_table_name` and `results_table_name` are repeated inside `proc_parameters`:
+If the GENERATE_REQUEST helper is not installed, the app's REQUEST procedure can be called directly. Grant the app read access to the input table, then pass the full parameters object — note that `input_table_name` and `results_table_name` are repeated inside `proc_parameters`:
 ```sql
 ----------------------- Generating Request: Direct REQUEST -----------------
 USE ROLE C_MWEN_APP_ADMIN;
@@ -869,7 +869,7 @@ SELECT * FROM MEDIAWALLAH_ENRICHMENT_APP.UTIL_APP.METADATA_C_V
 <!-- ------------------------ -->
 ## Uninstall (Optional)
 #### Uninstall (Optional)
-In the event the consumer wishes to uninstall the app, the consumer can use the **C_MWEN_APP_ADMIN** role to call the UNINSTALL helper stored procedure. This procedure will drop the application database, the logs share, and the shared logs database. The Application Share (which includes the results and logs tables) will be permanently removed from the consumerΓÇÖs Snowflake instance.
+In the event the consumer wishes to uninstall the app, the consumer can use the **C_MWEN_APP_ADMIN** role to call the UNINSTALL helper stored procedure. This procedure will drop the application database, the logs share, and the shared logs database. The Application Share (which includes the results and logs tables) will be permanently removed from the consumer’s Snowflake instance.
 **Note**: It is important to note any data generated by the application stored in MEDIAWALLAH_ENRICHMENT_APP.RESULTS_APP will be lost. Please export results accordingly.
 **Example:**
 ```sql
