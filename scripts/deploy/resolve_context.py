@@ -17,6 +17,7 @@ Environment:
 
 from __future__ import annotations
 
+import dataclasses
 import json
 import os
 import sys
@@ -37,6 +38,17 @@ MIN_JOURNEY_DEPTH = 2
 
 class ContextError(RuntimeError):
     """The deploy context could not be established."""
+
+
+@dataclasses.dataclass(frozen=True)
+class Resolved:
+    """What the API and the artifact say about the commit being deployed."""
+
+    number: int | None
+    head_sha: str
+    same_repo: bool
+    passed: bool
+    languages: dict[str, str]
 
 
 def _warn(message: str) -> None:
@@ -68,8 +80,8 @@ def read_head_sha(event: dict[str, Any]) -> str:
     return validate.sha40(run.get("head_sha"))
 
 
-def find_pull_request(client: gh.GitHub, repo: str, head_sha: str) -> int | None:
-    """Return the number of the single open PR whose head is `head_sha`.
+def find_pull_request(client: gh.GitHub, repo: str, head_sha: str) -> dict[str, Any] | None:
+    """Return the single open PR whose head is `head_sha`.
 
     `workflow_run.pull_requests` is empty for forks, so the commit has to be looked
     up instead. A commit that heads no open PR, or heads more than one, yields None
@@ -80,18 +92,33 @@ def find_pull_request(client: gh.GitHub, repo: str, head_sha: str) -> int | None
         msg = "commit pulls lookup did not return a list"
         raise ContextError(msg)
 
-    matches = {
-        validate.pr_number(entry["number"])
+    matches = [
+        entry
         for entry in candidates
         if isinstance(entry, dict)
         and entry.get("state") == "open"
         and isinstance(entry.get("head"), dict)
         and entry["head"].get("sha") == head_sha
-    }
-    if len(matches) != 1:
-        _warn(f"expected exactly one open PR for {head_sha}, found {len(matches)}")
+    ]
+    numbers = {validate.pr_number(entry["number"]) for entry in matches}
+    if len(numbers) != 1:
+        _warn(f"expected exactly one open PR for {head_sha}, found {len(numbers)}")
         return None
-    return matches.pop()
+    return matches[0]
+
+
+def from_same_repo(pull: dict[str, Any], repo: str) -> bool:
+    """Whether the pull request's head branch lives in the base repository.
+
+    This is what the staging gate turns on, because pushing a branch to the base
+    repository already requires write access, while opening a fork pull request
+    requires nothing. Anything that does not clearly say "same repository" counts
+    as a fork: a deleted fork reports no head repository at all.
+    """
+    head = pull.get("head")
+    head_repo = head.get("repo") if isinstance(head, dict) else None
+    full_name = head_repo.get("full_name") if isinstance(head_repo, dict) else None
+    return isinstance(full_name, str) and full_name.casefold() == repo.casefold()
 
 
 def changed_paths(client: gh.GitHub, repo: str, number: int) -> list[str]:
@@ -235,20 +262,19 @@ def read_artifact(artifact_dir: Path, head_sha: str) -> tuple[bool, dict[str, st
     return data.get("all_validations_passed") is True, _language_map(data)
 
 
-def emit(
-    number: int | None, head_sha: str, work: dict[str, Any], passed: bool, languages: dict[str, str]
-) -> None:
+def emit(resolved: Resolved, work: dict[str, Any]) -> None:
     """Publish the resolved context as step outputs."""
     quickstarts = [
-        {"name": name, "language": languages.get(name, validate.DEFAULT_LANGUAGE)}
+        {"name": name, "language": resolved.languages.get(name, validate.DEFAULT_LANGUAGE)}
         for name in work["quickstarts"]
     ]
     relevant = bool(quickstarts or work["sidebar_files"] or work["journey_guides"])
 
-    gha.set_output("pr_number", number or 0)
-    gha.set_output("head_sha", head_sha)
+    gha.set_output("pr_number", resolved.number or 0)
+    gha.set_output("head_sha", resolved.head_sha)
+    gha.set_output("same_repo", resolved.same_repo)
     gha.set_output("has_relevant_changes", relevant)
-    gha.set_output("all_validations_passed", passed)
+    gha.set_output("all_validations_passed", resolved.passed)
     gha.set_output("md_file_count", work["markdown_count"])
     gha.set_output("has_sidebar_changes", bool(work["sidebar_files"]))
     gha.set_output("has_journey_guides", bool(work["journey_guides"]))
@@ -256,9 +282,11 @@ def emit(
     gha.set_json_output("sidebar_json_files", work["sidebar_files"])
     gha.set_json_output("journey_guides_json", work["journey_guides"])
 
+    number = resolved.number
     print(f"PR:                     {f'#{number}' if number else 'none (skipping)'}")
-    print(f"head_sha:               {head_sha}")
-    print(f"all_validations_passed: {passed}")
+    print(f"head_sha:               {resolved.head_sha}")
+    print(f"same_repo:              {resolved.same_repo}")
+    print(f"all_validations_passed: {resolved.passed}")
     print(f"quickstarts:            {[q['name'] for q in quickstarts]}")
     print(f"sidebar files:          {work['sidebar_files']}")
     print(f"journey guides:         {[g['name'] for g in work['journey_guides']]}")
@@ -278,14 +306,22 @@ def main() -> int:
     head_sha = read_head_sha(load_event())
 
     client = gh.GitHub(os.environ.get("GITHUB_TOKEN", ""))
-    number = find_pull_request(client, repo, head_sha)
-    if number is None:
-        emit(None, head_sha, empty, passed=False, languages={})
+    pull = find_pull_request(client, repo, head_sha)
+    if pull is None:
+        emit(Resolved(None, head_sha, same_repo=False, passed=False, languages={}), empty)
         return 0
 
+    number = validate.pr_number(pull["number"])
     work = classify(changed_paths(client, repo, number))
     passed, languages = read_artifact(artifact_dir, head_sha)
-    emit(number, head_sha, work, passed=passed, languages=languages)
+    resolved = Resolved(
+        number,
+        head_sha,
+        same_repo=from_same_repo(pull, repo),
+        passed=passed,
+        languages=languages,
+    )
+    emit(resolved, work)
     return 0
 
 
