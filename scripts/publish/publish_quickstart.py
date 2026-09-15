@@ -218,7 +218,11 @@ def write_content_fragment(target: Target, client: aem.Client) -> None:
 
 
 def publish_images(target: Target, client: aem.Client) -> int:
-    """Upload the guide's images to the DAM."""
+    """Upload the guide's images to the DAM and activate them.
+
+    A published guide links its images at the DAM, so an image that reaches the
+    author instance and stops there is a broken image on the live page.
+    """
     assets = target.source_path / "assets"
     images = (
         sorted(
@@ -235,7 +239,8 @@ def publish_images(target: Target, client: aem.Client) -> int:
 
     client.ensure_asset_folder(target.dam_folder)
     for image in images:
-        client.upload_asset(image, target.dam_folder)
+        created = client.upload_asset(image, target.dam_folder)
+        client.publish_asset(f"{target.dam_folder}/{image.name}", created=created)
     return len(images)
 
 

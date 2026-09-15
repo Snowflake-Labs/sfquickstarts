@@ -43,6 +43,13 @@ JSON_CONTENT_TYPE = "application/json"
 # AEM creates a folder asynchronously, so the first upload into it has to wait.
 FOLDER_SETTLE_SECONDS = 3
 
+# An asset is not indexed the moment its upload returns, and replication rejects
+# one that is not, so activation waits first and a new asset waits much longer.
+NEW_ASSET_SETTLE_SECONDS = 30
+EXISTING_ASSET_SETTLE_SECONDS = 2
+ACTIVATE_ATTEMPTS = 3
+ACTIVATE_RETRY_SECONDS = 15
+
 # A rate limit asks for a far longer pause than a server error does.
 RATE_LIMIT_MULTIPLIER = 60
 
@@ -201,13 +208,16 @@ class Client:
             )
         time.sleep(FOLDER_SETTLE_SECONDS)
 
-    def upload_asset(self, path: Path, dam_folder: str) -> None:
-        """Upload one image through the Assets API.
+    def upload_asset(self, path: Path, dam_folder: str) -> bool:
+        """Upload one image through the Assets API, returning whether it was created.
 
         PUT updates an existing asset and POST creates one. Which applies is probed
         first, but a PUT can still come back 404 because the probe races anything
         else writing to the folder, so that answer is taken as the correction it is
         rather than as a failed attempt.
+
+        This writes to the author instance only. Anything that has to be readable on
+        the public site needs publish_asset as well.
         """
         encoded = urllib.parse.quote(path.name, safe="")
         url = f"{self.base_url}/api/assets/{dam_folder.removeprefix('/content/dam/')}/{encoded}"
@@ -221,7 +231,7 @@ class Client:
             status, response = self._send(method, url, body, content_type)
             if HTTP_OK <= status < HTTP_REDIRECT:
                 print(f"Uploaded {path.name} ({method}, HTTP {status})")
-                return
+                return creating
             if status == HTTP_NOT_FOUND and not creating:
                 creating = True
                 continue
@@ -236,3 +246,38 @@ class Client:
 
         msg = f"upload of {path.name} failed after {self.attempts} attempts"
         raise AemError(msg)
+
+    def reprocess_asset(self, asset_path: str) -> None:
+        """Ask AEM to regenerate an asset's renditions.
+
+        Best effort, as the shell this replaces had it: the publish tier falls back
+        to the original when a rendition is missing, so a guide with unprocessed
+        images still reads correctly.
+        """
+        fields = {"operation": "PROCESS", "asset": asset_path, "profile-select": "full-process"}
+        body = urllib.parse.urlencode(fields).encode("utf-8")
+        status, _ = self._send("POST", f"{self.base_url}/bin/asynccommand", body)
+        if not HTTP_OK <= status < HTTP_REDIRECT:
+            print(f"::warning::reprocessing {asset_path} returned HTTP {status}")
+
+    def publish_asset(self, asset_path: str, *, created: bool) -> None:
+        """Reprocess an uploaded asset and activate it to the publish tier.
+
+        Replication answers 400 while an asset is still being indexed, which is a
+        wait rather than a rejection and is the one 4xx worth retrying here.
+        """
+        self.reprocess_asset(asset_path)
+        time.sleep(NEW_ASSET_SETTLE_SECONDS if created else EXISTING_ASSET_SETTLE_SECONDS)
+
+        body = urllib.parse.urlencode({"cmd": "Activate", "path": asset_path}).encode("utf-8")
+        for attempt in range(1, ACTIVATE_ATTEMPTS + 1):
+            status, response = self._send("POST", f"{self.base_url}/bin/replicate.json", body)
+            if HTTP_OK <= status < HTTP_REDIRECT:
+                print(f"Published {asset_path}")
+                return
+            if status != HTTP_CLIENT_ERROR or attempt == ACTIVATE_ATTEMPTS:
+                detail = response.decode("utf-8", errors="replace")[:ERROR_BODY_CHARS]
+                msg = f"publishing {asset_path} failed (HTTP {status}): {detail}"
+                raise AemError(msg)
+            print(f"publishing {asset_path}: not indexed, retrying in {ACTIVATE_RETRY_SECONDS}s")
+            time.sleep(ACTIVATE_RETRY_SECONDS)
