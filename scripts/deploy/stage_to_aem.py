@@ -30,8 +30,7 @@ import sys
 import time
 from pathlib import Path
 
-from lib import aem, validate
-from publish import upload_dam_asset
+from lib import aem, upload_dam_asset, validate
 
 CF_ROOT = "/content/dam/snowflake-site"
 PAGE_ROOT = "/content/snowflake-site/global"
