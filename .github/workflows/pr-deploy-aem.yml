@@ -17,13 +17,6 @@ permissions: {}
 # level group is held by a run whose staging jobs are awaiting environment approval,
 # which would queue the next run behind it and leave the author with no validation
 # feedback at all.
-
-# The staging jobs pick their environment from where the pull request's branch
-# lives. A branch in this repository could only have been pushed by someone with
-# write access, so it deploys through staging-auto, which has no reviewers. A fork
-# branch is anyone on the internet and goes through staging, which does. Both carry
-# AEM credentials, so both must stay in the IAM role's trust policy.
-
 jobs:
   resolve_context:
     # Only run for PRs, not direct pushes
