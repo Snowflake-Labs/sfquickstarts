@@ -13,7 +13,6 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 ## Overview 
 
-
 This Snowflake Guide covers the basics of training machine learning models, interpreting them, and deploying them to make predictions. 
 
 With Dataiku’s Visual Snowpark ML plugin - you won’t need to write a single line of code. That’s right!
@@ -37,7 +36,7 @@ The exercises in this lab will walk you through the steps to:
 - Look at our loan data, understand trends through correlation matrices
 - Train, interpret, and deploy Machine Learning models in Dataiku - powered by Snowpark ML
 - Use our trained model to make new predictions
-- `(Optional)` Set up an MLOps process to retrain the model, check for accuracy, and make new predictions on a weekly basis
+- `(Optional)` Set up an MLOps process to retrain the model, check for accuracy, and make new predictions on a weekly basis.
 
 
 ### What You’ll Need 
