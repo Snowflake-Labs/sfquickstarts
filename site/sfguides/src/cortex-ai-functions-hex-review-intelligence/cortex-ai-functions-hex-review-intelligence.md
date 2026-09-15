@@ -5,7 +5,7 @@ summary: Build an AI-powered product review intelligence app using Snowflake Cor
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/cortex-ai-functions, snowflake-site:taxonomy/snowflake-feature/external-collaboration
 environments: web
 status: Published
-feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+feedback link: https://github.com/Snowflake-Labs/sfquickstarts/issues
 tags: Snowflake Cortex, Generative AI, Hex, AI Functions, Data Applications, Partner Integrations
 
 # AI-Powered Product Review Intelligence with Cortex AI Functions and Hex
@@ -582,4 +582,4 @@ The Marketplace dataset (`AMAZON_BEST_SELLERS_RATINGS_AND_REVIEWS`) can be kept 
 - [Hex Threads — AI-Powered Notebook Assistant](https://hex.tech/product/threads/)
 - [Snowflake Dynamic Tables Documentation](https://docs.snowflake.com/en/user-guide/dynamic-tables-about)
 - [Published App: "What 3.7 Stars Won't Tell You"](https://app.hex.tech/snowflake/app/033m48khnOyIxAaMb5Sy77/latest)
-- [Blog Post: "What 3.7 Stars Won't Tell You"](https://medium.com/@naveenalan.thomas)
+- [Blog Post: "What 3.7 Stars Won't Tell You"](https://medium.com/snowflake/what-3-7-stars-wont-tell-you-fcaa1c7058b2)
