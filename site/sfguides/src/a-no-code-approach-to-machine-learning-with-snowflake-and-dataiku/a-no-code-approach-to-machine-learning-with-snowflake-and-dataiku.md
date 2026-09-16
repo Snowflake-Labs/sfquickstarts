@@ -928,3 +928,5 @@ We encourage you to continue with your free trial and continue to refine your mo
 - Join the [Dataiku Community](https://community.dataiku.com/)
 - Sign up for [Snowflake University](http://https://community.snowflake.com/s/snowflake-university)
 - Join the [Dataiku Academy](https://academy.dataiku.com/)
+
+<!-- trigger test: 2026-09-16T20:33:16Z -->
