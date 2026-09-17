@@ -49,6 +49,11 @@ PAGE_COPY_SETTLE_SECONDS = 8
 IMAGE_PROCESSING_SECONDS = 15
 PAGE_PROCESSING_SECONDS = 60
 
+# How long a write needs to be visible to the replication agent before activating
+# it. The value is the image wait that used to cover this by accident, which is the
+# only gap any preview that came out correct actually had.
+REPLICATION_SETTLE_SECONDS = 15
+
 
 def artifact_dir() -> Path:
     """Return the directory the validation artifact was downloaded into."""
@@ -153,6 +158,13 @@ def stage_guide(name: str, language: str) -> None:
     print(f"Uploaded {count} image(s)")
     if count:
         time.sleep(IMAGE_PROCESSING_SECONDS)
+
+    # Activation packages whatever the author holds when the replication agent gets
+    # to it, so the fragment write has to be visible to that agent first. This was
+    # only ever covered by the image wait above, which left a pull request touching
+    # no images activating its fragment the instant it was written: the publish tier
+    # got the base template and the preview came out empty.
+    time.sleep(REPLICATION_SETTLE_SECONDS)
     client.replicate(cf_path, "publish content fragment")
 
     page_path = stage_page(client, root, name, language, sha)

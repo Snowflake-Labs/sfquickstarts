@@ -51,6 +51,9 @@ PAGE_COPY_SETTLE_SECONDS = 8
 IMAGE_PROCESSING_SECONDS = 15
 PAGE_PROCESSING_SECONDS = 30
 
+# How long a write needs to be visible to the replication agent before activating it.
+REPLICATION_SETTLE_SECONDS = 15
+
 
 class PublishError(RuntimeError):
     """The guide could not be published."""
@@ -297,6 +300,11 @@ def main() -> int:
     image_count = publish_images(target, client)
     if image_count:
         time.sleep(IMAGE_PROCESSING_SECONDS)
+
+    # Activation packages whatever the author holds when the replication agent gets
+    # to it, so the fragment write has to be visible to that agent first rather than
+    # relying on the image wait above to cover it.
+    time.sleep(REPLICATION_SETTLE_SECONDS)
     client.replicate(target.content_fragment, "publish content fragment")
 
     write_page(target, client)
