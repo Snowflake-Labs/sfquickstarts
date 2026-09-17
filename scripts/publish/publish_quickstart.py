@@ -47,7 +47,6 @@ IMAGE_SUFFIXES = (".jpg", ".jpeg", ".png", ".gif", ".svg", ".webp", ".bmp", ".ic
 
 # AEM finishes each of these asynchronously, so the next call has to wait for it.
 # The durations are the ones the shell used; shortening them causes flaky publishes.
-CF_COPY_SETTLE_SECONDS = 3
 PAGE_COPY_SETTLE_SECONDS = 8
 IMAGE_PROCESSING_SECONDS = 15
 PAGE_PROCESSING_SECONDS = 30
@@ -211,10 +210,10 @@ def write_content_fragment(target: Target, client: aem.Client) -> None:
         client.copy(
             BASE_CF_PATH, f"{parent}/{target.name}", "copy base content fragment", deep=True
         )
-        time.sleep(CF_COPY_SETTLE_SECONDS)
+        client.wait_until_exists(f"{cf_path}/jcr:content", "copy base content fragment")
 
     print(f"Updating content fragment: {cf_path}")
-    client.post(f"{cf_path}/jcr:content", payload_field("content_fragment_payload"), "update CF")
+    client.write_fragment(cf_path, payload_field("content_fragment_payload"), "update CF")
 
 
 def publish_images(target: Target, client: aem.Client) -> int:

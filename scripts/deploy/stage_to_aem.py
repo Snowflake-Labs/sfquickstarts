@@ -45,7 +45,6 @@ SIDEBAR_LEVELS = ("developers", "developers/technical", "developers/technical/gu
 
 # AEM finishes each of these asynchronously. The durations are the ones the shell
 # used; a staged page needs longer than a published one because the copy is fresh.
-CF_COPY_SETTLE_SECONDS = 3
 PAGE_COPY_SETTLE_SECONDS = 8
 IMAGE_PROCESSING_SECONDS = 15
 PAGE_PROCESSING_SECONDS = 60
@@ -120,10 +119,10 @@ def stage_content_fragment(
     cf_path = f"{parent}/{name}-{sha}"
     print(f"Copying base fragment to {cf_path}")
     client.copy(BASE_CF_PATH, cf_path, "copy base content fragment", deep=True)
-    time.sleep(CF_COPY_SETTLE_SECONDS)
+    client.wait_until_exists(f"{cf_path}/jcr:content", "copy base content fragment")
 
     body = payload_field(root, name, "content_fragment_payload")
-    client.post(f"{cf_path}/jcr:content", body, "update content fragment")
+    client.write_fragment(cf_path, body, "update content fragment")
     return cf_path
 
 

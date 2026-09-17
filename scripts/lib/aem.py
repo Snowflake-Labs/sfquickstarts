@@ -25,6 +25,7 @@ import urllib.error
 import urllib.parse
 import urllib.request
 from pathlib import Path
+from typing import Any
 
 TIMEOUT_SECONDS = 120
 DEFAULT_MAX_RETRIES = 3
@@ -42,6 +43,23 @@ JSON_CONTENT_TYPE = "application/json"
 
 # AEM creates a folder asynchronously, so the first upload into it has to wait.
 FOLDER_SETTLE_SECONDS = 3
+
+# A copied node is not always readable the moment the copy request returns, so it
+# is waited for rather than slept on: a write that lands before the copy does is
+# silently undone when the copy finally arrives.
+COPY_POLL_SECONDS = 2
+COPY_WAIT_SECONDS = 90
+
+# Writing a fragment is checked rather than assumed, and retried before it fails.
+FRAGMENT_ATTEMPTS = 3
+FRAGMENT_RETRY_SECONDS = 10
+
+# The element a guide's markdown is written to, and the one worth reading back.
+# The failure being caught replaces the body wholesale with the base template, so
+# the opening of it is enough to tell the two apart. Comparing the whole value
+# instead would turn any normalisation AEM applies into a permanent hard failure.
+FRAGMENT_BODY_FIELD = "./data/master/quickstartArticleBody"
+FRAGMENT_CHECK_CHARS = 500
 
 # An asset is not indexed the moment its upload returns, and replication rejects
 # one that is not, so activation waits first and a new asset waits much longer.
@@ -146,6 +164,26 @@ class Client:
         """Whether a JCR path resolves on the instance."""
         return self.status(f"{path}.json") == HTTP_OK
 
+    def wait_until_exists(self, path: str, description: str) -> None:
+        """Block until a JCR path resolves, giving up loudly rather than late."""
+        deadline = time.monotonic() + COPY_WAIT_SECONDS
+        while not self.exists(path):
+            if time.monotonic() >= deadline:
+                msg = f"{description}: {path} did not appear within {COPY_WAIT_SECONDS}s"
+                raise AemError(msg)
+            time.sleep(COPY_POLL_SECONDS)
+
+    def properties(self, path: str) -> dict[str, Any]:
+        """Return a node's properties, or an empty mapping if it cannot be read."""
+        status, raw = self._send("GET", f"{self.base_url}{path}.json", None)
+        if not HTTP_OK <= status < HTTP_REDIRECT:
+            return {}
+        try:
+            data = json.loads(raw)
+        except json.JSONDecodeError:
+            return {}
+        return data if isinstance(data, dict) else {}
+
     def post(self, path: str, body: str, description: str) -> bytes:
         """POST a pre-encoded form body, retrying what is worth retrying."""
         url = f"{self.base_url}{path}"
@@ -175,6 +213,37 @@ class Client:
         if deep:
             fields["depth"] = "infinity"
         self.post_fields(source, fields, description)
+
+    def write_fragment(self, cf_path: str, body: str, description: str) -> None:
+        """Write a content fragment's payload and confirm the guide body took.
+
+        A Sling POST answers 200 whether or not it wrote what was asked, so a write
+        that races a still-settling copy of the base fragment is indistinguishable
+        from a successful one: the fragment keeps the base template and the job goes
+        green having staged an empty guide. The body is read back instead, and a
+        fragment that cannot be confirmed fails the job.
+        """
+        expected = dict(urllib.parse.parse_qsl(body)).get(FRAGMENT_BODY_FIELD, "")
+        opening = expected[:FRAGMENT_CHECK_CHARS]
+        for attempt in range(1, FRAGMENT_ATTEMPTS + 1):
+            self.post(f"{cf_path}/jcr:content", body, description)
+            written = self.fragment_body(cf_path)
+            if not expected or written.startswith(opening):
+                return
+            if attempt == FRAGMENT_ATTEMPTS:
+                msg = (
+                    f"{description}: {cf_path} does not hold the guide body after "
+                    f"{FRAGMENT_ATTEMPTS} attempts (wrote {len(expected)} characters, "
+                    f"read back {len(written)})"
+                )
+                raise AemError(msg)
+            print(f"{description}: did not take, retrying in {FRAGMENT_RETRY_SECONDS}s")
+            time.sleep(FRAGMENT_RETRY_SECONDS)
+
+    def fragment_body(self, cf_path: str) -> str:
+        """Return the guide body currently stored on a content fragment."""
+        value = self.properties(f"{cf_path}/jcr:content/data/master").get("quickstartArticleBody")
+        return value if isinstance(value, str) else ""
 
     def replicate(self, path: str, description: str) -> None:
         """Activate a path so it reaches the publish tier."""
