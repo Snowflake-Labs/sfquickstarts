@@ -124,7 +124,7 @@ def stage_content_fragment(
     cf_path = f"{parent}/{name}-{sha}"
     print(f"Copying base fragment to {cf_path}")
     client.copy(BASE_CF_PATH, cf_path, "copy base content fragment", deep=True)
-    client.wait_until_exists(f"{cf_path}/jcr:content", "copy base content fragment")
+    client.wait_for_fragment(cf_path, "copy base content fragment")
 
     body = payload_field(root, name, "content_fragment_payload")
     client.write_fragment(cf_path, body, "update content fragment")

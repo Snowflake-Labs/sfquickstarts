@@ -35,6 +35,10 @@ HTTP_OK = 200
 HTTP_REDIRECT = 300
 HTTP_CLIENT_ERROR = 400
 HTTP_NOT_FOUND = 404
+# "repository state conflicting with request", which AEM answers while it is still
+# assembling a node it has just been asked to copy. It is the one 4xx that clears
+# on its own, so it is waited out rather than treated as a rejection.
+HTTP_CONFLICT = 409
 HTTP_TOO_MANY_REQUESTS = 429
 HTTP_SERVER_ERROR = 500
 
@@ -47,6 +51,7 @@ FOLDER_SETTLE_SECONDS = 3
 # A copied node is not always readable the moment the copy request returns, so it
 # is waited for rather than slept on: a write that lands before the copy does is
 # silently undone when the copy finally arrives.
+COPY_SETTLE_SECONDS = 3
 COPY_POLL_SECONDS = 2
 COPY_WAIT_SECONDS = 90
 
@@ -105,7 +110,7 @@ def retry_delay(status: int, attempt: int, base: int) -> int | None:
         return base * RATE_LIMIT_MULTIPLIER
     if status >= HTTP_SERVER_ERROR:
         return base * attempt * 2
-    if HTTP_CLIENT_ERROR <= status < HTTP_SERVER_ERROR:
+    if HTTP_CLIENT_ERROR <= status < HTTP_SERVER_ERROR and status != HTTP_CONFLICT:
         return None
     return base * attempt
 
@@ -165,7 +170,13 @@ class Client:
         return self.status(f"{path}.json") == HTTP_OK
 
     def wait_until_exists(self, path: str, description: str) -> None:
-        """Block until a JCR path resolves, giving up loudly rather than late."""
+        """Block until a JCR path resolves, giving up loudly rather than late.
+
+        A node answering a GET only means it has been created, not that AEM has
+        finished assembling it, so the wait starts with a settle rather than
+        returning the instant the path appears.
+        """
+        time.sleep(COPY_SETTLE_SECONDS)
         deadline = time.monotonic() + COPY_WAIT_SECONDS
         while not self.exists(path):
             if time.monotonic() >= deadline:
@@ -244,6 +255,14 @@ class Client:
         """Return the guide body currently stored on a content fragment."""
         value = self.properties(f"{cf_path}/jcr:content/data/master").get("quickstartArticleBody")
         return value if isinstance(value, str) else ""
+
+    def wait_for_fragment(self, cf_path: str, description: str) -> None:
+        """Block until a content fragment is ready to be written to.
+
+        The node waited for is the one the payload writes into rather than the
+        fragment's root, which exists well before the copy beneath it has finished.
+        """
+        self.wait_until_exists(f"{cf_path}/jcr:content/data/master", description)
 
     def replicate(self, path: str, description: str) -> None:
         """Activate a path so it reaches the publish tier."""
