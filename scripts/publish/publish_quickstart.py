@@ -213,7 +213,7 @@ def write_content_fragment(target: Target, client: aem.Client) -> None:
         client.copy(
             BASE_CF_PATH, f"{parent}/{target.name}", "copy base content fragment", deep=True
         )
-        client.wait_until_exists(f"{cf_path}/jcr:content", "copy base content fragment")
+        client.wait_for_fragment(cf_path, "copy base content fragment")
 
     print(f"Updating content fragment: {cf_path}")
     client.write_fragment(cf_path, payload_field("content_fragment_payload"), "update CF")
