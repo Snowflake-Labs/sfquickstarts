@@ -1,6 +1,6 @@
 author: Jeffrey Chen
 id: getting-started-with-mediawallah-enrichment-native-app
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/industry/advertising-media-and-entertainment, snowflake-site:taxonomy/product/applications-and-collaboration
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/industry/advertising-media-and-entertainment, snowflake-site:taxonomy/product/applications-and-collaboration
 language: en
 summary: Install the MediaWallah Enrichment Native App from the Snowflake Marketplace, matchtest hashed emails, phones, addresses or device IDs against MediaWallah's identity graph, and enrich them without your data leaving your Snowflake account.
 environments: web
@@ -63,7 +63,7 @@ Enrichment results are returned in four tables plus a report.
 ### One-time setup (required, run once per account)
 Prior to using this app, the following one-time setup steps below **must be executed**.
 Please make ONLY the changes mentioned in the **NOTES** below.
-### Any other changes may result in the setup process failing.
+**Any other changes may result in the setup process failing.**
 
 **NOTES:**
 - Replace ```<MY_ROLE>``` with either the ACCOUNTADMIN role or a role that has been granted ACCOUNTADMIN.
@@ -176,7 +176,7 @@ The following scripts help streamline app usage considerably, and can be execute
 **NOTE:** The ACCOUNTADMIN and SECURITYADMIN roles are required to create the APP_ADMIN_ROLE, which is granted privileges to complete the pre-install setup:
 
 #### 01_create_generate_request_procedure.sql
-##### This procedure serves as a wrapper procedure that calls the app's REQUEST stored procedure, passing in a parameters object that includes the input table (if applicable), the app procedure to call, the procedure parameters, and the results table (if applicable)
+This procedure serves as a wrapper procedure that calls the app's REQUEST stored procedure, passing in a parameters object that includes the input table (if applicable), the app procedure to call, the procedure parameters, and the results table (if applicable)
 ```sql
 ----------------------------------------------------------------------------
 -- 01_create_generate_request_procedure.sql
@@ -264,7 +264,7 @@ UNSET (APP_ADMIN_ROLE, APP_WH, HELPER_DB);
 ```
 
 #### 02_create_uninstall_procedure.sql
-##### This procedure serves as a wrapper procedure that uninstalls the Provider's app and removes
+This procedure serves as a wrapper procedure that uninstalls the Provider's app and removes
 ```sql
 ----------------------------------------------------------------------------
 -- 02_create_uninstall_procedure.sql
@@ -332,7 +332,7 @@ UNSET (APP_ADMIN_ROLE, APP_WH, HELPER_DB);
 
 
 #### 03_application_description_procedure.sql
-##### This procedure helps identify the version and patch number of the current run is on
+This procedure helps identify the version and patch number of the current run is on
 ```sql
 ----------------------------------------------------------------------------
 -- 03_application_description_procedure.sql
@@ -390,10 +390,10 @@ UNSET (APP_ADMIN_ROLE, APP_WH, HELPER_DB);
 
 
 #### 04_grant_application_role.sql
-##### This grants the application role to a specific user of the application if one was not granted on installation
+This grants the application role to a specific user of the application if one was not granted on installation
 ```sql
 ----------------------------------------------------------------------------
--- 06_grant_application_role.sql
+-- 04_grant_application_role.sql
 -- This grants the application role to a specific user of the application
 -- if one was not granted on installation
 ----------------------------------------------------------------------------
@@ -423,9 +423,8 @@ If the view is still empty after five minutes, confirm the setup script complete
 To move from trial to a paid subscription, or to extend a trial, contact operations@mediawallah.com. The `subscription_mode` and limits in the metadata view are managed by MediaWallah.
 
 <!-- ------------------------ -->
-## Granting Application Access to the Consumer's Dataset(s)
+## Grant Table Access
 
-### Granting Application Access to the Consumer's Dataset(s)
 The application will need access to the consumer's dataset; **Either directly to the table or a view of the table.**
 
 
@@ -452,7 +451,7 @@ CREATE OR REPLACE VIEW C_MWEN_HELPER_DB.SOURCE.[CONSUMER_VIEW] AS
 <!-- ------------------------ -->
 ## Generating Requests
 
-Once enabled, the consumer can call the GENERATE_REQUEST helper stored procedure to use any of the consumer’s allowed stored procs. Data will be generated into the MEDIAWALLAH_ENRICHMENT_APP.RESULTS_APP schema. View [Results Guide](https://nativeapps.mediawallah.com/enrichment/MWEN%20-%20Results%20Guide.pdf) for a detailed explanation of the generated data.
+Once enabled, the consumer can call the GENERATE_REQUEST helper stored procedure to use any of the consumer’s allowed stored procs. Data will be generated into the MEDIAWALLAH_ENRICHMENT_APP.RESULTS_APP schema. See "Viewing Results" below for a detailed explanation of the generated data.
 Optimal warehouse sizing will depend on consumer input dataset dimensions. MediaWallah maintains average run times based on historical runs in a Warehouse Sizing Doc, ask for details (as a reference point: a 1MM-record matchtest completes in roughly 4 minutes on a 2X-LARGE warehouse).
 For a detailed explanation of the parameters used in GENERATE_REQUEST, see below
 **Note:** Application should only be run in series; one request at a time. Multiple requests can cause failures and inaccurate billing reporting in logs
@@ -547,7 +546,6 @@ CALL MEDIAWALLAH_ENRICHMENT_APP.PROCS_APP.REQUEST($${
 <!-- ------------------------ -->
 ## Parameters Description
 
-##### JSON Parameters Description
 ```markdown
 |------------------|----------------------------------------------------|
 | param            | description                                        |
@@ -603,7 +601,6 @@ CALL MEDIAWALLAH_ENRICHMENT_APP.PROCS_APP.REQUEST($${
 <!-- ------------------------ -->
 ## Match Key Type
 
-##### Available options for match_key_type:
 **note**: allowed match_key_types may vary due to contract
 ```markdown
 |-----------------|-----------------------------------------------------|
@@ -636,7 +633,7 @@ CALL MEDIAWALLAH_ENRICHMENT_APP.PROCS_APP.REQUEST($${
 ```
 **note**: Plain text emails should be lowered and white spaced removed before Hashing
 
-##### Formatting: PHONE
+#### Formatting: PHONE
 `primary_key` names one column. The app normalizes it to E.164 before matching: everything except digits is removed, a 10 digit number gets `+1` prepended, an 11-15 digit number gets `+` prepended. All of these match the same record:
 ```
 2125551234
@@ -648,7 +645,7 @@ Values that do not normalize this way are **not used as match keys**. That means
 
 HASHED_PHONE must be the SHA-256 of the E.164 string and nothing else: `SHA2('+12125551234')`. A hash of `2125551234`, `12125551234`, `(212) 555-1234` or any other form will not match, and the app cannot detect or repair it. Normalize to E.164 first, then hash. Hex case does not matter.
 
-##### Formatting: ADDRESS
+#### Formatting: ADDRESS
 `primary_key` is five comma-separated column names from your table, in this order: ADDRESS_1, ADDRESS_2, CITY, STATE, ZIP5. The column names can be anything; the position is what matters.
 ```json
       "primary_key": "addr1,addr2,city,st,zip",
@@ -679,7 +676,7 @@ ADDR1            | ADDR2   | CITY      | ST | ZIP
 ```
 Best results come from running your file through a CASS / USPS address standardizer before submitting.
 
-##### Formatting: NAME_ADDRESS
+#### Formatting: NAME_ADDRESS
 `primary_key` is two comma-separated column names, in this order: FIRST_NAME, ADDRESS_1. Same rules as ADDRESS: the two values are concatenated with no delimiter and compared case-insensitively, ADDRESS_1 in USPS form. Use this when you have no city/state/zip, or as a looser secondary key.
 ```json
       "primary_key": "first_name,addr1",
@@ -689,7 +686,6 @@ Best results come from running your file through a CASS / USPS address standardi
 <!-- ------------------------ -->
 ## Return Type
 
-##### Available options for return_types:
 *note*: allowed return_types may vary due to contract
 ```markdown
 |-----------------|-----------------------------------------------------|
@@ -758,7 +754,7 @@ Best results come from running your file through a CASS / USPS address standardi
 
 <!-- ------------------------ -->
 ## Viewing Results
-#### Viewing Results
+
 Depending on which application (aka proc_name) used, the GENERATE_REQUEST procedure will generate different outputs based on the RESULTS_TABLE.
 **Matchtest**
 ```sql
@@ -800,7 +796,7 @@ ORDER BY BUCKET_TYPE, MATCHED_DATA_TYPE
 
 <!-- ------------------------ -->
 ## Using ARID
-#### Using ARID
+
 An ARID (App Resolution Identifier) is the primary key generated per run of the application, used to join the original data with enriched digital data, enriched offline data and/or enriched audience segment data.
 **Example joining Data**
 ```sql
@@ -831,7 +827,7 @@ ON (
 
 <!-- ------------------------ -->
 ## Metadata (Reference)
-#### Metadata (Reference)
+
 ```markdown
 SELECT * FROM MEDIAWALLAH_ENRICHMENT_APP.UTIL_APP.METADATA_C_V
 ```
@@ -868,7 +864,7 @@ SELECT * FROM MEDIAWALLAH_ENRICHMENT_APP.UTIL_APP.METADATA_C_V
 
 <!-- ------------------------ -->
 ## Uninstall (Optional)
-#### Uninstall (Optional)
+
 In the event the consumer wishes to uninstall the app, the consumer can use the **C_MWEN_APP_ADMIN** role to call the UNINSTALL helper stored procedure. This procedure will drop the application database, the logs share, and the shared logs database. The Application Share (which includes the results and logs tables) will be permanently removed from the consumer’s Snowflake instance.
 **Note**: It is important to note any data generated by the application stored in MEDIAWALLAH_ENRICHMENT_APP.RESULTS_APP will be lost. Please export results accordingly.
 **Example:**
@@ -906,7 +902,7 @@ DROP SHARE MWEN_APP_SHARE;
 
 <!-- ------------------------ -->
 ## Upgrade (Optional)
-#### Upgrade (Optional)
+
 As new versions and patches are released, upgrade with the following commands.
 ```sql
 USE ROLE ACCOUNTADMIN;
@@ -932,10 +928,10 @@ We look forward to working with you. Please reach out for any questions snowflak
 
 ### Related Resources
 - [MediaWallah Enrichment App](https://app.snowflake.com/marketplace/listing/GZSOZ5Q3W8J/mediawallah-inc-mediawallah-enrichment-app)
-- [Reference Architecture](https://drive.google.com/file/d/1Es4gaeOOmpfmBDSp9RkCIGZB1PQHyzHg/view])
+- [Reference Architecture](https://drive.google.com/file/d/1Es4gaeOOmpfmBDSp9RkCIGZB1PQHyzHg/view)
+- [MediaWallah Native Apps](https://nativeapps.mediawallah.com/)
 - [Blog](https://medium.com/snowflake/ultra-secure-identity-and-audience-profile-enrichment-made-simple-21e48a56ab4a)
 <!-- - [<link to github code repo>] -->
-[Fork Repo on GitHub](https://github.com/Snowflake-Labs/sf-samples/pull/155)
 <!-- - [<link to documentation>] -->
 <!-- - [<link to youtube>] -->
 [Watch the Demo](https://youtu.be/I4e-qj5jHW8?list=TLGGsB5qTdKOvZ4yNDA5MjAyNQ)
