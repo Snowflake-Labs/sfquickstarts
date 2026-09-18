@@ -431,7 +431,7 @@ alter session set geography_output_format = 'WKT';
 
 Pretend that you are currently living in your apartment near Times Square in New York City. You need to make a shopping run to Best Buy and the liquor store, as well as grab a coffee at a coffee shop. Based on your current location, what are the closest stores or shops to do these errands, and are they the most optimal locations to go to collectively? Are there other shops you could stop at along the way?
 
-Start with running a query that represents your current location. This location has been preselected for the guide using a website that returns longitude and latitude when you click on a location on a map. Run this query in the Snowlake editor:
+Start with running a query that represents your current location. This location has been preselected for the guide using a website that returns longitude and latitude when you click on a location on a map. Run this query in the Snowflake editor:
 
 ```
 select to_geography('POINT(-73.986226 40.755702)');
