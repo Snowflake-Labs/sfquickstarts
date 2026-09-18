@@ -620,7 +620,7 @@ CALL MEDIAWALLAH_ENRICHMENT_APP.PROCS_APP.REQUEST($${
 | ADDRESS         | ADDRESS_1,ADDRESS_2,CITY,STATE,ZIP5 (see below)     |
 | NAME_ADDRESS    | FIRST_NAME,ADDRESS_1 (see below)                    |
 | PHONE           | Phone number, normalized to E.164 (see below)       |
-| HASHED_PHONE    | Phone Number obfuscation using Algorithm SHA256     |
+| HASHED_PHONE    | SHA256 of the E.164 phone (see Formatting: PHONE)   |
 | APN             | AppNexus                                            |
 | TTD             | The Trade Desk                                      |
 | CRT             | Criteo                                              |
@@ -646,7 +646,7 @@ CALL MEDIAWALLAH_ENRICHMENT_APP.PROCS_APP.REQUEST($${
 ```
 Values that do not normalize this way are **not used as match keys**. That means any value with fewer than 10 digits (e.g. a 7-digit local number) or more than 15 digits, and any value whose digits are not a real phone number. They are skipped, count as unmatched, and cannot be rescued by the app. MediaWallah's graph holds North American (`+1`) numbers, so a non-US number normalizes but will not find a match. Clean these rows before submitting.
 
-HASHED_PHONE is SHA256 of that E.164 string, so hash `+12125551234`, not `2125551234`: `SHA2('+12125551234')`.
+HASHED_PHONE must be the SHA-256 of the E.164 string and nothing else: `SHA2('+12125551234')`. A hash of `2125551234`, `12125551234`, `(212) 555-1234` or any other form will not match, and the app cannot detect or repair it. Normalize to E.164 first, then hash. Hex case does not matter.
 
 ##### Formatting: ADDRESS
 `primary_key` is five comma-separated column names from your table, in this order: ADDRESS_1, ADDRESS_2, CITY, STATE, ZIP5. The column names can be anything; the position is what matters.
@@ -702,7 +702,7 @@ Best results come from running your file through a CASS / USPS address standardi
 | MD5_HASH        | Hashed email using MD5 algorithm                    |
 | SHA1_HASH       | Hashed email using SHA1 algorithm                   |
 | SHA256_HASH     | Hashed email using SHA256 algorithm                 |
-| HASHED_PHONE    | Phone Number obfuscation using Algorithm SHA256     |
+| HASHED_PHONE    | Returned as SHA2('+1' + 10 digits)                  |
 | APN             | AppNexus                                            |
 | TTD             | The Trade Desk                                      |
 | CRT             | Criteo                                              |
@@ -722,7 +722,7 @@ Best results come from running your file through a CASS / USPS address standardi
 |=================|=====================================================|
 | EMAIL           | Plain Text Email                                    |
 | ADDRESS         | ADDRESS_1, ADDRESS_2, CITY, STATE, ZIP5 (USPS form) |
-| PHONE           | Phone number, 10 digits (North American, no +1)     |
+| PHONE           | Returned as 10 digits; see Formatting: PHONE        |
 |-----------------|-----------------------------------------------------|
 ```
 ```markdown
