@@ -21,7 +21,7 @@ Everything here works over the open protocol. There is no Snowflake-specific cli
 
 ### Prerequisites
 
-- A Snowflake account (or [free trial](https://signup.snowflake.com/)) on AWS, Azure, or GCP
+- A Snowflake account (or [free trial](https://signup.snowflake.com/)) on AWS or Azure. This guide uses Snowflake-managed Iceberg storage, which is [available only on AWS and Azure](https://docs.snowflake.com/en/user-guide/tables-iceberg-internal-storage) and is not available in government regions or in the People's Republic of China.
 - A role that can create databases, roles, users, and policies (`ACCOUNTADMIN` in a trial)
 - Apache Spark 3.5 or later with Apache Iceberg 1.11.0 or later
 - Familiarity with SQL and basic Spark
@@ -221,7 +221,7 @@ spark = (
 
 There is no fallback catalog, no JDBC URL, and no Snowflake connector. Every step that follows runs through that one catalog handle.
 
-`iceberg-aws-bundle` is what lets Iceberg use the credentials Snowflake vends. Without it the first read fails with `Failed to get file system for path: s3://…`, which looks like a storage problem but is a missing client library. On Azure or GCP, substitute `iceberg-azure-bundle` or `iceberg-gcp-bundle`.
+`iceberg-aws-bundle` is what lets Iceberg use the credentials Snowflake vends. Without it the first read fails with `Failed to get file system for path: s3://…`, which looks like a storage problem but is a missing client library. On Azure, substitute `iceberg-azure-bundle`.
 
 Run this in a notebook or a `pyspark` shell, where PySpark starts the JVM and resolves `spark.jars.packages` for you. Under `spark-submit` the JVM is already running by the time the builder executes, so the same two packages have to go on the command line instead:
 
@@ -393,10 +393,12 @@ One caveat matters for control design: **only successful operations are logged**
 
 `ACCESS_HISTORY` requires Enterprise Edition or higher, and records are retained for 365 days.
 
+One timing note before you run the query: `ACCESS_HISTORY` is not real time. Records can take up to about three hours to appear, so an empty result immediately after the Spark reads means the view has not caught up yet — not that enforcement failed. Wait and re-run.
+
 <!-- ------------------------ -->
 ## Troubleshoot Common Failures
 
-Three failure modes look like infrastructure problems and are not.
+Four failure modes look like infrastructure problems and are not.
 
 #### An expired-token error on write
 
