@@ -20,7 +20,7 @@ While every major LLM workload has converged on a unified backend (DeepSpeed/Meg
 
 **Snowflake Arctic RL** closes this gap by providing an open-source, high-performance, modular backend with **ZoRRo (Zero Redundancy Rollouts)** acceleration.
 
-![Arctic RL Production Architecture](assets/RLArch123.png)
+![Arctic RL Production Architecture](assets/rl-architecture.png)
 
 ### Key Architectural Layers
 
@@ -32,13 +32,13 @@ While every major LLM workload has converged on a unified backend (DeepSpeed/Meg
 4. **Server Backend Engines (GPU Cluster)**: Combines DeepSpeed for training with ArcticInference (custom vLLM) for high-throughput rollout generation, backed by peer-to-peer NCCL/NVLink weight synchronization.
 5. **Hardware & Compute Infrastructure**: Scales natively on NVIDIA multi-GPU clusters and Snowflake Container Services (SPCS).
 
-### What You Will Learn
+### What You Will Build
 - How the decoupled client-server architecture of Arctic RL simplifies post-training.
 - How ZoRRo Train and ZoRRo Inference eliminate token redundancy.
 - How to configure VeRL and SkyRL to use Arctic RL with zero algorithmic code changes.
 - How to evaluate and serve post-trained models using Snowflake Cortex.
 
-### Prerequisites
+### What You'll Need 
 - Familiarity with Python, PyTorch, and reinforcement learning basics (PPO / GRPO).
 - An active Snowflake account with Snowpark Container Services (SPCS) and Cortex enabled.
 
@@ -70,7 +70,7 @@ Duration: 15
 
 ZoRRo accelerates both the forward/backward training passes and rollout sampling:
 
-![ZoRRo Train: Split Attention in Action](assets/ZorroRun.png)
+![ZoRRo Train: Split Attention in Action](assets/zorro-run.png)
 
 ### 1. ZoRRo Train (Split Attention)
 During policy gradient updates (actor forward and backward passes), ZoRRo Train:
