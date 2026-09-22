@@ -38,6 +38,7 @@ You manage the order management backend for an e-commerce platform. The `orders`
 - The DDL differences between standard tables and Hybrid Tables (PRIMARY KEY requirement, constraint support)
 - How to bulk load data from a standard table into a Hybrid Table using the optimized path
 - How to add secondary indexes on a populated Hybrid Table without downtime
+- How to add a FOREIGN KEY to a populated Hybrid Table, monitor the background build, and recover from a validation failure
 - How to compare query profiles before and after migration (COLUMN_BASED vs ROW_BASED)
 - How to perform a zero-downtime swap using ALTER TABLE RENAME
 
@@ -211,7 +212,7 @@ This single statement:
 2. Declares two secondary indexes inline (customer lookup and composite status/region/timestamp)
 3. Loads all 500,000 rows and populates the indexes using the optimized bulk load path
 
-> **Note:** CTAS for Hybrid Tables requires you to declare the full column schema explicitly. Unlike standard table CTAS, the schema cannot be inferred from the SELECT. If your table requires FOREIGN KEY constraints, you must create the schema separately and use INSERT INTO ... SELECT to load (CTAS does not support FOREIGN KEY).
+> **Note:** CTAS for Hybrid Tables requires you to declare the full column schema explicitly. Unlike standard table CTAS, the schema cannot be inferred from the SELECT. CTAS also cannot declare a FOREIGN KEY constraint. To create a Hybrid Table with a foreign key, load it with CTAS as shown above, then add the foreign key with `ALTER TABLE`. See **Add a Foreign Key After Loading**, below.
 
 > **Note:** You can also add secondary indexes after table creation using `CREATE INDEX`. This is useful when you discover new access patterns on a live table. For a full exploration of adding indexes to populated tables, composite index column ordering, INCLUDE columns, and anti-patterns, see the [Secondary Index Design for Hybrid Tables](https://www.snowflake.com/en/developers/guides/hybrid-tables-secondary-index-design/) quickstart.
 
@@ -251,6 +252,85 @@ You should see:
 | SYS_INDEX_ORDERS_HYBRID_PRIMARY | ORDER_ID | Y | ACTIVE |
 | IDX_ORDERS_CUSTOMER_ID | CUSTOMER_ID | N | ACTIVE |
 | IDX_ORDERS_STATUS_REGION_TS | STATUS, REGION, CREATED_AT | N | ACTIVE |
+
+### Add a Foreign Key After Loading
+
+CTAS cannot declare a FOREIGN KEY, but you can add one to the table you just populated. This keeps the optimized bulk load from the CTAS above and adds referential integrity afterward, with no table recreation and no second copy of the data.
+
+First create the parent table that the `customer_id` column will reference:
+
+```sql
+CREATE OR REPLACE HYBRID TABLE customers (
+    customer_id NUMBER      NOT NULL PRIMARY KEY,
+    name        VARCHAR(50)
+);
+
+INSERT INTO customers
+SELECT DISTINCT customer_id, 'cust_' || customer_id
+FROM orders_standard;
+```
+
+Before adding the constraint, check for rows that would violate it. A foreign key can only be added if every child value already exists in the parent:
+
+```sql
+-- ORPHAN DETECTION: EXPECT 0
+SELECT COUNT(*) AS orphan_rows
+FROM orders_hybrid o
+LEFT JOIN customers c ON o.customer_id = c.customer_id
+WHERE c.customer_id IS NULL;
+```
+
+Now add the constraint:
+
+```sql
+ALTER TABLE orders_hybrid
+  ADD CONSTRAINT fk_customer FOREIGN KEY (customer_id) REFERENCES customers(customer_id);
+```
+
+This is an online operation. `orders_hybrid` stays available for reads and writes while Snowflake builds the index that backs the constraint in the background. Because the build is asynchronous, the `ALTER TABLE` statement returns *before* the constraint is in place, so a successful `ALTER TABLE` is not proof that the constraint is ready:
+
+```sql
+SHOW INDEXES IN TABLE orders_hybrid;
+```
+
+Immediately after the `ALTER TABLE`, `FK_CUSTOMER` reports a `status` of `BUILD IN PROGRESS` with a `status_info` of "The index is being built." **Re-run `SHOW INDEXES` until `FK_CUSTOMER` reports `ACTIVE` before you rely on the constraint.** The build runs in the background and takes longer than the `ALTER TABLE` that started it, and how much longer scales with the number of rows being validated, so poll rather than assuming a duration.
+
+> **Note:** A FOREIGN KEY constraint builds its own underlying index, which appears in `SHOW INDEXES` alongside the indexes you declared at creation time. Dropping the constraint removes that index as well.
+
+#### Recovering from a Validation Failure
+
+If any child row has no matching parent, the `ALTER TABLE` still succeeds and the failure surfaces in the background build instead. The constraint lands in `BUILD VALIDATION FAILURE`:
+
+| `status` | `status_info` |
+|---|---|
+| `BUILD VALIDATION FAILURE` | Index creation failed validation. The existing data violates the constraint. Please review the data, resolve the violations, and try creating the constraint again. |
+
+The index that backs the constraint did not finish building, and it stays in that state until you intervene: it never
+reaches `ACTIVE` on its own, and a non-active index is not used to retrieve data. Snowflake does still enforce the
+constraint on new writes, so an INSERT or UPDATE that violates it fails with
+`200009 (22000): Foreign key constraint "FK_CUSTOMER" was violated.` What the failed build does not do is fix the rows
+that were already in the table, which are the rows that failed validation. Because the `ALTER TABLE` reported success,
+`SHOW INDEXES` is the only place this shows up.
+
+Recover by dropping the constraint, correcting the data, and adding it again:
+
+```sql
+-- FIND THE OFFENDING ROWS
+SELECT o.order_id, o.customer_id
+FROM orders_hybrid o
+LEFT JOIN customers c ON o.customer_id = c.customer_id
+WHERE c.customer_id IS NULL;
+
+ALTER TABLE orders_hybrid DROP CONSTRAINT fk_customer;
+
+-- CORRECT THE DATA: EITHER INSERT THE MISSING PARENT ROWS,
+-- OR REMOVE THE ORPHANED CHILD ROWS
+
+ALTER TABLE orders_hybrid
+  ADD CONSTRAINT fk_customer FOREIGN KEY (customer_id) REFERENCES customers(customer_id);
+```
+
+Then re-run `SHOW INDEXES` until `FK_CUSTOMER` reports `ACTIVE`.
 
 <!-- ------------------------ -->
 ## Step 4: Validate with Query Profile Comparison
@@ -409,7 +489,7 @@ DROP ROLE IF EXISTS HT_MIGRATION_QS_ROLE;
 You have completed the Standard-to-Hybrid Table migration quickstart. You can now:
 
 - Assess standard tables for Hybrid Table suitability using a structured checklist
-- Create Hybrid Table equivalents with PRIMARY KEY using CTAS
+- Create Hybrid Table equivalents with PRIMARY KEY using CTAS, then add FOREIGN KEY constraints to the populated table
 - Bulk load data using the optimized path on fresh tables
 - Add secondary indexes on populated tables without downtime
 - Compare query profiles to validate migration success (COLUMN_BASED full scans to ROW_BASED index seeks)
@@ -446,7 +526,7 @@ You have completed the Standard-to-Hybrid Table migration quickstart. You can no
 
 **Q: Can I use CTAS to create a Hybrid Table with a FOREIGN KEY?**
 
-No. CTAS for Hybrid Tables does not support FOREIGN KEY constraints. Create the table schema explicitly (with the FK definition), then use INSERT INTO ... SELECT to bulk load. The bulk load is still optimized when the table is empty.
+Not in the CTAS statement itself. Declaring a FOREIGN KEY there fails with `391471 (0A000): A foreign key constraint definition in CTAS statements on hybrid tables is not supported.` You have two options. Load the table with CTAS and then add the constraint using `ALTER TABLE ... ADD CONSTRAINT`, which is the route shown in Step 3 and keeps the optimized bulk load path. Or create the table schema explicitly with the FK definition and load it using INSERT INTO ... SELECT. Adding and dropping FOREIGN KEY and UNIQUE constraints on an existing Hybrid Table is generally available, so the first option is usually simpler.
 
 **Q: How long does the bulk load take?**
 
@@ -464,6 +544,8 @@ Check for rows that violate the Hybrid Table constraints:
 - Rows with FOREIGN KEY values that do not exist in the referenced table
 
 These will cause the INSERT or CTAS to fail. Resolve the data quality issues in the standard table before re-running the migration.
+
+If you added the FOREIGN KEY after loading instead of declaring it up front, the row counts will match but the constraint build reports `BUILD VALIDATION FAILURE` in `SHOW INDEXES` rather than failing the load. See **Recovering from a Validation Failure** in Step 3.
 
 **Q: Can I migrate a table with Streams attached?**
 
