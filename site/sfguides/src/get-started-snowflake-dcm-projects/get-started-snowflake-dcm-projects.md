@@ -48,6 +48,12 @@ This guide shows two of those interfaces side by side. Every plan and deploy ste
 ### What You'll Build
 A small but real pipeline — three landing tables, one dynamic table, a semantic view you can query in business terms, and a Streamlit dashboard that reads it — declared entirely as code, deployed, changed, redeployed, and cleaned up.
 
+That work follows the DCM Projects lifecycle:
+
+![The DCM Projects lifecycle: create, define, plan, deploy, then iterate](assets/dcm_project_lifecycle.png)
+
+You will walk it in order — creating the manifest and project object, reading the definitions, planning, deploying — and then spend most of the guide in **ITERATE**, which is where a declarative tool earns its keep.
+
 <!-- ------------------------ -->
 ## Create a Workspace from Git
 
