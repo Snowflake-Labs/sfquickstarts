@@ -4,6 +4,7 @@ summary: Learn how to manage Snowflake security and governance objects — tags,
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/product/data-engineering
 environments: web
 status: Draft
+language: en
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 fork repo link: https://github.com/Snowflake-Labs/snowflake-dcm-projects
 tags: Getting Started, DCM, Governance, Data Engineering
