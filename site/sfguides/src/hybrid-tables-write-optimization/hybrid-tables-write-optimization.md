@@ -30,10 +30,11 @@ This quickstart teaches you how to measure and eliminate compilation overhead, c
 
 - How the plan cache works and why bound variables are critical
 - How to detect plan cache misses using `query_parameterized_hash`
-- Why stored procedures add overhead and what to use instead
+- Why standard stored procedures add overhead and what to use instead
 - How COPY INTO behaves on Hybrid Tables (and when to use it)
 - How schema qualification inconsistency splits your plan cache
-- The performance hierarchy: AUTOCOMMIT > multi-statement txn > stored procedures
+- The performance hierarchy for single-statement DML: AUTOCOMMIT > multi-statement txn > standard stored procedures
+- Where Inline Stored Procedures fit, and why a multi-statement atomic unit is a different case
 - How to measure the write performance of your workload
 
 ### Prerequisites
@@ -235,11 +236,11 @@ INSERT INTO orders VALUES (?, ?, ?, ?, ?, ?);
 <!-- ------------------------ -->
 ## Step 4: Stored Procedure Overhead
 
-Snowflake documentation explicitly states: executing with AUTOCOMMIT enabled or multi-statement transactions offers better performance than calling a stored procedure.
+Snowflake documentation explicitly states: executing with AUTOCOMMIT enabled or multi-statement transactions offers better performance than calling a standard stored procedure.
 
-### Why Stored Procedures Add Overhead
+### Why Standard Stored Procedures Add Overhead
 
-A stored procedure introduces:
+A standard stored procedure introduces:
 1. **CALL compilation** — the SP call itself must be compiled
 2. **Context switching** — execution transfers from Cloud Services to the XP layer for the SP runtime
 3. **Child statement compilation** — each SQL statement inside the SP is compiled separately
@@ -294,7 +295,7 @@ LIMIT 5;
 
 The CALL will show higher `total_elapsed_time` than the direct INSERT for the same logical operation.
 
-### When Stored Procedures Are Appropriate
+### When Standard Stored Procedures Are Appropriate
 
 - Complex business logic that cannot be expressed in a single SQL statement
 - Error handling and retry logic
@@ -308,7 +309,93 @@ From best to worst for Hybrid Table single-statement DML:
 
 1. **Direct DML with AUTOCOMMIT=TRUE** (default) — lowest overhead, plan cache works optimally
 2. **Multi-statement transaction** (explicit BEGIN/COMMIT) — slight overhead from transaction management, useful for batching related writes
-3. **Stored procedure** — highest overhead, use only when procedural logic is required
+3. **Standard stored procedure** — highest overhead, use only when procedural logic is required
+
+> **Note:** This hierarchy is about **single-statement DML**. A unit of work that must apply several
+> statements atomically is a different case, covered in the next section.
+
+### Inline Stored Procedures for Multi-Statement Units
+
+The hierarchy above covers single statements. A separate case is a unit of work that must apply
+several statements atomically — updating an order and writing an audit row, say, where either both
+happen or neither does.
+
+A standard stored procedure compiles each statement in its body separately, which is the
+per-statement overhead described earlier in this step. An **Inline Stored Procedure** instead
+compiles the whole body as one unit and pushes it to the query processing layer as a single atomic
+block, so that cost is paid once rather than per statement. The practical consequence is that the
+more statements the unit contains, the more an Inline Stored Procedure saves — both against a
+standard procedure, and against a client-driven explicit transaction, which pays a network round
+trip for every statement.
+
+> **Note:** Inline Stored Procedures are in Public Preview, available on any account and warehouse
+> with no request required. For best performance the `ENABLE_USE_STABLE_PATH` parameter must be
+> `TRUE` on the warehouse that runs them, which Snowflake already sets on most accounts.
+
+Confirm the value in effect rather than assuming it, because the `default` column reads `false`:
+
+```sql
+SHOW PARAMETERS LIKE 'ENABLE_USE_STABLE_PATH' IN WAREHOUSE <warehouse_name>;
+```
+
+Read the `value` column, not `default`. A `level` of `SYSTEM` means Snowflake set the value for you.
+
+Create an audit table, then an Inline Stored Procedure that updates an order and records the change:
+
+```sql
+CREATE OR REPLACE HYBRID TABLE order_audit (
+    audit_id   NUMBER        NOT NULL AUTOINCREMENT,
+    order_id   NUMBER        NOT NULL,
+    new_status VARCHAR(20)   NOT NULL,
+    changed_at TIMESTAMP_NTZ NOT NULL,
+    PRIMARY KEY (audit_id),
+    INDEX idx_audit_order (order_id)
+);
+
+CREATE OR REPLACE INLINE PROCEDURE update_order_status(
+    p_order_id   NUMBER,
+    p_new_status VARCHAR,
+    p_changed_at TIMESTAMP_NTZ)
+RETURNS VARCHAR
+LANGUAGE SQL
+AS
+$$
+BEGIN ATOMIC
+  UPDATE orders SET status = :p_new_status WHERE order_id = :p_order_id;
+  INSERT INTO order_audit (order_id, new_status, changed_at)
+    VALUES (:p_order_id, :p_new_status, :p_changed_at);
+  RETURN 'OK';
+END;
+$$;
+```
+
+Call it in a single round trip:
+
+```sql
+CALL update_order_status(1, 'SHIPPED', CURRENT_TIMESTAMP()::TIMESTAMP_NTZ);
+```
+
+Both statements commit together. If the INSERT fails, the UPDATE is rolled back with it.
+
+Four constraints matter when you write one:
+
+- **Hybrid tables only.** A statement that touches a standard table isn't supported inside an Inline
+  Stored Procedure.
+- **No explicit transaction control.** Each invocation is already an atomic block, so `BEGIN`,
+  `COMMIT`, and `ROLLBACK` aren't allowed in the body.
+- **No dynamic context functions.** `CURRENT_TIMESTAMP`, `CURRENT_TIME`, `CURRENT_DATE`, `SYSDATE`,
+  `SYSTIMESTAMP`, `GETDATE`, `LOCALTIME`, and `LOCALTIMESTAMP` aren't supported inside the body. Pass
+  the value in as an argument, the way `p_changed_at` does above. Calling one inside the body fails
+  with `090277 (0A000): Inline stored procedure execution error`.
+- **Keep each invocation small.** Inline Stored Procedures target short-running OLTP operations: a
+  small number of rows per call, completing in a few hundred milliseconds.
+
+An Inline Stored Procedure is not a replacement for direct DML on a single statement. For one INSERT
+or one UPDATE, direct parameterized SQL remains the lowest-overhead option and the hierarchy above
+applies unchanged.
+
+For the full reference, including error handling and the complete list of limitations, see
+[Inline Stored Procedures for hybrid tables](https://docs.snowflake.com/en/user-guide/hybrid-tables-inline-stored-procedures).
 
 <!-- ------------------------ -->
 ## Step 5: COPY INTO Behavior on Hybrid Tables
@@ -517,7 +604,8 @@ You can now:
 |-------|--------|
 | Using bound variables? | All application queries should use prepared statements |
 | One parameterized hash per logical operation? | Standardize schema qualification |
-| SP wrapping simple DML? | Remove SP, use direct INSERT |
+| Standard SP wrapping simple DML? | Remove SP, use direct INSERT |
+| Multi-statement atomic unit? | Consider an Inline Stored Procedure instead of a client-driven transaction |
 | Compilation > 50% of total latency? | Plan cache not warming — check hash cardinality |
 | Loading into non-empty HT? | No fast path available — ~1M rows/min throughput |
 | BI tool scanning HT directly? | Snapshot to standard table first |
@@ -528,6 +616,8 @@ You can now:
 
 - [Hybrid Tables Best Practices](https://docs.snowflake.com/en/user-guide/tables-hybrid-best-practices)
 - [Performance Testing for Hybrid Tables](https://docs.snowflake.com/en/user-guide/tables-hybrid-test)
+- [Inline Stored Procedures for Hybrid Tables](https://docs.snowflake.com/en/user-guide/hybrid-tables-inline-stored-procedures)
+- [Operational Query Performance for Hybrid Tables](https://docs.snowflake.com/en/user-guide/hybrid-tables-operational-query-performance)
 - [Connecting Applications to Hybrid Tables](https://www.snowflake.com/en/developers/guides/hybrid-tables-application-connectors/)
 - [Analytics Patterns for Hybrid Tables](https://www.snowflake.com/en/developers/guides/hybrid-tables-analytics-patterns/)
 - [Streaming and Change Detection Patterns](https://www.snowflake.com/en/developers/guides/hybrid-tables-streaming-patterns/)
