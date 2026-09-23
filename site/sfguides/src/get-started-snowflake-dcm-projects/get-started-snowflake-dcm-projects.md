@@ -63,7 +63,7 @@ If you want to work in Snowsight rather than locally, create a Snowsight Workspa
 
 Once the workspace is created you will see the repository files in the file explorer. Navigate to **Quickstarts/get-started-snowflake-dcm-projects** to find two directories.
 
-`DCM_Projects_Get_Started/` is the DCM Project itself. It holds `manifest.yml`, five definition files under `sources/definitions/` — `raw.sql`, `analytics.sql`, `serve.sql`, `access.sql` and `jinja_demo.sql` — and one macro file, `sources/macros/grants_macro.sql`. This is all that plan and deploy read.
+`DCM_Projects_Get_Started/` is the DCM Project itself. It holds `manifest.yml`, five definition files under `sources/definitions/` — `raw.sql`, `analytics.sql`, `serve.sql`, `access.sql` and `jinja_demo.sql` — one macro file at `sources/macros/grants_macro.sql`, and a `streamlit/dashboard/` folder holding the app that the project deploys as an asset.
 
 `scripts/` holds three numbered SQL files that you run in Snowsight worksheets at different stages of this guide. They live outside the project directory, so nothing in them is ever picked up by a plan.
 
@@ -73,27 +73,10 @@ Once the workspace is created you will see the repository files in the file expl
 | `scripts/02_post_deploy.sql` | After the first successful deploy |
 | `scripts/03_cleanup.sql` | When you are finished |
 
-Open `scripts/01_pre_deploy.sql` in a Snowsight worksheet — you will use it in the next step.
-
-If you prefer to work locally, skip the workspace and clone the repository as shown in the next section. The project files are identical either way.
+Every operational step in this guide is given twice: once for Snowsight, and once for the [Snowflake CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli/installation/installation) if you would rather drive the project from a terminal against your own copy of the repository.
 
 <!-- ------------------------ -->
 ## Prerequisites and Setup
-
-Clone the companion repository and move into this guide's directory:
-
-```bash
-git clone https://github.com/Snowflake-Labs/snowflake-dcm-projects
-cd snowflake-dcm-projects/Quickstarts/get-started-snowflake-dcm-projects
-```
-
-You'll find two directories. `DCM_Projects_Get_Started/` is the project itself — the manifest, the definition files and a macro. This is all that plan and deploy read. `scripts/` holds three numbered SQL files that run outside the project, so nothing in them is ever picked up by a plan.
-
-| File | When to run |
-|:-----|:------------|
-| `scripts/01_pre_deploy.sql` | Once, before the first plan |
-| `scripts/02_post_deploy.sql` | After the first successful deploy |
-| `scripts/03_cleanup.sql` | When you are finished |
 
 Run the first script. **In Snowsight:** open `scripts/01_pre_deploy.sql` in a worksheet and run each section in order. **With the Snowflake CLI:**
 
@@ -129,7 +112,7 @@ A project is a **manifest** plus one or more **definition files** under `sources
 
 ### The manifest
 
-Open `DCM_Projects_Get_Started/manifest.yml`. It has two halves. The first declares **targets**:
+Open `DCM_Projects_Get_Started/manifest.yml`. It has three sections — **targets**, **assets** and **templating**. The first declares targets:
 
 ```yaml
 manifest_version: 2
@@ -152,7 +135,17 @@ targets:
 
 A target is a deployment destination: which account to deploy into, which DCM Project object holds the state there, which role owns that project, and — the important line — which `templating_config` to render the definitions with. `default_target` is what you get when you omit `--target`. The file ships with a `DCM_STAGE` target too; only `DCM_DEV` is used here.
 
-The second half declares those templating configurations:
+Next comes **assets**. Everything under `sources/` is SQL that a `DEFINE` statement expresses in full, but some objects are backed by files instead — a Streamlit app is Python, not DDL. An asset is a named set of such files that the project carries along with its definitions:
+
+```yaml
+assets:
+  dashboard:
+    path: 'streamlit/dashboard/**/*'
+```
+
+That name is how a definition refers to the files, as `asset://dashboard`. The guide comes back to this in detail once there is data for the app to read; for now the thing to notice is that it sits at the **top level** of the manifest, alongside `targets` and `templating` rather than inside either.
+
+The third section declares the templating configurations that targets select between:
 
 ```yaml
 templating:
