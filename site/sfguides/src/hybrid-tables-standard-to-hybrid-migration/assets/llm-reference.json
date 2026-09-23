@@ -18,6 +18,7 @@
       "Create Hybrid Table with PRIMARY KEY (CTAS or explicit DDL + INSERT)",
       "Validate row counts and data integrity",
       "Add secondary indexes on populated table",
+      "Add FOREIGN KEY constraints on the populated table and wait for the build to reach ACTIVE",
       "Compare query profiles (COLUMN_BASED vs ROW_BASED)",
       "Perform zero-downtime swap via ALTER TABLE RENAME",
       "Keep backup for rollback period, then decommission"
@@ -46,8 +47,15 @@
     },
     "explicit_ddl_then_insert": {
       "syntax": "CREATE OR REPLACE HYBRID TABLE table_name (..., PRIMARY KEY (pk_col), FOREIGN KEY (fk_col) REFERENCES parent(pk)); INSERT INTO table_name SELECT * FROM source;",
-      "notes": "Required when FOREIGN KEY is needed. INSERT INTO empty table still uses optimized bulk load.",
+      "notes": "One of two routes when a FOREIGN KEY is needed. INSERT INTO an empty table still uses the optimized bulk load. Since online constraints became generally available, CTAS followed by ALTER TABLE ... ADD CONSTRAINT is usually simpler.",
       "optimized_bulk_load": true
+    },
+    "ctas_then_add_constraint": {
+      "syntax": "CREATE OR REPLACE HYBRID TABLE table_name (..., PRIMARY KEY (pk_col)) AS SELECT * FROM source; ALTER TABLE table_name ADD CONSTRAINT fk_name FOREIGN KEY (fk_col) REFERENCES parent(pk);",
+      "notes": "Preferred route for a populated table that needs a FOREIGN KEY. Keeps the CTAS bulk load and adds the constraint afterward, with no table recreation and no second copy of the data.",
+      "optimized_bulk_load": true,
+      "online": true,
+      "asynchronous_build": "ALTER TABLE returns before the backing index finishes building. Poll SHOW INDEXES until status is ACTIVE before relying on the constraint."
     },
     "zero_downtime_swap": {
       "syntax": "ALTER TABLE old_name RENAME TO old_name_backup; ALTER TABLE new_ht RENAME TO old_name;",
@@ -63,7 +71,10 @@
     "foreign_key": {
       "supported": true,
       "ctas_support": false,
-      "notes": "FK is enforced on INSERT/UPDATE. Both tables must be in the same database. Use explicit DDL + INSERT for FK tables."
+      "add_drop_on_existing_table": true,
+      "notes": "FK is enforced on INSERT/UPDATE. Both tables must be in the same database. A FOREIGN KEY cannot be declared in a CTAS statement, which fails with error 391471, but it can be added to an already populated table with ALTER TABLE ... ADD CONSTRAINT and removed with ALTER TABLE ... DROP CONSTRAINT.",
+      "builds_own_index": "A FOREIGN KEY constraint builds its own underlying index, which appears in SHOW INDEXES. Dropping the constraint removes that index as well.",
+      "build_states": "BUILD IN PROGRESS until the build completes, then ACTIVE. If rows already in the table violate the constraint, the build reports BUILD VALIDATION FAILURE instead: the index never reaches ACTIVE so it is not used to retrieve data, although the constraint still rejects new violating writes with error 200009. Recover by dropping the constraint, correcting the data, and adding it again."
     },
     "unique": {
       "supported": true,
@@ -124,7 +135,11 @@
   "faq": [
     {
       "question": "Can I use CTAS to create a Hybrid Table with a FOREIGN KEY?",
-      "answer": "No. CTAS does not support FOREIGN KEY constraints. Create schema explicitly, then INSERT INTO ... SELECT."
+      "answer": "Not in the CTAS statement itself, which fails with error 391471. Two routes work: load the table with CTAS and then add the constraint using ALTER TABLE ... ADD CONSTRAINT, which keeps the optimized bulk load; or create the schema explicitly with the FK definition and load with INSERT INTO ... SELECT. Adding and dropping FOREIGN KEY and UNIQUE constraints on an existing hybrid table is generally available, so the first route is usually simpler."
+    },
+    {
+      "question": "I added a FOREIGN KEY after loading and SHOW INDEXES reports BUILD VALIDATION FAILURE. What happened?",
+      "answer": "Rows already in the table violate the constraint, so the backing index failed validation rather than the load failing. The index never reaches ACTIVE and is not used to retrieve data, although new violating writes are still rejected with error 200009. Find the offending rows with a LEFT JOIN against the parent table, drop the constraint, correct the data, then add the constraint again and wait for ACTIVE."
     },
     {
       "question": "Will my applications break after the RENAME swap?",
