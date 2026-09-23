@@ -39,6 +39,7 @@ You manage the order management backend for an e-commerce platform. The `orders`
 - How to bulk load data from a standard table into a Hybrid Table using the optimized path
 - How to add secondary indexes on a populated Hybrid Table without downtime
 - How to add a FOREIGN KEY to a populated Hybrid Table, monitor the background build, and recover from a validation failure
+- How to carry business rules into the migration as CHECK constraints, and why they must be declared at creation time
 - How to compare query profiles before and after migration (COLUMN_BASED vs ROW_BASED)
 - How to perform a zero-downtime swap using ALTER TABLE RENAME
 
@@ -148,6 +149,28 @@ Not every standard table should be converted to a Hybrid Table. Use this checkli
 | Row count manageable? | 500K (well within HT capacity) |
 | Needs result cache for repeated queries? | No (operational queries need fresh data) |
 | Has Streams, Dynamic Tables, or MVs? | No downstream dependencies |
+| Business rules to enforce in the database? | Yes: amounts must be positive, status must be a known value |
+
+### Inventory the Business Rules You Want to Enforce
+
+Migration is the moment to decide which business rules the database should enforce, because a CHECK constraint on a Hybrid
+Table can only be declared when the table is created. Unlike a FOREIGN KEY, you cannot add one later with `ALTER TABLE`, so
+a rule you skip here means recreating the table to introduce it.
+
+A standard table that was never constrained often contains values the application assumed could not happen. Check the
+candidate rules against the existing data before you migrate:
+
+```sql
+SELECT
+    COUNT(*)                                                   AS total_rows,
+    COUNT_IF(total_amount <= 0)                                AS nonpositive_amounts,
+    COUNT_IF(status NOT IN ('PENDING','SHIPPED','DELIVERED','CANCELLED')) AS unknown_statuses
+FROM orders_standard;
+-- Expected for this dataset: 500000 total, 0 violations of either rule
+```
+
+Both counts must be zero before you add the matching constraint. A single violating row aborts the entire migration load,
+so it is much cheaper to find them now than to debug a failed CTAS later.
 
 ### Verify Primary Key Uniqueness
 
@@ -202,7 +225,9 @@ CREATE OR REPLACE HYBRID TABLE orders_hybrid (
     total_amount NUMBER(12,2)  NOT NULL,
     PRIMARY KEY (order_id),
     INDEX idx_orders_customer_id (customer_id),
-    INDEX idx_orders_status_region_ts (status, region, created_at)
+    INDEX idx_orders_status_region_ts (status, region, created_at),
+    CONSTRAINT chk_total_amount_positive CHECK (total_amount > 0),
+    CONSTRAINT chk_status_known CHECK (status IN ('PENDING','SHIPPED','DELIVERED','CANCELLED'))
 )
 AS SELECT * FROM orders_standard;
 ```
@@ -210,9 +235,12 @@ AS SELECT * FROM orders_standard;
 This single statement:
 1. Defines the Hybrid Table schema with a PRIMARY KEY on `order_id`
 2. Declares two secondary indexes inline (customer lookup and composite status/region/timestamp)
-3. Loads all 500,000 rows and populates the indexes using the optimized bulk load path
+3. Declares the two business rules you inventoried in Step 2 as named CHECK constraints
+4. Loads all 500,000 rows and populates the indexes using the optimized bulk load path
 
 > **Note:** CTAS for Hybrid Tables requires you to declare the full column schema explicitly. Unlike standard table CTAS, the schema cannot be inferred from the SELECT. CTAS also cannot declare a FOREIGN KEY constraint. To create a Hybrid Table with a foreign key, load it with CTAS as shown above, then add the foreign key with `ALTER TABLE`. See **Add a Foreign Key After Loading**, below.
+
+> **Important:** CHECK constraints behave the opposite way. A Hybrid Table accepts them in CTAS, but only at creation time — `ALTER TABLE ... ADD CONSTRAINT ... CHECK` fails with `001186 (42P16): Unsupported table type for CHECK constraint: Hybrid table`, and adding `ENABLE NOVALIDATE` does not change that. Declare every CHECK you need in the CREATE statement, because introducing one later means recreating the table.
 
 > **Note:** You can also add secondary indexes after table creation using `CREATE INDEX`. This is useful when you discover new access patterns on a live table. For a full exploration of adding indexes to populated tables, composite index column ordering, INCLUDE columns, and anti-patterns, see the [Secondary Index Design for Hybrid Tables](https://www.snowflake.com/en/developers/guides/hybrid-tables-secondary-index-design/) quickstart.
 
@@ -225,6 +253,65 @@ SELECT 'orders_hybrid', COUNT(*) FROM orders_hybrid;
 ```
 
 Both should show 500,000. If they differ, investigate constraint violations (NULL in NOT NULL columns, duplicate PKs).
+
+### Confirm the Business Rules Are Enforced
+
+The CTAS validated all 500,000 existing rows against both CHECK constraints as it loaded them. From now on the constraints
+also reject new violating writes:
+
+```sql
+-- Fails: violates chk_total_amount_positive
+INSERT INTO orders_hybrid
+    (order_id, customer_id, status, region, created_at, updated_at, total_amount)
+VALUES (999999901, 1, 'PENDING', 'EU', CURRENT_TIMESTAMP()::TIMESTAMP_NTZ, NULL, -10.00);
+
+-- Fails: violates chk_status_known
+INSERT INTO orders_hybrid
+    (order_id, customer_id, status, region, created_at, updated_at, total_amount)
+VALUES (999999902, 1, 'REFUNDED', 'EU', CURRENT_TIMESTAMP()::TIMESTAMP_NTZ, NULL, 10.00);
+```
+
+Both statements return an error naming the constraint that rejected them:
+
+```
+001185 (23514): Operation on table ORDERS_HYBRID failed because CHECK constraint
+CHK_TOTAL_AMOUNT_POSITIVE, which requires that total_amount > 0, was violated
+```
+
+That error names `CHK_TOTAL_AMOUNT_POSITIVE` because the constraint was given a name. An unnamed inline CHECK such as
+`total_amount NUMBER(12,2) CHECK (total_amount > 0)` is enforced identically, but reports a generated identifier like
+`SYS_CONSTRAINT_9727f254-3bdc-44dc-836c-e0f58db5901b` instead, which tells an on-call engineer nothing. Name your
+constraints.
+
+#### If the CTAS Fails Instead of Loading
+
+A CHECK is validated against the incoming rows, so a single bad row in the source aborts the whole statement rather than
+loading part of the data:
+
+```
+001185 (23514): Operation on table ORDERS_HYBRID failed because CHECK constraint
+CHK_TOTAL_AMOUNT_POSITIVE, which requires that total_amount > 0, was violated
+```
+
+The failure is atomic. If you are re-running `CREATE OR REPLACE` over a Hybrid Table that already exists, the existing table
+and all of its rows are left untouched, so a failed attempt does not cost you the previous one. If the table did not exist
+yet, nothing is created.
+
+This is the migration working as intended: it refuses to carry data that breaks the rule you just declared. Find the
+offending rows in the source, decide whether to correct them or relax the rule, then re-run the CTAS:
+
+```sql
+SELECT order_id, status, total_amount
+FROM orders_standard
+WHERE total_amount <= 0
+   OR status NOT IN ('PENDING','SHIPPED','DELIVERED','CANCELLED')
+LIMIT 100;
+```
+
+> **Important:** A CHECK constraint does not imply NOT NULL. If a column is NULL the predicate evaluates to NULL, which is
+> not treated as a violation, so the row is accepted. Every `updated_at` value in this dataset is NULL, so a rule such as
+> `CHECK (updated_at >= created_at)` would pass for all 500,000 rows while enforcing nothing. Pair the CHECK with NOT NULL
+> when the rule is meant to apply to every row.
 
 ### Spot-Check Data Integrity
 
@@ -467,7 +554,7 @@ Use these prompts in [Cortex Code](https://docs.snowflake.com/en/user-guide/cort
 
 > "Assess this Standard Table DDL for Hybrid Table suitability. Identify the primary key candidate, recommended secondary indexes, and any incompatible column types: [paste DDL]."
 
-> "Generate the migration SQL to convert this Standard Table to a Hybrid Table, including CREATE HYBRID TABLE, COPY INTO for the initial load, and SWAP: [paste DDL and row count]."
+> "Generate the migration SQL to convert this Standard Table to a Hybrid Table, including CREATE HYBRID TABLE, the initial load, and SWAP: [paste DDL and row count]. If I want CHECK constraints, declare them in the CREATE statement and use CTAS or INSERT INTO ... SELECT rather than COPY INTO."
 
 > "Write a validation query to confirm my Standard-to-Hybrid migration was successful. Compare row counts, sample row checksums, and verify all constraints are enforced on the new HT."
 
@@ -490,6 +577,7 @@ You have completed the Standard-to-Hybrid Table migration quickstart. You can no
 
 - Assess standard tables for Hybrid Table suitability using a structured checklist
 - Create Hybrid Table equivalents with PRIMARY KEY using CTAS, then add FOREIGN KEY constraints to the populated table
+- Carry business rules into the migration as named CHECK constraints, declared at creation time
 - Bulk load data using the optimized path on fresh tables
 - Add secondary indexes on populated tables without downtime
 - Compare query profiles to validate migration success (COLUMN_BASED full scans to ROW_BASED index seeks)
@@ -523,6 +611,18 @@ You have completed the Standard-to-Hybrid Table migration quickstart. You can no
 
 <!-- ------------------------ -->
 ## FAQ and Troubleshooting
+
+**Q: Can I add a CHECK constraint after migrating?**
+
+No. `ALTER TABLE ... ADD CONSTRAINT ... CHECK` on a Hybrid Table fails with `001186 (42P16): Unsupported table type for CHECK constraint: Hybrid table`, and `ENABLE NOVALIDATE` does not bypass it. CHECK constraints can only be declared when the table is created, which is why Step 2 asks you to inventory business rules before the migration rather than after. To introduce one later, recreate the table with CTAS from the existing Hybrid Table and swap it in using the same rename pattern as Step 5. This is the opposite of FOREIGN KEY and UNIQUE, which you can add and drop on a populated table at any time.
+
+**Q: My CTAS failed with `001185` and no table was created. What happened?**
+
+A row in the source data violates one of the CHECK constraints you declared. The constraint is validated against the incoming rows, so the whole load is rejected rather than partially applied, and the named constraint in the error message tells you which rule failed. Query the source for violating rows as shown in Step 3, correct them or relax the rule, then re-run the CTAS.
+
+**Q: Can I load a Hybrid Table that has a CHECK constraint using COPY INTO?**
+
+No. `COPY INTO` fails with `001187 (0A000): DML operation COPY INTO not supported for table <name> because it has CHECK constraints`. Load with CTAS as shown in Step 3, or with `INSERT INTO ... SELECT`. If your migration path depends on staged files, land them in a standard table first and then CTAS into the Hybrid Table.
 
 **Q: Can I use CTAS to create a Hybrid Table with a FOREIGN KEY?**
 

@@ -1,8 +1,8 @@
 {
   "guide_id": "hybrid-tables-standard-to-hybrid-migration",
   "title": "Converting Standard Snowflake Tables to Hybrid Tables",
-  "version": "1.0.0",
-  "last_updated": "2026-06-16",
+  "version": "1.2.0",
+  "last_updated": "2026-09-23",
   "author": "Adam Timm",
   "description": "Complete migration guide for converting standard Snowflake tables to Hybrid Tables with zero-downtime swap pattern.",
   "prerequisites": {
@@ -14,6 +14,7 @@
   "migration_workflow": {
     "steps": [
       "Assess standard table for HT suitability",
+      "Inventory the business rules to enforce and confirm no existing rows violate them",
       "Verify PK uniqueness and check downstream dependencies",
       "Create Hybrid Table with PRIMARY KEY (CTAS or explicit DDL + INSERT)",
       "Validate row counts and data integrity",
@@ -83,6 +84,16 @@
     "not_null": {
       "supported": true,
       "ctas_support": true
+    },
+    "check": {
+      "supported": true,
+      "ctas_support": true,
+      "add_drop_on_existing_table": false,
+      "notes": "CHECK can only be declared when the table is created, and every form of CREATE HYBRID TABLE accepts it including CTAS. ALTER TABLE ... ADD CONSTRAINT ... CHECK fails with 001186 (42P16) 'Unsupported table type for CHECK constraint: Hybrid table', and ENABLE NOVALIDATE does not bypass that. This is the inverse of FOREIGN KEY and UNIQUE, which can be added and dropped on a populated table.",
+      "validates_existing_rows": "A CTAS validates incoming rows against the constraint. One violating source row aborts the whole statement with 001185 (23514) and no table is left behind, so the migration refuses to carry data that breaks the rule.",
+      "null_semantics": "A CHECK does not imply NOT NULL. When a referenced column is NULL the predicate evaluates to NULL, which is not a violation, so the row is accepted. Pair the CHECK with NOT NULL when the rule must apply to every row.",
+      "name_your_constraints": "A named constraint appears in the violation error (CHK_TOTAL_AMOUNT_POSITIVE). An unnamed inline CHECK is enforced identically but reports a generated identifier such as SYS_CONSTRAINT_<uuid>, which is not diagnosable.",
+      "copy_into_unsupported": "COPY INTO a hybrid table that has a CHECK constraint fails with 001187 (0A000) 'DML operation COPY INTO not supported for table <name> because it has CHECK constraints'. Load with CTAS or INSERT INTO ... SELECT instead."
     }
   },
   "unsupported_downstream": [
@@ -133,6 +144,18 @@
     }
   ],
   "faq": [
+    {
+      "question": "Can I add a CHECK constraint after migrating?",
+      "answer": "No. ALTER TABLE ... ADD CONSTRAINT ... CHECK fails with 001186 (42P16) and ENABLE NOVALIDATE does not bypass it. CHECK is create-time only, so inventory business rules before the migration. To introduce one later, recreate the table with CTAS and swap it in with the rename pattern. This is the opposite of FOREIGN KEY and UNIQUE."
+    },
+    {
+      "question": "My CTAS failed with 001185 and no table was created. What happened?",
+      "answer": "A source row violates a CHECK constraint declared in the CREATE statement. The constraint is validated against incoming rows, so the load is rejected rather than partially applied, and the named constraint in the error identifies the failing rule. Query the source for violating rows, correct them or relax the rule, then re-run."
+    },
+    {
+      "question": "Can I load a hybrid table that has a CHECK constraint using COPY INTO?",
+      "answer": "No, it fails with 001187 (0A000). Use CTAS or INSERT INTO ... SELECT. If the migration depends on staged files, land them in a standard table first and then CTAS into the hybrid table."
+    },
     {
       "question": "Can I use CTAS to create a Hybrid Table with a FOREIGN KEY?",
       "answer": "Not in the CTAS statement itself, which fails with error 391471. Two routes work: load the table with CTAS and then add the constraint using ALTER TABLE ... ADD CONSTRAINT, which keeps the optimized bulk load; or create the schema explicitly with the FK definition and load with INSERT INTO ... SELECT. Adding and dropping FOREIGN KEY and UNIQUE constraints on an existing hybrid table is generally available, so the first route is usually simpler."
