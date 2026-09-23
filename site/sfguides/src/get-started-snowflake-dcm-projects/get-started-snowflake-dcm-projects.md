@@ -241,7 +241,7 @@ snow dcm plan --target DCM_DEV --save-output
 On a clean account this reports:
 
 ```text
-17 entities (16 create, 1 alter, 0 drop)
+18 entities (17 create, 1 alter, 0 drop)
 ```
 
 ![Plan results showing the planned changes](assets/plan_results.png)
@@ -254,15 +254,15 @@ Two things in that summary deserve an explanation.
 
 **Why one alter, on a first deploy?** The altered entity is `ROLE DCM_DEVELOPER`, acquiring `OWNERSHIP` on each newly created object. The project-owner role has to exist *before* the project can be created — it is what owns the project — so it is never something DCM creates. A first deploy of any DCM Project therefore shows exactly this one alter. It is not drift, and there is nothing to fix.
 
-**Why 17 entities from 12 `DEFINE` statements?** The arithmetic is worth following, because it shows what DCM is actually tracking:
+**Why 18 entities from 13 `DEFINE` statements?** The arithmetic is worth following, because it shows what DCM is actually tracking:
 
 | Source | Entities |
 |:-------|:---------|
-| `DEFINE` statements in the non-template files: 1 database, 3 schemas, 3 tables, 1 dynamic table, 1 semantic view, 1 warehouse, 1 role, 1 tag | 12 |
+| `DEFINE` statements in the non-template files: 1 database, 3 schemas, 3 tables, 1 dynamic table, 1 semantic view, 1 Streamlit app, 1 warehouse, 1 role, 1 tag | 13 |
 | The `PUBLIC` schema, which DCM plans automatically with every database | 1 |
 | The Jinja macro expanding `DEV_TEAM_1` — 1 schema and 2 roles | 3 |
 | `ROLE DCM_DEVELOPER` gaining ownership | 1 |
-| **Total** | **17** |
+| **Total** | **18** |
 
 An entity is not a line of SQL. It is an object DCM will own and reconcile on every future deploy.
 
@@ -281,7 +281,7 @@ snow dcm deploy --target DCM_DEV --alias initial-deployment
 ```
 
 ```text
-17 (16 created, 1 altered, 0 dropped)
+18 (17 created, 1 altered, 0 dropped)
 ```
 
 The `--alias` is a label on this deployment, the way a commit message labels a commit. It appears in the project's deployment history, so six weeks later you can tell which deploy introduced a change without diffing object definitions.
@@ -527,9 +527,9 @@ assets:
     path: 'streamlit/dashboard/**/*'
 ```
 
-The path is relative to the manifest and must live **outside `sources/`**, which is reserved for definitions, macros and tests. Use `path` for a single glob or `paths` for a list. Only `*` and `**` are supported — no `?`, no brace expansion — and paths cannot contain Jinja. A pattern matching no files fails the run rather than deploying something empty.
+The path is relative to the manifest and must live **outside `sources/`**, which is reserved for definitions, macros and tests. Use `path` for a single entry or `paths` for a list; each one can be a glob, a directory, or a single file. Globs support only `*` and `**` — no `?`, no brace expansion — and paths cannot contain Jinja. A pattern matching no files fails the run rather than deploying something empty.
 
-Then `DEFINE STREAMLIT` refers to the asset by name. It cannot take a folder path directly; the `asset://` URI is the only way in, and that indirection is the whole reason assets exist:
+Then `DEFINE STREAMLIT` refers to the asset by name. While the feature is in public preview the `asset://` URI is the *only* accepted form — it will not take a folder path directly — and that indirection is what assets exist to provide:
 
 ```sql
 DEFINE STREAMLIT DCM_DEMO_1{{env_suffix}}.SERVE.ORDERS_DASHBOARD
