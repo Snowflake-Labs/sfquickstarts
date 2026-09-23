@@ -1,8 +1,8 @@
 {
   "guide_id": "hybrid-tables-application-connectors",
   "title": "Connecting Applications to Hybrid Tables",
-  "version": "1.0.0",
-  "last_updated": "2026-06-16",
+  "version": "1.1.0",
+  "last_updated": "2026-09-23",
   "author": "Adam Timm",
   "minimum_driver_versions": {
     "JDBC": "3.13.31",
@@ -17,13 +17,14 @@
     "Use connection pooling with long-lived connections — eliminates 100-500ms reconnect overhead",
     "Use private key (JWT) authentication for service accounts",
     "Colocate application in same cloud region as Snowflake account",
-    "Keep AUTOCOMMIT = TRUE (default) for OLTP workloads",
+    "Keep AUTOCOMMIT = TRUE (default) for OLTP workloads — also required to call an Inline Stored Procedure, which cannot run inside an open transaction",
     "Never benchmark HT latency via Snowsight — always use application driver"
   ],
   "connector_patterns": {
     "jdbc": {
       "auth": "private_key_file or privateKey property (BouncyCastle)",
       "batch_insert": "prepareStatement + addBatch + executeBatch",
+      "call_inline_procedure": "prepareStatement(\"CALL proc(?, ?)\") + executeQuery(); the result set has one row and one column named after the procedure, read with rs.getString(1)",
       "pool": "HikariCP — set maxLifetime and net.snowflake.jdbc.ttl to same value",
       "ttl_property": "System.setProperty(\"net.snowflake.jdbc.ttl\", \"1800\")",
       "kafka_pattern": "Kafka consumer (batched=true, concurrency=partitions) -> HikariCP pool -> executeBatch -> HT",
@@ -32,6 +33,7 @@
     "python": {
       "auth": "authenticator=SNOWFLAKE_JWT, private_key_file",
       "batch_insert": "cursor.executemany(sql, list_of_tuples) with ? qmark binding",
+      "call_inline_procedure": "cursor.execute(\"CALL proc(?, ?)\", (arg1, arg2)) then cursor.fetchone()[0] for a scalar RETURNS, or fetchall() for RETURNS TABLE",
       "binding_syntax": "? (qmark) — do NOT use f-strings or %s formatting",
       "pool": "SQLAlchemy create_engine with pool_size, pool_pre_ping=True, pool_recycle=1800",
       "recommended_batch_size": "500-1000 rows per executemany call",
@@ -40,6 +42,7 @@
     "nodejs": {
       "auth": "authenticator: SNOWFLAKE_JWT, privateKey: fs.readFileSync(path)",
       "batch_insert": "connection.execute with binds: [[row1...], [row2...]]",
+      "call_inline_procedure": "connection.execute({ sqlText: 'CALL proc(?, ?)', binds: [arg1, arg2] }); the scalar result is rows[0].PROC_NAME, uppercased",
       "binding_syntax": "? or :N positional — never string template literals",
       "pool": "snowflake.createPool with evictionRunIntervalMillis: 60000",
       "pool_warning": "Default evictionRunIntervalMillis=0 disables eviction — always set it"
@@ -47,9 +50,36 @@
     "snowpark": {
       "auth": "authenticator: SNOWFLAKE_JWT, private_key_file",
       "recommended": "session.sql('INSERT ... VALUES (?, ...)').bind([...]).collect()",
+      "call_inline_procedure": "session.sql('CALL proc(?, ?)').bind([arg1, arg2]).collect()",
       "not_recommended": "df.write.save_as_table() — not documented for HT",
       "bulk_pattern": "session.sql('INSERT INTO ht SELECT ... FROM staging WHERE batch_id = ?').bind([id])"
     }
+  },
+  "inline_stored_procedures": {
+    "status": "Public Preview",
+    "purpose": "Execute a multi-statement unit of work atomically against hybrid tables with less per-statement overhead than a standard stored procedure.",
+    "mechanism": "The body is compiled as a single unit and pushed down to the query processing layer, avoiding the per-statement round trips of a standard stored procedure.",
+    "syntax": "CREATE OR REPLACE INLINE PROCEDURE name(arg TYPE) RETURNS TYPE LANGUAGE SQL AS $$ BEGIN ATOMIC ... END $$;",
+    "call": "CALL is an ordinary SQL statement, so every driver invokes it with its normal bind syntax. No driver-specific API and no minimum driver version beyond the versions already required for hybrid tables.",
+    "argument_reference": "Reference arguments inside the body with a colon prefix, for example :p_order_id.",
+    "hybrid_tables_only": true,
+    "autocommit_required": "Cannot be invoked from inside an open transaction; must be called with autocommit enabled. Commit or roll back before calling.",
+    "compiled_at_call_time": "Compilation happens at CALL time, not CREATE time, so CREATE can succeed while the first CALL fails on an unsupported construct. Call each new procedure once in a test environment.",
+    "returns": {
+      "scalar": "RETURNS <type> yields a single-row, single-column result set whose column is named after the procedure.",
+      "table": "RETURNS TABLE(...) yields a normal result set; declared column types must match the query's types exactly."
+    },
+    "error_propagation": "An unhandled failure inside the body propagates to the driver as a normal statement error and rolls back every earlier change in the same call. The code is the failing statement's own code, not a single procedure-level code: duplicate primary key surfaces as 200001, division by zero as 100051, a NOT NULL violation as 391467. Match on the driver's exception type rather than one code.",
+    "exception_handler_tradeoff": "An EXCEPTION handler inside the procedure returns a controlled value instead of rolling back, which commits statements that already succeeded in that call and can leave partial state. Omit the handler and handle the error in application code when all-or-nothing behavior is required.",
+    "supported_statements": ["SELECT", "INSERT", "UPDATE", "DELETE", "MERGE"],
+    "key_constraints": [
+      "No dynamic context functions: CURRENT_TIMESTAMP, CURRENT_TIME, CURRENT_DATE, SYSDATE, SYSTIMESTAMP, GETDATE, LOCALTIME, LOCALTIMESTAMP (error 090277). Compute the value in the caller and pass it as an argument.",
+      "No DDL, no dynamic SQL (EXECUTE IMMEDIATE), no nested stored procedure calls, no nested atomic blocks",
+      "No explicit BEGIN, COMMIT, or ROLLBACK inside the body",
+      "Owner's rights only; no session variables; at most one database referenced per body",
+      "Not a bulk-loading path; use batch inserts or COPY INTO for ingest"
+    ],
+    "when_not_to_use": "A single-statement write is faster as direct DML with bound variables; wrapping one statement adds no benefit."
   },
   "anti_patterns": [
     {"id": "AP1", "name": "String literals in queries", "impact": "Disables plan cache, 10-100ms extra compilation per query"},
@@ -57,6 +87,9 @@
     {"id": "AP3", "name": "Reconnecting per request", "impact": "100-500ms connection setup overhead per query"},
     {"id": "AP4", "name": "Oversized connection pool", "impact": "Warehouse queuing; match pool size to warehouse concurrency"},
     {"id": "AP5", "name": "Benchmarking via Snowsight", "impact": "5-20x higher latency than driver; not representative"},
-    {"id": "AP6", "name": "Inconsistent schema qualification", "impact": "Splits plan cache into multiple entries; reduces hit rate"}
+    {"id": "AP6", "name": "Inconsistent schema qualification", "impact": "Splits plan cache into multiple entries; reduces hit rate"},
+    {"id": "AP7", "name": "Calling an Inline Stored Procedure with autocommit disabled", "impact": "The call fails; Inline Stored Procedures cannot run inside an open transaction"},
+    {"id": "AP8", "name": "Adding an EXCEPTION handler to a multi-statement Inline Stored Procedure that needs atomicity", "impact": "Handling the error commits statements that already succeeded, leaving partial state instead of rolling back"},
+    {"id": "AP9", "name": "Calling CURRENT_TIMESTAMP inside an Inline Stored Procedure body", "impact": "Fails at CALL time with error 090277; pass the value as an argument instead"}
   ]
 }

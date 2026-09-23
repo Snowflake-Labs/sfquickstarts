@@ -2,18 +2,18 @@ author: Adam Timm
 id: hybrid-tables-application-connectors
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/hybrid-tables
 language: en
-summary: Learn how to connect applications to Snowflake Hybrid Tables using JDBC, Python, Node.js, and Snowpark with bound variables, connection pooling, and Kafka ingest patterns.
+summary: Learn how to connect applications to Snowflake Hybrid Tables using JDBC, Python, Node.js, and Snowpark with bound variables, connection pooling, Inline Stored Procedures, and Kafka ingest patterns.
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 <!--
-keywords: hybrid table, JDBC, Python connector, Node.js, Snowpark, Spring Boot, Kafka, connection pool, HikariCP, bound variables, prepared statements, private key auth, batch insert, executemany, OLTP, application development
-related_concepts: plan cache, query compilation, bound parameters, autocommit, connection pooling, private key JWT auth, Kafka consumer, micro-batch, executeBatch
+keywords: hybrid table, JDBC, Python connector, Node.js, Snowpark, Spring Boot, Kafka, connection pool, HikariCP, bound variables, prepared statements, private key auth, batch insert, executemany, inline stored procedures, CALL, atomic block, OLTP, application development
+related_concepts: plan cache, query compilation, bound parameters, autocommit, connection pooling, private key JWT auth, Kafka consumer, micro-batch, executeBatch, inline stored procedures, atomic execution, exception handling
 prerequisite_guides: getting-started-with-hybrid-tables, hybrid-tables-secondary-index-design
 skill_level: intermediate
 estimated_time_minutes: 45
-snowflake_features: hybrid_tables, jdbc_driver, python_connector, nodejs_driver, snowpark
+snowflake_features: hybrid_tables, jdbc_driver, python_connector, nodejs_driver, snowpark, inline_stored_procedures
 -->
 
 # Connecting Applications to Hybrid Tables
@@ -31,6 +31,8 @@ This quickstart covers the four primary connector patterns for Hybrid Table work
 - **Node.js** — array binding and connection pools
 - **Snowpark** — when to use `session.sql()` vs the DataFrame API
 
+It also covers calling **Inline Stored Procedures** from each driver, for multi-statement units of work that must be atomic.
+
 ### Why Connector Choice and Configuration Matter
 
 The single most impactful configuration decision for Hybrid Table performance is whether you use **bound variables (parameterized queries)**. When you use bound variables, Snowflake compiles the query plan once and reuses it across all executions with different parameter values. When you use string literals, Snowflake compiles a new plan for every query — adding 10-100ms of compilation overhead to every request.
@@ -44,6 +46,7 @@ For a Hybrid Table workload executing 1,000 queries per second, this difference 
 - How to set up connection pools correctly (and avoid stale connection errors)
 - How to use bound variables for plan cache reuse in each driver
 - How to batch insert rows efficiently without row-by-row overhead
+- How to call an Inline Stored Procedure with bound parameters, read its result, and handle its errors
 - The Kafka → Spring Boot → Hybrid Table ingest pattern
 - Anti-patterns to avoid: string literals, oversized pools, single-row loops
 
@@ -124,7 +127,9 @@ Key rules:
 
 ### Keep AUTOCOMMIT Enabled
 
-`AUTOCOMMIT = TRUE` (the default) is the correct setting for Hybrid Table OLTP workloads. Each DML statement is its own atomic transaction. Explicit stored procedure wrappers add overhead. Use explicit `BEGIN`/`COMMIT` only when you need multi-statement atomicity.
+`AUTOCOMMIT = TRUE` (the default) is the correct setting for Hybrid Table OLTP workloads. Each DML statement is its own atomic transaction. Standard stored procedure wrappers add overhead. Use explicit `BEGIN`/`COMMIT` only when you need multi-statement atomicity, or an Inline Stored Procedure for a multi-statement unit of work against Hybrid Tables (see Step 6).
+
+> **Note:** Inline Stored Procedures cannot be invoked from inside an open transaction — they must be called with autocommit enabled. If you plan to call them, keeping `AUTOCOMMIT = TRUE` is a requirement rather than only a recommendation.
 
 ### Colocate Application and Snowflake
 
@@ -520,7 +525,177 @@ df.write.mode("append").save_as_table("orders")  # may not honor HT constraints
 ```
 
 <!-- ------------------------ -->
-## Step 6: Anti-Patterns
+## Step 6: Inline Stored Procedures
+
+Inline Stored Procedures are a stored procedure type built for operational workloads on Hybrid Tables. The entire body is compiled as one unit and pushed to the query processing layer, which avoids the per-statement overhead a standard stored procedure pays. Reach for one when several DML statements against Hybrid Tables have to succeed or fail together.
+
+> **Note:** Inline Stored Procedures are in Public Preview and operate exclusively on Hybrid Tables. Statements that reference standard Snowflake tables, Iceberg tables, or other table types are not supported inside the body.
+
+### Create the Procedure
+
+This procedure updates an order and writes an audit record as one atomic unit. It uses the `orders` table from Setup plus a small audit table:
+
+```sql
+CREATE OR REPLACE HYBRID TABLE order_audit (
+    audit_id    NUMBER        NOT NULL,
+    order_id    NUMBER        NOT NULL,
+    old_status  VARCHAR(20)   NOT NULL,
+    new_status  VARCHAR(20)   NOT NULL,
+    changed_at  TIMESTAMP_NTZ NOT NULL,
+    PRIMARY KEY (audit_id)
+);
+
+CREATE OR REPLACE INLINE PROCEDURE update_order_status(
+  p_order_id   NUMBER,
+  p_new_status VARCHAR,
+  p_audit_id   NUMBER,
+  p_changed_at TIMESTAMP_NTZ
+)
+RETURNS VARCHAR
+LANGUAGE SQL
+AS
+$$
+DECLARE
+  v_old_status VARCHAR;
+BEGIN ATOMIC
+  SELECT status INTO :v_old_status
+    FROM orders
+    WHERE order_id = :p_order_id;
+
+  UPDATE orders
+    SET status = :p_new_status
+    WHERE order_id = :p_order_id;
+
+  INSERT INTO order_audit (audit_id, order_id, old_status, new_status, changed_at)
+    VALUES (:p_audit_id, :p_order_id, :v_old_status, :p_new_status, :p_changed_at);
+
+  RETURN 'Updated order ' || :p_order_id
+         || ' from ' || :v_old_status
+         || ' to ' || :p_new_status;
+END;
+$$;
+```
+
+Two details in that definition matter for your application code:
+
+- **`p_changed_at` is an argument rather than a call to `CURRENT_TIMESTAMP()`.** Dynamic context functions — `CURRENT_TIMESTAMP`, `CURRENT_TIME`, `CURRENT_DATE`, `SYSDATE`, `SYSTIMESTAMP`, `GETDATE`, `LOCALTIME`, and `LOCALTIMESTAMP` — are not supported inside an Inline Stored Procedure, and calling one fails with error `090277`. Compute the value in your application and bind it, as the driver examples below do. The direct INSERT examples earlier in this guide call `CURRENT_TIMESTAMP()` inline, which is correct for direct DML but does not carry over into a procedure body.
+- **Arguments are referenced with a colon prefix**, as in `:p_order_id`, inside the body.
+
+> **Important:** Inline Stored Procedures are compiled at CALL time, not at CREATE time. A `CREATE` statement can succeed and the first `CALL` still fail on an unsupported construct. Call each new procedure once in a test environment before you deploy it.
+
+### Call the Procedure with Bound Variables
+
+`CALL` is an ordinary SQL statement, so no driver needs a special API for it. Each connector binds arguments the same way it does for any other parameterized statement, which lets Snowflake reuse the compiled plan across invocations.
+
+#### Python
+
+```python
+cursor = conn.cursor()
+cursor.execute(
+    "CALL update_order_status(?, ?, ?, ?)",
+    (1001, 'SHIPPED', 9001, '2026-09-23 11:00:00')
+)
+print(cursor.fetchone()[0])     # Updated order 1001 from PENDING to SHIPPED
+```
+
+#### JDBC
+
+A `CALL` returns a single-row result set whose column is named after the procedure:
+
+```java
+String sql = "CALL update_order_status(?, ?, ?, ?)";
+
+try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+    stmt.setLong(1, order.getOrderId());
+    stmt.setString(2, "SHIPPED");
+    stmt.setLong(3, auditId);
+    stmt.setTimestamp(4, Timestamp.from(order.getChangedAt()));
+
+    try (ResultSet rs = stmt.executeQuery()) {
+        if (rs.next()) {
+            String result = rs.getString(1);
+        }
+    }
+}
+```
+
+#### Node.js
+
+```javascript
+connection.execute({
+  sqlText: 'CALL update_order_status(?, ?, ?, ?)',
+  binds: [1001, 'SHIPPED', 9001, '2026-09-23 11:00:00'],
+  complete: (err, stmt, rows) => {
+    if (err) return console.error('Call failed:', err.message);
+    console.log(rows[0].UPDATE_ORDER_STATUS);
+  }
+});
+```
+
+#### Snowpark
+
+```python
+session.sql(
+    "CALL update_order_status(?, ?, ?, ?)"
+).bind([1001, 'SHIPPED', 9001, '2026-09-23 11:00:00']).collect()
+```
+
+> **Important:** Inline Stored Procedures must be called with autocommit enabled and cannot run inside an open transaction. `AUTOCOMMIT = TRUE` is already the recommended setting for Hybrid Table workloads (see Step 1), so most applications need no change. If your framework or connection pool disables autocommit, commit or roll back the open transaction before calling.
+
+### Returning a Result Set
+
+Declare `RETURNS TABLE` to return rows rather than a scalar. Your driver then reads the result exactly as it reads a `SELECT`:
+
+```sql
+CREATE OR REPLACE INLINE PROCEDURE get_order(p_order_id NUMBER)
+RETURNS TABLE(
+  order_id    NUMBER,
+  customer_id NUMBER,
+  status      VARCHAR(20),
+  region      VARCHAR(10),
+  amount      NUMBER(12,2)
+)
+LANGUAGE SQL
+AS
+$$
+BEGIN ATOMIC
+  LET res RESULTSET := (
+    SELECT order_id, customer_id, status, region, amount
+      FROM orders
+      WHERE order_id = :p_order_id
+  );
+  RETURN TABLE(res);
+END;
+$$;
+```
+
+The column types you declare must match the types the query returns exactly.
+
+### Error Handling and Atomicity
+
+When a statement inside the body fails and nothing handles the error, the failure propagates to your driver as a normal statement error and every change made earlier in the same call is rolled back. The error code is the failing statement's own code rather than a single procedure-level code: a duplicate primary key surfaces as `200001`, a division by zero as `100051`. Handle the exception type your driver raises instead of matching one specific code.
+
+```python
+try:
+    cursor.execute(
+        "CALL update_order_status(?, ?, ?, ?)",
+        (1001, 'RETURNED', 9001, '2026-09-23 12:00:00')
+    )
+except snowflake.connector.errors.ProgrammingError as e:
+    # Neither the UPDATE nor the audit INSERT took effect.
+    log.warning("update_order_status failed: %s", e)
+```
+
+An `EXCEPTION` handler placed inside the procedure behaves differently, and the difference is easy to overlook:
+
+> **Important:** An `EXCEPTION` handler trades atomicity for a controlled return value. When the handler catches an error, statements that already succeeded earlier in the same call are committed instead of rolled back. A procedure that updates a row and then fails to write its audit record leaves the update in place. Use a handler only where partial completion is acceptable; when you need all-or-nothing behavior, let the error reach the caller and handle it there.
+
+### When Not to Use One
+
+A single-statement write is still fastest as direct DML with bound variables, so wrapping one INSERT or UPDATE gains nothing. Inline Stored Procedures also support only `SELECT`, `INSERT`, `UPDATE`, `DELETE`, and `MERGE`, which means they are not a bulk-loading path — keep using batch inserts and the Kafka pattern from Step 2 for ingest.
+
+<!-- ------------------------ -->
+## Step 7: Anti-Patterns
 
 These patterns look correct but silently degrade performance or correctness on Hybrid Tables.
 
@@ -590,11 +765,16 @@ Use these prompts in [Cortex Code](https://docs.snowflake.com/en/user-guide/cort
 
 > "Set up a Kafka Sink connector for my Hybrid Table. My HT schema is: [paste DDL]. My Kafka topic payload is: [paste schema]. Generate the connector config with appropriate batch size and error handling."
 
+> "Convert this multi-statement transaction against my Hybrid Tables into an Inline Stored Procedure, and show me the parameterized CALL from [Python / Java / Node.js]: [paste code]. Flag anything in it that Inline Stored Procedures don't support."
+
 <!-- ------------------------ -->
 ## Cleanup
 
 ```sql
 DROP TABLE IF EXISTS orders;
+DROP TABLE IF EXISTS order_audit;
+DROP PROCEDURE IF EXISTS update_order_status(NUMBER, VARCHAR, NUMBER, TIMESTAMP_NTZ);
+DROP PROCEDURE IF EXISTS get_order(NUMBER);
 ```
 
 <!-- ------------------------ -->
@@ -606,6 +786,7 @@ You can now connect applications to Hybrid Tables correctly across all major Sno
 - **Pool connections, don't reconnect** — connection setup overhead dominates for OLTP
 - **Private key auth for service accounts** — no passwords, no rotation, no MFA prompts
 - **Batch inserts** — send rows in batches of 500-1,000, not one at a time
+- **Inline Stored Procedures** — for multi-statement units that must be atomic; call them with bound variables and autocommit enabled
 - **Kafka ingest** — Kafka → Spring Boot (batched, concurrent) → HT replaces complex multi-hop pipelines
 - **Never benchmark via Snowsight** — always measure with your application driver
 
@@ -615,6 +796,7 @@ You can now connect applications to Hybrid Tables correctly across all major Sno
 
 - [Hybrid Tables Best Practices](https://docs.snowflake.com/en/user-guide/tables-hybrid-best-practices)
 - [Performance Testing for Hybrid Tables](https://docs.snowflake.com/en/user-guide/tables-hybrid-test)
+- [Inline Stored Procedures for Hybrid Tables](https://docs.snowflake.com/en/user-guide/hybrid-tables-inline-stored-procedures)
 - [JDBC Driver Documentation](https://docs.snowflake.com/en/developer-guide/jdbc/jdbc)
 - [Python Connector Documentation](https://docs.snowflake.com/en/developer-guide/python-connector/python-connector)
 - [Node.js Driver Documentation](https://docs.snowflake.com/en/developer-guide/node-js/nodejs-driver)
@@ -642,7 +824,15 @@ Match pool size to your warehouse's concurrent thread capacity. An XSMALL wareho
 
 **Q: Do I need to change anything for `AUTOCOMMIT`?**
 
-No — the default `AUTOCOMMIT = TRUE` is correct for Hybrid Table OLTP workloads. Do not disable it. If you need multi-statement atomicity, use explicit `BEGIN`/`COMMIT` in a single multi-statement transaction rather than stored procedures.
+No — the default `AUTOCOMMIT = TRUE` is correct for Hybrid Table OLTP workloads. Do not disable it. If you need multi-statement atomicity, use explicit `BEGIN`/`COMMIT` in a single multi-statement transaction, or an Inline Stored Procedure, rather than a standard stored procedure. Note that an Inline Stored Procedure cannot be called from inside an open transaction, so autocommit must stay enabled to use one.
+
+**Q: When should I use an Inline Stored Procedure instead of `BEGIN`/`COMMIT`?**
+
+Use one when a unit of work runs several DML statements against Hybrid Tables and they must all succeed or all fail. The body is compiled and dispatched as a single unit, so it avoids the per-statement round trips that a multi-statement transaction or a standard stored procedure pays, and the advantage grows with the number of statements. For a single-statement write, direct DML with bound variables is still the fastest option. See Step 6.
+
+**Q: My Inline Stored Procedure returned an error string instead of failing. Why did part of the work still commit?**
+
+An `EXCEPTION` handler inside the procedure catches the error and returns a value instead of rolling back, so statements that already succeeded in that call are committed. If you need all-or-nothing behavior, remove the handler and let the error propagate to your driver, then handle it in application code.
 
 **Q: Can I use an ORM (Hibernate, SQLAlchemy, ActiveRecord) with Hybrid Tables?**
 
@@ -651,3 +841,5 @@ Yes, with caveats. ORMs that generate literal SQL (embedding values directly int
 **Q: What happens if a Kafka batch partially fails due to a duplicate primary key?**
 
 `executeBatch` in JDBC reports per-row results in the returned `int[]` array. Rows that fail due to duplicate PK violations will return `Statement.EXECUTE_FAILED` (-3). Implement a retry or dead-letter queue for failed rows. A future pattern covers error handling and dead-letter queue design in detail.
+
+This is per-row behavior for a batch insert, and differs from an Inline Stored Procedure: an unhandled failure there rolls back the entire call rather than reporting per-row status. See Step 6.
