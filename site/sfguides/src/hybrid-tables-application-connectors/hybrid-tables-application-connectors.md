@@ -493,8 +493,9 @@ session = Session.builder.configs({
 ```python
 session.sql(
     "INSERT INTO orders (order_id, customer_id, status, region, amount, created_at) "
-    "VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP()::TIMESTAMP_NTZ)"
-).bind([1001, 5042, 'PENDING', 'US-EAST', 149.99]).collect()
+    "VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP()::TIMESTAMP_NTZ)",
+    params=[1001, 5042, 'PENDING', 'US-EAST', 149.99]
+).collect()
 ```
 
 ### Bulk INSERT from a Staging Table
@@ -508,8 +509,9 @@ session.sql(
     "INSERT INTO orders (order_id, customer_id, status, region, amount, created_at) "
     "SELECT order_id, customer_id, status, region, amount, created_at "
     "FROM staging_orders "
-    "WHERE batch_id = ?"
-).bind([batch_id]).collect()
+    "WHERE batch_id = ?",
+    params=[batch_id]
+).collect()
 ```
 
 ### Why Not `save_as_table()` for HT?
@@ -518,7 +520,7 @@ The Snowpark DataFrame write API (`df.write.save_as_table()`, `df.write.mode()`)
 
 ```python
 # Correct for HT
-session.sql("INSERT INTO orders ... VALUES (?, ?, ...)").bind([...]).collect()
+session.sql("INSERT INTO orders ... VALUES (?, ?, ...)", params=[...]).collect()
 
 # Not recommended for HT
 df.write.mode("append").save_as_table("orders")  # may not honor HT constraints
@@ -583,9 +585,21 @@ Two details in that definition matter for your application code:
 
 > **Important:** Inline Stored Procedures are compiled at CALL time, not at CREATE time. A `CREATE` statement can succeed and the first `CALL` still fail on an unsupported construct. Call each new procedure once in a test environment before you deploy it.
 
+This procedure is deliberately minimal so the call pattern stays readable. Before adapting it, note three things it does not do:
+
+- **It does not verify the order exists.** `UPDATE ... WHERE order_id = :p_order_id` succeeds when it matches zero rows, and `SQLROWCOUNT` is not available inside an Inline Stored Procedure, so the body cannot check how many rows it changed. As written, a call with an unknown `order_id` can still write an audit row describing a change that never happened. Add an explicit `SELECT COUNT(*) INTO` guard against `orders` if that matters to you.
+- **It is not a compare-and-swap.** All statements in the block share one read timestamp, so the `SELECT` is a snapshot read, not a version check. Two concurrent callers can both read `PENDING` and both write. Add the expected value to the predicate — `WHERE order_id = :p_order_id AND status = :p_expected_status` — if you need optimistic concurrency.
+- **It is only as idempotent as `p_audit_id`.** Because `audit_id` is the audit table's primary key and the caller supplies it, reusing the same value on a retry makes the retry fail rather than double-write. That makes it a usable idempotency key, but only if your application reuses it deliberately on retry instead of generating a fresh one.
+
+Inline Stored Procedures also run with **owner's rights** only; caller's rights execution is not supported, so the procedure's owner needs the privileges on the underlying tables.
+
+> **Note:** This section covers the constraints most likely to affect application code. It is not the complete list — see [Inline Stored Procedures for Hybrid Tables](https://docs.snowflake.com/en/user-guide/hybrid-tables-inline-stored-procedures) for the full set, including restrictions on table functions, `OUT` arguments, `CONTINUE` handlers, session variables, and referencing more than one database.
+
 ### Call the Procedure with Bound Variables
 
-`CALL` is an ordinary SQL statement, so no driver needs a special API for it. Each connector binds arguments the same way it does for any other parameterized statement, which lets Snowflake reuse the compiled plan across invocations.
+`CALL` is an ordinary SQL statement, so no driver needs a special API for it. Each connector binds arguments the same way it does for any other parameterized statement, using the same bind APIs already shown for each driver earlier in this guide.
+
+> **Note:** The Python example below was executed against a Hybrid Table. The JDBC, Node.js, and Snowpark examples translate the same bind pattern into each driver's own API — run them against your own account before relying on them in production.
 
 #### Python
 
@@ -606,18 +620,20 @@ A `CALL` returns a single-row result set whose column is named after the procedu
 String sql = "CALL update_order_status(?, ?, ?, ?)";
 
 try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-    stmt.setLong(1, order.getOrderId());
+    stmt.setLong(1, 1001L);
     stmt.setString(2, "SHIPPED");
-    stmt.setLong(3, auditId);
-    stmt.setTimestamp(4, Timestamp.from(order.getChangedAt()));
+    stmt.setLong(3, 9001L);
+    stmt.setTimestamp(4, Timestamp.valueOf("2026-09-23 11:00:00"));
 
     try (ResultSet rs = stmt.executeQuery()) {
         if (rs.next()) {
-            String result = rs.getString(1);
+            System.out.println(rs.getString(1));
         }
     }
 }
 ```
+
+> **Note:** `Timestamp.valueOf` produces a wall-clock value, which matches the `TIMESTAMP_NTZ` column used here. If you build the value from an `Instant` instead, convert it to the intended local time first so the stored value is not shifted.
 
 #### Node.js
 
@@ -636,8 +652,9 @@ connection.execute({
 
 ```python
 session.sql(
-    "CALL update_order_status(?, ?, ?, ?)"
-).bind([1001, 'SHIPPED', 9001, '2026-09-23 11:00:00']).collect()
+    "CALL update_order_status(?, ?, ?, ?)",
+    params=[1001, 'SHIPPED', 9001, '2026-09-23 11:00:00']
+).collect()
 ```
 
 > **Important:** Inline Stored Procedures must be called with autocommit enabled and cannot run inside an open transaction. `AUTOCOMMIT = TRUE` is already the recommended setting for Hybrid Table workloads (see Step 1), so most applications need no change. If your framework or connection pool disables autocommit, commit or roll back the open transaction before calling.
@@ -673,26 +690,36 @@ The column types you declare must match the types the query returns exactly.
 
 ### Error Handling and Atomicity
 
-When a statement inside the body fails and nothing handles the error, the failure propagates to your driver as a normal statement error and every change made earlier in the same call is rolled back. The error code is the failing statement's own code rather than a single procedure-level code: a duplicate primary key surfaces as `200001`, a division by zero as `100051`. Handle the exception type your driver raises instead of matching one specific code.
+When a statement inside the body fails and nothing handles the error, the failure propagates to your driver as a normal statement error and every change made earlier in the same call is rolled back. The error code is the failing statement's own code rather than a single procedure-level code: in testing, a duplicate primary key surfaced as `200001` and a division by zero as `100051`. Treat those as illustrative and catch your driver's exception type rather than matching one specific code.
 
 ```python
+import logging
+
 try:
     cursor.execute(
         "CALL update_order_status(?, ?, ?, ?)",
         (1001, 'RETURNED', 9001, '2026-09-23 12:00:00')
     )
 except snowflake.connector.errors.ProgrammingError as e:
-    # Neither the UPDATE nor the audit INSERT took effect.
-    log.warning("update_order_status failed: %s", e)
+    # The server rejected the call, so neither the UPDATE nor the audit INSERT
+    # took effect. Re-raise or route to your retry logic - do not swallow it.
+    logging.warning("update_order_status failed: %s", e)
+    raise
 ```
+
+> **Note:** A client-side timeout is not the same as a server-side failure. If the connection drops after the server committed, your application sees an error for a call that actually succeeded, so catch connection and timeout errors separately and re-check state before retrying rather than assuming a rollback.
 
 An `EXCEPTION` handler placed inside the procedure behaves differently, and the difference is easy to overlook:
 
-> **Important:** An `EXCEPTION` handler trades atomicity for a controlled return value. When the handler catches an error, statements that already succeeded earlier in the same call are committed instead of rolled back. A procedure that updates a row and then fails to write its audit record leaves the update in place. Use a handler only where partial completion is acceptable; when you need all-or-nothing behavior, let the error reach the caller and handle it there.
+> **Important:** A handler that returns makes the `CALL` succeed. Because the call completed normally, statements that already ran in that call are committed rather than rolled back — you have not caught and rolled back, you have converted a failure into a commit of whatever finished first. A procedure that updates a row and then fails to write its audit record leaves the update in place and still returns a value. **A returned error string is therefore not a rollback signal.** Use a handler only where partial completion is acceptable; when you need all-or-nothing behavior, leave the error unhandled so it reaches the caller.
+
+> **Note:** Handlers only run for errors raised after compilation succeeds. Because the body is compiled at CALL time, statically detectable problems — an unknown column, a return-type mismatch, or an unsupported construct such as `CURRENT_TIMESTAMP` — are reported before any statement executes and cannot be caught by an `EXCEPTION` handler.
 
 ### When Not to Use One
 
-A single-statement write is still fastest as direct DML with bound variables, so wrapping one INSERT or UPDATE gains nothing. Inline Stored Procedures also support only `SELECT`, `INSERT`, `UPDATE`, `DELETE`, and `MERGE`, which means they are not a bulk-loading path — keep using batch inserts and the Kafka pattern from Step 2 for ingest.
+For a plain single-statement write issued directly by your application, direct DML with bound variables is the simpler path and avoids the procedure entirely. Wrapping a single statement is still worthwhile when you want the abstraction or the access-control boundary a procedure gives you — Snowflake documents that case, because an Inline Stored Procedure executes the body as one unit and so avoids the per-statement overhead a standard stored procedure would add.
+
+Inline Stored Procedures support only `SELECT`, `INSERT`, `UPDATE`, `DELETE`, and `MERGE`, which means they are not a bulk-loading path — keep using batch inserts and the Kafka pattern from Step 2 for ingest.
 
 <!-- ------------------------ -->
 ## Step 7: Anti-Patterns
@@ -771,10 +798,10 @@ Use these prompts in [Cortex Code](https://docs.snowflake.com/en/user-guide/cort
 ## Cleanup
 
 ```sql
-DROP TABLE IF EXISTS orders;
-DROP TABLE IF EXISTS order_audit;
 DROP PROCEDURE IF EXISTS update_order_status(NUMBER, VARCHAR, NUMBER, TIMESTAMP_NTZ);
 DROP PROCEDURE IF EXISTS get_order(NUMBER);
+DROP TABLE IF EXISTS order_audit;
+DROP TABLE IF EXISTS orders;
 ```
 
 <!-- ------------------------ -->
@@ -828,11 +855,11 @@ No — the default `AUTOCOMMIT = TRUE` is correct for Hybrid Table OLTP workload
 
 **Q: When should I use an Inline Stored Procedure instead of `BEGIN`/`COMMIT`?**
 
-Use one when a unit of work runs several DML statements against Hybrid Tables and they must all succeed or all fail. The body is compiled and dispatched as a single unit, so it avoids the per-statement round trips that a multi-statement transaction or a standard stored procedure pays, and the advantage grows with the number of statements. For a single-statement write, direct DML with bound variables is still the fastest option. See Step 6.
+Use one when a unit of work runs several DML statements against Hybrid Tables and they must all succeed or all fail. The body is compiled and dispatched as a single unit, which avoids the per-statement round trips a standard stored procedure pays. For a plain single-statement write, direct DML with bound variables is simpler. Benchmark your own workload rather than assuming a margin. See Step 6.
 
 **Q: My Inline Stored Procedure returned an error string instead of failing. Why did part of the work still commit?**
 
-An `EXCEPTION` handler inside the procedure catches the error and returns a value instead of rolling back, so statements that already succeeded in that call are committed. If you need all-or-nothing behavior, remove the handler and let the error propagate to your driver, then handle it in application code.
+An `EXCEPTION` handler inside the procedure catches the error and returns a value, which makes the `CALL` succeed — so statements that already ran in that call are committed rather than rolled back. A returned error string is not a rollback signal. If you need all-or-nothing behavior, remove the handler and let the error propagate to your driver, then handle it in application code.
 
 **Q: Can I use an ORM (Hibernate, SQLAlchemy, ActiveRecord) with Hybrid Tables?**
 
