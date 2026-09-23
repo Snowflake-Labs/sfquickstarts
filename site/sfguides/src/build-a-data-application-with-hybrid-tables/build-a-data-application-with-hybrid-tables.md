@@ -104,7 +104,11 @@ CREATE OR REPLACE HYBRID TABLE "TASK" (
 	primary key (id) rely,
     foreign key (owner_id) references "USER"(id),
     index idx001_owner_id(owner_id),
-    index idx002_complete(complete)
+    index idx002_complete(complete),
+    CONSTRAINT chk_completed_has_date
+      CHECK (complete = FALSE OR date_completed IS NOT NULL),
+    CONSTRAINT chk_completed_after_created
+      CHECK (date_completed IS NULL OR date_completed >= date_created)
 );
 
 CREATE OR REPLACE HYBRID TABLE TASK_LABEL (
@@ -815,7 +819,11 @@ CREATE OR REPLACE HYBRID TABLE "TASK" (
 	  primary key (id) rely,
     foreign key (owner_id) references "USER"(id),
     index idx001_owner_id(owner_id),
-    index idx002_complete(complete)
+    index idx002_complete(complete),
+    CONSTRAINT chk_completed_has_date
+      CHECK (complete = FALSE OR date_completed IS NOT NULL),
+    CONSTRAINT chk_completed_after_created
+      CHECK (date_completed IS NULL OR date_completed >= date_created)
 );
 ```
 
@@ -835,7 +843,7 @@ In the code in `Controller.py` we see how the value from `TASK_ID_SEQ.nextval` i
         task_id = self.session.sql(f"SELECT HYBRID_TASK_APP_DB.DATA.TASK_ID_SEQ.nextval id").collect()[0].ID
         self.session.sql(f"INSERT INTO HYBRID_TASK_APP_DB.DATA.TASK (ID, ITEM, DATE_DUE, OWNER_ID) VALUES (?, ?, ?, ?);", params=[task_id, item, ("TIMESTAMP_NTZ", date_due), user_id]).collect()
         for label in updated_labels:
-            self.session.sql(f"INSERT INTO HYBRID_TASK_APP_DB.DATA.TASK_LABEL (TASK_ID, LABEL) VALUES (?, LOWER(?));", params=[id, label]).collect()            
+            self.session.sql(f"INSERT INTO HYBRID_TASK_APP_DB.DATA.TASK_LABEL (TASK_ID, LABEL) VALUES (?, LOWER(?));", params=[task_id, label]).collect()            
         self.session.sql(f"COMMIT;").collect()
         return task_id
 ```
@@ -857,6 +865,160 @@ SELECT * FROM TASK ORDER BY date_created DESC LIMIT 1;
 SELECT task_id, LISTAGG(label, ',') as labels FROM TASK_LABEL 
 WHERE task_id IN (SELECT id FROM TASK ORDER BY date_created DESC LIMIT 1) GROUP BY ALL;
 ```
+
+#### Collapsing a multi-table write into an Inline Procedure
+
+Both of the write paths above send one statement per label. That is the right design when you do not know in advance how many labels the user changed, but every statement is a separate round trip between the application and Snowflake.
+
+An [Inline Stored Procedure](https://docs.snowflake.com/en/developer-guide/stored-procedure/inline-stored-procedures) can collapse a multi-table write into a single call. Its body is compiled as one unit and runs as one atomic transaction, so `BEGIN TRANSACTION` and `COMMIT` are neither needed nor allowed.
+
+There is an important limit. An Inline Procedure cannot iterate: it has no loops, no dynamic SQL, and it cannot expand an array with a table function. Passing the labels as an `ARRAY` and flattening it inside the body fails:
+
+```sql
+-- This does NOT work inside an Inline Procedure
+INSERT INTO TASK_LABEL (task_id, label)
+SELECT :p_task_id, f.value::VARCHAR FROM TABLE(FLATTEN(input => :p_labels)) f;
+-- 392116 (0A000): 'Accessing non hybrid table' is not supported in Inline Stored Procedure.
+```
+
+So do not try to move the variable-length label loop into one. What you can do is define a *bounded* procedure that handles a fixed number of label slots:
+
+```sql
+CREATE OR REPLACE INLINE PROCEDURE update_task_bounded(
+    p_task_id       NUMBER,
+    p_item          VARCHAR,
+    p_date_due      TIMESTAMP,
+    p_modified_at   TIMESTAMP,
+    p_add_label_1   VARCHAR,
+    p_add_label_2   VARCHAR,
+    p_remove_label  VARCHAR
+)
+RETURNS VARCHAR
+LANGUAGE SQL
+AS
+$$
+BEGIN ATOMIC
+    UPDATE "TASK"
+       SET item = :p_item,
+           date_due = :p_date_due,
+           date_modified = :p_modified_at
+     WHERE id = :p_task_id;
+
+    INSERT INTO TASK_LABEL (task_id, label) VALUES (:p_task_id, :p_add_label_1);
+    INSERT INTO TASK_LABEL (task_id, label) VALUES (:p_task_id, :p_add_label_2);
+
+    DELETE FROM TASK_LABEL
+     WHERE task_id = :p_task_id AND label = :p_remove_label;
+
+    RETURN 'task ' || :p_task_id || ' updated';
+END;
+$$;
+```
+
+Two details in that body are worth noting:
+
+- `date_modified` is passed in as an argument. `CURRENT_TIMESTAMP()` is not available inside an Inline Procedure, so any timestamp the statement needs has to come from the caller.
+- The bind variables appear bare in the `VALUES` clause. Wrapping one in a function, as in `VALUES (:p_task_id, LOWER(:p_add_label_1))`, fails with `002014 (22000) Invalid expression ... in VALUES clause`, so the lowercasing that the Python code does with `LOWER(?)` moves to the caller instead.
+
+The whole update is then one call. Pick a task that already has at least two labels so the example works against your own generated data:
+
+```sql
+SET DEMO_TASK  = (SELECT MIN(task_id) FROM (
+                    SELECT task_id FROM TASK_LABEL GROUP BY task_id HAVING COUNT(*) >= 2));
+SET DEMO_LABEL = (SELECT MIN(label) FROM TASK_LABEL WHERE task_id = $DEMO_TASK);
+
+CALL update_task_bounded($DEMO_TASK, 'renamed task', '2026-12-01'::TIMESTAMP,
+                         '2026-09-23 12:00:00'::TIMESTAMP,
+                         'demo_a', 'demo_b', $DEMO_LABEL);
+```
+
+From Python it is an ordinary statement with bound parameters:
+
+```python
+    def update_task_bounded(self, task_id:int, item:str, date_due:datetime.datetime,
+                            modified_at:datetime.datetime,
+                            add_1:str, add_2:str, remove:str) -> str:
+        return self.session.sql(
+            "CALL update_task_bounded(?, ?, ?, ?, ?, ?, ?);",
+            params=[task_id, item, ("TIMESTAMP_NTZ", date_due),
+                    ("TIMESTAMP_NTZ", modified_at),
+                    add_1.strip().lower(), add_2.strip().lower(), remove.strip().lower()]
+        ).collect()[0][0]
+```
+
+Use the bounded procedure when the shape of the write is fixed and you want one round trip. Keep the client-side transaction from `update_task` when the number of label changes is genuinely variable, because that is a case an Inline Procedure cannot express.
+
+#### Seeing the whole write roll back
+
+The reason to group these statements at all is that a partial write would leave a task whose labels do not match it. To see that guarantee, call the procedure with a label the task already has. `TASK_LABEL` has a primary key of `(task_id, label)`, so the second insert violates it.
+
+Note the task's current state first:
+
+```sql
+SELECT t.item, LISTAGG(l.label, ',') AS labels
+FROM "TASK" t JOIN TASK_LABEL l ON l.task_id = t.id
+WHERE t.id = $DEMO_TASK GROUP BY t.item;
+```
+
+Then attempt an update whose label write cannot succeed. `demo_a` is already on the task from the call above, so inserting it again violates the primary key:
+
+```sql
+CALL update_task_bounded($DEMO_TASK, 'SHOULD NOT PERSIST', '2027-01-01'::TIMESTAMP,
+                         '2026-09-23 13:00:00'::TIMESTAMP,
+                         'demo_a', 'demo_c', 'demo_b');
+```
+
+The call fails with:
+
+```
+200001 (22000): Uncaught exception of type 'STATEMENT_ERROR' on line 9 at position 4 : A primary key already exists.
+```
+
+Re-run the query above and the task is exactly as it was. The `UPDATE` to `item` and `date_due` did not stick, `demo_c` was not added, and `demo_b` was not removed, even though those statements individually succeeded before the failing one. The procedure either applies every statement or none of them.
+
+> **Note:** This guarantee depends on letting the error propagate. If you add an `EXCEPTION` handler that returns a value, the `CALL` completes normally and the statements that already ran are committed, which turns a failed write into a partial one. A returned error string is not a rollback.
+
+#### Enforcing task and completion-date consistency
+
+Grouping the writes keeps the two tables consistent with each other. A `CHECK` constraint keeps each row internally consistent, and the `TASK` table we created declares two rules:
+
+```sql
+    CONSTRAINT chk_completed_has_date
+      CHECK (complete = FALSE OR date_completed IS NOT NULL),
+    CONSTRAINT chk_completed_after_created
+      CHECK (date_completed IS NULL OR date_completed >= date_created)
+```
+
+The first says a task marked complete must record when it was completed. The second says a task cannot have been completed before it existed. Both are enforced on every write, so the application cannot persist a task in either of those states.
+
+Try a task that claims to be complete but records no completion date. The identifiers are derived so they do not collide with the sequence or the owner foreign key:
+
+```sql
+SET BAD_ID   = (SELECT MAX(id) + 1000 FROM "TASK");
+SET AN_OWNER = (SELECT MIN(owner_id) FROM "TASK");
+
+INSERT INTO "TASK" (id, item, complete, date_created, date_completed, owner_id)
+VALUES ($BAD_ID, 'completed but no date', TRUE, '2026-09-01', NULL, $AN_OWNER);
+```
+
+The statement fails and names the rule it broke:
+
+```
+001185 (23514): Operation on table HYBRID_TASK_APP_DB.DATA.TASK failed because CHECK constraint CHK_COMPLETED_HAS_DATE, which requires that complete = FALSE OR date_completed IS NOT NULL, was violated
+```
+
+Then a task completed before it was created:
+
+```sql
+INSERT INTO "TASK" (id, item, complete, date_created, date_completed, owner_id)
+VALUES ($BAD_ID, 'completed before created', TRUE, '2026-09-10', '2026-09-01', $AN_OWNER);
+```
+
+```
+001185 (23514): Operation on table HYBRID_TASK_APP_DB.DATA.TASK failed because CHECK constraint CHK_COMPLETED_AFTER_CREATED, which requires that date_completed IS NULL OR date_completed >= date_created, was violated
+```
+
+> **Note:** A `CHECK` constraint on a hybrid table has to be declared when the table is created. `ALTER TABLE ... ADD CONSTRAINT ... CHECK` is rejected, so decide on these rules before you load, and confirm your existing rows satisfy them. Note also that a `CHECK` does not imply `NOT NULL`: a `NULL` is not a violation, because the rule does not evaluate to false.
 
 With that, we have gone through both reading data, mixing analytical type of queries with direct transactional point lookup queries, as well as working with transactionally scoped writes to multiple tables.
 
