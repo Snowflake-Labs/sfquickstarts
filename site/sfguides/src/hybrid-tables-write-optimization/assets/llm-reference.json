@@ -28,11 +28,15 @@
     "constraints": [
       "Statements may reference hybrid tables only",
       "No explicit BEGIN, COMMIT, or ROLLBACK inside the body; the body is already atomic",
+      "Cannot be invoked from inside an open transaction; must be called with autocommit enabled",
       "No dynamic context functions such as CURRENT_TIMESTAMP, CURRENT_DATE, CURRENT_TIME, SYSDATE, SYSTIMESTAMP, GETDATE, LOCALTIME, or LOCALTIMESTAMP (error 090277); pass the value in as an argument instead",
-      "An uncaught statement error surfaces as error 100072"
+      "Compiled at CALL time rather than CREATE time, so CREATE can succeed while the first CALL fails on an unsupported construct",
+      "An EXCEPTION handler that returns makes the CALL succeed, so statements that already ran are committed rather than rolled back; leave errors unhandled when all-or-nothing behavior is required",
+      "Compilation errors are raised before execution and cannot be caught by an EXCEPTION handler",
+      "An uncaught statement error propagates the failing statement's own error code"
     ],
-    "when_to_use": "Prefer it over a multi-statement transaction or a standard stored procedure when several dependent DML statements against hybrid tables must succeed or fail together. The advantage grows with the number of statements in the unit.",
-    "when_not_to_use": "A single-statement write is still fastest as direct DML; wrapping one statement adds no benefit."
+    "when_to_use": "Prefer it over a multi-statement transaction or a standard stored procedure when several dependent DML statements against hybrid tables must succeed or fail together. Benchmark your own workload rather than assuming a margin.",
+    "when_not_to_use": "For a plain single-statement write, direct parameterized DML remains the lowest-overhead option. Wrapping a single statement is still worthwhile for abstraction or an access-control boundary, since the body executes as one unit and avoids the per-statement overhead a standard stored procedure would add."
   },
   "copy_into_behavior": {
     "supported": true,

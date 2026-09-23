@@ -392,7 +392,9 @@ Four constraints matter when you write one:
 
 An Inline Stored Procedure is not a replacement for direct DML on a single statement. For one INSERT
 or one UPDATE, direct parameterized SQL remains the lowest-overhead option and the hierarchy above
-applies unchanged.
+applies unchanged. Wrapping a single statement is still worthwhile when you want the abstraction or
+the access-control boundary a procedure provides, because the body executes as one unit rather than
+paying the per-statement overhead a standard stored procedure would add.
 
 For the full reference, including error handling and the complete list of limitations, see
 [Inline Stored Procedures for hybrid tables](https://docs.snowflake.com/en/user-guide/hybrid-tables-inline-stored-procedures).
