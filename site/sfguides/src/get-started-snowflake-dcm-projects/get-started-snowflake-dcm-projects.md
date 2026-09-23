@@ -36,16 +36,17 @@ This guide shows two of those interfaces side by side. Every plan and deploy ste
 - What a DCM Project declares, and how a manifest maps one codebase onto several environments
 - How to read a plan changeset and deploy it with an alias
 - How editing a definition and redeploying converges instead of recreating
-- How Jinja templating parameterizes definitions, and how `env_vars` and `env_secrets` carry values you cannot commit
+- How Jinja templating parameterizes definitions, so one codebase serves DEV, STAGE and PROD
+- How project assets let a project deploy a Streamlit app alongside the pipeline it reads
 - How to inspect what a project manages, and how to tear it down safely
 
 ### What You'll Need
 - A [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) with ACCOUNTADMIN access
-- [Snowflake CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli/installation/installation) **3.24 or later** if you want to follow the CLI path, and for the `env_vars` and `env_secrets` section
+- [Snowflake CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli/installation/installation) if you want to follow the CLI path
 - Familiarity with SQL
 
 ### What You'll Build
-A small but real pipeline — three landing tables, one dynamic table, and a semantic view you can query in business terms — declared entirely as code, deployed, changed, redeployed, and cleaned up.
+A small but real pipeline — three landing tables, one dynamic table, a semantic view you can query in business terms, and a Streamlit dashboard that reads it — declared entirely as code, deployed, changed, redeployed, and cleaned up.
 
 <!-- ------------------------ -->
 ## Create a Workspace from Git
@@ -446,55 +447,21 @@ Deployed to DEV this loop runs twice. Deployed to PROD it runs for Marketing and
 
 Jinja renders *before* Snowflake parses the SQL. The consequence catches everyone at least once: **a `{{ ... }}` expression inside a `--` comment is still evaluated.** Commenting a line out hides it from Snowflake. It does not hide it from the template engine, which has already finished by then.
 
-Concretely — this line, fully commented out, fails a plan:
+`sources/definitions/raw.sql` carries a deliberate demonstration. This line is inert SQL but live Jinja:
 
 ```sql
---  COMMENT = 'Quickstart demo (build {{ _snow.env_var("BUILD_NUMBER") }})';
+--   this database is DCM_DEMO_1{{env_suffix}}
 ```
+
+Run a plan with `--save-output` and read the same line back in `out/rendered/sources/definitions/raw.sql`. The suffix has been substituted *inside the comment*:
 
 ```text
-variable 'BUILD_NUMBER' is declared in 'env_vars' section of the manifest,
-but was not supplied in the ENVIRONMENT parameters
+--   this database is DCM_DEMO_1_DEV
 ```
 
-The fix is to wrap the example in Jinja's raw block, which tells the engine to emit its contents verbatim instead of evaluating them. `sources/definitions/raw.sql` line 23 shows exactly how it is written. One further trap: never write those raw directives as literal text in prose next to the block, because the template engine will read them as a second, unterminated raw block and the plan fails with a missing-end-of-raw error.
+Harmless here, because `env_suffix` always has a value. It stops being harmless the moment a commented-out line references something that does not resolve — the plan fails on a line you believed was disabled. The same applies to prose: never write Jinja delimiters as literal text in a comment you intend as explanation, because the engine reads them as code and not as English.
 
-So: the "comment out the alternative" pattern is safe in plain SQL and a trap in templated SQL.
-
-### Values you cannot commit
-
-`env_suffix` and `templating_config` handle per-environment values you are happy to check into Git. Build numbers, region identifiers and API keys are not those. `env_vars` and `env_secrets` cover them, and they are declared in the manifest as **keys with no values**:
-
-```yaml
-templating:
-  env_vars:
-    - BUILD_NUMBER:
-    - DEPLOYMENT_REGION:
-
-  env_secrets:
-    - API_KEY:
-```
-
-Reference a declared name from any definition file — `_snow.env_var()` for a variable, `_snow.env_secret()` for a secret:
-
-```sql
-COMMENT = 'Quickstart demo database (build {{ _snow.env_var("BUILD_NUMBER") }})';
-```
-
-Supply the value at deploy time from the shell, or from a file:
-
-```bash
-export BUILD_NUMBER=482
-snow dcm deploy --target DCM_DEV
-
-snow dcm deploy --target DCM_DEV --env-file .env
-```
-
-Three behaviours are worth internalising. A value **travels as a bind variable**, so it never appears in Query History. A **secret is masked** in plan and deploy output, in deployment history and in logs. And a name that is declared but never referenced is only a warning — it becomes a hard error at plan time as soon as a definition actually needs it to render.
-
-Two gotchas. A value containing `#`, or with leading or trailing whitespace, must be quoted, or it is silently truncated at the `#` and trimmed at the edges. And `$VAR` interpolation is not supported — the value is taken literally.
-
-This mechanism requires Snowflake CLI **3.24 or later**. It is not yet available from Snowsight Workspaces, so this one section is CLI-only — everything else in the guide works from either interface.
+So: the "comment out the alternative" pattern is safe in plain SQL and a trap in templated SQL. And `out/rendered/` is the first place to look whenever a template surprises you — it is the exact SQL DCM evaluated.
 
 <!-- ------------------------ -->
 ## Governance Touch
@@ -545,7 +512,53 @@ SELECT * FROM SEMANTIC_VIEW(
 ORDER BY TOTAL_REVENUE DESC;
 ```
 
-Ten category rows come back, `Pizza | 106.00 | 67.50 | 3` at the top. `DEFINE SEMANTIC VIEW` is public preview, and it means the vocabulary your BI tools and AI agents depend on is versioned and reviewed in the same plan diff as the pipeline producing the numbers.
+Ten category rows come back, `Pizza | 106.00 | 67.50 | 3` at the top. `DEFINE SEMANTIC VIEW` means the vocabulary your BI tools and AI agents depend on is versioned and reviewed in the same plan diff as the pipeline producing the numbers.
+
+<!-- ------------------------ -->
+## The App That Reads It
+
+Everything so far has been SQL that a `DEFINE` statement can express in full. A Streamlit app cannot be: it is Python files, and DCM needs a way to carry them. That is what **project assets** are for.
+
+An asset is a named set of source files, declared at the top level of `manifest.yml` — a sibling of `targets` and `templating`, not nested inside either:
+
+```yaml
+assets:
+  dashboard:
+    path: 'streamlit/dashboard/**/*'
+```
+
+The path is relative to the manifest and must live **outside `sources/`**, which is reserved for definitions, macros and tests. Use `path` for a single glob or `paths` for a list. Only `*` and `**` are supported — no `?`, no brace expansion — and paths cannot contain Jinja. A pattern matching no files fails the run rather than deploying something empty.
+
+Then `DEFINE STREAMLIT` refers to the asset by name. It cannot take a folder path directly; the `asset://` URI is the only way in, and that indirection is the whole reason assets exist:
+
+```sql
+DEFINE STREAMLIT DCM_DEMO_1{{env_suffix}}.SERVE.ORDERS_DASHBOARD
+    FROM 'asset://dashboard/'
+    MAIN_FILE = 'streamlit_app.py'
+    QUERY_WAREHOUSE = DCM_DEMO_1_WH{{env_suffix}}
+    TITLE = 'Orders Dashboard'
+    COMMENT = 'Reads the ORDER_ANALYTICS semantic view; deployed from the dashboard asset';
+```
+
+`MAIN_FILE` is relative to the imported asset root, not to the definition file. Note what is *absent*: no compute pool, no `environment.yml`, no dependency list. Snowflake supplies a container runtime and a default package set that already includes `streamlit` and `snowflake-snowpark-python`, so the minimal form above is genuinely all a working app needs here.
+
+The app reads the semantic view rather than the dynamic table, so the numbers on screen are the same metric definitions an agent would resolve. One detail matters for portability — **asset files are not Jinja-rendered**, so the app cannot use `{{env_suffix}}` to find its own database. It resolves that at runtime instead, which is why the identical file serves every environment:
+
+```python
+session = get_active_session()
+database = session.sql("SELECT CURRENT_DATABASE()").collect()[0][0]
+```
+
+Now the useful part. Change nothing but the Python — add a chart, rename a heading — and plan again:
+
+```console
+ALTER    STREAMLIT            DCM_DEMO_1_DEV.SERVE.ORDERS_DASHBOARD
+Planned 1 entity (0 to create, 1 to alter, 0 to drop).
+```
+
+The plan tracks the **contents of the asset**, not just the `DEFINE` statement, and a deploy publishes a new version of the app. So the dashboard is versioned and promoted on exactly the same path as the tables it reads — one plan, one deploy, one changeset covering the pipeline and its front end. Redeploy again without touching anything and you get `No changes detected`, the same convergence you saw earlier.
+
+`DEFINE CODE BUNDLE` uses assets the same way, for packaging Python jobs rather than apps.
 
 <!-- ------------------------ -->
 ## Detach and Clean Up
@@ -601,7 +614,7 @@ That last part is the lesson. You now know that:
 - `DEFINE` executes as **`CREATE OR ALTER`**, so redeploying converges instead of recreating
 - The manifest is the control surface: one codebase, many environments, differences confined to YAML
 - Jinja renders **before** DCM parses the SQL — including inside comments
-- `env_vars` and `env_secrets` carry the values templating cannot
+- **Project assets** carry the files a `DEFINE` statement cannot express, so an app ships with its pipeline
 
 ### What's Next
 - **[Build Data Pipelines with Snowflake DCM Projects](https://www.snowflake.com/en/developers/guides/build-data-pipelines-with-snowflake-dcm-projects/)** — split platform infrastructure from transformation pipelines and build a medallion architecture
