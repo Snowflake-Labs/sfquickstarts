@@ -28,6 +28,7 @@ As Hybrid Table workloads grow in production, three operational challenges emerg
 
 | Pattern | Freshness | Best For |
 |---------|-----------|----------|
+| Post-Load Foreign Key | One-time | Enforcing a relationship recognized after data already exists |
 | Fan-In Aggregation | Minutes | Cross-domain analytics joining multiple HTs |
 | Hot/Cold Data Tiering | Daily | Managing HT storage growth (2 TB quota per DB) |
 | Alert-Based Monitoring | 3-hour view latency | Latency regression, throttling detection |
@@ -58,6 +59,11 @@ GRANT OWNERSHIP ON WAREHOUSE HT_OPS_QS_WH TO ROLE HT_OPS_QS_ROLE;
 CREATE OR REPLACE DATABASE HT_OPS_QS_DB;
 GRANT OWNERSHIP ON DATABASE HT_OPS_QS_DB TO ROLE HT_OPS_QS_ROLE;
 
+-- Every pattern in this guide is driven by a Task. Owning a task is not enough
+-- to run one: the owner role needs the EXECUTE TASK privilege, or each run fails
+-- with "Cannot execute task, EXECUTE TASK privilege must be granted to owner role".
+GRANT EXECUTE TASK ON ACCOUNT TO ROLE HT_OPS_QS_ROLE;
+
 USE ROLE HT_OPS_QS_ROLE;
 CREATE OR REPLACE SCHEMA HT_OPS_QS_DB.DATA;
 USE WAREHOUSE HT_OPS_QS_WH;
@@ -76,7 +82,9 @@ CREATE OR REPLACE HYBRID TABLE orders (
     created_at   TIMESTAMP_NTZ NOT NULL,
     total_amount NUMBER(12,2) NOT NULL,
     PRIMARY KEY (order_id),
-    INDEX idx_orders_customer (customer_id)
+    INDEX idx_orders_customer (customer_id),
+    CONSTRAINT chk_order_status
+      CHECK (status IN ('PENDING','SHIPPED','DELIVERED','CANCELLED'))
 )
 AS SELECT SEQ4(), UNIFORM(1,10000,RANDOM())::NUMBER,
     ARRAY_CONSTRUCT('PENDING','SHIPPED','DELIVERED','CANCELLED')[UNIFORM(0,3,RANDOM())]::VARCHAR,
@@ -90,13 +98,147 @@ CREATE OR REPLACE HYBRID TABLE customers (
     customer_name VARCHAR NOT NULL,
     tier          VARCHAR(20) NOT NULL,
     region        VARCHAR(10) NOT NULL,
-    PRIMARY KEY (customer_id)
+    PRIMARY KEY (customer_id),
+    CONSTRAINT chk_customer_tier
+      CHECK (tier IN ('BRONZE','SILVER','GOLD','PLATINUM'))
 )
-AS SELECT SEQ4(), 'customer_' || SEQ4()::VARCHAR,
+AS SELECT SEQ4() + 1, 'customer_' || (SEQ4() + 1)::VARCHAR,
     ARRAY_CONSTRUCT('BRONZE','SILVER','GOLD','PLATINUM')[UNIFORM(0,3,RANDOM())]::VARCHAR,
     ARRAY_CONSTRUCT('US-EAST','US-WEST','EU','APAC')[UNIFORM(0,3,RANDOM())]::VARCHAR
 FROM TABLE(GENERATOR(ROWCOUNT => 10000));
 ```
+
+Two details in that DDL matter for the rest of this guide.
+
+**The customer keys are offset by one on purpose.** `SEQ4()` starts at zero, while `orders.customer_id`
+is drawn from `UNIFORM(1, 10000, RANDOM())`. A bare `SEQ4()` would generate customers `0` through
+`9999`, so every order that drew customer `10000` would have no matching parent row — enough to
+prevent the foreign key you add in the next section from validating. `SEQ4() + 1` produces exactly
+`1` through `10000` and makes the two key sets line up.
+
+**Each table declares a `CHECK` constraint** for the vocabulary its generator produces: order status
+and customer tier. On a hybrid table a `CHECK` constraint can only be declared when the table is
+created, so it has to be part of this DDL rather than something you add later.
+
+Confirm the key sets match before continuing:
+
+```sql
+SELECT MIN(customer_id) AS c_min, MAX(customer_id) AS c_max FROM customers;
+-- Expected: 1, 10000
+
+SELECT COUNT(*) AS orphan_orders
+FROM orders o
+WHERE NOT EXISTS (SELECT 1 FROM customers c WHERE c.customer_id = o.customer_id);
+-- Expected: 0
+```
+
+Each constraint rejects a value outside its list:
+
+```sql
+INSERT INTO orders VALUES (9999999, 1, 'REFUNDED', 'EU',
+    CURRENT_TIMESTAMP()::TIMESTAMP_NTZ, 10.00);
+```
+
+```
+001185 (23514): Operation on table ORDERS failed because CHECK constraint
+CHK_ORDER_STATUS, which requires that status IN
+('PENDING','SHIPPED','DELIVERED','CANCELLED'), was violated
+```
+
+<!-- ------------------------ -->
+## Add the Foreign Key After Loading
+
+`orders` and `customers` are related, but nothing yet enforces that relationship. Add it now, after
+both tables are loaded, which is the normal situation in production: the relationship is recognized
+after the data already exists rather than designed in from the start.
+
+```sql
+ALTER TABLE orders ADD CONSTRAINT fk_orders_customer
+    FOREIGN KEY (customer_id) REFERENCES customers(customer_id);
+```
+
+### The DDL Result Does Not Mean It Worked
+
+That statement returns `Statement executed successfully` immediately, which tells you the constraint
+was accepted, not that it was validated. The supporting index builds asynchronously, and the only
+way to see where it stands is `SHOW INDEXES`:
+
+```sql
+SHOW INDEXES IN TABLE orders;
+```
+
+Immediately after the `ALTER TABLE`, the new entry is still working:
+
+| Index Name | Status | Status Info |
+|------------|--------|-------------|
+| FK_ORDERS_CUSTOMER | BUILD IN PROGRESS | The index is being built. |
+
+Re-run `SHOW INDEXES` until it settles. On data with no orphans it reaches `ACTIVE`, and the
+constraint is enforced only from that point:
+
+| Index Name | Columns | Status |
+|------------|---------|--------|
+| FK_ORDERS_CUSTOMER | CUSTOMER_ID | ACTIVE |
+
+> **Note:** Treat `SHOW INDEXES` as a required step whenever you add a foreign key to a table that
+> already holds data. A constraint that appears in metadata is not necessarily enforcing anything
+> yet, and nothing raises an error to tell you.
+
+### When Validation Fails
+
+If the existing rows violate the constraint, the DDL still succeeds and the build still starts, then
+ends in a terminal failure state. Introduce an order referencing a customer that does not exist and
+watch it happen:
+
+```sql
+ALTER TABLE orders DROP CONSTRAINT fk_orders_customer;
+
+INSERT INTO orders VALUES (9999998, 999999, 'PENDING', 'EU',
+    CURRENT_TIMESTAMP()::TIMESTAMP_NTZ, 10.00);
+
+ALTER TABLE orders ADD CONSTRAINT fk_orders_customer
+    FOREIGN KEY (customer_id) REFERENCES customers(customer_id);
+```
+
+The `ALTER TABLE` reports success. `SHOW INDEXES` reports what actually happened:
+
+| Index Name | Status | Status Info |
+|------------|--------|-------------|
+| FK_ORDERS_CUSTOMER | BUILD VALIDATION FAILURE | Index creation failed validation. The existing data violates the constraint. Please review the data, resolve the violations, and try creating the constraint again. |
+
+A failed constraint does not repair itself and cannot be retried in place. Drop it, fix the data,
+then add it again:
+
+```sql
+ALTER TABLE orders DROP CONSTRAINT fk_orders_customer;
+
+DELETE FROM orders
+WHERE customer_id NOT IN (SELECT customer_id FROM customers);
+
+ALTER TABLE orders ADD CONSTRAINT fk_orders_customer
+    FOREIGN KEY (customer_id) REFERENCES customers(customer_id);
+```
+
+Confirm it reaches `ACTIVE` before relying on it.
+
+### What the Constraint Changes for the Patterns Below
+
+Once the foreign key is active, `customers` is a parent table and deleting from it is restricted
+while matching orders exist:
+
+```sql
+DELETE FROM customers WHERE customer_id = 1;
+```
+
+```
+200008 (22000): Foreign keys that reference key values still exist.
+```
+
+That matters for the tiering pattern in Step 2. Archiving removes rows from `orders`, the child
+side, which the constraint permits. Any process that removes customers has to deal with their orders
+first. It is also why you should not reach for dropping the foreign key as a way around a failed
+delete — that trades referential integrity for convenience, and the constraint has to be rebuilt and
+revalidated afterward.
 
 <!-- ------------------------ -->
 ## Step 1: Fan-In Aggregation
@@ -128,14 +270,63 @@ AS
 ALTER TASK refresh_consolidated_analytics RESUME;
 ```
 
+Resuming the task schedules it; it does not run it. On a 15-minute schedule the first run can be up
+to fifteen minutes away, and `consolidated_orders` does not exist until that run completes. Trigger
+one now so you can verify the pattern immediately:
+
+```sql
+EXECUTE TASK refresh_consolidated_analytics;
+```
+
+That submits a run rather than waiting for it, so give it a few seconds and confirm it finished
+before querying the table:
+
+```sql
+SELECT NAME, STATE, SCHEDULED_TIME, COMPLETED_TIME, ERROR_MESSAGE
+FROM TABLE(INFORMATION_SCHEMA.TASK_HISTORY(
+    TASK_NAME => 'REFRESH_CONSOLIDATED_ANALYTICS'))
+WHERE COMPLETED_TIME IS NOT NULL
+ORDER BY COMPLETED_TIME DESC
+LIMIT 5;
+-- Wait for the most recent row to show STATE = SUCCEEDED before continuing
+```
+
+The `COMPLETED_TIME IS NOT NULL` filter matters. Because the task is resumed, the history also
+contains a row for the next scheduled run with `STATE = SCHEDULED`, and that row sorts first by
+scheduled time even though it has not run. Filtering to completed runs shows only what actually
+executed.
+
 Verify:
 
 ```sql
-SELECT COUNT(*) FROM consolidated_orders; -- Expected: 500000
+SELECT COUNT(*) AS consolidated_rows FROM consolidated_orders;
+-- Expected: 500000
+```
+
+```sql
 SELECT customer_tier, COUNT(*), SUM(total_amount) FROM consolidated_orders GROUP BY customer_tier;
 
 ALTER TASK refresh_consolidated_analytics SUSPEND;
 ```
+
+The join is written as a `LEFT JOIN` so the fan-in never silently drops an order. With the foreign
+key active that distinction no longer changes the result, because every order is guaranteed a parent:
+
+```sql
+SELECT COUNT(*) AS rows_missing_customer
+FROM consolidated_orders WHERE customer_name IS NULL;
+-- Expected: 0
+```
+
+Before the key sets were aligned, that query returned a non-zero count and the `LEFT JOIN` was the
+only reason those orders appeared in the output at all, with null customer attributes. Keep the
+`LEFT JOIN` as a safety net, but treat a non-zero result here as a signal that something upstream has
+broken the relationship.
+
+> **Note:** Keep this aggregation in a Task, not an Inline Stored Procedure. It reads a hybrid table
+> and writes a standard table, and an Inline Stored Procedure can only touch hybrid tables in a single
+> database. It also uses DDL, which an Inline Stored Procedure does not allow. `CREATE OR REPLACE
+> TABLE` is already atomic, so there is nothing to gain by wrapping it.
 
 ### Incremental Fan-In (MERGE)
 
@@ -240,6 +431,16 @@ SELECT COUNT(*) FROM orders_all;
 - DELETE from HT reclaims space via background compaction — space is recovered over hours, not instantly
 - The archive standard table compresses to ~20-30% of its raw size using columnar compression
 - Cluster the archive table on `created_at` for fast historical range scans
+
+### Why This Stays Outside an Inline Stored Procedure
+
+The age-off task moves rows from a hybrid table into a standard table and then deletes them. That
+spans two table types, so it is not eligible for an Inline Stored Procedure, which is restricted to
+hybrid tables within one database. A Task is the right container here.
+
+Note also which side of the relationship this pattern touches. Archiving deletes from `orders`, the
+child table, which the foreign key permits. If you later add a tiering process for `customers`, it
+has to archive or reassign the matching orders first, or the delete fails with `200008`.
 
 <!-- ------------------------ -->
 ## Step 3: Alert-Based Monitoring
@@ -357,6 +558,8 @@ DROP ROLE IF EXISTS HT_OPS_QS_ROLE;
 ## Conclusion and Resources
 
 You can now:
+- Enforce a relationship on data that already exists by adding a foreign key after load, and confirm it validated instead of trusting the DDL result
+- Constrain column vocabularies with `CHECK` constraints declared at table creation
 - Consolidate multiple Hybrid Tables into a single analytics surface using fan-in aggregation
 - Tier hot/cold data to manage HT storage growth and keep the row store performant
 - Monitor HT workloads with AGGREGATE_QUERY_HISTORY for sub-second query visibility
