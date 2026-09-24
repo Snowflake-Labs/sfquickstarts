@@ -870,7 +870,7 @@ WHERE task_id IN (SELECT id FROM TASK ORDER BY date_created DESC LIMIT 1) GROUP 
 
 Both of the write paths above send one statement per label. That is the right design when you do not know in advance how many labels the user changed, but every statement is a separate round trip between the application and Snowflake.
 
-An [Inline Stored Procedure](https://docs.snowflake.com/en/developer-guide/stored-procedure/inline-stored-procedures) can collapse a multi-table write into a single call. Its body is compiled as one unit and runs as one atomic transaction, so `BEGIN TRANSACTION` and `COMMIT` are neither needed nor allowed.
+An [Inline Stored Procedure](https://docs.snowflake.com/en/user-guide/hybrid-tables-inline-stored-procedures) can collapse a multi-table write into a single call. Its body is compiled as one unit and runs as one atomic transaction, so `BEGIN TRANSACTION` and `COMMIT` are neither needed nor allowed.
 
 There is an important limit. An Inline Procedure cannot iterate: it has no loops, no dynamic SQL, and it cannot expand an array with a table function. Passing the labels as an `ARRAY` and flattening it inside the body fails:
 
