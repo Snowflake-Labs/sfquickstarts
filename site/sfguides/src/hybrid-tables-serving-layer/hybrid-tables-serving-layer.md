@@ -44,9 +44,11 @@ Hybrid Tables provide deterministic low latency for point lookups via the primar
 ### What You Will Learn
 
 - How to design a Hybrid Table specifically for serving (schema, PK, indexes)
+- How to enforce the serving contract with `CHECK` constraints, and why a CTAS+SWAP refresh can silently remove them
 - The CTAS+SWAP pattern for atomic bulk refresh without downtime
 - Why reads spike after a CTAS and how to mitigate the warm-up window
 - How to size warehouses for high-concurrency serving workloads
+- How to make a multi-statement entitlement change atomic with an Inline Stored Procedure, and when not to use one
 - Two complete worked scenarios with DDL, data generation, and query patterns
 
 ### Prerequisites
@@ -133,7 +135,9 @@ CREATE OR REPLACE HYBRID TABLE user_recommendations (
     content_title   VARCHAR(500),
     content_url     VARCHAR(2000),
     computed_at     TIMESTAMP_NTZ NOT NULL,
-    PRIMARY KEY (user_id, content_id)
+    PRIMARY KEY (user_id, content_id),
+    CONSTRAINT chk_rank_positive CHECK (rank > 0),
+    CONSTRAINT chk_score_range   CHECK (score > 0 AND score <= 1)
 );
 ```
 
@@ -141,6 +145,15 @@ The composite primary key `(user_id, content_id)` enables:
 - Fast seek to all recommendations for a specific user
 - Deduplication (same user+content pair cannot appear twice)
 - Ordered retrieval within a user (PK is sorted by user_id first)
+
+The two `CHECK` constraints encode what the scoring pipeline is supposed to produce: ranks start at
+1, and scores are normalized to the interval `(0, 1]`. A serving table is read by applications that
+trust its shape, so it is worth rejecting a malformed pipeline output at write time rather than
+discovering it in production traffic.
+
+> **Note:** On a hybrid table, a `CHECK` constraint must be declared when the table is created. You
+> cannot add one later with `ALTER TABLE`. That constrains how you refresh this table, which the
+> CTAS+SWAP section below covers.
 
 ### Create the Source Table (Simulates Scoring Pipeline Output)
 
@@ -184,10 +197,23 @@ CREATE OR REPLACE HYBRID TABLE user_recommendations (
     content_title   VARCHAR(500),
     content_url     VARCHAR(2000),
     computed_at     TIMESTAMP_NTZ NOT NULL,
-    PRIMARY KEY (user_id, content_id)
+    PRIMARY KEY (user_id, content_id),
+    CONSTRAINT chk_rank_positive CHECK (rank > 0),
+    CONSTRAINT chk_score_range   CHECK (score > 0 AND score <= 1)
 )
 AS SELECT * FROM recommendations_source;
 ```
+
+The `CHECK` constraints are validated against the incoming rows, so a CTAS load is also a
+validation pass over whatever the scoring pipeline produced. If the source contains a rank of `0`,
+the load fails rather than publishing bad data:
+
+```
+001185 (23514): Operation on table USER_RECOMMENDATIONS failed because CHECK
+constraint CHK_RANK_POSITIVE, which requires that rank > 0, was violated
+```
+
+Because `CREATE OR REPLACE` is atomic, a failed load leaves the previous table and its rows intact.
 
 ### Serve: Lookup Recommendations for a User
 
@@ -216,7 +242,9 @@ CREATE OR REPLACE HYBRID TABLE user_recommendations_new (
     content_title   VARCHAR(500),
     content_url     VARCHAR(2000),
     computed_at     TIMESTAMP_NTZ NOT NULL,
-    PRIMARY KEY (user_id, content_id)
+    PRIMARY KEY (user_id, content_id),
+    CONSTRAINT chk_rank_positive CHECK (rank > 0),
+    CONSTRAINT chk_score_range   CHECK (score > 0 AND score <= 1)
 )
 AS SELECT * FROM recommendations_source;
 
@@ -226,6 +254,81 @@ ALTER TABLE user_recommendations SWAP WITH user_recommendations_new;
 -- Step 3: Drop the old version (now in the _new name)
 DROP TABLE user_recommendations_new;
 ```
+
+### The Swap Carries Constraints With It
+
+Repeat the `CHECK` constraints on **every** table you swap in. `SWAP WITH` exchanges the two tables'
+constraints along with their data, and it does not require them to match. If the replacement table
+omits them, the swap still succeeds and your live serving table comes out the other side with no
+`CHECK` constraints at all.
+
+That failure is silent. Nothing errors, and the next step drops the table that is now holding your
+constraints:
+
+```sql
+-- What NOT to do: build the replacement without the constraints
+CREATE OR REPLACE HYBRID TABLE user_recommendations_new (
+    user_id NUMBER NOT NULL, content_id NUMBER NOT NULL,
+    rank NUMBER NOT NULL, score FLOAT NOT NULL,
+    content_title VARCHAR(500), content_url VARCHAR(2000),
+    computed_at TIMESTAMP_NTZ NOT NULL,
+    PRIMARY KEY (user_id, content_id)
+)
+AS SELECT * FROM recommendations_source;
+
+ALTER TABLE user_recommendations SWAP WITH user_recommendations_new;
+```
+
+After that swap, inspect what the serving table actually has:
+
+```sql
+SELECT GET_DDL('TABLE', 'user_recommendations');
+```
+
+The `CHECK` constraints are gone, and a row the pipeline should never produce is now accepted:
+
+```sql
+INSERT INTO user_recommendations
+VALUES (999999, 1, 0, 0.5, 'bad', 'bad', CURRENT_TIMESTAMP()::TIMESTAMP_NTZ);
+-- Succeeds, because rank > 0 is no longer enforced
+```
+
+Since a hybrid table's `CHECK` constraints can only be declared at creation time, you cannot repair
+this with `ALTER TABLE` afterward. The only fix is another CTAS+SWAP using a correctly constrained
+replacement table. Do that now, both to restore the constraints and to clear the invalid row:
+
+```sql
+DROP TABLE user_recommendations_new;
+
+DELETE FROM user_recommendations WHERE rank <= 0;
+
+CREATE OR REPLACE HYBRID TABLE user_recommendations_new (
+    user_id         NUMBER       NOT NULL,
+    content_id      NUMBER       NOT NULL,
+    rank            NUMBER       NOT NULL,
+    score           FLOAT        NOT NULL,
+    content_title   VARCHAR(500),
+    content_url     VARCHAR(2000),
+    computed_at     TIMESTAMP_NTZ NOT NULL,
+    PRIMARY KEY (user_id, content_id),
+    CONSTRAINT chk_rank_positive CHECK (rank > 0),
+    CONSTRAINT chk_score_range   CHECK (score > 0 AND score <= 1)
+)
+AS SELECT * FROM user_recommendations;
+
+ALTER TABLE user_recommendations SWAP WITH user_recommendations_new;
+DROP TABLE user_recommendations_new;
+
+SELECT GET_DDL('TABLE', 'user_recommendations');
+-- The CHECK constraints are back
+```
+
+Note that the repair CTAS selects from the live table, so it also revalidates the rows already
+there. Deleting the invalid row first is what allows that load to succeed.
+
+> **Note:** Treat the replacement table's DDL as part of the serving contract, not as scratch. Any
+> place that builds it — an ad hoc refresh, the scheduled task below, a CI job — must carry the same
+> constraints, or the first refresh through that path quietly removes them.
 
 > **Why SWAP instead of RENAME?** `ALTER TABLE ... SWAP WITH` exchanges the contents of two tables atomically in a single metadata operation. Applications querying `user_recommendations` see the new data immediately after the swap with zero downtime. `RENAME` requires two statements (rename old, rename new) which creates a brief window where the table name does not exist.
 
@@ -242,7 +345,9 @@ BEGIN
     rank NUMBER NOT NULL, score FLOAT NOT NULL,
     content_title VARCHAR(500), content_url VARCHAR(2000),
     computed_at TIMESTAMP_NTZ NOT NULL,
-    PRIMARY KEY (user_id, content_id)
+    PRIMARY KEY (user_id, content_id),
+    CONSTRAINT chk_rank_positive CHECK (rank > 0),
+    CONSTRAINT chk_score_range   CHECK (score > 0 AND score <= 1)
   )
   AS SELECT * FROM recommendations_source;
 
@@ -250,6 +355,10 @@ BEGIN
   DROP TABLE user_recommendations_new;
 END;
 ```
+
+This is the path that runs unattended every four hours, so it is the most important place to keep
+the constraints in sync. A task body missing them would strip the serving table on its next run,
+with nothing in the task history to indicate that anything changed.
 
 <!-- ------------------------ -->
 ## Scenario 2: API Backend (Entitlements/Session State)
@@ -268,7 +377,9 @@ CREATE OR REPLACE HYBRID TABLE user_entitlements (
     access_level    VARCHAR(20)   NOT NULL,
     granted_at      TIMESTAMP_NTZ NOT NULL,
     expires_at      TIMESTAMP_NTZ,
-    PRIMARY KEY (user_id, resource_type, resource_id)
+    PRIMARY KEY (user_id, resource_type, resource_id),
+    CONSTRAINT chk_expires_after_granted
+      CHECK (expires_at IS NULL OR expires_at > granted_at)
 );
 ```
 
@@ -276,6 +387,12 @@ The composite PK enables:
 - Lookup all entitlements for a user: `WHERE user_id = ?`
 - Lookup specific resource access: `WHERE user_id = ? AND resource_type = ? AND resource_id = ?`
 - Both use the PK prefix seek (no secondary index needed)
+
+The `CHECK` constraint enforces date ordering: an entitlement either never expires (`NULL`) or
+expires after it was granted. An entitlement whose window is inverted would be invisible to every
+access check that filters on `expires_at`, which is a difficult bug to notice from the application
+side. A `NULL` `expires_at` still passes, so the constraint does not accidentally require an
+expiration date.
 
 ### Load Sample Data
 
@@ -338,7 +455,25 @@ INSERT INTO user_entitlements VALUES (
 -- Revoke access (delete)
 DELETE FROM user_entitlements
 WHERE user_id = 'user_42' AND resource_type = 'DASHBOARD' AND resource_id = 'resource_999';
+```
 
+For the bulk sync, first stand up a source table representing what the upstream system sent. Keep
+`expires_at` after `granted_at` so the merged rows satisfy the serving table's `CHECK` constraint:
+
+```sql
+CREATE OR REPLACE TABLE entitlements_source AS
+SELECT 'user_' || u.id::VARCHAR                        AS user_id,
+       'DASHBOARD'                                     AS resource_type,
+       'resource_' || UNIFORM(1, 500, RANDOM())::VARCHAR AS resource_id,
+       ARRAY_CONSTRUCT('READ','WRITE','ADMIN')
+           [UNIFORM(0, 2, RANDOM())]::VARCHAR          AS access_level,
+       CURRENT_TIMESTAMP()::TIMESTAMP_NTZ              AS granted_at,
+       DATEADD(DAY, UNIFORM(30, 365, RANDOM()),
+               CURRENT_TIMESTAMP())::TIMESTAMP_NTZ     AS expires_at
+FROM (SELECT SEQ4() + 1 AS id FROM TABLE(GENERATOR(ROWCOUNT => 1000))) u;
+```
+
+```sql
 -- Bulk sync from source system (MERGE)
 MERGE INTO user_entitlements AS tgt
 USING entitlements_source AS src
@@ -353,6 +488,136 @@ WHEN NOT MATCHED THEN INSERT VALUES (
   src.access_level, src.granted_at, src.expires_at
 );
 ```
+
+### Optional: Change an Entitlement and Audit It Atomically
+
+An entitlement change is often two writes: update the grant, and record who changed what. If the
+second write fails, you do not want the first to stand. An
+[Inline Stored Procedure](https://docs.snowflake.com/en/developer-guide/stored-procedure/inline-stored-procedures)
+runs its body as a single atomic transaction, so the pair either both apply or neither does.
+
+Start with an audit table. This one enforces the access-level vocabulary, which the entitlements
+table deliberately does not:
+
+```sql
+CREATE OR REPLACE HYBRID TABLE entitlement_audit (
+    audit_id      NUMBER        NOT NULL AUTOINCREMENT START 1 INCREMENT 1 ORDER,
+    user_id       VARCHAR(100)  NOT NULL,
+    resource_type VARCHAR(50)   NOT NULL,
+    resource_id   VARCHAR(200)  NOT NULL,
+    new_access    VARCHAR(20)   NOT NULL,
+    changed_at    TIMESTAMP_NTZ NOT NULL,
+    PRIMARY KEY (audit_id),
+    CONSTRAINT chk_audit_access CHECK (new_access IN ('READ','WRITE','ADMIN'))
+);
+```
+
+```sql
+CREATE OR REPLACE INLINE PROCEDURE change_entitlement(
+    p_user_id       VARCHAR,
+    p_resource_type VARCHAR,
+    p_resource_id   VARCHAR,
+    p_new_access    VARCHAR,
+    p_changed_at    TIMESTAMP_NTZ
+)
+RETURNS VARCHAR
+LANGUAGE SQL
+AS
+$$
+BEGIN ATOMIC
+    UPDATE user_entitlements
+       SET access_level = :p_new_access
+     WHERE user_id       = :p_user_id
+       AND resource_type = :p_resource_type
+       AND resource_id   = :p_resource_id;
+
+    INSERT INTO entitlement_audit
+        (user_id, resource_type, resource_id, new_access, changed_at)
+    VALUES (:p_user_id, :p_resource_type, :p_resource_id, :p_new_access, :p_changed_at);
+
+    RETURN 'ok';
+END;
+$$;
+```
+
+Two details are worth noting before you call it:
+
+- The timestamp is a parameter. `CURRENT_TIMESTAMP()` is not available inside an Inline Stored
+  Procedure, so any value the statements need must come from the caller.
+- Bind variables appear bare in the `VALUES` clause and are prefixed with a colon when referenced.
+  An Inline Stored Procedure cannot use `INSERT ... SELECT` with bind variables, so a fixed set of
+  parameters per call is the shape to aim for.
+
+Pick a real row and make a valid change:
+
+```sql
+SET E_USER = (SELECT MIN(user_id) FROM user_entitlements);
+SET E_TYPE = (SELECT MIN(resource_type) FROM user_entitlements WHERE user_id = $E_USER);
+SET E_RID  = (SELECT MIN(resource_id) FROM user_entitlements
+              WHERE user_id = $E_USER AND resource_type = $E_TYPE);
+
+CALL change_entitlement($E_USER, $E_TYPE, $E_RID, 'ADMIN',
+                        CURRENT_TIMESTAMP()::TIMESTAMP_NTZ);
+
+SELECT access_level FROM user_entitlements
+ WHERE user_id = $E_USER AND resource_type = $E_TYPE AND resource_id = $E_RID;
+SELECT COUNT(*) FROM entitlement_audit;
+```
+
+Both writes are visible: the grant is now `ADMIN` and the audit table has one row.
+
+#### Seeing the Whole Change Roll Back
+
+Now call it with an access level the audit table rejects. The `UPDATE` runs first and applies, then
+the audit `INSERT` violates `chk_audit_access`:
+
+```sql
+CALL change_entitlement($E_USER, $E_TYPE, $E_RID, 'SUPERUSER',
+                        CURRENT_TIMESTAMP()::TIMESTAMP_NTZ);
+```
+
+```
+001185 (23514): Uncaught exception of type 'STATEMENT_ERROR' on line 9 at position 4 :
+Operation on table ENTITLEMENT_AUDIT failed because CHECK constraint
+CHK_AUDIT_ACCESS, which requires that new_access IN ('READ','WRITE','ADMIN'),
+was violated
+```
+
+Confirm that the update was undone rather than left half-applied:
+
+```sql
+SELECT access_level FROM user_entitlements
+ WHERE user_id = $E_USER AND resource_type = $E_TYPE AND resource_id = $E_RID;
+-- Still ADMIN: the SUPERUSER update was rolled back
+
+SELECT COUNT(*) FROM user_entitlements WHERE access_level = 'SUPERUSER';
+-- 0
+
+SELECT COUNT(*) FROM entitlement_audit;
+-- Still 1: no audit row was written either
+```
+
+This is the property the procedure buys you. The same two statements sent separately by an
+application would have left the grant changed with no audit record.
+
+> **Note:** An Inline Stored Procedure must be called with autocommit enabled; it cannot run inside
+> an open transaction. It also cannot contain DDL or explicit transaction control, and every table
+> it touches must be a hybrid table in the same database.
+
+#### Where Not to Use One
+
+Leave the Scenario 1 refresh alone. The CTAS+SWAP workflow is DDL against a standard source table,
+which an Inline Stored Procedure cannot do, and wrapping bulk refresh in a procedure would gain
+nothing even if it could — `CREATE OR REPLACE` and `SWAP WITH` are already atomic on their own.
+Reserve Inline Stored Procedures for small, bounded, multi-statement writes like the one above.
+
+There is also a performance trade-off worth knowing. Statements executed inside a stored procedure
+are not eligible for the
+[operational query performance optimizations](https://docs.snowflake.com/en/user-guide/hybrid-tables-operational-query-performance)
+that repeated parameterized queries benefit from. For a low-volume administrative write like an
+entitlement change that is the right trade — atomicity matters more than latency. For the
+high-volume read path in *API Query Patterns* above, keep the queries outside procedures so they
+remain eligible.
 
 <!-- ------------------------ -->
 ## Step 2: Managing the Compaction Window
@@ -479,6 +744,7 @@ You can now:
 
 - Replace reverse ETL pipelines with Hybrid Tables as a serving layer
 - Design serving tables with composite primary keys for efficient point lookups
+- Enforce a serving contract with `CHECK` constraints, and keep them intact across a CTAS+SWAP refresh
 - Use CTAS+SWAP for atomic bulk refresh with zero application downtime
 - Manage warm-up windows by scheduling refreshes during low-traffic periods
 - Size multi-cluster warehouses for high-concurrency serving (XS + horizontal scaling)
