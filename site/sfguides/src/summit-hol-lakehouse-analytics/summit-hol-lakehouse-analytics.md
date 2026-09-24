@@ -639,13 +639,13 @@ GRANT SELECT ON VIEW iceberg_lab_db.analytics.quotes_vw TO ROLE SNOWFLAKE;
 GRANT SELECT ON SEMANTIC VIEW iceberg_lab_db.analytics.quotes_sv TO ROLE SNOWFLAKE;
 ```
 
-> **Note:** The `SNOWFLAKE` service role is available in Snowflake Enterprise and Business Critical accounts. Trial accounts do not include this role — if you receive a "Role does not exist" error, skip this step. The agent is still fully accessible via **AI & ML > Agents** in Snowsight.
+> **Note:** The `SNOWFLAKE` service role is available in Snowflake Enterprise and Business Critical accounts. Trial accounts do not include this role — if you receive a "Role does not exist" error, skip this step. The agent is still fully accessible via **AI & ML > Agent Studio** in Snowsight.
 
 ### Ask Questions
 
 To open the agent in Snowsight:
 
-1. In the left nav, click **AI & ML → Agents**
+1. In the left nav, click **AI & ML → Agent Studio**
 2. Find **Insurance Quotes Analyst** in the list and click **Open**
 3. Type a question in the chat input and press Enter
 4. The agent translates your question into SQL against `quotes_sv` and returns the result
