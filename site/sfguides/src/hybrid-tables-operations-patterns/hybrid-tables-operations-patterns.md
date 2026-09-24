@@ -173,16 +173,16 @@ Immediately after the `ALTER TABLE`, the new entry is still working:
 |------------|--------|-------------|
 | FK_ORDERS_CUSTOMER | BUILD IN PROGRESS | The index is being built. |
 
-Re-run `SHOW INDEXES` until it settles. On data with no orphans it reaches `ACTIVE`, and the
-constraint is enforced only from that point:
+Re-run `SHOW INDEXES` until it settles. On data with no orphans it reaches `ACTIVE`, which means the
+rows already in the table have been validated and the index is available to serve queries:
 
 | Index Name | Columns | Status |
 |------------|---------|--------|
 | FK_ORDERS_CUSTOMER | CUSTOMER_ID | ACTIVE |
 
 > **Note:** Treat `SHOW INDEXES` as a required step whenever you add a foreign key to a table that
-> already holds data. A constraint that appears in metadata is not necessarily enforcing anything
-> yet, and nothing raises an error to tell you.
+> already holds data. A successful DDL result tells you the constraint was accepted, not that the
+> existing rows passed validation, and nothing raises an error to tell you otherwise.
 
 ### When Validation Fails
 
@@ -205,6 +205,18 @@ The `ALTER TABLE` reports success. `SHOW INDEXES` reports what actually happened
 | Index Name | Status | Status Info |
 |------------|--------|-------------|
 | FK_ORDERS_CUSTOMER | BUILD VALIDATION FAILURE | Index creation failed validation. The existing data violates the constraint. Please review the data, resolve the violations, and try creating the constraint again. |
+
+This state is easy to misread, so it is worth being precise about what it means. A constraint left in
+`BUILD VALIDATION FAILURE` **still enforces every new write**. Statements that would violate it fail,
+valid statements succeed, and `TRUNCATE TABLE` on the referenced table fails. Only the rows that were
+already in the table when you added the constraint remain unvalidated. The constraint is not inert —
+it is half-applied, which is the more dangerous condition: the orphans you already had are still
+there, while the table behaves as though the relationship holds.
+
+It is also nearly invisible. `SHOW INDEXES` is the only command that reports this state.
+`SHOW IMPORTED KEYS`, `SHOW PRIMARY KEYS`, the `TABLE_CONSTRAINTS` view, and `GET_DDL` all list the
+constraint exactly as they would if it had validated. Treat a validation failure as something to
+investigate, not something to retry.
 
 A failed constraint does not repair itself and cannot be retried in place. Drop it, fix the data,
 then add it again:
