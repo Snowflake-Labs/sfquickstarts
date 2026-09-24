@@ -262,69 +262,69 @@ constraints along with their data, and it does not require them to match. If the
 omits them, the swap still succeeds and your live serving table comes out the other side with no
 `CHECK` constraints at all.
 
-That failure is silent. Nothing errors, and the next step drops the table that is now holding your
-constraints:
+That failure is silent. Nothing errors, and the constraints do not disappear so much as change places
+— they end up on the table you are about to drop. Two throwaway tables show the exchange clearly.
+Build one with a `CHECK` constraint and one without:
 
 ```sql
--- What NOT to do: build the replacement without the constraints
-CREATE OR REPLACE HYBRID TABLE user_recommendations_new (
-    user_id NUMBER NOT NULL, content_id NUMBER NOT NULL,
-    rank NUMBER NOT NULL, score FLOAT NOT NULL,
-    content_title VARCHAR(500), content_url VARCHAR(2000),
-    computed_at TIMESTAMP_NTZ NOT NULL,
-    PRIMARY KEY (user_id, content_id)
-)
-AS SELECT * FROM recommendations_source;
+CREATE OR REPLACE HYBRID TABLE swap_demo_guarded (
+    id   NUMBER NOT NULL,
+    rank NUMBER NOT NULL,
+    PRIMARY KEY (id),
+    CONSTRAINT chk_demo_rank CHECK (rank > 0)
+);
 
-ALTER TABLE user_recommendations SWAP WITH user_recommendations_new;
+CREATE OR REPLACE HYBRID TABLE swap_demo_plain (
+    id   NUMBER NOT NULL,
+    rank NUMBER NOT NULL,
+    PRIMARY KEY (id)
+);
 ```
 
-After that swap, inspect what the serving table actually has:
+Swap them. Note that Snowflake does not object to the mismatch:
+
+```sql
+ALTER TABLE swap_demo_guarded SWAP WITH swap_demo_plain;
+```
+
+Now look at where the constraint went:
+
+```sql
+SELECT GET_DDL('TABLE', 'swap_demo_guarded');
+-- chk_demo_rank is gone
+
+SELECT GET_DDL('TABLE', 'swap_demo_plain');
+-- chk_demo_rank is here now
+```
+
+The table that kept its name lost its protection, and a row it should never accept now goes in:
+
+```sql
+INSERT INTO swap_demo_guarded VALUES (1, 0);
+-- Succeeds, because rank > 0 is no longer enforced on this table
+```
+
+Read `swap_demo_guarded` as your live serving table and `swap_demo_plain` as a replacement someone
+built without copying the constraints forward. The swap succeeds, the serving table comes out
+unprotected, and the routine `DROP TABLE` of the replacement discards the only copy of the
+constraints. Because a hybrid table's `CHECK` constraints can only be declared at creation time, you
+cannot patch the damage with `ALTER TABLE` afterward — recovering means another CTAS+SWAP through a
+correctly constrained table, after deleting whatever invalid rows arrived in the meantime.
+
+Clean up the demonstration tables:
+
+```sql
+DROP TABLE swap_demo_guarded;
+DROP TABLE swap_demo_plain;
+```
+
+The practical defense is to keep the constrained `CREATE` statement in version control next to the
+refresh job, and to verify after each swap rather than trusting that it was done right:
 
 ```sql
 SELECT GET_DDL('TABLE', 'user_recommendations');
+-- Confirm chk_rank_positive and chk_score_range are still present
 ```
-
-The `CHECK` constraints are gone, and a row the pipeline should never produce is now accepted:
-
-```sql
-INSERT INTO user_recommendations
-VALUES (999999, 1, 0, 0.5, 'bad', 'bad', CURRENT_TIMESTAMP()::TIMESTAMP_NTZ);
--- Succeeds, because rank > 0 is no longer enforced
-```
-
-Since a hybrid table's `CHECK` constraints can only be declared at creation time, you cannot repair
-this with `ALTER TABLE` afterward. The only fix is another CTAS+SWAP using a correctly constrained
-replacement table. Do that now, both to restore the constraints and to clear the invalid row:
-
-```sql
-DROP TABLE user_recommendations_new;
-
-DELETE FROM user_recommendations WHERE rank <= 0;
-
-CREATE OR REPLACE HYBRID TABLE user_recommendations_new (
-    user_id         NUMBER       NOT NULL,
-    content_id      NUMBER       NOT NULL,
-    rank            NUMBER       NOT NULL,
-    score           FLOAT        NOT NULL,
-    content_title   VARCHAR(500),
-    content_url     VARCHAR(2000),
-    computed_at     TIMESTAMP_NTZ NOT NULL,
-    PRIMARY KEY (user_id, content_id),
-    CONSTRAINT chk_rank_positive CHECK (rank > 0),
-    CONSTRAINT chk_score_range   CHECK (score > 0 AND score <= 1)
-)
-AS SELECT * FROM user_recommendations;
-
-ALTER TABLE user_recommendations SWAP WITH user_recommendations_new;
-DROP TABLE user_recommendations_new;
-
-SELECT GET_DDL('TABLE', 'user_recommendations');
--- The CHECK constraints are back
-```
-
-Note that the repair CTAS selects from the live table, so it also revalidates the rows already
-there. Deleting the invalid row first is what allows that load to succeed.
 
 > **Note:** Treat the replacement table's DDL as part of the serving contract, not as scratch. Any
 > place that builds it — an ad hoc refresh, the scheduled task below, a CI job — must carry the same
@@ -524,7 +524,21 @@ RETURNS VARCHAR
 LANGUAGE SQL
 AS
 $$
+DECLARE
+    v_matches NUMBER;
 BEGIN ATOMIC
+    SELECT COUNT(*) INTO :v_matches
+      FROM user_entitlements
+     WHERE user_id       = :p_user_id
+       AND resource_type = :p_resource_type
+       AND resource_id   = :p_resource_id;
+
+    IF (:v_matches = 0) THEN
+        BEGIN
+            RETURN 'no matching entitlement';
+        END;
+    END IF;
+
     UPDATE user_entitlements
        SET access_level = :p_new_access
      WHERE user_id       = :p_user_id
@@ -540,13 +554,20 @@ END;
 $$;
 ```
 
-Two details are worth noting before you call it:
+Three details are worth noting before you call it:
 
 - The timestamp is a parameter. `CURRENT_TIMESTAMP()` is not available inside an Inline Stored
   Procedure, so any value the statements need must come from the caller.
-- Bind variables appear bare in the `VALUES` clause and are prefixed with a colon when referenced.
-  An Inline Stored Procedure cannot use `INSERT ... SELECT` with bind variables, so a fixed set of
-  parameters per call is the shape to aim for.
+- Procedure parameters are referenced with a colon prefix — `:p_user_id` — everywhere they appear,
+  including inside the `VALUES` clause.
+- An Inline Stored Procedure cannot use `INSERT ... SELECT` with bind variables. Attempting it fails
+  at `CALL` time with `392116 (0A000): 'Bind variable ... is not supported in Inline Stored
+  Procedure'`, so a fixed set of parameters per call is the shape to aim for.
+- The `COUNT(*)` guard is not decoration. `SQLROWCOUNT` is not available inside an Inline Stored
+  Procedure, so there is no way to branch on how many rows the `UPDATE` touched after the fact.
+  Without the guard, a call naming an entitlement that does not exist updates nothing and still
+  writes an audit row — a false record of a change that never happened. Counting first is the
+  documented workaround.
 
 Pick a real row and make a valid change:
 
@@ -597,12 +618,19 @@ SELECT COUNT(*) FROM entitlement_audit;
 -- Still 1: no audit row was written either
 ```
 
-This is the property the procedure buys you. The same two statements sent separately by an
-application would have left the grant changed with no audit record.
+This is the property the procedure buys you. The same two statements sent separately with autocommit
+on — the usual shape for application code that does not manage transactions explicitly — would have
+left the grant changed with no audit record.
 
 > **Note:** An Inline Stored Procedure must be called with autocommit enabled; it cannot run inside
 > an open transaction. It also cannot contain DDL or explicit transaction control, and every table
 > it touches must be a hybrid table in the same database.
+
+> **Note:** The rollback above depends on the error going uncaught. An `EXCEPTION ... WHEN OTHER THEN`
+> handler inside the block catches the error and returns a controlled result *instead of* rolling
+> back, so adding one to this procedure would leave the grant changed and the audit row missing — the
+> exact outcome the procedure exists to prevent. Add a handler only when you have decided what should
+> happen to the partial work.
 
 #### Where Not to Use One
 
@@ -611,13 +639,22 @@ which an Inline Stored Procedure cannot do, and wrapping bulk refresh in a proce
 nothing even if it could — `CREATE OR REPLACE` and `SWAP WITH` are already atomic on their own.
 Reserve Inline Stored Procedures for small, bounded, multi-statement writes like the one above.
 
-There is also a performance trade-off worth knowing. Statements executed inside a stored procedure
-are not eligible for the
+Inline Stored Procedures are a different case from standard stored procedures where performance is
+concerned. Statements inside a *standard* stored procedure do not benefit from the
 [operational query performance optimizations](https://docs.snowflake.com/en/user-guide/hybrid-tables-operational-query-performance)
-that repeated parameterized queries benefit from. For a low-volume administrative write like an
-entitlement change that is the right trade — atomicity matters more than latency. For the
-high-volume read path in *API Query Patterns* above, keep the queries outside procedures so they
-remain eligible.
+that repeated parameterized queries get. Inline Stored Procedures build on those optimizations
+instead: setting `ENABLE_USE_STABLE_PATH = TRUE` on the warehouse applies them to the individual
+statements inside the procedure body, and to single-statement queries on the same warehouse.
+
+```sql
+ALTER WAREHOUSE <warehouse_name> SET ENABLE_USE_STABLE_PATH = TRUE;
+```
+
+So you do not have to choose between atomicity and latency here. Set the parameter once on the
+warehouse that serves this workload and both the procedure calls and the read path in
+*API Query Patterns* above benefit. Call the procedure with bound parameters from your application
+rather than interpolating values into the `CALL` statement, so Snowflake can reuse the compiled plan
+across invocations.
 
 <!-- ------------------------ -->
 ## Step 2: Managing the Compaction Window
