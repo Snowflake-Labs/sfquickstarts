@@ -154,7 +154,7 @@ CREATE OR REPLACE HYBRID TABLE ICECREAM_ORDER_AUDIT (
 The `ID` column auto-increments so the load generator never has to invent unique keys across
 threads.
 
-Now the procedure. An [Inline Stored Procedure](https://docs.snowflake.com/en/developer-guide/stored-procedure/inline-stored-procedures)
+Now the procedure. An [Inline Stored Procedure](https://docs.snowflake.com/en/user-guide/hybrid-tables-inline-stored-procedures)
 compiles its body as a single unit and runs it as one atomic transaction, so `BEGIN TRANSACTION`
 and `COMMIT` are neither needed nor allowed inside it.
 
@@ -274,7 +274,7 @@ SELECT * FROM ICECREAM_ORDERS WHERE ID = ?
 
 **TRANSACTION Thread Group** — a multi-statement unit of work, described in *Add a Transaction Workload* below.
 
-**INVALID INPUT Thread Group** — deliberately failing calls used to prove rollback. It is shipped **disabled**, because the `Response Time Graph` listener sits at test plan level and would otherwise fold those failures into your latency numbers. See *Assert That a Failed Transaction Rolls Back*.
+**INVALID INPUT Thread Group** — deliberately failing calls used to prove rollback. It is shipped **disabled**, because the `Response Time Graph` listener sits at test plan level and would otherwise fold those failures into your latency numbers. See *Assert Transaction Rollback*.
 
 **Note:** A hybrid table best practice is to use prepared statements with bound parameters. This method maximizes
 query re-use, minimizes compile time, and generates more useful [AGGREGATE_QUERY_HISTORY](https://docs.snowflake.com/en/sql-reference/account-usage/aggregate_query_history).
@@ -379,7 +379,7 @@ test run for a while before drawing conclusions: early calls in a run include co
 that later calls amortize.
 
 <!-- ------------------------ -->
-## Assert That a Failed Transaction Rolls Back
+## Assert Transaction Rollback
 
 Throughput only matters if the writes are correct. The `INVALID INPUT Thread Group` proves that a
 failed transaction leaves nothing behind.
@@ -492,6 +492,6 @@ holds a key pair, so clean it up rather than leaving it in the account.
 - [Snowflake hybrid tables](https://docs.snowflake.com/en/user-guide/tables-hybrid)
 - [Key-pair authentication](https://docs.snowflake.com/en/user-guide/key-pair-auth)
 - [AGGREGATE_QUERY_HISTORY](https://docs.snowflake.com/en/sql-reference/account-usage/aggregate_query_history)
-- [Inline Stored Procedures](https://docs.snowflake.com/en/developer-guide/stored-procedure/inline-stored-procedures)
+- [Inline Stored Procedures](https://docs.snowflake.com/en/user-guide/hybrid-tables-inline-stored-procedures)
 - [CHECK constraints](https://docs.snowflake.com/en/sql-reference/constraints-overview)
 - [JMeter](https://jmeter.apache.org/)
