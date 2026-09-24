@@ -23,18 +23,21 @@ This quickstart demonstrates **reinforcement learning fine-tuning** of a small l
 | **Benchmark** | GSM8K (50 eval problems) |
 | **Judge** | Cortex mistral-large2 |
 
-### What You Will Build
+### What You'll Learn
 
-- A Cortex `llama3.3-70b` baseline on 50 GSM8K problems.
-- A Tinker GRPO RL training loop fine-tuning `Qwen3.5-4B` on the full GSM8K training set.
-- An LLM-as-Judge evaluation pipeline using Cortex `mistral-large2`.
-- A multi-panel comparison dashboard and Snowflake tables for downstream analysis.
+- Establish a Cortex `llama3.3-70b` baseline on 50 GSM8K problems.
+- Fine-tune `Qwen3.5-4B` with a Tinker GRPO RL training loop using GSM8K training data.
+- Evaluate model responses with an LLM-as-Judge pipeline using Cortex `mistral-large2`.
+- Compare results in a multi-panel dashboard and persist them to Snowflake tables.
 
-### What You'll Need
+### Prerequisites
 
 - An active Snowflake account with Cortex enabled.
 - A [Tinker API key](https://tinker.ai/).
-- Python environment with `tinker-cookbook`, `datasets`, and `snowflake-snowpark-python`.
+- A Snowflake notebook environment with an active Snowpark session and `tinker-cookbook`, `datasets`, `snowflake-snowpark-python`, and `snowflake-ml-python` available.
+- Access to an existing `CORTEX_CODE` database and permission to create the tutorial tables and stage in `CORTEX_CODE.PUBLIC`.
+
+Use a sandbox for this tutorial. The result-writing steps overwrite tables with the same names; do not use names that contain data you need to retain.
 
 <!-- ------------------------ -->
 ## Setup
@@ -88,7 +91,7 @@ Duration: 3
 
 Load the [GSM8K](https://huggingface.co/datasets/openai/gsm8k) grade-school math benchmark. We use the full training split for RL and 50 held-out test problems for evaluation.
 
-![GSM8K dataset sample](assets/gsm8K-datset.png)
+![GSM8K dataset sample](assets/gsm8k-dataset.png)
 
 ```python
 ds = datasets.load_dataset("openai/gsm8k", "main")
@@ -146,10 +149,7 @@ MATH_SYSTEM_PROMPT = (
 
 def cortex_baseline(question):
     prompt  = f"{MATH_SYSTEM_PROMPT}\n\nQuestion: {question}"
-    escaped = prompt.replace("'", "''")
-    return session.sql(
-        f"SELECT SNOWFLAKE.CORTEX.COMPLETE('{CORTEX_MODEL}', '{escaped}') AS resp"
-    ).collect()[0]["RESP"]
+    return cortex.complete(CORTEX_MODEL, prompt, session=session, stream=False)
 
 baseline_results = []
 for i, row in enumerate(test_data):
@@ -199,7 +199,7 @@ print(f"Tinker client ready — {TINKER_MODEL}, LoRA rank {LORA_RANK}")
 
 ### RL Training Loop
 
-![Tinker RL training reward curve](assets/tinker-rl-qwen-trianing-step.png)
+![Tinker RL training reward curve](assets/tinker-rl-qwen-training-step.png)
 
 ```python
 CONVO_PREFIX    = [{"role": "system", "content": MATH_SYSTEM_PROMPT}]
@@ -320,6 +320,7 @@ print(f"  Delta:                             {finetuned_acc - baseline_acc:+.1%}
 
 session.sql("USE DATABASE CORTEX_CODE").collect()
 session.sql("CREATE SCHEMA IF NOT EXISTS CORTEX_CODE.PUBLIC").collect()
+session.sql("USE SCHEMA CORTEX_CODE.PUBLIC").collect()
 session.create_dataframe(df).write.mode("overwrite").save_as_table("TINKER_VS_CORTEX_MATH_EVAL")
 print("Results saved to CORTEX_CODE.PUBLIC.TINKER_VS_CORTEX_MATH_EVAL")
 ```
@@ -349,8 +350,7 @@ Return ONLY valid JSON:
 
 def llm_judge(question, ground_truth, response):
     prompt  = JUDGE_PROMPT.format(question=question, ground_truth=ground_truth, response=response)
-    escaped = prompt.replace("'", "''")
-    raw = session.sql(f"SELECT SNOWFLAKE.CORTEX.COMPLETE('{JUDGE_MODEL}', '{escaped}') AS resp").collect()[0]["RESP"]
+    raw = cortex.complete(JUDGE_MODEL, prompt, session=session, stream=False)
     try:
         return json.loads(raw.strip())
     except json.JSONDecodeError:
@@ -449,19 +449,42 @@ The final notebook cell renders a **seven-panel dashboard**:
 7. **Summary stats table** — exact match accuracy, mean scores, perfect 10s, zero scores.
 
 <!-- ------------------------ -->
+## Cleanup
+Duration: 2
+
+After saving any results you want to retain, run the following SQL in a worksheet **only for objects created for this tutorial**. Dropping the stage also removes all files stored in it. If `EVAL_CONFIGS` already existed or is shared, do not drop it; remove only the configuration file uploaded during your run.
+
+```sql
+DROP TABLE IF EXISTS CORTEX_CODE.PUBLIC.TINKER_VS_CORTEX_MATH_EVAL;
+DROP TABLE IF EXISTS CORTEX_CODE.PUBLIC.TINKER_VS_CORTEX_JUDGE_SCORES;
+DROP TABLE IF EXISTS CORTEX_CODE.PUBLIC.MATH_EVAL_GROUND_TRUTH;
+DROP STAGE IF EXISTS CORTEX_CODE.PUBLIC.EVAL_CONFIGS;
+```
+
+`MATH_EVAL_GROUND_TRUTH` is created by the notebook's optional Cortex AI Evaluation Setup section; `IF EXISTS` handles runs that skipped it.
+
+Keep the existing `CORTEX_CODE` database and shared `PUBLIC` schema. Only if you created `CORTEX_CODE.PUBLIC` solely for this tutorial and it is now empty, optionally remove it using `RESTRICT`, which refuses to drop a nonempty schema:
+
+```sql
+DROP SCHEMA IF EXISTS CORTEX_CODE.PUBLIC RESTRICT;
+```
+
+These commands do not remove Tinker checkpoints or other Tinker resources. Review and remove any saved training artifacts you no longer need through Tinker, and stop the notebook runtime when you are finished.
+
+<!-- ------------------------ -->
 ## Conclusion
 Duration: 2
 
-In this quickstart you:
+### What You Learned
 
 - Established a Cortex `llama3.3-70b` baseline on 50 GSM8K grade-school math problems.
-- Fine-tuned `Qwen/Qwen3.5-4B` with GRPO reinforcement learning using Tinker in under 10 training steps.
+- Fine-tuned `Qwen/Qwen3.5-4B` with GRPO reinforcement learning using Tinker for 10 configured training steps.
 - Evaluated both models with an LLM-as-Judge pipeline powered by Cortex `mistral-large2`.
 - Persisted comparison results to Snowflake and rendered a seven-panel judge dashboard.
 
-### Next Steps
+### Resources
 
-- Increase `TRAIN_STEPS` (30–50) and `GROUP_SIZE` (8) for further accuracy gains.
-- Replace binary 0/1 rewards with a partial-credit grader that rewards correct reasoning steps.
-- Deploy the fine-tuned weights to a Cortex Agent and run `EXECUTE_AI_EVALUATION` for automated regression tracking.
-- Swap `Qwen3.5-4B` for a larger base model to explore the accuracy/cost frontier.
+- [Tinker](https://tinker.ai/)
+- [GSM8K dataset](https://huggingface.co/datasets/openai/gsm8k)
+- [Cortex Python completion API](https://docs.snowflake.com/en/developer-guide/snowpark-ml/reference/latest/api/cortex/snowflake.cortex.complete)
+- [Companion notebook](tinker-accel.ipynb)
