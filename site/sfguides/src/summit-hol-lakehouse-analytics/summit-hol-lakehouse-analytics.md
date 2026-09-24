@@ -28,11 +28,9 @@ The dataset is a Financial Services use case: insurance quote requests collected
 - How to build a [Cortex Agent](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agent) and query your data lake in natural language
 
 ### What You'll Need
-- A Snowflake Enterprise account with `ACCOUNTADMIN` access, deployed in **AWS US West 2 (Oregon)**
+- A Snowflake Enterprise account with `ACCOUNTADMIN` access, on **Amazon Web Services** (any AWS region)
 
-> **Don't have a Snowflake account?** Sign up for a free trial at [signup.snowflake.com/summit2026](https://signup.snowflake.com/summit2026). Select the **AI Data Cloud for Enterprise** option — this trial includes free access to Cortex Code CLI.
-
-> **Important:** When creating your trial account, select **Amazon Web Services** as the cloud provider and **US West (Oregon)** as the region. The lab infrastructure (S3 bucket, Glue catalog, IAM role) is deployed in AWS US West 2 — your Snowflake account must be in the same region to reach it.
+> **Note:** The lab infrastructure (S3 bucket, Glue catalog, IAM role) is deployed in AWS US West 2, but your Snowflake account does not need to be in that region. Accounts in other AWS regions read the Iceberg data cross-region, which adds latency to the first scan of each file and incurs AWS data transfer charges. For the fastest experience, use an account in **US West (Oregon)**.
 
 ### What You'll Build
 - A Snowflake **External Volume** connected to the lab's S3-backed Iceberg dataset
@@ -125,7 +123,7 @@ Once inside Cortex Code, paste the following:
 ```
 I want to complete the Summit HOL Lakehouse Analytics lab end to end.
 
-My Snowflake account is on AWS US West 2 (Oregon). I have ACCOUNTADMIN access
+My Snowflake account is on AWS. I have ACCOUNTADMIN access
 and my warehouse is COMPUTE_WH.
 
 The lab has pre-configured AWS infrastructure:
