@@ -493,7 +493,7 @@ WHEN NOT MATCHED THEN INSERT VALUES (
 
 An entitlement change is often two writes: update the grant, and record who changed what. If the
 second write fails, you do not want the first to stand. An
-[Inline Stored Procedure](https://docs.snowflake.com/en/developer-guide/stored-procedure/inline-stored-procedures)
+[Inline Stored Procedure](https://docs.snowflake.com/en/user-guide/hybrid-tables-inline-stored-procedures)
 runs its body as a single atomic transaction, so the pair either both apply or neither does.
 
 Start with an audit table. This one enforces the access-level vocabulary, which the entitlements
