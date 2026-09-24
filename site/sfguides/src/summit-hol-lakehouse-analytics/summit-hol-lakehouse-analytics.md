@@ -619,7 +619,11 @@ FROM SPECIFICATION $$
   ],
   "tool_resources": {
     "Query Insurance Quotes": {
-      "semantic_view": "iceberg_lab_db.analytics.quotes_sv"
+      "semantic_view": "iceberg_lab_db.analytics.quotes_sv",
+      "execution_environment": {
+        "type": "warehouse",
+        "warehouse": "COMPUTE_WH"
+      }
     }
   }
 }
