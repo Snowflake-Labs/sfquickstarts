@@ -827,7 +827,7 @@ No. Geospatial data types (GEOGRAPHY, GEOMETRY), semi-structured types (ARRAY, O
 
 **Q: My index build is stuck at BUILD IN PROGRESS. What should I do?**
 
-Only one index build can run at a time per table. If you submitted multiple `CREATE INDEX` commands, they queue sequentially. Wait for each to complete before expecting the next to start. If a build appears stuck for an extended period, check for long-running transactions that may be blocking the build.
+Only one index can be built at a time on a given table, but a second `CREATE INDEX` on that table is **rejected rather than queued**. It fails immediately with `391480` and that index is never created. So if you submitted several `CREATE INDEX` statements back to back, only the first one is building — the rest did not enter a queue and do not exist. Run `SHOW INDEXES IN TABLE <table_name>` to see which indexes were actually created, then re-issue the remaining statements one at a time, waiting for each to reach `ACTIVE` first. The scope is per table, so a build on one table does not block a build on another. Note also that a build takes several seconds even on a small table, so `BUILD IN PROGRESS` shortly after you submit the statement is expected rather than stuck. If a build stays in progress far longer than the table size would suggest, check for long-running transactions that may be blocking it.
 
 **Q: Do bound variables affect index usage?**
 
