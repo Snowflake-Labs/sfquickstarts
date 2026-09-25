@@ -39,6 +39,8 @@ You are building the order management backend for an e-commerce platform. Orders
 - The **equality-first, range-last** rule for composite index column ordering
 - How to create **covering indexes** with `INCLUDE` columns to eliminate probe scans
 - How to add indexes to a live, actively-used Hybrid Table without downtime
+- How `FOREIGN KEY` constraints create and own their own indexes, and how that differs from an index you create
+- How to read index build states, including `BUILD VALIDATION FAILURE`, and recover from a failed constraint
 - How to read query profiles to confirm index usage
 - The predicates and patterns that **disqualify** a query from index use
 
@@ -187,7 +189,19 @@ SHOW INDEXES IN TABLE orders;
 -- Wait until the status column shows ACTIVE for idx_orders_customer_id
 ```
 
-> **Note:** Only one index build can run at a time. If you submit multiple `CREATE INDEX` statements, they will queue.
+> **Note:** Only one index can be built on a given table at a time, and a second request is
+> **rejected rather than queued**. If you submit another `CREATE INDEX` on this table while this
+> build is running, it fails and that index is never created:
+>
+> `391480 (0A000): Another index is being built on table 'ORDERS'. Only one index can be built at a time. Either cancel the other index creation or wait until it is complete.`
+>
+> Builds take several seconds even on a small table, so statements submitted back to back will
+> normally land inside that window. Wait for `ACTIVE` before creating the next index. This matters
+> throughout the rest of this guide: if you paste a later step while a build is still running, you
+> will be missing an index and the query profiles will not match what the step describes.
+>
+> The restriction is per table. A build on one Hybrid Table does not block index creation on a
+> different one.
 
 Now re-run the same customer lookup:
 
@@ -278,14 +292,48 @@ SELECT status, COUNT(*) FROM orders GROUP BY status ORDER BY 2 DESC;
 
 > **Note:** A single-column index on a low-cardinality column like `status` (only 4 values) is a poor standalone index because it still scans a large fraction of the table. It becomes more selective as the **leading** column of a composite index that also constrains `region` and `created_at`.
 
-**Ordering within equality columns:** Within the equality prefix of a composite index, higher-cardinality columns should generally lead. A boolean column like `is_active` (2 distinct values) as the leading key means every seek still touches roughly half the index. A higher-cardinality column like `region` (4 values) or `customer_id` (10,000 values) narrows the seek range considerably.
+**Ordering within equality columns:** Within the equality prefix of a composite index, higher-cardinality columns should generally lead. The fewer distinct values the leading column has, the larger the fraction of the index each seek has to scan before the next column can narrow anything. Compare two orderings of the same three columns to see the effect.
 
 ```sql
--- Less effective: boolean column leads, large fraction of index scanned on every seek
-CREATE INDEX idx_poor ON orders (is_active, region, created_at);
+-- Less effective: the low-cardinality column leads, so every seek scans a
+-- large fraction of the index
+CREATE INDEX idx_poor ON orders (region, customer_id, created_at);
+```
 
--- Better: higher-cardinality column leads, much smaller seek range
-CREATE INDEX idx_better ON orders (region, is_active, created_at);
+Wait for `idx_poor` to reach `ACTIVE`, then drop it before building the comparison. Only one index
+can be built on a table at a time, and leaving `idx_poor` in place would skew the later steps:
+
+```sql
+SHOW INDEXES IN TABLE orders;
+-- Wait until idx_poor shows ACTIVE
+
+DROP INDEX orders.idx_poor;
+```
+
+```sql
+-- Better: the higher-cardinality column leads, so each seek targets a much
+-- smaller range
+CREATE INDEX idx_better ON orders (customer_id, region, created_at);
+```
+
+`region` has only four distinct values, so leading with it means a seek lands in roughly a quarter
+of the index before the second column can narrow anything. `customer_id` has ten thousand distinct
+values, so leading with it reduces the seek range by orders of magnitude before `region` is even
+consulted.
+
+Cardinality is a tie-breaker, not the first rule. Order the key by what your queries actually filter
+on: equality columns first, range columns last, and among the equality columns put the ones that
+appear in every query ahead of the ones that appear in only some. Here both columns are always
+supplied, so cardinality decides. If some queries filtered on `region` alone, leading with
+`customer_id` would make the index useless to them.
+
+Drop the comparison index before continuing so it does not affect the profiles in later steps:
+
+```sql
+SHOW INDEXES IN TABLE orders;
+-- Wait until idx_better shows ACTIVE
+
+DROP INDEX orders.idx_better;
 ```
 
 <!-- ------------------------ -->
@@ -365,6 +413,168 @@ Once all three builds complete, you should see three secondary indexes plus the 
 | IDX_ORDERS_CUSTOMER_ID | CUSTOMER_ID | N | ACTIVE |
 | IDX_ORDERS_STATUS_REGION_TS | STATUS, REGION, CREATED_AT | N | ACTIVE |
 | IDX_ORDERS_REGION_CREATED | REGION, CREATED_AT | N | ACTIVE |
+
+### Indexes Created by Foreign Key Constraints
+
+Not every index on a Hybrid Table is one you create directly. A `FOREIGN KEY` constraint needs an
+index on the referencing column to enforce itself, so Snowflake creates and owns one as part of the
+constraint. Those indexes appear in `SHOW INDEXES` alongside the ones you created, but they follow
+different rules.
+
+The `orders` table references a customer that does not exist yet, so start by creating the parent.
+
+```sql
+CREATE OR REPLACE HYBRID TABLE customers (
+    customer_id   NUMBER      NOT NULL PRIMARY KEY,
+    customer_name VARCHAR     NOT NULL,
+    tier          VARCHAR(20) NOT NULL
+);
+
+INSERT INTO customers (customer_id, customer_name, tier)
+SELECT SEQ4() + 1,
+       'customer_' || (SEQ4() + 1)::VARCHAR,
+       ARRAY_CONSTRUCT('BRONZE','SILVER','GOLD','PLATINUM')
+           [UNIFORM(0, 3, RANDOM())]::VARCHAR
+FROM TABLE(GENERATOR(ROWCOUNT => 10000));
+```
+
+The `+ 1` matters. `SEQ4()` starts at zero, while the order generator assigned `customer_id` from
+`UNIFORM(1, 10000, RANDOM())`. A bare `SEQ4()` would produce customers `0` through `9999`, leaving
+every order that drew customer `10000` with no parent row — enough to fail the constraint you are
+about to add. Confirm the ranges line up before continuing:
+
+```sql
+SELECT MIN(customer_id) AS c_min, MAX(customer_id) AS c_max FROM customers;
+-- Expected: 1, 10000
+
+SELECT COUNT(*) AS orphan_orders
+FROM orders o
+WHERE NOT EXISTS (SELECT 1 FROM customers c WHERE c.customer_id = o.customer_id);
+-- Expected: 0
+```
+
+Now add the constraint:
+
+```sql
+ALTER TABLE orders ADD CONSTRAINT fk_orders_customer
+    FOREIGN KEY (customer_id) REFERENCES customers(customer_id);
+```
+
+### Watch the Build State, Not the DDL Result
+
+The statement above returns `Statement executed successfully` immediately. That result tells you
+the constraint was *accepted*, not that it was *validated*. The index builds asynchronously, and
+the only way to see where it stands is `SHOW INDEXES`:
+
+```sql
+SHOW INDEXES IN TABLE orders;
+```
+
+Immediately after the `ALTER TABLE`, the new entry reports that it is still working:
+
+| Index Name | Columns | Status | Status Info |
+|------------|---------|--------|-------------|
+| FK_ORDERS_CUSTOMER | CUSTOMER_ID | BUILD IN PROGRESS | The index is being built. |
+
+Re-run `SHOW INDEXES` until it settles. On clean data it reaches `ACTIVE`, which means the rows
+already in the table have been validated and the index is available to serve queries:
+
+| Index Name | Columns | Is Unique | Status |
+|------------|---------|-----------|--------|
+| FK_ORDERS_CUSTOMER | CUSTOMER_ID | N | ACTIVE |
+
+> **Note:** Treat `SHOW INDEXES` as a required step whenever you add a foreign key to a table that
+> already holds data. A successful DDL result tells you the constraint was accepted, not that the
+> rows already in the table passed validation.
+
+### When Validation Fails
+
+If the existing rows violate the constraint, the DDL still succeeds and the build still starts —
+then it ends in a terminal failure state. Introduce a row with no parent and watch it happen:
+
+```sql
+ALTER TABLE orders DROP CONSTRAINT fk_orders_customer;
+
+INSERT INTO orders (customer_id, status, region, created_at, total_amount, created_by)
+VALUES (999999, 'PENDING', 'US-EAST', CURRENT_TIMESTAMP()::TIMESTAMP_NTZ, 42.00, 'user_1');
+
+ALTER TABLE orders ADD CONSTRAINT fk_orders_customer
+    FOREIGN KEY (customer_id) REFERENCES customers(customer_id);
+```
+
+The `ALTER TABLE` reports success. `SHOW INDEXES` reports the truth:
+
+| Index Name | Status | Status Info |
+|------------|--------|-------------|
+| FK_ORDERS_CUSTOMER | BUILD VALIDATION FAILURE | Index creation failed validation. The existing data violates the constraint. Please review the data, resolve the violations, and try creating the constraint again. |
+
+Be precise about what this state means, because it is easy to misread. A constraint left in
+`BUILD VALIDATION FAILURE` **still enforces every new write**. Statements that would violate it
+fail, valid statements succeed, and `TRUNCATE TABLE` on the referenced table fails. Only the rows
+that were already in the table when you added the constraint remain unvalidated. The constraint is
+not inert; it is half-applied, which is the more dangerous condition, because the table now behaves
+as though the relationship holds while the original offending rows are still sitting in it.
+
+`SHOW INDEXES` is also the only command that reports this state. `SHOW IMPORTED KEYS`,
+`SHOW PRIMARY KEYS`, the `TABLE_CONSTRAINTS` view, and `GET_DDL` all list the constraint exactly as
+they would if it had validated.
+
+A failed constraint does not repair itself, and you cannot retry it in place. Drop it, fix the
+data, and add it again:
+
+```sql
+ALTER TABLE orders DROP CONSTRAINT fk_orders_customer;
+
+DELETE FROM orders
+WHERE customer_id NOT IN (SELECT customer_id FROM customers);
+
+ALTER TABLE orders ADD CONSTRAINT fk_orders_customer
+    FOREIGN KEY (customer_id) REFERENCES customers(customer_id);
+```
+
+Confirm it reaches `ACTIVE` before you rely on it.
+
+### FK-Backed Indexes Behave Differently
+
+The index behind a constraint is not yours to manage. Dropping it directly fails:
+
+```sql
+DROP INDEX orders.fk_orders_customer;
+```
+
+```
+391457 (2F003): Index 'FK_ORDERS_CUSTOMER' is associated with constraint
+'FK_ORDERS_CUSTOMER'. Use ALTER TABLE .. DROP CONSTRAINT to drop the index
+and its associated constraint.
+```
+
+The constraint owns its lifecycle in both directions, so dropping the constraint removes the index
+with it — no separate `DROP INDEX` needed:
+
+```sql
+ALTER TABLE orders DROP CONSTRAINT fk_orders_customer;
+SHOW INDEXES IN TABLE orders;
+-- FK_ORDERS_CUSTOMER is gone
+```
+
+| | Index you create | Index created by a FOREIGN KEY |
+|---|---|---|
+| Created by | `CREATE INDEX` or the `INDEX` clause | `ALTER TABLE ... ADD CONSTRAINT` |
+| Naming | you choose | matches the constraint name |
+| Removed by | `DROP INDEX` | `ALTER TABLE ... DROP CONSTRAINT` |
+| `DROP INDEX` allowed | yes | no, fails with `391457` |
+| Build failure mode | build error | `BUILD VALIDATION FAILURE` from existing data |
+| Purpose | query performance | enforcing referential integrity |
+
+The practical consequence is that you should not add a foreign key expecting to tune its index
+later. Once it is `ACTIVE` the constraint's index is a real access path and equality lookups on
+`customer_id` can use it, but you do not control its key order, its `INCLUDE` list, or its
+lifecycle. If a query needs a different column order or additional included columns, create your
+own index for it. The two kinds coexist on the same column without conflict.
+
+> **Note:** Because the constraint owns the index, dropping a foreign key silently removes an index
+> your queries may have been using. Check for dependent access paths before dropping a constraint
+> as part of schema maintenance.
 
 <!-- ------------------------ -->
 <!-- INTENT: Teach how to diagnose index usage from query profile scan modes -->
@@ -496,10 +706,20 @@ SELECT * FROM orders WHERE status = 'PENDING' AND region = 'US-EAST' AND created
 CREATE INDEX idx_status_only ON orders (status);
 ```
 
-**Do this instead:** Combine the low-cardinality column with higher-cardinality columns in a composite index. The index `(status, region, created_at)` seeks to a much smaller subset.
+**Do this instead:** Combine the low-cardinality column with higher-cardinality columns in a composite index. The index you built in Step 3 already does exactly this, so there is nothing new to create here. First wait for the standalone index to finish building, then drop it:
 
 ```sql
-CREATE INDEX idx_orders_status_region_ts ON orders (status, region, created_at);
+SHOW INDEXES IN TABLE orders;
+-- Wait until idx_status_only shows ACTIVE
+
+DROP INDEX orders.idx_status_only;
+```
+
+```sql
+-- Already built earlier in this guide:
+--   CREATE INDEX idx_orders_status_region_ts ON orders (status, region, created_at);
+SHOW INDEXES IN TABLE orders;
+-- Confirm idx_orders_status_region_ts is present and ACTIVE
 ```
 
 ### Anti-Pattern 6: Non-Deterministic Session Functions in Predicates
