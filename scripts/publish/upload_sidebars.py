@@ -15,8 +15,7 @@ import os
 import sys
 from pathlib import Path
 
-from lib import aem, validate
-from publish import upload_dam_asset
+from lib import aem, upload_dam_asset, validate
 
 DAM_ROOT = "snowflake-site"
 DAM_FOLDER = f"{DAM_ROOT}/developers/technical/guides-navigation"

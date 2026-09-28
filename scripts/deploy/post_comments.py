@@ -20,6 +20,7 @@ Environment:
     GUIDE_NAME         journey-staged only
     HEAD_SHA           staging kinds only
     AEM_PUBLISH_URL    staging kinds only; exported by the secrets action
+    RUN_URL            staging-pending only; the run holding the approval
 """
 
 from __future__ import annotations
@@ -302,6 +303,25 @@ def journey_body() -> str:
     )
 
 
+def approval_body() -> str:
+    """Point the author at the deployment approval the preview is waiting on.
+
+    Nothing on the pull request itself surfaces a pending environment approval, so
+    without this the run sits waiting and the author has no way to know why no
+    preview appeared.
+    """
+    url = (os.environ.get("RUN_URL") or "").strip()
+    if not url.startswith("https://"):
+        msg = f"RUN_URL is not an https URL: {url!r}"
+        raise validate.ValidationError(msg)
+    return (
+        "## ⏳ Staging Preview Pending Approval\n\n"
+        "Validation passed. The preview URL is published once the staging deployment "
+        "is approved by a member of `guide-maintainers`.\n\n"
+        f"👉 **Approve here:** {url}\n\n{SIGNATURE}"
+    )
+
+
 def build_body(kind: str) -> str | None:
     """Return the comment body for `kind`, or None when there is nothing to say."""
     reports = Reports(Path(os.environ.get("ARTIFACT_DIR", "artifact")))
@@ -310,6 +330,7 @@ def build_body(kind: str) -> str | None:
         "informational": lambda: informational_body(reports),
         "quickstart-staged": quickstart_body,
         "journey-staged": journey_body,
+        "staging-pending": approval_body,
     }
     return builders[kind]()
 
@@ -319,7 +340,13 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "kind",
-        choices=["validation-failures", "informational", "quickstart-staged", "journey-staged"],
+        choices=[
+            "validation-failures",
+            "informational",
+            "quickstart-staged",
+            "journey-staged",
+            "staging-pending",
+        ],
     )
     kind = parser.parse_args().kind
 

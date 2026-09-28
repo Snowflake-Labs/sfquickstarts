@@ -25,6 +25,7 @@ import urllib.error
 import urllib.parse
 import urllib.request
 from pathlib import Path
+from typing import Any
 
 TIMEOUT_SECONDS = 120
 DEFAULT_MAX_RETRIES = 3
@@ -34,6 +35,10 @@ HTTP_OK = 200
 HTTP_REDIRECT = 300
 HTTP_CLIENT_ERROR = 400
 HTTP_NOT_FOUND = 404
+# "repository state conflicting with request", which AEM answers while it is still
+# assembling a node it has just been asked to copy. It is the one 4xx that clears
+# on its own, so it is waited out rather than treated as a rejection.
+HTTP_CONFLICT = 409
 HTTP_TOO_MANY_REQUESTS = 429
 HTTP_SERVER_ERROR = 500
 
@@ -42,6 +47,31 @@ JSON_CONTENT_TYPE = "application/json"
 
 # AEM creates a folder asynchronously, so the first upload into it has to wait.
 FOLDER_SETTLE_SECONDS = 3
+
+# A copied node is not always readable the moment the copy request returns, so it
+# is waited for rather than slept on: a write that lands before the copy does is
+# silently undone when the copy finally arrives.
+COPY_SETTLE_SECONDS = 3
+COPY_POLL_SECONDS = 2
+COPY_WAIT_SECONDS = 90
+
+# Writing a fragment is checked rather than assumed, and retried before it fails.
+FRAGMENT_ATTEMPTS = 3
+FRAGMENT_RETRY_SECONDS = 10
+
+# The element a guide's markdown is written to, and the one worth reading back.
+# The failure being caught replaces the body wholesale with the base template, so
+# the opening of it is enough to tell the two apart. Comparing the whole value
+# instead would turn any normalisation AEM applies into a permanent hard failure.
+FRAGMENT_BODY_FIELD = "./data/master/quickstartArticleBody"
+FRAGMENT_CHECK_CHARS = 500
+
+# An asset is not indexed the moment its upload returns, and replication rejects
+# one that is not, so activation waits first and a new asset waits much longer.
+NEW_ASSET_SETTLE_SECONDS = 30
+EXISTING_ASSET_SETTLE_SECONDS = 2
+ACTIVATE_ATTEMPTS = 3
+ACTIVATE_RETRY_SECONDS = 15
 
 # A rate limit asks for a far longer pause than a server error does.
 RATE_LIMIT_MULTIPLIER = 60
@@ -80,7 +110,7 @@ def retry_delay(status: int, attempt: int, base: int) -> int | None:
         return base * RATE_LIMIT_MULTIPLIER
     if status >= HTTP_SERVER_ERROR:
         return base * attempt * 2
-    if HTTP_CLIENT_ERROR <= status < HTTP_SERVER_ERROR:
+    if HTTP_CLIENT_ERROR <= status < HTTP_SERVER_ERROR and status != HTTP_CONFLICT:
         return None
     return base * attempt
 
@@ -139,6 +169,32 @@ class Client:
         """Whether a JCR path resolves on the instance."""
         return self.status(f"{path}.json") == HTTP_OK
 
+    def wait_until_exists(self, path: str, description: str) -> None:
+        """Block until a JCR path resolves, giving up loudly rather than late.
+
+        A node answering a GET only means it has been created, not that AEM has
+        finished assembling it, so the wait starts with a settle rather than
+        returning the instant the path appears.
+        """
+        time.sleep(COPY_SETTLE_SECONDS)
+        deadline = time.monotonic() + COPY_WAIT_SECONDS
+        while not self.exists(path):
+            if time.monotonic() >= deadline:
+                msg = f"{description}: {path} did not appear within {COPY_WAIT_SECONDS}s"
+                raise AemError(msg)
+            time.sleep(COPY_POLL_SECONDS)
+
+    def properties(self, path: str) -> dict[str, Any]:
+        """Return a node's properties, or an empty mapping if it cannot be read."""
+        status, raw = self._send("GET", f"{self.base_url}{path}.json", None)
+        if not HTTP_OK <= status < HTTP_REDIRECT:
+            return {}
+        try:
+            data = json.loads(raw)
+        except json.JSONDecodeError:
+            return {}
+        return data if isinstance(data, dict) else {}
+
     def post(self, path: str, body: str, description: str) -> bytes:
         """POST a pre-encoded form body, retrying what is worth retrying."""
         url = f"{self.base_url}{path}"
@@ -168,6 +224,45 @@ class Client:
         if deep:
             fields["depth"] = "infinity"
         self.post_fields(source, fields, description)
+
+    def write_fragment(self, cf_path: str, body: str, description: str) -> None:
+        """Write a content fragment's payload and confirm the guide body took.
+
+        A Sling POST answers 200 whether or not it wrote what was asked, so a write
+        that races a still-settling copy of the base fragment is indistinguishable
+        from a successful one: the fragment keeps the base template and the job goes
+        green having staged an empty guide. The body is read back instead, and a
+        fragment that cannot be confirmed fails the job.
+        """
+        expected = dict(urllib.parse.parse_qsl(body)).get(FRAGMENT_BODY_FIELD, "")
+        opening = expected[:FRAGMENT_CHECK_CHARS]
+        for attempt in range(1, FRAGMENT_ATTEMPTS + 1):
+            self.post(f"{cf_path}/jcr:content", body, description)
+            written = self.fragment_body(cf_path)
+            if not expected or written.startswith(opening):
+                return
+            if attempt == FRAGMENT_ATTEMPTS:
+                msg = (
+                    f"{description}: {cf_path} does not hold the guide body after "
+                    f"{FRAGMENT_ATTEMPTS} attempts (wrote {len(expected)} characters, "
+                    f"read back {len(written)})"
+                )
+                raise AemError(msg)
+            print(f"{description}: did not take, retrying in {FRAGMENT_RETRY_SECONDS}s")
+            time.sleep(FRAGMENT_RETRY_SECONDS)
+
+    def fragment_body(self, cf_path: str) -> str:
+        """Return the guide body currently stored on a content fragment."""
+        value = self.properties(f"{cf_path}/jcr:content/data/master").get("quickstartArticleBody")
+        return value if isinstance(value, str) else ""
+
+    def wait_for_fragment(self, cf_path: str, description: str) -> None:
+        """Block until a content fragment is ready to be written to.
+
+        The node waited for is the one the payload writes into rather than the
+        fragment's root, which exists well before the copy beneath it has finished.
+        """
+        self.wait_until_exists(f"{cf_path}/jcr:content/data/master", description)
 
     def replicate(self, path: str, description: str) -> None:
         """Activate a path so it reaches the publish tier."""
@@ -201,13 +296,16 @@ class Client:
             )
         time.sleep(FOLDER_SETTLE_SECONDS)
 
-    def upload_asset(self, path: Path, dam_folder: str) -> None:
-        """Upload one image through the Assets API.
+    def upload_asset(self, path: Path, dam_folder: str) -> bool:
+        """Upload one image through the Assets API, returning whether it was created.
 
         PUT updates an existing asset and POST creates one. Which applies is probed
         first, but a PUT can still come back 404 because the probe races anything
         else writing to the folder, so that answer is taken as the correction it is
         rather than as a failed attempt.
+
+        This writes to the author instance only. Anything that has to be readable on
+        the public site needs publish_asset as well.
         """
         encoded = urllib.parse.quote(path.name, safe="")
         url = f"{self.base_url}/api/assets/{dam_folder.removeprefix('/content/dam/')}/{encoded}"
@@ -221,7 +319,7 @@ class Client:
             status, response = self._send(method, url, body, content_type)
             if HTTP_OK <= status < HTTP_REDIRECT:
                 print(f"Uploaded {path.name} ({method}, HTTP {status})")
-                return
+                return creating
             if status == HTTP_NOT_FOUND and not creating:
                 creating = True
                 continue
@@ -236,3 +334,38 @@ class Client:
 
         msg = f"upload of {path.name} failed after {self.attempts} attempts"
         raise AemError(msg)
+
+    def reprocess_asset(self, asset_path: str) -> None:
+        """Ask AEM to regenerate an asset's renditions.
+
+        Best effort, as the shell this replaces had it: the publish tier falls back
+        to the original when a rendition is missing, so a guide with unprocessed
+        images still reads correctly.
+        """
+        fields = {"operation": "PROCESS", "asset": asset_path, "profile-select": "full-process"}
+        body = urllib.parse.urlencode(fields).encode("utf-8")
+        status, _ = self._send("POST", f"{self.base_url}/bin/asynccommand", body)
+        if not HTTP_OK <= status < HTTP_REDIRECT:
+            print(f"::warning::reprocessing {asset_path} returned HTTP {status}")
+
+    def publish_asset(self, asset_path: str, *, created: bool) -> None:
+        """Reprocess an uploaded asset and activate it to the publish tier.
+
+        Replication answers 400 while an asset is still being indexed, which is a
+        wait rather than a rejection and is the one 4xx worth retrying here.
+        """
+        self.reprocess_asset(asset_path)
+        time.sleep(NEW_ASSET_SETTLE_SECONDS if created else EXISTING_ASSET_SETTLE_SECONDS)
+
+        body = urllib.parse.urlencode({"cmd": "Activate", "path": asset_path}).encode("utf-8")
+        for attempt in range(1, ACTIVATE_ATTEMPTS + 1):
+            status, response = self._send("POST", f"{self.base_url}/bin/replicate.json", body)
+            if HTTP_OK <= status < HTTP_REDIRECT:
+                print(f"Published {asset_path}")
+                return
+            if status != HTTP_CLIENT_ERROR or attempt == ACTIVATE_ATTEMPTS:
+                detail = response.decode("utf-8", errors="replace")[:ERROR_BODY_CHARS]
+                msg = f"publishing {asset_path} failed (HTTP {status}): {detail}"
+                raise AemError(msg)
+            print(f"publishing {asset_path}: not indexed, retrying in {ACTIVATE_RETRY_SECONDS}s")
+            time.sleep(ACTIVATE_RETRY_SECONDS)

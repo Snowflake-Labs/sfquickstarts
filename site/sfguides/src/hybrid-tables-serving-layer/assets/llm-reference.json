@@ -38,8 +38,10 @@
     "auto_suspend": "300-600 (avoid suspend/resume during traffic dips)",
     "why_xs": "XS cluster is sufficient for many operational serving workloads. Benchmark your patterns, then scale horizontally via clusters, not vertically via larger size."
   },
-  "warpspeed": {
-    "note": "WarpSpeed (Public Preview) can improve latency for repeated query patterns. Benchmark your specific workload to measure impact.",
+  "operational_query_performance": {
+    "note": "Setting ENABLE_USE_STABLE_PATH = TRUE on a warehouse (public preview) can improve latency for repeated parameterized queries. Benchmark your specific workload to measure impact.",
+    "docs": "https://docs.snowflake.com/en/user-guide/hybrid-tables-operational-query-performance",
+    "enable": "ALTER WAREHOUSE <wh> SET ENABLE_USE_STABLE_PATH = TRUE",
     "requirements": ["Bound variables", "Consistent query shape", "Queries outside stored procedures"],
     "serving_fit": "High — serving workloads execute the same parameterized query shape repeatedly"
   },

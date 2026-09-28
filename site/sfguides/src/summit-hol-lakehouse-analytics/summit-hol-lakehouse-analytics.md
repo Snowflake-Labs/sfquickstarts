@@ -28,11 +28,9 @@ The dataset is a Financial Services use case: insurance quote requests collected
 - How to build a [Cortex Agent](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agent) and query your data lake in natural language
 
 ### What You'll Need
-- A Snowflake Enterprise account with `ACCOUNTADMIN` access, deployed in **AWS US West 2 (Oregon)**
+- A Snowflake Enterprise account with `ACCOUNTADMIN` access, on **Amazon Web Services** (any AWS region)
 
-> **Don't have a Snowflake account?** Sign up for a free trial at [signup.snowflake.com/summit2026](https://signup.snowflake.com/summit2026). Select the **AI Data Cloud for Enterprise** option — this trial includes free access to Cortex Code CLI.
-
-> **Important:** When creating your trial account, select **Amazon Web Services** as the cloud provider and **US West (Oregon)** as the region. The lab infrastructure (S3 bucket, Glue catalog, IAM role) is deployed in AWS US West 2 — your Snowflake account must be in the same region to reach it.
+> **Note:** The lab infrastructure (S3 bucket, Glue catalog, IAM role) is deployed in AWS US West 2, but your Snowflake account does not need to be in that region. Accounts in other AWS regions read the Iceberg data cross-region, which adds latency to the first scan of each file and incurs AWS data transfer charges. For the fastest experience, use an account in **US West (Oregon)**.
 
 ### What You'll Build
 - A Snowflake **External Volume** connected to the lab's S3-backed Iceberg dataset
@@ -51,10 +49,10 @@ Here is what has been set up on your behalf:
 
 | Resource | Details |
 |---|---|
-| **S3 Bucket** | `s3://sf-lab-iceberg-407539788379/iceberg/` (us-west-2) |
+| **S3 Bucket** | `s3://glue-snowflake-lab-849350360261/iceberg/` (us-west-2) |
 | **Glue Database** | `iceberg` |
 | **Iceberg Table** | `quotes` — 40 columns, insurance quote records in Iceberg V2 format |
-| **IAM Role** | `arn:aws:iam::407539788379:role/sf-lab-shared-role` |
+| **IAM Role** | `arn:aws:iam::849350360261:role/sf-lab-shared-role` |
 
 ### Architecture
 
@@ -125,12 +123,12 @@ Once inside Cortex Code, paste the following:
 ```
 I want to complete the Summit HOL Lakehouse Analytics lab end to end.
 
-My Snowflake account is on AWS US West 2 (Oregon). I have ACCOUNTADMIN access
+My Snowflake account is on AWS. I have ACCOUNTADMIN access
 and my warehouse is COMPUTE_WH.
 
 The lab has pre-configured AWS infrastructure:
-- S3 bucket: s3://sf-lab-iceberg-407539788379/iceberg/
-- IAM role: arn:aws:iam::407539788379:role/sf-lab-shared-role
+- S3 bucket: s3://glue-snowflake-lab-849350360261/iceberg/
+- IAM role: arn:aws:iam::849350360261:role/sf-lab-shared-role
 - Glue database: iceberg, table: quotes (~56K insurance quote records)
 
 Please run through all sections in order:
@@ -184,8 +182,8 @@ CREATE OR REPLACE EXTERNAL VOLUME my_iceberg_vol
     (
       NAME             = 'us-west-2'
       STORAGE_PROVIDER = 'S3'
-      STORAGE_BASE_URL = 's3://sf-lab-iceberg-407539788379/iceberg/'
-      STORAGE_AWS_ROLE_ARN = 'arn:aws:iam::407539788379:role/sf-lab-shared-role'
+      STORAGE_BASE_URL = 's3://glue-snowflake-lab-849350360261/iceberg/'
+      STORAGE_AWS_ROLE_ARN = 'arn:aws:iam::849350360261:role/sf-lab-shared-role'
     )
   )
   ALLOW_WRITES = FALSE;
@@ -206,11 +204,11 @@ CREATE OR REPLACE CATALOG INTEGRATION my_glue_int
   REST_CONFIG = (
     CATALOG_URI      = 'https://glue.us-west-2.amazonaws.com/iceberg'
     CATALOG_API_TYPE = AWS_GLUE
-    CATALOG_NAME     = '407539788379'
+    CATALOG_NAME     = '849350360261'
   )
   REST_AUTHENTICATION = (
     TYPE                 = SIGV4
-    SIGV4_IAM_ROLE       = 'arn:aws:iam::407539788379:role/sf-lab-shared-role'
+    SIGV4_IAM_ROLE       = 'arn:aws:iam::849350360261:role/sf-lab-shared-role'
     SIGV4_SIGNING_REGION = 'us-west-2'
   )
   ENABLED = TRUE;
@@ -335,9 +333,12 @@ CREATE ROLE IF NOT EXISTS lab_analyst;
 -- Hierarchy: analyst is a subset of data engineer
 GRANT ROLE lab_analyst TO ROLE lab_data_engineer;
 
--- Grant both roles to your user
-GRANT ROLE lab_data_engineer TO USER IDENTIFIER(CURRENT_USER());
-GRANT ROLE lab_analyst TO USER IDENTIFIER(CURRENT_USER());
+-- Grant both roles to the current user (resolved at runtime)
+BEGIN
+  LET u STRING := CURRENT_USER();
+  EXECUTE IMMEDIATE 'GRANT ROLE lab_data_engineer TO USER "' || :u || '"';
+  EXECUTE IMMEDIATE 'GRANT ROLE lab_analyst TO USER "' || :u || '"';
+END;
 
 -- Grant warehouse access so roles can run queries
 -- Replace COMPUTE_WH with your warehouse name if different
@@ -374,7 +375,48 @@ CREATE DATABASE IF NOT EXISTS iceberg_lab_db;
 CREATE SCHEMA IF NOT EXISTS iceberg_lab_db.analytics;
 
 CREATE OR REPLACE VIEW iceberg_lab_db.analytics.quotes_vw AS
-SELECT * FROM my_iceberg_db."iceberg"."quotes";
+SELECT
+  "uuid"                   AS uuid,
+  "batchid"                AS batchid,
+  "quote_product"          AS quote_product,
+  "quotedate"              AS quotedate,
+  "quotehour"              AS quotehour,
+  "policyno"               AS policyno,
+  "inceptiondate"          AS inceptiondate,
+  "expirydate"             AS expirydate,
+  "effectivestartdate"     AS effectivestartdate,
+  "effectiveenddate"       AS effectiveenddate,
+  "previnsr"               AS previnsr,
+  "creditchecksconsentind" AS creditchecksconsentind,
+  "creditscore"            AS creditscore,
+  "dateofbirth"            AS dateofbirth,
+  "homeownerind"           AS homeownerind,
+  "maritalstatus"          AS maritalstatus,
+  "vehiclesavailable"      AS vehiclesavailable,
+  "prn"                    AS prn,
+  "sex"                    AS sex,
+  "postcodedistrict"       AS postcodedistrict,
+  "postcodefull"           AS postcodefull,
+  "postcodesector"         AS postcodesector,
+  "surname"                AS surname,
+  "iptamount"              AS iptamount,
+  "newriskpremium"         AS newriskpremium,
+  "oldriskpremium"         AS oldriskpremium,
+  "originalpremium"        AS originalpremium,
+  "premiuminclipt"         AS premiuminclipt,
+  "premiumexclipt"         AS premiumexclipt,
+  "totalpremiumpayable"    AS totalpremiumpayable,
+  "agencyref"              AS agencyref,
+  "businesssourcecode"     AS businesssourcecode,
+  "intermediary_code"      AS intermediary_code,
+  "insrpmttype"            AS insrpmttype,
+  "debitfrqcy"             AS debitfrqcy,
+  "address"                AS address,
+  "fullname"               AS fullname,
+  "postcode"               AS postcode,
+  "phonenumber"            AS phonenumber,
+  "email"                  AS email
+FROM my_iceberg_db."iceberg"."quotes";
 ```
 
 ### Masking Policies
@@ -577,7 +619,11 @@ FROM SPECIFICATION $$
   ],
   "tool_resources": {
     "Query Insurance Quotes": {
-      "semantic_view": "iceberg_lab_db.analytics.quotes_sv"
+      "semantic_view": "iceberg_lab_db.analytics.quotes_sv",
+      "execution_environment": {
+        "type": "warehouse",
+        "warehouse": "COMPUTE_WH"
+      }
     }
   }
 }
@@ -597,13 +643,13 @@ GRANT SELECT ON VIEW iceberg_lab_db.analytics.quotes_vw TO ROLE SNOWFLAKE;
 GRANT SELECT ON SEMANTIC VIEW iceberg_lab_db.analytics.quotes_sv TO ROLE SNOWFLAKE;
 ```
 
-> **Note:** The `SNOWFLAKE` service role is available in Snowflake Enterprise and Business Critical accounts. Trial accounts do not include this role — if you receive a "Role does not exist" error, skip this step. The agent is still fully accessible via **AI & ML > Agents** in Snowsight.
+> **Note:** The `SNOWFLAKE` service role is available in Snowflake Enterprise and Business Critical accounts. Trial accounts do not include this role — if you receive a "Role does not exist" error, skip this step. The agent is still fully accessible via **AI & ML > Agent Studio** in Snowsight.
 
 ### Ask Questions
 
 To open the agent in Snowsight:
 
-1. In the left nav, click **AI & ML → Agents**
+1. In the left nav, click **AI & ML → Agent Studio**
 2. Find **Insurance Quotes Analyst** in the list and click **Open**
 3. Type a question in the chat input and press Enter
 4. The agent translates your question into SQL against `quotes_sv` and returns the result

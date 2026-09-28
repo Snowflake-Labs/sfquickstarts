@@ -9,11 +9,10 @@ on:
 
 permissions: {}
 
-# Publishes must not overlap, and a queued run must not be cancelled: each one
-# carries a different commit's content.
-concurrency:
-  group: publish-aem-${{ github.ref }}
-  cancel-in-progress: false
+# No concurrency group, deliberately. Every run here carries a different commit's
+# content, so none of them may be dropped. cancel-in-progress: false does not buy
+# that: GitHub keeps only one pending run per group and cancels the rest, so a run
+# held open by a production approval silently killed the publishes queued behind it.
 
 jobs:
   detect_changes:

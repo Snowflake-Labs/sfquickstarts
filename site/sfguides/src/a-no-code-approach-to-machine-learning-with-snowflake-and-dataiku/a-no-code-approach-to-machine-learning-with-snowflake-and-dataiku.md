@@ -10,6 +10,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 # A No Code Approach to Machine Learning with Snowflake and Dataiku
 
+
 ## Overview 
 
 This Snowflake Guide covers the basics of training machine learning models, interpreting them, and deploying them to make predictions. 
@@ -35,7 +36,7 @@ The exercises in this lab will walk you through the steps to:
 - Look at our loan data, understand trends through correlation matrices
 - Train, interpret, and deploy Machine Learning models in Dataiku - powered by Snowpark ML
 - Use our trained model to make new predictions
-- `(Optional)` Set up an MLOps process to retrain the model, check for accuracy, and make new predictions on a weekly basis
+- `(Optional)` Set up an MLOps process to retrain the model, check for accuracy, and make new predictions on a weekly basis.
 
 
 ### What You’ll Need 
@@ -46,7 +47,7 @@ The exercises in this lab will walk you through the steps to:
 <!-- ------------------------ -->
 ## Create Your Snowflake Lab Environment
 
-If you haven't already, [register for a Snowflake free 30-day trial](https://trial.snowflake.com/) The rest of the sections in this lab assume you are using a new Snowflake account created by registering for a trial.
+If you haven't already, [register for a Snowflake free 30-day trial](https://trial.snowflake.com/) The rest of the sections in this lab assume you are using a new Snowflake account created by registering for a trial
 
 > 
 > 

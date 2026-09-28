@@ -30,8 +30,7 @@ import sys
 import time
 from pathlib import Path
 
-from lib import aem, validate
-from publish import upload_dam_asset
+from lib import aem, upload_dam_asset, validate
 
 CF_ROOT = "/content/dam/snowflake-site"
 PAGE_ROOT = "/content/snowflake-site/global"
@@ -46,10 +45,14 @@ SIDEBAR_LEVELS = ("developers", "developers/technical", "developers/technical/gu
 
 # AEM finishes each of these asynchronously. The durations are the ones the shell
 # used; a staged page needs longer than a published one because the copy is fresh.
-CF_COPY_SETTLE_SECONDS = 3
 PAGE_COPY_SETTLE_SECONDS = 8
 IMAGE_PROCESSING_SECONDS = 15
 PAGE_PROCESSING_SECONDS = 60
+
+# How long a write needs to be visible to the replication agent before activating
+# it. The value is the image wait that used to cover this by accident, which is the
+# only gap any preview that came out correct actually had.
+REPLICATION_SETTLE_SECONDS = 15
 
 
 def artifact_dir() -> Path:
@@ -90,7 +93,12 @@ def payload_field(root: Path, name: str, field: str) -> str:
 
 
 def stage_images(client: aem.Client, root: Path, name: str) -> int:
-    """Upload the guide's images from the artifact to the staging DAM folder."""
+    """Upload the guide's images from the artifact to the staging DAM folder.
+
+    Deliberately not activated to the publish tier. A preview reads its images from
+    the pull request's commit on GitHub rather than the DAM, and this folder is the
+    live guide's, so activating here would put unmerged images on the public site.
+    """
     images = within(root, "images", name)
     if images is None or not images.is_dir():
         return 0
@@ -116,10 +124,10 @@ def stage_content_fragment(
     cf_path = f"{parent}/{name}-{sha}"
     print(f"Copying base fragment to {cf_path}")
     client.copy(BASE_CF_PATH, cf_path, "copy base content fragment", deep=True)
-    time.sleep(CF_COPY_SETTLE_SECONDS)
+    client.wait_for_fragment(cf_path, "copy base content fragment")
 
     body = payload_field(root, name, "content_fragment_payload")
-    client.post(f"{cf_path}/jcr:content", body, "update content fragment")
+    client.write_fragment(cf_path, body, "update content fragment")
     return cf_path
 
 
@@ -150,6 +158,13 @@ def stage_guide(name: str, language: str) -> None:
     print(f"Uploaded {count} image(s)")
     if count:
         time.sleep(IMAGE_PROCESSING_SECONDS)
+
+    # Activation packages whatever the author holds when the replication agent gets
+    # to it, so the fragment write has to be visible to that agent first. This was
+    # only ever covered by the image wait above, which left a pull request touching
+    # no images activating its fragment the instant it was written: the publish tier
+    # got the base template and the preview came out empty.
+    time.sleep(REPLICATION_SETTLE_SECONDS)
     client.replicate(cf_path, "publish content fragment")
 
     page_path = stage_page(client, root, name, language, sha)

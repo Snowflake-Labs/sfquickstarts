@@ -217,7 +217,7 @@ CoCo queries `INFORMATION_SCHEMA` and shows the database structure: RAW (source 
 
 > *"How many orders, customers, and products do we have?"*
 
-Expected: ~10M orders, ~25M order items, 2M customers, 10 products, 1200 reviews, 1200 support tickets.
+Expected: ~10M orders, ~25M order items, 2M customers, 10 products, ~240 reviews, ~192 support tickets.
 
 > *"What's the date range of our order data?"*
 
