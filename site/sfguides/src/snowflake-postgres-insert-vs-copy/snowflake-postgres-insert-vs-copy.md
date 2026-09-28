@@ -6,6 +6,7 @@ summary: Comparing INSERT, batch INSERT, and COPY performance in Postgres
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+tags: Postgres
 
 # Comparing INSERT and COPY Performance
 <!-- ------------------------ -->

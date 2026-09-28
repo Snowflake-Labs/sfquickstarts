@@ -6,6 +6,7 @@ summary: Stream Postgres logs from Snowflake into Datadog using the native event
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+tags: Postgres
 
 # Monitor Snowflake Postgres Logs with Datadog
 <!-- ------------------------ -->
@@ -101,9 +102,23 @@ This is a printf-style format string that gets prepended to every log line. Each
 
 By default, Snowflake Postgres does not generate logs. You will need to set `log_statement` to enable them. If you do not have a production instance, you can set this to `all` for testing log ingestion. For production, review your necessary configurations.
 
+> **Note:** Snowflake Postgres does not support the standard PostgreSQL `ALTER SYSTEM` command. Instead, use the Snowsight UI or the `ALTER POSTGRES INSTANCE` SQL command to change server settings.
+
+**Option 1: Snowsight UI**
+
+1. In the navigation menu, select **Postgres**
+2. Select your instance
+3. On the right side of the page, select the edit icon next to **Custom parameters**
+4. Search for `log_statement` and set the value to `all`
+5. Click **Continue to review**, then **Submit**
+
+**Option 2: SQL**
+
 ```sql
-ALTER SYSTEM SET log_statement = 'all';
+ALTER POSTGRES INSTANCE <your_instance_name> SET POSTGRES_SETTINGS = ('log_statement' = 'all');
 ```
+
+For the full list of available logging parameters, see [Snowflake Postgres Server Settings](https://docs.snowflake.com/en/user-guide/snowflake-postgres/postgres-server-settings).
 
 <!-- ------------------------ -->
 ## 2. Confirm Logs in the Snowflake Event Table

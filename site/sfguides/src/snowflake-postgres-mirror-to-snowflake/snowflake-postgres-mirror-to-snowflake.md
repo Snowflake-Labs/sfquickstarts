@@ -1,6 +1,6 @@
 author: Elizabeth Christensen
 id: snowflake-postgres-mirror-to-snowflake
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/snowflake-feature/postgres
 language: en
 summary: Learn how to replicate Snowflake Postgres tables to Snowflake for analytics using a mirror
 environments: web

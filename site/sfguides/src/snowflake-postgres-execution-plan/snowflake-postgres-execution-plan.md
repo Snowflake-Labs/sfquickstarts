@@ -6,6 +6,7 @@ summary: Using Postgres EXPLAIN to understand query execution
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+tags: Postgres
 
 # Postgres Execution Plan
 <!-- ------------------------ -->
