@@ -1,6 +1,6 @@
 author: Gilberto Hernandez, Snowflake CoCo
 id: get-started-with-remote-development-snowflake-vscode-extension
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/snowflake-ml, snowflake-site:taxonomy/product/platform
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/platform
 language: en
 summary: Connect VS Code or Cursor to a Snowflake-managed dev environment over Remote-SSH, ingest ~1B rows of Tasty Bytes data, enrich with Marketplace weather, and train + log an XGBoost sales-forecasting model – all on Snowflake compute, from your local editor.
 environments: web
@@ -31,6 +31,13 @@ Let's get started!
  - How to clone and work with a private GitHub repo from the remote environment – using your editor's GitHub sign-in, or a Snowflake secret for editor-independent auth
 - How to suspend and resume the remote environment while preserving cloned repos, installed packages, and trained artifacts
 
+### Prerequisites
+
+- A Snowflake account (Enterprise or higher) with Marketplace access and the `ENABLE_NOTEBOOK_SERVICE_REMOTE_VS_CODE_ACCESS` parameter set to `TRUE` (on by default).
+- A role with `USAGE` on a compute pool that allows the `NOTEBOOK` workload type, plus permission to use external access integrations and secrets.
+- VS Code or Cursor installed locally, and a GitHub account.
+- Working knowledge of Python, Jupyter notebooks, Git, and basic SQL.
+
 ### What You'll Need
 
 - A Snowflake account with a role that can create and run notebook services (`USAGE` on a compute pool that allows the `NOTEBOOK` workload type; permission to use external access integrations and secrets). If you don't have one, [sign up for a free 30-day trial](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides). Select Enterprise edition.
@@ -56,7 +63,7 @@ By the end of this guide, you'll have:
 - An actual vs. predicted sales chart for a held-out week, rendered inline in the remote notebook.
 
 <!-- ------------------------ -->
-## Set up your Snowflake account
+## Set up your account
 
 Duration: 6
 
@@ -107,7 +114,7 @@ You should see weather observations for a US city across the first week of Janua
 Great job – the Snowflake side is ready. Now let's get your editor set up.
 
 <!-- ------------------------ -->
-## Install the extension and sign in
+## Install the extension
 
 Duration: 3
 
@@ -154,7 +161,7 @@ The service enters PENDING status while Snowflake provisions the container. This
 ![create env](./assets/create-env.png)
 
 <!-- ------------------------ -->
-## Connect over SSH and open a notebook
+## Connect and open the notebook
 
 Duration: 8
 
@@ -217,7 +224,7 @@ Great job. You're now running Snowflake-backed compute from your local editor. L
 
 
 <!-- ------------------------ -->
-## Enrich with Marketplace weather and feature-engineer with CoCo
+## Enrich and feature-engineer with CoCo
 
 Duration: 8
 
@@ -389,7 +396,7 @@ session.table('tb_101.ml.feature_table').count()
 Now the feature table lives in Snowflake, ready for training.
 
 <!-- ------------------------ -->
-## Train an XGBoost model and log it to the Model Registry
+## Train and register the model
 
 Duration: 6
 
@@ -486,11 +493,11 @@ You should see the two lines tracking each other reasonably closely. The fit has
 ![chart](./assets/chart.png)
 
 <!-- ------------------------ -->
-## Working with a private git repo
+## Work with private repos
 
 Duration: 5
 
-Data science and machine learning work often involves the use of source control and git repositories. The suggested path for working with repos using remote development is to clone them into the the **/mnt/pd0** directory. This is the persisted storage directory, and cloning into it will ensure that the repo will be available to you in subsequent SSH sessions.
+Data science and machine learning work often involves the use of source control and git repositories. The suggested path for working with repos using remote development is to clone them into the **/mnt/pd0** directory. This is the persisted storage directory, and cloning into it will ensure that the repo will be available to you in subsequent SSH sessions.
 
 Git authentication is typically handled by your editor's GitHub sign-in – no secret or credential helper needed. If your remote VS Code (or Cursor) session is signed into GitHub, many git operations will work with little to no configuration. 
 
@@ -505,7 +512,7 @@ If you're signed in, then the typical `git clone` workflow applies and automatic
 ```bash
 cd /mnt/pd0
 git clone https://github.com/<your_github_username>/<repo-name>.git # Path to repo
-cd <repo-name>>
+cd <repo-name>
 ```
 
 If you are running git under a service identity instead of your own, store an access token in a **Snowflake secret**, mount it into the service, and point git at it with a credential helper. This is the common pattern for team and production environments. For details, see [Remote Development with the Snowflake Extension for Visual Studio Code](https://docs.snowflake.com/en/user-guide/vscode-ext-remote-development).
@@ -524,7 +531,7 @@ git config --local user.email "you@example.com"
 
 
 <!-- ------------------------ -->
-## Suspend, resume, and confirm state persists
+## Suspend and resume
 
 Duration: 2
 
@@ -590,20 +597,9 @@ The same remote environment that ran this notebook can host your team's other ML
 
 - [Remote Development with the Snowflake Extension for Visual Studio Code](https://docs.snowflake.com/en/user-guide/vscode-ext-remote-development)
 - [Snowflake Extension for Visual Studio Code](https://docs.snowflake.com/en/user-guide/vscode-ext)
-- [Snowflake Notebooks (Container Runtime)](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-on-container-runtime)
+- [Snowflake Notebooks (Container Runtime)](https://docs.snowflake.com/en/developer-guide/snowflake-ml/notebooks-on-spcs)
 - [Snowflake ML – Model Registry](https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/overview)
-- [Cortex Code (CoCo) in your code editor](https://docs.snowflake.com/en/user-guide/cortex-code)
+- [Cortex Code (CoCo) in your code editor](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code)
 - [Companion repo: sfguide-getting-started-with-remote-development-vscode-extension](https://github.com/Snowflake-Labs/sfguide-getting-started-with-remote-development-vscode-extension)
 - [Pelmorex Weather Source: Frostbyte – Snowflake Marketplace](https://app.snowflake.com/marketplace/listing/GZSOZ1LLEL)
-- Related Quickstart: [Getting Started with CoCo in the Snowflake VS Code Extension](https://quickstarts.snowflake.com/guide/get-started-coco-vscode-extension/)
-
-<!--
-AUTHOR NOTES (remove before publish):
-
-Validated end-to-end on a live account (setup, weather join, features, train.py, Model Registry, chart, private-repo clone via editor GitHub auth). The service-identity / Snowflake-secret path is now a short pointer to the official docs; it was validated earlier, but it's out of scope for a getting-started guide – the interactive reader is signed into GitHub in their editor.
-
-Still open before publish:
-- Publish the companion repo to github.com/Snowflake-Labs so the `git clone` step works (currently manual file upload).
-- Optionally pin a specific Container Runtime version in step 4 (guide currently accepts the default).
-- Capture screenshots for assets/: (1) Remote Environments panel with a running service, (2) Setup SSH, (3) Snowflake Kernel (Python + SQL) picker, (4) row-count cell result, (5) CoCo panel in remote window, (6) Model Registry entry in Snowsight, (7) actual-vs-predicted chart, (8) /secrets/ ls output.
--->
+- Related Quickstart: [Getting Started with CoCo in the Snowflake VS Code Extension](https://www.snowflake.com/en/developers/guides/get-started-coco-vscode-extension/)
