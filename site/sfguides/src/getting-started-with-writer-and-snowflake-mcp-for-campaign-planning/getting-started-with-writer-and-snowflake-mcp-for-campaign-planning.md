@@ -150,14 +150,16 @@ SELECT 'https://'
   || '/mcp-servers/WRITER_QUICKSTART_MCP_SERVER' AS mcp_server_url;
 ```
 
-**Expected:** A client ID and secret, and a fully qualified MCP server URL. Keep both for the WRITER connection step.
+**Expected:** A client ID and secret, and a fully qualified MCP server URL. **Keep these three values for the WRITER connection step**.
 
 > If your account identifier contains underscores, replace them with hyphens in the hostname. Some MCP clients fail to connect to hostnames with underscores. This applies to the hostname only — database, schema, and server names in the path retain their original underscores.
+
+> If your Snowflake account restricts network traffic, add WRITER's [static egress IP addresses](https://dev.writer.com/home/mcp-gateway#whitelist-ip-addresses) to your allowlist. See Snowflake's [Network policies for MCP clients](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents-mcp#network-policies-for-mcp-clients) documenation for more details.
 
 <!-- ------------------------ -->
 ## Role Setup
 
-For simplicity, in this quickstart we'll update your  `DEFAULT_ROLE` to be the `WRITER_QUICKSTART_ROLE`. For more information on role behavior with OAuth sessions and Snowflake MCP, see [Snowflake documenatation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents-mcp#role-behavior-in-oauth-sessions).
+For simplicity, in this quickstart we'll update your `DEFAULT_ROLE` to be the `WRITER_QUICKSTART_ROLE`. For more information on role behavior with OAuth sessions and Snowflake MCP, see [Snowflake documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents-mcp#role-behavior-in-oauth-sessions).
 
 ```sql
 USE ROLE ACCOUNTADMIN;
@@ -207,76 +209,134 @@ WRITER will open a browser window for the Snowflake OAuth consent screen. Sign i
 
 After connecting, WRITER should discover **two** tools: `campaign-planner` and `save-brief`.
 
-You are now finished with the connection steps and are ready to use Snowflake with WRITER.
+You are now finished with the WRITER admin connection steps and are ready to use Snowflake with WRITER.
 
 <!-- ------------------------ -->
-## Build the Playbook
+## Build the WRITER Playbook
 
-### Create the playbook
+### Test Your Connector
+Let's first make sure the Snowflake connector is connected. From WRITER App, click on **Customize** and then **Connectors**. Find Snowflake and click `Connect` if you haven't already connected.
 
-Now we are ready to build a playbook in WRITER that uses the Snowflake Connector. 
+![Connect to Snowflake](assets/connect_to_snowflake.png)
+
+ Sign in with your Snowflake user and approve, and you will see an `Authentication Successful` message. 
+
+Now let's test that the connection works by clicking on `+ New Session` to open a new WRITER agent session. Now enter this prompt:
+```
+Use \snowflake to tell me which 5 micro segments have the highest intent score.
+```
+You should see results similar to the following (note results will vary).
+
+![Agent test prompt](assets/agent_test_prompt.png)
+
+### Create the Playbook
+
+Now we are ready to build a playbook in WRITER that uses the Snowflake Connector. Note you can visit this [guide](https://support.writer.com/articles/1496523599-get-started-with-playbooks) to learn more on creating playbooks in WRITER.
 
 While in WRITER, click on **Playbooks**. Once in the playbooks screen, select `+ New playbook`.
-![Select Playbooks](assets/writer_menu_playbook.png)
 
-**Add one variable:**
+![New Playbook](assets/new_playbook.png)
 
-| Key | Type |
-|-----|------|
-| `Campaign__Topic` | text |
-
-**Paste this as the agent prompt:**
+Now select a `Multi step` playbook and **enter the following prompt**:
 
 ```
-### Instructions
-
-You are planning a marketing campaign for Apex Athletics, a B2B activewear company.
-The campaign topic is [w-var](Campaign__Topic).
+- You are planning a marketing campaign for Apex Athletics, a fictitious B2B activewear company.
+- The campaign topic is [w-var](Campaign__Topic).
+- Treat [w-var](Additional__Context), if provided, as supplementary direction that constrains the
+  brief: messaging guardrails, channel restrictions, a specific campaign ID, or stakeholder
+  priorities.
 
 **Step 1 — Find the audience**
 
-Ask [w-connector](SNOWFLAKE) using campaign-planner:
-"Which 3 micro-segments should we target for a campaign about <topic>? For each, give
-the segment name, customer count, average LTV, intent score, and churn risk tier."
+- Ask [w-connector](SNOWFLAKE) using campaign-planner: "Which 3 micro-segments are most relevant
+  to a campaign about [w-var](Campaign__Topic)? For each, give the segment name, segment ID,
+  customer count, average LTV, intent score, churn risk tier, and dominant RFM segment."
+- For each segment, write 1–2 sentences explaining why it fits this campaign, connecting its
+  intent, LTV, and churn risk to the topic.
 
 **Step 2 — Find what has worked**
 
-Ask [w-connector](SNOWFLAKE) using campaign-planner:
-"What historical campaign copy has performed well for these segments and for the topic
-<topic>? Include subject lines, CTAs, tone, and conversion rates."
+- Ask [w-connector](SNOWFLAKE) using campaign-planner: "What historical campaigns are most
+  relevant to [w-var](Campaign__Topic) and to these segments? Return the campaign name, channel,
+  subject lines, CTAs, tone, and open, click, and conversion rates."
+- Pick the 2–3 most relevant campaigns. Prioritize similarity of topic and audience over recency.
+  Note what worked, what underperformed, and any messaging patterns.
+- If nothing closely relevant comes back, say so explicitly and continue. Do not fabricate
+  campaign history.
 
 **Step 3 — Draft the brief**
 
-Write a campaign brief grounded only in what came back from Snowflake. Do not invent
-segment names, metrics, or campaign history. Include:
-- Campaign name and a one-line objective
-- The 3 target segments with their metrics and a sentence on why each fits
-- Recommended channels, with a rationale referencing historical performance
-- Three subject line options in the tone that performed best
-- Success metrics, using the historical conversion rates as the baseline
-- Any assumptions or open questions
+- Write a campaign brief grounded only in what came back from Snowflake and in
+  [w-var](Additional__Context). Do not introduce segments, metrics, or campaign history that
+  Snowflake did not return.
+- The brief must include:
+  - Campaign name and a one-line objective
+  - The 3 target segments, each with its metrics and fit rationale
+  - The 2–3 reference campaigns, with what to carry forward from each
+  - Key messages and tone, based on the copy that performed best
+  - Three subject line options
+  - Success metrics, using the historical conversion rates as the baseline
+  - Assumptions and open questions
+- Select 3–5 channels. Channels must be text- or image-based only: no video or audio. One of the
+  channels must be a blog post. Give each channel a one-sentence rationale that references the
+  segment data or historical performance.
 
 **Step 4 — Save it to Snowflake**
 
-Call the save-brief tool on [w-connector](SNOWFLAKE) with:
-- P_CAMPAIGN_ID: a new identifier in the form CMP-2026-NNN
-- P_BRIEF_JSON: the complete brief as a JSON string, including brief_id, status
-  ("draft"), created_by ("WRITER playbook"), title, and a section for each part of
-  the brief above
+- Call the save-brief tool on [w-connector](SNOWFLAKE) once the brief is complete.
+- P_CAMPAIGN_ID: use the campaign ID from [w-var](Additional__Context) if one is given;
+  otherwise use a new identifier in the form CMP-2026-NNN.
+- P_BRIEF_JSON: the complete brief as a JSON object serialized to a string. Include brief_id,
+  status ("draft"), created_by ("WRITER playbook"), title, and one key per section of the brief
+  above.
+- If you revise the brief and save it again, reuse the same brief_id so the existing record is
+  updated rather than duplicated.
 
-Report the returned BRIEF_ID and the table it was written to.
+**Final message**
+
+- Present the brief in full.
+- Report the BRIEF_ID returned by save-brief and the table it was written to.
+- List any assumptions or open questions that need a decision.
 ```
+You will see something that looks similar to the following:
+![Enter prompt](assets/playbook_prompt.png)
 
-Run it with a topic such as `winter running gear` or `win back lapsed customers`.
+Note that you might see the following warning items that need corrected. Select the `Campaign Topic` and save as an `input`. This will allow us to have a dynamic input for each plabook run.
 
-![WRITER playbook builder](assets/writer-playbook-builder.png)
+![Campaign topic](assets/campaign_input.png)
 
-![Playbook running against Snowflake MCP](assets/writer-playbook-running.png)
+Do the same for `Additional Context`, but select `Make optional` so that this is only optional context. 
+
+Then make sure the appropriate Snowflake connector is referenced. You can always type a `/` and select the Snowflake connector.
+
+![Adjusted playbook](assets/adjusted_playbook.png)
+
+Now click `Create a playbook`.
+
+You will then see a new Playbook in Editor mode that shows the various steps of you playbook broken down into various steps. You can go ahead and click on the `Run Options` button and click `Run Playbook`.
+
+![Playbook editor](assets/playbook_editor.png)
+
+Then enter the following inputs and then select `Run`:
+- Campaign Topic: `Winter running gear`
+- Additional Context: `Use campaign ID CMP-2026-001`
+
+![Run playbook](assets/run_playbook.png)
+
+The playbook will take a few minutes to complete. When done, you should see output similar to the below showing the campaign run completed.
+
+![Finished playbook heading](assets/finished_playbook_top.png)
+
+You can view the final produced markdown artifact as well as a confirmation showing the record was saved to Snowflake as part of the governed write-back procedure.
+
+![Finished playbook bottom section](assets/finished_playbook_run.png)
+
+Now feel free to customize this pipeline, incorporating WRITER skills, brand guidelines and any additional context to make the workflow even more customized to your organization.
 
 <!-- ------------------------ -->
 ## Verify Write-Back
 
-Back in Snowflake, confirm the brief landed:
+As a final step, let's confirm that the write-back happened in Snowflake:
 
 ```sql
 USE ROLE ACCOUNTADMIN;
@@ -302,8 +362,6 @@ LIMIT 1;
 
 **Expected:** One row. `CREATED_BY` reflects the value from the playbook prompt. `BRIEF_CONTENT` holds the brief WRITER wrote, with its structure intact.
 
-![Campaign brief result in Snowflake](assets/snowflake-brief-result.png)
-
 Run the playbook again with the same `P_CAMPAIGN_ID` and `brief_id` — the row count stays at 1 because the `MERGE` updates rather than duplicates.
 
 <!-- ------------------------ -->
@@ -315,7 +373,6 @@ You have connected WRITER to Snowflake through an MCP server with two governed t
 - How to build a Cortex Agent that routes between a semantic view and a Cortex Search service
 - How to create a governed write-back path using a stored procedure exposed as an MCP tool
 - How to configure OAuth for Snowflake MCP server authentication
-- How WRITER discovers tool contracts through MCP `tools/list` — no hardcoded signatures needed
 - How to build a WRITER playbook that grounds content in Snowflake data and writes results back
 
 ### Cleanup
@@ -360,6 +417,7 @@ Also remove the connector in WRITER, since its credentials no longer resolve.
 ### Related Resources
 - [Building a Marketing Content Supply Chain Flywheel with WRITER & Snowflake Technical Blog](https://medium.com/snowflake/building-a-marketing-content-supply-chain-flywheel-with-writer-snowflake-cb13d76641ad)
 - [WRITER + Snowflake](https://writer.com/product/snowflake/)
+- [Getting Started with WRITER Playbooks](https://support.writer.com/articles/1496523599-get-started-with-playbooks)
 - [Getting Started with Snowflake MCP Server](https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake-mcp-server/)
 - [Best Practices to Building Cortex Agents](https://www.snowflake.com/en/developers/guides/best-practices-to-building-cortex-agents/)
 - [Snowflake MCP Server Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents-mcp)
@@ -368,6 +426,6 @@ Also remove the connector in WRITER, since its credentials no longer resolve.
 - [WRITER - Snowflake Connector Documentation](https://dev.writer.com/connectors/snowflake)
 
 ### Next Steps
-- **Extend to the full content supply chain.** Add a `save-asset` tool for copy and an `activate-segment` tool for audience delivery — both follow the same `GENERIC` procedure pattern as `save-brief`.
-- **Dynamic Tables.** Rebuild `CUSTOMER_360` as a Dynamic Table over a real event stream with `TARGET_LAG`, so segments stay current automatically.
+- **Extend to the full content supply chain.** Extend this example quickstart with additional patterns shown in this [technical blog](https://medium.com/snowflake/building-a-marketing-content-supply-chain-flywheel-with-writer-snowflake-cb13d76641ad).
 - **Index the briefs.** Add a Cortex Search service over `CAMPAIGN_BRIEFS` so each campaign can learn from the ones before it.
+- **Customize the WRITER Playbook.** Generate an html artifact with your brand guidelines and additional skills to ensure your workflows are fully compliant and on-brand.
