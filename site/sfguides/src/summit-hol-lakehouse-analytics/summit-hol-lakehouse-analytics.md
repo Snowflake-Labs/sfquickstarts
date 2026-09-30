@@ -657,7 +657,7 @@ To open the agent in Snowsight:
 2. Find **Insurance Quotes Analyst** in the list and click **Open**
 3. Type a question in the chat input and press Enter
 4. The agent translates your question into SQL against `quotes_sv` and returns the result
-5. To test masking enforcement: change your active role (top-left role picker) to `lab_analyst` or `lab_data_engineer` and ask the same question — PII fields will be masked or unmasked based on your role
+5. To test masking enforcement: switch your active role in Snowsight to `lab_analyst` or `lab_data_engineer` and ask the same question — PII fields will be masked or unmasked based on your role
 
 The agent is also available in Snowflake CoWork (enterprise accounts only).
 
