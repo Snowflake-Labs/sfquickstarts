@@ -11,19 +11,14 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 ## Overview
 
-[WRITER](https://writer.com) is an enterprise AI platform for content generation. In this guide you will connect WRITER to Snowflake through a Snowflake-managed MCP server, building a campaign-planning playbook that grounds its recommendations in your customer data and saves the finished brief back to Snowflake through a stored procedure you control.
+[WRITER](https://writer.com) is an enterprise AI platform for agentic marketing and revenue teams. When paired with Snowflake MCP, WRITER enables teams to activate their Snowflake data in every workflow to close the loop from insight to execution. You can learn more about WRITER & Snowflake's integration in this [link](https://writer.com/product/snowflake/).
 
-The MCP server exposes exactly two tools:
+In this guide you will connect WRITER to Snowflake through a Snowflake-managed MCP server, building a campaign-planning playbook that grounds its recommendations in customer data and saves the finished brief back to Snowflake through a stored procedure you control. We'll create all objects from scratch in this guide, but feel free to skip to the skip to the Connect to WRITER section if you already have an MCP server ready to be used.
 
-| Tool | Type | Purpose |
-|------|------|---------|
-| `campaign-planner` | `CORTEX_AGENT_RUN` | Routes questions to a semantic view (structured) or a Cortex Search service (unstructured). Snowflake owns the routing decision. |
-| `save-brief` | `GENERIC` (procedure) | Writes a campaign brief to a single table through a governed stored procedure with a fixed signature. |
-
-By the end you will have a WRITER playbook that asks a Cortex Agent which customer micro-segments to target, finds historical campaign copy that has performed well, drafts a brief, and writes it back to Snowflake — all governed by least-privileged roles and a fixed procedure contract.
+By the end you will have a WRITER playbook that asks a Cortex Agent which customer micro-segments to target, finds historical campaign copy that has performed well, drafts a brief, and writes it back to Snowflake — all governed by Snowflake.
 
 ### Prerequisites
-- A Snowflake account with Cortex AI enabled (Enterprise or higher, or a trial)
+- A Snowflake account with access to [Cortex AI features](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions#availability) (Cortex Agents, Cortex Search, and Semantic Views)
 - `ACCOUNTADMIN`, or a role that can create databases, warehouses, roles, and security integrations
 - A WRITER organization with permission to add a custom MCP connector (this may require a WRITER org admin — confirm before you start)
 - Basic familiarity with Snowflake and SQL
@@ -35,16 +30,23 @@ By the end you will have a WRITER playbook that asks a Cortex Agent which custom
 - How to build a governed write-back path using a stored procedure exposed as an MCP tool
 - How to configure OAuth for MCP server authentication
 - How to connect WRITER to a Snowflake MCP server and build a playbook
-- How MCP tool discovery works — WRITER discovers the procedure contract automatically
+- How to build a playbook in WRITER to enable reusable workflows for your team
 
 ### What You'll Need
-- A [Snowflake](https://signup.snowflake.com/) account (Enterprise or higher, or trial)
+- A [Snowflake](https://signup.snowflake.com/) account with access to Cortex AI features
 - A [WRITER](https://writer.com) organization with MCP connector access
-- About 15 minutes
+- About 30 minutes
 
 ### What You'll Build
 - A complete Snowflake environment with customer data, campaign history, a Cortex Agent, and an MCP server
 - A WRITER playbook that plans campaigns grounded in Snowflake data and writes briefs back through a governed procedure
+
+The MCP server provide two tools to WRITER:
+
+| Tool | Type | Purpose |
+|------|------|---------|
+| `campaign-planner` | `CORTEX_AGENT_RUN` | Routes questions to a semantic view (structured) or a Cortex Search service (unstructured). |
+| `save-brief` | `GENERIC` (procedure) | Writes a campaign brief to a single table through a governed stored procedure with a fixed signature. |
 
 ```
 WRITER playbook
@@ -63,31 +65,25 @@ WRITER playbook
 <!-- ------------------------ -->
 ## Environment Setup
 
-Creates the database, schema, warehouse, and a least-privileged role that WRITER will use.
-
-Run the pre-flight check first — it should return **0 rows**. If it returns a row, either drop the existing database or change the name consistently throughout this guide.
+In a Snowflake worksheet, copy/paste the below to create the database, schema, warehouse, and a least-privileged role that WRITER will use.
 
 ```sql
 USE ROLE ACCOUNTADMIN;
 
--- Pre-flight: expect 0 rows
-SHOW DATABASES LIKE 'WRITER_SF_QUICKSTART';
-
--- Environment
-CREATE DATABASE WRITER_SF_QUICKSTART
+CREATE DATABASE IF NOT EXISTS WRITER_SF_QUICKSTART
   COMMENT = 'WRITER + Snowflake MCP quickstart';
 
-CREATE SCHEMA WRITER_SF_QUICKSTART.MARKETING
-  COMMENT = 'Apex Athletics marketing data, AI objects, and write-back target';
+CREATE SCHEMA IF NOT EXISTS WRITER_SF_QUICKSTART.MARKETING
+  COMMENT = 'WRITER + Snowflake setup: Apex Athletics marketing data, AI objects, and write-back target';
 
-CREATE WAREHOUSE WRITER_QUICKSTART_WH
+CREATE WAREHOUSE IF NOT EXISTS WRITER_QUICKSTART_WH
   WAREHOUSE_SIZE = XSMALL
   AUTO_SUSPEND   = 60
   AUTO_RESUME    = TRUE
   INITIALLY_SUSPENDED = TRUE
   COMMENT = 'Warehouse for the WRITER quickstart';
 
-CREATE ROLE WRITER_QUICKSTART_ROLE
+CREATE ROLE IF NOT EXISTS WRITER_QUICKSTART_ROLE
   COMMENT = 'MCP access role for the WRITER quickstart';
 
 GRANT ROLE WRITER_QUICKSTART_ROLE TO ROLE SYSADMIN;
@@ -109,14 +105,11 @@ Everything is created in a new `WRITER_SF_QUICKSTART` database with its own ware
 <!-- ------------------------ -->
 ## Customer Data
 
-Two tables power the agent's customer intelligence:
+For this quickstart, we'll create all the data with the below SQL commands. In practice, you'll use your actual data while making sure to build the necessary Semantic Views and/or Cortex Search services. In our example, two tables power the agent's customer intelligence:
 
 - **CUSTOMER_360** — one row per customer with behavioral metrics, RFM scoring, churn risk, and predictive scores. 5,000 rows.
 - **MICRO_SEGMENTS** — customers grouped by RFM segment, churn tier, and preferred channel, scored and ranked by intent. This is what the agent reads when asked "who should I target?"
 
-All values are generated deterministically from `HASH(SEQ4())`, so your numbers will match the ones in this guide.
-
-> In production these would be Dynamic Tables with `TARGET_LAG`, built over a raw event stream so segment attributes refresh automatically. We use plain tables here so setup is a single paste.
 
 ```sql
 USE ROLE ACCOUNTADMIN;
@@ -500,22 +493,10 @@ FROM CAMPAIGN_LIBRARY;
 <!-- ------------------------ -->
 ## Write-Back Contract
 
-This is the governed half of the integration: one target table and one stored procedure.
+This part will enable goverened write-back capability into Snowflake with one target table and one stored procedure.
 
-**CAMPAIGN_BRIEFS** starts empty — it is the write target, nothing else. **SAVE_BRIEF** is the only way anything reaches that table from outside Snowflake.
+**CAMPAIGN_BRIEFS** starts empty and is the write target. **SAVE_BRIEF** is the only way anything reaches that table from outside Snowflake — it accepts two `VARCHAR` parameters, upserts via `MERGE` (so re-saving updates rather than duplicates), parses the brief JSON server-side, and runs as the caller's role so no privilege escalation is possible.
 
-| Constraint | Effect |
-|------------|--------|
-| Two `VARCHAR` parameters, fixed | No arbitrary column list, no extra tables |
-| `MERGE` on `BRIEF_ID` | Re-saving the same brief updates it; no duplicate rows |
-| `PARSE_JSON` into one `VARIANT` column | Structure is the caller's, but it lands in one typed place |
-| `BRIEF_ID` generated server-side when absent | Callers cannot collide or overwrite by guessing |
-| One target table | Cannot reach `CUSTOMER_360`, `MICRO_SEGMENTS`, or `CAMPAIGN_LIBRARY` |
-| `EXECUTE AS CALLER` | The caller's own grants still apply — no privilege escalation |
-
-> `P_BRIEF_JSON` must be a `VARCHAR` — this is a platform constraint. Snowflake does not support custom MCP or agent tools with a parameter of type `object`. The brief crosses the MCP boundary serialized as a string, and `PARSE_JSON` inside the procedure turns it back into structure.
-
-> `CREATE OR REPLACE TABLE` drops every grant on that table. If you go back and re-run an earlier step, re-run this step's grants afterward.
 
 ```sql
 USE ROLE ACCOUNTADMIN;
@@ -617,7 +598,7 @@ SELECT COUNT(*) AS should_be_zero FROM CAMPAIGN_BRIEFS;
 <!-- ------------------------ -->
 ## AI Layer
 
-Four objects: a Cortex Search service, a semantic view, the agent, and the MCP server.
+Now we'll create the AI-related Snowflake objects, including a Cortex Search service, a semantic view, the agent, and the MCP server.
 
 > The two YAML specs in this block are whitespace-sensitive. They are passed inside `$$ ... $$` and parsed as YAML. If your editor re-indents on paste you will get a parse error.
 
@@ -837,14 +818,12 @@ SHOW CORTEX SEARCH SERVICES IN SCHEMA WRITER_SF_QUICKSTART.MARKETING;
 
 **Expected:** `DESCRIBE MCP SERVER` shows both tools, with `save-brief` carrying `config.type = procedure` and an `input_schema` listing `P_CAMPAIGN_ID` and `P_BRIEF_JSON`. The Search service should show both `indexing_state` and `serving_state` as `ACTIVE` (this may take 1-5 minutes).
 
-![DESCRIBE MCP SERVER output](assets/describe-mcp-server.png)
-
-![Search service showing ACTIVE status](assets/search-service-active.png)
-
 <!-- ------------------------ -->
 ## OAuth Configuration
 
-WRITER authenticates to the MCP server with OAuth 2.0. This creates the security integration and retrieves the client credentials you will paste into WRITER.
+WRITER authenticates to the MCP server with OAuth 2.0. This creates the security integration and retrieves the client credentials you will paste into WRITER. You can find out more about how to connect WRITER to Snowflake in WRITER's [documentation](https://dev.writer.com/connectors/snowflake).
+
+You will need to capture the security integration client ID and secret, and a fully qualified MCP server URL to plug into WRITER in the following section. Make sure the OAUTH_REDIRECT_URI is the same as the value presented in the `Connect via OAuth` screenshot below.
 
 ```sql
 USE ROLE ACCOUNTADMIN;
@@ -855,7 +834,6 @@ CREATE SECURITY INTEGRATION WRITER_QUICKSTART_OAUTH
   ENABLED = TRUE
   OAUTH_CLIENT_TYPE = 'CONFIDENTIAL'
   OAUTH_REDIRECT_URI = 'https://app.writer.com/mcp/oauth/callback'
-  OAUTH_USE_SECONDARY_ROLES = NONE
   ALLOWED_ROLES_LIST = ('WRITER_QUICKSTART_ROLE')
   COMMENT = 'OAuth integration for the WRITER quickstart MCP connector';
 
@@ -875,72 +853,69 @@ SELECT 'https://'
 > If your account identifier contains underscores, replace them with hyphens in the hostname. Some MCP clients fail to connect to hostnames with underscores. This applies to the hostname only — database, schema, and server names in the path retain their original underscores.
 
 <!-- ------------------------ -->
-## Default Role Setup
+## Role Setup
 
-This is the step most likely to cost you time, and it fails in a way that looks like something else.
-
-MCP OAuth sessions use the connecting user's `DEFAULT_ROLE`. If your default role is not `WRITER_QUICKSTART_ROLE`, WRITER will authenticate successfully and then fail to see or invoke the tools.
-
-**Record your current values first.** This is a user-level setting.
+For simplicity, in this quickstart we'll update your  `DEFAULT_ROLE` to be the `WRITER_QUICKSTART_ROLE`. For more information on role behavior with OAuth sessions and Snowflake MCP, see [Snowflake documenatation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents-mcp#role-behavior-in-oauth-sessions).
 
 ```sql
 USE ROLE ACCOUNTADMIN;
 
--- Note DEFAULT_ROLE and DEFAULT_WAREHOUSE. Write them down.
-SHOW USERS LIKE '<your_username>';
+-- Check your current defaults (note them so you can restore later)
+DESCRIBE USER <your_username>;
 
 ALTER USER <your_username>
   SET DEFAULT_ROLE      = 'WRITER_QUICKSTART_ROLE'
       DEFAULT_WAREHOUSE = 'WRITER_QUICKSTART_WH';
-
--- Confirm
-SHOW USERS LIKE '<your_username>';
 ```
 
-> **Running this alongside an existing MCP integration?** `DEFAULT_ROLE` is a single value per user. If you already have a working connector, create a dedicated user for this quickstart instead:
->
-> ```sql
-> CREATE USER WRITER_QUICKSTART_USER
->   PASSWORD = '<choose-a-strong-password>'
->   MUST_CHANGE_PASSWORD = FALSE
->   DEFAULT_ROLE      = 'WRITER_QUICKSTART_ROLE'
->   DEFAULT_WAREHOUSE = 'WRITER_QUICKSTART_WH';
-> GRANT ROLE WRITER_QUICKSTART_ROLE TO USER WRITER_QUICKSTART_USER;
-> ```
 
 <!-- ------------------------ -->
 ## Connect WRITER
 
-In WRITER, add a custom MCP connector using the values from the OAuth step:
+Now the WRITER admin will need to add a new connector in WRITER. Open up WRITER AI Studio and navigate to `Connectors & tools`>`Connectors`. 
+
+Then select `+ New connector`.
+
+![WRITER NEW Connector](assets/new_connector.png)
+
+Find the **Snowflake** connector and click `Configure`.
+
+![Configure the Snowflake Connector](assets/configure_snowflake.png)
+
+You will need to add a profile name (`Snowflake Cortex connection`) and description (`Connects to your Snowflake data`). Then select `All teams` and click `Next`.
+
+![Set connector profile values](assets/snowflake_profile.png)
+
+Now select the default settings in the `Configure Snowflake` screen and click `Next`.
+
+![Select OAuth configuration](assets/configure_oauth1.png)
+
+Now you will need the following values from the OAuth Configuration steps above:
 
 | Field | Value |
 |-------|-------|
-| Server URL | The `mcp_server_url` from the OAuth step |
 | Client ID | From `SYSTEM$SHOW_OAUTH_CLIENT_SECRETS` |
 | Client secret | From `SYSTEM$SHOW_OAUTH_CLIENT_SECRETS` |
+| Tenant URL | The `mcp_server_url` from the OAuth step |
 
-WRITER will open a browser window for the Snowflake OAuth consent screen. Sign in as the user whose default role you set in the previous step and approve.
+Select `Client Secret` on the menu. Then enter the Client ID, Client Secret, and the Server URL as captured above.
+![Connect via OAuth](assets/configure_oauth2.png)
+
+WRITER will open a browser window for the Snowflake OAuth consent screen. Sign in with your Snowflake user and approve.
 
 After connecting, WRITER should discover **two** tools: `campaign-planner` and `save-brief`.
 
-![WRITER MCP connector configuration](assets/writer-connector-config.png)
-
-![WRITER showing discovered tools](assets/writer-tools-discovered.png)
-
-> If WRITER connects but shows no tools, or shows them and fails on invocation, revisit the Default Role Setup step. That is the usual cause.
+You are now finished with the connection steps and are ready to use Snowflake with WRITER.
 
 <!-- ------------------------ -->
 ## Build the Playbook
 
-### How WRITER discovers the contract
-
-You never tell WRITER the signature of `SAVE_BRIEF`. When a client connects, it issues an MCP `tools/list` request, and the server returns each tool's `inputSchema`. WRITER's model reads it at discovery time and calls the tool accordingly.
-
-The tool descriptions drive tool selection — WRITER decides between `campaign-planner` and `save-brief` from their names and descriptions alone. The parameter descriptions are functional, not documentation: they tell the model that `P_BRIEF_JSON` wants a serialized JSON string, not a nested object.
-
 ### Create the playbook
 
-Create a new playbook in WRITER with one agent node.
+Now we are ready to build a playbook in WRITER that uses the Snowflake Connector. 
+
+While in WRITER, click on **Playbooks**. Once in the playbooks screen, select `+ New playbook`.
+![Select Playbooks](assets/writer_menu_playbook.png)
 
 **Add one variable:**
 
@@ -1053,9 +1028,6 @@ DROP WAREHOUSE IF EXISTS WRITER_QUICKSTART_WH;
 DROP SECURITY INTEGRATION IF EXISTS WRITER_QUICKSTART_OAUTH;
 DROP ROLE IF EXISTS WRITER_QUICKSTART_ROLE;
 
--- Only if you created a dedicated user:
--- DROP USER IF EXISTS WRITER_QUICKSTART_USER;
-
 -- Restore your original default role and warehouse:
 -- ALTER USER <your_username>
 --   SET DEFAULT_ROLE = '<original_role>' DEFAULT_WAREHOUSE = '<original_warehouse>';
@@ -1084,12 +1056,14 @@ Also remove the connector in WRITER, since its credentials no longer resolve.
 | Second save fails | Missing UPDATE on CAMPAIGN_BRIEFS | Check grants include UPDATE |
 
 ### Related Resources
+- [Building a Marketing Content Supply Chain Flywheel with WRITER & Snowflake Technical Blog](https://medium.com/snowflake/building-a-marketing-content-supply-chain-flywheel-with-writer-snowflake-cb13d76641ad)
+- [WRITER + Snowflake](https://writer.com/product/snowflake/)
 - [Getting Started with Snowflake MCP Server](https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake-mcp-server/)
 - [Best Practices to Building Cortex Agents](https://www.snowflake.com/en/developers/guides/best-practices-to-building-cortex-agents/)
 - [Snowflake MCP Server Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents-mcp)
 - [Snowflake Cortex Analyst](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst)
 - [Snowflake Cortex Search](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search)
-- [WRITER Documentation](https://developer.writer.com/)
+- [WRITER - Snowflake Connector Documentation](https://dev.writer.com/connectors/snowflake)
 
 ### Next Steps
 - **Extend to the full content supply chain.** Add a `save-asset` tool for copy and an `activate-segment` tool for audience delivery — both follow the same `GENERIC` procedure pattern as `save-brief`.
