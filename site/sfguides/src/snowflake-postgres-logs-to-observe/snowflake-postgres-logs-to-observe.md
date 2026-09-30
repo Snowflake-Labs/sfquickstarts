@@ -109,7 +109,7 @@ By default, Snowflake Postgres does not generate logs. You will need to set `log
 **Option 2: SQL**
 
 ```sql
-ALTER POSTGRES INSTANCE <your_instance_name> SET POSTGRES_SETTINGS = ('log_statement' = 'all');
+ALTER POSTGRES INSTANCE <your_instance_name> SET POSTGRES_SETTINGS = '{"postgres:log_statement": "all"}';
 ```
 
 For the full list of available logging parameters, see [Snowflake Postgres Server Settings](https://docs.snowflake.com/en/user-guide/snowflake-postgres/postgres-server-settings).
