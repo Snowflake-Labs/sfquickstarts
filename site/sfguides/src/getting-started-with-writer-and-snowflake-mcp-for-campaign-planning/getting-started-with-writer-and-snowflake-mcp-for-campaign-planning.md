@@ -20,7 +20,7 @@ By the end you will have a WRITER playbook that asks a Cortex Agent which custom
 ### Prerequisites
 - A Snowflake account with access to [Cortex AI features](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions#availability) (Cortex Agents, Cortex Search, and Semantic Views)
 - `ACCOUNTADMIN`, or a role that can create databases, warehouses, roles, and security integrations
-- A WRITER organization with permission to add a custom MCP connector (this may require a WRITER org admin — confirm before you start)
+- A WRITER organization with permission to add the Snowflake connector
 - Basic familiarity with Snowflake and SQL
 
 > **New to Snowflake MCP?** If you haven't set up a Snowflake MCP Server yet, follow [Getting Started with Snowflake MCP Server](https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake-mcp-server/) to create one with Cortex Analyst and Search tools. For guidance on building Cortex Agents, see [Best Practices to Building Cortex Agents](https://www.snowflake.com/en/developers/guides/best-practices-to-building-cortex-agents/).
@@ -29,7 +29,7 @@ By the end you will have a WRITER playbook that asks a Cortex Agent which custom
 - How to create a Cortex Agent with both semantic view and search tools
 - How to build a governed write-back path using a stored procedure exposed as an MCP tool
 - How to configure OAuth for MCP server authentication
-- How to connect WRITER to a Snowflake MCP server and build a playbook
+- How to connect WRITER to a Snowflake MCP server
 - How to build a playbook in WRITER to enable reusable workflows for your team
 
 ### What You'll Need
