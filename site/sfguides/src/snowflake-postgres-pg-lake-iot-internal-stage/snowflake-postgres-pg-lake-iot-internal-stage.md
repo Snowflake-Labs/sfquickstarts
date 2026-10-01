@@ -6,6 +6,7 @@ summary: Build bidirectional data pipelines between Snowflake Postgres (pg_lake)
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+tags: Postgres
 
 # Bidirectional Data Pipelines with pg_lake and Snowflake - Internal Stage
 <!-- ------------------------ -->

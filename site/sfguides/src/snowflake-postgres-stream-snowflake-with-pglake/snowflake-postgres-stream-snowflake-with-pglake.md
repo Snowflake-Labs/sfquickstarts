@@ -1,11 +1,12 @@
 author: Brian Pace
 id: snowflake-postgres-stream-snowflake-with-pglake
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/product/data-engineering
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/postgres
 language: en
 summary: Stream row-level changes from a Snowflake table to Snowflake Postgres using Streams, Tasks, pg_lake, and pg_incremental
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+tags: Postgres
 
 # Stream Snowflake Changes to Postgres with pg_lake
 <!-- ------------------------ -->

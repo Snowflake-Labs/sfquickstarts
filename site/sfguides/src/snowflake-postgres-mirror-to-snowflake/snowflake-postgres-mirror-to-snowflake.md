@@ -1,6 +1,6 @@
 author: Elizabeth Christensen
 id: snowflake-postgres-mirror-to-snowflake
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/snowflake-feature/postgres
 language: en
 summary: Learn how to replicate Snowflake Postgres tables to Snowflake for analytics using a mirror
 environments: web
@@ -36,6 +36,18 @@ In this quickstart, you will create an operational Postgres database with a simp
 ### Prerequisites
 - Access to a Snowflake account with Snowflake Postgres enabled
 - A SQL client capable of connecting to Postgres (e.g., `psql`)
+
+
+### Using Cortex Code with Mirrors
+
+[Cortex Code](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code) (available as a desktop IDE and CLI) has a built-in Postgres skill that understands mirror operations. You can ask it to help with common mirroring tasks in natural language, for example:
+
+- **Create a mirror** — "create a mirror from my Postgres instance to Snowflake"
+- **Monitor mirrors** — "list my mirrors" or "check the status of my mirror"
+- **Troubleshoot** — "my mirror is failing, help me debug it"
+- **Query mirrored data** — "query the $live view" or "show me recent changes from $changes"
+
+The skill knows the mirror procedures (`CREATE_MIRROR`, `ALTER_MIRROR`, `DROP_MIRROR`, `LIST_MIRRORS`, etc.), the `$live` and `$changes` companion objects, and how to set up the required grants and extensions. 
 
 <!-- ------------------------ -->
 ## Create a Postgres Instance
@@ -145,6 +157,15 @@ Install `pg_lake` and `snowflake_cdc` on your Postgres instance. These extension
 CREATE EXTENSION snowflake_cdc CASCADE;
 ```
 
+### Grant Permissions
+Mirror management requires the `postgres_mirror_admin` application role. This is not granted to any role by default, including ACCOUNTADMIN. Grant it to the role you'll use to create and manage mirrors:
+
+```sql
+GRANT APPLICATION ROLE snowflake.postgres_mirror_admin TO ROLE <INSERT ROLE HERE>;
+```
+
+Replace `<INSERT ROLE HERE>` with your role (e.g., `ACCOUNTADMIN`).
+
 ### Create the Mirror via SQL
 You can create a mirror using the `snowflake.postgres.create_mirror` procedure. This tells Snowflake which Postgres tables to replicate and how often to sync.
 
@@ -251,7 +272,7 @@ Wait about a minute, then confirm the updated schema in **Snowflake**:
 
 ```sql
 DESCRIBE TABLE POSTGRESMIRRORTOSNOWFLAKE.PUBLIC.DEVICES;
-SELECT * FROM IOT_TEST3_MIRROR.PUBLIC.DEVICES LIMIT 20;
+SELECT * FROM POSTGRESMIRRORTOSNOWFLAKE.PUBLIC.DEVICES LIMIT 20;
 ```
 
 You should see the new `STATUS` column and the renamed `SITE_LOCATION` column. The mirror handles these DDL changes automatically — no need to drop and recreate anything.
@@ -368,7 +389,7 @@ When you're done experimenting, clean up the resources created in this quickstar
 Drop the mirror from **Snowflake**. Use `DROP_TARGET_DATABASE` to also delete the target database:
 
 ```sql
-CALL SNOWFLAKE.POSTGRES.DROP_MIRROR(MIRROR_NAME => 'iot_mirror', DROP_TARGET_DATABASE => TRUE);
+CALL SNOWFLAKE.POSTGRES.DROP_MIRROR('iot_mirror', TRUE);
 ```
 
 If you omit `DROP_TARGET_DATABASE`, the target database is left in place and remains queryable, but it will no longer receive updates.
@@ -382,6 +403,7 @@ DROP POSTGRES INSTANCE "my-instance";
 ```
 
 Replace `"my-instance"` with the name of your instance.
+
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
