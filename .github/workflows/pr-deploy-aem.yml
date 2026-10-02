@@ -37,6 +37,8 @@ jobs:
       all_validations_passed: ${{ steps.resolve.outputs.all_validations_passed }}
       quickstart_names_json: ${{ steps.resolve.outputs.quickstart_names_json }}
       md_file_count: ${{ steps.resolve.outputs.md_file_count }}
+      guide_count: ${{ steps.resolve.outputs.guide_count }}
+      stage_guides: ${{ steps.resolve.outputs.stage_guides }}
       has_sidebar_changes: ${{ steps.resolve.outputs.has_sidebar_changes }}
       sidebar_json_files: ${{ steps.resolve.outputs.sidebar_json_files }}
       has_journey_guides: ${{ steps.resolve.outputs.has_journey_guides }}
@@ -144,6 +146,7 @@ jobs:
           github.event.workflow_run.conclusion == 'success' &&
           needs.resolve_context.outputs.same_repo != 'true' &&
           needs.resolve_context.outputs.all_validations_passed == 'true' &&
+          needs.resolve_context.outputs.stage_guides == 'true' &&
           (needs.resolve_context.outputs.quickstart_names_json != '[]' ||
            needs.resolve_context.outputs.has_journey_guides == 'true')
         env:
@@ -161,6 +164,7 @@ jobs:
       github.event.workflow_run.conclusion == 'success' &&
       needs.resolve_context.outputs.has_relevant_changes == 'true' &&
       needs.resolve_context.outputs.all_validations_passed == 'true' &&
+      needs.resolve_context.outputs.stage_guides == 'true' &&
       needs.resolve_context.outputs.quickstart_names_json != '[]'
     strategy:
       matrix:
@@ -310,6 +314,7 @@ jobs:
     if: |
       needs.resolve_context.result == 'success' &&
       github.event.workflow_run.conclusion == 'success' &&
+      needs.resolve_context.outputs.stage_guides == 'true' &&
       needs.resolve_context.outputs.has_journey_guides == 'true'
     strategy:
       matrix:
@@ -416,6 +421,8 @@ jobs:
           HEAD_SHA: ${{ needs.resolve_context.outputs.head_sha }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           VALIDATIONS_PASSED: ${{ needs.resolve_context.outputs.all_validations_passed }}
+          STAGE_GUIDES: ${{ needs.resolve_context.outputs.stage_guides }}
+          GUIDE_COUNT: ${{ needs.resolve_context.outputs.guide_count }}
           STAGE_RESULTS: >-
             ${{ needs.stage_to_aem.result }}
             ${{ needs.upload_sidebar_json.result }}
