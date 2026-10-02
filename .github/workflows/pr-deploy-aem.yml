@@ -37,6 +37,8 @@ jobs:
       all_validations_passed: ${{ steps.resolve.outputs.all_validations_passed }}
       quickstart_names_json: ${{ steps.resolve.outputs.quickstart_names_json }}
       md_file_count: ${{ steps.resolve.outputs.md_file_count }}
+      guide_count: ${{ steps.resolve.outputs.guide_count }}
+      stage_guides: ${{ steps.resolve.outputs.stage_guides }}
       has_sidebar_changes: ${{ steps.resolve.outputs.has_sidebar_changes }}
       sidebar_json_files: ${{ steps.resolve.outputs.sidebar_json_files }}
       has_journey_guides: ${{ steps.resolve.outputs.has_journey_guides }}
@@ -59,7 +61,11 @@ jobs:
           python-version: '3.12'
 
       # Downloaded after the checkout, which clears the workspace before cloning.
+      # Allowed to fail: a validation run that was never approved to start produces
+      # no artifact, and that is not this workflow's failure to report.
       - name: Download validation artifact
+        id: artifact
+        continue-on-error: true
         uses: actions/download-artifact@v4
         with:
           name: validation-artifacts
@@ -67,8 +73,17 @@ jobs:
           github-token: ${{ github.token }}
           path: artifact
 
+      # A fork pull request waits for a maintainer before any job starts, and if it
+      # is merged while still waiting, GitHub marks the run failed and this workflow
+      # is triggered by it. There is nothing staged and nothing to tell the author,
+      # so the run stops here rather than going red and burying real failures.
+      - name: Report that there is nothing to deploy
+        if: steps.artifact.outcome != 'success'
+        run: echo "::notice::the validation run produced no artifact; nothing to deploy"
+
       - name: Resolve deploy context
         id: resolve
+        if: steps.artifact.outcome == 'success'
         env:
           GITHUB_TOKEN: ${{ github.token }}
           ARTIFACT_DIR: artifact
@@ -144,6 +159,7 @@ jobs:
           github.event.workflow_run.conclusion == 'success' &&
           needs.resolve_context.outputs.same_repo != 'true' &&
           needs.resolve_context.outputs.all_validations_passed == 'true' &&
+          needs.resolve_context.outputs.stage_guides == 'true' &&
           (needs.resolve_context.outputs.quickstart_names_json != '[]' ||
            needs.resolve_context.outputs.has_journey_guides == 'true')
         env:
@@ -161,6 +177,7 @@ jobs:
       github.event.workflow_run.conclusion == 'success' &&
       needs.resolve_context.outputs.has_relevant_changes == 'true' &&
       needs.resolve_context.outputs.all_validations_passed == 'true' &&
+      needs.resolve_context.outputs.stage_guides == 'true' &&
       needs.resolve_context.outputs.quickstart_names_json != '[]'
     strategy:
       matrix:
@@ -310,6 +327,7 @@ jobs:
     if: |
       needs.resolve_context.result == 'success' &&
       github.event.workflow_run.conclusion == 'success' &&
+      needs.resolve_context.outputs.stage_guides == 'true' &&
       needs.resolve_context.outputs.has_journey_guides == 'true'
     strategy:
       matrix:
@@ -416,6 +434,8 @@ jobs:
           HEAD_SHA: ${{ needs.resolve_context.outputs.head_sha }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           VALIDATIONS_PASSED: ${{ needs.resolve_context.outputs.all_validations_passed }}
+          STAGE_GUIDES: ${{ needs.resolve_context.outputs.stage_guides }}
+          GUIDE_COUNT: ${{ needs.resolve_context.outputs.guide_count }}
           STAGE_RESULTS: >-
             ${{ needs.stage_to_aem.result }}
             ${{ needs.upload_sidebar_json.result }}
