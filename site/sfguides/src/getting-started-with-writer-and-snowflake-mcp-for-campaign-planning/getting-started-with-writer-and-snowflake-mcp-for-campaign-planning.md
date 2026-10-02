@@ -176,7 +176,7 @@ ALTER USER <your_username>
 <!-- ------------------------ -->
 ## Connect WRITER
 
-Now the WRITER admin will need to add a new connector in WRITER. Open up WRITER AI Studio and navigate to `Connectors & tools`>`Connectors`. 
+Now the WRITER admin will need to add a new connector in WRITER. Open up [WRITER AI Studio](https://app.writer.com/aistudio) and navigate to `Connectors & tools`>`Connectors`. 
 
 Then select `+ New connector`.
 
@@ -215,7 +215,7 @@ You are now finished with the WRITER admin connection steps and are ready to use
 ## Build the WRITER Playbook
 
 ### Test Your Connector
-Let's first make sure the Snowflake connector is connected. From WRITER App, click on **Customize** and then **Connectors**. Find Snowflake and click `Connect` if you haven't already connected.
+Let's first make sure the Snowflake connector is connected. From [WRITER App](https://app.writer.com/), click on **Customize** and then **Connectors**. Find Snowflake and click `Connect` if you haven't already connected.
 
 ![Connect to Snowflake](assets/connect_to_snowflake.png)
 
@@ -223,7 +223,7 @@ Let's first make sure the Snowflake connector is connected. From WRITER App, cli
 
 Now let's test that the connection works by clicking on `+ New Session` to open a new WRITER agent session. Now enter this prompt:
 ```
-Use \snowflake to tell me which 5 micro segments have the highest intent score.
+Use snowflake to tell me which 5 micro segments have the highest intent score.
 ```
 You should see results similar to the following (note results will vary).
 
@@ -243,32 +243,26 @@ Now select a `Multi step` playbook and **enter the following prompt**:
 - You are planning a marketing campaign for Apex Athletics, a fictitious B2B activewear company.
 - The campaign topic is [w-var](Campaign__Topic).
 - Treat [w-var](Additional__Context), if provided, as supplementary direction that constrains the
-  brief: messaging guardrails, channel restrictions, a specific campaign ID, or stakeholder
-  priorities.
+  brief: messaging guardrails, channel restrictions, a specific campaign ID, or stakeholder priorities.
 
 **Step 1 — Find the audience**
 
 - Ask [w-connector](SNOWFLAKE) using campaign-planner: "Which 3 micro-segments are most relevant
-  to a campaign about [w-var](Campaign__Topic)? For each, give the segment name, segment ID,
-  customer count, average LTV, intent score, churn risk tier, and dominant RFM segment."
-- For each segment, write 1–2 sentences explaining why it fits this campaign, connecting its
-  intent, LTV, and churn risk to the topic.
+  to a campaign about [w-var](Campaign__Topic)? For each, give the segment name, segment ID, customer count, average LTV, intent score, churn risk tier, and dominant RFM segment."
+- For each segment, write 1–2 sentences explaining why it fits this campaign, connecting its intent, LTV, and churn risk to the topic.
 
 **Step 2 — Find what has worked**
 
 - Ask [w-connector](SNOWFLAKE) using campaign-planner: "What historical campaigns are most
-  relevant to [w-var](Campaign__Topic) and to these segments? Return the campaign name, channel,
-  subject lines, CTAs, tone, and open, click, and conversion rates."
+  relevant to [w-var](Campaign__Topic) and to these segments? Return the campaign name, channel, subject lines, CTAs, tone, and open, click, and conversion rates."
 - Pick the 2–3 most relevant campaigns. Prioritize similarity of topic and audience over recency.
   Note what worked, what underperformed, and any messaging patterns.
-- If nothing closely relevant comes back, say so explicitly and continue. Do not fabricate
-  campaign history.
+- If nothing closely relevant comes back, say so explicitly and continue. Do not fabricate campaign history.
 
 **Step 3 — Draft the brief**
 
 - Write a campaign brief grounded only in what came back from Snowflake and in
-  [w-var](Additional__Context). Do not introduce segments, metrics, or campaign history that
-  Snowflake did not return.
+  [w-var](Additional__Context). Do not introduce segments, metrics, or campaign history that Snowflake did not return.
 - The brief must include:
   - Campaign name and a one-line objective
   - The 3 target segments, each with its metrics and fit rationale
@@ -278,8 +272,7 @@ Now select a `Multi step` playbook and **enter the following prompt**:
   - Success metrics, using the historical conversion rates as the baseline
   - Assumptions and open questions
 - Select 3–5 channels. Channels must be text- or image-based only: no video or audio. One of the
-  channels must be a blog post. Give each channel a one-sentence rationale that references the
-  segment data or historical performance.
+  channels must be a blog post. Give each channel a one-sentence rationale that references the segment data or historical performance.
 
 **Step 4 — Save it to Snowflake**
 
@@ -287,10 +280,8 @@ Now select a `Multi step` playbook and **enter the following prompt**:
 - P_CAMPAIGN_ID: use the campaign ID from [w-var](Additional__Context) if one is given;
   otherwise use a new identifier in the form CMP-2026-NNN.
 - P_BRIEF_JSON: the complete brief as a JSON object serialized to a string. Include brief_id,
-  status ("draft"), created_by ("WRITER playbook"), title, and one key per section of the brief
-  above.
-- If you revise the brief and save it again, reuse the same brief_id so the existing record is
-  updated rather than duplicated.
+  status ("draft"), created_by ("WRITER playbook"), title, and one key per section of the brief above.
+- If you revise the brief and save it again, reuse the same brief_id so the existing record is updated rather than duplicated.
 
 **Final message**
 
