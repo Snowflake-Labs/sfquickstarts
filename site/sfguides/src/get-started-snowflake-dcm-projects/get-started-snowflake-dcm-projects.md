@@ -461,11 +461,11 @@ Harmless here, because `env_suffix` always has a value. It stops being harmless 
 So: the "comment out the alternative" pattern is safe in plain SQL and a trap in templated SQL. And `out/rendered/` is the first place to look whenever a template surprises you — it is the exact SQL DCM evaluated.
 
 <!-- ------------------------ -->
-## Connecting Entities with ATTACH
+## Beyond DEFINE: ATTACH and GRANT
 
-`DEFINE` declares an object. `ATTACH` connects two of them. It is the second verb in a project, and it exists because some relationships are not properties of either object — they are a link between them.
+`DEFINE` declares objects, and most of a project is `DEFINE`. Two other verbs do the rest.
 
-`sources/definitions/access.sql` declares a tag, then attaches it to a table:
+`ATTACH` connects two objects, because some relationships are not a property of either one — they are a link between them. `sources/definitions/access.sql` declares a tag, then attaches it to a table:
 
 ```sql
 DEFINE TAG DCM_DEMO_1{{env_suffix}}.RAW.DATA_SENSITIVITY
@@ -478,15 +478,18 @@ ATTACH TAG DCM_DEMO_1{{env_suffix}}.RAW.DATA_SENSITIVITY = 'INTERNAL'
 
 Because the link is its own statement, the two ends are independent: the tag and the table it marks need not be declared in the same file, or even in the same project.
 
-The same shape applies elsewhere:
+`GRANT` is the third verb, and it is just Snowflake's own `GRANT` — no wrapper, no new syntax. The same file gives the read role access to everything it needs:
 
-| Statement | Connects |
-|:----------|:---------|
-| `ATTACH TAG` | A tag value to an object |
-| `ATTACH MASKING POLICY` | A masking policy to one or more columns |
-| `ATTACH DATA METRIC FUNCTION` | A data quality check to a table |
+```sql
+GRANT USAGE on database DCM_DEMO_1{{env_suffix}} to role DCM_DEMO_1{{env_suffix}}_READ;
 
-Targets are narrower than you might expect — `ATTACH TAG` takes whole objects, so tables and dynamic tables are valid while views and individual columns are not.
+GRANT INHERITED SELECT on all tables in database DCM_DEMO_1{{env_suffix}}
+    to role DCM_DEMO_1{{env_suffix}}_READ;
+```
+
+The second one covers every table in the database, including tables a future deploy has not created yet — one grant rather than one per object.
+
+Grants are not entities in their own right; they belong to the role that holds them. That is why a plan reports `ALTER ROLE` rather than a list of individual grants, and why the very first deploy showed one alter on `DCM_DEVELOPER`: taking ownership of each new object is itself a grant.
 
 <!-- ------------------------ -->
 ## Seed Data and Query
@@ -540,14 +543,14 @@ DEFINE STREAMLIT DCM_DEMO_1{{env_suffix}}.SERVE.ORDERS_DASHBOARD
     COMMENT = 'Reads the ORDER_ANALYTICS semantic view; deployed from the dashboard asset';
 ```
 
-Declare the runtime rather than letting Snowflake pick one. `DEFINE` runs as `CREATE OR ALTER`, so an attribute the file leaves out is unset on the next deploy — and the app would move to a different runtime than the one it was written against.
-
 The app reads the semantic view rather than the dynamic table, so the numbers on screen are the same metric definitions an agent would resolve. One detail matters for portability — **asset files are not Jinja-rendered**, so the app cannot use `{{env_suffix}}` to find its own database. It resolves that at runtime instead, which is why the identical file serves every environment:
 
 ```python
 session = get_active_session()
 database = session.sql("SELECT CURRENT_DATABASE()").collect()[0][0]
 ```
+
+![The deployed Orders Dashboard reading the semantic view](assets/order_dashboard.png)
 
 Now the useful part. Change nothing but the Python — add a chart, rename a heading — and plan again:
 
