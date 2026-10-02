@@ -296,17 +296,13 @@ Note that you might see the following warning items that need corrected. Select 
 
 ![Campaign topic](assets/campaign_input.png)
 
-Do the same for `Additional Context`, but select `Make optional` so that this is only optional context. 
+Do the same for `Additional Context`, but select `Make optional` so that this is only optional context. Then make sure the appropriate Snowflake connector is referenced. You can always type a `/` and select the Snowflake connector.
 
-Then make sure the appropriate Snowflake connector is referenced. You can always type a `/` and select the Snowflake connector.
-
-![Adjusted playbook](assets/adjusted_playbook.png)
-
-Now click `Create a playbook`.
+Once done, select `Create a playbook`.
 
 You will then see a new Playbook in Editor mode that shows the various steps of you playbook broken down into various steps. You can go ahead and click on the `Run Options` button and click `Run Playbook`.
 
-![Playbook editor](assets/playbook_editor.png)
+![Playbook editor](assets/writer_playbook_run.png)
 
 Then enter the following inputs and then select `Run`:
 - Campaign Topic: `Winter running gear`
