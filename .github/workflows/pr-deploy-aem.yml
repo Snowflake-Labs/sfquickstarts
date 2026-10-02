@@ -59,7 +59,11 @@ jobs:
           python-version: '3.12'
 
       # Downloaded after the checkout, which clears the workspace before cloning.
+      # Allowed to fail: a validation run that was never approved to start produces
+      # no artifact, and that is not this workflow's failure to report.
       - name: Download validation artifact
+        id: artifact
+        continue-on-error: true
         uses: actions/download-artifact@v4
         with:
           name: validation-artifacts
@@ -67,8 +71,17 @@ jobs:
           github-token: ${{ github.token }}
           path: artifact
 
+      # A fork pull request waits for a maintainer before any job starts, and if it
+      # is merged while still waiting, GitHub marks the run failed and this workflow
+      # is triggered by it. There is nothing staged and nothing to tell the author,
+      # so the run stops here rather than going red and burying real failures.
+      - name: Report that there is nothing to deploy
+        if: steps.artifact.outcome != 'success'
+        run: echo "::notice::the validation run produced no artifact; nothing to deploy"
+
       - name: Resolve deploy context
         id: resolve
+        if: steps.artifact.outcome == 'success'
         env:
           GITHUB_TOKEN: ${{ github.token }}
           ARTIFACT_DIR: artifact
