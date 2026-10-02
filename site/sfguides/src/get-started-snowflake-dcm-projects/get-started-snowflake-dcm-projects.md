@@ -69,7 +69,7 @@ If you want to work in Snowsight rather than locally, create a Snowsight Workspa
 
 Once the workspace is created you will see the repository files in the file explorer. Navigate to **Quickstarts/get-started-snowflake-dcm-projects** to find two directories.
 
-`DCM_Projects_Get_Started/` is the DCM Project itself. It holds `manifest.yml`, five definition files under `sources/definitions/` — `raw.sql`, `analytics.sql`, `serve.sql`, `access.sql` and `jinja_demo.sql` — one macro file at `sources/macros/grants_macro.sql`, and a `streamlit/dashboard/` folder holding the app that the project deploys as an asset.
+`DCM_Projects_Get_Started/` is the DCM Project itself: a manifest, five definition files and one macro under `sources/`, and a Streamlit app that the project deploys as an asset. The next section walks through each part.
 
 `scripts/` holds three numbered SQL files that you run in Snowsight worksheets at different stages of this guide. They live outside the project directory, so nothing in them is ever picked up by a plan.
 
@@ -113,8 +113,6 @@ If you are working in Snowsight, refresh your browser after running this script 
 ## Anatomy of a DCM Project
 
 A project is a **manifest** plus one or more **definition files** under `sources/`. The manifest is the control surface; the definitions are the desired state.
-
-![The project files in the workspace file explorer](assets/workspace_files.png)
 
 ### The manifest
 
@@ -214,10 +212,6 @@ QUALIFY ROW_NUMBER() OVER (
     ) = 1;
 ```
 
-The `QUALIFY` clause dedupes: one row per order line per menu item, keeping the most recent by `ORDER_TS`. The file on disk also carries the commented-out `TARGET_LAG` alternative you will use in "Change It and Redeploy"; it is omitted here so the definition reads cleanly.
-
-`INITIALIZE = 'ON_SCHEDULE'` is worth noting. The default, `ON_CREATE`, runs a full synchronous refresh inside the `CREATE` statement, so a project creating several dynamic tables at once waits for all of them. `ON_SCHEDULE` lets the deploy finish and the table populate afterwards.
-
 The other four files follow the same pattern: `raw.sql` declares the database and the three landing tables, `access.sql` the warehouse, a read role, its grants and a tag, `serve.sql` a semantic view over the dynamic table, and `jinja_demo.sql` the templated team objects covered in "Templating and Per-Environment Config".
 
 <!-- ------------------------ -->
@@ -253,13 +247,13 @@ Two things in that summary deserve an explanation.
 
 **Why one alter, on a first deploy?** The altered entity is `ROLE DCM_DEVELOPER`, acquiring `OWNERSHIP` on each newly created object. The project-owner role has to exist *before* the project can be created — it is what owns the project — so it is never something DCM creates. A first deploy of any DCM Project therefore shows exactly this one alter. It is not drift, and there is nothing to fix.
 
-**Why 18 entities from 13 `DEFINE` statements?** The arithmetic is worth following, because it shows what DCM is actually tracking:
+**Why 18 entities from 13 `DEFINE` statements?** The arithmetic is worth following, because it shows what DCM is actually tracking. The thirteen definitions in the non-template files cover one database, three schemas, three tables, one dynamic table, one semantic view, one Streamlit app, one warehouse, one role and one tag. The remaining five come from elsewhere:
 
 | Source | Entities |
-|:-------|:---------|
-| `DEFINE` statements in the non-template files: 1 database, 3 schemas, 3 tables, 1 dynamic table, 1 semantic view, 1 Streamlit app, 1 warehouse, 1 role, 1 tag | 13 |
-| The `PUBLIC` schema, which DCM plans automatically with every database | 1 |
-| The Jinja macro expanding `DEV_TEAM_1` — 1 schema and 2 roles | 3 |
+|:-------|---------:|
+| `DEFINE` statements | 13 |
+| `PUBLIC` schema, planned with every database | 1 |
+| Jinja macro expanding `DEV_TEAM_1` | 3 |
 | `ROLE DCM_DEVELOPER` gaining ownership | 1 |
 | **Total** | **18** |
 
@@ -324,7 +318,7 @@ The CLI has a delta mode for fast iteration:
 snow dcm plan --target DCM_DEV --delta
 ```
 
-`--delta` reports the changes rather than the whole desired state, so it is what you run while iterating.
+`--delta` reports the changes rather than the whole desired state, so it is what you run while iterating. This is the mode the Snowsight control panel uses.
 
 ### Then the full plan
 
@@ -339,6 +333,8 @@ snow dcm plan --target DCM_DEV --save-output
 ```text
 6 entities (3 create, 3 alter, 0 drop)
 ```
+
+![Plan results after the three changes](assets/plan_results_2.png)
 
 Exactly six, and every one is accounted for. The three creates are `DEV_TEAM_2`'s objects: a schema and two roles, produced by the Jinja loop and macro from those two lines of YAML. The three alters are the dynamic table's target lag, the warehouse's size, and `DCM_DEVELOPER` taking ownership of the three new objects.
 
@@ -355,6 +351,8 @@ Adding a team creates objects. Removing an entry from the `teams` list would pro
 ### Deploy, then deploy again
 
 **In Snowsight:** set the operation to **Deploy**, give it the alias `lag-wh-and-team2`, and run it.
+
+![Deploy dialog for the second deployment](assets/deploy_dialog_2.png)
 
 **With the Snowflake CLI:**
 
@@ -463,11 +461,11 @@ Harmless here, because `env_suffix` always has a value. It stops being harmless 
 So: the "comment out the alternative" pattern is safe in plain SQL and a trap in templated SQL. And `out/rendered/` is the first place to look whenever a template surprises you — it is the exact SQL DCM evaluated.
 
 <!-- ------------------------ -->
-## Governance Touch
+## Attaching Tags and Policies
 
-Two governance statements sit in `sources/definitions/access.sql`, and both are public preview.
+Everything so far has used `DEFINE`, which declares an object and lets DCM reconcile it with `CREATE OR ALTER`. Governance needs a second verb, because of a hard limit: **`CREATE OR ALTER` cannot set tags or policies.** Try it inside a definition and the statement fails outright.
 
-The first is a tag, declared and then attached:
+So DCM splits the two concerns. `DEFINE` declares the policy or tag as an object; `ATTACH` binds it to a target. `sources/definitions/access.sql` shows the pair:
 
 ```sql
 DEFINE TAG DCM_DEMO_1{{env_suffix}}.RAW.DATA_SENSITIVITY
@@ -478,16 +476,19 @@ ATTACH TAG DCM_DEMO_1{{env_suffix}}.RAW.DATA_SENSITIVITY = 'INTERNAL'
     TO TABLE DCM_DEMO_1{{env_suffix}}.RAW.ORDER_HEADER;
 ```
 
-`ATTACH TAG` is a standalone statement rather than part of a `DEFINE`, and that is exactly why it can set a tag at all: `CREATE OR ALTER` cannot set tags or policies. It applies to whole objects — tables and dynamic tables are valid targets; views, semantic views and individual columns are not.
+That separation is what makes the binding expressible at all, and it has a useful side effect: the tag and the table it marks do not have to be declared in the same file, or even in the same project.
 
-The second is the inherited grant from "Prerequisites and Setup", now in use:
+`ATTACH` is a small family, not a one-off for tags:
 
-```sql
-GRANT INHERITED SELECT on all tables in database DCM_DEMO_1{{env_suffix}}
-    to role DCM_DEMO_1{{env_suffix}}_READ;
-```
+| Statement | Binds |
+|:----------|:------|
+| `ATTACH TAG` | A tag value to an object |
+| `ATTACH MASKING POLICY` | A masking policy to one or more columns |
+| `ATTACH DATA METRIC FUNCTION` | A data quality check to a table |
 
-One statement, covering every table in the database — including tables added by a future deploy.
+Two things are worth knowing before you reach for one. `ATTACH` is **imperative** — unlike `DEFINE`, it runs as written rather than being ordered by dependency, so what it targets must already exist by the time it executes. And attachments are applied with `FORCE`, which means an attach will replace an existing binding on the same target rather than failing.
+
+Targets are also narrower than you might expect. `ATTACH TAG` applies to whole objects: tables and dynamic tables are valid, while views, semantic views and individual columns are not. Row access policies cannot be attached from a definition at all.
 
 <!-- ------------------------ -->
 ## Seed Data and Query
@@ -528,18 +529,24 @@ assets:
 
 The path is relative to the manifest and must live **outside `sources/`**, which is reserved for definitions, macros and tests. Use `path` for a single entry or `paths` for a list; each one can be a glob, a directory, or a single file. Globs support only `*` and `**` — no `?`, no brace expansion — and paths cannot contain Jinja. A pattern matching no files fails the run rather than deploying something empty.
 
-Then `DEFINE STREAMLIT` refers to the asset by name. While the feature is in public preview the `asset://` URI is the *only* accepted form — it will not take a folder path directly — and that indirection is what assets exist to provide:
+Then `DEFINE STREAMLIT` refers to the asset by name. That indirection is the point: the definition names a set of files rather than a path, so the project can pull in files that live outside `sources/` and import them during rendering:
 
 ```sql
 DEFINE STREAMLIT DCM_DEMO_1{{env_suffix}}.SERVE.ORDERS_DASHBOARD
     FROM 'asset://dashboard/'
     MAIN_FILE = 'streamlit_app.py'
     QUERY_WAREHOUSE = DCM_DEMO_1_WH{{env_suffix}}
+    COMPUTE_POOL = SYSTEM_COMPUTE_POOL_CPU
+    RUNTIME_NAME = 'SYSTEM$ST_CONTAINER_RUNTIME_PY3_11'
     TITLE = 'Orders Dashboard'
     COMMENT = 'Reads the ORDER_ANALYTICS semantic view; deployed from the dashboard asset';
 ```
 
-`MAIN_FILE` is relative to the imported asset root, not to the definition file. Note what is *absent*: no compute pool, no `environment.yml`, no dependency list. Snowflake supplies a container runtime and a default package set that already includes `streamlit` and `snowflake-snowpark-python`, so the minimal form above is genuinely all a working app needs here.
+`MAIN_FILE` is relative to the imported asset root, not to the definition file.
+
+`COMPUTE_POOL` and `RUNTIME_NAME` are the two worth dwelling on, because leaving them out is a trap. Snowflake stamps both onto a Streamlit when it creates one. `DEFINE` runs as `CREATE OR ALTER`, and `CREATE OR ALTER` is declarative about the *whole* object — so an attribute this file does not declare does not merely stay as it is, it gets **unset** on the next deploy. The app would silently move onto the warehouse runtime, where an unpinned `streamlit` resolves to an old version, and code written against a current one starts raising `TypeError` on keyword arguments that did not exist yet.
+
+That is the general lesson, and it is worth more than this one app: with `CREATE OR ALTER`, anything you do not declare is drift to be removed, including defaults Snowflake itself applied. Declaring both attributes makes the file an honest description of the object, and the object stops changing underneath you.
 
 The app reads the semantic view rather than the dynamic table, so the numbers on screen are the same metric definitions an agent would resolve. One detail matters for portability — **asset files are not Jinja-rendered**, so the app cannot use `{{env_suffix}}` to find its own database. It resolves that at runtime instead, which is why the identical file serves every environment:
 
