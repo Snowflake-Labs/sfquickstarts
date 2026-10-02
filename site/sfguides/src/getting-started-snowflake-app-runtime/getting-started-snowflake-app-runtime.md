@@ -214,18 +214,6 @@ Deploys are **declarative**: every `snow app deploy` applies the full manifest. 
 
 For the complete field reference, see [app.yml manifest for Snowflake App Runtime](https://docs.snowflake.com/en/developer-guide/snowflake-app-runtime/app-yml).
 
-### Compute Options
-
-By default, runtime apps deploy to SPCS (Snowpark Container Services). If your account supports serverless compute (CNG), you can add the following to your `app.yml`:
-
-```yaml
-compute_resource: SERVERLESS
-```
-
-> **NOTE:**
->
-> Serverless provides sub-5-second cold start, automatic suspend on idle, and per-usage billing with no compute pool to manage. When `compute_resource` is omitted, the app uses SPCS with a managed compute pool.
-
 <!-- ------------------------ -->
 ## Verify the Deployment
 
