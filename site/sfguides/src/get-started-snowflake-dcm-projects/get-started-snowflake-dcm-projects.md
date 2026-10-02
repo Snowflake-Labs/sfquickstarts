@@ -461,11 +461,11 @@ Harmless here, because `env_suffix` always has a value. It stops being harmless 
 So: the "comment out the alternative" pattern is safe in plain SQL and a trap in templated SQL. And `out/rendered/` is the first place to look whenever a template surprises you — it is the exact SQL DCM evaluated.
 
 <!-- ------------------------ -->
-## Attaching Tags and Policies
+## Connecting Entities with ATTACH
 
-Everything so far has used `DEFINE`, which declares an object and lets DCM reconcile it with `CREATE OR ALTER`. Governance needs a second verb, because of a hard limit: **`CREATE OR ALTER` cannot set tags or policies.** Try it inside a definition and the statement fails outright.
+`DEFINE` declares an object. `ATTACH` connects two of them. It is the second verb in a project, and it exists because some relationships are not properties of either object — they are a link between them.
 
-So DCM splits the two concerns. `DEFINE` declares the policy or tag as an object; `ATTACH` binds it to a target. `sources/definitions/access.sql` shows the pair:
+`sources/definitions/access.sql` declares a tag, then attaches it to a table:
 
 ```sql
 DEFINE TAG DCM_DEMO_1{{env_suffix}}.RAW.DATA_SENSITIVITY
@@ -476,19 +476,17 @@ ATTACH TAG DCM_DEMO_1{{env_suffix}}.RAW.DATA_SENSITIVITY = 'INTERNAL'
     TO TABLE DCM_DEMO_1{{env_suffix}}.RAW.ORDER_HEADER;
 ```
 
-That separation is what makes the binding expressible at all, and it has a useful side effect: the tag and the table it marks do not have to be declared in the same file, or even in the same project.
+Because the link is its own statement, the two ends are independent: the tag and the table it marks need not be declared in the same file, or even in the same project.
 
-`ATTACH` is a small family, not a one-off for tags:
+The same shape applies elsewhere:
 
-| Statement | Binds |
-|:----------|:------|
+| Statement | Connects |
+|:----------|:---------|
 | `ATTACH TAG` | A tag value to an object |
 | `ATTACH MASKING POLICY` | A masking policy to one or more columns |
 | `ATTACH DATA METRIC FUNCTION` | A data quality check to a table |
 
-Two things are worth knowing before you reach for one. `ATTACH` is **imperative** — unlike `DEFINE`, it runs as written rather than being ordered by dependency, so what it targets must already exist by the time it executes. And attachments are applied with `FORCE`, which means an attach will replace an existing binding on the same target rather than failing.
-
-Targets are also narrower than you might expect. `ATTACH TAG` applies to whole objects: tables and dynamic tables are valid, while views, semantic views and individual columns are not. Row access policies cannot be attached from a definition at all.
+Targets are narrower than you might expect — `ATTACH TAG` takes whole objects, so tables and dynamic tables are valid while views and individual columns are not.
 
 <!-- ------------------------ -->
 ## Seed Data and Query
@@ -542,11 +540,7 @@ DEFINE STREAMLIT DCM_DEMO_1{{env_suffix}}.SERVE.ORDERS_DASHBOARD
     COMMENT = 'Reads the ORDER_ANALYTICS semantic view; deployed from the dashboard asset';
 ```
 
-`MAIN_FILE` is relative to the imported asset root, not to the definition file.
-
-`COMPUTE_POOL` and `RUNTIME_NAME` are the two worth dwelling on, because leaving them out is a trap. Snowflake stamps both onto a Streamlit when it creates one. `DEFINE` runs as `CREATE OR ALTER`, and `CREATE OR ALTER` is declarative about the *whole* object — so an attribute this file does not declare does not merely stay as it is, it gets **unset** on the next deploy. The app would silently move onto the warehouse runtime, where an unpinned `streamlit` resolves to an old version, and code written against a current one starts raising `TypeError` on keyword arguments that did not exist yet.
-
-That is the general lesson, and it is worth more than this one app: with `CREATE OR ALTER`, anything you do not declare is drift to be removed, including defaults Snowflake itself applied. Declaring both attributes makes the file an honest description of the object, and the object stops changing underneath you.
+Declare the runtime rather than letting Snowflake pick one. `DEFINE` runs as `CREATE OR ALTER`, so an attribute the file leaves out is unset on the next deploy — and the app would move to a different runtime than the one it was written against.
 
 The app reads the semantic view rather than the dynamic table, so the numbers on screen are the same metric definitions an agent would resolve. One detail matters for portability — **asset files are not Jinja-rendered**, so the app cannot use `{{env_suffix}}` to find its own database. It resolves that at runtime instead, which is why the identical file serves every environment:
 
