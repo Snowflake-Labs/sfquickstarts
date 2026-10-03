@@ -393,8 +393,8 @@ A Semantic View describes the tables in **business terms**: dates to group by, s
      ![saleshamburg](./assets/saleshamburg.png)
      ![weatherhamburg](./assets/weatherhamburg.png)
    - A **many-to-one relationship** from `SALES_HAMBURG_DT.ORDER_DATE` to `WEATHER_HAMBURG_DT.DATE_VALID_STD`
-   - `AVG_TEMPERATURE_CELSIUS`, `AVG_PRECIPITATION_MM`, and `MAX_WIND_SPEED_MPH` under **Facts** for `WEATHER_HAMBURG_DT`
      ![relationships](./assets/relationships.png)
+   - `AVG_TEMPERATURE_CELSIUS`, `AVG_PRECIPITATION_MM`, and `MAX_WIND_SPEED_MPH` under **Facts** for `WEATHER_HAMBURG_DT`
 
    CoCo may also add time dimensions or metrics. You do not need to find a category named "measures" or require extra SUM metrics for this lab. If one of the items above differs, correct the draft before publishing.
 
