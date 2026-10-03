@@ -367,9 +367,11 @@ We have clean, refreshing data. Now we need to make it accessible to analysts �
 
 A Semantic View describes the tables in **business terms**: dates to group by, sales and order values to analyze, weather conditions to compare, and the relationship that connects them. Cortex Analyst uses that model to answer questions about Hamburg sales and weather.
 
-1. Wait for the initial refresh of `SALES_HAMBURG_DT` and `WEATHER_HAMBURG_DT` to complete. In Snowsight, navigate to **AI & ML → Cortex Analyst** and click **Create in Workspaces**.
+1. In Snowsight, navigate to **AI & ML → Cortex Analyst** and click **Create in Workspaces**.
 
-2. Click **Create with CoCo**. In the new Workspace, confirm the role is **ACCOUNTADMIN** and the warehouse is **COMPUTE_WH**.
+2. Click **Create with CoCo**.
+
+![CreateCoCo](./assets/createcoco.png)
 
 3. Send CoCo this prompt:
 
@@ -380,17 +382,23 @@ A Semantic View describes the tables in **business terms**: dates to group by, s
    > - *Include daily Hamburg sales, order counts, temperature, precipitation, and wind speed, with clear descriptions*
    > - *Use DATE_VALID_STD as the unique key for WEATHER_HAMBURG_DT. Do not set a unique key on SALES_HAMBURG_DT. Define the relationship as many-to-one from ORDER_DATE to DATE_VALID_STD."*
 
-4. Allow CoCo to create the Semantic View draft in the Workspace. This creates an editable draft; it does not publish the view yet.
+5. Allow CoCo to create the Semantic View draft in the Workspace. This creates an editable draft; it does not publish the view yet.
 
-5. Review the draft in the Semantic View editor. Confirm it contains:
+![semanticcreated](./assets/semanticcreated.png)
+
+6. Review the draft in the Semantic View editor. Confirm it contains:
    - Both `SALES_HAMBURG_DT` and `WEATHER_HAMBURG_DT`, with `DAILY_SALES` and `NUM_ORDERS` under **Facts** for sales
-   - `DATE_VALID_STD` as the unique key for `WEATHER_HAMBURG_DT`, and no unique key on `SALES_HAMBURG_DT.ORDER_DATE`
+     ![tables](./assets/tables.png)
+   - `DATE_VALID_STD` as the unique key for `WEATHER_HAMBURG_DT`, and no unique key on `SALES_HAMBURG_DT.ORDER_DATE`. To find this, hover over the name of the table and click on the pencil to view the dimensions. 
+     ![saleshamburg](./assets/saleshamburg.png)
+     ![weatherhamburg](./assets/weatherhamburg.png)
    - A **many-to-one relationship** from `SALES_HAMBURG_DT.ORDER_DATE` to `WEATHER_HAMBURG_DT.DATE_VALID_STD`
    - `AVG_TEMPERATURE_CELSIUS`, `AVG_PRECIPITATION_MM`, and `MAX_WIND_SPEED_MPH` under **Facts** for `WEATHER_HAMBURG_DT`
+     ![relationships](./assets/relationships.png)
 
    CoCo may also add time dimensions or metrics. You do not need to find a category named "measures" or require extra SUM metrics for this lab. If one of the items above differs, correct the draft before publishing.
 
-6. Click **Publish**. If Snowsight asks for a name and location, confirm **Name** `HAMBURG_INSIGHTS_SV`, **Database** `TASTY_BYTES`, and **Schema** `ANALYTICS`. Confirm the published view appears under `TASTY_BYTES.ANALYTICS` before adding it to the agent.
+7. Click **Publish**. If Snowsight asks for a name and location, confirm **Name** `HAMBURG_INSIGHTS_SV`, **Database** `TASTY_BYTES`, and **Schema** `ANALYTICS`. Confirm the published view appears under `TASTY_BYTES.ANALYTICS` before adding it to the agent.
 
 ### STEP 2 — Create the Cortex Agent
 
