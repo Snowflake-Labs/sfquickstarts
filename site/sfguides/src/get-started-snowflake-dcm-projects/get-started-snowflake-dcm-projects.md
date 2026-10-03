@@ -74,7 +74,7 @@ Once the workspace is created you will see the repository files in the file expl
 `scripts/` holds three numbered SQL files that you run in Snowsight worksheets at different stages of this guide. They live outside the project directory, so nothing in them is ever picked up by a plan.
 
 | File | When to run |
-|:-----|:------------|
+|---|---|
 | `scripts/01_pre_deploy.sql` | Once, before the first plan |
 | `scripts/02_post_deploy.sql` | After the first successful deploy |
 | `scripts/03_cleanup.sql` | When you are finished |
@@ -92,7 +92,7 @@ snow sql -f scripts/01_pre_deploy.sql
 
 It does four things. It creates the `DCM_DEVELOPER` role and grants it to you. It enables inherited grants at the account level. It grants `DCM_DEVELOPER` a superset of account-level privileges — every guide in this series shares this role, and each grant carries a comment saying what capability it buys. Account-level privileges cannot be granted by a project on itself, which is why they all happen here, before the first plan.
 
-> **Inherited grants (public preview).** An `INHERITED` grant covers current *and* future objects of a type inside a container. `GRANT ON ALL` snapshots what exists right now; `GRANT ON FUTURE` covers only what comes later. An inherited grant covers both, as one grant rather than one per object, which is why it is the recommended pattern in DCM Projects. It requires an account-level opt-in and cannot be combined with `WITH GRANT OPTION`, `CASCADE` or `RESTRICT`.
+> **Inherited grants.** An `INHERITED` grant covers current *and* future objects of a type inside a container. `GRANT ON ALL` snapshots what exists right now; `GRANT ON FUTURE` covers only what comes later. An inherited grant covers both, as one grant rather than one per object, which is why it is the recommended pattern in DCM Projects. It requires an account-level opt-in and cannot be combined with `WITH GRANT OPTION`, `CASCADE` or `RESTRICT`.
 
 ```sql
 ALTER ACCOUNT SET FEATURE_RBAC_INHERITED_GRANTS = 'ENABLED';
@@ -105,7 +105,7 @@ CREATE OR REPLACE DCM PROJECT dcm_demo.projects.dcm_project_dev
     COMMENT = 'for testing DCM Projects Quickstarts';
 ```
 
-Copy the two values from that last query into `DCM_Projects_Get_Started/manifest.yml`: set `account_identifier` and `user` under the `DCM_DEV` target. A mismatched `account_identifier` is only a warning, not an error, but fixing it keeps the warning out of your output.
+Copy the account identifier from that last query into `account_identifier` under the `DCM_DEV` target in `DCM_Projects_Get_Started/manifest.yml`. A mismatched `account_identifier` is only a warning, not an error, but fixing it keeps the warning out of your output.
 
 If you are working in Snowsight, refresh your browser after running this script so Snowsight picks up the newly created DCM Project object. It will not appear in the Workspaces project selector until you do.
 
@@ -137,7 +137,7 @@ targets:
     templating_config: PROD
 ```
 
-A target is a deployment destination: which account to deploy into, which DCM Project object holds the state there, which role owns that project, and — the important line — which `templating_config` to render the definitions with. `default_target` is what you get when you omit `--target`. The file ships with a `DCM_STAGE` target too; only `DCM_DEV` is used here.
+A target is a deployment destination: which account to deploy into, which DCM Project object holds the state there, which role owns that project, and — the important line — which `templating_config` to render the definitions with. `default_target` is what you get when you omit `--target`. The file also ships with `DCM_STAGE` and `DCM_PROD_EU` targets; only `DCM_DEV` is used here.
 
 Next comes **assets**. Everything under `sources/` is SQL that a `DEFINE` statement expresses in full, but some objects are backed by files instead — a Streamlit app is Python, not DDL. An asset is a named set of such files that the project carries along with its definitions:
 
@@ -159,7 +159,6 @@ templating:
   configurations:
     DEV:
       env_suffix: "_DEV"
-      user: "INSERT_YOUR_USER"
       project_owner_role: "DCM_DEVELOPER"
       teams:
         - name: "DEV_TEAM_1"
@@ -212,7 +211,7 @@ QUALIFY ROW_NUMBER() OVER (
     ) = 1;
 ```
 
-The other four files follow the same pattern: `raw.sql` declares the database and the three landing tables, `access.sql` the warehouse, a read role, its grants and a tag, `serve.sql` a semantic view over the dynamic table, and `jinja_demo.sql` the templated team objects covered in "Templating and Per-Environment Config".
+The other four files follow the same pattern: `raw.sql` declares the database, the `RAW` schema and the three landing tables, `access.sql` the warehouse, a read role, its grants and a tag, `serve.sql` a semantic view over the dynamic table and the Streamlit app that reads it, and `jinja_demo.sql` the templated team objects covered in "Templating and Per-Environment Config".
 
 <!-- ------------------------ -->
 ## First Plan and Deploy
@@ -250,10 +249,10 @@ Two things in that summary deserve an explanation.
 **Why 18 entities from 13 `DEFINE` statements?** The arithmetic is worth following, because it shows what DCM is actually tracking. The thirteen definitions in the non-template files cover one database, three schemas, three tables, one dynamic table, one semantic view, one Streamlit app, one warehouse, one role and one tag. The remaining five come from elsewhere:
 
 | Source | Entities |
-|:-------|---------:|
+|---|---|
 | `DEFINE` statements | 13 |
 | `PUBLIC` schema, planned with every database | 1 |
-| Jinja macro expanding `DEV_TEAM_1` | 3 |
+| Jinja loop and macro expanding `DEV_TEAM_1` | 3 |
 | `ROLE DCM_DEVELOPER` gaining ownership | 1 |
 | **Total** | **18** |
 
@@ -318,7 +317,7 @@ The CLI has a delta mode for fast iteration:
 snow dcm plan --target DCM_DEV --delta
 ```
 
-`--delta` reports the changes rather than the whole desired state, so it is what you run while iterating. This is the mode the Snowsight control panel uses.
+`--delta` reports the changes rather than the whole desired state, so it is what you run while iterating; in Snowsight, select **Delta** under **Plan Mode**. It only evaluates definitions that changed, so it cannot see drift made outside DCM — always run a full plan before deploying.
 
 ### Then the full plan
 
@@ -387,7 +386,7 @@ A deployed project is a live inventory of the objects it owns. Ask it:
 SHOW ENTITIES IN DCM PROJECT dcm_demo.projects.dcm_project_dev;
 ```
 
-Every entity from the plan appears here, with its type and name. This is the boundary of the project's authority: an object in this list is reconciled on every deploy, and an object that is not is invisible to DCM even if it sits in the same database.
+Every entity the project manages appears here, with its type and name — 16 after the first deploy, not the 18 the plan reported. The `PUBLIC` schema and `DCM_DEVELOPER` were in the changeset, but neither is a managed entity. This is the boundary of the project's authority: an object in this list is reconciled on every deploy, and an object that is not is invisible to DCM even if it sits in the same database.
 
 That distinction is what makes the next command matter, because it tells you how the inventory got to its current shape:
 
@@ -427,6 +426,7 @@ There are exactly three ideas here. A **loop** over the manifest's `teams` list.
 {% macro create_team_roles(team) %}
     DEFINE ROLE {{team}}_OWNER{{env_suffix}};
     DEFINE ROLE {{team}}_USAGE{{env_suffix}};
+    GRANT USAGE     on database DCM_DEMO_1{{env_suffix}}        to role {{team}}_USAGE{{env_suffix}};
     GRANT USAGE     on schema DCM_DEMO_1{{env_suffix}}.{{team}} to role {{team}}_USAGE{{env_suffix}};
     GRANT OWNERSHIP on schema DCM_DEMO_1{{env_suffix}}.{{team}} to role {{team}}_OWNER{{env_suffix}};
     GRANT ROLE {{team}}_USAGE{{env_suffix}} to role {{team}}_OWNER{{env_suffix}};
@@ -456,7 +456,7 @@ Run a plan with `--save-output` and read the same line back in `out/rendered/sou
 --   this database is DCM_DEMO_1_DEV
 ```
 
-Harmless here, because `env_suffix` always has a value. It stops being harmless the moment a commented-out line references something that does not resolve — the plan fails on a line you believed was disabled. The same applies to prose: never write Jinja delimiters as literal text in a comment you intend as explanation, because the engine reads them as code and not as English.
+Harmless here, because `env_suffix` always has a value. It stops being harmless the moment a commented-out line references something that does not resolve — the plan fails on a line you believed was disabled. The same applies to prose: never write Jinja delimiters as literal text in a comment you intend as explanation, because the engine reads them as code and not as English. To write about a Jinja expression, use a Jinja comment — `{# ... #}` — which the engine strips instead of evaluating.
 
 So: the "comment out the alternative" pattern is safe in plain SQL and a trap in templated SQL. And `out/rendered/` is the first place to look whenever a template surprises you — it is the exact SQL DCM evaluated.
 
@@ -518,7 +518,7 @@ Ten category rows come back, `Pizza | 106.00 | 67.50 | 3` at the top. `DEFINE SE
 <!-- ------------------------ -->
 ## The App That Reads It
 
-Everything so far has been SQL that a `DEFINE` statement can express in full. A Streamlit app cannot be: it is Python files, and DCM needs a way to carry them. That is what **project assets** are for.
+Everything so far has been SQL that a `DEFINE` statement can express in full. A Streamlit app cannot be: it is Python files, and DCM needs a way to carry them. That is what **project assets** are for. Project assets, `DEFINE STREAMLIT` and `DEFINE CODE BUNDLE` are in public preview.
 
 An asset is a named set of source files, declared at the top level of `manifest.yml` — a sibling of `targets` and `templating`, not nested inside either:
 
@@ -528,7 +528,7 @@ assets:
     path: 'streamlit/dashboard/**/*'
 ```
 
-The path is relative to the manifest and must live **outside `sources/`**, which is reserved for definitions, macros and tests. Use `path` for a single entry or `paths` for a list; each one can be a glob, a directory, or a single file. Globs support only `*` and `**` — no `?`, no brace expansion — and paths cannot contain Jinja. A pattern matching no files fails the run rather than deploying something empty.
+The path is relative to the manifest and must live **outside `sources/`**, which is reserved for definitions, macros and tests. Use `path` for a single entry or `paths` for a list; each one can be a glob or a single file — a bare directory path is not accepted, so append `/**/*` to take a folder's contents. Globs support only `*` and `**` — no `?`, no brace expansion — and paths cannot contain Jinja. A pattern matching no files fails the run rather than deploying something empty.
 
 Then `DEFINE STREAMLIT` refers to the asset by name. That indirection is the point: the definition names a set of files rather than a path, so the project can pull in files that live outside `sources/` and import them during rendering:
 
@@ -566,7 +566,9 @@ The plan tracks the **contents of the asset**, not just the `DEFINE` statement, 
 <!-- ------------------------ -->
 ## Detach and Clean Up
 
-**In Snowsight:** open `scripts/03_cleanup.sql` in a worksheet and run it. **With the Snowflake CLI:**
+Before tearing anything down, know that there is a gentler option. **Detaching** stops DCM managing something without destroying it. `DROP DCM PROJECT` on its own — without a `PURGE` first — removes the project and its deployment history, and leaves every entity, grant and attachment in place as an ordinary unmanaged object. To release a single grant instead, run `ALTER DCM PROJECT ... UNMANAGE GRANT` and remove the matching `GRANT` from your definitions, or the next deploy takes it back.
+
+This guide cleans up fully. **In Snowsight:** open `scripts/03_cleanup.sql` in a worksheet and run it. **With the Snowflake CLI:**
 
 ```bash
 snow sql -f scripts/03_cleanup.sql
@@ -582,7 +584,7 @@ EXECUTE DCM PROJECT dcm_demo.projects.dcm_project_dev PURGE;
 DROP DCM PROJECT IF EXISTS dcm_demo.projects.dcm_project_dev;
 ```
 
-`PURGE` drops every object the project created — database, schemas, tables, dynamic table, semantic view, warehouse, roles, and all their data. It is irreversible, and it leaves the project object behind, which is why the `DROP` follows.
+`PURGE` drops every object the project created — database, schemas, tables, dynamic table, semantic view, Streamlit app, warehouse, roles, and all their data — and revokes its grants and removes its attachments. It is irreversible, and it leaves the project object behind, which is why the `DROP` follows.
 
 What it does **not** do is the important part. Three objects are shared across every guide in this series, and the script leaves them in place, commented out with the reason:
 
