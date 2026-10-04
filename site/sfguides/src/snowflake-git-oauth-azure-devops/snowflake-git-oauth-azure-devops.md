@@ -107,7 +107,10 @@ CREATE OR REPLACE API INTEGRATION azdo_oauth_integration
     OAUTH_CLIENT_SECRET = '<your-client-secret>'
     OAUTH_ACCESS_TOKEN_VALIDITY = 3600
     OAUTH_REFRESH_TOKEN_VALIDITY = 31536000
-    OAUTH_ALLOWED_SCOPES = ('vso.code_write', 'vso.packaging_write')
+    OAUTH_ALLOWED_SCOPES = (
+      '499b84ac-1321-427f-aa17-267ca6975798/vso.code_write',
+      '499b84ac-1321-427f-aa17-267ca6975798/vso.packaging_write'
+    )
     OAUTH_USERNAME = 'oauth2'
   )
   ENABLED = TRUE;
@@ -116,6 +119,8 @@ CREATE OR REPLACE API INTEGRATION azdo_oauth_integration
 > **Important:** Azure DevOps requires `OAUTH_USERNAME = 'oauth2'`. Without this, Git operations will fail with authentication errors.
 
 > **Tip:** The two `<tenant-id>` placeholders in the authorization and token endpoints must both be replaced with your Entra **Directory (tenant) ID**.
+
+> **Tip:** The `499b84ac-1321-427f-aa17-267ca6975798` prefix is Microsoft's Azure DevOps resource ID. Microsoft Entra ID requires it to identify the [Azure DevOps resource](https://learn.microsoft.com/en-us/azure/devops/integrate/get-started/authentication/entra-oauth). It is the same for every organization, and it is not the Application (client) ID from the previous step.
 
 <!-- ------------------------ -->
 ## Create a workspace from your Azure DevOps repository
@@ -146,6 +151,9 @@ You can now push, pull, and work with files in your Azure DevOps repository dire
 
 ### "Invalid redirect URI" error during authorization
 Verify that the redirect URI registered in Microsoft Entra ID exactly matches the Snowflake redirect URI for your account's region (see [Determine your Snowflake redirect URI](#determine-your-snowflake-redirect-uri)).
+
+### AADSTS650053 — scope does not exist on the resource
+This usually means `OAUTH_ALLOWED_SCOPES` used a bare Azure DevOps permission such as `'vso.code_write'`. Recreate the API integration with the qualified scopes in [Create an API integration in Snowflake](#create-an-api-integration-in-snowflake).
 
 ### Authorization succeeds but Git operations fail
 - Confirm that `OAUTH_USERNAME` is set to `oauth2` in your API integration.
