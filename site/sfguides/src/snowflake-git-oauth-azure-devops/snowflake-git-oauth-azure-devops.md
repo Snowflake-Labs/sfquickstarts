@@ -120,7 +120,7 @@ CREATE OR REPLACE API INTEGRATION azdo_oauth_integration
 
 > **Tip:** The two `<tenant-id>` placeholders in the authorization and token endpoints must both be replaced with your Entra **Directory (tenant) ID**.
 
-> **Tip:** The `499b84ac-1321-427f-aa17-267ca6975798` prefix is Microsoft's Azure DevOps resource ID. Microsoft Entra ID requires it to identify the [Azure DevOps resource](https://learn.microsoft.com/en-us/azure/devops/integrate/get-started/authentication/entra-oauth). It is the same for every organization, and it is not the Application (client) ID from the previous step.
+> **Tip:** The `499b84ac-1321-427f-aa17-267ca6975798` prefix is Microsoft's Azure DevOps resource ID. Microsoft Entra ID requires it to identify the [Azure DevOps resource](https://learn.microsoft.com/en-us/azure/devops/integrate/get-started/authentication/entra-oauth). It is not the Application (client) ID from the previous step.
 
 <!-- ------------------------ -->
 ## Create a workspace from your Azure DevOps repository
