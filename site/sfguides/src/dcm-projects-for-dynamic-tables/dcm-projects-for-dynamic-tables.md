@@ -93,35 +93,36 @@ SET user_name = (SELECT CURRENT_USER());
 GRANT ROLE dcm_developer TO USER IDENTIFIER($user_name);
 ```
 
-### 2. Grant Infrastructure Privileges
+### 2. Enable Inherited Grants
 
-The DCM_DEVELOPER role needs privileges to create infrastructure objects through DCM deployments:
-
-```sql
-GRANT CREATE WAREHOUSE ON ACCOUNT TO ROLE dcm_developer;
-GRANT CREATE ROLE ON ACCOUNT TO ROLE dcm_developer;
-GRANT CREATE DATABASE ON ACCOUNT TO ROLE dcm_developer;
-GRANT EXECUTE MANAGED TASK ON ACCOUNT TO ROLE dcm_developer;
-GRANT EXECUTE TASK ON ACCOUNT TO ROLE dcm_developer;
-
-GRANT MANAGE GRANTS ON ACCOUNT TO ROLE dcm_developer;
-```
-
-> **New RBAC feature:** this project's `access.sql` uses `GRANT INHERITED`, a Snowflake Public Preview capability. Grants marked `INHERITED` are automatically extended to objects created *later* in the container, so read roles stay correctly privileged without re-granting. It needs the one-time, account-level opt-in below — a behavior-change setting that is independent of DCM.
+> **Inherited grants.** An `INHERITED` grant covers current *and* future objects of a type inside a container, as one grant rather than one per object. This project's `access.sql` uses them. They require a one-time, account-level opt-in that is independent of DCM, and cannot be combined with `WITH GRANT OPTION`, `CASCADE` or `RESTRICT`.
 
 ```sql
 ALTER ACCOUNT SET FEATURE_RBAC_INHERITED_GRANTS = 'ENABLED';
 ```
 
-### 3. Grant Data Quality Privileges
+### 3. Grant Account-Level Privileges
 
-To define and test data quality expectations, grant the following:
+Account-level privileges cannot be granted by a project on itself, so they all happen here, before the first plan. The script grants `DCM_DEVELOPER` a **superset**: every guide in this series shares this role, so one run of any guide's pre-deploy script prepares you for all of them, and each grant carries a comment saying what capability it buys. The ones this guide relies on:
 
 ```sql
-GRANT APPLICATION ROLE SNOWFLAKE.DATA_QUALITY_MONITORING_VIEWER TO ROLE dcm_developer;
-GRANT APPLICATION ROLE SNOWFLAKE.DATA_QUALITY_MONITORING_ADMIN TO ROLE dcm_developer;
-GRANT DATABASE ROLE SNOWFLAKE.DATA_METRIC_USER TO ROLE dcm_developer;
+-- Create the warehouse, database and roles the project manages,
+-- and grant on objects the owner does not own
+GRANT CREATE WAREHOUSE ON ACCOUNT TO ROLE dcm_developer;
+GRANT CREATE ROLE      ON ACCOUNT TO ROLE dcm_developer;
+GRANT CREATE DATABASE  ON ACCOUNT TO ROLE dcm_developer;
+GRANT MANAGE GRANTS    ON ACCOUNT TO ROLE dcm_developer;
+
+-- Run the ingestion task
+GRANT EXECUTE TASK         ON ACCOUNT TO ROLE dcm_developer;
+GRANT EXECUTE MANAGED TASK ON ACCOUNT TO ROLE dcm_developer;
+
+-- Attach data quality expectations and read their results
 GRANT EXECUTE DATA METRIC FUNCTION ON ACCOUNT TO ROLE dcm_developer;
+GRANT APPLICATION ROLE SNOWFLAKE.DATA_QUALITY_MONITORING_VIEWER TO ROLE dcm_developer;
+
+-- Call AI_CLASSIFY in the frozen-region evolution later in this guide
+GRANT USE AI FUNCTIONS ON ACCOUNT TO ROLE dcm_developer;
 ```
 
 ### 4. Create the DCM Project Object
@@ -174,19 +175,19 @@ targets:
 
   DCM_STAGE:
     account_identifier: MYORG-MY_STAGE_ACCOUNT
-    project_name: DCM_DEMO.PROJECTS.DCM_PROJECT_STG
+    project_name: DCM_DEMO.PROJECTS.DCM_DT_PROJECT_STG
     project_owner: DCM_STAGE_DEPLOYER
     templating_config: STAGE
 
   DCM_PROD_US:
     account_identifier: MYORG-MY_ACCOUNT_US
-    project_name: DCM_DEMO.PROJECTS.DCM_PROJECT_PROD
+    project_name: DCM_DEMO.PROJECTS.DCM_DT_PROJECT_PROD
     project_owner: DCM_PROD_DEPLOYER
     templating_config: PROD
 
   DCM_PROD_EU:
     account_identifier: MYORG-MY_ACCOUNT_EU
-    project_name: DCM_DEMO.PROJECTS.DCM_PROJECT_PROD
+    project_name: DCM_DEMO.PROJECTS.DCM_DT_PROJECT_PROD
     project_owner: DCM_PROD_DEPLOYER
     templating_config: PROD
 
@@ -361,7 +362,7 @@ Before deploying changes, always run a **Plan** first. A Plan is a dry-run that 
 
 Click the play button to the right of **Plan** and wait for the definitions to render, compile, and dry-run.
 
-Since none of the defined objects exist yet, the plan will show only **CREATE** statements. You should see planned operations for:
+Since none of the defined objects exist yet, the plan shows 37 entities: 36 **CREATE** and 1 **ALTER**. You should see planned operations for:
 
 - 1 database (`DCM_DEMO_3_DEV`)
 - Multiple schemas (`RAW`, `ANALYTICS`, `SERVE`, plus team schemas from the Jinja demo)
@@ -410,13 +411,15 @@ The script inserts data into the raw tables: trucks, menu items, customers, inve
 
 ### 2. Refresh Dynamic Tables
 
-Because all dynamic tables use `INITIALIZE = ON_SCHEDULE`, they were created without data. Use `EXECUTE DCM PROJECT ... REFRESH ALL` to kick off the first refresh of every DT the project manages in one statement:
+Because all dynamic tables use `INITIALIZE = ON_SCHEDULE`, they were created without data. One `ALTER DYNAMIC TABLE` statement can refresh several dynamic tables at once. The script lists the three leaf tables:
 
 ```sql
-EXECUTE DCM PROJECT DCM_DEMO.PROJECTS.DCM_DT_PROJECT_DEV REFRESH ALL;
+ALTER DYNAMIC TABLE dcm_demo_3_dev.analytics.menu_item_popularity,
+                    dcm_demo_3_dev.analytics.customer_spending_summary,
+                    dcm_demo_3_dev.analytics.truck_performance REFRESH;
 ```
 
-DCM triggers refreshes in dependency order — upstream tables refresh before downstream ones.
+Their shared upstream, `ENRICHED_ORDER_DETAILS`, refreshes with them, and all four land at a **single data timestamp**, so the leaf tables are consistent with each other. You don't list the upstream yourself.
 
 ### 3. Verify
 
@@ -574,19 +577,23 @@ This is a frozen region in action: a schema change was deployed, and Snowflake o
 <!-- ------------------------ -->
 ## Cleanup
 
-When you're done, open `scripts/04_cleanup.sql` in a Snowsight worksheet and run it to tear down all objects:
+When you're done, open `scripts/04_cleanup.sql` in a Snowsight worksheet and run it. It purges everything the project manages and drops the now-empty project object:
 
 ```sql
-USE ROLE dcm_developer;
 EXECUTE DCM PROJECT dcm_demo.projects.dcm_dt_project_dev PURGE;
 
 DROP DCM PROJECT IF EXISTS dcm_demo.projects.dcm_dt_project_dev;
-DROP SCHEMA IF EXISTS dcm_demo.projects;
-DROP DATABASE IF EXISTS dcm_demo;
-
-USE ROLE ACCOUNTADMIN;
-DROP ROLE IF EXISTS dcm_developer;
 ```
+
+`PURGE` drops every object the project created — database, tables, the four dynamic tables, views, the task, functions, warehouse, roles, and all their data. It is irreversible, and it leaves the project object behind, which is why the `DROP` follows.
+
+What the script does **not** drop matters more. The `dcm_demo` registry database, its `projects` schema and the `dcm_developer` role are shared by every guide in this series, so they are left in place, commented out with the reason. `dcm_demo` holds the project object of every DCM guide you have run; dropping it destroys those projects too, and leaves their objects orphaned with no way to purge them. Check before you uncomment anything:
+
+```sql
+SHOW DCM PROJECTS IN SCHEMA dcm_demo.projects;
+```
+
+If `PURGE` ever fails, the script tells you to suspend the dynamic tables and the task first, so nothing keeps consuming credits while you investigate. The known cause is a data metric function attachment, which this guide has; dropping the table the DMF is attached to removes the attachment, after which `PURGE` succeeds.
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
