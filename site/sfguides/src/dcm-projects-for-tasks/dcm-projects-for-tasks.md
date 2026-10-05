@@ -98,35 +98,26 @@ SET user_name = (SELECT CURRENT_USER());
 GRANT ROLE dcm_developer TO USER IDENTIFIER($user_name);
 ```
 
-### 2. Grant Infrastructure, Task, and Alert Privileges
+### 2. Enable Inherited Grants
 
-```sql
-GRANT CREATE WAREHOUSE ON ACCOUNT TO ROLE dcm_developer;
-GRANT CREATE ROLE ON ACCOUNT TO ROLE dcm_developer;
-GRANT CREATE DATABASE ON ACCOUNT TO ROLE dcm_developer;
-GRANT CREATE INTEGRATION ON ACCOUNT TO ROLE dcm_developer;
-GRANT EXECUTE MANAGED TASK ON ACCOUNT TO ROLE dcm_developer;
-GRANT EXECUTE TASK ON ACCOUNT TO ROLE dcm_developer;
-GRANT EXECUTE ALERT ON ACCOUNT TO ROLE dcm_developer;
-GRANT EXECUTE MANAGED ALERT ON ACCOUNT TO ROLE dcm_developer;
-GRANT MANAGE GRANTS ON ACCOUNT TO ROLE dcm_developer;
-GRANT IMPORTED PRIVILEGES ON DATABASE SNOWFLAKE TO ROLE dcm_developer;
-```
-
-> **New RBAC feature:** these access definitions use `GRANT INHERITED`, a Snowflake Public Preview capability. Grants marked `INHERITED` are automatically extended to objects created *later* in the container, so read roles stay correctly privileged without re-granting. It needs the one-time, account-level opt-in below — a behavior-change setting that is independent of DCM.
+> **Inherited grants.** An `INHERITED` grant covers current *and* future objects of a type inside a container, as one grant rather than one per object. This project's access definitions use them. They require a one-time, account-level opt-in that is independent of DCM, and cannot be combined with `WITH GRANT OPTION`, `CASCADE` or `RESTRICT`.
 
 ```sql
 ALTER ACCOUNT SET FEATURE_RBAC_INHERITED_GRANTS = 'ENABLED';
 ```
 
-### 3. Grant Data Quality Privileges
+### 3. Grant Account-Level Privileges
 
-The quality-gate branch uses system and custom DMFs, which require these grants:
+Account-level privileges cannot be granted by a project on itself, so they all happen here, before the first plan. The script grants `DCM_DEVELOPER` a **superset**: every guide in this series shares this role, so one run of any guide's pre-deploy script prepares you for all of them, and each grant carries a comment saying what capability it buys. The ones this guide relies on are the task and alert privileges:
 
 ```sql
-GRANT APPLICATION ROLE SNOWFLAKE.DATA_QUALITY_MONITORING_VIEWER TO ROLE dcm_developer;
-GRANT EXECUTE DATA METRIC FUNCTION ON ACCOUNT TO ROLE dcm_developer;
+GRANT EXECUTE TASK          ON ACCOUNT TO ROLE dcm_developer;
+GRANT EXECUTE MANAGED TASK  ON ACCOUNT TO ROLE dcm_developer;
+GRANT EXECUTE ALERT         ON ACCOUNT TO ROLE dcm_developer;
+GRANT EXECUTE MANAGED ALERT ON ACCOUNT TO ROLE dcm_developer;
 ```
+
+A serverless task or alert needs **both** of its pair: `EXECUTE TASK` lets the owner run tasks it owns, and `EXECUTE MANAGED TASK` is additionally required when there is no warehouse. An alert that deploys but never fires is usually one of these missing. The quality-gate branch also needs `EXECUTE DATA METRIC FUNCTION` and the `SNOWFLAKE.DATA_QUALITY_MONITORING_VIEWER` application role, which the script grants too.
 
 ### 4. Create the DCM Project Object
 
@@ -449,7 +440,7 @@ With the manifest updated (account identifier, user, notification recipient) and
 
 3. Click **Plan**. Review the changeset — you should see the warehouse, database, schema, tables, procedures, functions, and every task listed as `CREATE`.
 
-![Plan output showing 37 entities — 36 CREATE and 1 ALTER](assets/plan_results.png)
+![Plan output showing 41 entities — 40 CREATE and 1 ALTER](assets/plan_results.png)
 
 4. Click **Deploy**.
 
@@ -472,17 +463,7 @@ Deployment takes about 30–60 seconds. When it succeeds, every `STARTED` task i
 
 Open that script in a Snowsight worksheet and walk through it section by section.
 
-### 1. Force-Run the Failed-Task Alert (optional)
-
-Because the alert deploys with a `STARTED` target state, it is already evaluating on its 60-minute schedule — no `RESUME` is needed. To see it fire on demand rather than waiting for the schedule, force-run it:
-
-```sql
-EXECUTE ALERT dcm_demo_4_dev.pipeline.failed_task_alert;
-```
-
-This evaluates the alert condition immediately against recent task history.
-
-### 2. Seed the Source Table and Run the Graph
+### 1. Seed the Source Table and Run the Graph
 
 ```sql
 INSERT INTO dcm_demo_4_dev.pipeline.weather_data_source (...) VALUES (...);
@@ -500,6 +481,16 @@ The graph kicks off immediately — you don't have to wait for the CRON schedule
 > ```
 >
 > This overrides `RUNTIME_MULTIPLIER` for that one execution without changing the task definition.
+
+### 2. Force-Run the Failed-Task Alert (optional)
+
+Because the alert deploys with a `STARTED` target state, it is already evaluating on its 60-minute schedule — no `RESUME` is needed. To see it fire on demand rather than waiting for the schedule, force-run it **after the graph run has finished** — a run takes several minutes:
+
+```sql
+EXECUTE ALERT dcm_demo_4_dev.pipeline.failed_task_alert;
+```
+
+This evaluates the alert condition immediately against recent task history. Run it straight after `EXECUTE TASK` and no task has failed yet, so it evaluates to false and sends nothing; run it once `DEMO_TASK_9` has failed and it fires.
 
 <!-- ------------------------ -->
 ## View the Task Graph
@@ -525,7 +516,7 @@ Check your inbox — you should see **two kinds of notification email** from thi
 | Email subject | Sent by | When it fires |
 |---|---|---|
 | **DCM Task Graph Run Summary (_DEV)** | `DEMO_FINALIZER` — a DCM-managed finalizer task | After **every** graph run, with a formatted HTML summary of task statuses, return values, and durations |
-| **DCM Pipeline — Failed Task Alert** | `FAILED_TASK_ALERT` — the DCM-managed serverless alert (defined in `alerts.sql`, resumed in `02_post_deploy.sql`) | Every 60 minutes, **only** when at least one task failed since the last check |
+| **DCM Pipeline — Failed Task Alert** | `FAILED_TASK_ALERT` — the DCM-managed serverless alert (defined in `alerts.sql`, deployed `STARTED`) | Every 60 minutes, **only** when at least one task failed since the last check |
 
 The finalizer gives you per-run detail; the alert is a background safety net that catches failures even if the finalizer itself errors out.
 
@@ -551,22 +542,26 @@ This is the pattern: schema change, Plan, Deploy. No drift between environments 
 <!-- ------------------------ -->
 ## Cleanup
 
-When you're done, open `scripts/03_cleanup.sql` in a Snowsight worksheet and run it:
+When you're done, open `scripts/03_cleanup.sql` in a Snowsight worksheet and run it. It purges everything the project manages, drops the now-empty project object, and drops the notification integration this guide created:
 
 ```sql
-USE ROLE dcm_developer;
 EXECUTE DCM PROJECT dcm_demo.projects.dcm_tasks_project_dev PURGE;
 
--- Notification integration is outside project scope, drop separately
+DROP DCM PROJECT IF EXISTS dcm_demo.projects.dcm_tasks_project_dev;
+
 USE ROLE ACCOUNTADMIN;
 DROP INTEGRATION IF EXISTS dcm_demo_email_notifications;
-
-DROP DCM PROJECT IF EXISTS dcm_demo.projects.dcm_tasks_project_dev;
-DROP SCHEMA IF EXISTS dcm_demo.projects;
-DROP DATABASE IF EXISTS dcm_demo;
-
-DROP ROLE IF EXISTS dcm_developer;
 ```
+
+`PURGE` drops every object the project created — database, tables, stream, task graph, alert, functions, procedures, warehouse, roles, and all their data. It is irreversible, and it leaves the project object behind, which is why the `DROP` follows.
+
+What the script does **not** drop matters more. The `dcm_demo` registry database, its `projects` schema and the `dcm_developer` role are shared by every guide in this series, so they are left in place, commented out with the reason. `dcm_demo` holds the project object of every DCM guide you have run; dropping it destroys those projects too, and leaves their objects orphaned with no way to purge them. Check before you uncomment anything:
+
+```sql
+SHOW DCM PROJECTS IN SCHEMA dcm_demo.projects;
+```
+
+If `PURGE` ever fails, the script tells you to suspend the root task and the alert first, so nothing keeps consuming credits while you investigate. The known cause is a data metric function attachment, which this guide has; dropping the table the DMF is attached to removes the attachment, after which `PURGE` succeeds.
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
