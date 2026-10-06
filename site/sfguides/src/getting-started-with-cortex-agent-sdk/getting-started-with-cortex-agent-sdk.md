@@ -6,6 +6,7 @@ categories: snowflake-site:taxonomy/solution-center/certification/quickstart, sn
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+tags: Cortex, Agent, SDK, Python, AI
 
 # Getting Started with the Cortex Agent SDK
 
@@ -21,7 +22,7 @@ This guide walks you from a first "hello world" agent run through streaming even
 - Basic Python and SQL knowledge
 
 ### What You'll Learn
-- How to authenticate with the SDK using a Personal Access Token (PAT)
+- How to authenticate with the SDK using a programmatic access token (PAT)
 - How to run a lite agent and stream its response
 - How to process streaming events and extract results
 - How to manage threads and build multi-turn conversations
@@ -31,7 +32,7 @@ This guide walks you from a first "hello world" agent run through streaming even
 ### What You'll Need
 - A [Snowflake account](https://signup.snowflake.com/) (Enterprise edition or higher)
 - Python 3.10 or later
-- A Personal Access Token (PAT) — we'll create one in the Setup step
+- A programmatic access token (PAT) -- we'll create one in the Setup step
 
 ### What You'll Build
 - Five progressively more advanced agent scripts
@@ -46,11 +47,11 @@ This guide walks you from a first "hello world" agent run through streaming even
 pip install snowflake-cortex-agent-sdk
 ```
 
-### Create a Personal Access Token (PAT)
+### Create a Programmatic Access Token (PAT)
 
 1. In Snowsight, click your name in the bottom-left corner
 2. Go to **Settings** > **Authentication**
-3. Under **Personal Access Tokens**, click **Generate Token**
+3. Under **Programmatic access tokens**, click **Generate Token**
 4. Give it a name (e.g., `agent-sdk-quickstart`) and copy the token
 
 ### Set Environment Variables
@@ -67,10 +68,18 @@ export SNOWFLAKE_PAT="your-pat-token"
 Run the following SQL in Snowsight or via SnowSQL to create the demo schema and sample data:
 
 ```sql
-USE ROLE ACCOUNTADMIN;
+USE ROLE SYSADMIN;
 
 CREATE DATABASE IF NOT EXISTS AGENT_SDK_DEMO_DB;
 CREATE SCHEMA IF NOT EXISTS AGENT_SDK_DEMO_DB.QUICKSTART;
+
+-- Create a demo role with limited access
+USE ROLE USERADMIN;
+CREATE ROLE IF NOT EXISTS AGENT_SDK_DEMO_ROLE;
+GRANT ROLE AGENT_SDK_DEMO_ROLE TO USER IDENTIFIER(CURRENT_USER());
+
+-- Grant access to the demo objects only
+USE ROLE SYSADMIN;
 
 CREATE OR REPLACE TABLE AGENT_SDK_DEMO_DB.QUICKSTART.SALES (
     sale_date DATE,
@@ -94,11 +103,14 @@ INSERT INTO AGENT_SDK_DEMO_DB.QUICKSTART.SALES VALUES
     ('2026-10-04', 'Europe', 'Widget A', 140, 4200.00),
     ('2026-10-04', 'Asia Pacific', 'Widget A', 190, 5700.00);
 
--- Make accessible to all roles
-GRANT USAGE ON DATABASE AGENT_SDK_DEMO_DB TO ROLE PUBLIC;
-GRANT USAGE ON SCHEMA AGENT_SDK_DEMO_DB.QUICKSTART TO ROLE PUBLIC;
-GRANT SELECT ON ALL TABLES IN SCHEMA AGENT_SDK_DEMO_DB.QUICKSTART TO ROLE PUBLIC;
+-- Grant access to the demo role (not PUBLIC)
+GRANT USAGE ON DATABASE AGENT_SDK_DEMO_DB TO ROLE AGENT_SDK_DEMO_ROLE;
+GRANT USAGE ON SCHEMA AGENT_SDK_DEMO_DB.QUICKSTART TO ROLE AGENT_SDK_DEMO_ROLE;
+GRANT SELECT ON ALL TABLES IN SCHEMA AGENT_SDK_DEMO_DB.QUICKSTART TO ROLE AGENT_SDK_DEMO_ROLE;
+GRANT INSERT ON ALL TABLES IN SCHEMA AGENT_SDK_DEMO_DB.QUICKSTART TO ROLE AGENT_SDK_DEMO_ROLE;
 ```
+
+> NOTE: Generate your PAT while using the `AGENT_SDK_DEMO_ROLE` role, or set the role in your connection config. This ensures the agent can only access the demo database.
 
 You're ready to write your first agent script.
 
@@ -113,7 +125,6 @@ Create a file called `01_hello_agent.py`:
 
 ```python
 import os
-import json
 from cortex_agent_sdk import CortexAgentClient
 from cortex_agent_sdk.auth import PatAuth
 
@@ -233,7 +244,6 @@ Create `02_streaming_callbacks.py`:
 
 ```python
 import os
-import json
 from cortex_agent_sdk import CortexAgentClient
 from cortex_agent_sdk.auth import PatAuth
 
@@ -243,7 +253,8 @@ client = CortexAgentClient(
 )
 
 SEMANTIC_MODEL = """..."""
-# (same inline semantic model as Step 3 — see 01_hello_agent.py for the full version)
+# Copy the full SEMANTIC_MODEL from 01_hello_agent.py (the inline semantic model
+# describing AGENT_SDK_DEMO_DB.QUICKSTART.SALES)
 
 
 def process_events(stream):
@@ -305,7 +316,9 @@ bg_body["messages"] = [
     {"role": "user", "content": [{"type": "text", "text": "What are the daily revenue trends?"}]}
 ]
 
-bg_run = client.agent.run(bg_body, background=True)
+bg_body["stream"] = False
+bg_body["background"] = True
+bg_run = client.agent.run(bg_body)
 print(f"Run started: {bg_run.run_id}")
 print("Waiting for completion...\n")
 
@@ -326,7 +339,7 @@ print("\nDone!")
 Key patterns:
 
 - **Event processing** — iterate the stream and switch on `item["type"]` to handle `tool_use`, `tool_results`, and `text` events differently
-- **Background runs** — `client.agent.run(body, background=True)` returns a `BackgroundRun` immediately; call `.wait()` to block until done, or `.cancel()` to abort
+- **Background runs** — set `stream=False` and `background=True` in the body dict, then call `client.agent.run(body)` to get a `BackgroundRun` handle; call `.wait()` to block until done, or `.cancel()` to abort
 - This is useful for kicking off multiple agent runs in parallel
 
 <!-- ------------------------ -->
@@ -338,7 +351,6 @@ Create `03_conversations.py`:
 
 ```python
 import os
-import json
 from cortex_agent_sdk import CortexAgentClient
 from cortex_agent_sdk.auth import PatAuth
 
@@ -348,7 +360,8 @@ client = CortexAgentClient(
 )
 
 SEMANTIC_MODEL = """..."""
-# (same inline semantic model — see 01_hello_agent.py)
+# Copy the full SEMANTIC_MODEL from 01_hello_agent.py (the inline semantic model
+# describing AGENT_SDK_DEMO_DB.QUICKSTART.SALES)
 
 
 def extract_text(events):
@@ -431,7 +444,7 @@ client.close()
 
 Key patterns:
 
-- **`client.threads.create()`** creates a new thread — pass `origin_application` (max 16 chars) to tag it
+- **`client.threads.create()`** creates a new thread — pass `origin_application` to tag it
 - **`thread_id`** on subsequent runs links them to the same conversation
 - **`client.threads.search()`** finds threads by keyword (fuzzy or regex)
 - **`client.threads.update()`** renames threads; **`.delete()`** removes them
@@ -445,7 +458,6 @@ Create `04_coding_agent.py`:
 
 ```python
 import os
-import json
 from cortex_agent_sdk import CortexAgentClient
 from cortex_agent_sdk.auth import PatAuth
 
@@ -566,7 +578,7 @@ print("\nDone!")
 Key patterns:
 
 - **`client.coding_agent.stream(body)`** runs an agent with full code execution capabilities
-- **`permission_policy: "always_allow"`** auto-approves all tool calls (use `"always_ask"` for interactive approval)
+- **`permission_policy: "always_allow"`** auto-approves all tool calls (use `"always_ask"` for interactive approval). Since the agent can execute SQL and bash commands, always use a **least-privilege role** like `AGENT_SDK_DEMO_ROLE` rather than ACCOUNTADMIN.
 - **`thread_id`** links multi-turn coding sessions so the agent builds on its own previous work
 - The agent can execute SQL, create objects, and analyze data autonomously
 
@@ -633,22 +645,51 @@ def main():
 
     # Pipeline Health
     print("\n[1/3] Running pipeline health check...\n")
-    pipeline_report = run_check(client, thread_id, """
-You are a data engineering ops agent. Perform a pipeline health check:
-1. Query SNOWFLAKE.ACCOUNT_USAGE.TASK_HISTORY for tasks that FAILED in the last 24h
-2. Check for tasks stuck running for more than 30 minutes
-3. Summarize: total failures, critical failures (task name + error), stuck tasks
-4. Rate overall health: HEALTHY / DEGRADED / CRITICAL""")
+    pipeline_report = run_check(
+        client,
+        thread_id,
+        """You are a data engineering ops agent. Perform a pipeline health check:
+
+1. Query SNOWFLAKE.ACCOUNT_USAGE.TASK_HISTORY for tasks that FAILED or were
+   CANCELLED in the last 24 hours. Show the task name, database, schema,
+   error message, and scheduled time.
+
+2. Check if any tasks are stuck by looking for tasks that have been running
+   for more than 30 minutes.
+
+3. Summarize your findings in this exact format:
+   - Total failures in last 24h: <count>
+   - Critical failures (list each with task name, error, and database.schema)
+   - Stuck tasks (if any)
+   - Overall pipeline health: HEALTHY / DEGRADED / CRITICAL
+
+If there are no failures, report HEALTHY status.""",
+    )
     print(pipeline_report)
 
     # Data Quality
     print("\n" + "-" * 70)
     print("\n[2/3] Running data quality check...\n")
-    quality_report = run_check(client, thread_id, """
-You are a data engineering ops agent. Perform a data quality check:
-1. Query DATA_QUALITY_MONITORING_RESULTS for DMF violations (skip if unavailable)
-2. Find the 10 stalest non-system tables by last_altered
-3. Summarize: DMF violations, stale tables, overall quality: GOOD / WARNING / CRITICAL""")
+    quality_report = run_check(
+        client,
+        thread_id,
+        """You are a data engineering ops agent. Perform a data quality check:
+
+1. Query SNOWFLAKE.ACCOUNT_USAGE.DATA_QUALITY_MONITORING_RESULTS for any
+   DMF violations in the last 24 hours. If this view is not available or
+   returns no results, note that and move on.
+
+2. Check table freshness: query SNOWFLAKE.ACCOUNT_USAGE.TABLE_STORAGE_METRICS
+   or INFORMATION_SCHEMA.TABLES to find tables that haven't been updated
+   in the last 48 hours (look at last_altered or similar columns) in
+   databases that are NOT system databases (skip SNOWFLAKE, SNOWFLAKE_SAMPLE_DATA).
+   Limit to 10 stalest tables.
+
+3. Summarize your findings:
+   - DMF violations: <count> (list each with table, metric, value)
+   - Stale tables: <count> (list the top 5 stalest with last update time)
+   - Overall data quality: GOOD / WARNING / CRITICAL""",
+    )
     print(quality_report)
 
     # Incident Diagnosis
@@ -659,13 +700,26 @@ You are a data engineering ops agent. Perform a data quality check:
 
     if needs_diagnosis:
         print("\n" + "-" * 70)
-        print("\n[3/3] Issues detected — running incident diagnosis...\n")
-        incident_report = run_check(client, thread_id,
-            "Based on the checks you just ran, diagnose root causes and suggest "
-            "fixes. Rate urgency: P1 (fix now), P2 (fix today), P3 (fix this week).")
+        print("\n[3/3] Critical issues detected — running incident diagnosis...\n")
+        incident_report = run_check(
+            client,
+            thread_id,
+            f"""You are a senior data engineering ops agent. Based on the pipeline
+health and data quality checks you just ran, diagnose root causes and
+suggest concrete fixes.
+
+For each critical or degraded finding:
+1. Investigate the root cause — run additional queries if needed
+   (check object dependencies, recent DDL changes, permission issues)
+2. Suggest a specific fix (SQL command, configuration change, or escalation)
+3. Rate the urgency: P1 (fix now), P2 (fix today), P3 (fix this week)
+
+Format your response as an incident report with clear sections.""",
+        )
         print(incident_report)
     else:
-        print("\n[3/3] No critical issues. Skipping diagnosis.")
+        print("\n" + "-" * 70)
+        print("\n[3/3] No critical issues detected. Skipping incident diagnosis.")
 
     print("\n" + "=" * 70)
     print("  OPS REPORT COMPLETE")
@@ -708,15 +762,23 @@ This pattern is designed to be extended:
 Congratulations! You've built five progressively more powerful agent scripts using the Cortex Agent SDK.
 
 ### What You Learned
-- How to authenticate with the SDK using a Personal Access Token
+- How to authenticate with the SDK using a programmatic access token
 - How to run lite agents with streaming and extract structured results
 - How to use background runs for asynchronous execution
 - How to build multi-turn conversations with persistent threads
 - How to use the coding agent sandbox for automated SQL execution
 - How to orchestrate multiple agent checks into an automated ops workflow
 
+### Cleanup
+
+To remove the demo objects created in this quickstart:
+
+```sql
+DROP DATABASE IF EXISTS AGENT_SDK_DEMO_DB;
+```
+
 ### Related Resources
 - [Cortex Agent SDK on PyPI](https://pypi.org/project/snowflake-cortex-agent-sdk/)
-- [Snowflake Cortex AI Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex)
-- [Cortex Agents Overview](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agent)
-- [Personal Access Tokens](https://docs.snowflake.com/en/user-guide/admin-personal-access-tokens)
+- [Snowflake Cortex AI Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/overview)
+- [Cortex Agents Overview](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents)
+- [Programmatic Access Tokens](https://docs.snowflake.com/en/user-guide/programmatic-access-tokens)
