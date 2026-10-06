@@ -2,11 +2,10 @@ author: Rick Radewagen
 id: ask-snowflake-questions-in-slack-with-dot
 language: en
 summary: Give Dot read-only access to Snowflake with a key-pair service user, describe your tables with comments, and answer data questions in Slack.
-categories: snowflake-site:taxonomy/solution-center/certification/community-sourced, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/snowflake-feature/business-intelligence
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/snowflake-feature/business-intelligence
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfquickstarts/issues
-tags: Business Intelligence, Natural Language Query, Key-Pair Authentication, Service Users, Slack
 
 # Ask Questions About Your Snowflake Data in Slack with Dot
 <!-- ------------------------ -->
@@ -111,7 +110,7 @@ COMMENT ON COLUMN NATIONS.REGION_ID IS 'Joins to REGIONS.REGION_ID';
 COMMENT ON TABLE REGIONS IS 'Sales regions: AFRICA, AMERICA, ASIA, EUROPE and MIDDLE EAST';
 ```
 
-The same works for your own tables. When Dot gets a question wrong, a missing definition is often the cause. Add it as a comment and sync again.
+The same works for your own tables. When Dot gets a question wrong, a missing definition is often the cause. Add it as a column comment and sync again. Dot picks up changed column comments on every sync, but keeps a table's description once it has one.
 
 <!-- ------------------------ -->
 ## Create Warehouse and Role
@@ -147,14 +146,16 @@ An X-Small warehouse is enough for most teams. It suspends after a minute withou
 <!-- ------------------------ -->
 ## Create a Service User
 
-A user with `TYPE = SERVICE` cannot sign in with a password or SAML SSO, so Dot signs in with a key pair. Create one on your computer:
+A user with `TYPE = SERVICE` cannot sign in with a password or SAML SSO, so Dot signs in with a key pair. It is also the setup that keeps working: Snowflake is [phasing out single-factor password sign-ins](https://docs.snowflake.com/en/user-guide/security-mfa-rollout), and from August to October 2026 it blocks passwords for all service users, including `LEGACY_SERVICE` users.
+
+Create an encrypted key pair on your computer. OpenSSL asks you to choose a passphrase, then asks for it again to write the public key:
 
 ```bash
-openssl genrsa 2048 | openssl pkcs8 -topk8 -inform PEM -out dot_rsa_key.p8 -nocrypt
+openssl genrsa 2048 | openssl pkcs8 -topk8 -v2 aes-256-cbc -inform PEM -out dot_rsa_key.p8
 openssl rsa -in dot_rsa_key.p8 -pubout -out dot_rsa_key.pub
 ```
 
-`dot_rsa_key.p8` is the private key. Keep it secret. You paste it into Dot in the next step.
+`dot_rsa_key.p8` is the private key, encrypted with your passphrase. Keep both secret. You paste them into Dot in the next step.
 
 Print the public key on one line, without the BEGIN and END lines:
 
@@ -207,15 +208,16 @@ Then in Dot:
 
 1. Open **Settings**, go to **Connections** and click **Snowflake**.
 2. Enter the account identifier and the username `DOT_USER`.
-3. Turn on **Key-pair**. Paste the full contents of `dot_rsa_key.p8` into **Private Key**, including the BEGIN and END lines. Leave **Passphrase** empty, because the key is not encrypted.
-4. Enter the role `DOT_ROLE` and the warehouse `DOT_WH`.
-5. Click **Connect**.
+3. Turn on **Key-pair**. Paste the full contents of `dot_rsa_key.p8` into **Private Key**, including the BEGIN and END lines.
+4. Enter your passphrase in **Passphrase**.
+5. Enter the role `DOT_ROLE` and the warehouse `DOT_WH`.
+6. Click **Connect**.
 
-Dot checks the connection and syncs the tables that DOT_ROLE can see. It reads table and column names, your comments and a small sample of values.
+Dot checks that it can see the warehouse, saves the connection and syncs the tables that DOT_ROLE can see. It reads table and column names, your comments and a sample of values.
 
-When the sync is done, open **Model** in the left navigation. Make sure all four DOT_DEMO.SALES tables are active, and activate any that are not.
+When the sync is done, open **Model** in the left navigation. Make sure all four DOT_DEMO.SALES tables are active, and turn on **Active** for any that are not.
 
-Store `dot_rsa_key.p8` in your password manager, then delete the local copy.
+Store `dot_rsa_key.p8` and its passphrase in your password manager, then delete the local copy.
 
 <!-- ------------------------ -->
 ## Ask Your First Question
@@ -224,7 +226,7 @@ Start in the Dot web app, so you can compare the answer with your own SQL. Open 
 
 > What was revenue by region in 1997?
 
-Dot finds the tables, joins them and answers with a table or a chart. Open the **Query** tab under the result to see the SQL it ran.
+Dot finds the tables, joins them and answers with a table or a chart. Click the **Query** tab on the result to see the SQL it ran.
 
 Now run your own query in Snowsight:
 
@@ -239,7 +241,7 @@ GROUP BY r.REGION_NAME
 ORDER BY REVENUE DESC;
 ```
 
-The numbers should match. If they do not, compare the two queries. The difference usually points to a business rule that Dot did not know. Add it as a comment, sync the connection and ask again.
+The numbers should match. If they do not, compare the two queries. The difference usually points to a business rule that Dot did not know. Add it as a column comment, sync the connection and ask again.
 
 <!-- ------------------------ -->
 ## Ask in Slack
@@ -249,7 +251,7 @@ The numbers should match. If they do not, compare the two queries. The differenc
 3. Reload the Connections page in Dot and check the **Slack Team ID** field. Dot fills it in when your Slack workspace uses the same email domain as your Dot account. If it is empty, copy the ID that starts with `T` from your Slack URL in the browser, after `/client/`. Paste it and click **Save**.
 4. In a Slack channel, invite Dot with `/invite @Dot`.
 5. Start a thread with your question: `@Dot what was revenue by region in 1997?`
-6. Reply in the same thread to ask a follow-up, such as `split Europe by market segment`. Dot uses the whole thread as context, so you don't need to mention it again.
+6. Reply in the same thread to ask a follow-up, such as `split Europe by market segment`. Dot uses the whole thread as context, and you don't need to tag `@Dot` again.
 
 Each answer in Slack has an **Access Online** link. It opens the answer in Dot, where you can see the SQL.
 
@@ -258,7 +260,7 @@ Dot also answers in Microsoft Teams. See [Dot in Microsoft Teams](https://docs.g
 <!-- ------------------------ -->
 ## Review Dot's Queries
 
-Every query from Dot carries the query tag `dot`, runs as DOT_USER and uses DOT_WH. SYSADMIN owns DOT_WH, so it can list them:
+Every query from Dot carries the query tag `dot` and runs as DOT_USER. SYSADMIN owns DOT_WH, so it can list the ones that ran on that warehouse:
 
 ```sql
 USE ROLE SYSADMIN;
@@ -320,4 +322,5 @@ You gave an AI analyst read-only access to Snowflake through a key-pair service 
 - [Dot in Slack](https://docs.getdot.ai/integrations/slack-and-teams/slack)
 - [Snowflake key-pair authentication](https://docs.snowflake.com/en/user-guide/key-pair-auth)
 - [Snowflake user types](https://docs.snowflake.com/en/user-guide/admin-user-management)
+- [Deprecation of single-factor password sign-ins](https://docs.snowflake.com/en/user-guide/security-mfa-rollout)
 - [Snowflake resource monitors](https://docs.snowflake.com/en/user-guide/resource-monitors)
