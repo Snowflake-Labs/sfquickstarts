@@ -213,6 +213,8 @@ Then in Dot:
 5. Enter the role `DOT_ROLE` and the warehouse `DOT_WH`.
 6. Click **Connect**.
 
+![Dot's Snowflake connection form with Key-pair turned on. The values shown are examples.](assets/dot-snowflake-connection-keypair.png)
+
 Dot checks that it can see the warehouse, saves the connection and syncs the tables that DOT_ROLE can see. It reads table and column names, your comments and a sample of values.
 
 When the sync is done, open **Model** in the left navigation. Make sure all four DOT_DEMO.SALES tables are active, and turn on **Active** for any that are not.
@@ -224,9 +226,13 @@ Store `dot_rsa_key.p8` and its passphrase in your password manager, then delete 
 
 Start in the Dot web app, so you can compare the answer with your own SQL. Open a new chat and ask:
 
-> What was revenue by region in 1997?
+> What was revenue by region in 1994?
 
 Dot finds the tables, joins them and answers with a table or a chart. Click the **Query** tab on the result to see the SQL it ran.
+
+![Dot answers with a chart of 1994 revenue by region, led by Europe](assets/dot-answer-revenue-by-region.png)
+
+![The Query tab shows the SQL Dot ran](assets/dot-answer-query-tab.png)
 
 Now run your own query in Snowsight:
 
@@ -236,12 +242,18 @@ FROM DOT_DEMO.SALES.ORDERS o
 JOIN DOT_DEMO.SALES.CUSTOMERS c ON c.CUSTOMER_ID = o.CUSTOMER_ID
 JOIN DOT_DEMO.SALES.NATIONS n ON n.NATION_ID = c.NATION_ID
 JOIN DOT_DEMO.SALES.REGIONS r ON r.REGION_ID = n.REGION_ID
-WHERE YEAR(o.ORDER_DATE) = 1997
+WHERE YEAR(o.ORDER_DATE) = 1994
 GROUP BY r.REGION_NAME
 ORDER BY REVENUE DESC;
 ```
 
 The numbers should match. If they do not, compare the two queries. The difference usually points to a business rule that Dot did not know. Add it as a column comment, sync the connection and ask again.
+
+Your comments shape the answer. Every 1994 order is fulfilled, so total order value and revenue are the same. Ask about 1997 instead and Dot points out that every 1997 order is still open (`O`), because the ORDER_STATUS comment told it what the status codes mean.
+
+Ask a follow-up in the same chat, such as `Split Europe by market segment`. Dot keeps the context of the conversation.
+
+![Dot splits Europe's 1994 revenue by market segment](assets/dot-follow-up-europe-segments.png)
 
 <!-- ------------------------ -->
 ## Ask in Slack
@@ -250,7 +262,7 @@ The numbers should match. If they do not, compare the two queries. The differenc
 2. Click **Add Dot to Slack** and allow the app in your Slack workspace.
 3. Reload the Connections page in Dot and check the **Slack Team ID** field. Dot fills it in when your Slack workspace uses the same email domain as your Dot account. If it is empty, copy the ID that starts with `T` from your Slack URL in the browser, after `/client/`. Paste it and click **Save**.
 4. In a Slack channel, invite Dot with `/invite @Dot`.
-5. Start a thread with your question: `@Dot what was revenue by region in 1997?`
+5. Start a thread with your question: `@Dot what was revenue by region in 1994?`
 6. Reply in the same thread to ask a follow-up, such as `split Europe by market segment`. Dot uses the whole thread as context, and you don't need to tag `@Dot` again.
 
 Each answer in Slack has an **Access Online** link. It opens the answer in Dot, where you can see the SQL.
