@@ -1,5 +1,5 @@
 author: Gilberto Hernandez, Kevin Nguyen, Snowflake CoCo
-id: snowflake-northstar-data-engineering
+id: data-ingestion-transformation-delivery-coco
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/feature/cortex-analyst, snowflake-site:taxonomy/feature/dynamic-tables, snowflake-site:taxonomy/feature/semantic-views, snowflake-site:taxonomy/use-case/data-engineering
 language: en
 summary: Build a fully prompt-driven I-T-D data pipeline in Snowflake using CoCo and Dynamic Tables, then investigate a regional sales drop with a Cortex Agent accessed through Snowflake CoWork.
