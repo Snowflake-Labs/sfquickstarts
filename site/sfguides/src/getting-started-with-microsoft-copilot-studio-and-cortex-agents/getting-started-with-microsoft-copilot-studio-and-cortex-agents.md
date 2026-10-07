@@ -4,7 +4,7 @@ categories: snowflake-site:taxonomy/solution-center/certification/quickstart, sn
 language: en
 summary: This is a quickstart showing users how use Microsoft Copilot Studio with Snowflake Cortex Agents 
 environments: web
-status: Published 
+status: Hidden 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 
