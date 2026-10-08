@@ -292,13 +292,25 @@ In this iteration you turn ChurnGuard from a read-only dashboard into a workflow
 
 ### Setup
 
-First, create the ACTIONS table that stores retention tasks. From the repo root:
+First, create the ACTIONS table that stores retention tasks. Paste the following SQL into Cortex Code chat (the full script is also in `scripts/iteration-2-setup.sql`):
 
-```bash
-snow sql -f scripts/iteration-2-setup.sql --connection quickstart
+```sql
+USE ROLE SFQUICKSTART_CHURNGUARD_ROLE;
+USE DATABASE SFQUICKSTART_CHURNGUARD;
+USE SCHEMA PUBLIC;
+
+CREATE TABLE IF NOT EXISTS ACTIONS (
+    ACTION_ID STRING DEFAULT UUID_STRING(),
+    CUSTOMER_KEY NUMBER,
+    ASSIGNED_TO STRING,
+    ACTION_TYPE STRING,
+    STATUS STRING DEFAULT 'New',
+    NOTES STRING,
+    CREATED_AT TIMESTAMP_NTZ DEFAULT CURRENT_TIMESTAMP(),
+    UPDATED_AT TIMESTAMP_NTZ DEFAULT CURRENT_TIMESTAMP(),
+    CREATED_BY STRING DEFAULT CURRENT_USER()
+);
 ```
-
-![Running iteration-2-setup.sql](assets/iter2_setup_sql.png)
 
 Then checkout the iteration 2 branch and copy the AGENTS.md into your project:
 
@@ -404,10 +416,28 @@ In this iteration the manual workflow from iteration 2 becomes agent-powered. In
 
 ### Setup
 
-Run the iteration 3 setup script to create the stored procedure that the agent will use as a custom tool:
+Create the stored procedure that the agent will use as a custom tool. Paste the following SQL into Cortex Code chat (the full script is also in `scripts/iteration-3-setup.sql`):
 
-```bash
-snow sql -f scripts/iteration-3-setup.sql --connection quickstart
+```sql
+USE ROLE SFQUICKSTART_CHURNGUARD_ROLE;
+USE DATABASE SFQUICKSTART_CHURNGUARD;
+USE SCHEMA PUBLIC;
+
+-- Stored procedure as a custom tool for the Cortex Agent.
+-- The agent calls this to create retention actions via conversation.
+CREATE OR REPLACE PROCEDURE CREATE_RETENTION_ACTION(
+    P_CUSTOMER_KEY NUMBER,
+    P_ACTION_TYPE STRING,
+    P_NOTES STRING
+)
+RETURNS STRING
+LANGUAGE SQL
+AS
+BEGIN
+    INSERT INTO ACTIONS (CUSTOMER_KEY, ACTION_TYPE, NOTES, ASSIGNED_TO)
+    VALUES (:P_CUSTOMER_KEY, :P_ACTION_TYPE, :P_NOTES, CURRENT_USER());
+    RETURN 'Retention action created for customer ' || :P_CUSTOMER_KEY;
+END;
 ```
 
 > **NOTE:**
