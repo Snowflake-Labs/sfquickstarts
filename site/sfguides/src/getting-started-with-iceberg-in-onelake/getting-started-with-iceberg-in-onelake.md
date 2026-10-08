@@ -31,13 +31,13 @@ This quickstart demonstrates the core workflow: creating Iceberg tables in OneLa
 
 
 ### What You Will Learn
-- creating an external volume and catalog integration to read Iceberg data in OneLake
+- creating a catalog integration to read Iceberg data in OneLake
 - creating a Snowflake Database in OneLake and writing Snowflake managed Iceberg tables
 - setting OneLake as a catalog linked database in Snowflake
 - querying Iceberg from Snowflake and Fabric services
 
 ### What You Will Build 
-- You will build a fully interoperable, open lakehouse by integrating Snowflake with Microsoft OneLake. You will get sample data in Fabric, create an external volume, set up OneLake as an Catalog Linked Database in Snowflake, and create Iceberg tables in OneLake. The end result is a seamless data architecture where Snowflake can manage and query data stored in the open formats of OneLake.
+- You will build a fully interoperable, open lakehouse by integrating Snowflake with Microsoft OneLake. You will get sample data in Fabric, set up OneLake as a Catalog Linked Database in Snowflake, and create Iceberg tables in OneLake. The end result is a seamless data architecture where Snowflake can manage and query data stored in the open formats of OneLake.
 
 ### What You will Need 
 - A free [Snowflake Account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)
@@ -93,9 +93,9 @@ Under OneLake Settings, "Users can access data stored in OneLake with apps exter
     * Click Add Permission
     * Grant admin consent (Next to Add a permission)
 ![](assets/AppRegPerm.png)
-5. On the left hand menu, Click "Certificates & secrets"
-and Click "New Client Secret"
-!!IMPORTANT!! Copy the Value, as it will not be available later. (Secret ID doesn't not matter)
+5. On the left hand menu, click "Certificates & secrets"
+and click "New Client Secret"
+!!IMPORTANT!! Copy the Value, as it will not be available later.
 ![](assets/CertsSecrets.png)
 ![](assets/AppRegCert.png)
 
@@ -121,8 +121,6 @@ USE ROLE ACCOUNTADMIN;
 >> Step 1
 Create the Snowflake External Iceberg Rest Catalog Integration object.
 
-The naming convention used in this script is:
-FABRIC_[fabric_lakehouse_name]__IRC_INT
 *****************************************************************************************/
 -- Create catalog integration object
 CREATE OR REPLACE CATALOG INTEGRATION SnowflakeOneLakeLakehouse_IRC_INT
@@ -169,7 +167,6 @@ CREATE OR REPLACE DATABASE SnowflakeOneLakeLakehouse_CLDB
 ;
 
 /*****************************************************************************************
-Finshed!
 You can now query and explore your data.
 Note: Fabric is case sensitive, so you will need to use double quoted identifiers for 
 mixed case or lower case object names. ex. "schema"."table"
@@ -179,7 +176,7 @@ SHOW SCHEMAS;
 SHOW TABLES;  --This may take a minute to populate
 
 ```
-It may take a minute for the initial sync to complete. You can run the troubleshooting query above to check on the status.
+It may take a minute for the initial sync to complete.
 
 Once complete, the OneLake Lakehouse tables will show up in Snowflake data explorer as linked objects.  You can query and interact with them just like any other data in Snowflake.
 ![](assets/CLDB.png)
@@ -222,7 +219,7 @@ For more information about creating a Snowflake connection in Microsoft Fabric, 
 5. After your connection is created, save the Connection ID for your connection for use later.
 ![](assets/connectionid.png)
 
-6. From the connection Managed users menu, search for your multi-tenant app name and grant it user access to the connection.
+6. From the connection Managed users menu, search for your multi-tenant app name and grant it user access to the connection. (Note: If you don't know your multi-tenant app name, the next section will display it)
 ![](assets/ConnectionAccess.png)
 ![](assets/Connectionshare.png)
 
@@ -243,9 +240,9 @@ In this step, you connect a standard Snowflake database to Microsoft Fabric.
 7. In the Create External Volume dialog, to create an external volume, review the volume details, and then select Create Volume. Be sure to consent to the entra URL if prompted to create the service principal in Azure. This may need to be run by an Entra ID admin if you do not have access.
 
 ### Fabric Workspace
-1. Return to your Fabric Workspace and Click Manage Access in the top right of the interface.
+1. Return to your Fabric Workspace and click Manage Access in the top right of the interface.
 Make sure you are in your Fabric Work Space, and NOT your Lakehouse interface.
-2. Take the value of the AZURE_MULTI_TENANT_APP_NAME you copied from the last query you ran in Snowflake, and add it to the workspace.
+2. Take the value of the AZURE_MULTI_TENANT_APP_NAME and add it to the workspace.
 ![](assets/AddPeople.png)
 ![](assets/AddSPN.png)
 
@@ -305,7 +302,7 @@ Congratulations! You've successfully created an Iceberg table in OneLake as a Sn
 
 
 ### What You Learned
-- creating an external volume and catalog integration to read Iceberg data in OneLake
+- creating a catalog integration to read Iceberg data in OneLake
 - creating a Snowflake Database in OneLake and writing Snowflake managed Iceberg tables
 - setting OneLake as a catalog linked database in Snowflake
 - querying Iceberg from Snowflake and Fabric services
