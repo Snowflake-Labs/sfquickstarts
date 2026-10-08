@@ -125,20 +125,15 @@ This creates `SFQUICKSTART_CHURNGUARD_ROLE` with ownership of the quickstart dat
 
 ### Prepare Your Working Directory
 
-Checkout the iteration 1 branch and create a working directory for the app code:
+Checkout the iteration 1 branch:
 
 ```bash
 git checkout iteration-1/data-exploration
-mkdir churnguard && cd churnguard
 ```
 
-The branch includes [`AGENTS.md`](https://github.com/Snowflake-Labs/sfguide-getting-started-snowflake-app-runtime/blob/iteration-1/data-exploration/AGENTS.md) (symlinked to `COCO.md`) which tells Cortex Code Desktop about your Snowflake environment — connection, role, database, and conventions. Copy it into your working directory:
+The branch includes [`AGENTS.md`](https://github.com/Snowflake-Labs/sfguide-getting-started-snowflake-app-runtime/blob/iteration-1/data-exploration/AGENTS.md) which tells Cortex Code Desktop about your Snowflake environment — connection, role, database, and conventions. CoCo reads this file automatically from the project root.
 
-```bash
-cp ../AGENTS.md . && cp -P ../COCO.md .
-```
-
-Open `churnguard/` in Cortex Code Desktop. Confirm it is connected to your Snowflake account — you should see your account name in the status bar.
+Open the repo directory in Cortex Code Desktop. Confirm it is connected to your Snowflake account — you should see your account name in the status bar.
 
 ![Cortex Code Desktop connected to Snowflake](assets/coco_connected.png)
 
@@ -312,13 +307,10 @@ CREATE TABLE IF NOT EXISTS ACTIONS (
 );
 ```
 
-Then checkout the iteration 2 branch and copy the AGENTS.md into your project:
+Then checkout the iteration 2 branch:
 
 ```bash
-cd ..
 git checkout iteration-2/workflow-app
-cp AGENTS.md churnguard/ && cp -P COCO.md churnguard/
-cd churnguard
 ```
 
 ### The Prompt
@@ -444,13 +436,10 @@ END;
 >
 > The semantic view and Cortex Agent object will be created during this walkthrough. The setup script creates the stored procedure; the prompt guides Cortex Code to create the remaining objects.
 
-Checkout the iteration 3 branch and update AGENTS.md:
+Checkout the iteration 3 branch:
 
 ```bash
-cd ..
 git checkout iteration-3/ai-app
-cp AGENTS.md churnguard/ && cp -P COCO.md churnguard/
-cd churnguard
 ```
 
 ### The Prompt
