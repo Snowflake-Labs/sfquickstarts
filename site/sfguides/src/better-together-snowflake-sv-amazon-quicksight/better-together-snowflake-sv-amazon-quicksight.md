@@ -39,7 +39,7 @@ This integration leverages Snowflake's native capabilities to ingest structured 
 **3. Amazon Quick Sight Integration**: Using the provided `QuickSight Dataset Generator` guide in the Notebook to create QuickSight datasets from Snowflake DDL, from setting up credentials to sharing datasets with users. Using the [AWS Cloudshell](https://aws.amazon.com/cloudshell/) to programmatically interact with [Amazon Quick Sight API](https://boto3.amazonaws.com/v1/documentation/api/1.12.0/reference/services/quicksight.html).  
 **4. Enhanced AI-powered BI**: This integration empowers the BI team to use natural language for creating interactive charts/dashboards, building calculated fields, developing data stories, and conducting what-if scenarios and significantly reducing the risk of AI hallucinations. The BI team can further incorporate this Snowflake sourced dashboard into the (Amazon Quick) Movies [Space](https://aws.amazon.com/quick/spaces/) and combine other files, dashboards, topics, knowledge bases, and application actions into a unified and customizable enterprise knowledge center. 
 
-![architecture diagram](assets/ref-arch.png)
+![architecture diagram](assets/semantic-views.png)
 
 <br>
 
@@ -63,10 +63,15 @@ You will build a foundational yet practical setup of a Snowflake Cortex Analyst,
   - Select **`Enterprise`** edition on **`AWS`** Cloud
   - Access to **`ACCOUNTADMIN`** role is required for creating semantic views
 - Familiarity with AWS. If you do not have an account, [signup for an AWS Account](https://docs.aws.amazon.com/quicksuite/latest/userguide/setting-up.html#sign-up-for-aws) and [Quick Suite](https://docs.aws.amazon.com/quicksuite/latest/userguide/signing-in.html)
+  - The two csv files used for data loading can be found in the attached notebook, as well as in the `assets` folder or can be downloaded from the Amazon S3 bucket: 
+  [movies.csv.gz](https://sfquickstarts.s3.amazonaws.com/vhol_aws_workshop/movies.csv.gz)) and [ratings.csv.gz](https://sfquickstarts.s3.amazonaws.com/vhol_aws_workshop/ratings.csv.gz))
 
-  **Ensure to sign up to both of the above in AWS `US West (Oregon)` or `US East (Virginia)`** 
+  **Ensure to sign up to both of the above in AWS `US West (Oregon)` or `US East (Virginia)`**
+  
   At launch, Quick is available in 4 Regions: US East (N. Virginia), US West (Oregon), Asia Pacific (Sydney), and Europe (Ireland).
-  Refer to [Amazon Quick documentation](https://docs.aws.amazon.com/quicksuite/latest/userguide/regions.html)
+  
+  **Update: 5/Jun - Quick is now available in Asia Pacific (Tokyo), Europe (London) and Europe (Frankfurt) as well**
+  Refer to [Amazon Quick documentation](https://docs.aws.amazon.com/quicksuite/latest/userguide/regions.html) for the latest available region 
 - Basic knowledge of SQL and Python
 - Familiarity with data analysis concepts
 <br>

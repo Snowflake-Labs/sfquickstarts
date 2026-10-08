@@ -1,0 +1,458 @@
+name: cortex_ai_costs
+description: >
+  Semantic model for Cortex AI cost and usage analysis across all services, models, and users.
+  The unified_costs table is the primary summary for aggregate cost analysis by date, service, and model.
+  It includes COST_USD for dollar amounts, INPUT_TOKENS/OUTPUT_TOKENS for token breakdown,
+  and CACHE_READ_TOKENS/CACHE_WRITE_TOKENS for Cortex Code cache token details.
+  The user_costs table provides per-user, per-query attribution including COST_USD.
+  Services tracked: CORTEX_AISQL, CORTEX_ANALYST, CORTEX_DOCUMENT_PROCESSING, CORTEX_REST_API,
+  CORTEX_SEARCH, CORTEX_SEARCH_SERVING, CORTEX_CODE_CLI, CORTEX_CODE_SNOWSIGHT, CORTEX_AGENT, and SNOWFLAKE_INTELLIGENCE.
+  When users ask about total costs, credits, spending, or dollars, prefer the unified_costs table.
+  When users ask about specific users or who is spending, use the user_costs table.
+  REST API services have no credits - only token-based dollar costs via COST_USD.
+  Dollar costs are computed dynamically based on the CORTEX_ENABLED_CROSS_REGION account parameter.
+  Base rate is $2.00/credit if cross-region is ANY_REGION, $2.20/credit otherwise.
+  Cortex Code (CLI and Snowsight) has a 10% premium applied to the base rate.
+  Cortex Agent and Snowflake Intelligence have a 30% premium applied to the base rate.
+
+custom_instructions: |
+  Always wrap all numeric measure columns (CREDITS, COST_USD, TOKENS, INPUT_TOKENS, OUTPUT_TOKENS,
+  CACHE_READ_TOKENS, CACHE_WRITE_TOKENS, REQUEST_COUNT, DURATION_MS) in COALESCE(..., 0) when used
+  in aggregations (SUM, AVG, etc.) to treat NULL values as zero.
+  Always add NULLS LAST to ORDER BY clauses on numeric measures.
+  Never return NULL for any aggregated numeric column — use COALESCE(SUM(...), 0) pattern throughout.
+
+tables:
+  - name: unified_costs
+    description: >
+      Aggregated daily cost summary across all Cortex AI services.
+      Each row represents one service+model combination for a given day.
+      Use this table for aggregate cost analysis, trend analysis, and service comparisons.
+      COST_USD contains the estimated dollar cost. For credit-based services it is credits * dynamic rate.
+      The dynamic rate depends on the CORTEX_ENABLED_CROSS_REGION parameter and service-specific premiums.
+      For REST API it is calculated from input/output token rates.
+    base_table:
+      database: {{DATABASE}}
+      schema: {{SCHEMA}}
+      table: CORTEX_AI_UNIFIED_COSTS
+    dimensions:
+      - name: usage_date
+        synonyms:
+          - date
+          - day
+          - cost date
+        description: Date of the usage record
+        expr: USAGE_DATE
+        data_type: DATE
+        sample_values:
+          - "2025-01-15"
+          - "2025-02-01"
+          - "2025-03-10"
+      - name: service_category
+        synonyms:
+          - category
+          - service type
+          - service group
+        description: High-level category grouping of Cortex AI services (e.g. REST API, LLM Functions, Search, Analyst)
+        expr: SERVICE_CATEGORY
+        data_type: VARCHAR
+        sample_values:
+          - REST API
+          - LLM Functions
+          - Search
+          - Analyst
+          - Cortex Agent
+          - Snowflake Intelligence
+          - Cortex Code CLI
+          - Document Processing
+      - name: service_name
+        synonyms:
+          - service
+          - product
+          - cortex service
+        description: Specific Cortex AI service name
+        expr: SERVICE_NAME
+        data_type: VARCHAR
+        sample_values:
+          - CORTEX_REST_API
+          - CORTEX_AISQL
+          - CORTEX_ANALYST
+          - CORTEX_SEARCH
+          - CORTEX_SEARCH_SERVING
+          - CORTEX_DOCUMENT_PROCESSING
+          - CORTEX_CODE_CLI
+          - CORTEX_CODE_SNOWSIGHT
+          - CORTEX_AGENT
+          - SNOWFLAKE_INTELLIGENCE
+      - name: model_name
+        synonyms:
+          - model
+          - llm model
+          - ai model
+        description: Name of the AI/LLM model used. 'unknown' when model is not applicable.
+        expr: MODEL_NAME
+        data_type: VARCHAR
+        sample_values:
+          - claude-opus-4-6
+          - claude-sonnet-4-5
+          - claude-opus-4-5
+          - claude-4-sonnet
+          - llama3.1-70b
+          - mistral-large2
+          - snowflake-arctic
+          - deepseek-r1
+          - unknown
+    measures:
+      - name: credits
+        synonyms:
+          - cost
+          - spend
+          - credit consumption
+        description: Snowflake credits consumed by this service on this day
+        expr: CREDITS
+        data_type: NUMBER
+        default_aggregation: sum
+      - name: cost_usd
+        synonyms:
+          - dollar cost
+          - dollar amount
+          - usd cost
+          - money spent
+          - price
+        description: >
+          Estimated dollar cost. For credit-based services: credits * dynamic rate per credit.
+          The rate depends on the CORTEX_ENABLED_CROSS_REGION parameter (base $2.00 or $2.20)
+          with service-specific premiums: +10% for Cortex Code, +30% for Agent/SI.
+          For REST API: (input_tokens * input_rate + output_tokens * output_rate) / 1M * (1 - discount%).
+        expr: COST_USD
+        data_type: NUMBER
+        default_aggregation: sum
+      - name: tokens
+        synonyms:
+          - token count
+          - token volume
+        description: Total tokens processed by LLM-based services
+        expr: TOKENS
+        data_type: NUMBER
+        default_aggregation: sum
+      - name: input_tokens
+        synonyms:
+          - input token count
+          - prompt tokens
+        description: Input tokens sent to the model (populated for REST API and Cortex Code services)
+        expr: INPUT_TOKENS
+        data_type: NUMBER
+        default_aggregation: sum
+      - name: output_tokens
+        synonyms:
+          - output token count
+          - completion tokens
+          - response tokens
+        description: Output tokens generated by the model (populated for REST API and Cortex Code services)
+        expr: OUTPUT_TOKENS
+        data_type: NUMBER
+        default_aggregation: sum
+      - name: cache_read_tokens
+        synonyms:
+          - cache read
+          - read cache tokens
+        description: Cache read input tokens (populated for Cortex Code CLI and Snowsight services)
+        expr: CACHE_READ_TOKENS
+        data_type: NUMBER
+        default_aggregation: sum
+      - name: cache_write_tokens
+        synonyms:
+          - cache write
+          - write cache tokens
+        description: Cache write input tokens (populated for Cortex Code CLI and Snowsight services)
+        expr: CACHE_WRITE_TOKENS
+        data_type: NUMBER
+        default_aggregation: sum
+      - name: request_count
+        synonyms:
+          - requests
+          - api calls
+          - call count
+        description: Number of requests or API calls
+        expr: REQUEST_COUNT
+        data_type: NUMBER
+        default_aggregation: sum
+
+  - name: user_costs
+    description: >
+      Per-user per-query cost attribution for Cortex AI services.
+      Each row represents one user query to a specific service.
+      Use this table when users ask about who is spending, per-user breakdowns, or query-level detail.
+      COST_USD contains the estimated dollar cost per query using dynamic pricing.
+    base_table:
+      database: {{DATABASE}}
+      schema: {{SCHEMA}}
+      table: USER_AI_COSTS
+    dimensions:
+      - name: user_name
+        synonyms:
+          - user
+          - login name
+          - username
+        description: Snowflake login name of the user
+        expr: USER_NAME
+        data_type: VARCHAR
+      - name: full_name
+        synonyms:
+          - name
+          - person
+          - display name
+        description: Display name of the user
+        expr: FULL_NAME
+        data_type: VARCHAR
+      - name: usage_date
+        synonyms:
+          - date
+          - day
+        description: Date of the user query
+        expr: USAGE_DATE
+        data_type: DATE
+      - name: usage_time
+        description: Timestamp of the user query
+        expr: USAGE_TIME
+        data_type: TIMESTAMP_TZ
+      - name: service_name
+        synonyms:
+          - service
+        description: Cortex AI service name for the user query
+        expr: SERVICE_NAME
+        data_type: VARCHAR
+        sample_values:
+          - CORTEX_REST_API
+          - CORTEX_AISQL
+          - CORTEX_ANALYST
+          - CORTEX_SEARCH
+          - CORTEX_CODE_CLI
+          - CORTEX_CODE_SNOWSIGHT
+          - CORTEX_AGENT
+          - SNOWFLAKE_INTELLIGENCE
+      - name: model_name
+        synonyms:
+          - model
+        description: Model used in the user query
+        expr: MODEL_NAME
+        data_type: VARCHAR
+        sample_values:
+          - claude-opus-4-6
+          - claude-sonnet-4-5
+          - claude-opus-4-5
+          - claude-4-sonnet
+          - llama3.1-70b
+          - unknown
+      - name: query_id
+        description: Unique query identifier
+        expr: QUERY_ID
+        data_type: VARCHAR
+      - name: query_text
+        synonyms:
+          - sql
+          - query
+          - statement
+        description: First 1000 characters of the SQL query text
+        expr: QUERY_TEXT
+        data_type: VARCHAR
+    measures:
+      - name: tokens
+        description: Tokens consumed per user query
+        expr: TOKENS
+        data_type: NUMBER
+        default_aggregation: sum
+      - name: input_tokens
+        synonyms:
+          - prompt tokens
+        description: Input tokens per user query (REST API and Cortex Code services)
+        expr: INPUT_TOKENS
+        data_type: NUMBER
+        default_aggregation: sum
+      - name: output_tokens
+        synonyms:
+          - completion tokens
+        description: Output tokens per user query (REST API and Cortex Code services)
+        expr: OUTPUT_TOKENS
+        data_type: NUMBER
+        default_aggregation: sum
+      - name: cache_read_tokens
+        synonyms:
+          - cache read
+        description: Cache read input tokens per user query (Cortex Code services)
+        expr: CACHE_READ_TOKENS
+        data_type: NUMBER
+        default_aggregation: sum
+      - name: cache_write_tokens
+        synonyms:
+          - cache write
+        description: Cache write input tokens per user query (Cortex Code services)
+        expr: CACHE_WRITE_TOKENS
+        data_type: NUMBER
+        default_aggregation: sum
+      - name: credits
+        description: Credits consumed per user query
+        expr: CREDITS
+        data_type: NUMBER
+        default_aggregation: sum
+      - name: cost_usd
+        synonyms:
+          - dollar cost
+          - usd cost
+        description: Estimated dollar cost per user query using dynamic pricing
+        expr: COST_USD
+        data_type: NUMBER
+        default_aggregation: sum
+      - name: duration_ms
+        synonyms:
+          - latency
+          - execution time
+          - runtime
+        description: Query execution duration in milliseconds
+        expr: DURATION_MS
+        data_type: NUMBER
+        default_aggregation: avg
+
+verified_queries:
+  - name: total_cost_last_30_days
+    question: What is the total cost in dollars over the last 30 days?
+    verified_at: 1742515200
+    verified_by: admin
+    use_as_onboarding_question: true
+    sql: |
+      SELECT SUM(COST_USD) AS TOTAL_COST_USD
+      FROM {{DATABASE}}.{{SCHEMA}}.CORTEX_AI_UNIFIED_COSTS
+      WHERE USAGE_DATE >= DATEADD('day', -30, CURRENT_DATE())
+
+  - name: cost_by_service_last_30_days
+    question: What is the cost breakdown by service over the last 30 days?
+    verified_at: 1742515200
+    verified_by: admin
+    use_as_onboarding_question: true
+    sql: |
+      SELECT SERVICE_NAME,
+             SUM(CREDITS) AS TOTAL_CREDITS,
+             SUM(COST_USD) AS TOTAL_COST_USD,
+             SUM(REQUEST_COUNT) AS TOTAL_REQUESTS
+      FROM {{DATABASE}}.{{SCHEMA}}.CORTEX_AI_UNIFIED_COSTS
+      WHERE USAGE_DATE >= DATEADD('day', -30, CURRENT_DATE())
+      GROUP BY SERVICE_NAME
+      ORDER BY TOTAL_COST_USD DESC
+
+  - name: daily_cost_trend
+    question: Show me the daily cost trend for the last 30 days
+    verified_at: 1742515200
+    verified_by: admin
+    use_as_onboarding_question: true
+    sql: |
+      SELECT USAGE_DATE,
+             SUM(CREDITS) AS TOTAL_CREDITS,
+             SUM(COST_USD) AS TOTAL_COST_USD
+      FROM {{DATABASE}}.{{SCHEMA}}.CORTEX_AI_UNIFIED_COSTS
+      WHERE USAGE_DATE >= DATEADD('day', -30, CURRENT_DATE())
+      GROUP BY USAGE_DATE
+      ORDER BY USAGE_DATE
+
+  - name: top_spending_users
+    question: Who are the top 10 users by cost?
+    verified_at: 1742515200
+    verified_by: admin
+    use_as_onboarding_question: true
+    sql: |
+      SELECT FULL_NAME,
+             USER_NAME,
+             COALESCE(SUM(CREDITS), 0) AS TOTAL_CREDITS,
+             COALESCE(SUM(COST_USD), 0) AS TOTAL_COST_USD,
+             COUNT(QUERY_ID) AS TOTAL_QUERIES
+      FROM {{DATABASE}}.{{SCHEMA}}.USER_AI_COSTS
+      WHERE COST_USD IS NOT NULL
+      GROUP BY FULL_NAME, USER_NAME
+      ORDER BY TOTAL_COST_USD DESC NULLS LAST
+      LIMIT 10
+
+  - name: cost_by_model
+    question: What is the cost by model?
+    verified_at: 1742515200
+    verified_by: admin
+    use_as_onboarding_question: true
+    sql: |
+      SELECT MODEL_NAME,
+             SUM(CREDITS) AS TOTAL_CREDITS,
+             SUM(COST_USD) AS TOTAL_COST_USD,
+             SUM(TOKENS) AS TOTAL_TOKENS,
+             SUM(REQUEST_COUNT) AS TOTAL_REQUESTS
+      FROM {{DATABASE}}.{{SCHEMA}}.CORTEX_AI_UNIFIED_COSTS
+      WHERE MODEL_NAME != 'unknown'
+      GROUP BY MODEL_NAME
+      ORDER BY TOTAL_COST_USD DESC
+
+  - name: rest_api_token_breakdown
+    question: What is the input vs output token breakdown for REST API?
+    verified_at: 1742515200
+    verified_by: admin
+    sql: |
+      SELECT MODEL_NAME,
+             SUM(INPUT_TOKENS) AS TOTAL_INPUT_TOKENS,
+             SUM(OUTPUT_TOKENS) AS TOTAL_OUTPUT_TOKENS,
+             SUM(TOKENS) AS TOTAL_TOKENS,
+             SUM(COST_USD) AS TOTAL_COST_USD
+      FROM {{DATABASE}}.{{SCHEMA}}.CORTEX_AI_UNIFIED_COSTS
+      WHERE SERVICE_NAME = 'CORTEX_REST_API'
+        AND MODEL_NAME != 'unknown'
+      GROUP BY MODEL_NAME
+      ORDER BY TOTAL_COST_USD DESC
+
+  - name: monthly_cost_comparison
+    question: Show me month over month cost comparison
+    verified_at: 1742515200
+    verified_by: admin
+    sql: |
+      SELECT DATE_TRUNC('month', USAGE_DATE) AS MONTH,
+             SUM(CREDITS) AS TOTAL_CREDITS,
+             SUM(COST_USD) AS TOTAL_COST_USD,
+             SUM(REQUEST_COUNT) AS TOTAL_REQUESTS
+      FROM {{DATABASE}}.{{SCHEMA}}.CORTEX_AI_UNIFIED_COSTS
+      GROUP BY MONTH
+      ORDER BY MONTH
+
+  - name: user_cost_by_service
+    question: Show me the cost breakdown by user and service
+    verified_at: 1742515200
+    verified_by: admin
+    sql: |
+      SELECT FULL_NAME,
+             SERVICE_NAME,
+             COALESCE(SUM(CREDITS), 0) AS TOTAL_CREDITS,
+             COALESCE(SUM(COST_USD), 0) AS TOTAL_COST_USD,
+             COUNT(QUERY_ID) AS TOTAL_QUERIES
+      FROM {{DATABASE}}.{{SCHEMA}}.USER_AI_COSTS
+      WHERE COST_USD IS NOT NULL
+      GROUP BY FULL_NAME, SERVICE_NAME
+      ORDER BY TOTAL_COST_USD DESC NULLS LAST
+
+  - name: total_credits_and_tokens
+    question: What are the total credits and tokens consumed?
+    verified_at: 1742515200
+    verified_by: admin
+    sql: |
+      SELECT SUM(CREDITS) AS TOTAL_CREDITS,
+             SUM(COST_USD) AS TOTAL_COST_USD,
+             SUM(TOKENS) AS TOTAL_TOKENS,
+             SUM(REQUEST_COUNT) AS TOTAL_REQUESTS,
+             COUNT(DISTINCT SERVICE_NAME) AS SERVICES_USED
+      FROM {{DATABASE}}.{{SCHEMA}}.CORTEX_AI_UNIFIED_COSTS
+
+  - name: cortex_agent_usage
+    question: How much have Cortex Agents cost?
+    verified_at: 1742515200
+    verified_by: admin
+    sql: |
+      SELECT MODEL_NAME,
+             SUM(CREDITS) AS TOTAL_CREDITS,
+             SUM(COST_USD) AS TOTAL_COST_USD,
+             SUM(TOKENS) AS TOTAL_TOKENS,
+             SUM(REQUEST_COUNT) AS TOTAL_REQUESTS
+      FROM {{DATABASE}}.{{SCHEMA}}.CORTEX_AI_UNIFIED_COSTS
+      WHERE SERVICE_NAME = 'CORTEX_AGENT'
+      GROUP BY MODEL_NAME
+      ORDER BY TOTAL_COST_USD DESC

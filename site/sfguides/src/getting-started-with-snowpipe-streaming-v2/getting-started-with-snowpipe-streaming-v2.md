@@ -449,11 +449,12 @@ Create a file called `streamlit_app.py` in your `~/ssv2-quickstart` directory:
 
 ```python
 import streamlit as st
+from snowflake.snowpark.context import get_active_session
 import time
 
 st.set_page_config(page_title="Snowpipe Streaming high-performance architecture Monitor", layout="wide")
 
-conn = st.connection("snowflake")
+session = get_active_session()
 
 DATABASE = "SSV2_QUICKSTART_DB"
 SCHEMA   = "SSV2_SCHEMA"
@@ -464,12 +465,11 @@ st.title("Snowpipe Streaming high-performance architecture — Live Monitor")
 st.caption(f"Reading from `{DATABASE}.{SCHEMA}.{TABLE}` · refreshes every {REFRESH_INTERVAL}s")
 
 try:
-    metrics_df = conn.query(
+    metrics_df = session.sql(
         f"""SELECT COUNT(*) AS total_rows,
                    COALESCE(SUM(order_amount), 0) AS total_revenue
             FROM {DATABASE}.{SCHEMA}.{TABLE}""",
-        ttl=0,
-    )
+    ).to_pandas()
     total_rows = metrics_df["TOTAL_ROWS"].iloc[0] if len(metrics_df) > 0 else 0
     total_revenue = metrics_df["TOTAL_REVENUE"].iloc[0] if len(metrics_df) > 0 else 0
 except Exception as e:
@@ -478,12 +478,11 @@ except Exception as e:
     total_revenue = 0
 
 if total_rows > 0:
-    latest_df = conn.query(
+    latest_df = session.sql(
         f"""SELECT MAX(user_id) AS latest_id,
                    COUNT(DISTINCT country) AS unique_countries
             FROM {DATABASE}.{SCHEMA}.{TABLE}""",
-        ttl=0,
-    )
+    ).to_pandas()
     col1, col2, col3, col4 = st.columns(4)
     col1.metric("Total Rows", f"{total_rows:,}")
     col2.metric("Revenue Total", f"${total_revenue:,.2f}")
@@ -499,43 +498,40 @@ else:
 
 st.subheader("Most Recent Records")
 if total_rows > 0:
-    recent_df = conn.query(
+    recent_df = session.sql(
         f"""SELECT user_id, first_name, last_name, email, country, order_amount
             FROM {DATABASE}.{SCHEMA}.{TABLE}
             ORDER BY user_id DESC
             LIMIT 20""",
-        ttl=0,
-    )
-    st.dataframe(recent_df, use_container_width=True, hide_index=True)
+    ).to_pandas()
+    st.dataframe(recent_df, use_container_width=True)
 else:
     st.write("No data yet.")
 
 if total_rows > 0:
     st.subheader("Revenue Over Time")
-    time_df = conn.query(
+    time_df = session.sql(
         f"""SELECT
                 DATE_TRUNC('second', registration_date) AS time_bucket,
                 SUM(SUM(order_amount)) OVER (ORDER BY DATE_TRUNC('second', registration_date)) AS cumulative_revenue
             FROM {DATABASE}.{SCHEMA}.{TABLE}
             GROUP BY time_bucket
             ORDER BY time_bucket""",
-        ttl=0,
-    )
+    ).to_pandas()
     st.line_chart(time_df.set_index("TIME_BUCKET"), y="CUMULATIVE_REVENUE", height=300)
 
     st.subheader("Top 10 Countries by Revenue")
-    country_df = conn.query(
+    country_df = session.sql(
         f"""SELECT country, SUM(order_amount) AS revenue
             FROM {DATABASE}.{SCHEMA}.{TABLE}
             GROUP BY country
             ORDER BY revenue DESC
             LIMIT 10""",
-        ttl=0,
-    )
-    st.dataframe(country_df, use_container_width=True, hide_index=True)
+    ).to_pandas()
+    st.dataframe(country_df, use_container_width=True)
 
 time.sleep(REFRESH_INTERVAL)
-st.rerun()
+st.experimental_rerun()
 ```
 
 ### Upload and Deploy

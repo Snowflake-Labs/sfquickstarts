@@ -1,0 +1,10 @@
+name: cortex-code-credit-manager
+channels:
+  - snowflake
+dependencies:
+  - streamlit
+  - snowflake-snowpark-python
+  - pandas
+  - altair
+  - fpdf2
+  - pyyaml

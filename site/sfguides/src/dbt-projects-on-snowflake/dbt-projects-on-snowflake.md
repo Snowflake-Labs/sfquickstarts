@@ -7,6 +7,7 @@ environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 fork repo link: https://github.com/Snowflake-Labs/getting-started-with-dbt-on-snowflake
+open in snowflake link: https://app.snowflake.com/templates?template=getting_started_with_dbt_projects&utm_source=snowflake-devrel&utm_medium=developer-guides&utm_content=dbt-projects-on-snowflake&utm_cta=developer-guides-deeplink
 
 # Exploring dbt Projects on Snowflake
 ## Overview 

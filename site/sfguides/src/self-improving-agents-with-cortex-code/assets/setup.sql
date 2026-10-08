@@ -2021,11 +2021,11 @@ WITH PROFILE='{ "display_name": "MARKETING_CAMPAIGNS_AGENT" }'
     COMMENT=$$ Self-improving marketing campaigns analytics agent $$
 FROM SPECIFICATION $$
 {
-    "models": {"orchestration": "auto"},
+    "models": {"orchestration": "claude-sonnet-5"},
     "instructions": {
         "orchestration": 
             "You are a marketing analytics assistant. Orchestrate the response to user questions according to the following rules - 
-            1. Always call cortex search to find data about any campaigns potentially relevant to a user's query.
+            1. Use any tool you see fit
             2. Only use additional tool calls as needed.
             3. If you can't find exact data, use reasonable judgment to fill in gaps.",
         "response": 
@@ -2131,6 +2131,7 @@ GRANT USAGE ON CORTEX SEARCH SERVICE SELF_IMPROVING_AGENT_DB.AGENTS.MARKETING_CA
 GRANT USAGE ON PROCEDURE SELF_IMPROVING_AGENT_DB.AGENTS.GENERATE_CAMPAIGN_REPORT_HTML(INT) TO ROLE ACCOUNTADMIN;
 GRANT SELECT ON ALL TABLES IN SCHEMA SELF_IMPROVING_AGENT_DB.AGENTS TO ROLE ACCOUNTADMIN;
 GRANT DATABASE ROLE SNOWFLAKE.CORTEX_USER TO ROLE ACCOUNTADMIN;
+GRANT MONITOR ON AGENT SELF_IMPROVING_AGENT_DB.AGENTS.MARKETING_CAMPAIGNS_AGENT TO ROLE ACCOUNTADMIN;
 
 CREATE SNOWFLAKE INTELLIGENCE IF NOT EXISTS SNOWFLAKE_INTELLIGENCE_OBJECT_DEFAULT;
 ALTER SNOWFLAKE INTELLIGENCE SNOWFLAKE_INTELLIGENCE_OBJECT_DEFAULT ADD AGENT SELF_IMPROVING_AGENT_DB.AGENTS.MARKETING_CAMPAIGNS_AGENT;

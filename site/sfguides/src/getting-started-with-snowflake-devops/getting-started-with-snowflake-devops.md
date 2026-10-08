@@ -537,7 +537,7 @@ jobs:
 
       # Install Snowflake CLI GitHub Action and point to config file
       - name: Install snowflake-cli
-        uses: Snowflake-Labs/snowflake-cli-action@v1.5
+        uses: snowflakedb/snowflake-actions@v1.5
         with:
           cli-version: "latest"
           default-config-file-path: ".snowflake/config.toml"
@@ -561,7 +561,7 @@ jobs:
             -D "retention_time=${RETENTION_TIME}"
 ```
 
-Both commands are executed using the `snow` command. This command is part of the [SnowflakeCLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli-v2/index) tool, not to be confused with its predecessor [SnowSQL](https://docs.snowflake.com/en/user-guide/snowsql). SnowflakeCLI is an open-source command-line tool explicitly designed for developer-centric workloads. Also provided is a [native GitHub Action](https://github.com/Snowflake-Labs/snowflake-cli-action), simplifying the setup and connection management. It is a flexible and extensible tool that can accommodate modern development practices and technologies. This makes it a perfect choice for DevOps.
+Both commands are executed using the `snow` command. This command is part of the [SnowflakeCLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli-v2/index) tool, not to be confused with its predecessor [SnowSQL](https://docs.snowflake.com/en/user-guide/snowsql). SnowflakeCLI is an open-source command-line tool explicitly designed for developer-centric workloads. Also provided is a [native GitHub Action](https://github.com/snowflakedb/snowflake-actions), simplifying the setup and connection management. It is a flexible and extensible tool that can accommodate modern development practices and technologies. This makes it a perfect choice for DevOps.
 
 <!-- ------------------------ -->
 ## Cleanup
@@ -598,4 +598,4 @@ You have learned a ton in this guide. Here are the highlights:
 - [Advanced: Data Engineering Pipelines with Snowpark Python](/en/developers/guides/data-engineering-pipelines-with-snowpark-python/)
 - Related Tools
   - [Snowflake Visual Studio Code Extension](https://docs.snowflake.com/en/user-guide/vscode-ext)
-  - [SnowflakeCLI Tool](https://docs.snowflake.com/en/developer-guide/snowflake-cli-v2/index) and [GitHub Action](https://github.com/Snowflake-Labs/snowflake-cli-action)
+  - [SnowflakeCLI Tool](https://docs.snowflake.com/en/developer-guide/snowflake-cli-v2/index) and [GitHub Action](https://github.com/snowflakedb/snowflake-actions)

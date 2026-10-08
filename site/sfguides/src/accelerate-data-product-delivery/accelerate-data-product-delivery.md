@@ -1,20 +1,20 @@
 author: Srinivasan Kuppusamy
 id: accelerate-data-product-delivery
 language: en
-summary: Learn how to accelerate data product delivery from requirements to production in one sprint using Snowflake Cortex Code. Automate design, code generation, governance, and monitoring using an AI agent and a machine-readable data contract. Uses an FSI example but applicable to any industry.
+summary: Learn how to accelerate data product delivery from requirements to production in one sprint using CoCo. Automate design, code generation, governance, and monitoring using an AI agent and a machine-readable data contract. Uses an FSI example but applicable to any industry.
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart,snowflake-site:taxonomy/product/ai,snowflake-site:taxonomy/product/data-engineering,snowflake-site:taxonomy/snowflake-feature/compliance-security-discovery-governance,snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions,snowflake-site:taxonomy/industry/financial-services
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfquickstarts/issues
 fork repo link: https://github.com/srini86/data-products-lifecycle-fsi-example
 
-# Accelerate Data Product Delivery with Snowflake Cortex Code
+# Accelerate Data Product Delivery with CoCo
 <!-- ------------------------ -->
 ## Overview
 
 Duration: 5 minutes
 
-This guide shows how to deliver a governed data product in **a single sprint** using [Cortex Code (CoCo)](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-code) and a machine-readable **data contract** as the single source of truth. One document captures the requirements; an agent reads it and generates, deploys, and monitors every artifact automatically.
+This guide shows how to deliver a governed data product in **a single sprint** using [CoCo](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code) and a machine-readable **data contract** as the single source of truth. One document captures the requirements; an agent reads it and generates, deploys, and monitors every artifact automatically.
 
 ![Data Product Lifecycle](assets/data-product-lifecycle.png)
 
@@ -25,19 +25,19 @@ The example uses a **Retail Customer Churn Risk** data product in a retail banki
 ### What You'll Learn
 
 - How a machine-readable data contract (ODCS v2.2) drives all downstream automation — one document replaces days of manual artifact authoring
-- How a Cortex Code agent generates a dbt project, masking policies, and DMF quality checks from the contract in minutes
+- How a CoCo agent generates a dbt project, masking policies, and DMF quality checks from the contract in minutes
 - How to deploy, monitor, and evolve a governed data product on Snowflake
 
 ### What You'll Need
 
 - A Snowflake account with `ACCOUNTADMIN` role
-- [Cortex Code (CoCo) CLI](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-code) installed
+- [CoCo CLI](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-cli) installed
 - [Snow CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli/index) installed
 - Git
 
 ### What You'll Build
 
-In one sprint you will produce a complete, production-ready data product. Source tables are pre-loaded — everything below is generated and deployed by the Cortex Code agent:
+In one sprint you will produce a complete, production-ready data product. Source tables are pre-loaded — everything below is generated and deployed by the CoCo agent:
 
 - A dbt model transforming five source tables into a governed output table
 - Masking policies protecting PII columns (email, phone, date of birth)
@@ -63,7 +63,7 @@ Open `00_setup/setup.sql` in Snowsight and run each step in order:
 | Step 2 | Creates two Snowflake stages in `GOVERNANCE`: `data_contracts` and `streamlit_apps` |
 | Step 3 | Creates five source tables in the `RAW` schema |
 | Step 4 | Loads synthetic FSI sample data into the source tables |
-| Step 5 *(optional)* | Deploys a Streamlit code generator app — skip if following the Cortex Code path |
+| Step 5 *(optional)* | Deploys a Streamlit code generator app — skip if following the CoCo path |
 | Step 6 | Verifies all five source tables exist with expected row counts |
 
 Source tables loaded by Steps 3–4:
@@ -79,7 +79,7 @@ Source tables loaded by Steps 3–4:
 Confirm Step 6 shows all five tables before continuing.
 
 <!-- ------------------------ -->
-## Start Cortex Code
+## Start CoCo
 
 Duration: 2
 
@@ -108,18 +108,18 @@ Open `02_design/_example/churn_risk_data_contract.yaml`. The contract has three 
 
 ### Prompt 2: Generate Your Own Contract *(Optional)*
 
-Use Cortex Code to generate a contract from your own canvas:
+Use CoCo to generate a contract from your own canvas:
 
 "Generate an ODCS v2.2 data contract for `<your data product>`. Use `02_design/_example/churn_risk_data_contract.yaml` as a reference."
 
 <!-- ------------------------ -->
-## Deliver: Cortex Code Agent
+## Deliver: CoCo Agent
 
 Duration: 25 minutes
 
 This phase uses the `dplc-accelerator` skill — an interactive orchestrator that detects your current phase, displays a progress tracker, and presents each prompt one step at a time.
 
-![Cortex Code Skills Flow](assets/cortex-code-skills-flow.png)
+![CoCo Skills Flow](assets/cortex-code-skills-flow.png)
 
 ### Prompt 1: Generate the dbt Project
 
@@ -220,7 +220,7 @@ Duration: 2 minutes
 ### Related Resources
 
 - [Source repo with full example code](https://github.com/srini86/data-products-lifecycle-fsi-example)
-- [Cortex Code documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-code)
+- [CoCo documentation](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code)
 - [dbt Core with Snowflake](https://docs.snowflake.com/en/user-guide/ecosystem-dbt)
 - [Data Metric Functions](https://docs.snowflake.com/en/user-guide/data-quality-intro)
 - [Snowflake Semantic Views](https://docs.snowflake.com/en/user-guide/views-semantic)

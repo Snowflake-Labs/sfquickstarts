@@ -1,4 +1,4 @@
-author: James Cha-Earley, Sho Tanaka, Anh Kieu
+author: James Cha-Earley, Sho Tanaka, Anh Kieu, Emre Oezdamarlar
 id: gain-insights-from-unstructured-data
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions, snowflake-site:taxonomy/snowflake-feature/unstructured-data-analysis
 language: en
@@ -89,7 +89,7 @@ Now upload the media files into the dedicated stages created by setup.sql:
 
 6. Run Post-Upload SQL:
    * After uploading all files, open a new SQL worksheet in [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight.html#)
-   * Load and execute the **`setup-post-upload.sql`** file to register the uploaded files into the corresponding tables
+   * Load and execute the [**`setup-post-upload.sql`** file](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/gain-insights-from-unstructured-data/setup-post-upload.sql) to register the uploaded files into the corresponding tables
    * This step is required to make the uploaded audio, video, and image files available for processing in subsequent steps
 
 Your Snowflake environment now contains the complete set of data across all modalities.
@@ -272,9 +272,8 @@ SELECT
         file => TO_FILE('@TB_VOC.MEDIA.IMAGES', IMAGE_PATH),
         responseFormat => {
             'brand_name': 'What is the food truck or restaurant brand name visible?',
-            'menu_items': 'What menu items or dishes are visible?',
-            'prices': 'What prices are shown?',
-            'location_clues': 'What location indicators are visible (street signs, landmarks)?'
+            'car_color': 'Identify the color of the car.',
+            'menu_items': 'What menu items or dishes are visible?'
         }
     ) AS extracted_data
 FROM
@@ -293,8 +292,8 @@ SELECT
         file => TO_FILE('@TB_VOC.MEDIA.IMAGES', RELATIVE_PATH),
         responseFormat => {
             'brand_name': 'What is the food truck or restaurant brand name visible?',
-            'menu_items': 'What menu items or dishes are visible?',
-            'prices': 'What prices are shown?'
+            'car_color': 'Identify the color of the car.',
+            'menu_items': 'What menu items or dishes are visible?'
         }
     ) AS extracted_data
 FROM
@@ -455,7 +454,7 @@ SELECT
     RELATIVE_PATH AS file_path,
     AI_EXTRACT(
         TO_FILE('@TB_VOC.MEDIA.IMAGES', RELATIVE_PATH),
-        {'brand_name': 'What is the food truck brand name?', 'menu_items': 'What menu items are visible?', 'prices': 'What prices are shown?'}
+        {'brand_name': 'What is the food truck brand name?', 'car_color': 'Identify the color of the car.', 'menu_items': 'What menu items or dishes are visible?'}
     ):response AS extracted_data
 FROM
     DIRECTORY(@TB_VOC.MEDIA.IMAGES)

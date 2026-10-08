@@ -2,17 +2,17 @@ authors: Josh Reini, Elliott Botwick
 id: self-improving-agents-with-cortex-code
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/snowflake-feature/cortex-code, snowflake-site:taxonomy/snowflake-feature/cortex-agents
 language: en
-summary: Build a Cortex Agent, evaluate it with Agent GPA, analyze failures, and optimize its instructions — all from Cortex Code.
+summary: Build a Cortex Agent, evaluate it with Agent GPA, analyze failures, and optimize its instructions — all from Cortex Code (CoCo).
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Cortex Agents, Evaluations, AI, LLM, Snowflake Cortex, Cortex Code, Agent GPA
+tags: Cortex Agents, Evaluations, AI, LLM, Snowflake Cortex, Cortex Code, CoCo, Agent GPA
 
-# Self-Improving Agents with Cortex Code
+# Self-Improving Agents with CoCo
 
 ## Overview
 
-Building AI agents is just the beginning — understanding how well they perform and systematically improving them is what separates prototypes from production systems. In this guide, you'll build a marketing analytics agent, deploy it to production, stress-test it with hard queries, then use Cortex Code to mine failures from logs, evaluate with Agent GPA, and optimize the agent's instructions.
+Building AI agents is just the beginning — understanding how well they perform and systematically improving them is what separates prototypes from production systems. In this guide, you'll build a marketing analytics agent, deploy it to production, stress-test it with hard queries, then use CoCo to mine failures from logs, evaluate with Agent GPA, and optimize the agent's instructions.
 
 By the end, you'll have an agent with measurably better performance — and a repeatable workflow for continuous improvement.
 
@@ -20,7 +20,7 @@ By the end, you'll have an agent with measurably better performance — and a re
 |------|---------------|
 | Setup | Deploy a production agent with 5 tools |
 | Stress Test | Run hard queries in Snowflake Intelligence to generate failure traces |
-| Install Cortex Code | Install the CLI while traces propagate (~10 min) |
+| Install CoCo | Install the CLI while traces propagate (~10 min) |
 | Evaluate | Mine logs, curate an eval dataset, run Agent GPA baseline |
 | Optimize | Analyze failures, generate improved instructions, validate with a second eval |
 
@@ -48,7 +48,7 @@ By the end, you'll have an agent with measurably better performance — and a re
 
 - How to build a Cortex Agent with multiple tool types (Cortex Analyst, Cortex Search, stored procedures, web search, data-to-chart)
 - How to use Snowflake Intelligence to interact with your agent and generate observability traces
-- How to use Cortex Code to mine agent logs and curate evaluation datasets
+- How to use CoCo to mine agent logs and curate evaluation datasets
 - How to run Agent GPA evaluations with built-in metrics
 - How to analyze failure patterns and generate improved orchestration instructions
 - How to validate improvements by comparing evaluation scores across agent iterations
@@ -141,9 +141,9 @@ Show me campaigns where customer sentiment was negative but ROI was still positi
 
 <!-- ------------------------ -->
 
-## Install Cortex Code
+## Install CoCo
 
-Cortex Code is an AI-powered CLI that you'll use to mine agent logs, run evaluations, analyze failures, and generate improved agent instructions.
+CoCo is an AI-powered CLI that you'll use to mine agent logs, run evaluations, analyze failures, and generate improved agent instructions.
 
 **Linux / macOS / WSL:**
 
@@ -159,40 +159,99 @@ irm https://ai.snowflake.com/static/cc-scripts/install.ps1 | iex
 
 After installation, run `cortex` to launch the setup wizard — it will guide you through connecting to your Snowflake account.
 
-For detailed setup instructions, see the [Cortex Code CLI docs](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-cli).
+For detailed setup instructions, see the [CoCo CLI docs](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-cli).
 
 <!-- ------------------------ -->
 
 ## Curate an Eval Dataset from Logs
 
-Open Cortex Code and enter `/bypass` to enable bypass mode, then enter the following prompt:
+Open CoCo by typing in `cortex` then enter `/bypass` or `shift+tab` to enable bypass mode, then enter the following prompt:
 
 ```
-Use the cortex agent dataset-curation skill to pull all available production traces for
+Use the agent-studio dataset skill to pull all available production traces for
 SELF_IMPROVING_AGENT_DB.AGENTS.MARKETING_CAMPAIGNS_AGENT and curate an evaluation dataset.
-Ground truth should always include sections for key figures, curated suggestions and sources referenced
-and be specific enough to accurately evaluate agent quality. Expected tool invocations are not needed.
+Ground truth should include sections for key figures, curated suggestions and sources referenced and
+be specific enough to accurately evaluate agent quality. Ground truth should always be independently
+verified - don't just assume production traces were correct. Tool invocations should also be included
+for every record and cover the minimal required tooling to fulfill the user's request.
 Store the evalset in SELF_IMPROVING_AGENT_DB.AGENTS and register it as a new evaluation dataset.
 ```
 
-Cortex Code will:
+CoCo will:
 
 1. Query the observability traces from the previous step
 2. Help you select and annotate queries with ground truth
 3. Create an eval table and register it via `SYSTEM$CREATE_EVALUATION_DATASET`
 
+Note that CoCo will prompt you throughout for which metrics you'd like to build the evalset for, over which period of production data you'd like to build on, what you'd like to name your dataset etc.
+
+<img width="1105" height="341" alt="image" src="https://github.com/user-attachments/assets/1e973c9b-62d1-4fd1-9d29-41222802d225" /> <br>
+
+
+<img width="1108" height="191" alt="image" src="https://github.com/user-attachments/assets/a08246a7-d208-44a4-aefc-2d43a405443b" /> <br>
+
+
+For each of these you can safely click enter to use the recommended settings.
+
 <!-- ------------------------ -->
 
 ## Run Baseline Evaluation
 
-Run Agent GPA on your curated dataset. Enter this prompt in Cortex Code:
+Compute Agent GPA metrics on your curated dataset. 
+
+You should see CoCo ask you if you'd like to run an evaluation dataset - say Yes. If CoCo didn't ask you to do this, see prompt below to kick off eval workflow.
+
+<img width="1101" height="245" alt="image" src="https://github.com/user-attachments/assets/718cd75c-428d-4fff-a49d-0a32b2e61c52" /> <br>
+
+You can use Auto For metric version (this will just map to which LLM Judge computes metric scores).
+
+<img width="1106" height="259" alt="image" src="https://github.com/user-attachments/assets/db89806c-c0d5-456d-89fa-0b05c1c5a67f" /> <br>
+
+Specify YES you would like to create a custom metric.
+
+<img width="1106" height="259" alt="image" src="https://github.com/user-attachments/assets/fa60a367-53c4-453f-acc0-cd13762f129e" /> <br>
+
+When prompted specify that you would like to compute Execution Efficiency.
+
+<img width="805" height="209" alt="image" src="https://github.com/user-attachments/assets/5a4abe5d-7219-4441-bbf1-32fdf0211fe1" /> <br>
+
+Once again can specify Auto for LLM Judge. 
+
+<img width="787" height="190" alt="image" src="https://github.com/user-attachments/assets/dac7162e-6c43-47da-a429-e9dff9b88ba9" /> <br>
+
+Specify that you would like to use a 0-1 scale.
+
+<img width="796" height="151" alt="image" src="https://github.com/user-attachments/assets/a4b46413-1f1f-49b3-a462-8b7221f37ff0" /> <br>
+
+Confirm any other prompted info from CoCo and let the eval kickoff!
+
+If the first prompt did not trigger the eval workflow - enter this prompt in CoCo then follow above instructions to configure your eval: 
 
 ```
 Run an evaluation for SELF_IMPROVING_AGENT_DB.AGENTS.MARKETING_CAMPAIGNS_AGENT against the registered dataset.
-Compute Answer Correctness, Logical Consistency, Execution Efficiency, Plan Quality and Plan Adherance as metrics.
-All metrics should use a 0-1 scale where 1 is optimal beavior. Once the eval completes, show me the evaluation results.
-Break down scores by metric and identify which queries scored lowest. What are the common failure patterns?
+Compute Answer Correctness, Logical Consistency, Tool Selection Accuracy, Tool Execution Accuracy, and Execution Efficiency as metrics.
+Custom metrics should use a 0-1 scale where 1 is optimal behavior.
 ```
+
+Follow the link generated by CoCo to view evaluation results - note that this may take 3-5 minutes to complete. Once completed, visually inspect the val results then proceed to the next step.
+
+## Improve the Agent
+
+After the evaluation has completed, enter the following prompt to analyze the evaluation results and improve your agent!
+
+```
+Perform failure analysis on the evaluation results. Where did the agent perform poorly?
+Based on this analysis, generate improved orchestration and response instructions for
+SELF_IMPROVING_AGENT_DB.AGENTS.MARKETING_CAMPAIGNS_AGENT that fix the identified issues.
+The instructions should tell the agent what format to respond in, when to use multiple tools and in what order,
+and encourage efficient tool calling aligned to the ground truth. Apply the changes and publish as a new agent version.
+```
+
+CoCo will:
+
+1. Draft improved orchestration and response instructions with explicit tool routing rules and response guidelines
+2. Apply via `ALTER AGENT ... SET SPECIFICATION = ...`
+3. Publish a new default agent version
 
 **Common failure patterns you'll see:**
 
@@ -200,35 +259,26 @@ Break down scores by metric and identify which queries scored lowest. What are t
 - Redundant tool calls
 - Incomplete summaries missing key data
 
-## Improve the Agent
+**Common fixes:**
 
-```
-Based on the failure analysis, generate improved orchestration and response instructions for
-SELF_IMPROVING_AGENT_DB.AGENTS.MARKETING_CAMPAIGNS_AGENT that fix the identified issues.
-The instructions should tell the agent what format to respond in, when to use multiple tools and in what order,
-and encourage efficient tool calling. Only make updates to the instructions - do not make any updates to
-the tool configuration or other areas of the agent spec. Apply the changes.
-```
-
-Cortex Code will:
-
-1. Draft improved orchestration and response instructions with explicit tool routing rules and response guidelines
-2. Apply via `ALTER AGENT ... SET SPECIFICATION = ...`
+- Efficient Tool Selection instructions
+- Stopping Conditions
+- Response Guidelines to include key figures, suggestions and cited sources
 
 **What changes:** Only the `instructions.orchestration` and `instructions.response` field. Tools, tool_resources, and orchestration model stay the same. Improved instructions is the only lever.
 
 ## Validate Agent Improvement
 
 ```
-Run the evaluation of SELF_IMPROVING_AGENT_DB.AGENTS.MARKETING_CAMPAIGNS_AGENT against the same dataset again.
+Run the evaluation of SELF_IMPROVING_AGENT_DB.AGENTS.MARKETING_CAMPAIGNS_AGENT against the new agent version.
 Compare the results against the baseline — show me a side-by-side comparison of scores by metric
-and highlight what improved.
+and highlight what improved. Use agent-studio skills as necessary. 
 ```
 
 **What to look for:**
 
-- **Overall score improvement**: The optimized agent should score higher across both metrics
-- **No regressions**: The optimized agent should still handle simple queries just as well as the baseline
+- **Overall score improvement**: The optimized agent should ideally score higher across most metrics
+- **Minimal regressions**: The optimized agent should still handle simple queries just as well as the baseline. Some regression is natural but should be minimal.
 
 <!-- ------------------------ -->
 
@@ -240,7 +290,7 @@ Congratulations! You've built a self-improving AI agent workflow — deploying a
 
 - How to build a multi-tool Cortex Agent with Cortex Analyst, Cortex Search, stored procedures, web search, and data-to-chart capabilities
 - How to generate observability traces by stress-testing your agent in Snowflake Intelligence
-- How to use Cortex Code to mine agent logs and curate evaluation datasets
+- How to use CoCo to mine agent logs and curate evaluation datasets
 - How to run Agent GPA evaluations with built-in metrics
 - How to analyze failure patterns and generate improved orchestration instructions
 - How to validate improvements by comparing baseline vs optimized evaluation scores
@@ -250,17 +300,17 @@ Congratulations! You've built a self-improving AI agent workflow — deploying a
 
 | Concept | Description |
 |---------|-------------|
-| **Agent GPA** | Evaluation framework with built-in metrics for answer correctness and logical consistency |
+| **Agent GPA** | Evaluation framework with built-in metrics for answer correctness, logical consistency, tool selection accuracy and tool execution accuracy |
 | **Orchestration Instructions** | Natural language instructions telling the agent how to route queries and coordinate tools — the key lever for improvement |
 | **Eval Dataset** | Frozen snapshot of queries + ground truth used to score agent performance |
-| **Cortex Code** | AI-powered CLI that mines agent logs, runs evaluations, identifies failures, and generates improved agent instructions |
+| **CoCo** | AI-powered CLI that mines agent logs, runs evaluations, identifies failures, and generates improved agent instructions |
 
 ### Related Resources
 
 - [Agent GPA Paper](https://bit.ly/agent-gpa)
 - [Cortex Agent Evals Guide](https://bit.ly/cortex-agent-evals)
 - [DeepLearning.AI Course](https://bit.ly/deeplearning-agent-gpa)
-- [Cortex Code CLI Docs](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-cli)
+- [CoCo CLI Docs](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-cli)
 
 ### Cleanup
 

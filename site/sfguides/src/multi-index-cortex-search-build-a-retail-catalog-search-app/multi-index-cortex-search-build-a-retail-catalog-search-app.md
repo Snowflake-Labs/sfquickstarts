@@ -22,10 +22,10 @@ This guide has two parts:
 -   **Part 2 — Building a Search Application:** Use the Python SDK to query the service programmatically, then build a React + FastAPI demo app and deploy it to Snowpark Container Services. We will use a synthetic winter sports ecommerce shop as an example.
 
 > **Download the code assets for this quickstart:**
- > - [setup_snowfield_pro_search.sql](https://github.com/Snowflake-Labs/sfguides/blob/master/site/sfguides/src/multi-index-cortex-search-build-a-retail-catalog-search-app/code/setup_snowfield_pro_search.sql) — Full environment and SQL setup
-> - [products.csv](https://github.com/Snowflake-Labs/sfguides/blob/master/site/sfguides/src/multi-index-cortex-search-build-a-retail-catalog-search-app/code/products.csv) — Product catalog data (1,085 products)
-> - [querying_with_python_sdk.ipynb](https://github.com/Snowflake-Labs/sfguides/tree/master/site/sfguides/src/multi-index-cortex-search-build-a-retail-catalog-search-app/code/querying_with_python_sdk.ipynb) - Querying Multi-index Cortex Search with Python SDK
-> - [snow-sports-demo/](https://github.com/Snowflake-Labs/sfguides/tree/master/site/sfguides/src/multi-index-cortex-search-build-a-retail-catalog-search-app/code/snow-sports-demo) — Full-stack application source (backend, frontend, Dockerfile, product images, and SPCS spec)
+ > - [setup_snowfield_pro_search.sql](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/multi-index-cortex-search-build-a-retail-catalog-search-app/code/setup_snowfield_pro_search.sql) — Full environment and SQL setup
+> - [products.csv](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/multi-index-cortex-search-build-a-retail-catalog-search-app/code/products.csv) — Product catalog data (1,085 products)
+> - [querying_with_python_sdk.ipynb](https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/multi-index-cortex-search-build-a-retail-catalog-search-app/code/querying_with_python_sdk.ipynb) - Querying Multi-index Cortex Search with Python SDK
+> - [snow-sports-demo/](https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/multi-index-cortex-search-build-a-retail-catalog-search-app/code/snow-sports-demo) — Full-stack application source (backend, frontend, Dockerfile, product images, and SPCS spec)
 
 ### What You'll Need
 
@@ -662,7 +662,7 @@ The full SNOWFIELD PRO demo connects a FastAPI backend to a React frontend. The 
 
 ![Example app](assets/example_app.png)
 
-We will cover to options for running the app:
+We will cover two options for running the app:
 - Option 1: Running the App **Locally**
 - Option 2: Running the App **in Snowpark Container Services**
 
@@ -753,7 +753,6 @@ Browser (localhost:5173)
 
 The same app can be deployed to SPCS for production use — no code changes required. The backend automatically detects the SPCS environment and uses OAuth token authentication from the mounted `/snowflake/session/token` file.
 
-> aside negative
 > **Trial Account Limitation:** Snowpark Container Services (SPCS) is not available on Snowflake trial accounts. If you are using a trial account, you can skip this section and use the local deployment described above instead. The local deployment provides the same functionality for development and testing purposes.
 
 #### Prerequisites
@@ -898,8 +897,6 @@ DROP WAREHOUSE IF EXISTS CATALOG_SEARCH_WH;
 ### Resources
 
 -   [Cortex Search Overview — Snowflake Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview)
--   [Cortex Search Service DDL Reference](https://docs.snowflake.com/en/sql-reference/sql/create-cortex-search-service)
--   [Snowflake Python SDK — CortexSearchService](https://docs.snowflake.com/en/developer-guide/snowflake-ml/reference/latest/cortex_search_service)
--   [SNOWFLAKE.CORTEX.COMPLETE() Reference](https://docs.snowflake.com/en/sql-reference/functions/complete-snowflake-cortex)
--   [snowflake-arctic-embed Models](https://huggingface.co/collections/Snowflake/snowflake-arctic-embed-661f62f3c91aafe00b4aee3b)
--   [SNOWFIELD PRO Demo Source Code](https://github.com/Snowflake-Labs/sfguides)
+-   [Cortex Search Overview — Snowflake Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview#multi-index-cortex-search)
+-   [Multi Index Cortex Search Query Syntax](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/query-cortex-search-service#multi-index-queries)
+-   [SNOWFIELD PRO Demo Source Code](https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/multi-index-cortex-search-build-a-retail-catalog-search-app/code/snow-sports-demo)

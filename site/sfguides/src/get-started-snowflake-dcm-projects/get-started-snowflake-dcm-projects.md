@@ -16,8 +16,6 @@ Snowflake DCM (Database Change Management) Projects let you define your Snowflak
 
 In this guide, you'll work with a sample DCM Project that defines a food truck analytics pipeline. You'll explore the project files, plan a deployment, deploy the infrastructure to your account, and insert sample data — all from Snowsight Workspaces.
 
-> **Note:** DCM Projects is currently in Public Preview. See the [DCM Projects documentation](https://docs.snowflake.com/en/user-guide/dcm-projects/dcm-projects-overview) for the latest details.
-
 ### Prerequisites
 - Basic knowledge of Snowflake concepts (databases, schemas, tables, roles)
 - Familiarity with SQL
