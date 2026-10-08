@@ -16,17 +16,17 @@ Snowflake App Runtime lets you deploy full-stack web apps directly on Snowflake.
 
 In this quickstart you will build **ChurnGuard**, a customer retention platform that evolves across three iterations. Each iteration maps to a core Snowflake App Runtime use case:
 
-| Iteration | App Type | What You Build |
-|-----------|----------|---------------|
-| **1 — Explorer** | Advanced Data Exploration | Churn risk dashboard with KPIs, segment charts, and trend analysis |
-| **2 — Workflow** | Workflow App | Retention action forms, an Action Board, write-back to Snowflake, per-user views |
-| **3 — Agent** | AI App with Cortex Agent | Chat panel powered by a Cortex Agent that analyzes data AND creates actions |
+| Iteration | App Type | What You Build | Snowflake Features |
+|-----------|----------|---------------|-------------------|
+| **1 — Explorer** | Data Exploration | Churn risk dashboard with KPIs, segment charts, paginated customer details | Application Service, `querySnowflake`, `app.yml` manifest |
+| **2 — Workflow** | Workflow App | Retention action forms, Action Board with KPI summaries, escalation alerts as toasts | Write-back with bind variables, Dynamic Tables, Alerts |
+| **3 — Agent** | AI App | Chat panel powered by a Cortex Agent that analyzes data AND creates actions | Cortex Agent, Cortex Analyst, Semantic View, custom tools |
 
 > **Iterative by design:** Each iteration builds on the previous one. Session leaders can stop at any iteration — each produces a deployable, valuable app.
 
 The progression tells a story:
 - **See the data** (iteration 1 — read-only dashboard)
-- **Act on the data** (iteration 2 — manual workflow with write-back)
+- **Act on the data** (iteration 2 — manual workflow with write-back; Snowflake does the thinking via dynamic tables and alerts)
 - **Let the agent act** (iteration 3 — Cortex Agent reasons and executes through conversation)
 
 ### Prompt Approach
@@ -47,7 +47,8 @@ This structure tells Cortex Code *what* you want without dictating *how* to impl
 
 - The **describe → scaffold → deploy → iterate** development loop
 - How runtime apps access Snowflake data with zero credential management
-- Write-back patterns and caller's rights for per-user access control
+- Write-back patterns with bind variables (SQL injection prevention)
+- Using dynamic tables and alerts to push intelligence into Snowflake so the app stays thin
 - Embedding a Cortex Agent into a web app with custom tools
 - How the `app.yml` manifest configures your app
 
@@ -164,37 +165,7 @@ This is the core of the quickstart. You will paste a single IDD-structured promp
 
 ### The Prompt
 
-Open `prompts/01-build-explorer.md` from the repo, or copy and paste the following into the Cortex Code chat:
-
-```text
-/snowflake-apps
-
-Goal: Build a customer churn risk dashboard called ChurnGuard
-that helps retention teams identify and prioritize at-risk customers.
-
-Requirements:
-- KPI cards: total customers, churn rate, revenue at risk, avg return rate
-- Segment chart: churn risk distribution by credit rating (High/Medium/Low)
-- Trend chart: active customers vs churn indicator over time
-- Detailed segment table with risk badges per credit rating
-- Query the pre-computed tables in SFQUICKSTART_CHURNGUARD.PUBLIC:
-  CHURN_METRICS (customer-level data) and CHURN_TRENDS (monthly aggregates)
-
-UI:
-- Modern card-based layout with generous spacing and subtle shadows
-- Professional color palette (blues and grays with accent colors for risk levels)
-- Responsive grid that works well on wide screens
-- Smooth loading states and transitions
-- Data-dense but not cluttered -- prioritize readability
-
-Constraints:
-- Query only the local CHURN_METRICS and CHURN_TRENDS tables
-  (do NOT query SNOWFLAKE_SAMPLE_DATA directly -- the fact tables are too large)
-
-Output:
-- Deployed interactive dashboard at the Application Service URL
-- Clean Next.js project structure ready for iteration
-```
+Open [`prompts/01-build-explorer.md`](https://github.com/Snowflake-Labs/sfguide-getting-started-snowflake-app-runtime/blob/iteration-1/data-exploration/prompts/01-build-explorer.md) from the repo and paste the prompt into Cortex Code Desktop chat. It describes the dashboard goal, KPI cards, charts, customer details table, and UI preferences — all in IDD structure.
 
 ### What Happens Next
 
@@ -286,29 +257,11 @@ For the complete reference, see [app.yml manifest for Snowflake App Runtime](htt
 <!-- ------------------------ -->
 ## Iteration 2: Add Workflow Capabilities
 
-In this iteration you turn ChurnGuard from a read-only dashboard into a workflow tool. Teams can flag high-risk customers, assign retention actions, and track resolution.
+In this iteration you turn ChurnGuard from a read-only dashboard into a workflow tool. Teams can flag high-risk customers, assign retention actions, and track resolution — with Snowflake-native intelligence powering summaries and escalation alerts.
 
 ### Setup
 
-First, create the ACTIONS table that stores retention tasks. Paste the following SQL into Cortex Code chat (the full script is also in `scripts/iteration-2-setup.sql`):
-
-```sql
-USE ROLE SFQUICKSTART_CHURNGUARD_ROLE;
-USE DATABASE SFQUICKSTART_CHURNGUARD;
-USE SCHEMA PUBLIC;
-
-CREATE TABLE IF NOT EXISTS ACTIONS (
-    ACTION_ID STRING DEFAULT UUID_STRING(),
-    CUSTOMER_KEY NUMBER,
-    ASSIGNED_TO STRING,
-    ACTION_TYPE STRING,
-    STATUS STRING DEFAULT 'New',
-    NOTES STRING,
-    CREATED_AT TIMESTAMP_NTZ DEFAULT CURRENT_TIMESTAMP(),
-    UPDATED_AT TIMESTAMP_NTZ DEFAULT CURRENT_TIMESTAMP(),
-    CREATED_BY STRING DEFAULT CURRENT_USER()
-);
-```
+See [`scripts/iteration-2-setup.sql`](https://github.com/Snowflake-Labs/sfguide-getting-started-snowflake-app-runtime/blob/iteration-2/workflow-app/scripts/iteration-2-setup.sql) for the full SQL. The script creates four objects that work together: the app writes raw actions, the **dynamic table** materializes summaries, and the **alert** detects escalations and writes in-app notifications — all without the app polling or computing anything.
 
 Then checkout the iteration 2 branch:
 
@@ -316,43 +269,15 @@ Then checkout the iteration 2 branch:
 git checkout iteration-2/workflow-app
 ```
 
+Run the iteration 2 setup script to create the workflow objects — ACTIONS table, ACTION_SUMMARY dynamic table, NOTIFICATIONS table, and ESCALATION_ALERT:
+
+```bash
+snow sql -f scripts/iteration-2-setup.sql --connection quickstart
+```
+
 ### The Prompt
 
-Open `prompts/02-add-workflow.md` or paste the following into Cortex Code:
-
-```text
-/snowflake-apps
-
-Goal: Add retention workflow capabilities to ChurnGuard so teams
-can act on churn insights -- flag customers, assign tasks, and
-track resolution.
-
-Requirements:
-- "Flag for Retention" action button on high-risk customer rows
-- Retention action form: assignee, action type
-  (Call / Email / Offer / Escalate), notes field
-- Write flagged actions to the ACTIONS table
-- Action Board page: all tasks with status badges
-  (New / In Progress / Resolved)
-- Status update controls to move tasks through the workflow
-- Use caller's rights so each user sees their own assignments
-
-UI:
-- Action Board as a clean list/table with status pill badges
-- Slide-over or modal form for creating actions -- not a separate page
-- Inline status transitions (click badge to advance)
-- Visual distinction between action statuses using color coding
-- Consistent design language with the existing explorer dashboard
-
-Constraints:
-- Use bind variables for all write operations
-- Do not modify the existing read-only dashboard views
-
-Output:
-- Updated app with a new Action Board page
-- Per-user task views powered by caller's rights
-- Redeploy to the same Application Service URL
-```
+Open [`prompts/02-add-workflow.md`](https://github.com/Snowflake-Labs/sfguide-getting-started-snowflake-app-runtime/blob/iteration-2/workflow-app/prompts/02-add-workflow.md) from the repo and paste the prompt into Cortex Code. It describes the workflow goal: flag customers for retention, write actions with bind variables, Action Board with DT-powered summaries, and global toast notifications from Snowflake alerts.
 
 ### What Happens
 
@@ -362,47 +287,62 @@ Cortex Code modifies the existing app (it does not rebuild from scratch):
 
 New API routes use `querySnowflake` with `{ binds: [...] }` to INSERT into the ACTIONS table. All values are passed as bind parameters — never interpolated into SQL strings.
 
-**2. Caller's rights**
-
-The Action Board queries use `{ callersRights: true }` so each user sees only their own assigned tasks. This means the query runs as the signed-in user, and Snowflake applies that user's role and privileges.
-
 ```typescript
-const rows = await querySnowflake(
-  "SELECT * FROM ACTIONS WHERE ASSIGNED_TO = CURRENT_USER() AND STATUS != 'Resolved'",
-  { callersRights: true }
+await querySnowflake(
+  "INSERT INTO ACTIONS (CUSTOMER_KEY, ASSIGNED_TO, ACTION_TYPE, NOTES) VALUES (?, ?, ?, ?)",
+  { binds: [customerKey, assignedTo, actionType, notes] }
 );
 ```
 
-**3. Form and Action Board UI**
+**2. Dynamic table summaries**
 
-Cortex Code adds a modal form for creating retention actions and an Action Board page with status badges and inline transitions.
+The Action Board reads pre-computed summaries from the `ACTION_SUMMARY` dynamic table instead of aggregating at query time. Snowflake refreshes this table automatically every minute.
 
-**4. Redeploy**
+**3. In-app notifications from alerts**
+
+The `ESCALATION_ALERT` runs every minute. When it detects open escalations in the dynamic table, it writes a row to the `NOTIFICATIONS` table. The app polls this table and shows a dismissible banner — no email integration or webhook required.
+
+**4. Form and Action Board UI**
+
+Cortex Code adds a modal form for creating retention actions, an Action Board page with summary KPI cards, status badges, inline transitions, and a notification banner.
+
+**5. Redeploy**
 
 The app redeploys to the same URL. The upgrade is in-place — no downtime.
 
 ### Key Concepts
 
-> **Owner's rights vs caller's rights**
+> **Dynamic tables**
 >
-> By default, queries run as the service's own identity (owner's rights) — all users see the same data. Pass `{ callersRights: true }` to run as the signed-in user. See [Query Snowflake](https://docs.snowflake.com/en/developer-guide/snowflake-app-runtime/query-snowflake).
+> A dynamic table continuously materializes a query result. The `ACTION_SUMMARY` table computes action counts with a 1-minute target lag — the app reads pre-computed values instead of running aggregations on every page load. See [Dynamic tables](https://docs.snowflake.com/en/user-guide/dynamic-tables-about).
+
+> **Snowflake alerts**
+>
+> An alert evaluates a condition on a schedule and executes a SQL action when the condition is true. `ESCALATION_ALERT` checks the dynamic table for open escalations and writes in-app notifications — pushing intelligence into Snowflake so the app stays thin. See [Alerts](https://docs.snowflake.com/en/user-guide/alerts).
 
 > **Bind variables**
 >
 > Always use `?` placeholders and `binds` for user-supplied values. This prevents SQL injection. See [Developing secure runtime apps](https://docs.snowflake.com/en/developer-guide/snowflake-app-runtime/secure-development).
 
+> **Owner's rights**
+>
+> All queries run as the service's own identity (owner's rights). This is simpler and more reliable than caller's rights — no per-user grants needed. The service acts as a controlled gateway with bind variables preventing injection. See [Query Snowflake](https://docs.snowflake.com/en/developer-guide/snowflake-app-runtime/query-snowflake).
+
 ### Verify
 
-Open the app and test the workflow:
+Open the app and test the full workflow:
 
-1. Navigate to a high-risk customer in the segment table
-2. Click **Flag for Retention** and fill in the form
-3. Switch to the **Action Board** page to see the new task
+1. Navigate to a high-risk customer in the customer details table
+2. Click **Flag** and fill in the form — try "Escalate" as the action type
+3. Switch to the **Action Board** page to see the new task and summary KPI cards
 4. Click the status badge to advance it through the workflow
+5. Wait ~1 minute — the dynamic table refreshes and the alert fires
+6. A notification banner appears on the Action Board for the escalation
+7. Dismiss the notification by clicking the close button
 
 ![Retention action form](assets/iter2_action_form.png)
 
-![Action Board with status badges](assets/iter2_action_board.png)
+![Action Board with status badges and notification banner](assets/iter2_action_board.png)
 
 <!-- ------------------------ -->
 ## Iteration 3: Embed a Cortex Agent
@@ -411,33 +351,13 @@ In this iteration the manual workflow from iteration 2 becomes agent-powered. In
 
 ### Setup
 
-Create the stored procedure that the agent will use as a custom tool. Paste the following SQL into Cortex Code chat (the full script is also in `scripts/iteration-3-setup.sql`):
+Run the iteration 3 setup script to create the stored procedure that the agent will use as a custom tool:
 
-```sql
-USE ROLE SFQUICKSTART_CHURNGUARD_ROLE;
-USE DATABASE SFQUICKSTART_CHURNGUARD;
-USE SCHEMA PUBLIC;
-
--- Stored procedure as a custom tool for the Cortex Agent.
--- The agent calls this to create retention actions via conversation.
-CREATE OR REPLACE PROCEDURE CREATE_RETENTION_ACTION(
-    P_CUSTOMER_KEY NUMBER,
-    P_ACTION_TYPE STRING,
-    P_NOTES STRING
-)
-RETURNS STRING
-LANGUAGE SQL
-AS
-BEGIN
-    INSERT INTO ACTIONS (CUSTOMER_KEY, ACTION_TYPE, NOTES, ASSIGNED_TO)
-    VALUES (:P_CUSTOMER_KEY, :P_ACTION_TYPE, :P_NOTES, CURRENT_USER());
-    RETURN 'Retention action created for customer ' || :P_CUSTOMER_KEY;
-END;
+```bash
+snow sql -f scripts/iteration-3-setup.sql --connection quickstart
 ```
 
-> **NOTE:**
->
-> The semantic view and Cortex Agent object will be created during this walkthrough. The setup script creates the stored procedure; the prompt guides Cortex Code to create the remaining objects.
+See [`scripts/iteration-3-setup.sql`](https://github.com/Snowflake-Labs/sfguide-getting-started-snowflake-app-runtime/blob/iteration-3/ai-app/scripts/iteration-3-setup.sql) for the full SQL. The `CREATE_RETENTION_ACTION` procedure inserts into the ACTIONS table and returns a confirmation message — the agent calls this when a user asks to create a retention action.
 
 Checkout the iteration 3 branch:
 
@@ -447,44 +367,7 @@ git checkout iteration-3/ai-app
 
 ### The Prompt
 
-Open `prompts/03-add-agent.md` or paste the following into Cortex Code:
-
-```text
-/snowflake-apps
-
-Goal: Embed a Cortex Agent into ChurnGuard that can both analyze
-churn data and create retention actions through natural conversation.
-
-Requirements:
-- Chat panel that calls the CHURNGUARD_AGENT via the agent:run REST API
-- The agent uses Cortex Analyst (semantic view) to answer data questions
-  about customer churn, segments, and trends
-- The agent uses a custom tool (CREATE_RETENTION_ACTION stored procedure)
-  to create retention tasks when the user asks
-- Thread-based conversation so multi-turn context is maintained
-- Display agent responses with formatted text, data tables where relevant
-
-UI:
-- Chat panel as a persistent sidebar or slide-out drawer
-- Clear visual distinction between user messages and agent responses
-- Multi-phase loading UX for the agent:run call (~30s response time):
-  animated thinking/reasoning indicator, step-by-step status
-  (e.g. "Analyzing data...", "Creating action..."), smooth transition
-  to the final response
-- Skeleton or shimmer placeholders while waiting for agent output
-- Inline data tables when the agent returns query results
-- Consistent with existing ChurnGuard design language
-
-Constraints:
-- Call agent:run REST API from API routes (not querySnowflake for the agent)
-- The agent's custom tool writes to the same ACTIONS table from iteration 2
-- Keep the existing dashboard and Action Board pages functional
-
-Output:
-- Working chat panel that queries data AND creates actions via conversation
-- The manual workflow from iteration 2 is now also agent-accessible
-- Redeploy to the same Application Service URL
-```
+Open [`prompts/03-add-agent.md`](https://github.com/Snowflake-Labs/sfguide-getting-started-snowflake-app-runtime/blob/iteration-3/ai-app/prompts/03-add-agent.md) from the repo and paste the prompt into Cortex Code. It describes embedding a Cortex Agent with a chat panel that can both analyze churn data (via Cortex Analyst) and create retention actions (via the stored procedure custom tool).
 
 ### What Happens
 
