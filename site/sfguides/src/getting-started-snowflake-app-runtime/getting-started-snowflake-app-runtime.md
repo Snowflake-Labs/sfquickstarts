@@ -220,22 +220,9 @@ Inspect the generated `app.yml` in your project root. With Snow CLI v3.26.0+, `s
 >
 > `app.yml` is the manifest going forward. See [Migrate from snowflake.yml to app.yml](https://docs.snowflake.com/en/developer-guide/snowflake-app-runtime/migrate-to-app-yml).
 
-```yaml
-version: 2
-name: churnguard
-database: SFQUICKSTART_CHURNGUARD
-schema: PUBLIC
-query_warehouse: COMPUTE_WH
+![app.yml in the editor](assets/iter1_app_yml.png)
 
-label: "ChurnGuard"
-description: "Customer churn risk dashboard"
-icon: "public/icon.svg"
-
-ignore:
-  - node_modules
-  - .next
-  - .git
-```
+For the complete reference, see [app.yml manifest for Snowflake App Runtime](https://docs.snowflake.com/en/developer-guide/snowflake-app-runtime/app-yml).
 
 ### Key Fields
 
@@ -250,20 +237,16 @@ ignore:
 | **auto_resume** | Resume the service on incoming requests (default: `true`) |
 | **auto_suspend_secs** | Idle seconds before suspend (default: `0` = never, minimum: `300`) |
 
-Deploys are **declarative**: every `snow app deploy` applies the full manifest. The `app.yml` stays the same across all three iterations — only the application code changes.
-
-For the complete reference, see [app.yml manifest for Snowflake App Runtime](https://docs.snowflake.com/en/developer-guide/snowflake-app-runtime/app-yml).
-
-![app.yml in the editor](assets/iter1_app_yml.png)
+Deploys are **declarative**: every `snow app deploy` applies the full manifest. Iteration 2 extends `app.yml` with `secrets:` and `external_access_integrations:` so the app can reach Snowflake Postgres; otherwise only the application code changes between iterations.
 
 <!-- ------------------------ -->
 ## Iteration 2: Add Workflow Capabilities
 
 In this iteration you turn ChurnGuard from a read-only dashboard into a workflow tool. Teams can flag high-risk customers, assign retention actions, and track resolution. The architecture splits OLTP and OLAP cleanly:
 
-- **Snowflake Postgres** handles transactional writes (action CRUD) with ACID guarantees
-- **Data mirroring** automatically replicates changes to Snowflake (~30s lag)
-- **Dynamic tables + alerts** run entirely in Snowflake to detect escalations and create notifications
+![Iteration 2 architecture](assets/iter2_architecture.png)
+
+The app reads and writes only Postgres for actions, so the Action Board is always consistent. Mirroring, the dynamic table, and the alert form a separate Snowflake-side pipeline whose only output the app consumes is the `NOTIFICATIONS` table.
 
 ### Setup
 
@@ -379,7 +362,7 @@ Open the app and test the full workflow:
 
 ![Retention action form](assets/iter2_action_form.png)
 
-![Action Board with status badges and notification banner](assets/iter2_action_board.png)
+![Action Board with status badges and summary cards](assets/iter2_action_board.png)
 
 <!-- ------------------------ -->
 ## Iteration 3: Embed a Cortex Agent
