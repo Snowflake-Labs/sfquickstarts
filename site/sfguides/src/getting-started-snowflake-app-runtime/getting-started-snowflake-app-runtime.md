@@ -1,55 +1,65 @@
 author: Kamesh Sampath
 id: getting-started-snowflake-app-runtime
-summary: Build and deploy your first runtime app in under 15 minutes using only a plain-English prompt in Cortex Code Desktop.
+summary: Build and deploy three types of Snowflake App Runtime apps — from an interactive dashboard to a workflow app to an AI-powered agentic experience — using structured prompts in Cortex Code Desktop.
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart,snowflake-site:taxonomy/product/applications-and-collaboration,snowflake-site:taxonomy/snowflake-feature/build
 environments: web
 status: Published
 language: en
-duration: 15
+duration: 45
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 
 # Get Started with Snowflake App Runtime
 <!-- ------------------------ -->
 ## Overview
 
-Snowflake App Runtime lets you deploy data web apps directly on Snowflake. Your app runs as an **APPLICATION SERVICE** object — no Docker images to build, no container registry to manage, no CI/CD pipeline to configure. Describe what you want, deploy in one command.
+Snowflake App Runtime lets you deploy full-stack web apps directly on Snowflake. Your app runs as an **APPLICATION SERVICE** object — no Docker images, no container registry, no CI/CD pipeline. Describe what you want, deploy in one command.
 
-In this quickstart you will use Cortex Code Desktop to build and deploy a **customer churn risk dashboard** from a single plain-English prompt. The app is a React/Next.js project that queries TPC-DS sample data already available in every Snowflake account, renders interactive charts, and runs entirely inside Snowflake.
+In this quickstart you will build **ChurnGuard**, a customer retention platform that evolves across three iterations. Each iteration maps to a core Snowflake App Runtime use case:
+
+| Iteration | App Type | What You Build |
+|-----------|----------|---------------|
+| **1 — Explorer** | Advanced Data Exploration | Churn risk dashboard with KPIs, segment charts, and trend analysis |
+| **2 — Workflow** | Workflow App | Retention action forms, an Action Board, write-back to Snowflake, per-user views |
+| **3 — Agent** | AI App with Cortex Agent | Chat panel powered by a Cortex Agent that analyzes data AND creates actions |
+
+> **Iterative by design:** Each iteration builds on the previous one. Session leaders can stop at any iteration — each produces a deployable, valuable app.
+
+The progression tells a story:
+- **See the data** (iteration 1 — read-only dashboard)
+- **Act on the data** (iteration 2 — manual workflow with write-back)
+- **Let the agent act** (iteration 3 — Cortex Agent reasons and executes through conversation)
+
+### Prompt Approach
+
+Each iteration uses an [Intent-Driven Development (IDD)](https://blogs.kameshs.dev) structured prompt with five sections:
+
+| Section | Purpose |
+|---------|---------|
+| **Goal** | Desired outcome |
+| **Requirements** | What the app must do (intent statements, not steps) |
+| **UI** | Look, feel, layout, and interaction patterns |
+| **Constraints** | Scope, safety rules, what not to do |
+| **Output** | What success looks like |
+
+This structure tells Cortex Code *what* you want without dictating *how* to implement it.
 
 ### What You'll Learn
 
-- How to go from a plain-English prompt to a live, deployed web application using Cortex Code Desktop
-- The **describe -> scaffold -> deploy -> iterate** development loop
-- How the generated `app.yml` manifest configures your app (version, database, schema, name, query_warehouse)
-- How runtime apps access Snowflake data with zero credential management (OAuth tokens are injected at runtime)
-- How to iteratively add features to a deployed app via follow-up prompts
-
-### What You'll Build
-
-A customer churn risk dashboard with:
-
-- KPI cards: total customers, churn rate, revenue at risk, average return rate
-- Segment chart: churn risk distribution by credit rating (High/Medium/Low)
-- Trend chart: active customers vs churn indicator over time
-- Segment table: detailed breakdown with risk badges per credit segment
-
-All backed by `SNOWFLAKE_SAMPLE_DATA.TPCDS_SF10TCL` tables. Cortex Code automatically selects the right tables and optimizes queries for the large dataset.
-
-### Prerequisites
-
-- Familiarity with web applications (no frontend experience required — Cortex Code generates the code)
+- The **describe → scaffold → deploy → iterate** development loop
+- How runtime apps access Snowflake data with zero credential management
+- Write-back patterns and caller's rights for per-user access control
+- Embedding a Cortex Agent into a web app with custom tools
+- How the `app.yml` manifest configures your app
 
 ### What You'll Need
 
-- A [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) with Snowflake App Runtime enabled and **ACCOUNTADMIN** (or a role with **CREATE APPLICATION SERVICE** privileges). Note: Snowflake App Runtime is not available on [trial accounts](https://docs.snowflake.com/en/user-guide/admin-trial-account).
+- A [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) with Snowflake App Runtime enabled and **ACCOUNTADMIN** privileges. Note: Snowflake App Runtime is not available on [trial accounts](https://docs.snowflake.com/en/user-guide/admin-trial-account).
 - [Cortex Code Desktop](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code) installed and connected to your Snowflake account
 - [Snowflake CLI](https://docs.snowflake.com/developer-guide/snowflake-cli/installation/installation) **v3.26.0** or later
 - [Node.js](https://nodejs.org/) **20+** and **npm**
 
 <!-- ------------------------ -->
 ## Environment Setup
-
-Verify that the required tools are installed and your Snowflake account has access to the TPC-DS sample data.
 
 ### Verify Tools
 
@@ -65,246 +75,499 @@ Confirm Node.js version (must be 20 or later):
 node --version
 ```
 
-Confirm your Snowflake CLI connection is working (see [Managing Snowflake connections](https://docs.snowflake.com/en/developer-guide/snowflake-cli/connecting/configure-connections) if you need to set one up):
+### Clone the Repository
+
+The quickstart repo contains setup scripts and IDD prompts for each iteration:
 
 ```bash
-snow connection test
+git clone https://github.com/Snowflake-Labs/sfguide-getting-started-snowflake-app-runtime.git
+cd sfguide-getting-started-snowflake-app-runtime
 ```
 
-Open Cortex Code Desktop and confirm it is connected to your Snowflake account. You should see your account name in the status bar.
+### Add a Snowflake CLI Connection
 
-![Cortex Code Desktop connected to Snowflake](assets/coco_connected.png)
+Add a `quickstart` connection to your Snowflake CLI config (`~/.snowflake/config.toml`):
+
+```toml
+[connections.quickstart]
+account = "<your_account>"
+user = "<your_user>"
+authenticator = "externalbrowser"    # or SNOWFLAKE_JWT, etc.
+```
+
+Test the connection:
+
+```bash
+snow connection test --connection quickstart
+```
+
+### Run RBAC Setup
+
+The `scripts/grants.sql` file creates a dedicated role for this quickstart. Open it, replace `<your_user>` with your Snowflake username, then run:
+
+```bash
+snow sql -f scripts/grants.sql --connection quickstart
+```
+
+This creates `SFQUICKSTART_CHURNGUARD_ROLE` with grants for app deployment, warehouse access, sample data, and Cortex AI functions.
+
+### Create the Database
+
+```bash
+snow sql -f scripts/setup.sql --connection quickstart
+```
+
+This creates the `SFQUICKSTART_CHURNGUARD` database where all quickstart objects will live.
 
 ### Set Up Sample Data
 
-TPC-DS sample data ships with most Snowflake accounts. Check whether it is already available:
-
-```sql
-SHOW DATABASES LIKE 'SNOWFLAKE_SAMPLE_DATA';
-```
-
-If the database does not exist, create it from the share and grant access:
-
-```sql
--- Run as ACCOUNTADMIN
-CREATE DATABASE SNOWFLAKE_SAMPLE_DATA FROM SHARE SFC_SAMPLES.SAMPLE_DATA;
-
-GRANT IMPORTED PRIVILEGES ON DATABASE SNOWFLAKE_SAMPLE_DATA TO ROLE PUBLIC;
-```
-
-Verify the data is accessible:
+TPC-DS sample data ships with most Snowflake accounts. Verify it is accessible:
 
 ```sql
 SELECT COUNT(*) FROM SNOWFLAKE_SAMPLE_DATA.TPCDS_SF10TCL.CUSTOMER;
 ```
 
-You should see approximately 65 million rows.
+You should see approximately 65 million rows. If `SNOWFLAKE_SAMPLE_DATA` does not exist, see [TPC-DS sample data](https://docs.snowflake.com/en/user-guide/sample-data-tpcds).
 
-### Create a Working Directory
+### Prepare Your Working Directory
 
-Create a directory for your project. Cortex Code will scaffold the app here.
+Checkout the iteration 1 branch and create a working directory for the app code:
 
 ```bash
-mkdir churn-dashboard && cd churn-dashboard
+git checkout iteration-1/data-exploration
+mkdir churnguard && cd churnguard
 ```
 
-Open this directory in Cortex Code Desktop.
+The branch includes [`AGENTS.md`](https://github.com/Snowflake-Labs/sfguide-getting-started-snowflake-app-runtime/blob/iteration-1/data-exploration/AGENTS.md) (symlinked to `COCO.md`) which tells Cortex Code Desktop about your Snowflake environment — connection, role, database, and conventions. Copy it into your working directory:
+
+```bash
+cp ../AGENTS.md . && cp -P ../COCO.md .
+```
+
+Open `churnguard/` in Cortex Code Desktop. Confirm it is connected to your Snowflake account — you should see your account name in the status bar.
+
+![Cortex Code Desktop connected to Snowflake](assets/coco_connected.png)
+
+> **Note:** Each iteration builds on the previous. Complete iteration 1 before starting iteration 2.
 
 <!-- ------------------------ -->
-## Build the App with Cortex Code
+## Iteration 1: Build ChurnGuard Explorer
 
-This is the core of the quickstart. You will paste a single prompt into Cortex Code Desktop and watch it build the entire application.
+This is the core of the quickstart. You will paste a single IDD-structured prompt into Cortex Code Desktop and watch it build the entire application.
 
 ### The Prompt
 
-Copy and paste the following into the Cortex Code chat:
+Open `prompts/01-build-explorer.md` from the repo, or copy and paste the following into the Cortex Code chat:
 
 ```text
-/snowflake-apps Build me a customer churn risk dashboard showing churn probability by segment and monthly trends. Use TPCDS sample data and keep queries performant for a demo. Deploy it when ready.
-```
+/snowflake-apps
 
-![Cortex Code with the churn prompt](assets/coco_prompt.png)
+Goal: Build a customer churn risk dashboard called ChurnGuard
+that helps retention teams identify and prioritize at-risk customers.
+
+Requirements:
+- KPI cards: total customers, churn rate, revenue at risk, avg return rate
+- Segment chart: churn risk distribution by credit rating (High/Medium/Low)
+- Trend chart: active customers vs churn indicator over time
+- Detailed segment table with risk badges per credit rating
+- Use SNOWFLAKE_SAMPLE_DATA.TPCDS_SF10TCL tables
+  (CUSTOMER, CUSTOMER_DEMOGRAPHICS, STORE_SALES, STORE_RETURNS)
+
+UI:
+- Modern card-based layout with generous spacing and subtle shadows
+- Professional color palette (blues and grays with accent colors for risk levels)
+- Responsive grid that works well on wide screens
+- Smooth loading states and transitions
+- Data-dense but not cluttered -- prioritize readability
+
+Constraints:
+- Use SAMPLE clauses on large fact tables for demo-friendly performance
+
+Output:
+- Deployed interactive dashboard at the Application Service URL
+- Clean Next.js project structure ready for iteration
+```
 
 ### What Happens Next
 
 > **NOTE:**
 >
-> The full build and deploy process typically takes a few minutes. While Cortex Code works through the steps below, you can follow along in the chat to see each phase as it happens.
+> The full build and deploy process typically takes a few minutes. Follow along in the chat to see each phase.
 
-Since the prompt includes "Deploy it when ready", Cortex Code works through the full lifecycle automatically — from data discovery to a live, deployed app. Here is what to expect:
+Since the prompt includes deployment intent (via `AGENTS.md` configuration), Cortex Code works through the full lifecycle automatically:
 
 **1. Data discovery**
 
-Cortex Code queries `INFORMATION_SCHEMA.TABLES` to find the TPC-DS tables and their row counts. It inspects key table schemas (`CUSTOMER`, `CUSTOMER_DEMOGRAPHICS`, `STORE_SALES`, `STORE_RETURNS`) and decides on a query strategy — using `SAMPLE` clauses on the large fact tables to keep response times fast on the 10TB dataset.
+Cortex Code queries `INFORMATION_SCHEMA.TABLES` to find the TPC-DS tables and their row counts. It inspects key table schemas (`CUSTOMER`, `CUSTOMER_DEMOGRAPHICS`, `STORE_SALES`, `STORE_RETURNS`) and decides on a query strategy — using `SAMPLE` clauses on the large fact tables for fast response times.
 
 **2. Project scaffold**
 
-Cortex Code copies the Next.js runtime app starter template into your working directory and runs `npm install` to set up dependencies.
+Cortex Code copies the Next.js runtime app starter template into your working directory and runs `npm install`.
 
 **3. Manifest and implementation**
 
-Cortex Code generates the `app.yml` deployment manifest via `snow app setup`, then writes the full application in one pass:
+Cortex Code generates the `app.yml` deployment manifest via `snow app setup`, then writes the full application:
 
-- **API routes** — optimized SQL queries for KPIs, segment breakdowns, and trend data, using `SAMPLE BLOCK` on large fact tables
-- **React frontend** — KPI cards, a segment chart, a trend chart, and a segment table with risk badges
-- **Custom icon and branding** — replaces the template defaults
+- **API routes** — optimized SQL queries for KPIs, segment breakdowns, and trend data
+- **React frontend** — KPI cards, segment chart, trend chart, and segment table with risk badges
+- **Styling** — professional card-based layout per the [UI] specifications
 
-You can inspect the generated `app.yml` in the next section.
-
-![Generated project structure](assets/project_structure.png)
+![Generated project structure](assets/iter1_project_structure.png)
 
 **4. Deploy**
 
 Cortex Code runs `snow app deploy` automatically, monitors the build and promotion phases, and provides the live App URL when the service reaches **RUNNING** status.
 
-![Deploy output with App URL](assets/app_deploy_url.png)
+![Deploy output with App URL](assets/iter1_deploy_url.png)
+
+### Verify
+
+Open the App URL in your browser to see your ChurnGuard Explorer dashboard.
+
+![ChurnGuard Explorer dashboard](assets/iter1_dashboard.png)
+
+> **Note on sample data:** The dashboard queries TPC-DS data using `SAMPLE` clauses for performance. Exact numbers will vary between runs because each sample is random.
+
+The endpoint URL does not change when you redeploy. The running service upgrades in place — no DNS changes, no downtime.
+
+### Iterate: Add a Download Feature
+
+Runtime apps support iterative development through follow-up prompts. Paste this into Cortex Code:
+
+```text
+/snowflake-apps Add a Download Report button that exports the currently displayed churn data as a CSV file.
+```
+
+After deployment, verify the new button appears and downloads a CSV.
+
+![Dashboard with Download button](assets/iter1_download.png)
 
 ### Test Locally (Optional)
 
-To test locally before deploying, remove "Deploy it when ready." from the prompt. After implementation, you can run `npm run dev` and open [http://localhost:3000](http://localhost:3000) to verify the dashboard locally before deploying. The local dev server connects to Snowflake using your CLI credentials — the same code works in both environments.
+To test locally before deploying, you can run `npm run dev` and open [http://localhost:3000](http://localhost:3000). The local dev server connects to Snowflake using your CLI credentials.
 
 <!-- ------------------------ -->
 ## Understanding app.yml
 
-Take a moment to inspect the generated `app.yml` in your project root. This is the deployment manifest — it tells the Snowflake CLI everything it needs to build, package, and deploy your app.
-
-With Snow CLI v3.26.0+, `snow app setup` generates `app.yml` — the single manifest for all runtime apps. No separate `snowflake.yml` needed.
+Inspect the generated `app.yml` in your project root. With Snow CLI v3.26.0+, `snow app setup` generates `app.yml` — the single manifest for all runtime apps.
 
 > **Have an existing project that uses snowflake.yml?**
 >
-> `app.yml` is the manifest going forward. See [Migrate from snowflake.yml to app.yml](https://docs.snowflake.com/en/developer-guide/snowflake-app-runtime/migrate-to-app-yml) for the migration guide.
+> `app.yml` is the manifest going forward. See [Migrate from snowflake.yml to app.yml](https://docs.snowflake.com/en/developer-guide/snowflake-app-runtime/migrate-to-app-yml).
 
 ```yaml
-version: 2                          # Required — tells the CLI to read this file
-name: churn-dashboard               # APPLICATION SERVICE object name
-database: SNOWFLAKE_APPS            # Must already exist
-schema: PUBLIC                      # Must already exist
-query_warehouse: COMPUTE_WH        # Warehouse for SQL queries at runtime
+version: 2
+name: churnguard
+database: SFQUICKSTART_CHURNGUARD
+schema: PUBLIC
+query_warehouse: COMPUTE_WH
 
-label: "Customer Churn Dashboard"
-description: "Customer churn risk dashboard using TPC-DS sample data"
+label: "ChurnGuard"
+description: "Customer churn risk dashboard"
 icon: "public/icon.svg"
 
-ignore:                             # Excluded from upload
+ignore:
   - node_modules
   - .next
   - .git
 ```
-
-The `install`, `build`, and `run` phases are also declared in `app.yml`. When omitted, they default to `npm ci`, `npm run build`, and `npm start` respectively.
 
 ### Key Fields
 
 | Field | Purpose |
 |-------|---------|
 | **version: 2** | Required — the CLI ignores deployment keys without it |
-| **name** | APPLICATION SERVICE object name. A fully qualified name (`DB.SCHEMA.NAME`) overrides `database` and `schema` |
+| **name** | APPLICATION SERVICE object name |
 | **database / schema** | Where the app object is created. Both must already exist |
-| **query_warehouse** | Warehouse for SQL queries. Must already exist |
-| **label / description / icon** | Presentation metadata visible in `SHOW APPLICATION SERVICES` and Snowsight |
+| **query_warehouse** | Warehouse for SQL queries at runtime |
+| **label / description / icon** | Presentation metadata |
 | **ignore** | Glob patterns excluded from the upload |
 | **auto_resume** | Resume the service on incoming requests (default: `true`) |
 | **auto_suspend_secs** | Idle seconds before suspend (default: `0` = never, minimum: `300`) |
 
-### Packaging and Deploys
+Deploys are **declarative**: every `snow app deploy` applies the full manifest. The `app.yml` stays the same across all three iterations — only the application code changes.
 
-There is no `artifacts` field in `app.yml`. The build output **is** the package — whole-project packaging (minus `ignore` patterns). If you need to reshape output, do it in `build.commands`.
+For the complete reference, see [app.yml manifest for Snowflake App Runtime](https://docs.snowflake.com/en/developer-guide/snowflake-app-runtime/app-yml).
 
-Deploys are **declarative**: every `snow app deploy` applies the full manifest. A field you omit goes back to its default — including values previously set with `ALTER APPLICATION SERVICE`. Keep the manifest as your source of truth.
-
-For the complete field reference, see [app.yml manifest for Snowflake App Runtime](https://docs.snowflake.com/en/developer-guide/snowflake-app-runtime/app-yml).
+![app.yml in the editor](assets/iter1_app_yml.png)
 
 <!-- ------------------------ -->
-## Verify the Deployment
+## Iteration 2: Add Workflow Capabilities
 
-Cortex Code deploys the app automatically and outputs the live App URL in the chat. Open it in your browser to see your churn risk dashboard running inside Snowflake.
+In this iteration you turn ChurnGuard from a read-only dashboard into a workflow tool. Teams can flag high-risk customers, assign retention actions, and track resolution.
 
-![Deployed churn dashboard](assets/deployed_dashboard.png)
+### Setup
 
-> **Note on sample data:** The dashboard queries TPC-DS data using `SAMPLE` clauses for performance. Exact numbers (customer counts, revenue figures) will vary between runs because each sample is random. The focus of this quickstart is the app structure and deployment flow, not the analytical accuracy of the churn model.
+First, create the ACTIONS table that stores retention tasks. From the repo root:
 
-The endpoint URL does not change when you redeploy. The running service upgrades in place via `CREATE OR ALTER APPLICATION SERVICE` — no DNS changes, no downtime for your users.
-
-To find the App URL manually, you can also query Snowflake directly:
-
-```sql
-SHOW APPLICATION SERVICES;
+```bash
+snow sql -f scripts/iteration-2-setup.sql --connection quickstart
 ```
 
-```sql
-DESCRIBE APPLICATION SERVICE churn_risk_dashboard;
+![Running iteration-2-setup.sql](assets/iter2_setup_sql.png)
+
+Then checkout the iteration 2 branch and copy the AGENTS.md into your project:
+
+```bash
+cd ..
+git checkout iteration-2/workflow-app
+cp AGENTS.md churnguard/ && cp -P COCO.md churnguard/
+cd churnguard
 ```
 
-The `url` column in the output contains your app's live endpoint.
+### The Prompt
 
-<!-- ------------------------ -->
-## Iterate — Add a Feature
-
-Runtime apps support iterative development through follow-up prompts. You do not need to start over to add features.
-
-Paste this into Cortex Code:
+Open `prompts/02-add-workflow.md` or paste the following into Cortex Code:
 
 ```text
-Add a Download Report button that exports the currently filtered churn data as a CSV file.
+/snowflake-apps
+
+Goal: Add retention workflow capabilities to ChurnGuard so teams
+can act on churn insights -- flag customers, assign tasks, and
+track resolution.
+
+Requirements:
+- "Flag for Retention" action button on high-risk customer rows
+- Retention action form: assignee, action type
+  (Call / Email / Offer / Escalate), notes field
+- Write flagged actions to the ACTIONS table
+- Action Board page: all tasks with status badges
+  (New / In Progress / Resolved)
+- Status update controls to move tasks through the workflow
+- Use caller's rights so each user sees their own assignments
+
+UI:
+- Action Board as a clean list/table with status pill badges
+- Slide-over or modal form for creating actions -- not a separate page
+- Inline status transitions (click badge to advance)
+- Visual distinction between action statuses using color coding
+- Consistent design language with the existing explorer dashboard
+
+Constraints:
+- Use bind variables for all write operations
+- Do not modify the existing read-only dashboard views
+
+Output:
+- Updated app with a new Action Board page
+- Per-user task views powered by caller's rights
+- Redeploy to the same Application Service URL
 ```
 
 ### What Happens
 
-Cortex Code:
+Cortex Code modifies the existing app (it does not rebuild from scratch):
 
-1. Adds a new API route that generates CSV from the current filter parameters
-2. Adds a **Download Report** button to the dashboard UI
-3. Redeploys the updated app automatically
+**1. API routes for writes**
 
-After deployment, open the dashboard and verify the new button appears. Click **Download Report** — a CSV file with the filtered churn data should download.
+New API routes use `querySnowflake` with `{ binds: [...] }` to INSERT into the ACTIONS table. All values are passed as bind parameters — never interpolated into SQL strings.
 
-![Dashboard with Download button](assets/iterate_download.png)
+**2. Caller's rights**
 
-This is the core development loop: **describe what you want -> Cortex Code implements -> redeploy -> verify**. Each iteration builds on the existing app without starting from scratch.
+The Action Board queries use `{ callersRights: true }` so each user sees only their own assigned tasks. This means the query runs as the signed-in user, and Snowflake applies that user's role and privileges.
+
+```typescript
+const rows = await querySnowflake(
+  "SELECT * FROM ACTIONS WHERE ASSIGNED_TO = CURRENT_USER() AND STATUS != 'Resolved'",
+  { callersRights: true }
+);
+```
+
+**3. Form and Action Board UI**
+
+Cortex Code adds a modal form for creating retention actions and an Action Board page with status badges and inline transitions.
+
+**4. Redeploy**
+
+The app redeploys to the same URL. The upgrade is in-place — no downtime.
+
+### Key Concepts
+
+> **Owner's rights vs caller's rights**
+>
+> By default, queries run as the service's own identity (owner's rights) — all users see the same data. Pass `{ callersRights: true }` to run as the signed-in user. See [Query Snowflake](https://docs.snowflake.com/en/developer-guide/snowflake-app-runtime/query-snowflake).
+
+> **Bind variables**
+>
+> Always use `?` placeholders and `binds` for user-supplied values. This prevents SQL injection. See [Developing secure runtime apps](https://docs.snowflake.com/en/developer-guide/snowflake-app-runtime/secure-development).
+
+### Verify
+
+Open the app and test the workflow:
+
+1. Navigate to a high-risk customer in the segment table
+2. Click **Flag for Retention** and fill in the form
+3. Switch to the **Action Board** page to see the new task
+4. Click the status badge to advance it through the workflow
+
+![Retention action form](assets/iter2_action_form.png)
+
+![Action Board with status badges](assets/iter2_action_board.png)
+
+<!-- ------------------------ -->
+## Iteration 3: Embed a Cortex Agent
+
+In this iteration the manual workflow from iteration 2 becomes agent-powered. Instead of clicking buttons to flag customers and create tasks, users converse with a Cortex Agent that can both analyze churn data and execute retention actions.
+
+### Setup
+
+Run the iteration 3 setup script to create the stored procedure that the agent will use as a custom tool:
+
+```bash
+snow sql -f scripts/iteration-3-setup.sql --connection quickstart
+```
+
+> **NOTE:**
+>
+> The semantic view and Cortex Agent object will be created during this walkthrough. The setup script creates the stored procedure; the prompt guides Cortex Code to create the remaining objects.
+
+Checkout the iteration 3 branch and update AGENTS.md:
+
+```bash
+cd ..
+git checkout iteration-3/ai-app
+cp AGENTS.md churnguard/ && cp -P COCO.md churnguard/
+cd churnguard
+```
+
+### The Prompt
+
+Open `prompts/03-add-agent.md` or paste the following into Cortex Code:
+
+```text
+/snowflake-apps
+
+Goal: Embed a Cortex Agent into ChurnGuard that can both analyze
+churn data and create retention actions through natural conversation.
+
+Requirements:
+- Chat panel that calls the CHURNGUARD_AGENT via the agent:run REST API
+- The agent uses Cortex Analyst (semantic view) to answer data questions
+  about customer churn, segments, and trends
+- The agent uses a custom tool (CREATE_RETENTION_ACTION stored procedure)
+  to create retention tasks when the user asks
+- Thread-based conversation so multi-turn context is maintained
+- Display agent responses with formatted text, data tables where relevant
+
+UI:
+- Chat panel as a persistent sidebar or slide-out drawer
+- Clear visual distinction between user messages and agent responses
+- Multi-phase loading UX for the agent:run call (~30s response time):
+  animated thinking/reasoning indicator, step-by-step status
+  (e.g. "Analyzing data...", "Creating action..."), smooth transition
+  to the final response
+- Skeleton or shimmer placeholders while waiting for agent output
+- Inline data tables when the agent returns query results
+- Consistent with existing ChurnGuard design language
+
+Constraints:
+- Call agent:run REST API from API routes (not querySnowflake for the agent)
+- The agent's custom tool writes to the same ACTIONS table from iteration 2
+- Keep the existing dashboard and Action Board pages functional
+
+Output:
+- Working chat panel that queries data AND creates actions via conversation
+- The manual workflow from iteration 2 is now also agent-accessible
+- Redeploy to the same Application Service URL
+```
+
+### What Happens
+
+**1. Semantic view**
+
+Cortex Code creates a semantic view over the churn data tables. This gives the Cortex Agent structured access to query customer, demographics, sales, and returns data through natural language.
+
+**2. Cortex Agent**
+
+Cortex Code creates a `CHURNGUARD_AGENT` object with:
+- **Cortex Analyst tool** — the semantic view, so the agent can answer data questions by generating SQL
+- **Custom tool** — the `CREATE_RETENTION_ACTION` stored procedure from iteration 2, so the agent can create retention tasks
+
+**3. Chat panel UI**
+
+The chat panel calls the agent via the `agent:run` REST API from a Next.js API route. The UI handles the ~30-second response time with a multi-phase loading experience:
+- Animated thinking indicator while the agent reasons
+- Step-by-step status updates as the agent calls tools
+- Smooth transition to the formatted response
+
+**4. Thread management**
+
+Threads persist conversation context. The chat panel creates a thread on first message and reuses it for follow-ups, so the agent remembers what was discussed.
+
+### Key Concepts
+
+> **Cortex Agents**
+>
+> A Cortex Agent is a fully managed agentic platform. It reasons over requests, plans work, calls tools, and generates responses. See [Cortex Agents](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents).
+
+> **Custom tools**
+>
+> Stored procedures and UDFs can be registered as agent tools. The agent decides when to call them based on the user's request. See [Create and manage agents](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents-manage).
+
+> **agent:run REST API**
+>
+> Your app calls the agent through the REST API, using threads to maintain conversation context. See [Cortex Agents Run API](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents-run).
+
+### Verify
+
+Open the app and test the agent:
+
+1. Open the chat panel
+2. Ask: *"What are the highest risk customers in the Low credit segment?"*
+3. The agent queries the data and returns results
+
+![Agent answering a data question](assets/iter3_chat_data.png)
+
+4. Ask: *"Create retention tasks for the top 3 — call type for all of them"*
+5. The agent calls the `CREATE_RETENTION_ACTION` tool and confirms
+
+![Agent creating a retention action](assets/iter3_chat_action.png)
+
+6. Switch to the **Action Board** — the new tasks appear, created by the agent
 
 <!-- ------------------------ -->
 ## Cleanup
 
-Remove the lab resources when you are done. Tell Cortex Code:
+Remove all quickstart resources by running the cleanup script:
 
-```text
-Clean up everything you created for this app — drop the application service and any objects created during deploy.
+```bash
+snow sql -f scripts/cleanup.sql --connection quickstart
 ```
 
-Cortex Code will drop the APPLICATION SERVICE and related objects.
-
-To clean up manually instead, run:
-
-```sql
-DROP APPLICATION SERVICE IF EXISTS churn_risk_dashboard;
-```
-
-```sql
--- Skip this if you deployed into an existing database like SNOWFLAKE_APPS
-DROP DATABASE IF EXISTS <your_app_database>;
-```
+This drops the APPLICATION SERVICE, the `SFQUICKSTART_CHURNGUARD` database (including all tables, procedures, agents, and semantic views), and the `SFQUICKSTART_CHURNGUARD_ROLE`.
 
 The sample data database (`SNOWFLAKE_SAMPLE_DATA`) is shared across your account — do not drop it unless you are sure no other workloads use it.
+
+To clean up manually:
+
+```sql
+USE ROLE ACCOUNTADMIN;
+DROP APPLICATION SERVICE IF EXISTS SFQUICKSTART_CHURNGUARD.PUBLIC.CHURNGUARD;
+DROP DATABASE IF EXISTS SFQUICKSTART_CHURNGUARD;
+DROP ROLE IF EXISTS SFQUICKSTART_CHURNGUARD_ROLE;
+```
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
 
-You built and deployed a full-stack web application on Snowflake in under 15 minutes — using only plain-English prompts.
+You built a customer retention platform that evolved across three iterations — from a read-only dashboard to a workflow app to an AI-powered agentic experience.
 
 ### What You Learned
 
-- How to use Cortex Code Desktop to scaffold, implement, and deploy a runtime app from a single prompt
-- The describe -> scaffold -> deploy -> iterate development loop
-- How the `app.yml` manifest configures database, schema, warehouse, and compute for your app
-- How runtime apps access Snowflake data with zero credential management
-- How to iteratively add features to a deployed app via follow-up prompts
+| Iteration | Key Takeaway |
+|-----------|-------------|
+| **1 — Explorer** | Snowflake App Runtime removes all infrastructure friction. Describe what you want, deploy with `snow app deploy`. |
+| **2 — Workflow** | Runtime apps handle real business workflows — forms, write-back, per-user access via caller's rights — not just dashboards. |
+| **3 — Agent** | A Cortex Agent embedded in your app can both analyze data and execute actions. The app becomes agentic infrastructure. |
 
-### Builder Takeaways
+### The Development Loop
 
-1. **Snowflake App Runtime removes all infrastructure friction** — no Docker, no CI/CD, no container registry. Describe what you want, deploy with `snow app deploy`.
-2. **Snowflake data access requires zero credentials** — OAuth tokens are injected automatically at runtime. No connection strings to manage.
-3. **Live URLs are stable across redeploys** — the endpoint upgrades in place via `CREATE OR ALTER APPLICATION SERVICE`. No DNS changes for your users.
-4. **Local development mirrors deployed behavior** — test with `npm run dev` before deploying. The same code works in both environments.
+Every iteration followed the same pattern:
+
+1. **Describe** what you want in an IDD-structured prompt
+2. **Cortex Code** scaffolds or modifies the app
+3. **Deploy** with `snow app deploy` — stable URL, zero downtime
+4. **Verify** in the browser
+5. **Iterate** with follow-up prompts
 
 ### Related Resources
 
@@ -312,10 +575,14 @@ You built and deployed a full-stack web application on Snowflake in under 15 min
 - [Getting started with Snowflake App Runtime](https://docs.snowflake.com/en/developer-guide/snowflake-app-runtime/getting-started)
 - [app.yml manifest reference](https://docs.snowflake.com/en/developer-guide/snowflake-app-runtime/app-yml)
 - [Query Snowflake from your app](https://docs.snowflake.com/en/developer-guide/snowflake-app-runtime/query-snowflake)
-- [Deploy targets](https://docs.snowflake.com/en/developer-guide/snowflake-app-runtime/deploy-targets)
-- [Migrate from snowflake.yml to app.yml](https://docs.snowflake.com/en/developer-guide/snowflake-app-runtime/migrate-to-app-yml)
 - [Developing secure runtime apps](https://docs.snowflake.com/en/developer-guide/snowflake-app-runtime/secure-development)
-- [Account administrator setup](https://docs.snowflake.com/en/developer-guide/snowflake-app-runtime/account-admin-setup)
+- [Access control for Snowflake App Runtime](https://docs.snowflake.com/en/developer-guide/snowflake-app-runtime/access-control)
+- [Cortex Agents](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents)
+- [Cortex Agents Run API](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents-run)
+- [Snowflake-managed MCP server](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents-mcp)
+- [Deploy targets](https://docs.snowflake.com/en/developer-guide/snowflake-app-runtime/deploy-targets)
+- [Scale and suspend](https://docs.snowflake.com/en/developer-guide/snowflake-app-runtime/scale-and-suspend)
 - [Cortex Code Desktop](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code)
 - [Snowflake CLI command reference](https://docs.snowflake.com/en/developer-guide/snowflake-cli/command-reference/overview)
 - [TPC-DS sample data](https://docs.snowflake.com/en/user-guide/sample-data-tpcds)
+- [Intent-Driven Development (IDD)](https://blogs.kameshs.dev)
