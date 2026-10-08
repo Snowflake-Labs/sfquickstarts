@@ -101,33 +101,27 @@ Test the connection:
 snow connection test --connection quickstart
 ```
 
-### Run RBAC Setup
+### Run Infrastructure Setup
 
-The `scripts/grants.sql` file creates a dedicated role for this quickstart. Open it, replace `<your_user>` with your Snowflake username, then run:
-
-```bash
-snow sql -f scripts/grants.sql --connection quickstart
-```
-
-This creates `SFQUICKSTART_CHURNGUARD_ROLE` with grants for app deployment, warehouse access, sample data, and Cortex AI functions.
-
-### Create the Database
+The `scripts/setup.sql` script creates the quickstart database and ensures TPC-DS sample data is available:
 
 ```bash
 snow sql -f scripts/setup.sql --connection quickstart
 ```
 
-This creates the `SFQUICKSTART_CHURNGUARD` database where all quickstart objects will live.
+This creates the `SFQUICKSTART_CHURNGUARD` database and verifies `SNOWFLAKE_SAMPLE_DATA` is accessible. If TPC-DS data is not in your account, the script creates it from the Snowflake share. You can also get it from [Snowflake Marketplace](https://docs.snowflake.com/en/user-guide/sample-data-tpcds#getting-tpc-ds-data-from-snowflake-marketplace) by searching for "TPC-DS" and clicking **Get**.
 
-### Set Up Sample Data
+The verification query should return approximately 65 million rows.
 
-TPC-DS sample data ships with most Snowflake accounts. Verify it is accessible:
+### Run RBAC Setup
 
-```sql
-SELECT COUNT(*) FROM SNOWFLAKE_SAMPLE_DATA.TPCDS_SF10TCL.CUSTOMER;
+The `scripts/grants.sql` file creates a dedicated role and grants access to the objects created by setup.sql. Open it, replace `<your_user>` with your Snowflake username, then run:
+
+```bash
+snow sql -f scripts/grants.sql --connection quickstart
 ```
 
-You should see approximately 65 million rows. If `SNOWFLAKE_SAMPLE_DATA` does not exist, see [TPC-DS sample data](https://docs.snowflake.com/en/user-guide/sample-data-tpcds).
+This creates `SFQUICKSTART_CHURNGUARD_ROLE` with ownership of the quickstart database, grants for app deployment, warehouse access, sample data, and Cortex AI functions.
 
 ### Prepare Your Working Directory
 
