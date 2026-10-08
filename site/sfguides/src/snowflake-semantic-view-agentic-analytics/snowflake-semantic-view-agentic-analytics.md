@@ -43,9 +43,9 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 Run the SQL in this guide in **Projects > Workspaces > SQL file**, in section order. Use a fresh, non-production lab: the original setup below replaces named resources and changes user defaults. Review those statements before execution and do not run them against resources used by others.
 
-The [companion folder](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/tree/main/snowflake-semantic-view-agentic-analytics) also provides a separate scripted path: [01_setup.sql](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/snowflake-semantic-view-agentic-analytics/sql/01_setup.sql) loads the public data, [02_semantic_views.sql](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/snowflake-semantic-view-agentic-analytics/sql/02_semantic_views.sql) creates three compact baseline views, and [03_hr_baseline.sql](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/snowflake-semantic-view-agentic-analytics/sql/03_hr_baseline.sql) supplies an HR baseline instead of Autopilot. [04_semantic_query.sql](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/snowflake-semantic-view-agentic-analytics/sql/04_semantic_query.sql) queries the companion marketing view. These are an alternative to the corresponding inline setup, view and query blocks below, not duplicate steps; their semantic definitions differ. Choose one path and do not mix their view definitions or queries.
+The [companion folder](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/tree/main/snowflake-semantic-view-agentic-analytics) contains copies of the SQL below, with the same definitions and queries: [01_setup.sql](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/snowflake-semantic-view-agentic-analytics/sql/01_setup.sql) loads the public data and [02_semantic_views.sql](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/snowflake-semantic-view-agentic-analytics/sql/02_semantic_views.sql) creates the three semantic views. Run [04_semantic_query.sql](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/snowflake-semantic-view-agentic-analytics/sql/04_semantic_query.sql) at **Query Semantic Views**. Then create HR through Autopilot using the five reference queries in [03_hr_verified_queries.sql](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/snowflake-semantic-view-agentic-analytics/sql/03_hr_verified_queries.sql). That file does not create a replacement HR model. Use each file or its matching inline block, not both. Follow the section order rather than filename numbering: `01`, `02`, `04`, then the HR Autopilot step with `03`.
 
-For either path, finish the data and four views first. Next, complete or skip the two **Optional** enrichment sections, run the separate Streamlit app, and then create and test the agent. On the companion path, [05_agent.sql](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/snowflake-semantic-view-agentic-analytics/sql/05_agent.sql) replaces the inline agent setup. Run the optional notebook before cleanup; it is not required by the app or agent. The setup loads the sample data directly, so no manual CSV download is needed.
+Finish the data and four views first. Next, complete or skip the two **Optional** enrichment sections, run the separate Streamlit app, and then create and test the agent. [05_agent.sql](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/snowflake-semantic-view-agentic-analytics/sql/05_agent.sql) contains the same agent setup as the inline section. Run the optional notebook before cleanup; it is not required by the app or agent. The setup loads the sample data directly, so no manual CSV download is needed.
 
 This creates a comprehensive data warehouse supporting cross-functional analytics across Sales, Marketing, Finance, and HR domains.
 
@@ -904,7 +904,6 @@ SELECT
     -- Job dimensions
     j.JOB_KEY,
     j.JOB_TITLE,
-    j.JOB_LEVEL,
     -- Location dimensions
     l.LOCATION_KEY,
     l.LOCATION_NAME,
@@ -933,7 +932,7 @@ JOIN SV_VHOL_DB.VHOL_SCHEMA.LOCATION_DIM l
 GROUP BY 
     e.EMPLOYEE_KEY, e.EMPLOYEE_NAME, e.GENDER, e.HIRE_DATE,
     d.DEPARTMENT_KEY, d.DEPARTMENT_NAME,
-    j.JOB_KEY, j.JOB_TITLE, j.JOB_LEVEL,
+    j.JOB_KEY, j.JOB_TITLE,
     l.LOCATION_KEY, l.LOCATION_NAME,
     f.HR_FACT_ID, f.DATE, f.SALARY, f.ATTRITION_FLAG
 ORDER BY f.DATE DESC, f.SALARY DESC;
@@ -981,7 +980,6 @@ Provide Job and Location Analytics over time, with salary metrics
 SELECT 
     j.JOB_KEY,
     j.JOB_TITLE,
-    j.JOB_LEVEL,
     l.LOCATION_KEY,
     l.LOCATION_NAME,
     EXTRACT(YEAR FROM f.DATE) as RECORD_YEAR,
@@ -1007,7 +1005,7 @@ JOIN SV_VHOL_DB.VHOL_SCHEMA.LOCATION_DIM l
     ON f.LOCATION_KEY = l.LOCATION_KEY
 JOIN SV_VHOL_DB.VHOL_SCHEMA.EMPLOYEE_DIM e 
     ON f.EMPLOYEE_KEY = e.EMPLOYEE_KEY
-GROUP BY j.JOB_KEY, j.JOB_TITLE, j.JOB_LEVEL, l.LOCATION_KEY, l.LOCATION_NAME, EXTRACT(YEAR FROM f.DATE)
+GROUP BY j.JOB_KEY, j.JOB_TITLE, l.LOCATION_KEY, l.LOCATION_NAME, EXTRACT(YEAR FROM f.DATE)
 ORDER BY j.JOB_TITLE, l.LOCATION_NAME, RECORD_YEAR;
 ```
 
@@ -1190,14 +1188,13 @@ LIMIT 10;
 -- VHOL Seed Query
 SELECT 
     j.JOB_TITLE,
-    j.JOB_LEVEL,
     COUNT(DISTINCT f.EMPLOYEE_KEY) as employee_count,
     AVG(f.SALARY) as avg_salary
 FROM HR_EMPLOYEE_FACT f
 JOIN JOB_DIM j 
     ON f.JOB_KEY = j.JOB_KEY
-GROUP BY j.JOB_TITLE, j.JOB_LEVEL
-ORDER BY j.JOB_LEVEL, employee_count DESC;
+GROUP BY j.JOB_TITLE
+ORDER BY employee_count DESC;
 
 -- VHOL Seed Query
 SELECT 
@@ -1282,7 +1279,6 @@ ORDER BY p50_salary DESC;
 
 -- VHOL Seed Query
 SELECT 
-    j.JOB_LEVEL,
     j.JOB_TITLE,
     COUNT(*) as total_records,
     SUM(f.ATTRITION_FLAG) as attrition_count,
@@ -1291,8 +1287,7 @@ SELECT
 FROM HR_EMPLOYEE_FACT f
 JOIN JOB_DIM j 
     ON f.JOB_KEY = j.JOB_KEY
-WHERE j.JOB_LEVEL IS NOT NULL
-GROUP BY j.JOB_LEVEL, j.JOB_TITLE
+GROUP BY j.JOB_TITLE
 ORDER BY attrition_rate_pct DESC;
 
 -- VHOL Seed Query
@@ -1935,7 +1930,7 @@ Run this section in a separate **Streamlit in Snowflake app in Workspaces**, not
 
 The standalone app replaces the two notebook-embedded Streamlit examples. Its connection, semantic metadata discovery and Analyst authentication are handled in the app file. Do not paste that file into the enrichment notebook. If you deploy it, use `SV_VHOL_DB.VHOL_SCHEMA` and keep access private while it runs as the lab role.
 
-The screenshots show the companion HR baseline from [sql/03_hr_baseline.sql](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/snowflake-semantic-view-agentic-analytics/sql/03_hr_baseline.sql). Autopilot-generated metric names may differ; select the corresponding salary metric and department dimension. Do not run the baseline script over an existing HR view. In the captured example, the metric is `"WORKFORCE"."AVERAGE_SALARY"`, the grouping is `"DEPARTMENTS"."DEPARTMENT_NAME"`, and **Maximum groups** is `10`.
+The screenshots were captured with an earlier test HR definition, not the Autopilot-generated definition you create here. Metric names and results may differ; select the corresponding salary metric and department dimension from your own view. In the captured example, the metric is `"WORKFORCE"."AVERAGE_SALARY"`, the grouping is `"DEPARTMENTS"."DEPARTMENT_NAME"`, and **Maximum groups** is `10`. The app discovers the available definitions rather than requiring those exact names.
 
 ![Explore metrics configured for average observed salary by department, limited to ten groups](assets/semantic-explore-inputs.png)
 
