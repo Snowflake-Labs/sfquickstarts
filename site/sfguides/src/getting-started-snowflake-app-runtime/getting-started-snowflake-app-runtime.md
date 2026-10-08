@@ -123,6 +123,24 @@ snow sql -f scripts/grants.sql --connection quickstart
 
 This creates `SFQUICKSTART_CHURNGUARD_ROLE` with ownership of the quickstart database, grants for app deployment, warehouse access, sample data, and Cortex AI functions.
 
+### Run Data Setup
+
+The TPC-DS 10 TB dataset is too large to query interactively from a dashboard. The `scripts/setup-data.sql` script samples the data once and materializes two small tables — `CHURN_METRICS` (~30 K customer rows) and `CHURN_TRENDS` (monthly aggregates) — inside the quickstart database. Dashboard queries then hit these pre-computed tables and return in under a second.
+
+```bash
+snow sql -f scripts/setup-data.sql --connection quickstart
+```
+
+> **Note:** This script uses `TABLESAMPLE SYSTEM` (block-level sampling) to avoid full table scans on the 29 billion-row fact tables. The CTAS statements take 1–3 minutes on a Medium warehouse.
+
+Verify the tables were created:
+
+```bash
+snow sql -q "SELECT 'CHURN_METRICS' AS tbl, COUNT(*) AS rows FROM SFQUICKSTART_CHURNGUARD.PUBLIC.CHURN_METRICS UNION ALL SELECT 'CHURN_TRENDS', COUNT(*) FROM SFQUICKSTART_CHURNGUARD.PUBLIC.CHURN_TRENDS" --connection quickstart --role SFQUICKSTART_CHURNGUARD_ROLE
+```
+
+You should see approximately 29 000 rows in `CHURN_METRICS` and 7–12 rows in `CHURN_TRENDS`.
+
 ### Prepare Your Working Directory
 
 Checkout the iteration 1 branch:
@@ -159,8 +177,8 @@ Requirements:
 - Segment chart: churn risk distribution by credit rating (High/Medium/Low)
 - Trend chart: active customers vs churn indicator over time
 - Detailed segment table with risk badges per credit rating
-- Use SNOWFLAKE_SAMPLE_DATA.TPCDS_SF10TCL tables
-  (CUSTOMER, CUSTOMER_DEMOGRAPHICS, STORE_SALES, STORE_RETURNS)
+- Query the pre-computed tables in SFQUICKSTART_CHURNGUARD.PUBLIC:
+  CHURN_METRICS (customer-level data) and CHURN_TRENDS (monthly aggregates)
 
 UI:
 - Modern card-based layout with generous spacing and subtle shadows
@@ -170,7 +188,8 @@ UI:
 - Data-dense but not cluttered -- prioritize readability
 
 Constraints:
-- Use SAMPLE clauses on large fact tables for demo-friendly performance
+- Query only the local CHURN_METRICS and CHURN_TRENDS tables
+  (do NOT query SNOWFLAKE_SAMPLE_DATA directly -- the fact tables are too large)
 
 Output:
 - Deployed interactive dashboard at the Application Service URL
@@ -185,29 +204,25 @@ Output:
 
 Since the prompt includes deployment intent (via `AGENTS.md` configuration), Cortex Code works through the full lifecycle automatically:
 
-**1. Data discovery**
-
-Cortex Code queries `INFORMATION_SCHEMA.TABLES` to find the TPC-DS tables and their row counts. It inspects key table schemas (`CUSTOMER`, `CUSTOMER_DEMOGRAPHICS`, `STORE_SALES`, `STORE_RETURNS`) and decides on a query strategy — using `SAMPLE` clauses on the large fact tables for fast response times.
-
-**2. Project scaffold**
+**1. Project scaffold**
 
 Cortex Code copies the Next.js runtime app starter template into your working directory and runs `npm install`.
 
-**3. Manifest and implementation**
+**2. Manifest and implementation**
 
 Cortex Code generates the `app.yml` deployment manifest via `snow app setup`, then writes the full application:
 
-- **API routes** — optimized SQL queries for KPIs, segment breakdowns, and trend data
+- **API routes** — simple aggregate queries against the pre-computed `CHURN_METRICS` and `CHURN_TRENDS` tables
 - **React frontend** — KPI cards, segment chart, trend chart, and segment table with risk badges
 - **Styling** — professional card-based layout per the [UI] specifications
 
-![Generated project structure](assets/iter1_project_structure.png)
+![Generated project structure](assets/project_structure.png)
 
-**4. Deploy**
+**3. Deploy**
 
 Cortex Code runs `snow app deploy` automatically, monitors the build and promotion phases, and provides the live App URL when the service reaches **RUNNING** status.
 
-![Deploy output with App URL](assets/iter1_deploy_url.png)
+![Deploy output with App URL](assets/app_deploy_url.png)
 
 ### Verify
 
@@ -215,21 +230,9 @@ Open the App URL in your browser to see your ChurnGuard Explorer dashboard.
 
 ![ChurnGuard Explorer dashboard](assets/iter1_dashboard.png)
 
-> **Note on sample data:** The dashboard queries TPC-DS data using `SAMPLE` clauses for performance. Exact numbers will vary between runs because each sample is random.
+> **Note on data:** The dashboard queries the pre-computed `CHURN_METRICS` and `CHURN_TRENDS` tables created by `setup-data.sql`. Because those tables use sampled TPC-DS data, exact numbers may vary if you re-run the setup script.
 
 The endpoint URL does not change when you redeploy. The running service upgrades in place — no DNS changes, no downtime.
-
-### Iterate: Add a Download Feature
-
-Runtime apps support iterative development through follow-up prompts. Paste this into Cortex Code:
-
-```text
-/snowflake-apps Add a Download Report button that exports the currently displayed churn data as a CSV file.
-```
-
-After deployment, verify the new button appears and downloads a CSV.
-
-![Dashboard with Download button](assets/iter1_download.png)
 
 ### Test Locally (Optional)
 
