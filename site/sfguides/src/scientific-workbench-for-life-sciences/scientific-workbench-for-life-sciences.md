@@ -292,7 +292,7 @@ SHOW ROLES LIKE 'WORKBENCH_%';
 SHOW EXTERNAL ACCESS INTEGRATIONS LIKE 'NVIDIA_%';
 ```
 
-## Deploy NVIDIA NIM Containers on SPCS
+## Deploy NIMs on SPCS
 
 This optional step deploys NVIDIA BioNeMo NIM containers locally on Snowpark Container Services (SPCS) GPU compute pools. By default, all NIM tools call the NVIDIA hosted API — SPCS deployment provides an alternative for customers who need air-gapped operation or want to avoid per-call API costs.
 
@@ -742,10 +742,10 @@ npm install
 Create a `.env.local` file (or rely on `~/.snowflake/config.toml` default connection):
 
 ```bash
-# Option 1: Password auth
+# Option 1: Key-pair auth (recommended)
 SNOWFLAKE_ACCOUNT=<account>
 SNOWFLAKE_USER=<user>
-SNOWFLAKE_PASSWORD=<password>
+SNOWFLAKE_PRIVATE_KEY_PATH=~/.snowflake/rsa_key.p8
 SNOWFLAKE_WAREHOUSE=WORKBENCH_XS
 SNOWFLAKE_ROLE=WORKBENCH_ADMIN
 
@@ -1052,8 +1052,8 @@ Congratulations! You've deployed a complete Scientific Workbench for life scienc
 
 ### Related Resources
 
-- [Snowflake Cortex Agents Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agent)
-- [Snowflake App Runtime Documentation](https://docs.snowflake.com/en/developer-guide/snowflake-apps)
+- [Snowflake Cortex Agents Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents)
+- [Snowflake App Runtime Documentation](https://docs.snowflake.com/en/developer-guide/snowflake-app-runtime/about-snowflake-app-runtime)
 - [NVIDIA BioNeMo Platform](https://www.nvidia.com/en-us/clara/bionemo/)
 - [NVIDIA NIM API Catalog](https://build.nvidia.com/explore/healthcare)
 - [Cortex Analyst (Semantic Views)](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst)
