@@ -2,7 +2,7 @@
 # the repo. Unless a later match takes precedence,
 # these users will be requested for
 # review when someone opens a pull request.
-* @guide-maintainers
+* @Snowflake-Labs/guide-maintainers
 
 
 # Content used in Northstar Workshops -- extra checks for in flight content
