@@ -57,10 +57,19 @@ This structure tells Cortex Code *what* you want without dictating *how* to impl
 
 ### What You'll Need
 
-- A [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) with Snowflake App Runtime enabled and **ACCOUNTADMIN** privileges. Note: Snowflake App Runtime is not available on [trial accounts](https://docs.snowflake.com/en/user-guide/admin-trial-account).
+- A [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) with Snowflake App Runtime enabled. Note: Snowflake App Runtime is not available on [trial accounts](https://docs.snowflake.com/en/user-guide/admin-trial-account).
+- **ACCOUNTADMIN** access for the initial setup scripts. The setup requires privileges that only ACCOUNTADMIN (or equivalent) can grant:
+  - Create a custom role and database
+  - Grant `BIND SERVICE ENDPOINT` (expose the app's URL)
+  - Grant `CREATE EXTERNAL ACCESS INTEGRATION` and `CREATE NETWORK POLICY` (Postgres connectivity in iteration 2)
+  - Grant the `snowflake.postgres_mirror_admin` application role (data mirroring in iteration 2)
+  - Grant the `SNOWFLAKE.CORTEX_USER` database role (Cortex Agent in iteration 3)
+
+  After setup, all day-to-day work uses the dedicated `SFQUICKSTART_CHURNGUARD_ROLE`.
 - [Cortex Code Desktop](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code) installed and connected to your Snowflake account
 - [Snowflake CLI](https://docs.snowflake.com/developer-guide/snowflake-cli/installation/installation) **v3.26.0** or later
 - [Node.js](https://nodejs.org/) **20+** and **npm**
+- [psql](https://www.postgresql.org/docs/current/app-psql.html) (PostgreSQL client) — needed in iteration 2 to run schema scripts against Snowflake Postgres. Install via `brew install libpq` (macOS) or your system package manager.
 
 <!-- ------------------------ -->
 ## Environment Setup
@@ -140,10 +149,10 @@ snow sql -f scripts/setup-data.sql --connection quickstart
 Verify the tables were created:
 
 ```bash
-snow sql -q "SELECT 'CHURN_METRICS' AS tbl, COUNT(*) AS rows FROM SFQUICKSTART_CHURNGUARD.PUBLIC.CHURN_METRICS UNION ALL SELECT 'CHURN_TRENDS', COUNT(*) FROM SFQUICKSTART_CHURNGUARD.PUBLIC.CHURN_TRENDS" --connection quickstart --role SFQUICKSTART_CHURNGUARD_ROLE
+snow sql -q "SELECT 'CHURN_METRICS' AS tbl, COUNT(*) AS row_count FROM SFQUICKSTART_CHURNGUARD.PUBLIC.CHURN_METRICS UNION ALL SELECT 'CHURN_TRENDS', COUNT(*) FROM SFQUICKSTART_CHURNGUARD.PUBLIC.CHURN_TRENDS" --connection quickstart --role SFQUICKSTART_CHURNGUARD_ROLE
 ```
 
-You should see approximately 29 000 rows in `CHURN_METRICS` and 7–12 rows in `CHURN_TRENDS`.
+You should see approximately 30000 rows in `CHURN_METRICS` and 7-12 rows in `CHURN_TRENDS`.
 
 ### Prepare Your Working Directory
 
@@ -164,19 +173,21 @@ Open the repo directory in Cortex Code Desktop. Confirm it is connected to your 
 > **How your app carries over:** Cortex Code generates the app in `churnguard/`. Every iteration branch ignores that folder in `.gitignore` and contains only prompts and scripts. When you check out the next iteration branch, git leaves `churnguard/` untouched and the new prompt builds on your existing app. To version your app, create your own branch and remove `churnguard/` from `.gitignore`.
 
 <!-- ------------------------ -->
-## Iteration 1: Build ChurnGuard Explorer
+## Iteration 1: Build the ChurnGuard Data Explorer
 
-This is the core of the quickstart. You will paste a single IDD-structured prompt into Cortex Code Desktop and watch it build the entire application.
+Snowflake App Runtime is a natural fit for advanced data exploration — interactive views over governed data that go beyond what a static report can do. In this iteration you will paste a single IDD-structured prompt into Cortex Code Desktop and watch it build a complete churn-risk explorer with drill-down and pivot capabilities.
 
 ### The Prompt
 
-Open [`prompts/01-build-explorer.md`](https://github.com/Snowflake-Labs/sfguide-build-full-stack-apps-with-snowflake-app-runtime/blob/iteration-1/data-exploration/prompts/01-build-explorer.md) from the repo and paste the prompt into Cortex Code Desktop chat. It describes the dashboard goal, KPI cards, charts, customer details table, and UI preferences — all in IDD structure.
+Open [`prompts/01-build-explorer.md`](https://github.com/Snowflake-Labs/sfguide-build-full-stack-apps-with-snowflake-app-runtime/blob/iteration-1/data-exploration/prompts/01-build-explorer.md) from the repo and paste the prompt into Cortex Code Desktop chat. It describes the dashboard goal, KPI cards, charts, customer details table with pagination, drill-down from charts to the detail table, a pivot selector to re-group by different dimensions, and UI preferences — all in IDD structure.
 
 ### What Happens Next
 
 > **NOTE:**
 >
 > The full build and deploy process typically takes a few minutes. Follow along in the chat to see each phase.
+>
+> Because Cortex Code generates code with an LLM, the exact UI — component layout, chart styles, color choices, and naming — will vary between runs. The screenshots in this guide are illustrative; your app will have the same functionality but may not look identical.
 
 Since the prompt includes deployment intent (via `AGENTS.md` configuration), Cortex Code works through the full lifecycle automatically:
 
@@ -189,7 +200,7 @@ Cortex Code copies the Next.js runtime app starter template into your working di
 Cortex Code generates the `app.yml` deployment manifest via `snow app setup`, then writes the full application:
 
 - **API routes** — simple aggregate queries against the pre-computed `CHURN_METRICS` and `CHURN_TRENDS` tables
-- **React frontend** — KPI cards, segment chart, trend chart, and segment table with risk badges
+- **React frontend** — KPI cards, segment chart with drill-down filtering, trend chart, dimension pivot selector, and customer table with pagination and risk badges
 - **Styling** — professional card-based layout per the [UI] specifications
 
 ![Generated project structure](assets/project_structure.png)
@@ -275,6 +286,14 @@ snow sql -f scripts/grants.sql --connection quickstart
 
 > **Note:** The Postgres instance takes ~3-5 minutes to provision. The prompt handles waiting and verification.
 
+> **Local psql access:** The network policy created by the setup prompt only allows SPCS egress IPs by default. If you want to run `psql` against the Postgres instance from your local machine (e.g., to inspect data), you need to add your public IP to the policy. The prompt may do this automatically, or you can add it manually:
+>
+> ```sql
+> ALTER NETWORK POLICY CHURNGUARD_PG_POLICY ADD ALLOWED_IP_LIST = ('<your-public-ip>/32');
+> ```
+>
+> Remove your IP when local access is no longer needed.
+
 **Step 3 — Create DT, notifications table, and alert:**
 
 ```bash
@@ -325,7 +344,18 @@ The `app.yml` gains `secrets:` (PG credentials and host) and `external_access_in
 
 The app redeploys to the same URL. The upgrade is in-place — no downtime.
 
-### Key Concepts
+### Understanding the Updated app.yml
+
+Open `app.yml` again and compare it with the iteration 1 version. Cortex Code added two blocks:
+
+![Updated app.yml with secrets and EAI highlighted](assets/iter2_app_yml.png)
+
+| New field | Purpose |
+|-----------|---------|
+| **secrets** | Mounts Snowflake SECRET objects as environment variables inside the running container. Each entry maps a name (used in code, e.g. `PG_CREDENTIALS`) to a fully-qualified secret object. The app reads these at runtime — credentials never appear in source code. |
+| **external_access_integrations** | Lists EAIs that grant the app permission to make outbound network calls. `CHURNGUARD_EAI` binds the Postgres network rule (host + port) with the secrets above, so the app can connect to Snowflake Postgres. |
+
+Everything else in the manifest — `install`, `build`, `run`, `ignore` — is unchanged from iteration 1. The manifest is declarative: each `snow app deploy` applies the full file, so adding these two blocks is all it takes to give the app network access and credentials.
 
 > **Snowflake Postgres**
 >
