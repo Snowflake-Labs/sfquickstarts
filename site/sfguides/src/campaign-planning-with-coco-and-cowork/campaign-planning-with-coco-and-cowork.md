@@ -57,10 +57,6 @@ To complete this lab, you'll need a Snowflake account. A free Snowflake trial ac
 
 6. Complete the rest of the form and click **Get started**.
 
-> **Why AWS?** This lab stores its Iceberg tables in **Snowflake-managed storage**, which is available on AWS and Azure. Stick with the pre-selected AWS region.
-
-![trial](./assets/trial.png)
-
 <!-- ------------------------ -->
 ## Understand the Scenario
 Duration: 2
@@ -103,6 +99,8 @@ Make sure you are signed into your trial account. Confirm your active role is **
 
 2. Click the **+** icon next to **Workspaces/Databases** → **Create new Git workspace**.
 
+![gitworkspace](./assets/gitworkspace.png)
+
 3. Fill out the modal:
    - **Repository URL:** `https://github.com/Snowflake-Labs/expedition-2026-day-2-hol`
    - **Workspace name:** anything you like (e.g., `campaign-planning`)
@@ -111,9 +109,10 @@ Make sure you are signed into your trial account. Confirm your active role is **
      - **Allowed prefixes:** `https://github.com/Snowflake-Labs`
    - Check **Public repository**.
 
-4. Click **Create**.
+![gitrepository](./assets/gitrepository.png)
+![apiintegration](./assets/apiintegration.png)
 
-![gitworkspace](./assets/gitworkspace.png)
+4. Click **Create**.
 
 > **What just happened?** The Workspace modal created a Git API integration for you, a one-time step that tells Snowflake which GitHub organization is an allowed source for Git-backed Workspaces.
 
@@ -124,6 +123,8 @@ The Workspace opens with the repo's files visible in the file explorer on the le
 1. In the Workspace file explorer, open **`lab.ipynb`**.
 
 2. Click **Connect** next to the Run button and select **Create and connect**. Wait for the status bar at the bottom of the notebook to show **Connected** before proceeding.
+
+![apiintegration](./assets/apiintegration.png)
 
 3. Set the notebook's active **role** and **warehouse** using the **role & warehouse picker** at the top of the Notebooks editor:
    - **Role:** **ACCOUNTADMIN**
@@ -137,6 +138,8 @@ The Workspace opens with the repo's files visible in the file explorer on the le
 
 Open the **CoCo** chat panel from the Workspace toolbar. You'll send it prompts throughout the lab.
 
+![coco](./assets/coco.png)
+
 > **Key principle:** Use CoCo to generate the hard parts and understand why. The workflow is: describe → generate → compare → run. After CoCo generates SQL, compare it against the **Expected output** shown in the notebook. If they match, click **Allow** to run it. Optionally, copy the SQL into the notebook cell for future reference.
 
 ### Run the setup cell
@@ -148,6 +151,8 @@ The first SQL cell in the notebook (**`setup`**) creates the `MERIDIAN_STAY` dat
 - `ANALYTICS`: the semantic view and agent
 
 It also grants the Cortex Agent privileges your role needs later. Run the **`setup`** cell before continuing. You should see *"Statement executed successfully."*
+
+![setupcell](./assets/setupcell.png)
 
 <!-- ------------------------ -->
 ## Land Raw Exports
@@ -181,11 +186,11 @@ Send this prompt to CoCo. Compare the output against the expected output in the 
 
 > *"Load the three CSV files in the stage @MERIDIAN_STAY.RAW.CAMPAIGN_EXPORTS into their matching Iceberg tables in MERIDIAN_STAY.RAW: paid_media_export.csv into PAID_MEDIA_EXPORT, email_sms_export.csv into EMAIL_SMS_EXPORT, and crm_campaigns_export.csv into CRM_CAMPAIGNS_EXPORT. Use the file format MERIDIAN_STAY.RAW.CSV_FF and load the columns in file order."*
 
+![firstprompt](./assets/firstprompt.png)
+
 You should see **16**, **10**, and **7** rows loaded. If CoCo's first attempt fails and it retries with a corrected statement, that's normal: it reads the error and fixes its own SQL.
 
 > **Seeing `MATCH_BY_COLUMN_NAME = NONE` at the end of each statement?** That's fine. It tells Snowflake to load columns by position, which is the default and exactly what *"in file order"* asks for.
-
-![cococopy](./assets/cococopy.png)
 
 ### See the mess
 
@@ -197,8 +202,6 @@ Run the **`peek_raw`** cell. It lines up all 33 raw rows from the three exports 
 - Three date formats: `2026-11-02`, `11/09/2026`, and `Nov 02, 2026`.
 - Budgets like `"$65,000"` are text, not numbers.
 - *Veterans Day Weekend Blitz* has a status of **Cancelled**, but it's still in the list.
-
-![peekraw](./assets/peekraw.png)
 
 You can't find collisions until all three systems speak the same language, and that's next.
 
@@ -225,6 +228,8 @@ Before building anything, ask CoCo to compare the three sources. It queries the 
 > - *Audience: Leisure Travelers, Business Travelers, Families, Loyalty Members, Meeting Planners, Wellness Seekers, All Guests*
 >
 > *Also point out how dates and budgets are formatted differently, and any campaigns whose status means they shouldn't be on the plan."*
+
+![secondprompt](./assets/secondprompt.png)
 
 CoCo should map, for example, `fb_ads`, `paid_social`, and `Social Media` to **Paid Social**, and `NA`, `US & Canada`, and `N. America` to **North America**. It should also call out the three date formats, the text budgets, and the cancelled *Veterans Day Weekend Blitz*. It may mention the **Draft** *Tokyo Business District Launch* too; drafts are still planned, so it stays. The full expected mapping is in the notebook.
 
@@ -309,7 +314,11 @@ A table of collisions is useful. A view the whole team can scan in five seconds 
 
 1. In the Workspace file explorer, open **`campaign_timeline/streamlit_app.py`**.
 
+![streamlitapp](./assets/streamlitapp.png)
+
 2. If a banner says *"This file looks like a Streamlit app, but is missing configuration"*, click **Convert to streamlit app**. The Workspace adds the configuration files the app needs.
+
+![convert](./assets/convert.png)
 
 3. Click **Run**. The app runs privately for you on a container runtime and reads straight from `MERIDIAN_STAY.CURATED.CAMPAIGNS`.
 
@@ -382,6 +391,8 @@ A Semantic View describes your data in **business terms**: which columns are dim
    - **Time Dimensions:** `START_DATE` and `END_DATE`
    - **Synonyms:** `REGION` (*geography, market, territory*), `AUDIENCE` (*segment, target group*), and `CHANNEL` (*medium, platform*)
 
+![campaignid](./assets/campaignid.png)
+
    **`CAMPAIGN_COLLISIONS`**
    - **Facts:** `COMBINED_BUDGET_USD` and `OVERLAP_DAYS`
    - **Time Dimensions:** `OVERLAP_START` and `OVERLAP_END`
@@ -414,6 +425,8 @@ A Semantic View describes your data in **business terms**: which columns are dim
 
 4. Click **Create**.
 
+![agentconfig](./assets/agentconfig.png)
+
 5. Click **Configuration** near the top of the agent editor.
 
 6. Under the **General** tab, set:
@@ -423,11 +436,17 @@ A Semantic View describes your data in **business terms**: which columns are dim
      - `Which collisions are happening in November 2026?`
      - `What's launching in APAC in January 2027?`
 
+![general](./assets/general.png)
+
 7. Under the **Instructions** tab, set:
    - **Orchestration instructions:** `Whenever you can answer visually with a chart, always choose to generate a chart even if the user didn't ask for one.`
    - **Response instructions:** `Give concise, accurate answers for marketing planners. Name campaigns explicitly and include dates, budgets, and owner teams when relevant.`
 
+![instructions](./assets/instructions.png)
+
 8. Click **Tools → Add semantic view**.
+
+![addsv](./assets/addsv.png)
 
 9. Configure the tool:
    - **Service database & schema:** `MERIDIAN_STAY.ANALYTICS`
@@ -445,7 +464,11 @@ Since you created the agent through the UI, it's already available in Snowflake 
 
 1. In Snowsight, navigate to **AI & ML → Snowflake CoWork**.
 
+![cowork](./assets/cowork.png)
+
 2. Select **CAMPAIGN_PLANNING_AGENT** from the agent list.
+
+![planningagent](./assets/planningagent.png)
 
 3. Ask:
 
@@ -453,7 +476,7 @@ Since you created the agent through the UI, it's already available in Snowflake 
 
 The agent should list **9 collisions** with a combined budget of **$557,500**.
 
-![cowork](./assets/cowork.png)
+![questionone](./assets/questionone.png)
 
 ### Investigate in CoWork
 
