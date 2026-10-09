@@ -12,7 +12,7 @@ fork repo link: https://github.com/sfc-gh-cnantasenamat/ai-powered-video-publish
 # Build an AI-Powered Video Publishing App on Snowflake
 ## Overview
 
-Creators publishing a video usually have to write a description, mark chapter timestamps, pick SEO keywords, choose a thumbnail, and write captions. VidPrep prepares drafts of these outputs from an uploaded video or audio file using Snowflake Cortex. Review the transcript and generated copy before publishing; transcription and model output can contain errors.
+Creators publishing a video, for example to YouTube, usually have to write a description, mark chapter timestamps, pick SEO keywords, choose a thumbnail, and write captions. VidPrep prepares drafts of these outputs from a video or audio file you upload, using Snowflake Cortex. It does not download videos from YouTube or other sites; process only media you own or have rights to use. Review the transcript and generated copy before publishing; transcription and model output can contain errors.
 
 The core design principle behind VidPrep is that a large language model should never be trusted to emit a timestamp directly, because it can hallucinate one that doesn't correspond to anything said in the video. Instead, the model is only ever asked to point at a position in a real, transcribed word array, and the actual timestamp is looked up in code from that position. This guide walks through that architecture and how to build and deploy the whole app on Snowflake.
 
