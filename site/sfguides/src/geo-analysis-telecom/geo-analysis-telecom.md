@@ -342,7 +342,7 @@ Now that you have a basic understanding of how the `GEOGRAPHY` data type works a
 
 Pretend you are an analyst working for a telecommunication company, and you need to do an analysis around coverage of the United Kingdom by your mobile network. You will start with simple data discovery and then try to answer more complex analytical questions.
 
-Start with running a query that represents your current location. This location has been preselected for the guide and represents the location of the UCL Bentham House in London. Run this query in the Snowlake editor:
+Start with running a query that represents your current location. This location has been preselected for the guide and represents the location of the UCL Bentham House in London. Run this query in the Snowflake editor:
 
 
 ```
