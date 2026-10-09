@@ -161,6 +161,8 @@ Open the repo directory in Cortex Code Desktop. Confirm it is connected to your 
 
 > **Note:** Each iteration builds on the previous. Complete iteration 1 before starting iteration 2.
 
+> **How your app carries over:** Cortex Code generates the app in `churnguard/`. Every iteration branch ignores that folder in `.gitignore` and contains only prompts and scripts. When you check out the next iteration branch, git leaves `churnguard/` untouched and the new prompt builds on your existing app. To version your app, create your own branch and remove `churnguard/` from `.gitignore`.
+
 <!-- ------------------------ -->
 ## Iteration 1: Build ChurnGuard Explorer
 
