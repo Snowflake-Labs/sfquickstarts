@@ -1,4 +1,4 @@
-author: James Cha-Earley
+authors: James Cha-Earley
 id: getting-started-with-cortex-agent-sdk
 language: en
 summary: Build programmatic AI agent workflows using the Snowflake Cortex Agent SDK for Python — from your first agent run to an automated data engineering ops agent.
