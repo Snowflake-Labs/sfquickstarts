@@ -9,7 +9,7 @@ duration: 45
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 fork repo link: <https://github.com/Snowflake-Labs/sfguide-build-full-stack-apps-with-snowflake-app-runtime>
 
-# Get Started with Snowflake App Runtime
+# Build Full-Stack Apps with Snowflake App Runtime
 <!-- ------------------------ -->
 ## Overview
 
