@@ -34,15 +34,7 @@ VidPrep, a Streamlit-in-Snowflake app, with:
 - A **Thumbnails & Clips** tab with real extracted thumbnail frames and verbatim pull quotes
 - A **Captions & FAQ** tab with downloadable `.srt`/`.vtt` caption files and a generated FAQ
 
-![VidPrep Overview tab: chapters resolved from real transcribed word timings, a video preview, and a generated description](assets/02-output-overview.png)
-
-![VidPrep Titles & SEO tab: title suggestions and a SEO checklist](assets/03-output-titles-seo.png)
-
-![VidPrep Thumbnails & Clips tab: real extracted thumbnail frames and verbatim pull quotes with timestamps](assets/04-output-thumbnails-clips.png)
-
-![VidPrep Captions & FAQ tab: downloadable caption files and a generated, timestamp-linked FAQ](assets/05-output-captions-faq.png)
-
-These screenshots show a synthetic demo upload and its generated results. The SEO checklist includes a warning, and generated copy should always be reviewed before publishing.
+Screenshots of each part appear in the sections that build it. They come from one live run on the synthetic sample video in the companion repository, so you can upload the same file and compare your results.
 
 ### Prerequisites
 - Access to a [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)
@@ -164,6 +156,10 @@ def acquire_from_upload(uploaded_file) -> AcquiredMedia:
 
 Uploaded video files double as the preview player's source and the input for thumbnail frame extraction. Audio-only uploads get an audio player instead, and the thumbnail tab reports that no video frames are available.
 
+In the app, this is the Input section: a single file uploader and a **Generate** button. Here the sample video `vidprep_demo.mp4` has been added and is ready to process:
+
+![VidPrep Input section: upload a video or audio file, then click Generate to run AI_TRANSCRIBE and AI_COMPLETE](assets/01-input-upload.png)
+
 ## Transcribe with AI_TRANSCRIBE
 
 `transcribe.py` builds a single transcript timeline for the media. Downstream timestamps are resolved against that timeline, so their accuracy depends on the transcription.
@@ -278,12 +274,21 @@ _DESCRIPTION_SCHEMA = {
 }
 ```
 
+The Overview tab shows the result. For the two-minute sample, the model proposed eight chapters, and each start time (0:00, 0:16, 0:30, and so on) was looked up from the transcript word it pointed at. Each timestamp is a button that seeks the preview player. Below them, the description block combines the generated description, the chapter list, and the keywords, ready to paste into a video platform:
+
+![VidPrep Overview tab: chapters resolved from real transcribed word timings, a video preview, and a generated description](assets/02-output-overview.png)
+
 ## Add Publishing Extras
 
 `enhance.py` layers six more publishing-prep features on top of the core pipeline, following the same "never invent, always resolve" rule:
 
 - **Title suggestions** come from one `AI_COMPLETE` call that asks for 5-8 candidates of 100 characters or fewer.
 - **A SEO checklist** is pure Python (no model call at all), checking description length, keyword usage, call-to-action presence, title length, and chapter count.
+
+On the Titles & SEO tab, the sample produced eight title candidates. The checklist passed four checks and flagged one: none of the 15 keywords appear word for word in the description. That warning is the point of the checklist: it tells you what to fix by hand before publishing.
+
+![VidPrep Titles & SEO tab: title suggestions and a SEO checklist](assets/03-output-titles-seo.png)
+
 - **Thumbnail candidates** are real JPEG frames extracted with `ffmpeg` near each chapter start, using a two-second offset where the media duration permits.
 - **Pull quotes** reuse the same chunked-scan pattern as chapters: the model picks a `start_word_index`/`end_word_index` span, and the quote text is built verbatim from the transcript:
 
@@ -301,14 +306,22 @@ def generate_quotes(media: AcquiredMedia, transcript: Transcript, max_quotes: in
     return quotes
 ```
 
+The Thumbnails & Clips tab shows both. Each thumbnail is a real frame taken two seconds after a chapter start (0:02, 0:18, 0:45, and so on), labelled with that chapter. Each pull quote is copied exactly from the transcript with its real time span, such as "A language model should never invent a timestamp." at 0:59 to 1:01:
+
+![VidPrep Thumbnails & Clips tab: real extracted thumbnail frames and verbatim pull quotes with timestamps](assets/04-output-thumbnails-clips.png)
+
 - **Caption files** (`.srt`/`.vtt`) are built deterministically from the word-level transcript by grouping words into cues, with no model call needed.
 - **An FAQ** phrases each chapter as a question, tied back to that chapter's real `start_seconds` by index, never a model-invented timestamp.
+
+The Captions & FAQ tab has the two caption downloads at the top. Below them, each FAQ entry ends with a "See" link to the chapter it came from, and the copy-paste Timestamps block lists every question at its chapter's start time:
+
+![VidPrep Captions & FAQ tab: downloadable caption files and a generated, timestamp-linked FAQ](assets/05-output-captions-faq.png)
+
+Treat all of this generated copy as a first draft and review it before publishing.
 
 ## Build the UI
 
 `app.py` wraps the Input controls in a bordered container, then, once a result exists in `st.session_state`, renders the Output section as four tabs. The tab set has a `key` and `on_change="rerun"` (available in Streamlit 1.64 and later), so the selected tab survives the rerun that every button click triggers. Without it, clicking an extras button would send the user back to Overview:
-
-![VidPrep Input section: upload a video or audio file, then click Generate to run AI_TRANSCRIBE and AI_COMPLETE](assets/01-input-upload.png)
 
 ```python
 tab_overview, tab_titles_seo, tab_thumbs, tab_captions = st.tabs(
