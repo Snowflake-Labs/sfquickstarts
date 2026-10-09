@@ -37,7 +37,7 @@ This guide walks through five progressive scripts that build from a simple query
 ### What You'll Need
 
 - A Snowflake account with Cortex Code access
-- The `cortex` CLI installed ([Cortex Code documentation](https://docs.snowflake.com/en/developer-guide/cortex-code))
+- The `cortex` CLI installed ([Cortex Code documentation](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code))
 - Python 3.10+
 - A connection configured in `~/.snowflake/connections.toml` (PAT or key-pair auth)
 
@@ -798,6 +798,6 @@ You've learned how to programmatically automate Cortex Code using the Python Age
 
 ### Related resources
 
-- [Cortex Code documentation](https://docs.snowflake.com/en/developer-guide/cortex-code)
+- [Cortex Code documentation](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code)
 - [Cortex Agents overview](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents)
 - [Programmatic access tokens](https://docs.snowflake.com/en/user-guide/programmatic-access-tokens)
