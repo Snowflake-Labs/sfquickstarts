@@ -124,7 +124,7 @@ The Workspace opens with the repo's files visible in the file explorer on the le
 
 2. Click **Connect** next to the Run button and select **Create and connect**. Wait for the status bar at the bottom of the notebook to show **Connected** before proceeding.
 
-![apiintegration](./assets/apiintegration.png)
+![connected](./assets/connected.png)
 
 3. Set the notebook's active **role** and **warehouse** using the **role & warehouse picker** at the top of the Notebooks editor:
    - **Role:** **ACCOUNTADMIN**
@@ -436,7 +436,7 @@ A Semantic View describes your data in **business terms**: which columns are dim
      - `Which collisions are happening in November 2026?`
      - `What's launching in APAC in January 2027?`
 
-![general](./assets/general.png)
+![General](./assets/General.png)
 
 7. Under the **Instructions** tab, set:
    - **Orchestration instructions:** `Whenever you can answer visually with a chart, always choose to generate a chart even if the user didn't ask for one.`
