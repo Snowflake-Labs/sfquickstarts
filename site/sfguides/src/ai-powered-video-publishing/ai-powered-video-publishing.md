@@ -30,19 +30,19 @@ Read the solid arrows as processing order, not unconditional execution: cached r
 ### What You'll Build
 VidPrep, a Streamlit-in-Snowflake app, with:
 - An **Overview** tab with generated chapters (clickable: each timestamp seeks the preview player), a video preview, and a copy-paste description block
-- A **Titles & SEO** tab with title suggestions, a YouTube category pick, an end-screen suggestion, and a free SEO checklist
+- A **Titles & SEO** tab with title suggestions and a free SEO checklist
 - A **Thumbnails & Clips** tab with real extracted thumbnail frames and verbatim pull quotes
 - A **Captions & FAQ** tab with downloadable `.srt`/`.vtt` caption files and a generated FAQ
 
 ![VidPrep Overview tab: chapters resolved from real transcribed word timings, a video preview, and a generated description](assets/02-output-overview.png)
 
-![VidPrep Titles & SEO tab: title suggestions, a YouTube category pick, an end-screen suggestion, and a SEO checklist](assets/03-output-titles-seo.png)
+![VidPrep Titles & SEO tab: title suggestions and a SEO checklist](assets/03-output-titles-seo.png)
 
 ![VidPrep Thumbnails & Clips tab: real extracted thumbnail frames and verbatim pull quotes with timestamps](assets/04-output-thumbnails-clips.png)
 
 ![VidPrep Captions & FAQ tab: downloadable caption files and a generated, timestamp-linked FAQ](assets/05-output-captions-faq.png)
 
-These screenshots show a synthetic demo upload and its generated results. The SEO checklist includes warnings, and generated copy should always be reviewed before publishing.
+These screenshots show a synthetic demo upload and its generated results. The SEO checklist includes a warning, and generated copy should always be reviewed before publishing.
 
 ### Prerequisites
 - Access to a [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)
@@ -280,9 +280,9 @@ _DESCRIPTION_SCHEMA = {
 
 ## Add Publishing Extras
 
-`enhance.py` layers eight more publishing-prep features on top of the core pipeline, following the same "never invent, always resolve" rule:
+`enhance.py` layers six more publishing-prep features on top of the core pipeline, following the same "never invent, always resolve" rule:
 
-- **Titles, category, and an end-screen suggestion** come from one bundled `AI_COMPLETE` call. The category is constrained to YouTube's fixed list of categories and validated against it in code.
+- **Title suggestions** come from one `AI_COMPLETE` call that asks for 5-8 candidates of 100 characters or fewer.
 - **A SEO checklist** is pure Python (no model call at all), checking description length, keyword usage, call-to-action presence, title length, and chapter count.
 - **Thumbnail candidates** are real JPEG frames extracted with `ffmpeg` near each chapter start, using a two-second offset where the media duration permits.
 - **Pull quotes** reuse the same chunked-scan pattern as chapters: the model picks a `start_word_index`/`end_word_index` span, and the quote text is built verbatim from the transcript:
@@ -324,7 +324,7 @@ The three "extras" tabs are lazy: each has its own **Generate** button, and resu
 with tab_titles_seo:
     if st.button("Generate title & SEO suggestions", key="gen_titles_seo"):
         try:
-            with st.spinner("Generating title, category, and end-screen suggestions..."):
+            with st.spinner("Generating title and SEO suggestions..."):
                 extras["titles_seo"] = enhance.generate_titles_seo(media, result, transcript.duration)
         except GenerationError as e:
             st.error(f"Generation failed: {e}")
