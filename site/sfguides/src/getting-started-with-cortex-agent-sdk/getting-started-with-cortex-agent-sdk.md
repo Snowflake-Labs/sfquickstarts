@@ -108,9 +108,12 @@ GRANT USAGE ON DATABASE AGENT_SDK_DEMO_DB TO ROLE AGENT_SDK_DEMO_ROLE;
 GRANT USAGE ON SCHEMA AGENT_SDK_DEMO_DB.QUICKSTART TO ROLE AGENT_SDK_DEMO_ROLE;
 GRANT SELECT ON ALL TABLES IN SCHEMA AGENT_SDK_DEMO_DB.QUICKSTART TO ROLE AGENT_SDK_DEMO_ROLE;
 GRANT INSERT ON ALL TABLES IN SCHEMA AGENT_SDK_DEMO_DB.QUICKSTART TO ROLE AGENT_SDK_DEMO_ROLE;
+GRANT CREATE TABLE ON SCHEMA AGENT_SDK_DEMO_DB.QUICKSTART TO ROLE AGENT_SDK_DEMO_ROLE;
+GRANT CREATE VIEW ON SCHEMA AGENT_SDK_DEMO_DB.QUICKSTART TO ROLE AGENT_SDK_DEMO_ROLE;
+GRANT USAGE ON WAREHOUSE COMPUTE_WH TO ROLE AGENT_SDK_DEMO_ROLE;
 ```
 
-> NOTE: Generate your PAT while using the `AGENT_SDK_DEMO_ROLE` role, or set the role in your connection config. This ensures the agent can only access the demo database.
+> NOTE: Replace `COMPUTE_WH` with your own warehouse name if different. Generate your PAT while using the `AGENT_SDK_DEMO_ROLE` role, or set the role in your connection config. This ensures the agent can only access the demo database.
 
 You're ready to write your first agent script.
 
