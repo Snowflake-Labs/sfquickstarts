@@ -41,6 +41,12 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 ## Setup
 ### Load the Base Data
 
+Run the SQL in this guide in **Projects > Workspaces > SQL file**, in section order. Use a fresh, non-production lab: the original setup below replaces named resources and changes user defaults. Review those statements before execution and do not run them against resources used by others.
+
+The [companion folder](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/tree/main/snowflake-semantic-view-agentic-analytics) contains copies of the SQL below, with the same definitions and queries: [01_setup.sql](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/snowflake-semantic-view-agentic-analytics/sql/01_setup.sql) loads the public data and [02_semantic_views.sql](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/snowflake-semantic-view-agentic-analytics/sql/02_semantic_views.sql) creates the three semantic views. Run [04_semantic_query.sql](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/snowflake-semantic-view-agentic-analytics/sql/04_semantic_query.sql) at **Query Semantic Views**. Then create HR through Autopilot using the five reference queries in [03_hr_verified_queries.sql](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/snowflake-semantic-view-agentic-analytics/sql/03_hr_verified_queries.sql). That file does not create a replacement HR model. Use each file or its matching inline block, not both. Follow the section order rather than filename numbering: `01`, `02`, `04`, then the HR Autopilot step with `03`.
+
+Finish the data and four views first. Next, complete or skip the two **Optional** enrichment sections, run the separate Streamlit app, and then create and test the agent. [05_agent.sql](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/snowflake-semantic-view-agentic-analytics/sql/05_agent.sql) contains the same agent setup as the inline section. Run the optional notebook before cleanup; it is not required by the app or agent. The setup loads the sample data directly, so no manual CSV download is needed.
+
 This creates a comprehensive data warehouse supporting cross-functional analytics across Sales, Marketing, Finance, and HR domains.
 
 **Dimension Tables (13):**
@@ -279,8 +285,7 @@ use role agentic_analytics_vhol_role;
     -- Job Dimension (HR)
     CREATE OR REPLACE TABLE job_dim (
         job_key INT PRIMARY KEY,
-        job_title VARCHAR(100) NOT NULL,
-        job_level INT
+        job_title VARCHAR(100) NOT NULL
     );
 
     -- Location Dimension (HR)
@@ -605,7 +610,7 @@ We will create 3 semantic views, one each for:
 - Marketing
 - Finance 
 
-We will use the Semantic View Autopilot feature to create the 4$^{th}$ on an HR semantic view.
+We will use the Semantic View Autopilot feature to create the fourth semantic view for HR.
 
 More info here https://docs.snowflake.com/en/user-guide/views-semantic/sql
 
@@ -865,7 +870,7 @@ For the previous semantic views, you were provided a pre-created script. In this
 
 - Select `SV_VHOL_DB.VHOL_SCHEMA` for the "Location to store" field
 - Name your semantic view `HR_SEMANTIC_VIEW`
-- Select Employee, Department, Job and Location dimensions
+- Select `HR_EMPLOYEE_FACT` together with the Employee, Department, Job and Location dimensions
 - In the "Semantic View" tab, scroll down and for "Verified Queries" click on the "+" button then pass the questions and SQL from the 5 examples below into the wizard
 
 (Note - run the optional cell below to delete the `HR_SEMANTIC_VIEW` if this is not your first time running through the VHOL)
@@ -899,7 +904,6 @@ SELECT
     -- Job dimensions
     j.JOB_KEY,
     j.JOB_TITLE,
-    j.JOB_LEVEL,
     -- Location dimensions
     l.LOCATION_KEY,
     l.LOCATION_NAME,
@@ -928,7 +932,7 @@ JOIN SV_VHOL_DB.VHOL_SCHEMA.LOCATION_DIM l
 GROUP BY 
     e.EMPLOYEE_KEY, e.EMPLOYEE_NAME, e.GENDER, e.HIRE_DATE,
     d.DEPARTMENT_KEY, d.DEPARTMENT_NAME,
-    j.JOB_KEY, j.JOB_TITLE, j.JOB_LEVEL,
+    j.JOB_KEY, j.JOB_TITLE,
     l.LOCATION_KEY, l.LOCATION_NAME,
     f.HR_FACT_ID, f.DATE, f.SALARY, f.ATTRITION_FLAG
 ORDER BY f.DATE DESC, f.SALARY DESC;
@@ -976,7 +980,6 @@ Provide Job and Location Analytics over time, with salary metrics
 SELECT 
     j.JOB_KEY,
     j.JOB_TITLE,
-    j.JOB_LEVEL,
     l.LOCATION_KEY,
     l.LOCATION_NAME,
     EXTRACT(YEAR FROM f.DATE) as RECORD_YEAR,
@@ -1002,7 +1005,7 @@ JOIN SV_VHOL_DB.VHOL_SCHEMA.LOCATION_DIM l
     ON f.LOCATION_KEY = l.LOCATION_KEY
 JOIN SV_VHOL_DB.VHOL_SCHEMA.EMPLOYEE_DIM e 
     ON f.EMPLOYEE_KEY = e.EMPLOYEE_KEY
-GROUP BY j.JOB_KEY, j.JOB_TITLE, j.JOB_LEVEL, l.LOCATION_KEY, l.LOCATION_NAME, EXTRACT(YEAR FROM f.DATE)
+GROUP BY j.JOB_KEY, j.JOB_TITLE, l.LOCATION_KEY, l.LOCATION_NAME, EXTRACT(YEAR FROM f.DATE)
 ORDER BY j.JOB_TITLE, l.LOCATION_NAME, RECORD_YEAR;
 ```
 
@@ -1076,7 +1079,9 @@ JOIN SV_VHOL_DB.VHOL_SCHEMA.EMPLOYEE_DIM e
     ON f.EMPLOYEE_KEY = e.EMPLOYEE_KEY;
 ```
 
-## AI-Powered Semantic View Enrichment
+## Optional: AI-Powered Semantic View Enrichment
+
+You can skip this section and the following **Optional: Setup Semantic View Enhancement with AI Workflow** section and continue to **Interactive Semantic View Visualization**. The original detailed SQL and Python workflow is retained below. As a shorter alternative, use the [companion notebook, query_history_enrichment.ipynb](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/snowflake-semantic-view-agentic-analytics/query_history_enrichment.ipynb); it generates its own three seed queries and returns review-only suggestions. Choose the detailed workflow or the companion notebook, not both.
 
 In this section, we will run some SQL queries to generate a synthetic set of query history entries in Snowflake.  We will then use AI (leveraging Snowlake AISQL) to mine query history and suggest enhancements to the HR semantic view.
 
@@ -1183,14 +1188,13 @@ LIMIT 10;
 -- VHOL Seed Query
 SELECT 
     j.JOB_TITLE,
-    j.JOB_LEVEL,
     COUNT(DISTINCT f.EMPLOYEE_KEY) as employee_count,
     AVG(f.SALARY) as avg_salary
 FROM HR_EMPLOYEE_FACT f
 JOIN JOB_DIM j 
     ON f.JOB_KEY = j.JOB_KEY
-GROUP BY j.JOB_TITLE, j.JOB_LEVEL
-ORDER BY j.JOB_LEVEL, employee_count DESC;
+GROUP BY j.JOB_TITLE
+ORDER BY employee_count DESC;
 
 -- VHOL Seed Query
 SELECT 
@@ -1275,7 +1279,6 @@ ORDER BY p50_salary DESC;
 
 -- VHOL Seed Query
 SELECT 
-    j.JOB_LEVEL,
     j.JOB_TITLE,
     COUNT(*) as total_records,
     SUM(f.ATTRITION_FLAG) as attrition_count,
@@ -1284,8 +1287,7 @@ SELECT
 FROM HR_EMPLOYEE_FACT f
 JOIN JOB_DIM j 
     ON f.JOB_KEY = j.JOB_KEY
-WHERE j.JOB_LEVEL IS NOT NULL
-GROUP BY j.JOB_LEVEL, j.JOB_TITLE
+GROUP BY j.JOB_TITLE
 ORDER BY attrition_rate_pct DESC;
 
 -- VHOL Seed Query
@@ -1451,9 +1453,15 @@ SELECT 1;
 
 ```
 
-## Setup Semantic View Enhancement with AI Workflow
+## Optional: Setup Semantic View Enhancement with AI Workflow
 
 Initialize libraries, session, and configuration for AI-powered semantic view enhancement workflow.
+
+For the detailed workflow below, first run the seed SQL in the preceding section, then create a notebook in **Projects > Workspaces** and add the Python blocks below as separate cells in their existing order. Select **Connect**, wait for the kernel, then choose `AGENTIC_ANALYTICS_VHOL_ROLE` and `AGENTIC_ANALYTICS_VHOL_WH` in the connection controls. Run the initialization cell first. The hosted session needs no password or local connector.
+
+If you chose the shorter [companion notebook](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/snowflake-semantic-view-agentic-analytics/query_history_enrichment.ipynb), use GitHub's **Download raw file** control, upload the `.ipynb` into Workspaces and connect in the same way. Run its four Python cells from top to bottom instead of the detailed cells below. It contains no Streamlit code and does not deploy generated DDL.
+
+The detailed workflow below reads `ACCOUNT_USAGE` query history, which requires suitable permissions and can have reporting delay. Use an enabled Cortex model for your account. Review generated DDL before running the deployment cell: that original cell drops the existing HR view. Do not run it unless you intend to replace that lab view and have retained its definition.
 
 
 ```
@@ -1464,6 +1472,7 @@ import re
 import pandas as pd
 from typing import List, Dict, Any
 from snowflake.snowpark import Session
+from snowflake.snowpark.context import get_active_session
 
 # Get the built-in Snowpark session
 session = get_active_session()
@@ -1474,7 +1483,7 @@ SEMANTIC_VIEW_NAME = 'HR_SEMANTIC_VIEW'
 CORTEX_MODEL = 'claude-3-5-sonnet'  # Claude model with high token limit
 
 # Set context for the analysis
-session.sql("USE ROLE agentic_analytics_vhol_role").collect()
+# Select agentic_analytics_vhol_role in the notebook connection controls before running.
 session.sql("USE DATABASE SV_VHOL_DB").collect()
 session.sql("USE SCHEMA VHOL_SCHEMA").collect()
 
@@ -1912,1104 +1921,34 @@ print("="*60)
 ### Interactive Semantic View Visualization
 Streamlit app for exploring semantic views with dynamic metric/dimension discovery and chart generation.
 
+Run this section in a separate **Streamlit in Snowflake app in Workspaces**, not in a notebook cell. Finish loading the data and creating all four semantic views first. The optional enrichment workflow is not required, and the app creates its own Snowflake session.
 
-```
-# Interactive Semantic View Visualization - Streamlit App for Snowflake Notebooks
-# Uses SHOW METRICS and SHOW DIMENSIONS to dynamically discover available metrics and dimensions
-# 
-# Usage in Snowflake Notebook:
-# 1. Make sure you have created the HR_SEMANTIC_VIEW
-# 2. Paste this code into a Streamlit cell
-# 3. The app will automatically discover metrics and dimensions
+1. Open **Projects > Workspaces > Add new > Streamlit App** and name it `semantic_analytics`.
+2. In **Settings**, select `AGENTIC_ANALYTICS_VHOL_ROLE` for **App executes as**, `AGENTIC_ANALYTICS_VHOL_WH` for **Query warehouse**, and an administrator-approved compute pool. Save the settings.
+3. Replace the generated main Python file with [streamlit_app/streamlit_app.py](https://github.com/Snowflake-Labs/snowflake-demo-notebooks/blob/main/snowflake-semantic-view-agentic-analytics/streamlit_app/streamlit_app.py). Keep the configuration generated by Workspaces. The app uses `streamlit`, `pandas`, `requests` and `snowflake-snowpark-python`.
+4. Select **Run** for the private preview. Choose **Explore metrics**, select a business area, metric and grouping, then select **Run query** inside the app. The table and chart show the last submitted query; submit again after changing inputs.
 
-import streamlit as st
-import pandas as pd
-import plotly.express as px
+The standalone app replaces the two notebook-embedded Streamlit examples. Its connection, semantic metadata discovery and Analyst authentication are handled in the app file. Do not paste that file into the enrichment notebook. If you deploy it, use `SV_VHOL_DB.VHOL_SCHEMA` and keep access private while it runs as the lab role.
 
-# Semantic view configuration - adjust if needed
-SEMANTIC_VIEW_NAME = "HR_SEMANTIC_VIEW"
-SEMANTIC_VIEW_SCHEMA = "SV_VHOL_DB.VHOL_SCHEMA"  # Full schema path
-SEMANTIC_VIEW_FULL_NAME = f"{SEMANTIC_VIEW_SCHEMA}.{SEMANTIC_VIEW_NAME}"
+The screenshots were captured with an earlier test HR definition, not the Autopilot-generated definition you create here. Metric names and results may differ; select the corresponding salary metric and department dimension from your own view. In the captured example, the metric is `"WORKFORCE"."AVERAGE_SALARY"`, the grouping is `"DEPARTMENTS"."DEPARTMENT_NAME"`, and **Maximum groups** is `10`. The app discovers the available definitions rather than requiring those exact names.
 
-def main():
-    st.title("🎯 Semantic View Interactive Visualization")
-    st.markdown(f"**Semantic View:** `{SEMANTIC_VIEW_FULL_NAME}`")
-    
-    # Check if session is available (Snowflake notebook context)
-    if 'session' not in globals():
-        st.error("❌ Snowflake session not available. Please run this in a Snowflake notebook.")
-        st.info("💡 Make sure you're running this in a Snowflake notebook with `session` available")
-        return
-    
-    # Extract available metrics and dimensions using SHOW commands
-    @st.cache_data
-    def get_options():
-        """Get metrics and dimensions from semantic view using SHOW SEMANTIC METRICS/DIMENSIONS commands
-        Returns: (metrics_list, dimensions_list, metrics_map, dimensions_map)
-        where maps contain full_name -> short_name mappings
-        """
-        metrics = []
-        dimensions = []
-        metrics_map = {}  # full_name -> short_name
-        dimensions_map = {}  # full_name -> short_name
-        
-        try:
-            # Get metrics from semantic view
-            show_metrics_sql = f"SHOW SEMANTIC METRICS IN {SEMANTIC_VIEW_FULL_NAME}"
-            
-            with st.spinner("🔍 Fetching metrics from semantic view..."):
-                metrics_result = session.sql(show_metrics_sql).collect()
-            
-            if metrics_result and len(metrics_result) > 0:
-                # Convert to DataFrame to inspect structure
-                metrics_df = pd.DataFrame([dict(row.asDict()) for row in metrics_result])
-                
-                # Debug: Show available columns (first time only)
-                if 'metrics_debug' not in st.session_state:
-                    with st.expander("🔍 Metrics Result Structure (Debug)", expanded=False):
-                        st.dataframe(metrics_df.head())
-                        st.write(f"Columns: {list(metrics_df.columns)}")
-                    st.session_state.metrics_debug = True
-                
-                # Extract metric names - try common column names
-                metric_name_col = None
-                table_name_col = None
-                
-                for col in ['name', 'metric_name', 'metric', 'METRIC_NAME', 'NAME']:
-                    if col in metrics_df.columns:
-                        metric_name_col = col
-                        break
-                
-                # Try to find table name column
-                for col in ['table_name', 'table', 'TABLE_NAME', 'TABLE', 'source_table', 'entity_name']:
-                    if col in metrics_df.columns:
-                        table_name_col = col
-                        break
-                
-                if metric_name_col:
-                    for _, row in metrics_df.iterrows():
-                        metric_name = str(row[metric_name_col]).strip()
-                        if pd.isna(metric_name) or not metric_name:
-                            continue
-                        
-                        # Try to get table name
-                        table_name = None
-                        if table_name_col and table_name_col in row:
-                            table_name = str(row[table_name_col]).strip()
-                            if pd.isna(table_name) or not table_name:
-                                table_name = None
-                        
-                        # Check if metric_name already contains table prefix (table.metric format)
-                        if '.' in metric_name:
-                            # Already has table prefix
-                            full_name = metric_name
-                            short_name = metric_name.split('.')[-1]
-                            metrics.append(full_name)
-                            metrics_map[full_name] = short_name
-                        elif table_name:
-                            # Create full name with table prefix
-                            full_name = f"{table_name}.{metric_name}"
-                            metrics.append(full_name)
-                            metrics_map[full_name] = metric_name
-                        else:
-                            # If no table name, use just the metric name
-                            metrics.append(metric_name)
-                            metrics_map[metric_name] = metric_name
-                else:
-                    # Fallback: use first column
-                    metrics_raw = metrics_df.iloc[:, 0].dropna().unique().tolist()
-                    for metric in metrics_raw:
-                        metrics.append(str(metric))
-                        metrics_map[str(metric)] = str(metric)
-            else:
-                st.warning("⚠️ No metrics found in semantic view")
-            
-            # Get dimensions from semantic view
-            show_dimensions_sql = f"SHOW SEMANTIC DIMENSIONS IN {SEMANTIC_VIEW_FULL_NAME}"
-            
-            with st.spinner("🔍 Fetching dimensions from semantic view..."):
-                dimensions_result = session.sql(show_dimensions_sql).collect()
-            
-            if dimensions_result and len(dimensions_result) > 0:
-                # Convert to DataFrame to inspect structure
-                dimensions_df = pd.DataFrame([dict(row.asDict()) for row in dimensions_result])
-                
-                # Debug: Show available columns (first time only)
-                if 'dimensions_debug' not in st.session_state:
-                    with st.expander("🔍 Dimensions Result Structure (Debug)", expanded=False):
-                        st.dataframe(dimensions_df.head())
-                        st.write(f"Columns: {list(dimensions_df.columns)}")
-                    st.session_state.dimensions_debug = True
-                
-                # Extract dimension names - try common column names
-                dimension_name_col = None
-                table_name_col = None
-                
-                for col in ['name', 'dimension_name', 'dimension', 'DIMENSION_NAME', 'NAME']:
-                    if col in dimensions_df.columns:
-                        dimension_name_col = col
-                        break
-                
-                # Try to find table name column
-                for col in ['table_name', 'table', 'TABLE_NAME', 'TABLE', 'source_table', 'entity_name']:
-                    if col in dimensions_df.columns:
-                        table_name_col = col
-                        break
-                
-                if dimension_name_col:
-                    for _, row in dimensions_df.iterrows():
-                        dimension_name = str(row[dimension_name_col]).strip()
-                        if pd.isna(dimension_name) or not dimension_name:
-                            continue
-                        
-                        # Try to get table name
-                        table_name = None
-                        if table_name_col and table_name_col in row:
-                            table_name = str(row[table_name_col]).strip()
-                            if pd.isna(table_name) or not table_name:
-                                table_name = None
-                        
-                        # Check if dimension_name already contains table prefix (table.dimension format)
-                        if '.' in dimension_name:
-                            # Already has table prefix
-                            full_name = dimension_name
-                            short_name = dimension_name.split('.')[-1]
-                            dimensions.append(full_name)
-                            dimensions_map[full_name] = short_name
-                        elif table_name:
-                            # Create full name with table prefix
-                            full_name = f"{table_name}.{dimension_name}"
-                            dimensions.append(full_name)
-                            dimensions_map[full_name] = dimension_name
-                        else:
-                            # If no table name, use just the dimension name
-                            dimensions.append(dimension_name)
-                            dimensions_map[dimension_name] = dimension_name
-                else:
-                    # Fallback: use first column
-                    dimensions_raw = dimensions_df.iloc[:, 0].dropna().unique().tolist()
-                    for dim in dimensions_raw:
-                        dimensions.append(str(dim))
-                        dimensions_map[str(dim)] = str(dim)
-            else:
-                st.warning("⚠️ No dimensions found in semantic view")
-            
-            # Fallback values if nothing found
-            if not metrics and not dimensions:
-                st.error("❌ Could not retrieve metrics or dimensions. Using fallback values.")
-                st.info("💡 Make sure the semantic view exists and is accessible")
-                metrics = ["HR_EMPLOYEE_FACT.TOTAL_EMPLOYEES", "HR_EMPLOYEE_FACT.AVG_SALARY", 
-                          "HR_EMPLOYEE_FACT.TOTAL_SALARY_COST", "HR_EMPLOYEE_FACT.ATTRITION_COUNT"]
-                dimensions = ["DEPARTMENT_DIM.DEPARTMENT_NAME", "JOB_DIM.JOB_TITLE", 
-                            "LOCATION_DIM.LOCATION_NAME", "EMPLOYEE_DIM.EMPLOYEE_NAME"]
-                # Create mappings for fallback
-                for m in metrics:
-                    metrics_map[m] = m.split('.')[-1] if '.' in m else m
-                for d in dimensions:
-                    dimensions_map[d] = d.split('.')[-1] if '.' in d else d
-            elif not metrics:
-                st.warning("⚠️ No metrics found, using fallback")
-                metrics = ["HR_EMPLOYEE_FACT.TOTAL_EMPLOYEES", "HR_EMPLOYEE_FACT.AVG_SALARY", 
-                          "HR_EMPLOYEE_FACT.TOTAL_SALARY_COST"]
-                for m in metrics:
-                    metrics_map[m] = m.split('.')[-1] if '.' in m else m
-            elif not dimensions:
-                st.warning("⚠️ No dimensions found, using fallback")
-                dimensions = ["DEPARTMENT_DIM.DEPARTMENT_NAME", "JOB_DIM.JOB_TITLE", 
-                            "LOCATION_DIM.LOCATION_NAME"]
-                for d in dimensions:
-                    dimensions_map[d] = d.split('.')[-1] if '.' in d else d
-            
-        except Exception as e:
-            st.error(f"❌ Error fetching metrics/dimensions: {str(e)}")
-            st.info("💡 Using fallback values. Make sure the semantic view exists and is accessible.")
-            # Fallback values
-            metrics = ["HR_EMPLOYEE_FACT.TOTAL_EMPLOYEES", "HR_EMPLOYEE_FACT.AVG_SALARY", 
-                      "HR_EMPLOYEE_FACT.TOTAL_SALARY_COST", "HR_EMPLOYEE_FACT.ATTRITION_COUNT"]
-            dimensions = ["DEPARTMENT_DIM.DEPARTMENT_NAME", "JOB_DIM.JOB_TITLE", 
-                        "LOCATION_DIM.LOCATION_NAME", "EMPLOYEE_DIM.EMPLOYEE_NAME"]
-            # Create mappings for fallback
-            for m in metrics:
-                metrics_map[m] = m.split('.')[-1] if '.' in m else m
-            for d in dimensions:
-                dimensions_map[d] = d.split('.')[-1] if '.' in d else d
-            import traceback
-            with st.expander("🔍 Error Details"):
-                st.code(traceback.format_exc(), language='python')
-        
-        # Remove duplicates while preserving order
-        metrics = list(dict.fromkeys(metrics))
-        dimensions = list(dict.fromkeys(dimensions))
-        
-        return metrics, dimensions, metrics_map, dimensions_map
+![Explore metrics configured for average observed salary by department, limited to ten groups](assets/semantic-explore-inputs.png)
 
-    try:
-        metrics, dimensions, metrics_map, dimensions_map = get_options()
-        
-        if not metrics or not dimensions:
-            st.error("❌ Could not load metrics or dimensions. Please check the semantic view.")
-            return
-        
-        # Create two columns for the dropdowns
-        col1, col2 = st.columns(2)
-        
-        with col1:
-            selected_metric_full = st.selectbox(
-                "📊 Select Metric:",
-                metrics,
-                help="Choose a metric to visualize",
-                index=0 if metrics else None
-            )
-        
-        with col2:
-            selected_dimension_full = st.selectbox(
-                "📏 Select Dimension:",
-                dimensions,
-                help="Choose a dimension to group by",
-                index=0 if dimensions else None
-            )
-        
-        if selected_metric_full and selected_dimension_full:
-            # Get short names for ORDER BY (without table prefix)
-            selected_metric_short = metrics_map.get(selected_metric_full, selected_metric_full.split('.')[-1] if '.' in selected_metric_full else selected_metric_full)
-            selected_dimension_short = dimensions_map.get(selected_dimension_full, selected_dimension_full.split('.')[-1] if '.' in selected_dimension_full else selected_dimension_full)
-            
-            # Configuration section
-            st.markdown("---")
-            st.subheader("⚙️ Visualization Configuration")
-            
-            col_config1, col_config2, col_config3, col_config4 = st.columns(4)
-            
-            with col_config1:
-                limit_rows = st.number_input(
-                    "📊 Number of Rows:",
-                    min_value=1,
-                    max_value=1000,
-                    value=10,
-                    step=1,
-                    help="Limit the number of rows returned"
-                )
-            
-            with col_config2:
-                viz_type = st.selectbox(
-                    "📈 Visualization Type:",
-                    ["Table", "Vertical Bar", "Horizontal Bar", "Line", "Pie"],
-                    index=1,  # Default to Vertical Bar
-                    help="Choose the chart type"
-                )
-            
-            with col_config3:
-                sort_by = st.selectbox(
-                    "🔀 Sort By:",
-                    ["Metric", "Dimension"],
-                    index=0,  # Default to Metric
-                    help="Choose which column to sort by"
-                )
-            
-            with col_config4:
-                sort_direction = st.selectbox(
-                    "⬆️ Sort Direction:",
-                    ["DESC", "ASC"],
-                    index=0,  # Default to DESC
-                    help="Choose sort direction"
-                )
-            
-            # Determine sort column
-            if sort_by == "Metric":
-                sort_column = selected_metric_short
-            else:
-                sort_column = selected_dimension_short
-            
-            # Generate semantic SQL using SEMANTIC_VIEW() function
-            # Use full names (with table prefix) inside SEMANTIC_VIEW()
-            # Use short names (without prefix) in ORDER BY outside SEMANTIC_VIEW()
-            query_sql = f"""SELECT * FROM SEMANTIC_VIEW(
-    {SEMANTIC_VIEW_FULL_NAME}
-    DIMENSIONS {selected_dimension_full}
-    METRICS {selected_metric_full}
-) ORDER BY {sort_column} {sort_direction} LIMIT {limit_rows}"""
-            
-            # Show the generated SQL in an expander
-            with st.expander("📋 View Generated Semantic SQL"):
-                st.code(query_sql, language='sql')
-            
-            # Execute the query and create visualization
-            try:
-                with st.spinner("🔄 Executing query and creating visualization..."):
-                    try:
-                        result = session.sql(query_sql).collect()
-                    except Exception as sql_error:
-                        # If full name doesn't work, try with just the view name
-                        if "SEMANTIC_VIEW" in str(sql_error).upper() or "syntax" in str(sql_error).lower():
-                            st.info("💡 Trying with view name only (without schema qualification)...")
-                            fallback_query = f"""SELECT * FROM SEMANTIC_VIEW(
-    {SEMANTIC_VIEW_NAME}
-    DIMENSIONS {selected_dimension_full}
-    METRICS {selected_metric_full}
-) ORDER BY {sort_column} {sort_direction} LIMIT {limit_rows}"""
-                            result = session.sql(fallback_query).collect()
-                            query_sql = fallback_query  # Update the query shown
-                        else:
-                            raise sql_error
-                
-                if result and len(result) > 0:
-                    # Convert to DataFrame
-                    df = pd.DataFrame([dict(row.asDict()) for row in result])
-                    
-                    # Clean column names
-                    df.columns = [col.strip() for col in df.columns]
-                    
-                    # Ensure we have numeric data for the metric
-                    if len(df.columns) >= 2:
-                        # Try to convert metric column to numeric
-                        metric_col = df.columns[1]
-                        df[metric_col] = pd.to_numeric(df[metric_col], errors='coerce')
-                    
-                    # Determine which columns to use
-                    x_col = df.columns[0]
-                    y_col = df.columns[1] if len(df.columns) > 1 else selected_metric_short
-                    
-                    # Explicitly sort the dataframe to maintain SQL sort order
-                    # This ensures Plotly respects the sort order
-                    sort_col_in_df = None
-                    if sort_by == "Metric":
-                        sort_col_in_df = y_col
-                    else:
-                        sort_col_in_df = x_col
-                    
-                    # Sort dataframe to match SQL ORDER BY
-                    ascending = (sort_direction == "ASC")
-                    df = df.sort_values(by=sort_col_in_df, ascending=ascending).reset_index(drop=True)
-                    
-                    metric_name = selected_metric_short.replace('_', ' ').title()
-                    dimension_name = selected_dimension_short.replace('_', ' ').title()
-                    
-                    # Create visualization based on selected type
-                    if viz_type == "Table":
-                        # Show table directly
-                        st.dataframe(df, use_container_width=True)
-                    else:
-                        # Create chart based on type
-                        if viz_type == "Vertical Bar":
-                            # Create category order to preserve dataframe sort order
-                            category_order = df[x_col].tolist()
-                            fig = px.bar(
-                                df, 
-                                x=x_col, 
-                                y=y_col,
-                                title=f'{metric_name} by {dimension_name}',
-                                labels={
-                                    x_col: dimension_name,
-                                    y_col: metric_name
-                                },
-                                color=y_col,
-                                color_continuous_scale='Blues',
-                                category_orders={x_col: category_order}
-                            )
-                            fig.update_layout(
-                                showlegend=False,
-                                height=500,
-                                xaxis_tickangle=-45,
-                                hovermode='x unified',
-                                xaxis={'categoryorder': 'array', 'categoryarray': category_order}
-                            )
-                        
-                        elif viz_type == "Horizontal Bar":
-                            # For horizontal bars, preserve y-axis (category) order
-                            category_order = df[x_col].tolist()
-                            fig = px.bar(
-                                df, 
-                                x=y_col,
-                                y=x_col,
-                                orientation='h',
-                                title=f'{metric_name} by {dimension_name}',
-                                labels={
-                                    x_col: dimension_name,
-                                    y_col: metric_name
-                                },
-                                color=y_col,
-                                color_continuous_scale='Blues',
-                                category_orders={x_col: category_order}
-                            )
-                            fig.update_layout(
-                                showlegend=False,
-                                height=max(400, len(df) * 30),  # Dynamic height based on rows
-                                hovermode='y unified',
-                                yaxis={'categoryorder': 'array', 'categoryarray': category_order}
-                            )
-                        
-                        elif viz_type == "Line":
-                            # Preserve x-axis order for line charts
-                            category_order = df[x_col].tolist()
-                            fig = px.line(
-                                df, 
-                                x=x_col, 
-                                y=y_col,
-                                title=f'{metric_name} by {dimension_name}',
-                                labels={
-                                    x_col: dimension_name,
-                                    y_col: metric_name
-                                },
-                                markers=True,
-                                category_orders={x_col: category_order}
-                            )
-                            fig.update_layout(
-                                height=500,
-                                xaxis_tickangle=-45,
-                                hovermode='x unified',
-                                xaxis={'categoryorder': 'array', 'categoryarray': category_order}
-                            )
-                        
-                        elif viz_type == "Pie":
-                            fig = px.pie(
-                                df,
-                                values=y_col,
-                                names=x_col,
-                                title=f'{metric_name} by {dimension_name}'
-                            )
-                            fig.update_layout(
-                                height=500,
-                                showlegend=True
-                            )
-                            fig.update_traces(textposition='inside', textinfo='percent+label')
-                        
-                        st.plotly_chart(fig, use_container_width=True)
-                    
-                    # Show data table in expander (always available)
-                    with st.expander("📊 View Data Table"):
-                        st.dataframe(df, use_container_width=True)
-                    
-                    # Show query execution info
-                    with st.expander("🔍 Query Execution Details"):
-                        st.code(query_sql, language='sql')
-                        st.write(f"**Rows returned:** {len(df)}")
-                        st.write(f"**Columns:** {', '.join(df.columns)}")
-                        if len(df.columns) >= 2:
-                            st.write(f"**Metric range:** {df[y_col].min():,.2f} to {df[y_col].max():,.2f}")
-                    
-                    st.success(f"✅ Successfully visualized {len(df)} data points!")
-                    
-                else:
-                    st.warning("⚠️ No data returned from the semantic view query")
-                    st.info("💡 Try selecting different metrics or dimensions")
-                    
-            except Exception as e:
-                st.error(f"❌ Error executing query: {str(e)}")
-                st.info("💡 Troubleshooting tips:")
-                st.info("1. Make sure the semantic view exists and is accessible")
-                st.info("2. Verify you have proper permissions to query the semantic view")
-                st.info("3. Check that the metric and dimension names are correct")
-                st.info("4. Try the SQL query manually in a SQL cell to debug")
-                import traceback
-                with st.expander("🔍 Error Details"):
-                    st.code(traceback.format_exc(), language='python')
-    
-    except Exception as e:
-        st.error(f"❌ Error loading options: {str(e)}")
-        st.info("💡 Make sure the semantic view was created successfully")
-        import traceback
-        with st.expander("🔍 Error Details"):
-            st.code(traceback.format_exc(), language='python')
+Scroll down to see the table and bar chart. These averages cover recorded HR observations across dates, not current active headcount. Results can change with the source data.
 
-# Run the Streamlit app
-if __name__ == "__main__":
-    main()
-
-
-```
+![Ten department averages in the result table and their corresponding bar chart](assets/semantic-explore-output.png)
 
 ### Natural Language Query Interface
-Let's now build a Streamlit app usin the Cortex Analyst API to convert plain English questions into SQL queries.
 
+Use **Ask a question** in the same standalone app. Enter a question, select **Generate SQL**, and wait for Cortex Analyst's interpretation and SQL.
 
-```
-# Natural Language Query Interface for Semantic Views
-# Streamlit App for Snowflake Notebooks
-# Uses Cortex Analyst REST API
-# 
-# Usage in Snowflake Notebook:
-# 1. Make sure you're in a Snowflake notebook (not local Streamlit)
-# 2. The 'session' variable should be automatically available
-# 3. Paste this code into a Streamlit cell
-# 4. Select a semantic view from the dropdown
-# 5. Type your natural language question
-# 6. Click "Answer!" to execute
-#
-# Note: If session is not available, ensure you're running in a Snowflake notebook environment.
-# The session variable is created automatically when you run a SQL cell in a Snowflake notebook.
+> Across all recorded HR observations, what are the top 10 departments by average observed salary? Return department name and average salary, highest first. These are observations, not current headcount.
 
-import streamlit as st
-import pandas as pd
-import json
-import time
+![Question entered in the app before selecting Generate SQL](assets/semantic-ask-input.png)
 
-# Try to import _snowflake (available in Snowflake notebooks)
-try:
-    import _snowflake  # For interacting with Snowflake-specific APIs
-    SNOWFLAKE_API_AVAILABLE = True
-except ImportError:
-    SNOWFLAKE_API_AVAILABLE = False
-    _snowflake = None
+![Cortex Analyst interpretation and generated semantic SQL with a manual-review reminder](assets/semantic-ask-output.png)
 
-# Schema configuration - adjust if needed
-DEFAULT_SCHEMA = "SV_VHOL_DB.VHOL_SCHEMA"
-
-def make_authenticated_request_via_session(session, url, method="POST", json_data=None, headers=None):
-    """
-    Attempt to make an HTTP request using the session's connection
-    This bypasses the need for explicit OAuth token extraction
-    """
-    try:
-        # Try to get the connection object
-        conn = None
-        if hasattr(session, '_conn'):
-            conn = session._conn
-        elif hasattr(session, 'connection'):
-            conn = session.connection
-        
-        if not conn:
-            return None
-        
-        # Try different methods to make HTTP requests through the connection
-        # Method 1: Check if connection has an HTTP client or request method
-        if hasattr(conn, '_request') or hasattr(conn, 'request'):
-            request_method = getattr(conn, '_request', None) or getattr(conn, 'request', None)
-            if request_method:
-                try:
-                    # Try to make the request
-                    response = request_method(url, method=method, json=json_data, headers=headers)
-                    return response
-                except:
-                    pass
-        
-        # Method 2: Check if there's an HTTP client or session object
-        if hasattr(conn, '_http') or hasattr(conn, 'http') or hasattr(conn, '_session') or hasattr(conn, 'session'):
-            http_client = (getattr(conn, '_http', None) or 
-                          getattr(conn, 'http', None) or
-                          getattr(conn, '_session', None) or
-                          getattr(conn, 'session', None))
-            if http_client:
-                try:
-                    if method == "POST":
-                        response = http_client.post(url, json=json_data, headers=headers)
-                    else:
-                        response = http_client.request(method, url, json=json_data, headers=headers)
-                    return response
-                except:
-                    pass
-        
-    except Exception:
-        pass
-    
-    return None
-
-def generate_oauth_token_from_session(session, account, region):
-    """
-    Attempt to generate an OAuth token using the current session
-    This uses Snowflake's OAuth API to create a token for REST API calls
-    """
-    try:
-        # Try to use Snowflake's OAuth token generation
-        # Note: SYSTEM$GENERATE_OAUTH_TOKEN might not be available
-        try:
-            token_result = session.sql("SELECT SYSTEM$GENERATE_OAUTH_TOKEN() as token").collect()
-            if token_result and len(token_result) > 0:
-                token = token_result[0].get('TOKEN')
-                if token:
-                    return token
-        except:
-            # SYSTEM$GENERATE_OAUTH_TOKEN might not be available
-            pass
-        
-    except Exception as e:
-        # Silently fail
-        pass
-    
-    return None
-
-def get_auth_token(session):
-    """Try to extract authentication token from Snowflake session"""
-    auth_token = None
-    
-    def _check_object_for_token(obj, depth=0, max_depth=3):
-        """Recursively search an object for token-like values"""
-        if depth > max_depth or obj is None:
-            return None
-        
-        # Check direct token attributes
-        token_attrs = ['_token', 'token', '_master_token', 'master_token', '_session_token', 
-                      'session_token', 'access_token', '_access_token', 'bearer_token', '_bearer_token']
-        for attr in token_attrs:
-            if hasattr(obj, attr):
-                try:
-                    value = getattr(obj, attr)
-                    if value and isinstance(value, str) and len(value) > 20:  # Tokens are usually long strings
-                        return value
-                except:
-                    pass
-        
-        # Check if it's a dict-like object
-        if hasattr(obj, '__dict__'):
-            for key, value in obj.__dict__.items():
-                if 'token' in key.lower() and isinstance(value, str) and len(value) > 20:
-                    return value
-                # Recursively check nested objects (but limit depth)
-                if depth < max_depth and isinstance(value, object) and not isinstance(value, (str, int, float, bool)):
-                    result = _check_object_for_token(value, depth + 1, max_depth)
-                    if result:
-                        return result
-        
-        return None
-    
-    try:
-        # Try to get from session's connection
-        conn = None
-        
-        # Method 1: Try session._conn (Snowpark)
-        if hasattr(session, '_conn'):
-            conn = session._conn
-        # Method 2: Try session.connection (alternative attribute name)
-        elif hasattr(session, 'connection'):
-            conn = session.connection
-        # Method 3: Try session._connection (another variant)
-        elif hasattr(session, '_connection'):
-            conn = session._connection
-        
-        if conn:
-            # Method A: Try REST client token (for Python connector connections)
-            if hasattr(conn, '_rest'):
-                rest_client = conn._rest
-                # Try direct attributes first
-                for token_attr in ['_token', 'token', '_master_token', 'master_token', '_session_token']:
-                    if hasattr(rest_client, token_attr):
-                        try:
-                            token_value = getattr(rest_client, token_attr)
-                            if token_value and isinstance(token_value, str) and len(token_value) > 20:
-                                auth_token = token_value
-                                break
-                        except:
-                            pass
-                
-                # Try recursive search if direct access failed
-                if not auth_token:
-                    auth_token = _check_object_for_token(rest_client, max_depth=2)
-                
-                # Try token manager if available
-                if not auth_token and hasattr(rest_client, '_token_manager'):
-                    token_manager = rest_client._token_manager
-                    auth_token = _check_object_for_token(token_manager, max_depth=2)
-            
-            # Method A2: For ServerConnection (Snowflake notebooks), try different attributes
-            # ServerConnection might have token stored differently
-            if not auth_token:
-                # Try connection-level token attributes
-                auth_token = _check_object_for_token(conn, max_depth=3)
-            
-            # Method A3: Try to get from connection's internal state
-            if not auth_token:
-                # Check for session token or authentication state
-                internal_attrs = ['_session_token', '_auth_token', '_token', 'token', 
-                                 '_session', '_authenticator', '_login_manager']
-                for attr in internal_attrs:
-                    if hasattr(conn, attr):
-                        try:
-                            value = getattr(conn, attr)
-                            if isinstance(value, str) and len(value) > 20:
-                                auth_token = value
-                                break
-                            elif hasattr(value, '__dict__'):
-                                # If it's an object, search it recursively
-                                token = _check_object_for_token(value, max_depth=2)
-                                if token:
-                                    auth_token = token
-                                    break
-                        except:
-                            pass
-            
-            # Method B: Try connection-level token attributes (recursive)
-            if not auth_token:
-                auth_token = _check_object_for_token(conn, max_depth=3)
-            
-            # Method C: Try from connection's authentication handler
-            if not auth_token:
-                auth_attrs = ['_authenticate', '_auth', 'authenticate', '_auth_handler', 'auth_handler']
-                for auth_attr in auth_attrs:
-                    if hasattr(conn, auth_attr):
-                        try:
-                            auth_handler = getattr(conn, auth_attr)
-                            auth_token = _check_object_for_token(auth_handler, max_depth=2)
-                            if auth_token:
-                                break
-                        except:
-                            pass
-            
-            # Method D: Try to get from connection's headers/cookies
-            if not auth_token and hasattr(conn, '_rest'):
-                rest_client = conn._rest
-                # Check if there's a headers dict with authorization
-                header_attrs = ['_headers', 'headers', '_request_headers', 'request_headers']
-                for header_attr in header_attrs:
-                    if hasattr(rest_client, header_attr):
-                        try:
-                            headers = getattr(rest_client, header_attr)
-                            if isinstance(headers, dict):
-                                auth_header = headers.get('Authorization') or headers.get('authorization')
-                                if auth_header and isinstance(auth_header, str):
-                                    if auth_header.startswith('Bearer '):
-                                        auth_token = auth_header[7:]  # Remove 'Bearer ' prefix
-                                    else:
-                                        auth_token = auth_header
-                                    if auth_token:
-                                        break
-                        except:
-                            pass
-    
-    except Exception as e:
-        # Silently fail - we'll handle missing token in the UI
-        pass
-    
-    return auth_token
-
-def main():
-    st.title("💬 Natural Language Query for Semantic Views")
-    st.markdown("Ask questions in plain English about your semantic view data")
-    st.markdown("*Using [Cortex Analyst REST API](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst/rest-api)*")
-    
-    # Check if session is available (Snowflake notebook context)
-    # In Snowflake notebooks, session is typically available as a global variable
-    if 'session' not in globals():
-        st.error("❌ Snowflake session not available. Please run this in a Snowflake notebook.")
-        st.info("💡 Make sure you're running this in a Snowflake notebook with `session` available")
-        return
-    
-    # Get account and region info early - cache it for the session
-    @st.cache_data
-    def get_account_info():
-        """Get account and region from the current Snowflake session"""
-        try:
-            account_info = session.sql("SELECT CURRENT_ACCOUNT() as account, CURRENT_REGION() as region").collect()
-            if account_info and len(account_info) > 0:
-                account = account_info[0]['ACCOUNT']
-                region = account_info[0]['REGION']
-                return account, region
-        except Exception:
-            pass
-        return None, None
-    
-    # Pre-populate account and region first (needed for token generation)
-    account, region = get_account_info()
-    
-    # Get token early - cache it for the session
-    @st.cache_data
-    def get_cached_token(account_val, region_val):
-        """Get auth token from session - cached, tries extraction then generation"""
-        # First try to extract existing token
-        token = get_auth_token(session)
-        
-        # If extraction failed and we have account/region, try generating one
-        if not token and account_val and region_val:
-            try:
-                token = generate_oauth_token_from_session(session, account_val, region_val)
-            except:
-                pass
-        
-        return token
-    
-    # Check if _snowflake API is available (required for authentication)
-    if account and region:
-        if not SNOWFLAKE_API_AVAILABLE:
-            st.error("⚠️ `_snowflake` module not available. This app requires running in a Snowflake notebook.")
-            st.info("💡 The `_snowflake` module provides automatic authentication for REST API calls.")
-            return
-    else:
-        st.warning("⚠️ Could not retrieve account information. Some features may not work.")
-    
-    # Get available semantic views in the schema
-    @st.cache_data
-    def get_semantic_views(schema_name):
-        """Get list of available semantic views in the schema"""
-        try:
-            # Handle schema name (could be "DATABASE.SCHEMA" or just "SCHEMA")
-            if '.' in schema_name:
-                database, schema = schema_name.split('.', 1)
-                show_sql = f"SHOW SEMANTIC VIEWS IN SCHEMA {database}.{schema}"
-            else:
-                # Try to use current database context
-                show_sql = f"SHOW SEMANTIC VIEWS IN SCHEMA {schema_name}"
-            
-            result = session.sql(show_sql).collect()
-            
-            if result and len(result) > 0:
-                # Convert to DataFrame
-                views_df = pd.DataFrame([dict(row.asDict()) for row in result])
-                
-                # Try to find the name column
-                name_col = None
-                for col in ['name', 'semantic_view_name', 'view_name', 'NAME', 'SEMANTIC_VIEW_NAME']:
-                    if col in views_df.columns:
-                        name_col = col
-                        break
-                
-                if name_col:
-                    views = views_df[name_col].dropna().unique().tolist()
-                else:
-                    # Fallback: use first column
-                    views = views_df.iloc[:, 0].dropna().unique().tolist()
-                
-                # Create full qualified names
-                full_names = []
-                for view in views:
-                    full_name = f"{schema_name}.{view}" if '.' not in view else view
-                    full_names.append(full_name)
-                
-                return full_names, views_df
-            else:
-                return [], pd.DataFrame()
-                
-        except Exception as e:
-            st.error(f"❌ Error fetching semantic views: {str(e)}")
-            return [], pd.DataFrame()
-    
-    # Schema selection
-    schema_input = st.text_input(
-        "📁 Schema:",
-        value=DEFAULT_SCHEMA,
-        help="Enter the schema path (e.g., DATABASE.SCHEMA)"
-    )
-    
-    # Get semantic views
-    with st.spinner("🔍 Loading semantic views..."):
-        semantic_views, views_df = get_semantic_views(schema_input)
-    
-    if not semantic_views:
-        st.warning(f"⚠️ No semantic views found in {schema_input}")
-        st.info("💡 Make sure the schema name is correct and contains semantic views")
-        
-        # Show debug info if available
-        if not views_df.empty:
-            with st.expander("🔍 Debug: SHOW SEMANTIC VIEWS Result"):
-                st.dataframe(views_df)
-        return
-    
-    # Semantic view selection
-    selected_view = st.selectbox(
-        "📊 Select Semantic View:",
-        semantic_views,
-        help="Choose a semantic view to query",
-        index=0 if semantic_views else None
-    )
-    
-    if selected_view:
-        st.markdown("---")
-        
-        # Natural language question input
-        st.subheader("💬 Ask Your Question")
-        question = st.text_area(
-            "Enter your question:",
-            height=100,
-            placeholder="e.g., What are the top 5 departments by average salary?",
-            help="Type your question in natural language"
-        )
-        
-        # Answer button
-        col1, col2 = st.columns([1, 4])
-        with col1:
-            answer_button = st.button("🚀 Answer!", type="primary", use_container_width=True)
-        
-        if answer_button and question:
-            if not question.strip():
-                st.warning("⚠️ Please enter a question")
-            else:
-                # Generate SQL from natural language question using Cortex Analyst REST API
-                generated_sql = None  # Initialize outside try block
-                
-                try:
-                    with st.spinner("🤖 Generating SQL from your question..."):
-                        # Use Snowflake's built-in API request method (no token needed!)
-                        if not SNOWFLAKE_API_AVAILABLE:
-                            st.error("❌ `_snowflake` module not available. Make sure you're running this in a Snowflake notebook.")
-                            st.info("💡 The `_snowflake` module is automatically available in Snowflake notebooks.")
-                            return
-                        
-                        # Build request body for Cortex Analyst API
-                        # According to Snowflake Labs example: https://github.com/Snowflake-Labs/sfguide-getting-started-with-cortex-analyst
-                        # Note: API requires exactly one of: semantic_model, semantic_model_file, or semantic_view
-                        request_body = {
-                            "messages": [
-                                {
-                                    "role": "user",
-                                    "content": [
-                                        {
-                                            "type": "text",
-                                            "text": question
-                                        }
-                                    ]
-                                }
-                            ],
-                            "semantic_view": selected_view
-                        }
-                        
-                        # Use Snowflake's built-in API request method
-                        # This automatically handles authentication - no token needed!
-                        API_ENDPOINT = "/api/v2/cortex/analyst/message"
-                        API_TIMEOUT = 50000  # in milliseconds
-                        
-                        resp = _snowflake.send_snow_api_request(
-                            "POST",  # method
-                            API_ENDPOINT,  # path
-                            {},  # headers (empty - auth is handled automatically)
-                            {},  # params
-                            request_body,  # body
-                            None,  # request_guid
-                            API_TIMEOUT,  # timeout in milliseconds
-                        )
-                        
-                        # Parse response
-                        # Content is a string with serialized JSON object
-                        parsed_content = json.loads(resp["content"])
-                        
-                        # Check if the response is successful
-                        if resp["status"] >= 400:
-                            # Error response
-                            error_msg = f"""
-🚨 An Analyst API error has occurred 🚨
-
-* response code: `{resp['status']}`
-* request-id: `{parsed_content.get('request_id', 'N/A')}`
-* error code: `{parsed_content.get('error_code', 'N/A')}`
-
-Message:
-
-{parsed_content.get('message', 'Unknown error')}
-
-                            """
-                            st.error(error_msg)
-                            generated_sql = None
-                        else:
-                            # Success - extract response data
-                            response_data = parsed_content
-                            
-                            # Extract SQL from response
-                            # Response structure: message.content[] with type "sql" containing "statement"
-                            text_response = None
-                            
-                            if 'message' in response_data and 'content' in response_data['message']:
-                                for content_block in response_data['message']['content']:
-                                    if content_block.get('type') == 'sql':
-                                        generated_sql = content_block.get('statement', '')
-                                    elif content_block.get('type') == 'text':
-                                        text_response = content_block.get('text', '')
-                            
-                            # Show text interpretation if available
-                            if text_response:
-                                with st.expander("📝 Interpretation", expanded=False):
-                                    st.write(text_response)
-                            
-                            # Show warnings if any
-                            if 'warnings' in response_data and response_data['warnings']:
-                                for warning in response_data['warnings']:
-                                    st.warning(f"⚠️ {warning.get('message', 'Warning')}")
-                            
-                            if generated_sql:
-                                # Show generated SQL
-                                with st.expander("🔍 Generated SQL Query", expanded=False):
-                                    st.code(generated_sql, language='sql')
-                                
-                                # Show response metadata if available
-                                if 'response_metadata' in response_data:
-                                    with st.expander("📊 Response Metadata", expanded=False):
-                                        st.json(response_data['response_metadata'])
-                            else:
-                                # Check if suggestions were provided
-                                suggestions_found = False
-                                if 'message' in response_data and 'content' in response_data['message']:
-                                    for content_block in response_data['message']['content']:
-                                        if content_block.get('type') == 'suggestions':
-                                            st.info("💡 Your question might be ambiguous. Here are some suggestions:")
-                                            suggestions = content_block.get('suggestions', [])
-                                            for i, suggestion in enumerate(suggestions, 1):
-                                                st.write(f"{i}. {suggestion}")
-                                            suggestions_found = True
-                                
-                                if not suggestions_found:
-                                    st.error("❌ No SQL generated. Check the response for details.")
-                                    with st.expander("🔍 Full Response"):
-                                        st.json(response_data)
-                                    generated_sql = None  # Ensure it's None if no SQL generated
-                        
-                        # Execute the query if SQL was generated
-                        if generated_sql:
-                            with st.spinner("🔄 Executing query..."):
-                                try:
-                                    result = session.sql(generated_sql).collect()
-                                    
-                                    if result and len(result) > 0:
-                                        # Convert to DataFrame
-                                        df = pd.DataFrame([dict(row.asDict()) for row in result])
-                                        
-                                        # Display results
-                                        st.subheader("📊 Results")
-                                        st.dataframe(df, use_container_width=True)
-                                        
-                                        # Show summary
-                                        st.success(f"✅ Query executed successfully! Returned {len(df)} rows.")
-                                        
-                                        # Show query details
-                                        with st.expander("📋 Query Details"):
-                                            st.code(generated_sql, language='sql')
-                                            st.write(f"**Rows returned:** {len(df)}")
-                                            st.write(f"**Columns:** {', '.join(df.columns)}")
-                                        
-                                    else:
-                                        st.info("ℹ️ Query executed but returned no results.")
-                                        
-                                except Exception as e:
-                                    st.error(f"❌ Error executing query: {str(e)}")
-                                    st.info("💡 The generated SQL might need adjustment. Check the generated SQL above.")
-                                    import traceback
-                                    with st.expander("🔍 Error Details"):
-                                        st.code(traceback.format_exc(), language='python')
-                        
-                        else:
-                            st.error("❌ Could not generate SQL from Cortex Analyst API")
-                            st.info("💡 Check the API response above for details.")
-                    
-                except Exception as e:
-                    st.error(f"❌ Error generating SQL: {str(e)}")
-                    st.info("💡 Make sure you're running in a Snowflake notebook and that Cortex Analyst is available in your account.")
-                    import traceback
-                    with st.expander("🔍 Error Details"):
-                        st.code(traceback.format_exc(), language='python')
-    
-    # Show available semantic views info
-    with st.expander("ℹ️ About This App"):
-        st.markdown("""
-        **How to use:**
-        1. Select a semantic view from the dropdown
-        2. Type your question in natural language
-        3. Click "Answer!" to generate and execute the query
-        
-        **Example questions:**
-        - "What are the top 10 departments by total employees?"
-        - "Show me average salary by job title"
-        - "Which locations have the highest attrition rates?"
-        - "List the top 5 employees by salary"
-        
-        **Note:** This app uses the [Cortex Analyst REST API](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst/rest-api) 
-        to generate SQL from natural language questions. The API automatically understands your semantic view 
-        structure and generates appropriate queries.
-        
-        **Authentication:** The app attempts to automatically retrieve your authentication token from the session.
-        If that fails, you can manually enter an OAuth token when prompted.
-        """)
-
-# Run the Streamlit app
-if __name__ == "__main__":
-    main()
-
-
-```
-
+Review the generated SQL before copying it into a Workspaces SQL file and running it with the lab role and warehouse. The app does not automatically execute model-generated SQL. The screenshot uses an isolated test database; use your own database name. You can stop the preview before continuing to the agent, but retain the lab tables and views.
 
 ## Enable and Configure Snowflake Intelligence
 
