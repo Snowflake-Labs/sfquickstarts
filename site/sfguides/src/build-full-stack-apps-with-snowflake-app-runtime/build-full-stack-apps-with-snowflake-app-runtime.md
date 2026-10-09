@@ -7,6 +7,7 @@ status: Published
 language: en
 duration: 45
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
+fork repo link: <https://github.com/Snowflake-Labs/sfguide-build-full-stack-apps-with-snowflake-app-runtime>
 
 # Get Started with Snowflake App Runtime
 <!-- ------------------------ -->
@@ -83,8 +84,8 @@ node --version
 The quickstart repo contains setup scripts and IDD prompts for each iteration:
 
 ```bash
-git clone https://github.com/Snowflake-Labs/sfguide-getting-started-snowflake-app-runtime.git
-cd sfguide-getting-started-snowflake-app-runtime
+git clone https://github.com/Snowflake-Labs/sfguide-build-full-stack-apps-with-snowflake-app-runtime.git
+cd sfguide-build-full-stack-apps-with-snowflake-app-runtime
 ```
 
 ### Add a Snowflake CLI Connection
@@ -152,7 +153,7 @@ Checkout the iteration 1 branch:
 git checkout iteration-1/data-exploration
 ```
 
-The branch includes [`AGENTS.md`](https://github.com/Snowflake-Labs/sfguide-getting-started-snowflake-app-runtime/blob/iteration-1/data-exploration/AGENTS.md) which tells Cortex Code Desktop about your Snowflake environment — connection, role, database, and conventions. CoCo reads this file automatically from the project root.
+The branch includes [`AGENTS.md`](https://github.com/Snowflake-Labs/sfguide-build-full-stack-apps-with-snowflake-app-runtime/blob/iteration-1/data-exploration/AGENTS.md) which tells Cortex Code Desktop about your Snowflake environment — connection, role, database, and conventions. CoCo reads this file automatically from the project root.
 
 Open the repo directory in Cortex Code Desktop. Confirm it is connected to your Snowflake account — you should see your account name in the status bar.
 
@@ -167,7 +168,7 @@ This is the core of the quickstart. You will paste a single IDD-structured promp
 
 ### The Prompt
 
-Open [`prompts/01-build-explorer.md`](https://github.com/Snowflake-Labs/sfguide-getting-started-snowflake-app-runtime/blob/iteration-1/data-exploration/prompts/01-build-explorer.md) from the repo and paste the prompt into Cortex Code Desktop chat. It describes the dashboard goal, KPI cards, charts, customer details table, and UI preferences — all in IDD structure.
+Open [`prompts/01-build-explorer.md`](https://github.com/Snowflake-Labs/sfguide-build-full-stack-apps-with-snowflake-app-runtime/blob/iteration-1/data-exploration/prompts/01-build-explorer.md) from the repo and paste the prompt into Cortex Code Desktop chat. It describes the dashboard goal, KPI cards, charts, customer details table, and UI preferences — all in IDD structure.
 
 ### What Happens Next
 
@@ -262,7 +263,7 @@ git checkout iteration-2/workflow-app
 snow sql -f scripts/grants.sql --connection quickstart
 ```
 
-**Step 2 — Create Postgres instance and data mirror.** Open [`prompts/02-postgres-setup.md`](https://github.com/Snowflake-Labs/sfguide-getting-started-snowflake-app-runtime/blob/iteration-2/workflow-app/prompts/02-postgres-setup.md) and paste the prompt into Cortex Code Desktop. This uses the `/snowflake-postgres` skill to:
+**Step 2 — Create Postgres instance and data mirror.** Open [`prompts/02-postgres-setup.md`](https://github.com/Snowflake-Labs/sfguide-build-full-stack-apps-with-snowflake-app-runtime/blob/iteration-2/workflow-app/prompts/02-postgres-setup.md) and paste the prompt into Cortex Code Desktop. This uses the `/snowflake-postgres` skill to:
 
 - Create the `CHURNGUARD_PG` Postgres instance
 - Create the `actions` table inside Postgres (with a primary key for mirroring)
@@ -282,7 +283,7 @@ This creates the `ACTION_SUMMARY` dynamic table (reads from the mirrored `$live`
 
 ### The Prompt
 
-Open [`prompts/02-add-workflow.md`](https://github.com/Snowflake-Labs/sfguide-getting-started-snowflake-app-runtime/blob/iteration-2/workflow-app/prompts/02-add-workflow.md) from the repo and paste the prompt into Cortex Code. It describes the workflow goal: flag customers for retention, write actions to Postgres with parameterized queries, read from Postgres for instant consistency, and display global toast notifications powered by Snowflake alerts.
+Open [`prompts/02-add-workflow.md`](https://github.com/Snowflake-Labs/sfguide-build-full-stack-apps-with-snowflake-app-runtime/blob/iteration-2/workflow-app/prompts/02-add-workflow.md) from the repo and paste the prompt into Cortex Code. It describes the workflow goal: flag customers for retention, write actions to Postgres with parameterized queries, read from Postgres for instant consistency, and display global toast notifications powered by Snowflake alerts.
 
 ### What Happens
 
@@ -393,7 +394,7 @@ snow sql -f scripts/grants.sql --connection quickstart
 snow sql -f scripts/iteration-3-setup.sql --connection quickstart
 ```
 
-See [`scripts/iteration-3-setup.sql`](https://github.com/Snowflake-Labs/sfguide-getting-started-snowflake-app-runtime/blob/iteration-3/ai-app/scripts/iteration-3-setup.sql) for the full SQL. The five seed rules are:
+See [`scripts/iteration-3-setup.sql`](https://github.com/Snowflake-Labs/sfguide-build-full-stack-apps-with-snowflake-app-runtime/blob/iteration-3/ai-app/scripts/iteration-3-setup.sql) for the full SQL. The five seed rules are:
 
 | Priority | When | Action |
 |---|---|---|
@@ -407,9 +408,9 @@ See [`scripts/iteration-3-setup.sql`](https://github.com/Snowflake-Labs/sfguide-
 
 Iteration 3 uses two prompts, the same way iteration 2 does.
 
-**1. Semantic view and agent.** Open [`prompts/03-agent-setup.md`](https://github.com/Snowflake-Labs/sfguide-getting-started-snowflake-app-runtime/blob/iteration-3/ai-app/prompts/03-agent-setup.md) and paste it into Cortex Code. It uses `/agent-studio` to create the `CHURNGUARD_SV` semantic view and the `CHURNGUARD_AGENT` agent, then tests the agent in the playground.
+**1. Semantic view and agent.** Open [`prompts/03-agent-setup.md`](https://github.com/Snowflake-Labs/sfguide-build-full-stack-apps-with-snowflake-app-runtime/blob/iteration-3/ai-app/prompts/03-agent-setup.md) and paste it into Cortex Code. It uses `/agent-studio` to create the `CHURNGUARD_SV` semantic view and the `CHURNGUARD_AGENT` agent, then tests the agent in the playground.
 
-**2. Agent in the app.** Open [`prompts/03-add-agent.md`](https://github.com/Snowflake-Labs/sfguide-getting-started-snowflake-app-runtime/blob/iteration-3/ai-app/prompts/03-add-agent.md) and paste it into Cortex Code. It uses `/snowflake-apps` to add the chat drawer, the contextual entry points, and the approve flow, then redeploys.
+**2. Agent in the app.** Open [`prompts/03-add-agent.md`](https://github.com/Snowflake-Labs/sfguide-build-full-stack-apps-with-snowflake-app-runtime/blob/iteration-3/ai-app/prompts/03-add-agent.md) and paste it into Cortex Code. It uses `/snowflake-apps` to add the chat drawer, the contextual entry points, and the approve flow, then redeploys.
 
 ### What Happens
 
