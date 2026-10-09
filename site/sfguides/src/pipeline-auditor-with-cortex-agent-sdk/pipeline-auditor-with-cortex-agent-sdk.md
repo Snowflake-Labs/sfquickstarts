@@ -711,7 +711,7 @@ You have built a full-stack AI-powered pipeline auditor that runs on Snowflake A
 
 ### Related Resources
 - [@snowflake/cortex-agent-sdk on npm](https://www.npmjs.com/package/@snowflake/cortex-agent-sdk)
-- [Snowflake App Runtime Documentation](https://docs.snowflake.com/en/developer-guide/snowflake-apps/snowflake-apps)
+- [Snowflake App Runtime Documentation](https://docs.snowflake.com/en/developer-guide/snowflake-app-runtime)
 - [Cortex Agents Overview](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents)
 - [Pipeline Auditor Companion Repository](https://github.com/sfc-gh-JCHAEARLEY/sfguide-pipeline-auditor-with-cortex-agent-sdk)
 
