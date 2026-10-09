@@ -7,7 +7,7 @@ environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Cortex, Agent, SDK, TypeScript, AI, App Runtime, Next.js
-fork repo link: https://github.com/iamontheinet/awesome-pipeline-auditor-with-cortex-agents-sdk
+fork repo link: https://github.com/sfc-gh-JCHAEARLEY/sfguide-pipeline-auditor-with-cortex-agent-sdk
 
 # Building a Pipeline Auditor with the Cortex Agent SDK
 
@@ -62,8 +62,8 @@ CREATE SCHEMA IF NOT EXISTS PIPELINE_AUDITOR_DB.AUDITOR;
 Clone the companion repository and navigate to the project:
 
 ```bash
-git clone https://github.com/iamontheinet/awesome-pipeline-auditor-with-cortex-agents-sdk.git
-cd awesome-pipeline-auditor-with-cortex-agents-sdk
+git clone https://github.com/sfc-gh-JCHAEARLEY/sfguide-pipeline-auditor-with-cortex-agent-sdk.git
+cd sfguide-pipeline-auditor-with-cortex-agent-sdk
 ```
 
 Install dependencies:
@@ -533,7 +533,7 @@ Rules:
 }
 ```
 
-The fix session is stored in a global variable so follow-up chat can continue the conversation.
+The fix session is stored per-job in the job store so follow-up chat can continue the conversation without leaking state between requests.
 
 ### Multi-Turn Follow-Up Chat
 
@@ -590,7 +590,7 @@ export function useSuggestFix() {
 
 The fix panel renders inline in the ChatThread component. Each finding in the report has a "Suggest Fix" button. When clicked, it opens a chat-like panel below the finding with the AI's suggestion and a text input for follow-ups.
 
-### Execute SQL Guard
+### Copy and Run
 
 SQL code blocks in fix suggestions include a **Copy** button so users can paste them into a Snowflake worksheet for execution.
 
@@ -711,9 +711,9 @@ You have built a full-stack AI-powered pipeline auditor that runs on Snowflake A
 
 ### Related Resources
 - [@snowflake/cortex-agent-sdk on npm](https://www.npmjs.com/package/@snowflake/cortex-agent-sdk)
-- [Snowflake App Runtime Documentation](https://docs.snowflake.com/en/developer-guide/snowflake-apps)
+- [Snowflake App Runtime Documentation](https://docs.snowflake.com/en/developer-guide/snowflake-apps/snowflake-apps)
 - [Cortex Agents Overview](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents)
-- [Original Pipeline Auditor Repository](https://github.com/iamontheinet/awesome-pipeline-auditor-with-cortex-agents-sdk)
+- [Pipeline Auditor Companion Repository](https://github.com/sfc-gh-JCHAEARLEY/sfguide-pipeline-auditor-with-cortex-agent-sdk)
 
 ### Cleanup
 
