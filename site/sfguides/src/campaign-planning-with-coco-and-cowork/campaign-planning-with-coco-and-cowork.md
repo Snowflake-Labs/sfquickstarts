@@ -1,6 +1,6 @@
 author: Kevin Nguyen, Snowflake CoCo
 id: campaign-planning-with-coco-and-cowork
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/cortex-analyst, snowflake-site:taxonomy/snowflake-feature/apache-iceberg, snowflake-site:taxonomy/snowflake-feature/snowflake-intelligence, snowflake-site:taxonomy/industry/travel-and-hospitality
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/cortex-analyst, snowflake-site:taxonomy/snowflake-feature/snowflake-intelligence, snowflake-site:taxonomy/industry/travel-and-hospitality
 language: en
 summary: Land messy campaign exports in open Apache Iceberg tables, clean and standardize them with CoCo, surface audience collisions on a live collision heatmap, and answer planning questions in plain language with Snowflake CoWork.
 environments: web
