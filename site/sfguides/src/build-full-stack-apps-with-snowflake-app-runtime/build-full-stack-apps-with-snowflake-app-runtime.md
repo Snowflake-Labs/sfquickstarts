@@ -398,13 +398,16 @@ Open the app and test the full workflow:
 ![Action Board with status badges and summary cards](assets/iter2_action_board.png)
 
 <!-- ------------------------ -->
-## Iteration 3: Embed a Cortex Agent
+## Iteration 3: Make ChurnGuard Intelligent
 
-In this iteration ChurnGuard becomes agent-assisted. A Cortex Agent sits inside the app: users ask questions from wherever they are (a customer row, a segment chart, an action card) and the agent explores the churn data, explains what it finds, and recommends retention actions. Users approve a recommendation with one click, and the app writes it to Postgres exactly as the iteration 2 form does.
+In this iteration ChurnGuard becomes an AI app with an embedded agent. A Cortex Agent sits inside the app: users ask questions from wherever they are, the agent explores churn data, explains what it finds, and recommends retention actions. A serverless task proactively stages recommendations overnight, so users open the app to find proposals already waiting. An MCP server lets external agents — including Cortex Code Desktop — automate ChurnGuard workflows hands-free.
 
-Two design choices shape this iteration:
+![Iteration 3 architecture](assets/iter3_architecture.png)
+
+Three design choices shape this iteration:
 - **Recommendations come from a lookup table, not from the model.** A `RETENTION_PLAYBOOK` table holds ordered rules (for example, *High risk and spend over $7,000 → Offer*). A `CUSTOMER_RECOMMENDATIONS` view applies them, so the same customer always gets the same action, with the rule that produced it. The agent decides *which* customers to look at; the playbook decides *what* to do.
-- **The agent proposes, the app writes.** The agent is read-only. Actions live in Postgres, and data mirroring only flows Postgres → Snowflake, so the agent could not write them from Snowflake anyway. Instead it returns action proposals, and the app sends approved ones through the existing `POST /api/actions`. There is one write path, and a person stays in the loop.
+- **The agent proposes, the app writes.** The agent is read-only for direct writes. It stages proposals into `PROPOSED_ACTIONS` via a custom tool. Users review proposals on the "Agent Suggested" tab and approve them with one click, routing through the same `POST /api/actions` path. A person stays in the loop.
+- **A serverless task stages recommendations daily.** `AGENT_SUGGESTION_TASK` calls the staging SP at 08:00 UTC, so the app has fresh proposals every morning. The human governs; the agent initiates.
 
 ### Setup
 
@@ -420,13 +423,15 @@ git checkout iteration-3/ai-app
 snow sql -f scripts/grants.sql --connection quickstart
 ```
 
-**Step 2 - Run iteration 3 setup** script to create the playbook and the recommendations view:
+**Step 2 - Run iteration 3 setup** script to create the playbook, recommendations view, proposals table, staging SP, and the daily task:
 
 ```bash
 snow sql -f scripts/iteration-3-setup.sql --connection quickstart
 ```
 
-See [`scripts/iteration-3-setup.sql`](https://github.com/Snowflake-Labs/sfguide-build-full-stack-apps-with-snowflake-app-runtime/blob/iteration-3/ai-app/scripts/iteration-3-setup.sql) for the full SQL. The five seed rules are:
+See [`scripts/iteration-3-setup.sql`](https://github.com/Snowflake-Labs/sfguide-build-full-stack-apps-with-snowflake-app-runtime/blob/iteration-3/ai-app/scripts/iteration-3-setup.sql) for the full SQL. The setup also runs `EXECUTE TASK AGENT_SUGGESTION_TASK` so proposals are available immediately.
+
+The five seed rules are:
 
 | Priority | When | Action |
 |---|---|---|
@@ -440,9 +445,9 @@ See [`scripts/iteration-3-setup.sql`](https://github.com/Snowflake-Labs/sfguide-
 
 Iteration 3 uses two prompts, the same way iteration 2 does.
 
-**1. Semantic view and agent.** Open [`prompts/03-agent-setup.md`](https://github.com/Snowflake-Labs/sfguide-build-full-stack-apps-with-snowflake-app-runtime/blob/iteration-3/ai-app/prompts/03-agent-setup.md) and paste it into Cortex Code. It uses `/agent-studio` to create the `CHURNGUARD_SV` semantic view and the `CHURNGUARD_AGENT` agent, then tests the agent in the playground.
+**1. Semantic view and agent.** Open [`prompts/03-agent-setup.md`](https://github.com/Snowflake-Labs/sfguide-build-full-stack-apps-with-snowflake-app-runtime/blob/iteration-3/ai-app/prompts/03-agent-setup.md) and paste it into Cortex Code. It uses `/agent-studio` to create the `CHURNGUARD_SV` semantic view and the `CHURNGUARD_AGENT` agent with a custom tool, then tests the agent in the playground.
 
-**2. Agent in the app.** Open [`prompts/03-add-agent.md`](https://github.com/Snowflake-Labs/sfguide-build-full-stack-apps-with-snowflake-app-runtime/blob/iteration-3/ai-app/prompts/03-add-agent.md) and paste it into Cortex Code. It uses `/snowflake-apps` to add the chat drawer, the contextual entry points, and the approve flow, then redeploys.
+**2. Agent in the app.** Open [`prompts/03-add-agent.md`](https://github.com/Snowflake-Labs/sfguide-build-full-stack-apps-with-snowflake-app-runtime/blob/iteration-3/ai-app/prompts/03-add-agent.md) and paste it into Cortex Code. It uses `/snowflake-apps` to add the chat drawer, contextual entry points, "Agent Suggested" tab, MCP server, and the approve flow, then redeploys.
 
 ### What Happens
 
@@ -455,7 +460,8 @@ Cortex Code creates `CHURNGUARD_SV` over `CHURN_METRICS`, `CHURN_TRENDS`, `CUSTO
 Cortex Code creates `CHURNGUARD_AGENT` with:
 - **Cortex Analyst** on the semantic view, so it can answer data questions by generating SQL
 - **Data to Chart**, so it can show trends and comparisons as charts
-- **Instructions** to take recommendations only from `CUSTOMER_RECOMMENDATIONS`, skip customers who already have an open action, propose at most 5 actions per turn, and return proposals in a `churnguard-actions` block the app can parse
+- **`stage_retention_actions` custom tool** backed by `STAGE_RETENTION_PROPOSALS` SP, so the agent can stage proposals into `PROPOSED_ACTIONS`
+- **Instructions** to take recommendations only from `CUSTOMER_RECOMMENDATIONS`, skip customers who already have an open action, and call the staging tool when asked to flag customers
 
 **3. Agent built into the app**
 
@@ -470,11 +476,23 @@ An empty drawer shows suggested prompts for the current page.
 
 **4. Streaming responses and action cards**
 
-A Next.js API route streams the `agent:run` REST API, so the UI handles the ~30-second response time step by step: a thinking indicator, live status updates as the agent calls tools, then the streamed answer with inline tables and charts. Proposals appear as action cards showing the customer, the action, and the playbook rule. **Approve** calls `POST /api/actions`, and the Action Board refreshes.
+A Next.js API route streams the `agent:run` REST API, so the UI handles the ~30-second response time step by step: a thinking indicator, live status updates as the agent calls tools, then the streamed answer with inline tables and charts. When the agent calls `stage_retention_actions`, the chat shows the staged count and links to the Agent Suggested tab. Proposals appear as action cards showing the customer, the action, and the playbook rule. **Approve** calls `POST /api/actions`, and the Action Board refreshes.
 
-**5. Thread management**
+**5. Agent Suggested tab**
+
+The Action Board gains an "Agent Suggested" tab showing pending proposals from `PROPOSED_ACTIONS`. Each card shows the customer, the recommended action, and the rule reason. An **Approve All** button stages all pending proposals at once; individual **Approve** / **Dismiss** buttons handle one at a time. Approving writes to Postgres and marks the proposal approved. A badge on the tab shows the pending count, and a toast notification appears when proposals are waiting.
+
+**6. Thread management**
 
 Threads persist conversation context. The app creates a thread on the first message and reuses it for follow-ups, so the agent remembers what was discussed.
+
+**7. Agentic automation**
+
+`AGENT_SUGGESTION_TASK` is a serverless task that runs daily at 08:00 UTC. It calls `STAGE_RETENTION_PROPOSALS`, which reads `CUSTOMER_RECOMMENDATIONS` for customers without pending proposals or open actions, and stages up to 20 proposals. Users open the app the next morning and find fresh recommendations waiting on the Agent Suggested tab.
+
+**8. MCP server**
+
+The app exposes an MCP server at `/api/mcp` with tools: `flag_customer`, `list_actions`, `get_customer_risk`, and `get_churn_summary`. Any MCP client with Snowflake credentials can automate ChurnGuard workflows — for example, Cortex Code Desktop can list open actions or flag a customer without opening the browser.
 
 ### Key Concepts
 
@@ -488,31 +506,54 @@ Threads persist conversation context. The app creates a thread on the first mess
 
 > **Propose and approve**
 >
-> The agent never writes. It returns structured proposals, and the app writes approved actions through its existing API. This keeps a single write path to Postgres and a human decision on every action.
+> The agent never writes directly. It stages structured proposals into `PROPOSED_ACTIONS` via a custom tool, and the app writes approved actions through its existing API. A person decides on every action.
 
 > **agent:run REST API**
 >
 > Your app calls the agent through the REST API, streaming events and using threads to maintain conversation context. See [Cortex Agents Run API](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents-run).
 
+> **Serverless tasks**
+>
+> A serverless task runs on managed compute — no warehouse to size, suspend, or pay for when idle. `AGENT_SUGGESTION_TASK` stages proposals daily, so the agent works proactively.
+
+> **Custom agent tools**
+>
+> A custom tool connects an agent to a stored procedure. The agent calls the tool to stage proposals; the SP writes to `PROPOSED_ACTIONS` and returns the result. See [Custom tools](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents#custom-tools).
+
+> **MCP server**
+>
+> Model Context Protocol lets external agents call your app's API as tools. CoCo Desktop, Claude Desktop, or any MCP client with Snowflake auth can automate ChurnGuard workflows. See [Model Context Protocol](https://modelcontextprotocol.io).
+
 ### Verify
 
-Open the app and test the agent:
+Open the app and test the agent and agentic automation:
 
-1. Open the chat drawer (`Cmd+K`)
-2. Ask: *"Who are the top 5 high-risk customers by spend and what should we do?"*
-3. The agent returns the 5 customers in a table, each with a recommended action and the playbook rule behind it, plus 5 action cards
+1. Open the **Action Board** and switch to the **Agent Suggested** tab — you should see proposals staged by the setup task run
+2. Click **Approve All** — the actions appear on the main Action Board tab
+
+![Agent Suggested tab with proposals](assets/iter3_agent_suggested.png)
+
+3. Open the chat drawer (`Cmd+K`)
+4. Ask: *"Who are the top 5 high-risk customers by spend and what should we do?"*
+5. The agent returns the 5 customers in a table, each with a recommended action and the playbook rule behind it
 
 ![Agent answering a data question](assets/iter3_chat_data.png)
 
-4. Approve 3 of the cards
-5. Switch to the **Action Board** — the 3 actions appear immediately
+6. Ask: *"Flag high-risk customers for retention"* — the agent calls the `stage_retention_actions` tool, and new proposals appear on the Agent Suggested tab
+7. Ask: *"Show me the monthly churn trend as a chart"* — the agent generates a chart inline
 
-![Approved agent proposals on the Action Board](assets/iter3_action_cards.png)
+![Agent chart response](assets/iter3_chat_chart.png)
 
-6. After about 30 seconds, ask: *"Which high-risk customers still have no open action?"* — the 3 customers you just approved are no longer listed
-7. On the dashboard, open a customer row and choose **Ask about this customer** — the agent explains that customer's risk and suggests a next step
+8. On the dashboard, open a customer row and choose **Ask about this customer** — the agent explains that customer's risk and suggests a next step
 
 ![Asking the agent from a customer row](assets/iter3_contextual_ask.png)
+
+**MCP server verification:**
+
+9. In Cortex Code Desktop, configure the app's MCP endpoint as an MCP server (use the Application Service URL with `/api/mcp`)
+10. Ask CoCo: *"List all open actions in ChurnGuard"* — CoCo calls the `list_actions` MCP tool and returns the results
+
+![CoCo Desktop calling ChurnGuard via MCP](assets/iter3_mcp_coco.png)
 
 <!-- ------------------------ -->
 ## Cleanup
