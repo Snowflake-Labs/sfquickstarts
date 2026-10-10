@@ -17,18 +17,18 @@ Snowflake App Runtime lets you deploy full-stack web apps directly on Snowflake.
 
 In this quickstart you will build **ChurnGuard**, a customer retention platform that evolves across three iterations. Each iteration maps to a core Snowflake App Runtime use case:
 
-| Iteration | App Type | What You Build | Snowflake Features |
+| Iteration | Use Case | What You Build | Snowflake Features |
 |-----------|----------|---------------|-------------------|
-| **1 — Explorer** | Data Exploration | Churn risk dashboard with KPIs, segment charts, paginated customer details | Application Service, `querySnowflake`, `app.yml` manifest |
-| **2 — Workflow** | Workflow App | Retention action forms, Action Board with KPI summaries, escalation alerts as toasts | Snowflake Postgres, Data Mirroring, Dynamic Tables, Alerts, External Access Integration |
-| **3 — Agent** | AI App | Agent-assisted ChurnGuard: ask questions anywhere in the app, get playbook-grounded recommendations, approve them in one click | Cortex Agent, Cortex Analyst, Semantic View, Data to Chart |
+| **1 — Explorer** | Advanced Data Exploration | Rich, interactive views over churn data. Pivot, drill down, and explore in ways a static report cannot. | Application Service, `querySnowflake`, `app.yml` manifest |
+| **2 — Workflow** | Workflow Apps | Read and write governed data with collaborative state and alerts. The multi-step, transactional app a dashboard was never meant to be. | Snowflake Postgres, Data Mirroring, Dynamic Tables, Alerts, External Access Integration |
+| **3 — Agent** | AI Apps and Agents | Embed a Cortex Agent that reasons over your data and calls your app's tools. A serverless task stages recommendations proactively. An MCP server lets external agents automate workflows. | Cortex Agent, Semantic View, Serverless Tasks, MCP Server |
 
 > **Iterative by design:** Each iteration builds on the previous one. Session leaders can stop at any iteration — each produces a deployable, valuable app.
 
 The progression tells a story:
-- **See the data** (iteration 1 — read-only dashboard)
-- **Act on the data** (iteration 2 — workflow with transactional writes to Snowflake Postgres; data mirrors to Snowflake for DT-powered alerts)
-- **Let the agent help** (iteration 3 — a Cortex Agent explores the data and proposes actions; you approve them)
+- **See and explore live data** (iteration 1 — interactive dashboard with drill-down and pivot)
+- **Capture, route, and operate** (iteration 2 — workflow with transactional writes to Snowflake Postgres; data mirrors to Snowflake for DT-powered alerts)
+- **Bring intelligence into the app** (iteration 3 — a Cortex Agent proposes actions, a serverless task stages them daily, and an MCP server opens the app to external automation)
 
 ### Prompt Approach
 
@@ -156,10 +156,11 @@ You should see approximately 30000 rows in `CHURN_METRICS` and 7-12 rows in `CHU
 
 ### Prepare Your Working Directory
 
-Checkout the iteration 1 branch:
+Create your own working branch, `my-app`, from the iteration 1 branch:
 
 ```bash
-git checkout iteration-1/data-exploration
+git fetch origin
+git checkout -b my-app origin/iteration-1/data-exploration
 ```
 
 The branch includes [`AGENTS.md`](https://github.com/Snowflake-Labs/sfguide-build-full-stack-apps-with-snowflake-app-runtime/blob/iteration-1/data-exploration/AGENTS.md) which tells Cortex Code Desktop about your Snowflake environment — connection, role, database, and conventions. CoCo reads this file automatically from the project root.
@@ -170,7 +171,14 @@ Open the repo directory in Cortex Code Desktop. Confirm it is connected to your 
 
 > **Note:** Each iteration builds on the previous. Complete iteration 1 before starting iteration 2.
 
-> **How your app carries over:** Cortex Code generates the app in `churnguard/`. Every iteration branch ignores that folder in `.gitignore` and contains only prompts and scripts. When you check out the next iteration branch, git leaves `churnguard/` untouched and the new prompt builds on your existing app. To version your app, create your own branch and remove `churnguard/` from `.gitignore`.
+> **How your app carries over:** Cortex Code generates the app in `churnguard/` on your `my-app` branch. Each iteration branch builds on the previous one and adds only that iteration's prompts and scripts. At the end of each iteration you commit your app, and at the start of the next you pull the next iteration branch into `my-app`.
+
+At the end of each iteration, commit your app:
+
+```bash
+git add -A
+git commit -m "Iteration 1 done"
+```
 
 <!-- ------------------------ -->
 ## Iteration 1: Build the ChurnGuard Data Explorer
@@ -264,10 +272,10 @@ The app reads and writes only Postgres for actions, so the Action Board is alway
 
 ### Setup
 
-Checkout the iteration 2 branch:
+Commit your iteration 1 work if you haven't already, then pull in iteration 2:
 
 ```bash
-git checkout iteration-2/workflow-app
+git pull --no-rebase --no-edit origin iteration-2/workflow-app
 ```
 
 **Step 1 — Rerun grants** (includes Postgres, EAI, mirror, and alert privileges):
@@ -411,22 +419,24 @@ Three design choices shape this iteration:
 
 ### Setup
 
-Checkout the iteration 3 branch:
+Commit your iteration 2 work, then pull in iteration 3:
 
 ```bash
-git checkout iteration-3/ai-app
+git add -A
+git commit -m "Iteration 2 done"
+git pull --no-rebase --no-edit origin iteration-3/ai-app
 ```
 
-**Step 1 — Rerun grants** (includes Postgres, EAI, mirror, and alert privileges):
-
-```bash
-snow sql -f scripts/grants.sql --connection quickstart
-```
-
-**Step 2 - Run iteration 3 setup** script to create the playbook, recommendations view, proposals table, staging SP, and the daily task:
+**Step 1 - Run iteration 3 setup** script to create the playbook, recommendations view, proposals table, staging SP, and the daily task:
 
 ```bash
 snow sql -f scripts/iteration-3-setup.sql --connection quickstart
+```
+
+**Step 2 — Rerun grants** (includes Postgres, EAI, mirror, and alert privileges):
+
+```bash
+snow sql -f scripts/grants.sql --connection quickstart
 ```
 
 See [`scripts/iteration-3-setup.sql`](https://github.com/Snowflake-Labs/sfguide-build-full-stack-apps-with-snowflake-app-runtime/blob/iteration-3/ai-app/scripts/iteration-3-setup.sql) for the full SQL. The setup also runs `EXECUTE TASK AGENT_SUGGESTION_TASK` so proposals are available immediately.
@@ -578,6 +588,117 @@ DROP ROLE IF EXISTS SFQUICKSTART_CHURNGUARD_ROLE;
 ```
 
 <!-- ------------------------ -->
+## Troubleshooting
+
+Most issues fall into a few categories. You can diagnose them with the SQL queries below, or ask Cortex Code Desktop — paste the error message and ask *"Why am I seeing this?"*.
+
+### App won't deploy
+
+**"Insufficient privileges"** on `snow app deploy`:
+
+```sql
+-- Check your role has the required grants
+SHOW GRANTS TO ROLE SFQUICKSTART_CHURNGUARD_ROLE;
+```
+
+Re-run `scripts/grants.sql` as ACCOUNTADMIN if grants are missing.
+
+**"Application service already exists"**:
+
+The app is already deployed. Run `snow app deploy` again — it updates in place.
+
+### Postgres connection fails (iteration 2)
+
+**"Connection refused" or "SSL required"**:
+
+```sql
+-- Verify the Postgres instance is running
+SHOW POSTGRES INSTANCES IN ACCOUNT;
+```
+
+Ensure your local IP is in the network policy if running `psql` locally:
+
+```sql
+SHOW NETWORK POLICIES;
+DESCRIBE NETWORK POLICY <your_policy>;
+```
+
+**EAI or secret issues**:
+
+```sql
+-- Check External Access Integration
+SHOW EXTERNAL ACCESS INTEGRATIONS;
+-- Check secrets
+SHOW SECRETS IN SCHEMA SFQUICKSTART_CHURNGUARD.PUBLIC;
+```
+
+### Data not appearing / stale data
+
+**Mirror not syncing** (actions don't appear in Snowflake after writing to Postgres):
+
+```sql
+-- Check mirror lag
+SELECT * FROM CHURNGUARD_MIRROR.PUBLIC.ACTIONS$live LIMIT 5;
+-- Check mirror status
+SHOW DATA METRIC FUNCTIONS ON ACCOUNT;
+```
+
+Data mirroring has ~30 seconds of lag. Wait and query again.
+
+**Dynamic table not refreshing**:
+
+```sql
+-- Check DT refresh history
+SELECT * FROM TABLE(INFORMATION_SCHEMA.DYNAMIC_TABLE_REFRESH_HISTORY(
+    NAME => 'SFQUICKSTART_CHURNGUARD.PUBLIC.ACTION_SUMMARY'
+)) ORDER BY REFRESH_END_TIME DESC LIMIT 5;
+```
+
+### Agent not responding (iteration 3)
+
+**Agent returns errors in chat**:
+
+```sql
+-- Verify agent exists and is configured
+SHOW CORTEX AGENTS IN SCHEMA SFQUICKSTART_CHURNGUARD.PUBLIC;
+-- Verify semantic view
+SHOW SEMANTIC VIEWS IN SCHEMA SFQUICKSTART_CHURNGUARD.PUBLIC;
+```
+
+**No proposals on Agent Suggested tab**:
+
+```sql
+-- Check if the task ran
+SELECT * FROM TABLE(INFORMATION_SCHEMA.TASK_HISTORY(
+    TASK_NAME => 'AGENT_SUGGESTION_TASK'
+)) ORDER BY SCHEDULED_TIME DESC LIMIT 5;
+
+-- Check proposals directly
+SELECT * FROM PROPOSED_ACTIONS ORDER BY PROPOSED_AT DESC LIMIT 10;
+```
+
+**Task didn't run**:
+
+```sql
+-- Check task state
+SHOW TASKS LIKE 'AGENT_SUGGESTION_TASK';
+
+-- Resume if suspended
+ALTER TASK AGENT_SUGGESTION_TASK RESUME;
+
+-- Run manually
+EXECUTE TASK AGENT_SUGGESTION_TASK;
+```
+
+### General: ask Cortex Code Desktop
+
+For any error not covered above, paste the error message into Cortex Code Desktop and ask:
+
+> *"I'm running the ChurnGuard quickstart and got this error: [paste error]. What's wrong and how do I fix it?"*
+
+CoCo has access to your Snowflake account and can run diagnostic queries directly.
+
+<!-- ------------------------ -->
 ## Conclusion And Resources
 
 You built a customer retention platform that evolved across three iterations — from a read-only dashboard to a workflow app to an AI-powered agentic experience.
@@ -586,9 +707,9 @@ You built a customer retention platform that evolved across three iterations —
 
 | Iteration | Key Takeaway |
 |-----------|-------------|
-| **1 — Explorer** | Snowflake App Runtime removes all infrastructure friction. Describe what you want, deploy with `snow app deploy`. |
-| **2 — Workflow** | Snowflake Postgres for transactional writes; data mirroring bridges to DT + alerts. Secrets and EAI wire the connectivity. |
-| **3 — Agent** | A Cortex Agent embedded in your app explores the data and proposes playbook-grounded actions; the app executes what users approve. |
+| **1 — Explorer** | Snowflake App Runtime removes all infrastructure friction. Describe what you want, deploy with `snow app deploy`. Rich data exploration with full control of the UI. |
+| **2 — Workflow** | Snowflake Postgres for transactional writes; data mirroring bridges to DT + alerts. Secrets and EAI wire the connectivity. Capture, route, and operate. |
+| **3 — Agent** | A Cortex Agent embedded in your app explores data and proposes playbook-grounded actions. A serverless task works proactively. An MCP server opens the app to external automation. |
 
 ### The Development Loop
 
