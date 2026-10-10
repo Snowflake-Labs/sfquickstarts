@@ -560,8 +560,7 @@ Open the app and test the agent and agentic automation:
 
 **MCP server verification:**
 
-9. In Cortex Code Desktop, configure the app's MCP endpoint as an MCP server (use the Application Service URL with `/api/mcp`)
-10. Ask CoCo: *"List all open actions in ChurnGuard"* — CoCo calls the `list_actions` MCP tool and returns the results
+> **Note:** The app exposes a fully functional MCP server at `/api/mcp`, but external MCP clients (CoCo Desktop, Claude, Cursor) cannot yet authenticate to SAR app endpoints — the ingress OAuth flow requires a browser session. This integration is expected in a future release. For now, verify the MCP tools by calling the endpoint directly from an authenticated browser session or from within the app itself.
 
 ![CoCo Desktop calling ChurnGuard via MCP](assets/iter3_mcp_coco.png)
 
