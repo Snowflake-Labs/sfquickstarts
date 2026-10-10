@@ -457,7 +457,7 @@ Iteration 3 uses two prompts, the same way iteration 2 does.
 
 **1. Semantic view and agent.** Open [`prompts/03-agent-setup.md`](https://github.com/Snowflake-Labs/sfguide-build-full-stack-apps-with-snowflake-app-runtime/blob/iteration-3/ai-app/prompts/03-agent-setup.md) and paste it into Cortex Code. It uses `/agent-studio` to create the `CHURNGUARD_SV` semantic view and the `CHURNGUARD_AGENT` agent with a custom tool, then tests the agent in the playground.
 
-**2. Agent in the app.** Open [`prompts/03-add-agent.md`](https://github.com/Snowflake-Labs/sfguide-build-full-stack-apps-with-snowflake-app-runtime/blob/iteration-3/ai-app/prompts/03-add-agent.md) and paste it into Cortex Code. It uses `/snowflake-apps` to add the chat drawer, contextual entry points, "Agent Suggested" tab, MCP server, and the approve flow, then redeploys.
+**2. Agent in the app.** Open [`prompts/03-add-agent.md`](https://github.com/Snowflake-Labs/sfguide-build-full-stack-apps-with-snowflake-app-runtime/blob/iteration-3/ai-app/prompts/03-add-agent.md) and paste it into Cortex Code. It uses `/snowflake-apps` to add the chat drawer, contextual entry points, "Agent Suggested" tab, and the approve flow, then redeploys.
 
 ### What Happens
 
@@ -500,9 +500,9 @@ Threads persist conversation context. The app creates a thread on the first mess
 
 `AGENT_SUGGESTION_TASK` is a serverless task that runs daily at 08:00 UTC. It calls `STAGE_RETENTION_PROPOSALS`, which reads `CUSTOMER_RECOMMENDATIONS` for customers without pending proposals or open actions, and stages up to 20 proposals. Users open the app the next morning and find fresh recommendations waiting on the Agent Suggested tab.
 
-**8. MCP server**
+**8. Snowflake-managed MCP server**
 
-The app exposes an MCP server at `/api/mcp` with tools: `flag_customer`, `list_actions`, `get_customer_risk`, and `get_churn_summary`. Any MCP client with Snowflake credentials can automate ChurnGuard workflows — for example, Cortex Code Desktop can list open actions or flag a customer without opening the browser.
+The setup script creates a [Snowflake-managed MCP server](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents-mcp) (`CHURNGUARD_MCP`) that exposes the Cortex Agent and the staging procedure as MCP tools. Any MCP client — CoCo Desktop, Claude, Cursor — can connect with Snowflake OAuth and automate ChurnGuard workflows without opening the browser.
 
 ### Key Concepts
 
@@ -530,9 +530,9 @@ The app exposes an MCP server at `/api/mcp` with tools: `flag_customer`, `list_a
 >
 > A custom tool connects an agent to a stored procedure. The agent calls the tool to stage proposals; the SP writes to `PROPOSED_ACTIONS` and returns the result. See [Custom tools](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents#custom-tools).
 
-> **MCP server**
+> **Snowflake-managed MCP server**
 >
-> Model Context Protocol lets external agents call your app's API as tools. CoCo Desktop, Claude Desktop, or any MCP client with Snowflake auth can automate ChurnGuard workflows. See [Model Context Protocol](https://modelcontextprotocol.io).
+> A Snowflake-managed MCP server wraps Cortex Agents, search services, and stored procedures as MCP tools — accessible from any MCP client via Snowflake OAuth. Unlike a custom HTTP endpoint in your app, authentication and tool discovery are handled by Snowflake. See [Snowflake-managed MCP server](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents-mcp).
 
 ### Verify
 
@@ -552,18 +552,18 @@ Open the app and test the agent and agentic automation:
 6. Ask: *"Flag high-risk customers for retention"* — the agent calls the `stage_retention_actions` tool, and new proposals appear on the Agent Suggested tab
 7. Ask: *"Show me the monthly churn trend as a chart"* — the agent generates a chart inline
 
-![Agent chart response](assets/iter3_chat_chart.png)
-
 8. On the dashboard, open a customer row and choose **Ask about this customer** — the agent explains that customer's risk and suggests a next step
 
 ![Asking the agent from a customer row](assets/iter3_contextual_ask.png)
 
 **MCP server verification:**
 
-9. In Cortex Code Desktop, configure the app's MCP endpoint as an MCP server (use the Application Service URL with `/api/mcp`)
-10. Ask CoCo: *"List all open actions in ChurnGuard"* — CoCo calls the `list_actions` MCP tool and returns the results
+9. In Cortex Code Desktop, open **Settings → MCP**. Under **FROM SNOWFLAKE ACCOUNT**, find **CHURNGUARD_MCP**, toggle it on, and click **Connect**
+10. Ask CoCo: *"What high-risk customers need retention actions?"* — CoCo calls the `churnguard_agent` MCP tool and returns the results
 
 ![CoCo Desktop calling ChurnGuard via MCP](assets/iter3_mcp_coco.png)
+
+> **Note:** The MCP server is a Snowflake-managed object, not a route inside the app. CoCo Desktop discovers it automatically from your account — no URL to copy.
 
 <!-- ------------------------ -->
 ## Cleanup
