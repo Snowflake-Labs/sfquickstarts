@@ -85,7 +85,7 @@ Here is a summary of the Snowflake objects you will create:
 | `INTERACTIVE_ANALYTICS_IWH` | Interactive Warehouse | Sub-second query cache for the ORDERS table |
 | `INTERACTIVE_ANALYTICS_POOL` | Compute Pool | SPCS node that runs the simulation container |
 | `INTERACTIVE_ANALYTICS_SVC` | SPCS Service | Long-running simulation service |
-| `INTERACTIVE_ANALYTICS_AUTOSTOP` | Task (serverless) | Stops the simulation after 1 hour of inactivity |
+| `INTERACTIVE_ANALYTICS_AUTOSTOP` | Task (serverless) | Clears a stale running flag when no ticks have landed for 1 hour |
 | `INTERACTIVE_ANALYTICS_HISTORY_CLEANUP` | Task (warehouse) | Purges ORDERS_HISTORY rows older than 1 day |
 | `LIVE_ORDERS_DASHBOARD` | Streamlit in Snowflake | Live dashboard with KPI tiles, charts, and simulation controls |
 
@@ -334,7 +334,7 @@ CREATE STAGE IF NOT EXISTS INTERACTIVE_STREAMING_DEMO.PUBLIC.APP_STAGE;
 
 ### Maintenance tasks
 
-These tasks run in the background to manage costs. The autostop task turns off the simulation after one hour of inactivity. The cleanup task deletes history rows older than one day to keep storage costs low.
+These tasks run in the background to manage costs. The autostop task is a safety net: if `is_running` is still TRUE but no tick has updated `last_active_at` for an hour (for example, the service crashed), it sets the flag back to FALSE. It does not stop a healthy simulation, because every tick refreshes `last_active_at`, so click **Stop** when you finish. The cleanup task deletes history rows older than one day to keep storage costs low.
 
 ```sql
 CREATE OR REPLACE TASK INTERACTIVE_STREAMING_DEMO.PUBLIC.INTERACTIVE_ANALYTICS_AUTOSTOP
