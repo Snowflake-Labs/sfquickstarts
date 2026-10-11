@@ -97,11 +97,15 @@ There are no setup scripts to run and no SQL worksheets to open first. Your firs
 
 Make sure you are signed into your trial account. Confirm your active role is **ACCOUNTADMIN**.
 
+![role](./assets/role.png)
+
 ### Create a Git-backed Workspace
 
 1. In Snowsight, navigate to **Projects >> Workspaces**.
 
 2. Click the **+** icon next to **Workspaces/Databases** -> **Create new Git workspace**.
+
+![gitworkspace](./assets/gitworkspace.png)
 
 3. Fill out the modal:
    - **Repository URL:** `https://github.com/sfc-gh-kenguyen/expedition-finance-close`
@@ -110,6 +114,9 @@ Make sure you are signed into your trial account. Confirm your active role is **
      - **Name:** `GITHUB_MERIDIAN_FINANCE_LAB`
      - **Allowed prefixes:** `https://github.com/sfc-gh-kenguyen`
    - Check **Public repository**.
+
+![gitrepository](./assets/gitrepository.png)
+![apiintegration](./assets/apiintegration.png)
 
 4. Click **Create**.
 
@@ -123,6 +130,8 @@ The Workspace opens with the repo's files visible in the file explorer on the le
 
 2. Click **Connect** next to the Run button and select **Create and connect**. Wait for the status bar at the bottom of the notebook to show **Connected** before proceeding. The first connection can take a few minutes while Snowflake starts the notebook's compute.
 
+![connected](./assets/connected.png)
+
 3. Set the notebook's active **role** and **warehouse** using the **role & warehouse picker** at the top of the Notebooks editor:
    - **Role:** **ACCOUNTADMIN**
    - **Warehouse:** **COMPUTE_WH** (the default warehouse in every trial account)
@@ -135,6 +144,8 @@ The Workspace opens with the repo's files visible in the file explorer on the le
 
 Open the **CoCo** chat panel from the Workspace toolbar. You'll send it prompts throughout the lab.
 
+![coco](./assets/coco.png)
+
 > **Key principle:** Use CoCo to generate the hard parts and understand why. The workflow is: describe -> generate -> compare -> run. After CoCo generates SQL, compare it against the **Expected output** shown in the notebook. If it does the same thing, click **Allow** to run it. Optionally, copy the SQL into the notebook cell for future reference.
 
 ### Run the setup cell
@@ -146,6 +157,8 @@ The first SQL cell in the notebook (**`setup`**) creates the `MERIDIAN_STAY_FINA
 - `ANALYTICS`: the semantic view and agent
 
 It also grants the Cortex Agent privileges your role needs later. Run the **`setup`** cell before continuing. You should see *"Statement executed successfully."*
+
+![setupcell](./assets/setupcell.png)
 
 <!-- ------------------------ -->
 ## Land the Raw Exports in Apache Iceberg
@@ -180,6 +193,8 @@ Send this prompt to CoCo, then compare its SQL against the expected output in th
 > **CoCo's SQL won't always match word for word.** CoCo writes its SQL fresh each time, so it may format statements differently, add optional settings, or take a slightly different route than the expected output. That's fine. What matters is that it does the same thing and that the row counts and check results match.
 
 > *"Load the three CSV files in the stage @MERIDIAN_STAY_FINANCE.RAW.FINANCIAL_EXPORTS into their matching Iceberg tables in MERIDIAN_STAY_FINANCE.RAW: payroll_register.csv into PAYROLL_REGISTER, gl_journal_entries.csv into GL_JOURNAL_ENTRIES, and bank_statement.csv into BANK_STATEMENT. Use the file format MERIDIAN_STAY_FINANCE.RAW.CSV_FF and load the columns in file order."*
+
+![firstprompt](./assets/firstprompt.png)
 
 You should see **13**, **18**, and **18** rows loaded. CoCo may list the columns explicitly, wrap the load in `SELECT $1, $2, …`, or add `MATCH_BY_COLUMN_NAME = NONE`. All of these load the columns in file order, so they're fine as long as the row counts match.
 
@@ -217,6 +232,8 @@ Before building anything, ask CoCo to compare the three sources. It queries the 
 > - *Category: Payroll, Utilities, Maintenance, Marketing, Travel, Office Supplies, Insurance, Professional Services*
 >
 > *Also point out how dates and amounts are formatted differently, and any rows that should be excluded (duplicates, reversed entries)."*
+
+![secondprompt](./assets/secondprompt.png)
 
 CoCo should map, for example, `F&B` to **Food & Beverage**, `MGMT` to **Management**, and GL codes `PAY` to **Payroll**, `UTIL` to **Utilities**, `MAINT` to **Maintenance**, `MKTG` to **Marketing**, `TRAVEL` to **Travel**, `MISC` to **Office Supplies**, `INS` to **Insurance**, and `PROF` to **Professional Services**. It should also call out the three date formats, the three amount formats, the duplicate payroll row (EMP-102 on 11/15), and the reversed GL entry (JE-2014) along with the original it cancels (JE-2013). The full expected mapping is in the notebook.
 
@@ -293,9 +310,15 @@ A table of gaps is useful. A dashboard the whole team can look at during the clo
 
 1. In the Workspace file explorer, open **`reconciliation_dashboard/streamlit_app.py`**.
 
+![streamlitapp](./assets/streamlitapp.png)
+
 2. If a banner says *"This file looks like a Streamlit app, but is missing configuration"*, click **Convert to streamlit app**. The Workspace adds the configuration files the app needs.
 
+![convert](./assets/convert.png)
+
 3. Click **Run**. The app runs privately for you on a container runtime.
+
+![heatmap](./assets/heatmap.png)
 
 ### How to read it
 
@@ -323,6 +346,8 @@ Review the changes CoCo proposes before you accept them. It should add a new sec
 | Nov 15 | $25,150.00 | $25,150.00 | $0.00 |
 | Nov 30 | $5,000.00 | $5,000.00 | $0.00 |
 
+![heatmapcollisions](./assets/heatmapcollisions.png)
+
 > **Why "salaries only"?** The GL's Payroll category also includes benefits allocations ($4,780 on Nov 1 and $5,030 on Nov 15). They aren't in the payroll register, so counting them would make every pay date look out of balance.
 
 The tie-out only works because STEP 3 removed the duplicate payroll row. Left in, James Rivera's second $3,800 paycheck would push the Nov 15 register total to $28,950, $3,800 more than the GL batch.
@@ -345,7 +370,11 @@ A Semantic View describes your data in **business terms**: which columns are dim
 
 2. Click **Create in Workspaces** in the top right.
 
+![analyst](./assets/analyst.png)
+
 3. Click **Create with CoCo**. Snowsight opens a new `.sv.yaml` file, and the CoCo panel asks for a name, a location, and the source tables.
+
+![createwithcoco](./assets/createwithcoco.png)
 
 4. Send CoCo this prompt:
 
@@ -370,6 +399,8 @@ A Semantic View describes your data in **business terms**: which columns are dim
    - Synonyms on `CATEGORY` (for example, *expense type*) and `DEPARTMENT` (for example, *cost center*)
    - A `SOURCE_SYSTEM` description that says spending totals use only General Ledger rows
 
+![campaignid](./assets/campaignid.png)
+
    **`RECONCILIATION_GAPS`**
    - `GAP_ID` as the unique key
    - `AMOUNT` under **Facts**
@@ -384,6 +415,8 @@ A Semantic View describes your data in **business terms**: which columns are dim
 
 7. Click **Publish** in the top right of the editor. In the dialog, confirm **Name** `CLOSE_RECONCILIATION_SV`, **Database** `MERIDIAN_STAY_FINANCE`, and **Schema** `ANALYTICS`, then click **Publish**.
 
+![publishsv](./assets/publishsv.png)
+
 > **Prefer to click through it yourself?** Choose **Guided wizard** in step 3 instead, select both `CURATED` tables and all columns, name it `CLOSE_RECONCILIATION_SV` in `MERIDIAN_STAY_FINANCE.ANALYTICS`, and click **Publish**.
 
 ### STEP 2 — Create the Cortex Agent
@@ -394,11 +427,15 @@ A Semantic View describes your data in **business terms**: which columns are dim
 
 2. Click **Create agent** in the top right.
 
+![createagent](./assets/createagent.png)
+
 3. Configure:
    - **Database and schema:** `MERIDIAN_STAY_FINANCE.ANALYTICS`
    - **Agent object name:** `CLOSE_RECONCILIATION_AGENT`
 
 4. Click **Create**.
+
+![agentconfig](./assets/agentconfig.png)
 
 5. Click **Configuration** near the top of the agent editor.
 
@@ -409,11 +446,17 @@ A Semantic View describes your data in **business terms**: which columns are dim
      - `What's the largest discrepancy, and which systems does it involve?`
      - `Show me total general ledger spending by category for November 2026.`
 
+![General](./assets/General.png)
+
 7. Under the **Instructions** tab, set:
    - **Orchestration instructions:** `Whenever you can answer visually with a chart, always choose to generate a chart even if the user didn't ask for one. The payroll register, general ledger, and bank statement record the same money, so for spending totals use only General Ledger entries.`
    - **Response instructions:** `Give concise, accurate answers for finance operations. Name specific transactions and include dates, amounts, and source systems when relevant. Always express monetary amounts in USD.`
 
+![instructions](./assets/instructions.png)
+
 8. Click **Tools -> Add semantic view**.
+
+![addsv](./assets/addsv.png)
 
 9. Configure the tool:
    - **Service database & schema:** `MERIDIAN_STAY_FINANCE.ANALYTICS`
@@ -423,19 +466,27 @@ A Semantic View describes your data in **business terms**: which columns are dim
 
 10. Click **Add**, then click **Save** in the top right.
 
+![saveagent](./assets/saveagent.png)
+
 ### STEP 3 — Ask the agent the key question
 
 Since you created the agent through the UI, it's already available in Snowflake CoWork.
 
 1. In Snowsight, navigate to **AI & ML -> Snowflake CoWork**.
 
+![cowork](./assets/cowork.png)
+
 2. Select **CLOSE_RECONCILIATION_AGENT** from the agent list.
+
+![planningagent](./assets/planningagent.png)
 
 3. Ask:
 
    > *"Are there any reconciliation gaps for November 2026? If so, what's the total dollar amount?"*
 
 The agent should find **2 gaps** totaling **$47,200**: the $47,000 venue deposit wire transfer and the $200 bank service fee.
+
+![questionone](./assets/questionone.png)
 
 ### Investigate in CoWork
 
