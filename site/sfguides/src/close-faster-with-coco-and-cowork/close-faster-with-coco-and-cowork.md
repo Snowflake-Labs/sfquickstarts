@@ -31,7 +31,7 @@ In this hands-on lab you'll fix that for **Meridian Stay**, a fictional global h
 
 ### What You'll Need
 - A free Snowflake trial account: [https://signup.snowflake.com/](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&trial=student&cloud=aws&region=us-east-2&utm_campaign=introtosnowflake&utm_cta=developer-guides)
-- The companion GitHub repo: [https://github.com/sfc-gh-kenguyen/expedition-finance-close](https://github.com/sfc-gh-kenguyen/expedition-finance-close)
+- The companion GitHub repo: [https://github.com/Snowflake-Labs/expedition-2026-day-3-hol](https://github.com/Snowflake-Labs/expedition-2026-day-3-hol)
 
 ### What You'll Build
 - A governed, deduplicated transaction ledger built from three messy exports, stored as Iceberg
@@ -108,11 +108,11 @@ Make sure you are signed into your trial account. Confirm your active role is **
 ![gitworkspace](./assets/gitworkspace.png)
 
 3. Fill out the modal:
-   - **Repository URL:** `https://github.com/sfc-gh-kenguyen/expedition-finance-close`
+   - **Repository URL:** `https://github.com/Snowflake-Labs/expedition-2026-day-3-hol`
    - **Workspace name:** anything you like (e.g., `finance-close`)
    - **API integration:** click **+ / Create new** and provide:
      - **Name:** `GITHUB_MERIDIAN_FINANCE_LAB`
-     - **Allowed prefixes:** `https://github.com/sfc-gh-kenguyen`
+     - **Allowed prefixes:** `https://github.com/Snowflake-Labs`
    - Check **Public repository**.
 
 ![gitrepository](./assets/gitrepository.png)
