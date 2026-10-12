@@ -65,7 +65,7 @@ Duration: 2
 
 You're on the finance operations team at Meridian Stay, and it's the first week of December 2026. The November close is due, and the controller wants every discrepancy identified before the external auditors arrive on December 10.
 
-Last quarter, a $47,000 wire transfer for a conference venue deposit cleared the bank but was never journaled in the general ledger. The auditors flagged it, and the team spent a week tracing it back to a journal entry nobody created. Leadership wants to know: could it happen again, and is anything else missing?
+Last quarter, a $47,000 wire transfer for a ballroom renovation deposit to a ccontractor cleared the bank but was never journaled in the general ledger. The auditors flagged it, and the team spent a week tracing it back to a journal entry nobody created. Leadership wants to know: could it happen again, and is anything else missing?
 
 The root cause is simple: the three financial systems don't agree with each other.
 
@@ -73,7 +73,7 @@ The root cause is simple: the three financial systems don't agree with each othe
 |---|---|---|
 | Payroll register (ADP / Workday) | `payroll_register.csv` | `MM/DD/YYYY` dates, amounts stored as text (`"$4,200.00"`), department codes like `F&B` and `MGMT`, and one row exported twice |
 | General ledger (NetSuite / SAP) | `gl_journal_entries.csv` | `Nov 01 2026` dates, debits in parentheses (`(23,900.00)`), category codes (`PAY`, `UTIL`, `MAINT`), and a **Reversed** entry that was never removed |
-| Bank statement | `bank_statement.csv` | `YYYY-MM-DD` dates, debits as negative numbers, free-text descriptions (`"WIRE TFR - GRAND BALLROOM VENUE DEPOSIT"`), and no category or department columns |
+| Bank statement | `bank_statement.csv` | `YYYY-MM-DD` dates, debits as negative numbers, free-text descriptions (`"WIRE TFR - GRAND BALLROOM RENOVATION DEPOSIT"`), and no category or department columns |
 
 ### Here's the plan
 
@@ -202,7 +202,7 @@ You should see **13**, **18**, and **18** rows loaded. CoCo may list the columns
 
 Run the **`peek_raw`** cell. It shows every row from all three exports side by side, so you can see the problems before you fix them:
 
-- **Bank:** The cleanest of the three — ISO dates, negative numbers for debits — but the descriptions are free text (`"WIRE TFR - GRAND BALLROOM VENUE DEPOSIT"`), and there's no category or department at all.
+- **Bank:** The cleanest of the three — ISO dates, negative numbers for debits — but the descriptions are free text (`"WIRE TFR - GRAND BALLROOM RENOVATION DEPOSIT"`), and there's no category or department at all.
 - **GL:** Amounts are in parentheses for debits: `(23,900.00)`. Dates say `Nov 01 2026`. JE-2014 is a **Reversed** entry that cancels JE-2013, but both are still in the export. Categories are codes: `PAY`, `UTIL`, `MAINT`.
 - **Payroll:** James Rivera (EMP-102) appears **twice** on 11/15 with the same reference ID — a re-export duplicate. Amounts are text like `"$4,200.00"`. Departments say `F&B` and `MGMT` instead of full names.
 
@@ -298,10 +298,10 @@ Run the **`check_gaps`** cell. You should see **2 gaps** totaling **$47,200**:
 
 | Gap | Transaction | Date | Amount | Description |
 |---|---|---|---|---|
-| 1 | BK-3006 | 2026-11-12 | $47,000.00 | WIRE TFR - GRAND BALLROOM VENUE DEPOSIT |
+| 1 | BK-3006 | 2026-11-12 | $47,000.00 | WIRE TFR - GRAND BALLROOM RENOVATION DEPOSIT |
 | 2 | BK-3018 | 2026-11-30 | $200.00 | MONTHLY ACCOUNT SERVICE FEE |
 
-The first gap is the one leadership was afraid of: a **$47,000 venue deposit wire, paid on November 12 and never journaled**. It's the same kind of miss the auditors flagged last quarter, and it happened again. Someone authorized the payment, but nobody created the GL journal entry. But look at the second one: **BK-3018, $200, MONTHLY ACCOUNT SERVICE FEE**. This wasn't in anyone's close checklist. You just discovered it because you matched every bank transaction against the GL instead of spot-checking the big ones.
+The first gap is the one leadership was afraid of: a **$47,000 renovation deposit wire, paid on November 12 and never journaled**. It's the same kind of miss the auditors flagged last quarter, and it happened again. Someone authorized the payment, but nobody created the GL journal entry. But look at the second one: **BK-3018, $200, MONTHLY ACCOUNT SERVICE FEE**. This wasn't in anyone's close checklist. You just discovered it because you matched every bank transaction against the GL instead of spot-checking the big ones.
 
 This is the kind of gap that a manual close misses: too small to flag, too regular to question, and exactly the sort of thing that turns into an audit finding when someone finally looks.
 
@@ -335,7 +335,7 @@ The dashboard tells one story from top to bottom:
 
 - **Summary metrics** at the top: how many of the 18 bank transactions matched the GL (16 of 18, 89%), whether the month is ready to close (**Not Ready**, 2 gaps remain), and the total unreconciled amount ($47,200).
 - A **waterfall chart** that traces November's cash flow from opening to closing balance. Each bar is a payment leaving the account. **Blue** bars matched a GL entry; **red** bars did not. Red triangles call out each gap's transaction ID and amount (BK-3006 for $47,000 and BK-3018 for $200).
-- **Investigate the gaps** — one card per gap. Each card states what the bank paid, shows the GL entries around that date, and explains why none of them match. The root cause is right there: the $47,000 venue deposit was authorized but never journaled; the $200 bank fee is a recurring gap that nobody journals.
+- **Investigate the gaps** — one card per gap. Each card states what the bank paid, shows the GL entries around that date, and explains why none of them match. The root cause is right there: the $47,000 renovation deposit was authorized but never journaled; the $200 bank fee is a recurring gap that nobody journals.
 - **Next steps to close** — a numbered list of the journal entries that need to be posted. Once every gap has one, reconciliation reaches 100% and the month is ready to close.
 - A collapsed **Full ledger** expander at the bottom with all 46 transactions and filters by source system and category.
 
@@ -495,7 +495,7 @@ Since you created the agent through the UI, it's already available in Snowflake 
 
    > *"Are there any reconciliation gaps for November 2026? If so, what's the total dollar amount?"*
 
-The agent should find **2 gaps** totaling **$47,200**: the $47,000 venue deposit wire transfer and the $200 bank service fee.
+The agent should find **2 gaps** totaling **$47,200**: the $47,000 renovation deposit wire transfer and the $200 bank service fee.
 
 ![questionone](./assets/questionone.png)
 
@@ -505,7 +505,7 @@ The first answer tells you *what* doesn't tie out. Continue the same conversatio
 
 1. **Understand the big one.** Ask: *"Tell me everything about the $47,000 wire transfer. When did it hit the bank, and what was it for?"*
 
-   You should see it's BK-3006, dated November 12, described as "WIRE TFR - GRAND BALLROOM VENUE DEPOSIT." It hit the bank but was never journaled in the GL — someone authorized the payment, but nobody created the journal entry.
+   You should see it's BK-3006, dated November 12, described as "WIRE TFR - GRAND BALLROOM RENOVATION DEPOSIT." It hit the bank but was never journaled in the GL — someone authorized the payment, but nobody created the journal entry.
 
 2. **Ask if it will happen again.** Ask: *"Which of these gaps will happen again next month, and what should we change so it doesn't?"*
 
@@ -561,7 +561,7 @@ Congratulations! You took Meridian Stay's November close from three disconnected
 
 - Landed raw exports in **Snowflake-managed Apache Iceberg tables**, keeping the data in an open format
 - Used **CoCo** to standardize department names and category codes, parse three date formats and three amount formats, remove a payroll duplicate, and drop a reversed GL entry along with the entry it cancels
-- Found **2 reconciliation gaps** totaling **$47,200** — a $47,000 venue deposit wire transfer that was never journaled and a $200 bank fee that was never recorded
+- Found **2 reconciliation gaps** totaling **$47,200** — a $47,000 renovation deposit wire transfer that was never journaled and a $200 bank fee that was never recorded
 - Ran a **Streamlit** reconciliation dashboard that visualizes every gap and shows the root cause, then used **CoCo** to add a payroll tie-out
 - Created a **Semantic View** with CoCo and a **Cortex Agent** backed by it
 - Asked close-cycle questions in plain language in **Snowflake CoWork**
