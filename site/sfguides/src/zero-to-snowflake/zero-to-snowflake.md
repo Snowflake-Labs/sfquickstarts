@@ -6,6 +6,7 @@ summary: Zero to Snowflake
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+open in snowflake link: https://app.snowflake.com/templates?template=zero_to_snowflake&utm_source=snowflake-devrel&utm_medium=developer-guides&utm_content=zero-to-snowflake&utm_cta=developer-guides-deeplink
 
 # Zero to Snowflake
 
