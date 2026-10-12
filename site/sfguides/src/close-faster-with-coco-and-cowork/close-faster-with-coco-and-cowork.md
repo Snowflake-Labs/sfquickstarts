@@ -59,8 +59,6 @@ To complete this lab, you'll need a Snowflake account. A free Snowflake trial ac
 
 > **Why AWS?** This lab stores its Iceberg tables in **Snowflake-managed storage**, which is available on AWS and Azure. Stick with the pre-selected AWS region.
 
-![trial](./assets/trial.png)
-
 <!-- ------------------------ -->
 ## Understand the Scenario
 Duration: 2
@@ -268,6 +266,17 @@ If your numbers are different, ask CoCo to fix it rather than editing the SQL yo
 - Fewer than 46: *"Are all 12 unique payroll rows, 16 GL entries, and 18 bank rows included?"*
 - Different source system names: *"Set source_system to exactly 'Payroll Register', 'General Ledger', or 'Bank Statement'."* The dashboard and the gap check rely on these names.
 
+### Before and after
+
+Run the **`before_after`** cell. It shows the rows that needed the most cleaning, as they arrived in `RAW` and as they are now in `CURATED`:
+
+- The **duplicate payroll row** (James Rivera, EMP-102, 11/15, PAY-1007) collapses into one.
+- The **reversed GL entry** (JE-2014) and the **original it cancels** (JE-2013, $4,800 conference registration fees) are both gone.
+- `F&B` → `Food & Beverage`, `MGMT` → `Management`, `PAY` → `Payroll`, `MAINT` → `Maintenance`.
+- Dates and amounts now use one standard format.
+
+![beforeafter](./assets/beforeafter.png)
+
 ### STEP 4 — Find every reconciliation gap
 
 A **reconciliation gap** is a transaction that appears in one system but has no matching entry in another. That's exactly what the auditors found last quarter with the $47,000 wire transfer.
@@ -399,12 +408,14 @@ A Semantic View describes your data in **business terms**: which columns are dim
    - Synonyms on `CATEGORY` (for example, *expense type*) and `DEPARTMENT` (for example, *cost center*)
    - A `SOURCE_SYSTEM` description that says spending totals use only General Ledger rows
 
-![campaignid](./assets/campaignid.png)
+![transactionid](./assets/transactionid.png)
 
    **`RECONCILIATION_GAPS`**
    - `GAP_ID` as the unique key
    - `AMOUNT` under **Facts**
    - `TRANSACTION_DATE` under **Time Dimensions**
+
+![gapid](./assets/gapid.png)
 
    **Verified queries**
    - One verified query: *"Are there any reconciliation gaps for November 2026?"*
