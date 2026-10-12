@@ -349,6 +349,43 @@ See the related resources below for options on more advanced use cases and infor
 - Enabling real-time data by combining CDC and Snowpipe Streaming
 - How to set up connectors to create your own pipeline in Estuary
 
+### Cleanup
+
+Remove the demo resources you created in this guide to keep your workspace clean.
+
+**Estuary:**
+
+You may **disable** your connectors to stop them running if you'd still like to keep the configurations for reference or **delete** them entirely.
+
+1. From the **Destinations** overview page, select your Snowflake materialization.
+2. Click the Disable or Delete button to pause or remove the integration. Confirm your choice.
+3. Do the same on the **Sources** overview page for your MongoDB capture. If you're deleting your resources, you will also be prompted whether to delete the capture's associated _data collections_.
+
+**Snowflake:**
+
+Run the following script to remove the resources from the creation script.
+If you updated resource names there, make sure to change them here as well.
+
+This will drop all of your ingested data.
+
+```SQL
+drop database if exists ESTUARY_DB;
+drop warehouse if exists ESTUARY_WH;
+drop role if exists ESTUARY_ROLE;
+drop user if exists ESTUARY_USER;
+drop schema if exists ESTUARY_SCHEMA;
+```
+
+**MongoDB:**
+
+To remove MongoDB configurations and your cluster:
+
+1. Navigate to the **Database & Network Access** section of the dashboard.
+2. Under **Database Users**, delete the user you made for Estuary.
+3. Under the **IP Access List**, delete all IP addresses you allowlisted for Estuary.
+4. Navigate to the **Clusters** section of the dashboard.
+5. Select the additional options menu for your cluster and click **Terminate**. You will need to confirm that you want to delete the cluster and its data.
+
 ### Related Resources
 - [MongoDB docs](https://www.mongodb.com/docs/)
 - [MongoDB Estuary connector reference](https://docs.estuary.dev/reference/Connectors/capture-connectors/mongodb/)
