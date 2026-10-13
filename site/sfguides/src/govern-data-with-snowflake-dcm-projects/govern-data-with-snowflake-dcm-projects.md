@@ -22,7 +22,7 @@ You'll build a small customer dataset containing PII, define governance objects 
 
 ### What You'll Learn
 - How to define Snowflake tags and attach them to columns and tables with DCM (`DEFINE TAG`, `ATTACH TAG`)
-- How to define a masking policy and attach it to a column with DCM (`DEFINE MASKING POLICY`, `ATTACH MASKING POLICY`)
+- How to define a masking policy and attach it to a column with DCM (DEFINE MASKING POLICY, ATTACH MASKING POLICY)
 - How to define a **row access policy** for row-level security
 - How to define network and authentication policies as code, and activate them on a dedicated demo user
 - Which policy *associations* still run in a post-deploy script (current DCM limits)
@@ -30,7 +30,7 @@ You'll build a small customer dataset containing PII, define governance objects 
 ### Prerequisites
 - A Snowflake account with `ACCOUNTADMIN` access (to create roles and enable a preview parameter)
 - Familiarity with DCM Projects basics — see [Get Started with Snowflake DCM Projects](https://www.snowflake.com/en/developers/guides/get-started-snowflake-dcm-projects/)
-- `DEFINE MASKING POLICY` and `DEFINE ROW ACCESS POLICY` are in Public Preview; `ATTACH MASKING POLICY` and `ATTACH TAG` are available to all accounts
+- DEFINE MASKING POLICY and DEFINE ROW ACCESS POLICY are in Public Preview; ATTACH MASKING POLICY and `ATTACH TAG` are available to all accounts
 
 <!-- ------------------------ -->
 ## Create a Workspace from Git
@@ -51,9 +51,9 @@ The `scripts/` folder contains numbered SQL files you'll run at different stages
 
 | File | When to Run |
 |:-----|:------------|
-| `01_pre_deploy.sql` | Before the first DCM Plan & Deploy |
-| `02_post_deploy.sql` | After the first successful deployment |
-| `03_cleanup.sql` | When you're done and want to tear everything down |
+| 01_pre_deploy.sql | Before the first DCM Plan & Deploy |
+| 02_post_deploy.sql | After the first successful deployment |
+| 03_cleanup.sql | When you're done and want to tear everything down |
 
 Open `scripts/01_pre_deploy.sql` in a Snowsight worksheet — you'll use it in the next step.
 
@@ -133,9 +133,9 @@ Open the `DCM_Projects_Governance/sources/definitions/` folder:
 
 | File | Contents |
 |:-----|:---------|
-| `infrastructure.sql` | Warehouse, the `DCM_DEMO_5` database, `RAW`/`GOV`/`SERVE` schemas, a restricted `ANALYST` role, and inherited grants |
-| `raw.sql` | A `CUSTOMER` table with PII columns (email, phone, city) |
-| `governance.sql` | Tags, a masking policy, a row access policy, network rule/policy, and an authentication policy — plus `ATTACH TAG` and `ATTACH MASKING POLICY` |
+| infrastructure.sql | Warehouse, the DCM_DEMO_5 database, RAW/GOV/SERVE schemas, a restricted ANALYST role, and inherited grants |
+| raw.sql | A CUSTOMER table with PII columns (email, phone, city) |
+| governance.sql | Tags, a masking policy, a row access policy, network rule/policy, and an authentication policy — plus ATTACH TAG and ATTACH MASKING POLICY |
 
 The heart of the demo is `governance.sql`. DCM manages the **definitions** of every object below and attaches the tags and the masking policy; a few other *associations* are applied later in the post-deploy script (see the note at the end of this section).
 
@@ -175,7 +175,7 @@ ATTACH TAG DCM_DEMO_5{{env_suffix}}.GOV.PII = 'PII'
         COLUMN EMAIL;
 ```
 
-The masking policy is attached to the same column with `ATTACH MASKING POLICY`:
+The masking policy is attached to the same column with ATTACH MASKING POLICY:
 
 ```sql
 ATTACH MASKING POLICY DCM_DEMO_5{{env_suffix}}.GOV.EMAIL_MASK
@@ -183,7 +183,7 @@ ATTACH MASKING POLICY DCM_DEMO_5{{env_suffix}}.GOV.EMAIL_MASK
         COLUMN EMAIL;
 ```
 
-DCM applies the declared policy with the `FORCE` option, so it replaces a masking policy that was attached to the column outside DCM. If you remove the `ATTACH MASKING POLICY` statement, DCM detaches the policy from the column on the next deployment. If another DCM project already manages the attachment on that column, the deployment fails.
+DCM applies the declared policy with the `FORCE` option, so it replaces a masking policy that was attached to the column outside DCM. If you remove the ATTACH MASKING POLICY statement, DCM detaches the policy from the column on the next deployment. If another DCM project already manages the attachment on that column, the deployment fails.
 
 `governance.sql` also defines a network rule + policy and an authentication policy. DCM creates them, and the post-deploy script activates both on the demo service user — showing that account-security objects can be version-controlled with DCM.
 
@@ -252,7 +252,7 @@ SELECT policy_name, policy_kind, ref_entity_name
 | PAT_POLICY | AUTHENTICATION_POLICY | DCM_DEMO_5_DEV_SVC |
 | DCM_DEMO_5_DEV_POLICY | NETWORK_POLICY | DCM_DEMO_5_DEV_SVC |
 
-> **Note:** To enforce a network policy for every user, a role with the global `ATTACH POLICY` privilege runs `ALTER ACCOUNT SET NETWORK_POLICY = ...`; the same applies to `ALTER ACCOUNT SET AUTHENTICATION POLICY ...` with `APPLY AUTHENTICATION POLICY`. This quickstart doesn't do that, because an account-level network policy can lock users out of the account.
+> **Note:** To enforce a network policy for every user, a role with the global `ATTACH POLICY` privilege runs ALTER ACCOUNT SET NETWORK_POLICY = ...; the same applies to ALTER ACCOUNT SET AUTHENTICATION POLICY ... with APPLY AUTHENTICATION POLICY. This quickstart doesn't do that, because an account-level network policy can lock users out of the account.
 
 ### 5. Grant the analyst role
 
@@ -293,7 +293,7 @@ SELECT customer_id, first_name, email, country FROM dcm_demo_5_dev.raw.customer 
 | 2 | Bob | *****@example.com | USA |
 | 4 | David | *****@example.com | USA |
 
-The analyst sees **only USA rows** (the row access policy filtered out the UK and Italy customers) **and** a **masked email** (the masking policy DCM attached with `ATTACH MASKING POLICY`) — both enforced by policies DCM manages as code.
+The analyst sees **only USA rows** (the row access policy filtered out the UK and Italy customers) **and** a **masked email** (the masking policy DCM attached with ATTACH MASKING POLICY) — both enforced by policies DCM manages as code.
 
 <!-- ------------------------ -->
 ## Cleanup
@@ -322,7 +322,7 @@ You managed a full set of Snowflake governance objects as code with DCM Projects
 
 ### What You Learned
 - Defining tags, masking policies, a row access policy, and network/authentication policies with DCM
-- Attaching a masking policy to a column with `ATTACH MASKING POLICY`, and where the remaining policy associations live today
+- Attaching a masking policy to a column with ATTACH MASKING POLICY, and where the remaining policy associations live today
 - Activating network and authentication policies on a dedicated user instead of the account
 - Enabling inherited grants and using a least-privilege analyst role
 
