@@ -149,8 +149,7 @@ USE WAREHOUSE INTERACTIVE_ANALYTICS_WH;
 
 Creating a warehouse makes it the current warehouse for your session. The final `USE WAREHOUSE` switches back to the standard warehouse, because an interactive warehouse rejects DML such as the `INSERT` statements in the next steps with `Cannot run statement type 'INSERT' on an interactive warehouse`.
 
-Positive
-: Interactive warehouses enforce a **5-second query timeout** and a **24-hour minimum auto-suspend**. Keep dashboard queries selective (narrow projections, filters aligned with the clustering key) for consistent sub-second latency.
+> Interactive warehouses enforce a **5-second query timeout** and a **24-hour minimum auto-suspend**. Keep dashboard queries selective (narrow projections, filters aligned with the clustering key) for consistent sub-second latency.
 
 ### History and control tables
 
@@ -433,8 +432,7 @@ docker login <your_registry_url>
 
 When prompted, enter your Snowflake username and password (or a [programmatic access token](https://docs.snowflake.com/en/user-guide/programmatic-access/programmatic-access-tokens-intro)).
 
-Positive
-: If you have the [Snowflake CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli/index) installed and a connection configured, `snow spcs image-registry login` logs Docker in to your account's registry using that connection, so you don't have to type a password.
+> If you have the [Snowflake CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli/index) installed and a connection configured, `snow spcs image-registry login` logs Docker in to your account's registry using that connection, so you don't have to type a password.
 
 ### Build, tag, and push the image
 
@@ -449,8 +447,7 @@ docker tag simulation \
 docker push <your_registry_url>/simulation:latest
 ```
 
-Positive
-: Building on Apple Silicon (arm64)? Add `--platform linux/amd64` to `docker build` so the image runs correctly on Snowflake's x86_64 compute pool nodes.
+> Building on Apple Silicon (arm64)? Add `--platform linux/amd64` to `docker build` so the image runs correctly on Snowflake's x86_64 compute pool nodes.
 
 To confirm the push, open `SIM_REPO` in Snowsight under **Catalog > Database Explorer > INTERACTIVE_STREAMING_DEMO > PUBLIC > Image Repositories**. The `simulation` image should be listed with a fresh timestamp and its `sha256` digest, which matches the digest that `docker push` printed:
 
@@ -605,8 +602,7 @@ Click **New session** at the bottom of the **Simulation** sidebar section, then 
 
 Remove all resources when finished to stop incurring costs.
 
-Negative
-: Interactive warehouses have a **24-hour minimum billing period** once created. Drop the warehouse as soon as you are done to avoid unexpected charges.
+> **Warning:** Interactive warehouses have a **24-hour minimum billing period** once created. Drop the warehouse as soon as you are done to avoid unexpected charges.
 
 ```sql
 USE ROLE ACCOUNTADMIN;
