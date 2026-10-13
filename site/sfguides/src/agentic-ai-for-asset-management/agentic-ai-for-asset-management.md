@@ -23,7 +23,7 @@ The solution creates a fictional firm called **Simulated Asset Management (SAM)*
 
 ## Prerequisites
 
-- A Snowflake account with Cortex AI enabled
+- A Snowflake account with Cortex AI enabled and CORTEX_ENABLED_CROSS_REGION set to ANY_REGION
 - **Snowflake Public Data (Free)** Marketplace listing installed (auto-installed by setup script)
 - ACCOUNTADMIN role access (for initial setup only — the build runs as `FSI_DEMO_BUILD_ROLE` and the demo as `SAM_DEMO_USER_ROLE`)
 
@@ -108,21 +108,21 @@ The Private Credit Copilot calls the credit risk model directly through a what-i
 2. Click **+** then **From Git repository**
 3. Repository URL: `https://github.com/Snowflake-Labs/sfguide-agentic-ai-for-asset-management.git`
 4. Authentication: Public repository (no auth needed)
-5. Name the workspace (e.g., "SAM Demo")
+5. Name the workspace or use the default name
 
 ### Step 2: Run Setup (45-60 minutes)
 
-1. Open [`scripts/setup.sql`](scripts/setup.sql) in the workspace.
+1. Open [`https://github.com/Snowflake-Labs/sfguide-agentic-ai-for-asset-management/blob/main/scripts/setup.sql`](scripts/setup.sql) in the workspace.
 2. Set `$ws_name` in Section 0, at the top of the script, to the name of the workspace you created in Step 1. Run `SHOW WORKSPACES IN ACCOUNT` if you need to check the name. This is the only value you need to edit.
 3. Execute the whole script as `ACCOUNTADMIN`.
 
 Sections 1-8 create the infrastructure:
-- `SAM_DEMO` database with all schemas
+- `SAM_DEMO` and `FSI_DEMO_CONFIG` databases with all schemas
 - `SAM_DEMO_EXECUTION_WH` and `SAM_DEMO_CORTEX_WH` warehouses
 - `FSI_DEMO_BUILD_ROLE` (build) and `SAM_DEMO_USER_ROLE` (demo use) with the required privileges
 - Compute pools for the Code Bundle and the ML notebooks
 - Marketplace data share (Snowflake Public Data - Free)
-- Cortex AI enablement and Snowflake CoWork
+- Cortex AI enablement for the`FSI_DEMO_BUILD_ROLE` (build) and `SAM_DEMO_USER_ROLE` (demo use) roles
 
 Section 9 creates a Code Bundle from your workspace and runs the build inside Snowflake. The build creates all tables, documents, search services, semantic views, ML models, agents, skills, tools, signals and evaluation datasets.
 
@@ -140,7 +140,12 @@ EXECUTE CODE BUNDLE SAM_DEMO.AI.SAM_BUILD_BUNDLE
 
 1. Navigate to **AI & ML > Snowflake CoWork**
 2. Select any agent
-3. Start asking questions. The repository's `docs/demo_scripts/` folder has a step-by-step script for each demo scenario.
+3. Start asking questions. The repository's [`https://github.com/Snowflake-Labs/sfguide-agentic-ai-for-asset-management/blob/main/demo_scripts/`](demo_scripts/) folder has a step-by-step script for each demo scenario.
+
+### Clean-Up
+
+Run the [`https://github.com/Snowflake-Labs/sfguide-agentic-ai-for-asset-management/blob/main/scripts/teardown.sql`](scripts/teardown.sql) to remove all the objects that is created by this setup.
+
 
 ## Business Impact
 
