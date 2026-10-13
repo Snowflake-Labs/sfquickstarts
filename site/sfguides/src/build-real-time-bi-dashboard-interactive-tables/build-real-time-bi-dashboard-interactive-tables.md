@@ -49,8 +49,8 @@ You will assemble five tightly integrated Snowflake objects into a single, self-
 Fork and clone the companion repository:
 
 ```bash
-git clone https://github.com/sfc-gh-cnantasenamat/sfguide-build-real-time-bi-dashboard-interactive-tables.git
-cd sfguide-build-real-time-bi-dashboard-interactive-tables
+git clone https://github.com/sfc-gh-cnantasenamat/build-real-time-bi-dashboard-interactive-tables.git
+cd build-real-time-bi-dashboard-interactive-tables
 ```
 
 The repository has the following structure:
