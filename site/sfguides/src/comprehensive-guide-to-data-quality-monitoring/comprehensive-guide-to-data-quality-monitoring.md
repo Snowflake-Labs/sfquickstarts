@@ -12,7 +12,7 @@ tags: Getting Started, Data Quality, Data Metric Functions, DMF, Data Engineerin
 <!-- ------------------------ -->
 ## Overview
 
-Data quality problems rarely announce themselves. A device clock drifts and stamps readings two days into the future. An upstream system swaps a missing battery level for `-1`. A firmware release emits truncated JSON. Nothing errors, and the dashboards keep rendering — on data that is quietly wrong.
+Data quality problems rarely announce themselves. A device clock drifts and stamps readings two days into the future. An upstream system swaps a missing battery level for -1. A firmware release emits truncated JSON. Nothing errors, and the dashboards keep rendering — on data that is quietly wrong.
 
 Snowflake checks for these conditions natively, on a schedule, without moving data or standing up another tool. This guide is a **cookbook** for doing that.
 
@@ -28,19 +28,19 @@ After the setup step, each section is an **independent example** you can run in 
 - How to scope a check with `FILTER` or compute it per group with `WITHIN GROUP`
 - How to write a custom metric, cover a whole schema, and let Snowflake suggest checks and learn normal ranges
 - How to find the offending rows, get notified, and stop a pipeline
-- Where to place checks, how to keep them in code, and what they cost
+- Where to place checks, how to keep them in code, and what monitoring costs
 
 ### Prerequisites
 
-- A Snowflake account on **Enterprise Edition or higher**. Data Quality Monitoring is not available on Standard, and not on trial accounts.
+- A Snowflake account on **Enterprise Edition or higher**. Data Quality Monitoring is not available on Standard Edition or on [trial accounts](https://docs.snowflake.com/en/user-guide/data-quality-intro#label-data-quality-limitations).
 - A role that can create a database and holds the account-level privileges for creating and attaching data metric functions. See [Access control for data quality](https://docs.snowflake.com/en/user-guide/data-quality-access-control).
 - Familiarity with running SQL in a Snowsight worksheet.
 
-### A word on cost
-
-Scheduled evaluations run on serverless compute and bill under the **Data Quality Monitoring** category. Creating a metric and calling one directly in a `SELECT` are not billed. The examples use deliberately long schedules for that reason.
+### Use Cortex Code with this guide
 
 If you have Cortex Code available, the `/data-quality` skill can run these workflows against your own tables — recommending metrics, scoring schema health, and investigating violations.
+
+The examples use deliberately long schedules to keep cost down. The **What It Costs** section at the end of the guide covers billing and how to track spend.
 
 <!-- ------------------------ -->
 ## Set Up the Example Data
@@ -738,9 +738,10 @@ Check where the defect exists, not where it hurts. Reading 1017 would be dropped
 
 For anything you intend to keep, put checks in the same version-controlled definition as the table. Snowflake's declarative deployment model (DCM Projects) supports data metric functions and expectations as first-class definitions. Attaching a metric to a table you do not own needs an explicit executing role, and the deployment tooling can run every expectation as a **test step**, so a deployment fails when the data does not satisfy its own rules. A threshold change then shows up as a reviewable diff. See the [DCM Projects file reference](https://docs.snowflake.com/en/user-guide/dcm-projects/dcm-projects-files).
 
-### What it costs
+<!-- ------------------------ -->
+## What It Costs
 
-Cost scales with associations × evaluation frequency × work per evaluation; a schema-level attachment across two hundred tables on an hourly schedule is 4,800 evaluations a day. Creating a metric, calling it directly, and suspended schedules are free. Track spend:
+Scheduled evaluations run on serverless compute and bill under the **Data Quality Monitoring** category. Cost scales with associations × evaluation frequency × work per evaluation; a schema-level attachment across two hundred tables on an hourly schedule is 4,800 evaluations a day. Creating a metric, calling one directly in a SELECT, and suspended schedules are not billed. Track spend:
 
 ```sql
 SELECT * FROM SNOWFLAKE.ACCOUNT_USAGE.DATA_QUALITY_MONITORING_USAGE_HISTORY
