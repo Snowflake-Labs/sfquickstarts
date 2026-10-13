@@ -22,15 +22,15 @@ You'll build a small customer dataset containing PII, define governance objects 
 
 ### What You'll Learn
 - How to define Snowflake tags and attach them to columns and tables with DCM (`DEFINE TAG`, `ATTACH TAG`)
-- How to define a masking policy and apply it through **tag-based masking**
-- How to define a **row access policy** (Early Access) for row-level security
-- How to define network and authentication policies as code
-- Why some policy *associations* are applied in a post-deploy script (current DCM limits)
+- How to define a masking policy and attach it to a column with DCM (`DEFINE MASKING POLICY`, `ATTACH MASKING POLICY`)
+- How to define a **row access policy** for row-level security
+- How to define network and authentication policies as code, and activate them on a dedicated demo user
+- Which policy *associations* still run in a post-deploy script (current DCM limits)
 
 ### Prerequisites
 - A Snowflake account with `ACCOUNTADMIN` access (to create roles and enable a preview parameter)
 - Familiarity with DCM Projects basics — see [Get Started with Snowflake DCM Projects](https://www.snowflake.com/en/developers/guides/get-started-snowflake-dcm-projects/)
-- Row access policy support in DCM is an Early Access capability; the rest are in Public Preview
+- `DEFINE MASKING POLICY` and `DEFINE ROW ACCESS POLICY` are in Public Preview; `ATTACH MASKING POLICY` and `ATTACH TAG` are available to all accounts
 
 <!-- ------------------------ -->
 ## Create a Workspace from Git
@@ -85,6 +85,23 @@ GRANT MANAGE GRANTS ON ACCOUNT TO ROLE dcm_developer;
 GRANT CREATE NETWORK POLICY ON ACCOUNT TO ROLE dcm_developer;
 ```
 
+`DCM_DEVELOPER` owns the masking and row access policies it deploys, which is enough to attach them. Setting an authentication policy on a user requires a separate global privilege:
+
+```sql
+GRANT APPLY AUTHENTICATION POLICY ON ACCOUNT TO ROLE dcm_developer;
+```
+
+The script also creates a dedicated service user, `DCM_DEMO_5_DEV_SVC`, to activate the demo network and authentication policies on. Owning the user lets `DCM_DEVELOPER` set its network policy:
+
+```sql
+CREATE USER IF NOT EXISTS dcm_demo_5_dev_svc
+    TYPE = SERVICE
+    COMMENT = 'Demo service user for the Security & Governance Quickstart; target of the demo network and authentication policies';
+GRANT OWNERSHIP ON USER dcm_demo_5_dev_svc TO ROLE dcm_developer COPY CURRENT GRANTS;
+```
+
+> **Caution:** Activate the demo policies only on this service user. Don't set them on your own user or on the account — a network policy activated at the account level applies to every user and can lock you out.
+
 > **New RBAC feature:** these access definitions use `GRANT INHERITED`, a Snowflake Public Preview capability. Grants marked `INHERITED` are automatically extended to objects created *later* in the container, so read roles stay correctly privileged without re-granting. It needs the one-time, account-level opt-in below — a behavior-change setting that is independent of DCM.
 
 ```sql
@@ -118,9 +135,9 @@ Open the `DCM_Projects_Governance/sources/definitions/` folder:
 |:-----|:---------|
 | `infrastructure.sql` | Warehouse, the `DCM_DEMO_5` database, `RAW`/`GOV`/`SERVE` schemas, a restricted `ANALYST` role, and inherited grants |
 | `raw.sql` | A `CUSTOMER` table with PII columns (email, phone, city) |
-| `governance.sql` | Tags, a masking policy, a row access policy, network rule/policy, and an authentication policy — plus `ATTACH TAG` |
+| `governance.sql` | Tags, a masking policy, a row access policy, network rule/policy, and an authentication policy — plus `ATTACH TAG` and `ATTACH MASKING POLICY` |
 
-The heart of the demo is `governance.sql`. Note that DCM manages the **definitions** of every object below; a few *associations* are applied later in the post-deploy script (see the note at the end of this section).
+The heart of the demo is `governance.sql`. DCM manages the **definitions** of every object below and attaches the tags and the masking policy; a few other *associations* are applied later in the post-deploy script (see the note at the end of this section).
 
 Tags and a masking policy:
 
@@ -137,7 +154,7 @@ DEFINE MASKING POLICY DCM_DEMO_5{{env_suffix}}.GOV.EMAIL_MASK
     COMMENT = 'Masks the local-part of an email for non-privileged roles';
 ```
 
-A row access policy (Early Access) for row-level security:
+A row access policy for row-level security:
 
 ```sql
 DEFINE ROW ACCESS POLICY DCM_DEMO_5{{env_suffix}}.GOV.CUSTOMER_COUNTRY_FILTER
@@ -158,16 +175,26 @@ ATTACH TAG DCM_DEMO_5{{env_suffix}}.GOV.PII = 'PII'
         COLUMN EMAIL;
 ```
 
-`governance.sql` also defines a network rule + policy and an authentication policy. These are **created but never activated** in this demo — they show that account-security objects can be version-controlled with DCM.
+The masking policy is attached to the same column with `ATTACH MASKING POLICY`:
 
-> **Note (current DCM limits):** Attaching a masking policy to a column, associating a masking policy with a tag, and attaching a row access policy to a table are not yet expressible as DCM `DEFINE` statements. Those *associations* are applied in `02_post_deploy.sql`. DCM still owns the policy and tag **definitions**.
+```sql
+ATTACH MASKING POLICY DCM_DEMO_5{{env_suffix}}.GOV.EMAIL_MASK
+    TO TABLE DCM_DEMO_5{{env_suffix}}.RAW.CUSTOMER
+        COLUMN EMAIL;
+```
+
+DCM applies the declared policy with the `FORCE` option, so it replaces a masking policy that was attached to the column outside DCM. If you remove the `ATTACH MASKING POLICY` statement, DCM detaches the policy from the column on the next deployment. If another DCM project already manages the attachment on that column, the deployment fails.
+
+`governance.sql` also defines a network rule + policy and an authentication policy. DCM creates them, and the post-deploy script activates both on the demo service user — showing that account-security objects can be version-controlled with DCM.
+
+> **Note (current DCM limits):** These associations aren't yet expressible in DCM and are applied in `02_post_deploy.sql`: attaching a row access policy to a table, associating a masking policy with a tag (tag-based masking), and assigning network and authentication policies to a user or the account (`ALTER USER` / `ALTER ACCOUNT`). DCM still owns the policy and tag **definitions**.
 
 <!-- ------------------------ -->
 ## Plan and Deploy
 
 Duration: 3
 
-Select the `DCM_Projects_Governance` project and the `DCM_DEV` target in the DCM control panel, then run **Plan**. You should see the governance objects being created: the database, schemas, `CUSTOMER` table, both tags, the masking policy, the row access policy, the network rule/policy, and the authentication policy.
+Select the `DCM_Projects_Governance` project and the `DCM_DEV` target in the DCM control panel, then run **Plan**. You should see the governance objects being created: the database, schemas, `CUSTOMER` table, both tags, the masking policy, the row access policy, the network rule/policy, and the authentication policy. The `CUSTOMER` table's `EMAIL` column shows the masking policy being set.
 
 Once the plan looks correct, set the operation to **Deploy** and run it.
 
@@ -182,30 +209,52 @@ Once the plan looks correct, set the operation to **Deploy** and run it.
 
 Duration: 4
 
-Open `scripts/02_post_deploy.sql`. It seeds sample PII data, wires up the policy associations that DCM can't yet express, and grants you the restricted analyst role.
+Open `scripts/02_post_deploy.sql`. It seeds sample PII data, wires up the policy associations that DCM can't yet express, and grants you the restricted analyst role. The `EMAIL` column is already masked: DCM attached `EMAIL_MASK` during deployment.
 
 ### 1. Seed sample customer data
 
 The script inserts five customers across the USA, UK, and Italy.
 
-### 2. Tag-based masking
-
-```sql
-ALTER TAG dcm_demo_5_dev.gov.pii SET MASKING POLICY dcm_demo_5_dev.gov.email_mask;
-```
-
-Any column tagged `GOV.PII` (here, `EMAIL`) is now masked by `EMAIL_MASK` for non-privileged roles.
-
-> **Note:** If this statement runs immediately after deploy and returns a transient error, wait a few seconds and re-run it — the masking policy metadata may still be propagating.
-
-### 3. Row-level security
+### 2. Row-level security
 
 ```sql
 ALTER TABLE dcm_demo_5_dev.raw.customer
     ADD ROW ACCESS POLICY dcm_demo_5_dev.gov.customer_country_filter ON (COUNTRY);
 ```
 
-### 4. Grant the analyst role
+### 3. Tag-based masking
+
+```sql
+ALTER TAG dcm_demo_5_dev.gov.pii SET MASKING POLICY dcm_demo_5_dev.gov.email_mask;
+```
+
+Any column you tag `GOV.PII` later is now masked by `EMAIL_MASK` too. On `EMAIL`, the policy that DCM attached directly takes precedence over the tag-based one.
+
+> **Note:** If this statement runs immediately after deploy and returns a transient error, wait a few seconds and re-run it — the masking policy metadata may still be propagating.
+
+### 4. Activate the network and authentication policies
+
+```sql
+ALTER USER dcm_demo_5_dev_svc SET NETWORK_POLICY = dcm_demo_5_dev_policy;
+ALTER USER dcm_demo_5_dev_svc SET AUTHENTICATION POLICY dcm_demo_5_dev.gov.pat_policy;
+```
+
+The script then confirms that both policies are assigned to the service user:
+
+```sql
+SELECT policy_name, policy_kind, ref_entity_name
+    FROM TABLE(dcm_demo_5_dev.INFORMATION_SCHEMA.POLICY_REFERENCES(
+        REF_ENTITY_NAME => 'dcm_demo_5_dev_svc', REF_ENTITY_DOMAIN => 'user'));
+```
+
+| POLICY_NAME | POLICY_KIND | REF_ENTITY_NAME |
+|:--|:--|:--|
+| PAT_POLICY | AUTHENTICATION_POLICY | DCM_DEMO_5_DEV_SVC |
+| DCM_DEMO_5_DEV_POLICY | NETWORK_POLICY | DCM_DEMO_5_DEV_SVC |
+
+> **Note:** To enforce a network policy for every user, a role with the global `ATTACH POLICY` privilege runs `ALTER ACCOUNT SET NETWORK_POLICY = ...`; the same applies to `ALTER ACCOUNT SET AUTHENTICATION POLICY ...` with `APPLY AUTHENTICATION POLICY`. This quickstart doesn't do that, because an account-level network policy can lock users out of the account.
+
+### 5. Grant the analyst role
 
 ```sql
 GRANT ROLE dcm_demo_5_dev_analyst TO USER IDENTIFIER($user_name);
@@ -244,21 +293,24 @@ SELECT customer_id, first_name, email, country FROM dcm_demo_5_dev.raw.customer 
 | 2 | Bob | *****@example.com | USA |
 | 4 | David | *****@example.com | USA |
 
-The analyst sees **only USA rows** (the row access policy filtered out the UK and Italy customers) **and** a **masked email** (the tag-based masking policy) — both enforced by policies DCM manages as code.
+The analyst sees **only USA rows** (the row access policy filtered out the UK and Italy customers) **and** a **masked email** (the masking policy DCM attached with `ATTACH MASKING POLICY`) — both enforced by policies DCM manages as code.
 
 <!-- ------------------------ -->
 ## Cleanup
 
 Duration: 2
 
-Run `scripts/03_cleanup.sql` to tear everything down. It first removes the policy associations that were applied outside DCM, then purges the project:
+Run `scripts/03_cleanup.sql` to tear everything down. It first removes the policy associations that were applied outside DCM — a network policy can't be dropped while it's assigned to a user — then purges the project, which also detaches the masking policy DCM attached:
 
 ```sql
+ALTER USER IF EXISTS dcm_demo_5_dev_svc UNSET NETWORK_POLICY;
+ALTER USER IF EXISTS dcm_demo_5_dev_svc UNSET AUTHENTICATION POLICY;
 ALTER TAG IF EXISTS dcm_demo_5_dev.gov.pii UNSET MASKING POLICY dcm_demo_5_dev.gov.email_mask;
 ALTER TABLE IF EXISTS dcm_demo_5_dev.raw.customer DROP ROW ACCESS POLICY dcm_demo_5_dev.gov.customer_country_filter;
 
 EXECUTE DCM PROJECT dcm_demo.projects.dcm_gov_project_dev PURGE;
 DROP DCM PROJECT IF EXISTS dcm_demo.projects.dcm_gov_project_dev;
+DROP USER IF EXISTS dcm_demo_5_dev_svc;
 ```
 
 <!-- ------------------------ -->
@@ -270,7 +322,8 @@ You managed a full set of Snowflake governance objects as code with DCM Projects
 
 ### What You Learned
 - Defining tags, masking policies, a row access policy, and network/authentication policies with DCM
-- Applying tag-based masking and row-level security, and where policy associations live today
+- Attaching a masking policy to a column with `ATTACH MASKING POLICY`, and where the remaining policy associations live today
+- Activating network and authentication policies on a dedicated user instead of the account
 - Enabling inherited grants and using a least-privilege analyst role
 
 ### Related Resources
