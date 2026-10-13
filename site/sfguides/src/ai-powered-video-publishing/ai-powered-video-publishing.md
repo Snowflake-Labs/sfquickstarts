@@ -36,7 +36,7 @@ VidPrep, a Streamlit-in-Snowflake app, with:
 
 Screenshots of each part appear in the sections that build it. They come from one live run on the synthetic sample video in the companion repository, so you can upload the same file and compare your results.
 
-### Prerequisites
+### What You'll Need
 - Access to a [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)
 - A role with privileges to create a warehouse, database, stage, compute pool, and external access integration (e.g. `ACCOUNTADMIN`, or an equivalent custom role)
 - [Snowflake CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli/index) (`snow`) installed locally
@@ -61,10 +61,15 @@ CREATE SCHEMA IF NOT EXISTS VIDPREP_DB.APPS;
 CREATE STAGE IF NOT EXISTS VIDPREP_DB.APPS.VIDPREP_STAGE
   ENCRYPTION = (TYPE = 'SNOWFLAKE_SSE');
 
+-- INITIALLY_SUSPENDED keeps the pool from billing before the first deploy.
+-- AUTO_RESUME (default TRUE) starts it when the app launches, and
+-- AUTO_SUSPEND_SECS suspends it again after 10 idle minutes.
 CREATE COMPUTE POOL IF NOT EXISTS VIDPREP_COMPUTE_POOL
   MIN_NODES = 1
   MAX_NODES = 1
-  INSTANCE_FAMILY = CPU_X64_XS;
+  INSTANCE_FAMILY = CPU_X64_XS
+  INITIALLY_SUSPENDED = TRUE
+  AUTO_SUSPEND_SECS = 600;
 
 -- Container runtime apps need this to install pyproject.toml's dependencies
 -- from PyPI. SNOWFLAKE.EXTERNAL_ACCESS.PYPI_RULE is a Snowflake-managed
@@ -121,8 +126,7 @@ SNOWFLAKE_DEFAULT_CONNECTION_NAME=<your_connection_name> python -m streamlit run
 
 Confirm that profile targets the intended account and has access to the configured stage. Hosted Streamlit uses its embedded identity. For isolated tests, set `VIDPREP_STAGE_FQN` to a test-only stage and `VIDPREP_CACHE_DIR` to a fresh local directory. Stage names must contain three unquoted identifiers. Never commit connection credentials.
 
-> aside negative
-> **Important**: `st.connection("snowflake")` sets `snowflake.connector.paramstyle` to `"qmark"` as a side effect. Every SQL statement in this app uses `?` placeholders, never `%s`; mixing in `%s` produces a confusing syntax error at the Snowflake parser, not a Python error.
+> **Warning:** `st.connection("snowflake")` sets `snowflake.connector.paramstyle` to `"qmark"` as a side effect. Every SQL statement in this app uses `?` placeholders, never `%s`; mixing in `%s` produces a confusing syntax error at the Snowflake parser, not a Python error.
 
 ## Acquire the Media
 
@@ -237,7 +241,13 @@ def _ai_complete_json(prompt: str, schema: dict) -> dict:
 
 The generated result and each extra (titles, quotes, FAQ) are cached under a key that includes a hash of the model and the inputs the prompt uses, so a changed transcript or regenerated result never reuses stale suggestions.
 
-This app uses `claude-sonnet-5` as the `AI_COMPLETE` model (set in `config.py`'s `COMPLETE_MODEL`), configurable to any model your account has access to.
+This app uses `claude-sonnet-5` as the `AI_COMPLETE` model, set by `COMPLETE_MODEL` in `config.py`. That model isn't hosted in every region. If your region doesn't offer it, either enable [cross-region inference](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cross-region-inference) as ACCOUNTADMIN:
+
+```sql
+ALTER ACCOUNT SET CORTEX_ENABLED_CROSS_REGION = 'ANY_REGION';
+```
+
+or change `COMPLETE_MODEL` to a model that is available in your region (see [model availability](https://docs.snowflake.com/en/user-guide/snowflake-cortex/aisql-regional-availability)) and redeploy. The cache key includes the model name, so switching models never reuses old results.
 
 The transcript is scanned in overlapping word-count windows rather than one full-transcript call. Returned indices are converted to integers and clamped to the transcript's bounds. This keeps timestamps within the transcript; it does not establish that the selected chapter boundary is suitable:
 
@@ -402,9 +412,18 @@ The first deploy resolves and locks Python dependencies inside the container, wh
 
 ## Clean Up
 
-Save any generated outputs you need before removing tutorial resources. Stop only local app processes you started. Remove your run's temporary uploads, chunks, thumbnails, and caches after they are no longer needed by the preview.
+Save any generated outputs you need, and stop the local app if you started one. Then run the following as the role you used in Setup. Stopping the compute pool's workloads first is required before it can be dropped. Dropping the database also removes the stage and any media left on it.
 
-Inspect the configured stage for leftover media, including files from failed requests, and remove only your own run's files. Ask the resource owner to remove the tutorial app and schema after confirming they are used exclusively for this exercise. Remove a tutorial-only warehouse or compute pool only if you created it and no other workload uses it. Keep shared databases, integrations, pools, warehouses, and preexisting apps unchanged. Do not use a broad cleanup command against a shared environment.
+```sql
+DROP STREAMLIT IF EXISTS VIDPREP_DB.APPS.VIDPREP;
+ALTER COMPUTE POOL VIDPREP_COMPUTE_POOL STOP ALL;
+DROP COMPUTE POOL IF EXISTS VIDPREP_COMPUTE_POOL;
+DROP EXTERNAL ACCESS INTEGRATION IF EXISTS PYPI_ACCESS;
+DROP DATABASE IF EXISTS VIDPREP_DB;
+DROP WAREHOUSE IF EXISTS VIDPREP_WH;
+```
+
+Finally, delete the local cache directory (`.cache` by default, or whatever you set `VIDPREP_CACHE_DIR` to) to remove cached transcripts, thumbnails and caption files.
 
 ## Conclusion And Resources
 
