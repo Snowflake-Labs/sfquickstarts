@@ -148,7 +148,7 @@ snow sql -f scripts/setup-data.sql --connection quickstart  # sample data (1-3 m
 What each one does:
 
 - *setup.sql* creates the **SFQUICKSTART_CHURNGUARD** database and checks for the TPC-DS sample data (about 65 million rows). If your account doesn't have it, the script creates it from the Snowflake share. You can also get it from [Snowflake Marketplace](https://docs.snowflake.com/en/user-guide/sample-data-tpcds#getting-tpc-ds-data-from-snowflake-marketplace).
-- *grants.sql* creates **SFQUICKSTART_CHURNGUARD_ROLE** and grants it to you. The role owns the quickstart database and can deploy apps, use the warehouse, read the sample data, and call Cortex AI functions.
+- *grants.sql* creates **SFQUICKSTART_CHURNGUARD_ROLE** and grants it to you. The role owns the quickstart database and can deploy apps, use the warehouse, read the sample data, and call Cortex AI functions. The scripts use the **COMPUTE_WH** warehouse; if yours has a different name, change it in *grants.sql*, *setup-data.sql*, and *AGENTS.md*.
 - *setup-data.sql* samples the TPC-DS 10 TB dataset once into two small tables, **CHURN_METRICS** (about 30,000 customers) and **CHURN_TRENDS** (monthly totals), so dashboard queries return in under a second. It samples with *TABLESAMPLE SYSTEM* instead of scanning the 29-billion-row fact tables.
 
 Check the tables:
@@ -162,7 +162,7 @@ snow sql --connection quickstart --role SFQUICKSTART_CHURNGUARD_ROLE -q "
     FROM SFQUICKSTART_CHURNGUARD.PUBLIC.CHURN_TRENDS"
 ```
 
-Expect about 30,000 rows in **CHURN_METRICS** and 7–12 rows in **CHURN_TRENDS**.
+Expect about 30,000 rows in **CHURN_METRICS** and 12 rows (one per month) in **CHURN_TRENDS**. TPC-DS is a benchmark dataset, so its dates come from the early 2000s rather than this year.
 
 ### Prepare Your Working Directory
 
@@ -190,7 +190,7 @@ echo dotenv > .envrc && direnv allow
 snow connection test   # should show quickstart with SFQUICKSTART_CHURNGUARD_ROLE
 ```
 
-Snowflake CLI commands, the Cortex Code CLI, and ***npm run dev*** started from this terminal now use that connection and role. The files hold no secrets, so it's fine if they get committed to your branch.
+Snowflake CLI commands, the Cortex Code CLI, and ***npm run dev*** started from this terminal now use that connection and role. The files hold no secrets, and the repo's *.gitignore* keeps *.env* and *.envrc* out of your commits.
 
 Open the repo directory in Cortex Code Desktop. Your account name should appear in the status bar.
 
@@ -301,7 +301,7 @@ npm run dev
 <!-- ------------------------ -->
 ## Understanding app.yml
 
-Open *app.yml* in your project root. ***snow app setup*** (Snowflake CLI 3.26.0+) generates it, and every App Runtime app uses it as its manifest.
+Open *app.yml* in your project root. ***snow app setup*** (Snowflake CLI 3.26.0+) generates it, and every App Runtime app uses it as its manifest. Cortex Code runs ***snow app setup*** for you; run it yourself only when you bring existing app code.
 
 > **Tip:** Have a project that uses snowflake.yml? See [Migrate from snowflake.yml to app.yml](https://docs.snowflake.com/en/developer-guide/snowflake-app-runtime/migrate-to-app-yml).
 
@@ -323,6 +323,8 @@ For every field, see the [app.yml reference](https://docs.snowflake.com/en/devel
 | **auto_suspend_secs** | Idle seconds before the service suspends (default *0*, never; minimum *300*) |
 
 Each ***snow app deploy*** applies the whole manifest. Iteration 2 adds *secrets* and *external_access_integrations* so the app can reach Snowflake Postgres. Otherwise only the app code changes.
+
+> **Tip:** With the default *auto_suspend_secs* of *0*, the app never suspends and keeps consuming credits while idle. For a lab, set it to *300* (five minutes), or run the cleanup when you finish. See [Scale and suspend apps](https://docs.snowflake.com/en/developer-guide/snowflake-app-runtime/scale-and-suspend).
 
 <!-- ------------------------ -->
 ## Iteration 2: Add Workflow Capabilities
@@ -487,6 +489,8 @@ Iteration 3 uses two prompts, like iteration 2.
 
 ### What Happens
 
+**In Snowflake**
+
 **1. Semantic view.** **CHURNGUARD_SV** covers **CHURN_METRICS**, **CHURN_TRENDS**, **CUSTOMER_RECOMMENDATIONS**, **ACTION_SUMMARY**, and **NOTIFICATIONS**, with synonyms and verified queries. The agent can answer questions such as "which high-risk customers have no open action?"
 
 **2. Cortex Agent.** **CHURNGUARD_AGENT** has:
@@ -496,7 +500,11 @@ Iteration 3 uses two prompts, like iteration 2.
 - **A custom tool**, *stage_retention_actions*, backed by the **STAGE_RETENTION_PROPOSALS** procedure, to stage proposals
 - **Instructions** to take actions only from **CUSTOMER_RECOMMENDATIONS** and to skip customers who already have an open action
 
-**3. Chat in the app.** Open the chat drawer from the header or with *Cmd+K*. The conversation stays open as you move between pages. Each screen also offers a shortcut that carries its context:
+**3. Daily proposals.** **AGENT_SUGGESTION_TASK** runs at 08:00 UTC. It stages up to 20 proposals, highest risk and spend first, for customers with no open action and no pending proposal.
+
+**In the app**
+
+**4. Chat in the app.** Open the chat drawer from the header or with *Cmd+K*. The conversation stays open as you move between pages. Each screen also offers a shortcut that carries its context:
 
 - Customer row: *Ask about this customer*
 - Segment chart bar: *Explain this segment*
@@ -506,15 +514,13 @@ Iteration 3 uses two prompts, like iteration 2.
 
 An empty drawer suggests prompts for the current page.
 
-**4. Streaming answers.** An API route streams the *agent:run* REST API. An answer takes about 30 seconds, so the chat shows a thinking indicator, then each tool call, then the answer with tables and charts. When the agent stages proposals, the chat shows how many and links to the Agent Suggested tab.
+**5. Streaming answers.** An API route streams the *agent:run* REST API. An answer takes about 30 seconds, so the chat shows a thinking indicator, then each tool call, then the answer with tables and charts. When the agent stages proposals, the chat shows how many and links to the Agent Suggested tab.
 
-**5. Agent Suggested tab.** The Action Board gains a tab of pending proposals. Each card shows the customer, the action, and the playbook rule behind it. **Approve** writes the action to Postgres, **Dismiss** drops it, and **Approve All** handles every pending proposal. A badge shows how many are waiting.
+**6. Agent Suggested tab.** The Action Board gains a tab of pending proposals. Each card shows the customer, the action, and the playbook rule behind it. **Approve** writes the action to Postgres, **Dismiss** drops it, and **Approve All** handles every pending proposal. A badge shows how many are waiting.
 
-**6. Threads.** The app reuses one agent thread per conversation, so follow-up questions keep their context.
+**7. Threads.** The app reuses one agent thread per conversation, so follow-up questions keep their context.
 
-**7. Daily proposals.** **AGENT_SUGGESTION_TASK** runs at 08:00 UTC. It stages up to 20 proposals, highest risk and spend first, for customers with no open action and no pending proposal.
-
-**8. MCP server.** The app serves an MCP server at ***/api/mcp*** with four tools: *flag_customer*, *list_actions*, *get_customer_risk*, and *get_churn_summary*. Snowflake signs in every request, so MCP clients connect with a Snowflake connection, not an API key.
+**8. MCP server.** The app serves an MCP server at ***/api/mcp*** with four tools: *flag_customer*, *list_actions*, *get_customer_risk*, and *get_churn_summary*. Snowflake authenticates every request as your user, so MCP clients connect with a Snowflake connection, not an API key.
 
 ### Key Concepts
 
@@ -667,7 +673,8 @@ Goal: Personalize ChurnGuard for each signed-in user.
 
 Requirements:
 - Identify the signed-in user from the sf-context-current-user request header
-  (or CURRENT_USER() with callersRights: true). Snowflake already handles login.
+  (or CURRENT_USER() in a query run with the callersRights: true option).
+  Snowflake already handles login.
 - Show the user's name and role in the header, with a profile menu
 - Store preferences (default risk filter, default page) in a USER_PREFERENCES table
 - Show "My actions" on the Action Board: actions assigned to the current user
