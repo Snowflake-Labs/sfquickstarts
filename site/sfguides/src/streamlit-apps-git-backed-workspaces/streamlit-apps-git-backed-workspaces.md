@@ -73,7 +73,7 @@ sequenceDiagram
     Streamlit-->>Admin: SHOW STREAMLITS (verify)
 ```
 
-### Prerequisites
+### What You'll Need
 - Access to a [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) with Cortex AI enabled
 - A role with `USAGE` on a compute pool, and a default warehouse selected for your user (Streamlit apps in Workspaces run on a compute pool). Most accounts already have a default compute pool configured; if `SHOW COMPUTE POOLS` returns nothing usable, ask an admin to create one
 - A GitHub account and a [personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens) with `repo` scope
@@ -161,14 +161,14 @@ Priya has never touched the app before and doesn't use `git` day-to-day. She doe
 
 1. Sign in to Snowsight.
 
-![](assets/01-workspaces-landing.jpeg)
+![Workspaces landing page in Snowsight, with My Workspace selected and an Add new button above the file tree](assets/01-workspaces-landing.jpeg)
 
 2. In the navigation menu, select **Projects » Workspaces**.
 3. Select **Add new** » **Create new workspace**, then choose **Git workspace** from the menu. This opens the **Create workspace from Git repository** dialog.
 
-![](assets/02-create-new-workspace-menu.jpeg)
+![Create new menu listing Private workspace, Shared workspace and Git workspace](assets/02-create-new-workspace-menu.jpeg)
 
-![](assets/03-create-workspace-dialog-empty.jpeg)
+![Empty Create workspace from Git repository dialog with repository URL, workspace name, API integration and authentication fields](assets/03-create-workspace-dialog-empty.jpeg)
 
 4. Paste the repository URL: `https://github.com/<your_github_username>/simple-streamlit-app`. The **Workspace name** field auto-fills from the repo name.
 5. From the **API integration** menu, select `github_git_api_integration` (or the OAuth integration your admin configured).
@@ -177,31 +177,31 @@ Priya has never touched the app before and doesn't use `git` day-to-day. She doe
    - **Personal access token**: if you followed the Setup section
    - **Public repository**: no credentials at all, available whenever the repo is public; read-only, so **Push** stays disabled. This is fine for quickly previewing this guide, but Priya needs OAuth2 or a personal access token to complete the commit-and-push steps below
 
-![](assets/04-create-workspace-dialog-filled-oauth.jpeg)
+![Create workspace dialog filled in with the simple-streamlit-app repository URL, the API integration selected, and OAuth2 chosen as the authentication method](assets/04-create-workspace-dialog-filled-oauth.jpeg)
 
 7. Select **Create**. Give it a moment, then confirm the workspace actually exists. The UI can show the Files/Changes tabs as if creation succeeded even when it didn't fully persist. If reopening **Projects » Workspaces** doesn't show it, redo the dialog.
 8. Once the workspace opens, use the branch selector at the bottom of the screen (shows **main** by default) to switch to `feature/collab-tutorial`, the branch Marcus pushed. If it doesn't appear in the list yet, select **Fetch all** first to pull the latest remote branches, then look again.
 
-![](assets/05-workspace-created-file-tree.jpeg)
+![New simple-streamlit-app workspace with .streamlit, README.md, requirements.txt and streamlit_app.py in the file tree](assets/05-workspace-created-file-tree.jpeg)
 
 ### Run the app
 
 1. Open `streamlit_app.py` in the file browser. A banner appears: *"This file looks like a Streamlit app, but is missing configuration."* Clicking plain **Run** at this point executes the file as a generic Python script and fails with `ModuleNotFoundError: No module named 'streamlit'`, so don't click it yet.
 
-![](assets/06-missing-config-banner.jpeg)
+![streamlit_app.py open in the editor with a banner saying the file looks like a Streamlit app but is missing configuration, offering Convert to Streamlit app](assets/06-missing-config-banner.jpeg)
 
 2. Select **Convert to Streamlit app** from the banner. In the confirmation dialog, leave **Move into a new app folder** checked and keep the default folder name (or set your own).
 
-![](assets/07-convert-to-streamlit-modal.jpeg)
+![Convert to Streamlit app confirmation dialog with Move into a new app folder checked and the default folder name](assets/07-convert-to-streamlit-modal.jpeg)
 
 3. Confirm. Workspaces moves `streamlit_app.py` and `.streamlit/config.toml` into that folder and generates two new files alongside them: `pyproject.toml` and `snowflake.yml` (the container-runtime Streamlit app config). All four show up as **A** (added) in the file tree.
 
-![](assets/08-converted-files-app-launching.jpeg)
+![File tree after conversion showing the streamlit_app folder with pyproject.toml, snowflake.yml and streamlit_app.py marked A for added, while the app preview loads](assets/08-converted-files-app-launching.jpeg)
 
 4. Now select **Run** (or `Cmd+Enter` / `Ctrl+Enter`). This launches a private **development app** that only Priya can see, running on the account's compute pool.
 5. Confirm the app loads: a title, an info banner, three example prompt pills, and a text area.
 
-![](assets/09-app-running-preview.jpeg)
+![Private development preview of the Cortex Demo app with a title, an info banner, three example prompt pills and a text area](assets/09-app-running-preview.jpeg)
 
 > **Note:** One-time restructuring. "Convert to Streamlit app" only needs to run once per app file; it's how Workspaces turns a plain `.py` file into a recognized Streamlit app. If you clone this repo fresh or someone else already ran the conversion and pushed the resulting `pyproject.toml`/`snowflake.yml`, Workspaces detects the existing configuration and shows a working **Run** button immediately, no conversion needed.
 
@@ -227,14 +227,14 @@ st.info("Pick a prompt below, or write your own, then generate a response with S
 
 She saves and re-runs to confirm the new copy shows up in the preview.
 
-![](assets/10-edited-copy-running.jpeg)
+![App preview after Priya's edit, with the info banner reading Pick a prompt below, or write your own, then generate a response with Snowflake Cortex](assets/10-edited-copy-running.jpeg)
 
 ### Commit and push
 
 1. Select **Changes** at the top of the folder view.
 2. Because the conversion step moved files, this commit includes more than just the copy edit: `streamlit_app.py` and `.streamlit/config.toml` show as **D** (deleted) at the repo root, and `streamlit_app/streamlit_app.py`, `streamlit_app/.streamlit/config.toml`, `streamlit_app/pyproject.toml`, and `streamlit_app/snowflake.yml` show as **A** (added). The file move and the new config files are captured in the same set of changes as Priya's copy edit.
 
-![](assets/11-changes-tab-diff-before-push.jpeg)
+![Changes tab on the feature/collab-tutorial branch listing the root config.toml and streamlit_app.py as deleted and the streamlit_app folder files as added, next to the updated app preview](assets/11-changes-tab-diff-before-push.jpeg)
 
 3. Enter a commit message, for example: `Convert to Streamlit app and clarify intro copy`.
 4. Select **Push**.
@@ -282,7 +282,7 @@ Marcus's commit is on GitHub, but Priya's workspace doesn't have it yet, since W
 3. Select **Pull** to fetch and merge Marcus's commit.
 4. Open `streamlit_app/streamlit_app.py` and confirm the fourth prompt pill (`What is a Snowflake git-backed workspace?`) is now present.
 
-![](assets/12-pulled-fourth-pill-code.jpeg)
+![streamlit_app/streamlit_app.py after Pull, showing the option_map with the fourth prompt What is a Snowflake git-backed workspace?](assets/12-pulled-fourth-pill-code.jpeg)
 
 5. Select **Run** again to confirm the app shows four pills instead of three.
 
@@ -297,11 +297,11 @@ So far, both collaborators have only seen a **private development app**, Priya's
 1. In the workspace's project pane toolbar, select **Deploy**.
 2. Review the settings: app title, target database and schema, compute pool, and the query warehouse.
 
-![](assets/13-deploy-app-dialog.jpeg)
+![Deploy app dialog with the app title streamlit_app, App ID STREAMLIT_APP, and the app location, compute pool and query warehouse settings](assets/13-deploy-app-dialog.jpeg)
 
 3. Select **Deploy**.
 
-![](assets/14-deploy-success-confirmed.jpeg)
+![App deployed successfully confirmation with Close and Open app buttons](assets/14-deploy-success-confirmed.jpeg)
 
 Verify from SQL (the app's name is auto-populated from the app folder, `streamlit_app`, not the repository name):
 
@@ -315,12 +315,25 @@ Keep in mind the split between the two states: editing the workspace code afterw
 
 Keep any changes you want to retain in GitHub before removing tutorial resources. Coordinate with your collaborator so neither person loses uncommitted work.
 
-1. Remove the deployed tutorial app from the database and schema you selected during deployment. Confirm the exact app name and ownership first; do not remove an existing app that you reused.
-2. Delete the tutorial workspace only after confirming that its changes are saved remotely. Deleting the workspace and removing the deployed app are separate cleanup steps.
-3. If you created the optional Git repository object for the connection check and have not already removed it, use the removal command in **Setup**. Do not remove a repository object shared by other projects.
-4. Ask the administrator to remove the API integration and secret only if they were created exclusively for this tutorial and no other workspace or repository uses them. Leave existing OAuth integrations, shared compute pools, and warehouses unchanged.
-5. After both collaborators finish, merge or otherwise save the work you need, then delete the tutorial feature branch from your own fork. Remove local tutorial clones only after checking for uncommitted files.
-6. Revoke any GitHub personal access token created solely for this tutorial once no remaining connection needs it.
+1. Drop the Snowflake objects you created in this guide. Replace `<db>.<schema>` with the database and schema you picked in the **Deploy** dialog. The API integration requires `ACCOUNTADMIN`, the same role you used to create it in **Setup**. Skip the integration and secret if you used an existing OAuth integration instead.
+
+   ```sql
+   USE ROLE ACCOUNTADMIN;
+
+   DROP STREAMLIT IF EXISTS <db>.<schema>.STREAMLIT_APP;
+   DROP GIT REPOSITORY IF EXISTS my_db.my_schema.simple_streamlit_app_check;
+   DROP API INTEGRATION IF EXISTS github_git_api_integration;
+   DROP SECRET IF EXISTS my_db.my_schema.github_pat;
+   ```
+
+2. Delete the `simple-streamlit-app` workspace from **Projects » Workspaces** once its changes are pushed to GitHub.
+3. Delete the feature branch from your fork once you have merged or saved the work you want to keep:
+
+   ```bash
+   git push origin --delete feature/collab-tutorial
+   ```
+
+4. Revoke the GitHub personal access token you created for this guide under **GitHub » Settings » Developer settings » Personal access tokens**.
 
 ## Conclusion And Resources
 
