@@ -35,7 +35,7 @@ This tutorial demonstrates gating agent-version promotion in a dedicated demo en
 - A GitHub Actions workflow: `validate → deploy_candidate → eval_sv → eval → promote`
 - Two companion notebooks: pre-pipeline exploration and post-pipeline inspection
 
-### Prerequisites
+### What You'll Need
 - Access to a [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) with Cortex Agents and Agent Evaluations enabled
 - ACCOUNTADMIN (or equivalent) to run the one-time setup
 - Cross-region inference enabled on your account for eval judge models ([docs](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents-evaluations))
@@ -110,32 +110,29 @@ The pipeline authenticates to Snowflake using [OIDC workload identity federation
 
 ### Register the OIDC subject claim on the service user
 
-First, identify the subject claim issued for your GitHub repository and branch. An authentication subject-mismatch error can show the claim to register:
+First, work out the subject claim GitHub issues for your repository and branch. For a repository under a personal GitHub account on github.com, it uses GitHub's [default format](https://docs.github.com/en/actions/security-for-github-actions/security-hardening-your-deployments/about-security-hardening-with-openid-connect#example-subject-claims):
 
-```bash
-# After the first run, copy the subject from the error:
-# "subject 'repo:<user>@<user_id>/<repo>@<repo_id>:ref:refs/heads/main'"
+```
+repo:<you>/<your-repo>:ref:refs/heads/main
 ```
 
-Alternatively, decode the token from any GitHub Actions run:
-
-```bash
-echo "$SNOWFLAKE_TOKEN" | cut -d. -f2 | tr '_-' '/+' | base64 -d 2>/dev/null | python3 -m json.tool
-```
-
-Then register it in Snowsight as ACCOUNTADMIN:
+Register it in Snowsight as ACCOUNTADMIN:
 
 ```sql
 ALTER USER SV_EVAL_CICD_USER SET WORKLOAD_IDENTITY = (
   TYPE    = OIDC
   ISSUER  = 'https://token.actions.githubusercontent.com'
-  SUBJECT = 'repo:<you>@<user_id>/<your-repo>@<repo_id>:ref:refs/heads/main'
+  SUBJECT = 'repo:<you>/<your-repo>:ref:refs/heads/main'
 );
 ```
 
-Replace `<you>`, `<user_id>`, `<your-repo>`, and `<repo_id>` with your values.
+Replace `<you>` and `<your-repo>` with your GitHub username and repository name.
 
-> **Note:** Personal GitHub accounts on github.com use the plain format `repo:<you>/<your-repo>:ref:refs/heads/main` (no `@<id>` suffixes). Organisation and enterprise accounts embed numeric IDs. If authentication fails with a subject mismatch, decode the token as shown above to find the exact claim.
+> **Note:** Some organisation and enterprise accounts customise the subject claim to embed numeric IDs, for example `repo:<owner>@<owner_id>/<repo>@<repo_id>:ref:refs/heads/main`. If the first pipeline run fails with a subject mismatch, the error message shows the exact claim to register. You can also decode the token inside any GitHub Actions run:
+>
+> ```bash
+> echo "$SNOWFLAKE_TOKEN" | cut -d. -f2 | tr '_-' '/+' | base64 -d 2>/dev/null | python3 -m json.tool
+> ```
 
 ### Store the account identifier as a GitHub secret
 
@@ -333,11 +330,24 @@ A git-backed workspace is **private** to your user. Collaborators each connect t
 
 Save any notebook results, evaluation evidence, and source changes you want to retain before removing tutorial resources.
 
-1. Disable the tutorial GitHub Actions workflow and wait for any active runs to finish or cancel them. This prevents another push from recreating resources during cleanup.
-2. Ask your administrator to remove the tutorial database `SV_EVAL_CICD` only after confirming it was created exclusively for this exercise. This removes its schema objects, including the demo tables, semantic view, agent, Streamlit app, stages, procedures, and evaluation datasets. Do not remove a database reused by another project.
-3. Have the administrator remove `SV_EVAL_CICD_USER` and `SV_EVAL_CICD_ROLE` only if they were created solely for this tutorial and are no longer used elsewhere.
-4. Keep `COMPUTE_WH` if it already existed or serves other workloads. Remove a tutorial-only warehouse only after confirming no other workloads use it.
-5. Remove tutorial notebooks and the git-backed workspace after saving any work you need. Delete the `SNOWFLAKE_ACCOUNT` repository secret only if no remaining workflow uses it. Keep shared API integrations unchanged.
+1. Disable the GitHub Actions workflow (**Actions » Deploy and evaluate Cortex project » ⋯ » Disable workflow**, or `gh workflow disable deploy.yml`) and cancel any active runs, so a push can't recreate resources while you clean up.
+2. Drop the objects `setup.sql` created. Run this in Snowsight as ACCOUNTADMIN. Dropping the database also removes the demo tables, semantic view, agent, Streamlit app, stages, procedures and evaluation datasets inside it.
+
+   ```sql
+   USE ROLE ACCOUNTADMIN;
+
+   DROP DATABASE IF EXISTS SV_EVAL_CICD;
+   DROP USER IF EXISTS SV_EVAL_CICD_USER;
+   DROP ROLE IF EXISTS SV_EVAL_CICD_ROLE;
+   -- Only if COMPUTE_WH was created by setup.sql (it uses CREATE WAREHOUSE IF NOT EXISTS):
+   -- DROP WAREHOUSE IF EXISTS COMPUTE_WH;
+   ```
+
+3. Delete the imported notebooks and the git-backed workspace in Snowsight, then remove the repository secret:
+
+   ```bash
+   gh secret delete SNOWFLAKE_ACCOUNT
+   ```
 
 ## Conclusion And Resources
 
