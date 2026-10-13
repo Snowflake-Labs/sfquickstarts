@@ -121,13 +121,13 @@ That is 21 rows across 5 devices and 3 sites. The timestamp columns are `TIMESTA
 
 | Reading | Problem | The check that finds it |
 |:--------|:--------|:------------------------|
-| 1016 | `TEMPERATURE_C` is NULL | `NULL_COUNT` |
-| 1020 | `READING_TS` is two days in the future — device clock skew | `FUTURE_TIMESTAMP_COUNT` |
-| 1019 | `PAYLOAD` is truncated and not valid JSON | `INVALID_JSON_COUNT` |
-| 1018 | `BATTERY_PCT` is `-1`, a sentinel for "unknown"; `STATUS_CODE` is `BATT_UNKNOWN` | `NEGATIVE_COUNT`, `ACCEPTED_VALUES` |
-| 1015 | Appears twice — duplicated on ingest | `DUPLICATE_COUNT` |
-| 1017 | `DEVICE_ID` is `DEV-9999`, which is not in `DEVICES` | `REFERENTIAL_INTEGRITY_COUNT` |
-| `DEVICES` `DEV-1003` | `LABEL` has leading and trailing spaces | `UNTRIMMED_STRING_COUNT` |
+| 1016 | TEMPERATURE_C is NULL | NULL_COUNT |
+| 1020 | READING_TS is two days in the future — device clock skew | FUTURE_TIMESTAMP_COUNT |
+| 1019 | PAYLOAD is truncated and not valid JSON | INVALID_JSON_COUNT |
+| 1018 | BATTERY_PCT is -1, a sentinel for "unknown"; STATUS_CODE is BATT_UNKNOWN | NEGATIVE_COUNT, ACCEPTED_VALUES |
+| 1015 | Appears twice — duplicated on ingest | DUPLICATE_COUNT |
+| 1017 | DEVICE_ID is DEV-9999, which is not in DEVICES | REFERENTIAL_INTEGRITY_COUNT |
+| DEVICES DEV-1003 | LABEL has leading and trailing spaces | UNTRIMMED_STRING_COUNT |
 
 `TEMPERATURE_C` legitimately goes negative — `DEV-1005` is a freezer. That is why the negative-value check targets `BATTERY_PCT`, not temperature.
 
@@ -164,19 +164,19 @@ That returns roughly 90 rows, because most metrics have one signature per data t
 
 | What you have | Reach for | Catches | Covered in |
 |:--------------|:----------|:--------|:-----------|
-| A column that must always be populated | `NULL_COUNT`, `NULL_PERCENT` | Missing values | Completeness and Validity |
-| A text column that must not be empty or padded | `BLANK_COUNT`, `UNTRIMMED_STRING_COUNT` | Empty strings, stray whitespace | Completeness and Validity |
-| A column with a known set of valid values | `ACCEPTED_VALUES` | Unexpected status codes | Completeness and Validity |
-| A numeric measure that cannot be negative or zero | `NEGATIVE_COUNT`, `ZERO_COUNT` | Sentinel values, unit errors | Completeness and Validity |
-| A text column holding JSON, or numbers stored as text | `INVALID_JSON_COUNT`, `INVALID_NUMERIC_TYPE_CAST_COUNT` | Malformed payloads, failing casts | Completeness and Validity |
-| A table that must keep receiving data | `FRESHNESS` | Stalled pipelines | Timeliness |
-| A timestamp that should never be in the future | `FUTURE_TIMESTAMP_COUNT` | Clock skew, bad backfills | Timeliness |
-| A foreign key into another table | `REFERENTIAL_INTEGRITY_COUNT` | Orphaned rows | Integrity and Uniqueness |
-| A natural key or ID | `DUPLICATE_COUNT`, `UNIQUE_COUNT` | Double ingestion, broken grain | Integrity and Uniqueness |
-| A table whose size matters | `ROW_COUNT` | Volume collapse | Volume, Drift and Distribution |
-| A table whose shape should not change unnoticed | `SCHEMA_CHANGE_COUNT` | Columns added, dropped, renamed, retyped | Volume, Drift and Distribution |
-| A numeric column whose *distribution* matters | `AVG`, `STDDEV`, `MEDIAN`, `VARIANCE`, `APPROX_QUANTILE_25/50/99` | Drift no single row reveals | Volume, Drift and Distribution |
-| Text whose length or casing should be stable | `STRING_LENGTH_MIN/AVG/MAX`, `CASE_FORMAT_VIOLATION_COUNT`, `SPECIAL_CHARACTER_COUNT` | Truncation, format regressions | Volume, Drift and Distribution |
+| A column that must always be populated | NULL_COUNT, NULL_PERCENT | Missing values | Completeness and Validity |
+| A text column that must not be empty or padded | BLANK_COUNT, UNTRIMMED_STRING_COUNT | Empty strings, stray whitespace | Completeness and Validity |
+| A column with a known set of valid values | ACCEPTED_VALUES | Unexpected status codes | Completeness and Validity |
+| A numeric measure that cannot be negative or zero | NEGATIVE_COUNT, ZERO_COUNT | Sentinel values, unit errors | Completeness and Validity |
+| A text column holding JSON, or numbers stored as text | INVALID_JSON_COUNT, INVALID_NUMERIC_TYPE_CAST_COUNT | Malformed payloads, failing casts | Completeness and Validity |
+| A table that must keep receiving data | FRESHNESS | Stalled pipelines | Timeliness |
+| A timestamp that should never be in the future | FUTURE_TIMESTAMP_COUNT | Clock skew, bad backfills | Timeliness |
+| A foreign key into another table | REFERENTIAL_INTEGRITY_COUNT | Orphaned rows | Integrity and Uniqueness |
+| A natural key or ID | DUPLICATE_COUNT, UNIQUE_COUNT | Double ingestion, broken grain | Integrity and Uniqueness |
+| A table whose size matters | ROW_COUNT | Volume collapse | Volume, Drift and Distribution |
+| A table whose shape should not change unnoticed | SCHEMA_CHANGE_COUNT | Columns added, dropped, renamed, retyped | Volume, Drift and Distribution |
+| A numeric column whose *distribution* matters | AVG, STDDEV, MEDIAN, VARIANCE, APPROX_QUANTILE_25/50/99 | Drift no single row reveals | Volume, Drift and Distribution |
+| Text whose length or casing should be stable | STRING_LENGTH_MIN/AVG/MAX, CASE_FORMAT_VIOLATION_COUNT, SPECIAL_CHARACTER_COUNT | Truncation, format regressions | Volume, Drift and Distribution |
 
 Prefer `_COUNT` when any occurrence is a defect, and `_PERCENT` when you care about proportion in a table whose size varies. `DATA_METRIC_SCHEDULE_TIME` appears in some listings but is **not a metric you can attach** — it is a helper for custom metrics. For the full catalog, see [System data metric functions](https://docs.snowflake.com/en/user-guide/data-quality-system-dmfs).
 
@@ -253,7 +253,7 @@ To stop evaluations while keeping checks attached, set the schedule to an empty 
 ALTER TABLE SENSOR_READINGS SET DATA_METRIC_SCHEDULE = '';
 ```
 
-Do not use `UNSET`: it reverts the table to the **default hourly** cadence, `0 */1 * * * UTC`, which multiplies a daily table's evaluations by twenty-four. Confirm the current schedule — a blank `SCHEDULE` means suspended:
+Do not use `UNSET`: it reverts the table to the **default hourly** cadence, 0 */1 * * * UTC, which multiplies a daily table's evaluations by twenty-four. Confirm the current schedule — a blank `SCHEDULE` means suspended:
 
 ```sql
 SELECT METRIC_NAME, SCHEDULE, SCHEDULE_STATUS
@@ -287,12 +287,12 @@ ALTER TABLE SENSOR_READINGS
 
 | Case | DMF | Notes |
 |:-----|:----|:------|
-| Missing values | `NULL_COUNT`, `NULL_PERCENT` | Count for a rule, percent for a tolerance |
-| Malformed JSON | `INVALID_JSON_COUNT` | Tests `TRY_PARSE_JSON`; NULLs are not counted as invalid |
-| Text that will fail a numeric cast | `INVALID_NUMERIC_TYPE_CAST_COUNT` | Attach to staging columns you plan to cast |
-| Sentinel or impossible numbers | `NEGATIVE_COUNT`, `ZERO_COUNT` | Apply only where the value is genuinely impossible |
-| Empty or padded strings | `BLANK_COUNT`, `UNTRIMMED_STRING_COUNT` | Finds the `DEV-1003` label in `DEVICES` |
-| Value outside a known set | `ACCEPTED_VALUES` | Takes a lambda; must be attached |
+| Missing values | NULL_COUNT, NULL_PERCENT | Count for a rule, percent for a tolerance |
+| Malformed JSON | INVALID_JSON_COUNT | Tests TRY_PARSE_JSON; NULLs are not counted as invalid |
+| Text that will fail a numeric cast | INVALID_NUMERIC_TYPE_CAST_COUNT | Attach to staging columns you plan to cast |
+| Sentinel or impossible numbers | NEGATIVE_COUNT, ZERO_COUNT | Apply only where the value is genuinely impossible |
+| Empty or padded strings | BLANK_COUNT, UNTRIMMED_STRING_COUNT | Finds the DEV-1003 label in DEVICES |
+| Value outside a known set | ACCEPTED_VALUES | Takes a lambda; must be attached |
 
 `ACCEPTED_VALUES` is the one pattern that differs. It takes a Boolean lambda and counts the rows that fail it:
 
@@ -314,7 +314,7 @@ That fires on reading 1018. Reach for it before writing a custom value-in-list m
 SELECT SNOWFLAKE.CORE.FRESHNESS(SELECT READING_TS FROM SENSOR_READINGS) AS STALENESS_SECONDS;
 ```
 
-On the example data this returns something like `-165869` — **negative**. Reading 1020 is stamped two days ahead, so freshness reports data that has not happened yet, and an expectation like `VALUE < 3600` would pass while the pipeline was dead. **A freshness check alone can be defeated by one bad timestamp.** Pair it with a clock-skew check and the pair cannot be fooled:
+On the example data this returns something like `-165869` — **negative**. Reading 1020 is stamped two days ahead, so freshness reports data that has not happened yet, and an expectation like VALUE < 3600 would pass while the pipeline was dead. **A freshness check alone can be defeated by one bad timestamp.** Pair it with a clock-skew check and the pair cannot be fooled:
 
 ```sql
 ALTER TABLE SENSOR_READINGS
@@ -330,10 +330,10 @@ ALTER TABLE SENSOR_READINGS
 
 | Case | Approach |
 |:-----|:---------|
-| Is the *data* current? | `FRESHNESS` on a timestamp column |
-| Did the *pipeline* run? | `FRESHNESS` with `ON ()`, which measures the last DML against the table |
-| Is any row dated in the future? | `FUTURE_TIMESTAMP_COUNT`; prefer the count over `FUTURE_TIMESTAMP_PERCENT` |
-| Business hours, per-source SLAs | A custom metric using `SNOWFLAKE.CORE.DATA_METRIC_SCHEDULE_TIME()` — see *Write Your Own Check* |
+| Is the *data* current? | FRESHNESS on a timestamp column |
+| Did the *pipeline* run? | FRESHNESS with ON (), which measures the last DML against the table |
+| Is any row dated in the future? | FUTURE_TIMESTAMP_COUNT; prefer the count over FUTURE_TIMESTAMP_PERCENT |
+| Business hours, per-source SLAs | A custom metric using SNOWFLAKE.CORE.DATA_METRIC_SCHEDULE_TIME() — see *Write Your Own Check* |
 
 `FUTURE_TIMESTAMP_COUNT` compares against the evaluation time, so a row that passes today can fail on a rerun of history. That is correct: a backfill dated next Tuesday is wrong on both days.
 
@@ -362,9 +362,9 @@ Returns `1` and `20`. `DUPLICATE_COUNT` is the number of *values that have dupli
 
 | Case | Approach |
 |:-----|:---------|
-| Single-column key | `DUPLICATE_COUNT ON (READING_ID)` with `VALUE = 0` |
-| Grain is a column combination | `DUPLICATE_COUNT` on a column list; must be attached |
-| Orphaned foreign keys | `REFERENTIAL_INTEGRITY_COUNT` |
+| Single-column key | DUPLICATE_COUNT ON (READING_ID) with VALUE = 0 |
+| Grain is a column combination | DUPLICATE_COUNT on a column list; must be attached |
+| Orphaned foreign keys | REFERENTIAL_INTEGRITY_COUNT |
 
 ```sql
 ALTER TABLE SENSOR_READINGS
@@ -401,14 +401,14 @@ WHERE METRIC_NAME = 'ROW_COUNT'
 ORDER BY MEASUREMENT_TIME DESC;
 ```
 
-A fixed floor like `VALUE > 15` cannot express "less than usual"; for that, use anomaly detection.
+A fixed floor like VALUE > 15 cannot express "less than usual"; for that, use anomaly detection.
 
 | Case | Approach | Notes |
 |:-----|:---------|:------|
-| Volume collapse | `ROW_COUNT ON ()` | Prefer anomaly detection over a fixed floor |
-| Schema drift | `SCHEMA_CHANGE_COUNT ON ()` with `VALUE = 0` | Measures change since the previous evaluation; needs two evaluations and reports a delta, not a state |
-| Distribution shift | `AVG`, `MEDIAN`, `STDDEV`, `APPROX_QUANTILE_99` | Record without an expectation; `MEDIAN` is exact, `APPROX_QUANTILE_50` is cheaper |
-| Text truncation | `STRING_LENGTH_MIN/AVG/MAX` | The quickest way to catch a truncation regression |
+| Volume collapse | ROW_COUNT ON () | Prefer anomaly detection over a fixed floor |
+| Schema drift | SCHEMA_CHANGE_COUNT ON () with VALUE = 0 | Measures change since the previous evaluation; needs two evaluations and reports a delta, not a state |
+| Distribution shift | AVG, MEDIAN, STDDEV, APPROX_QUANTILE_99 | Record without an expectation; MEDIAN is exact, APPROX_QUANTILE_50 is cheaper |
+| Text truncation | STRING_LENGTH_MIN/AVG/MAX | The quickest way to catch a truncation regression |
 
 ```sql
 ALTER TABLE SENSOR_READINGS
@@ -457,9 +457,9 @@ This measures 0 and passes, where the unfiltered version fails forever. `FILTER`
 
 | Need | Clause | Notes |
 |:-----|:-------|:------|
-| Check a subset of rows | `FILTER (<condition>)` | See [Apply data quality checks to a subset of rows](https://docs.snowflake.com/en/user-guide/data-quality-filter) |
-| Same metric per group, one association | `WITHIN GROUP (<cols>)` | Results carry `GROUP_BY_INFO`; `SYSTEM$DATA_METRIC_SCAN` accepts `WITHIN_GROUP_VALUES` |
-| Wide grouping | `GROUP LIMIT <n>` | Group by site or status, not by reading ID |
+| Check a subset of rows | FILTER (<condition>) | See [Apply data quality checks to a subset of rows](https://docs.snowflake.com/en/user-guide/data-quality-filter) |
+| Same metric per group, one association | WITHIN GROUP (<cols>) | Results carry GROUP_BY_INFO; SYSTEM$DATA_METRIC_SCAN accepts WITHIN_GROUP_VALUES |
+| Wide grouping | GROUP LIMIT <n> | Group by site or status, not by reading ID |
 
 `WITHIN GROUP` computes the metric separately for each group from a single association. Do not create one association per group value or imitate this with `GROUP BY` queries:
 
@@ -747,7 +747,7 @@ SELECT * FROM SNOWFLAKE.ACCOUNT_USAGE.DATA_QUALITY_MONITORING_USAGE_HISTORY
 ORDER BY START_TIME DESC;
 ```
 
-Across an organisation, `METERING_DAILY_HISTORY` carries the same spend with `SERVICE_TYPE = 'DATA_QUALITY_MONITORING'`. Match cadence to how fast you would act, use `TRIGGER_ON_CHANGES` where evaluating on data arrival fits, and suspend with `SET DATA_METRIC_SCHEDULE = ''` rather than `UNSET` while iterating.
+Across an organisation, `METERING_DAILY_HISTORY` carries the same spend with SERVICE_TYPE = 'DATA_QUALITY_MONITORING'. Match cadence to how fast you would act, use `TRIGGER_ON_CHANGES` where evaluating on data arrival fits, and suspend with SET DATA_METRIC_SCHEDULE = '' rather than `UNSET` while iterating.
 
 <!-- ------------------------ -->
 ## Cleanup
