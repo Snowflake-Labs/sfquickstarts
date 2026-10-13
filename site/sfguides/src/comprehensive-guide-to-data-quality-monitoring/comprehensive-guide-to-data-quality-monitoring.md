@@ -14,11 +14,11 @@ tags: Getting Started, Data Quality, Data Metric Functions, DMF, Data Engineerin
 
 Data quality problems rarely announce themselves. A device clock drifts and stamps readings two days into the future. An upstream system swaps a missing battery level for -1. A firmware release emits truncated JSON. Nothing errors, and the dashboards keep rendering — on data that is quietly wrong.
 
-Snowflake checks for these conditions natively, on a schedule, without moving data or standing up another tool. This guide is a **cookbook** for doing that.
+Snowflake can check for these conditions natively, on a schedule, without moving data or standing up another tool. This guide explores what that makes possible.
 
 ### How to use this guide
 
-After the setup step, each section is an **independent example** you can run in any order. Where an example can be done both in SQL and in Snowsight, both are shown. AI-suggested checks and the monitoring dashboards are Snowsight-only; quality-as-code is SQL-only.
+Each section explores **one capability**; read them in any order. Where something can be done both in SQL and in Snowsight, we show both. AI-suggested checks and the monitoring dashboards are Snowsight-only; quality-as-code is SQL-only.
 
 ### What you will learn
 
@@ -38,9 +38,7 @@ After the setup step, each section is an **independent example** you can run in 
 
 ### Use Cortex Code with this guide
 
-If you have Cortex Code available, the `/data-quality` skill can run these workflows against your own tables — recommending metrics, scoring schema health, and investigating violations.
-
-The examples use deliberately long schedules to keep cost down. The **What It Costs** section at the end of the guide covers billing and how to track spend.
+With Cortex Code, the `/data-quality` skill can apply these workflows to our own tables — recommending metrics, scoring schema health, and investigating violations.
 
 <!-- ------------------------ -->
 ## Anatomy of a Check
@@ -53,9 +51,9 @@ A check has five parts:
 4. An **expectation** turns the number into a verdict. A metric without one is measured but never judged.
 5. **Results** land in monitoring views you query or read in Snowsight.
 
-Read this section first; it is the model the rest of the guide builds on. The statements here run against the example table, so run them after the setup step.
+This is the model the rest of the guide builds on. The examples refer to the dataset described in the next section.
 
-Set the schedule, then attach a metric with an expectation:
+We can set a schedule, then attach a metric with an expectation:
 
 ```sql
 ALTER TABLE SENSOR_READINGS SET DATA_METRIC_SCHEDULE = '1440 MINUTE';
@@ -66,7 +64,7 @@ ALTER TABLE SENSOR_READINGS
     EXPECTATION MUST_HAVE_TEMPERATURE (VALUE = 0);
 ```
 
-On a new table, declare checks in `CREATE TABLE`, after the column list, so the table and its guarantees arrive together. Separate multiple bindings with commas; see [Use SQL to work with expectations](https://docs.snowflake.com/en/user-guide/data-quality-expectations) for the full syntax.
+On a new table, we can declare checks in CREATE TABLE, after the column list, so the table and its guarantees arrive together. Multiple bindings are separated by commas; see [Use SQL to work with expectations](https://docs.snowflake.com/en/user-guide/data-quality-expectations) for the full syntax.
 
 ```sql
 CREATE OR REPLACE TABLE SENSOR_READINGS_V2 (
@@ -90,7 +88,7 @@ Returns `1`. Metrics that **take no column argument** — `ROW_COUNT`, `SCHEMA_C
 
 ### Evaluating expectations now
 
-Evaluate every expectation on a table without waiting for the schedule:
+We can evaluate every expectation on a table without waiting for the schedule:
 
 ```sql
 SELECT METRIC_NAME, EXPECTATION_NAME, EXPECTATION_EXPRESSION, VALUE, EXPECTATION_VIOLATED
@@ -105,13 +103,13 @@ This form returns a result without recording it. `SYSTEM$EVALUATE_DATA_QUALITY_E
 
 ### In Snowsight
 
-Open the table, open the **Data Quality** tab, select **Add quality check**, pick the metric and column, and set the expected values. A check created in Snowsight is visible to SQL and vice versa. See [Use Snowsight to set up data quality checks](https://docs.snowflake.com/en/user-guide/data-quality-ui-setup).
+The same check can be added from the table's **Data Quality** tab: **Add quality check**, then a metric, a column, and the expected values. A check created in Snowsight is visible to SQL and vice versa. See [Use Snowsight to set up data quality checks](https://docs.snowflake.com/en/user-guide/data-quality-ui-setup).
 
 <!-- TODO: screenshot of the Data Quality tab on SENSOR_READINGS with the Add quality check panel open, NULL_COUNT selected on TEMPERATURE_C -->
 
 ### Scheduling options
 
-The schedule belongs to the table, not to a metric: every metric attached to a table runs on that table's schedule. There are three kinds. These are alternatives, not steps: the examples in this guide use the daily '1440 MINUTE' schedule set above, so if you try one, set it back afterwards.
+The schedule belongs to the table, not to a metric: every metric attached to a table runs on that table's schedule. There are three kinds. These are alternatives, not steps: the examples in this guide assume the daily '1440 MINUTE' schedule shown above.
 
 ```sql
 -- Fixed interval: 5, 15, 30, 60, 720, or 1440 minutes
@@ -124,15 +122,15 @@ ALTER TABLE SENSOR_READINGS SET DATA_METRIC_SCHEDULE = 'USING CRON 0 8 * * MON-F
 ALTER TABLE SENSOR_READINGS SET DATA_METRIC_SCHEDULE = 'TRIGGER_ON_CHANGES';
 ```
 
-Pick the interval that matches how fast you would act. TRIGGER_ON_CHANGES suits tables loaded in batches; it works on regular, transient, temporary, dynamic, external and Iceberg tables but **not on views**, and reclustering does not trigger it. Cron runs in the time zone named in the expression, and a run is skipped if the previous one has not finished. See [Schedule the DMF to run](https://docs.snowflake.com/en/user-guide/data-quality-working).
+The right interval matches how fast we would act. TRIGGER_ON_CHANGES suits tables loaded in batches; it works on regular, transient, temporary, dynamic, external and Iceberg tables but **not on views**, and reclustering does not trigger it. Cron runs in the time zone named in the expression, and a run is skipped if the previous one has not finished. See [Schedule the DMF to run](https://docs.snowflake.com/en/user-guide/data-quality-working).
 
-To stop evaluations while keeping checks attached, set the schedule to an empty string:
+To pause evaluations while keeping checks attached, we can set the schedule to an empty string:
 
 ```sql
 ALTER TABLE SENSOR_READINGS SET DATA_METRIC_SCHEDULE = '';
 ```
 
-Do not use `UNSET`: it reverts the table to the **default hourly** cadence, which multiplies a daily table's evaluations by twenty-four. Confirm the current schedule — a blank SCHEDULE means suspended:
+UNSET is a trap: it reverts the table to the **default hourly** cadence, which multiplies a daily table's evaluations by twenty-four. The references show the current schedule — a blank SCHEDULE means suspended:
 
 ```sql
 SELECT METRIC_NAME, SCHEDULE, SCHEDULE_STATUS
@@ -144,9 +142,9 @@ FROM TABLE(INFORMATION_SCHEMA.DATA_METRIC_FUNCTION_REFERENCES(
 <!-- TODO: screenshot of the Data Quality » Monitoring page for SENSOR_READINGS after the first evaluation: the failed-check count at the top and NULL_COUNT under Quality Dimensions -->
 
 <!-- ------------------------ -->
-## Set Up the Example Data
+## The Example Data
 
-This is the only step the examples depend on. Refrigerated sites report temperature and humidity from battery-powered sensors; readings land in a raw table keyed to a device inventory, with **deliberate defects** for the checks to find. Timestamps are relative to when you run this, so the examples behave the same whenever you work through them.
+The examples below assume a small IoT dataset. Refrigerated sites report temperature and humidity from battery-powered sensors; readings land in a raw table keyed to a device inventory, with **deliberate defects** for the checks to find. Timestamps are relative to the current time.
 
 ```sql
 CREATE DATABASE IF NOT EXISTS DQ_EXAMPLES;
@@ -235,11 +233,11 @@ TEMPERATURE_C legitimately goes negative — DEV-1005 is a freezer. That is why 
 <!-- ------------------------ -->
 ## Profile Before You Check
 
-Look at the data before writing rules. In Snowsight, select **Catalog » Explorer**, open **DQ_EXAMPLES » PUBLIC » SENSOR_READINGS**, and open the **Profile** tab for per-column statistics. This view is Snowsight-only.
+Before writing rules, we can look at the data. In Snowsight, **Catalog » Explorer** leads to **DQ_EXAMPLES » PUBLIC » SENSOR_READINGS**, whose **Profile** tab shows per-column statistics. This view is Snowsight-only.
 
 <!-- TODO: screenshot of the Profile tab for SENSOR_READINGS, showing the TEMPERATURE_C null share and the BATTERY_PCT minimum of -1 -->
 
-Two things stand out: `TEMPERATURE_C` has a non-zero null share, and `BATTERY_PCT` has a minimum of `-1`. The scripted equivalent:
+Two things stand out: TEMPERATURE_C has a non-zero null share, and BATTERY_PCT has a minimum of -1. The scripted equivalent:
 
 ```sql
 SELECT COUNT(*)                                            AS TOTAL_ROWS,
@@ -250,37 +248,37 @@ SELECT COUNT(*)                                            AS TOTAL_ROWS,
 FROM SENSOR_READINGS;
 ```
 
-Profiling tells you what is unusual, not what is *wrong* — that judgement is yours.
+Profiling tells us what is unusual, not what is *wrong* — that judgement is ours.
 
 <!-- ------------------------ -->
 ## Choosing a Check
 
-Snowflake's system metrics live in SNOWFLAKE.CORE and are grouped into categories. The catalog keeps growing, so start from the category that matches the column, then pick a metric:
+Snowflake's system metrics live in SNOWFLAKE.CORE and are grouped into categories. The catalog keeps growing, so one approach is to start from the category that matches the column, then pick a metric:
 
-| Category | Catches | Examples | Covered in |
-|:---------|:--------|:---------|:-----------|
-| Completeness | Missing or empty values | NULL_COUNT, BLANK_COUNT, EMPTY_STRING_COUNT | Completeness and Validity |
-| Validity | Values that break a format or rule | ACCEPTED_VALUES, INVALID_JSON_COUNT, FUTURE_TIMESTAMP_COUNT, REFERENTIAL_INTEGRITY_COUNT | Completeness and Validity, Timeliness, Integrity and Uniqueness |
-| Consistency | Formatting regressions in text | UNTRIMMED_STRING_COUNT, CASE_FORMAT_VIOLATION_COUNT | Completeness and Validity |
-| Uniqueness | Double ingestion, broken grain | DUPLICATE_COUNT, UNIQUE_COUNT | Integrity and Uniqueness |
-| Freshness | Stalled pipelines | FRESHNESS | Timeliness |
-| Volume | Tables that stop growing or collapse | ROW_COUNT | Volume, Drift and Distribution |
-| Schema | Columns added, dropped, renamed, retyped | SCHEMA_CHANGE_COUNT | Volume, Drift and Distribution |
-| Statistics | Drift no single row reveals; sentinel values | AVG, STDDEV, APPROX_QUANTILE_50, NEGATIVE_COUNT | Volume, Drift and Distribution |
-| Outliers | Values far outside the column's range | OUTLIER_IQR_COUNT, EXTREME_OUTLIER_ZSCORE_COUNT | Volume, Drift and Distribution |
+| Category | Catches | Examples |
+|:-----------------------|:--------|:---------|
+| Completeness | Missing or empty values | NULL_COUNT, BLANK_COUNT, EMPTY_STRING_COUNT |
+| Validity | Values that break a format or rule | ACCEPTED_VALUES, INVALID_JSON_COUNT, FUTURE_TIMESTAMP_COUNT, REFERENTIAL_INTEGRITY_COUNT |
+| Consistency | Formatting regressions in text | UNTRIMMED_STRING_COUNT, CASE_FORMAT_VIOLATION_COUNT |
+| Uniqueness | Double ingestion, broken grain | DUPLICATE_COUNT, UNIQUE_COUNT |
+| Freshness | Stalled pipelines | FRESHNESS |
+| Volume | Tables that stop growing or collapse | ROW_COUNT |
+| Schema | Columns added, dropped, renamed, retyped | SCHEMA_CHANGE_COUNT |
+| Statistics | Drift no single row reveals; sentinel values | AVG, STDDEV, APPROX_QUANTILE_50, NEGATIVE_COUNT |
+| Outliers | Values far outside the column's range | OUTLIER_IQR_COUNT, EXTREME_OUTLIER_ZSCORE_COUNT |
 
-Most metrics come in a _COUNT and a _PERCENT form: prefer _COUNT when any occurrence is a defect, and _PERCENT when you care about proportion in a table whose size varies. For the current list, see [System data metric functions](https://docs.snowflake.com/en/user-guide/data-quality-system-dmfs).
+Most metrics come in a _COUNT and a _PERCENT form: _COUNT suits cases where any occurrence is a defect, and _PERCENT cases where proportion matters in a table whose size varies. For the current list, see [System data metric functions](https://docs.snowflake.com/en/user-guide/data-quality-system-dmfs).
 
 <!-- ------------------------ -->
 ## Completeness and Validity
 
-Every reading should carry a temperature (reading 1016 does not), a parseable payload (1019 does not), a real battery level (1018 does not), and a known status code (1018 again). Measure the column-argument ones directly:
+Every reading should carry a temperature (reading 1016 does not), a parseable payload (1019 does not), a real battery level (1018 does not), and a known status code (1018 again). We can measure the column-argument ones directly:
 
 ```sql
 SELECT SNOWFLAKE.CORE.NULL_PERCENT(SELECT TEMPERATURE_C FROM SENSOR_READINGS) AS MISSING_PCT;
 ```
 
-Returns `4.761900` — one row in twenty-one. Use the count form for a rule ("never") and the percentage form for a tolerance ("under 1%"). Attach the rules; `MUST_HAVE_TEMPERATURE` is already attached from *Anatomy of a Check*:
+Returns `4.761900` — one row in twenty-one. The count form expresses a rule ("never"); the percentage form, a tolerance ("under 1%"). Attached as rules (MUST_HAVE_TEMPERATURE already appears in *Anatomy of a Check*):
 
 ```sql
 ALTER TABLE SENSOR_READINGS
@@ -303,7 +301,7 @@ ALTER TABLE SENSOR_READINGS
 | Empty or padded strings | BLANK_COUNT, UNTRIMMED_STRING_COUNT | Finds the DEV-1003 label in DEVICES |
 | Value outside a known set | ACCEPTED_VALUES | Takes a lambda; must be attached |
 
-`ACCEPTED_VALUES` is the one pattern that differs. It takes a Boolean lambda and counts the rows that fail it:
+ACCEPTED_VALUES is the one pattern that differs. It takes a Boolean lambda and counts the rows that fail it:
 
 ```sql
 ALTER TABLE SENSOR_READINGS
@@ -312,18 +310,18 @@ ALTER TABLE SENSOR_READINGS
     EXPECTATION STATUS_IS_KNOWN (VALUE = 0);
 ```
 
-That fires on reading 1018. Reach for it before writing a custom value-in-list metric.
+That fires on reading 1018, and saves us writing a custom value-in-list metric.
 
 <!-- ------------------------ -->
 ## Timeliness
 
-`FRESHNESS` returns the seconds between the newest value in a timestamp column and the moment the check ran:
+FRESHNESS returns the seconds between the newest value in a timestamp column and the moment the check ran:
 
 ```sql
 SELECT SNOWFLAKE.CORE.FRESHNESS(SELECT READING_TS FROM SENSOR_READINGS) AS STALENESS_SECONDS;
 ```
 
-On the example data this returns something like `-165869` — **negative**. Reading 1020 is stamped two days ahead, so freshness reports data that has not happened yet, and an expectation like VALUE < 3600 would pass while the pipeline was dead. **A freshness check alone can be defeated by one bad timestamp.** Pair it with a clock-skew check and the pair cannot be fooled:
+On the example data this returns something like `-165869` — **negative**. Reading 1020 is stamped two days ahead, so freshness reports data that has not happened yet, and an expectation like VALUE < 3600 would pass while the pipeline was dead. **A freshness check alone can be defeated by one bad timestamp.** Paired with a clock-skew check, it cannot be fooled:
 
 ```sql
 ALTER TABLE SENSOR_READINGS
@@ -344,12 +342,12 @@ ALTER TABLE SENSOR_READINGS
 | Is any row dated in the future? | FUTURE_TIMESTAMP_COUNT; prefer the count over FUTURE_TIMESTAMP_PERCENT |
 | Business hours, per-source SLAs | A custom metric using SNOWFLAKE.CORE.DATA_METRIC_SCHEDULE_TIME() — see *Write Your Own Check* |
 
-`FUTURE_TIMESTAMP_COUNT` compares against the evaluation time, so a row that passes today can fail on a rerun of history. That is correct: a backfill dated next Tuesday is wrong on both days.
+FUTURE_TIMESTAMP_COUNT compares against the evaluation time, so a row that passes today can fail on a rerun of history. That is correct: a backfill dated next Tuesday is wrong on both days.
 
 <!-- ------------------------ -->
 ## Integrity and Uniqueness
 
-Reading 1017 reports device `DEV-9999`, which is not in `DEVICES`; joins silently drop it. `REFERENTIAL_INTEGRITY_COUNT` replaces the hand-written `NOT IN` check. The second argument names the parent table and its matching column:
+Reading 1017 reports device DEV-9999, which is not in DEVICES; joins silently drop it. REFERENTIAL_INTEGRITY_COUNT replaces a hand-written NOT IN check. The second argument names the parent table and its matching column:
 
 ```sql
 ALTER TABLE SENSOR_READINGS
@@ -358,7 +356,7 @@ ALTER TABLE SENSOR_READINGS
     EXPECTATION NO_ORPHAN_READINGS (VALUE = 0);
 ```
 
-For compound keys, list the columns in matching order on both sides. *Find the Bad Rows* shows how to retrieve reading 1017 itself.
+For compound keys, the columns are listed in matching order on both sides. *Find the Bad Rows* shows how to retrieve reading 1017 itself.
 
 Reading 1015 was ingested twice:
 
@@ -367,7 +365,7 @@ SELECT SNOWFLAKE.CORE.DUPLICATE_COUNT(SELECT READING_ID FROM SENSOR_READINGS) AS
        SNOWFLAKE.CORE.UNIQUE_COUNT(SELECT READING_ID FROM SENSOR_READINGS)    AS DISTINCT_VALUES;
 ```
 
-Returns `1` and `20`. `DUPLICATE_COUNT` is the number of *values that have duplicates*, not excess rows; `UNIQUE_COUNT` is the number of *distinct* values, not values occurring once.
+Returns `1` and `20`. DUPLICATE_COUNT is the number of *values that have duplicates*, not excess rows; UNIQUE_COUNT is the number of *distinct* values, not values occurring once.
 
 | Case | Approach |
 |:-----|:---------|
@@ -394,7 +392,7 @@ NULLs count as a value, so a nullable key reports duplicates once two rows are b
 
 Some failures are not bad rows: good data stops arriving, a column is renamed upstream, or a sensor recalibrated to Fahrenheit produces individually plausible readings with a shifted distribution.
 
-`ROW_COUNT` takes no column, so attach it and read the measurement once an evaluation has run:
+ROW_COUNT takes no column, so we attach it and read the measurement once an evaluation has run:
 
 ```sql
 ALTER TABLE SENSOR_READINGS
@@ -410,7 +408,7 @@ WHERE METRIC_NAME = 'ROW_COUNT'
 ORDER BY MEASUREMENT_TIME DESC;
 ```
 
-A fixed floor like VALUE > 15 cannot express "less than usual"; for that, use anomaly detection.
+A fixed floor like VALUE > 15 cannot express "less than usual"; anomaly detection can.
 
 | Case | Approach | Notes |
 |:-----|:---------|:------|
@@ -439,7 +437,7 @@ SELECT SNOWFLAKE.CORE.AVG(SELECT TEMPERATURE_C FROM SENSOR_READINGS)            
 |----------:|------------:|------------:|---------:|
 | 6.235 | 4.2 | 5.836 | 13.343 |
 
-Mean well above median, with a spread as large as the mean, is the signature of a mixed population — chilled sites and a freezer pooled in one table. Attach the metric without an expectation to build history, rather than inventing a threshold. It will not appear in `SYSTEM$EVALUATE_DATA_QUALITY_EXPECTATIONS` output:
+Mean well above median, with a spread as large as the mean, is the signature of a mixed population — chilled sites and a freezer pooled in one table. Rather than inventing a threshold, we can attach the metric without an expectation to build history. It will not appear in SYSTEM$EVALUATE_DATA_QUALITY_EXPECTATIONS output:
 
 ```sql
 ALTER TABLE SENSOR_READINGS
@@ -452,7 +450,7 @@ ALTER TABLE SENSOR_READINGS
 
 Rules rarely apply to a whole table, and fleet-wide numbers hide per-device failures.
 
-`FILTER` scopes a check to a subset of rows. Readings flagged `BATT_UNKNOWN` are *expected* to carry a sentinel battery value, so exclude them by definition rather than by tolerance:
+FILTER scopes a check to a subset of rows. Readings flagged BATT_UNKNOWN are *expected* to carry a sentinel battery value, so we can exclude them by definition rather than by tolerance:
 
 ```sql
 ALTER TABLE SENSOR_READINGS
@@ -462,7 +460,7 @@ ALTER TABLE SENSOR_READINGS
     EXPECTATION HEALTHY_DEVICES_REPORT_BATTERY (VALUE = 0);
 ```
 
-This measures 0 and passes, where the unfiltered version fails forever. `FILTER` comes after the column and before the expectation, and takes multiple conditions. Prefer a filter over a loosened threshold.
+This measures 0 and passes, where the unfiltered version fails forever. FILTER comes after the column and before the expectation, and takes multiple conditions. A filter beats a loosened threshold.
 
 | Need | Clause | Notes |
 |:-----|:-------|:------|
@@ -470,7 +468,7 @@ This measures 0 and passes, where the unfiltered version fails forever. `FILTER`
 | Same metric per group, one association | WITHIN GROUP (<cols>) | Results carry GROUP_BY_INFO; SYSTEM$DATA_METRIC_SCAN accepts WITHIN_GROUP_VALUES |
 | Wide grouping | GROUP LIMIT <n> | Group by site or status, not by reading ID |
 
-`WITHIN GROUP` computes the metric separately for each group from a single association. Do not create one association per group value or imitate this with `GROUP BY` queries:
+WITHIN GROUP computes the metric separately for each group from a single association, with no need for one association per group value or GROUP BY imitations:
 
 ```sql
 ALTER TABLE SENSOR_READINGS
@@ -486,7 +484,7 @@ See [Apply data quality checks by group](https://docs.snowflake.com/en/user-guid
 <!-- ------------------------ -->
 ## Write Your Own Check
 
-When no system metric fits, write a DMF: a SQL function that takes a table argument and returns a number. This one counts readings with humidity outside a plausible range:
+When no system metric fits, we can write a DMF: a SQL function that takes a table argument and returns a number. This one counts readings with humidity outside a plausible range:
 
 ```sql
 CREATE OR REPLACE DATA METRIC FUNCTION IMPLAUSIBLE_HUMIDITY(
@@ -506,12 +504,12 @@ ALTER TABLE SENSOR_READINGS
     EXPECTATION HUMIDITY_IN_RANGE (VALUE = 0);
 ```
 
-Call a custom metric directly before attaching it. Column validation inside a `TABLE(...)` argument is weaker than for single-column metrics, so mistakes in multi-table signatures can surface only at evaluation time. Custom metrics can take more than one table argument, and can use `SNOWFLAKE.CORE.DATA_METRIC_SCHEDULE_TIME()` for freshness rules the built-in cannot express. Before writing one, check the catalog: `REFERENTIAL_INTEGRITY_COUNT` and `ACCEPTED_VALUES` replace the two most commonly hand-rolled metrics. See [Custom data metric functions](https://docs.snowflake.com/en/user-guide/data-quality-custom-dmfs).
+Calling a custom metric directly before attaching it is worthwhile. Column validation inside a `TABLE(...)` argument is weaker than for single-column metrics, so mistakes in multi-table signatures can surface only at evaluation time. Custom metrics can take more than one table argument, and can use `SNOWFLAKE.CORE.DATA_METRIC_SCHEDULE_TIME()` for freshness rules the built-in cannot express. The catalog is worth checking first: REFERENTIAL_INTEGRITY_COUNT and ACCEPTED_VALUES replace the two most commonly hand-rolled metrics. See [Custom data metric functions](https://docs.snowflake.com/en/user-guide/data-quality-custom-dmfs).
 
 <!-- ------------------------ -->
 ## Cover a Whole Schema in One Statement
 
-Volume and freshness apply to any table, so attach them at the schema level. Snowflake creates an association for every supported table-like object in the schema, including ones added later. Only `ROW_COUNT` and `FRESHNESS` work this way:
+Volume and freshness apply to any table, so we can attach them at the schema level. Snowflake creates an association for every supported table-like object in the schema, including ones added later. Only ROW_COUNT and FRESHNESS work this way:
 
 ```sql
 ALTER SCHEMA PUBLIC
@@ -522,7 +520,7 @@ ALTER SCHEMA PUBLIC
     ADD DATA METRIC FUNCTION SNOWFLAKE.CORE.FRESHNESS ON ();
 ```
 
-Zero-argument `FRESHNESS` skips views and external tables on its own. Inspect the references to tell schema-level from table-level associations; an association created at the schema level is detached at the schema level:
+Zero-argument FRESHNESS skips views and external tables on its own. The references tell schema-level from table-level associations; an association created at the schema level is detached at the schema level:
 
 ```sql
 SELECT REF_ENTITY_NAME, METRIC_NAME, LEVEL, EXCLUDE_TABLE_TYPES
@@ -535,12 +533,12 @@ One statement across two hundred tables creates two hundred scheduled evaluation
 <!-- ------------------------ -->
 ## Let Snowflake Propose the Checks
 
-Cortex Data Quality reads a table's metadata and usage patterns and suggests checks. It runs inside Snowflake using `AI_COMPLETE`, so data does not leave your account, and it respects the caller's access control. This is Snowsight-only.
+Cortex Data Quality reads a table's metadata and usage patterns and suggests checks. It runs inside Snowflake using AI_COMPLETE, so data does not leave the account, and it respects the caller's access control. This is Snowsight-only.
 
 It needs two things for the role using it:
 
 - **The SNOWFLAKE.CORTEX_USER database role**, granted to PUBLIC by default.
-- **Access to the models it calls** — mistral-7b and llama3.1-8b. Model access is governed by model role-based access control: the role must hold the matching model application roles. Most accounts grant every model to PUBLIC by default, so suggestions work out of the box; if they are unavailable, an administrator has restricted model access. See [Model access control](https://docs.snowflake.com/en/release-notes/bcr-bundles/2026_07/bcr-2378).
+- **Access to the models it calls.** Model access is governed by model role-based access control: the role must hold the matching model application roles. Most accounts grant every model to PUBLIC by default, so suggestions work out of the box; if they are unavailable, an administrator has restricted model access. See [Model access control](https://docs.snowflake.com/en/release-notes/bcr-bundles/2026_07/bcr-2378).
 
 To see which model roles PUBLIC holds:
 
@@ -548,11 +546,11 @@ To see which model roles PUBLIC holds:
 SHOW GRANTS TO APPLICATION ROLE SNOWFLAKE.PUBLIC;
 ```
 
-On the table's **Data Quality** tab, select **Add quality check**, then **Suggested quality checks**. Edit the expected values before accepting; an accepted suggestion is a real, billed, scheduled check.
+Suggestions live on the table's **Data Quality** tab, under **Add quality check** » **Suggested quality checks**. Expected values can be edited before accepting; an accepted suggestion is a real, billed, scheduled check.
 
 <!-- TODO: screenshot of the Suggested quality checks panel listing AI-proposed checks for SENSOR_READINGS, with the expectation values editable -->
 
-Treat suggestions as a first draft: the model can see that `BATTERY_PCT` is mostly between 60 and 100, but not that `-1` means "unknown". To stop anyone in the account using it:
+Suggestions are a first draft: the model can see that BATTERY_PCT is mostly between 60 and 100, but not that -1 means "unknown". To disable it account-wide:
 
 ```sql
 REVOKE DATABASE ROLE SNOWFLAKE.CORTEX_USER FROM ROLE PUBLIC;
@@ -561,7 +559,7 @@ REVOKE DATABASE ROLE SNOWFLAKE.CORTEX_USER FROM ROLE PUBLIC;
 <!-- ------------------------ -->
 ## Let Snowflake Learn Normal
 
-The right row count for a Tuesday is not the right row count for a bank holiday. Anomaly detection learns the pattern from history and flags departures from it. Enable it on a new association, or on the `ROW_COUNT` association attached earlier:
+The right row count for a Tuesday is not the right row count for a bank holiday. Anomaly detection learns the pattern from history and flags departures from it. We can enable it on a new association, or on the ROW_COUNT association attached earlier:
 
 ```sql
 ALTER TABLE SENSOR_READINGS
@@ -581,14 +579,14 @@ ALTER SCHEMA PUBLIC
     ANOMALY_DETECTION = TRUE;
 ```
 
-Anomaly detection is a **preview feature**, open to all Enterprise accounts. It supports **`ROW_COUNT` and `FRESHNESS` only**, needs a **training period** of accumulated history, runs on its own cadence independent of the table's schedule, and is tuned with `SENSITIVITY`. Use expectations for rules true by definition; use anomaly detection for quantities with a normal range you could not write down. See [Detecting anomalies in data quality](https://docs.snowflake.com/en/user-guide/data-quality-anomaly).
+Anomaly detection is a **preview feature**, open to all Enterprise accounts. It supports **`ROW_COUNT` and `FRESHNESS` only**, needs a **training period** of accumulated history, runs on its own cadence independent of the table's schedule, and is tuned with SENSITIVITY. Expectations suit rules true by definition; anomaly detection suits quantities with a normal range you could not write down. See [Detecting anomalies in data quality](https://docs.snowflake.com/en/user-guide/data-quality-anomaly).
 
 <!-- TODO: screenshot of the ROW_COUNT row under Quality Dimensions with anomaly detection enabled, showing the learned band (or the training-period notice if history is still accumulating) -->
 
 <!-- ------------------------ -->
 ## Find the Bad Rows
 
-`SYSTEM$DATA_METRIC_SCAN` returns the records that fail an attached check, ready to quarantine or send back to the source team:
+SYSTEM$DATA_METRIC_SCAN returns the records that fail an attached check, ready to quarantine or send back to the source team:
 
 ```sql
 SELECT * FROM TABLE(SYSTEM$DATA_METRIC_SCAN(
@@ -601,7 +599,7 @@ SELECT * FROM TABLE(SYSTEM$DATA_METRIC_SCAN(
 |-----------:|:----------|--------------:|:------------|
 | 1017 | DEV-9999 | 5.20 | OK |
 
-For `ACCEPTED_VALUES`, pass the same Boolean expression as `ARGUMENT_EXPRESSION`:
+For ACCEPTED_VALUES, the same Boolean expression goes in ARGUMENT_EXPRESSION:
 
 ```sql
 SELECT * FROM TABLE(SYSTEM$DATA_METRIC_SCAN(
@@ -611,9 +609,9 @@ SELECT * FROM TABLE(SYSTEM$DATA_METRIC_SCAN(
     ARGUMENT_EXPRESSION  => 'STATUS_CODE IN (''OK'', ''WARN'')'));
 ```
 
-Add `AT_TIMESTAMP` to scan the table as of a point in time, and `WITHIN_GROUP_VALUES` to narrow a grouped association to one group.
+AT_TIMESTAMP scans the table as of a point in time, and WITHIN_GROUP_VALUES narrows a grouped association to one group.
 
-Measurements live in `SNOWFLAKE.LOCAL.DATA_QUALITY_MONITORING_RESULTS` (shown in *Volume, Drift and Distribution*); there is no `ACCOUNT_USAGE` version. For "what is failing", read verdicts directly rather than joining measurements to expectation definitions:
+Measurements live in SNOWFLAKE.LOCAL.DATA_QUALITY_MONITORING_RESULTS (shown in *Volume, Drift and Distribution*); there is no ACCOUNT_USAGE version. For "what is failing", we can read verdicts directly rather than joining measurements to expectation definitions:
 
 ```sql
 SELECT MEASUREMENT_TIME, METRIC_NAME, EXPECTATION_NAME, VALUE, EXPECTATION_VIOLATED
@@ -633,7 +631,7 @@ See [Remediation of data quality issues](https://docs.snowflake.com/en/user-guid
 <!-- ------------------------ -->
 ## Get Told, Don't Watch
 
-Create a destination — email, or a webhook for Slack and similar:
+A notification needs a destination — email, or a webhook for Slack and similar:
 
 ```sql
 CREATE NOTIFICATION INTEGRATION DQ_EMAIL_INT
@@ -654,7 +652,7 @@ CREATE OR REPLACE NOTIFICATION INTEGRATION DQ_SLACK_INT
     WEBHOOK_HEADERS = ('Content-Type' = 'application/json');
 ```
 
-Then switch notifications on for the database, as YAML in a dollar-quoted string:
+Notifications are then switched on for the database, as YAML in a dollar-quoted string:
 
 ```sql
 ALTER DATABASE DQ_EXAMPLES SET DATA_QUALITY_MONITORING_SETTINGS =
@@ -669,7 +667,7 @@ notification:
 $$;
 ```
 
-Without `cooldown_hours`, an hourly check against a week-long violation sends 168 identical messages. `metadata_included` adds the table, metric and measured value. Settings apply **per database**; opt a single association out:
+Without cooldown_hours, an hourly check against a week-long violation sends 168 identical messages. metadata_included adds the table, metric and measured value. Settings apply **per database**; a single association can opt out:
 
 ```sql
 ALTER TABLE SENSOR_READINGS
@@ -682,7 +680,7 @@ See [Sending notifications for data quality issues](https://docs.snowflake.com/e
 <!-- ------------------------ -->
 ## Stop the Pipeline
 
-Notifications have no action hook. To stop a pipeline, use a Snowflake **alert** whose condition reads expectation status and whose action suspends the consumer. Given a downstream task and the breaker:
+Notifications have no action hook. To stop a pipeline, we can use a Snowflake **alert** whose condition reads expectation status and whose action suspends the consumer. Given a downstream task and the breaker:
 
 ```sql
 CREATE OR REPLACE TASK PUBLISH_READINGS
@@ -710,7 +708,7 @@ CREATE OR REPLACE ALERT READINGS_CIRCUIT_BREAKER
 ALTER ALERT READINGS_CIRCUIT_BREAKER RESUME;
 ```
 
-The condition inherits the expectations you already defined rather than adding a threshold of its own. Test it without waiting:
+The condition inherits the expectations already defined rather than adding a threshold of its own. We can test it without waiting:
 
 ```sql
 -- 1. Record a violation, so there is something to react to
@@ -730,20 +728,20 @@ WHERE NAME = 'READINGS_CIRCUIT_BREAKER'
 ORDER BY SCHEDULED_TIME DESC;
 ```
 
-The task's `state` should read `suspended`. In the alert history, `TRIGGERED` means the action ran; `ACTION_FAILED` means the condition matched but the `THEN` clause did not. Step 1 must use the `_PERSIST_RESULT` form, or the status surface stays empty. There is no automatic reset — a human resumes the task after the fix:
+The task's state should read suspended. In the alert history, TRIGGERED means the action ran; ACTION_FAILED means the condition matched but the THEN clause did not. Step 1 needs the persisting form, or the status surface stays empty. There is no automatic reset — a human resumes the task after the fix:
 
 ```sql
 ALTER TASK PUBLISH_READINGS RESUME;
 ```
 
-The pattern is **asynchronous**: a downstream task can run once more before suspension. For a hard gate, run the check as a pipeline step before the load. The alert's owner role needs `EXECUTE ALERT` on the account and `OPERATE` on what it suspends. Point a breaker at checks that mean "the data is unusable", not at statistics metrics.
+The pattern is **asynchronous**: a downstream task can run once more before suspension. For a hard gate, the check can run as a pipeline step before the load. The alert's owner role needs EXECUTE ALERT on the account and OPERATE on what it suspends. A breaker belongs on checks that mean "the data is unusable", not at statistics metrics.
 
 <!-- ------------------------ -->
 ## Operating Checks in Production
 
 ### Where to put your checks
 
-Check where the defect exists, not where it hurts. Reading 1017 would be dropped by a silver-layer inner join, so a gold check passes *because* the bad row was discarded.
+The best place to check is where the defect exists, not where it hurts. Reading 1017 would be dropped by a silver-layer inner join, so a gold check passes *because* the bad row was discarded.
 
 | Layer | Check for | Why here |
 |:------|:----------|:---------|
@@ -753,24 +751,24 @@ Check where the defect exists, not where it hurts. Reading 1017 would be dropped
 
 ### Checks as code
 
-For anything you intend to keep, put checks in the same version-controlled definition as the table. Snowflake's declarative deployment model (DCM Projects) supports data metric functions and expectations as first-class definitions. Attaching a metric to a table you do not own needs an explicit executing role, and the deployment tooling can run every expectation as a **test step**, so a deployment fails when the data does not satisfy its own rules. A threshold change then shows up as a reviewable diff. See the [DCM Projects file reference](https://docs.snowflake.com/en/user-guide/dcm-projects/dcm-projects-files).
+For anything we intend to keep, checks can live in the same version-controlled definition as the table. Snowflake's declarative deployment model (DCM Projects) supports data metric functions and expectations as first-class definitions. Attaching a metric to a table you do not own needs an explicit executing role, and the deployment tooling can run every expectation as a **test step**, so a deployment fails when the data does not satisfy its own rules. A threshold change then shows up as a reviewable diff. For a worked example — expectations declared with ATTACH DATA METRIC FUNCTION and run with TEST ALL as part of deployment — see [Build Data Pipelines with Snowflake DCM Projects](https://www.snowflake.com/en/developers/guides/build-data-pipelines-with-snowflake-dcm-projects/). For the syntax, see the [DCM Projects file reference](https://docs.snowflake.com/en/user-guide/dcm-projects/dcm-projects-files).
 
 <!-- ------------------------ -->
 ## What It Costs
 
-Scheduled evaluations run on serverless compute and bill under the **Data Quality Monitoring** category. Cost scales with associations × evaluation frequency × work per evaluation; a schema-level attachment across two hundred tables on an hourly schedule is 4,800 evaluations a day. Creating a metric, calling one directly in a SELECT, and suspended schedules are not billed. Track spend:
+Scheduled evaluations run on serverless compute and bill under the **Data Quality Monitoring** category. Cost scales with associations × evaluation frequency × work per evaluation; a schema-level attachment across two hundred tables on an hourly schedule is 4,800 evaluations a day. Creating a metric, calling one directly in a SELECT, and suspended schedules are not billed. Spend is visible here:
 
 ```sql
 SELECT * FROM SNOWFLAKE.ACCOUNT_USAGE.DATA_QUALITY_MONITORING_USAGE_HISTORY
 ORDER BY START_TIME DESC;
 ```
 
-Across an organisation, `METERING_DAILY_HISTORY` carries the same spend with SERVICE_TYPE = 'DATA_QUALITY_MONITORING'. Match cadence to how fast you would act, use `TRIGGER_ON_CHANGES` where evaluating on data arrival fits, and suspend with SET DATA_METRIC_SCHEDULE = '' rather than `UNSET` while iterating.
+Across an organisation, METERING_DAILY_HISTORY carries the same spend with SERVICE_TYPE = 'DATA_QUALITY_MONITORING'. Costs stay low when cadence matches how fast we would act, TRIGGER_ON_CHANGES is used where evaluating on data arrival fits, and schedules are suspended with an empty string rather than UNSET.
 
 <!-- ------------------------ -->
 ## Cleanup
 
-Dropping the database removes its tables, their associations, custom metrics, the secret, the task, the alert, and the database's monitoring settings:
+If you tried the examples, dropping the database removes its tables, their associations, custom metrics, the secret, the task, the alert, and the database's monitoring settings:
 
 ```sql
 DROP DATABASE IF EXISTS DQ_EXAMPLES;
@@ -783,7 +781,7 @@ DROP INTEGRATION IF EXISTS DQ_EMAIL_INT;
 DROP INTEGRATION IF EXISTS DQ_SLACK_INT;
 ```
 
-To keep the data but stop the billing, suspend instead:
+To keep the data but stop the billing, suspending is enough:
 
 ```sql
 ALTER TABLE DQ_EXAMPLES.PUBLIC.SENSOR_READINGS SET DATA_METRIC_SCHEDULE = '';
@@ -797,10 +795,10 @@ Data quality monitoring in Snowflake is a small vocabulary applied with judgemen
 ### What to take away
 
 - **Pick the metric from the column's shape.** The decision table in *Choosing a Check* is the whole method.
-- **Know which metrics can be called directly.** Column-argument metrics answer instantly in a `SELECT`; zero-argument ones must be attached.
+- **Know which metrics can be called directly.** Column-argument metrics answer instantly in a SELECT; zero-argument ones must be attached.
 - **One check is rarely enough.** Freshness alone was defeated by a single future-dated row.
 - **Check where the defect exists**, not where it hurts. Gold passing is not evidence.
-- **Scope with `FILTER`, don't loosen thresholds.**
+- **Scope with FILTER, don't loosen thresholds.**
 - **Assert rules; learn ranges.** Expectations for what is true by definition, anomaly detection for normal ranges.
 - **Notify with a cooldown**, or people will filter the alerts.
 - **Keep checks in code**, so a threshold change is reviewable.
