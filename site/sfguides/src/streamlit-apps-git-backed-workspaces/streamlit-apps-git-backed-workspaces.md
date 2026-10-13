@@ -6,7 +6,7 @@ summary: Learn how a Snowsight Workspaces user and a command-line Git user can c
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-fork repo link: https://github.com/sfc-gh-cnantasenamat/simple-streamlit-app
+fork repo link: https://github.com/streamlit/simple-streamlit-app
 
 
 # Build Streamlit Apps Together with Git-Backed Workspaces
@@ -79,7 +79,7 @@ sequenceDiagram
 - A GitHub account and a [personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens) with `repo` scope
 - A Snowflake role with `ACCOUNTADMIN`, or one that has been granted the account-level `CREATE INTEGRATION` privilege, for the one-time Git setup step
 - `git` installed locally (any recent version)
-- A fork of [sfc-gh-cnantasenamat/simple-streamlit-app](https://github.com/sfc-gh-cnantasenamat/simple-streamlit-app), forked into your own GitHub account so both collaborators can push to it
+- A fork of [streamlit/simple-streamlit-app](https://github.com/streamlit/simple-streamlit-app), forked into your own GitHub account so both collaborators can push to it
 
 ## Setup
 
@@ -355,5 +355,5 @@ Documentation:
 - [CREATE API INTEGRATION](https://docs.snowflake.com/en/sql-reference/sql/create-api-integration)
 
 Additional Reading:
-- [sfc-gh-cnantasenamat/simple-streamlit-app](https://github.com/sfc-gh-cnantasenamat/simple-streamlit-app), the sample app used throughout this guide
+- [streamlit/simple-streamlit-app](https://github.com/streamlit/simple-streamlit-app), the sample app used throughout this guide
 - [Snowflake Cortex Overview](https://docs.snowflake.com/en/user-guide/snowflake-cortex/overview)
