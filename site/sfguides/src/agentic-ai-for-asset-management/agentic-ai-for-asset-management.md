@@ -108,7 +108,7 @@ The Private Credit Copilot calls the credit risk model directly through a what-i
 2. Click **+** then **From Git repository**
 3. Repository URL: `https://github.com/Snowflake-Labs/sfguide-agentic-ai-for-asset-management.git`
 4. Authentication: Public repository (no auth needed)
-5. Name the workspace or use the default name
+5. Name the workspace (eg SAM_DEMO_WORKSPACE) or use the default name
 
 ### Step 2: Run Setup (45-60 minutes)
 
