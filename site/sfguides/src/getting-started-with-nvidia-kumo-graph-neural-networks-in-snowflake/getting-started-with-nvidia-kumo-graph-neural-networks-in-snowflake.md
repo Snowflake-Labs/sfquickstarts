@@ -1,7 +1,7 @@
 author: Akhil Ramasagaram
 id: getting-started-with-nvidia-kumo-graph-neural-networks-in-snowflake
 summary: Build, train, and run an NVIDIA Kumo graph neural network on your relational data, entirely inside Snowflake
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/snowflake-ml-functions
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/snowpark-container-services, snowflake-site:taxonomy/snowflake-feature/model-development
 environments: web
 language: en
 status: Hidden
@@ -23,7 +23,7 @@ Kumo turns your relational tables into a graph and trains a graph neural network
 
 * A Snowflake account with access to a GPU compute pool and Snowflake Notebooks on Container Runtime
 * Cortex Code (CoCo) Desktop or CLI connected to that account
-* Customer, order header, order line, and product tables in a schema you can read and write (referred to below as `<DB>.<SCHEMA>`)
+* Customer, order header, order line, and product tables in a schema you can read and write (referred to below as `<DB>.<SCHEMA>`). This guide uses the `Customer`, `SalesOrderHeader`, `SalesOrderDetail`, and `Product` tables from the [Microsoft SQL Server sample OLTP database](https://github.com/Microsoft/sql-server-samples/tree/master/samples/databases/adventure-works/oltp-install-script); load them into Snowflake before you start.
 
 ## Get Kumo
 
@@ -196,5 +196,6 @@ You connected Kumo to Snowflake, built a graph over four tables, and predicted 3
 **Resources**
 
 * Kumo wheel: [KUMO_WHEEL_LINK_PLACEHOLDER]
+* Sample dataset: [Microsoft SQL Server sample OLTP install script](https://github.com/Microsoft/sql-server-samples/tree/master/samples/databases/adventure-works/oltp-install-script)
 * Kumo skill for CoCo: [KUMO_SKILL_LINK_PLACEHOLDER]
 * Launch blog: [BLOG_LINK_PLACEHOLDER]
