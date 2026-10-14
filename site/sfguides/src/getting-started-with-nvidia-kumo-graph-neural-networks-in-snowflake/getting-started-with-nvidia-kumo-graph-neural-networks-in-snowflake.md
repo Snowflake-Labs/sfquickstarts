@@ -13,15 +13,26 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 Kumo turns your relational tables into a graph and trains a graph neural network on it, so you can predict outcomes without hand building features. In this guide you will train a model on customer, order, and product tables and write a 30 day reorder prediction for every active customer back to a Snowflake table.
 
-**What you will build**
+### What You'll Learn
+
+* How to install Kumo in a Snowflake Notebook on Container Runtime
+* How to describe relational tables as a Kumo graph
+* How to write a predictive query, train a graph neural network, and write predictions to Snowflake
+
+### What You'll Build
 
 * A Kumo graph over four sales tables
 * A predictive query: will this customer order again in the next 30 days?
 * A trained model and a predictions table in Snowflake
 
-**Prerequisites**
+### What You'll Need
 
-* A Snowflake account with access to a GPU compute pool and Snowflake Notebooks on Container Runtime
+* The Kumo wheel and the Kumo skill (links in [Get Kumo](#get-kumo))
+* A GPU compute pool for your notebook
+
+### Prerequisites
+
+* A [Snowflake account](https://signup.snowflake.com/) with access to a GPU compute pool and Snowflake Notebooks on Container Runtime
 * Cortex Code (CoCo) Desktop or CLI connected to that account
 * Customer, order header, order line, and product tables in a schema you can read and write (referred to below as `<DB>.<SCHEMA>`). This guide uses the `Customer`, `SalesOrderHeader`, `SalesOrderDetail`, and `Product` tables from the [Microsoft SQL Server sample OLTP database](https://github.com/Microsoft/sql-server-samples/tree/master/samples/databases/adventure-works/oltp-install-script); load them into Snowflake before you start.
 
@@ -56,10 +67,10 @@ CoCo uploads through the CLI, so the UI size limit does not apply.
 
 ### Step 2: Install the Kumo skill in CoCo
 
-The skill teaches CoCo the Kumo SDK so it can help you build graphs and queries on your own data.
+The skill teaches CoCo the Kumo SDK so it can help you build graphs and queries on your own data. Download and unzip it from **[KUMO_SKILL_LINK_PLACEHOLDER]**, then copy it into your CoCo skills folder:
 
 ```bash
-cp -r <PATH_TO_SKILL>/kumo-data-science ~/.snowflake/cortex/skills/
+cp -r ~/Downloads/kumo-data-science ~/.snowflake/cortex/skills/
 ```
 
 **Restart CoCo** after copying so it picks up the new skill.
@@ -152,10 +163,11 @@ pquery.validate()
 
 snapshot = graph.snapshot()
 training_table = pquery.generate_training_table(snapshot)
+# Pick the date you want to predict from. 2025-06-30 is the day after the last order in the sample data.
 prediction_table = pquery.generate_prediction_table(snapshot, prediction_time=datetime(2025, 6, 30))
 ```
 
-Set `prediction_time` to the day after the last order in your data.
+`prediction_time` is the date predictions are made from. The value above fits the sample data; for your own tables, pick a date for prediction, usually the day after your most recent record.
 
 ## Train with fit
 
@@ -189,11 +201,32 @@ Check the results:
 SELECT * FROM <DB>.<SCHEMA>.<PREDICTIONS_TABLE_NAME> LIMIT 10;
 ```
 
-## Conclusion
+The predictions table is the artifact your downstream applications read from, so keep it.
+
+## Save GPU Cost
+
+When you finish, stop the notebook session and suspend the GPU compute pool so it stops consuming credits:
+
+```sql
+ALTER COMPUTE POOL <GPU_COMPUTE_POOL_NAME> SUSPEND;
+```
+
+Resume it the next time you need it with `ALTER COMPUTE POOL <GPU_COMPUTE_POOL_NAME> RESUME;`.
+
+## Conclusion And Resources
 
 You connected Kumo to Snowflake, built a graph over four tables, and predicted 30 day reorders without writing a single feature. Try changing the query to predict revenue, churn, or the next product a customer buys.
 
-**Resources**
+### What You Learned
+
+* How to publish the Kumo wheel to a Snowflake Workspace and install it in a notebook
+* How to connect Kumo to Snowflake tables and describe them as a graph
+* How to write a predictive query, train a graph neural network with `fit`, and score with `predict`
+* How to write predictions to a Snowflake table and suspend GPU compute when done
+
+### Resources
+
+* [Snowflake ML documentation](https://docs.snowflake.com/en/developer-guide/snowflake-ml/overview)
 
 * Kumo wheel: [KUMO_WHEEL_LINK_PLACEHOLDER]
 * Sample dataset: [Microsoft SQL Server sample OLTP install script](https://github.com/Microsoft/sql-server-samples/tree/master/samples/databases/adventure-works/oltp-install-script)
