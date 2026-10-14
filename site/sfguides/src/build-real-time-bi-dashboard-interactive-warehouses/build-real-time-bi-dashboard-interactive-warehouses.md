@@ -19,7 +19,7 @@ Everything runs inside a single Snowflake account. No Kafka, no external message
 
 ![Architecture diagram showing the data flow between the SPCS simulation service, stored procedure, live orders table, interactive warehouse, history and control tables, maintenance tasks, and the Streamlit dashboard.](assets/architecture-diagram.png)
 
-<!-- Editable source: assets/architecture-diagram.excalidraw -->
+<!-- Editable source: assets/architecture_diagram.py (matplotlib) -->
 
 ### What You'll Learn
 - How to cluster a standard table with a key tuned for dashboard queries
