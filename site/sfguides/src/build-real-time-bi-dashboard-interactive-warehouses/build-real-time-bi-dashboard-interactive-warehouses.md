@@ -1,44 +1,43 @@
 author: Chanin Nantasenamat
-id: build-real-time-bi-dashboard-interactive-tables
-summary: Build a live e-commerce BI dashboard on Snowflake using interactive tables, an interactive warehouse, a Snowpark Container Services simulation service, and Streamlit in Snowflake.
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/interactive-tables, snowflake-site:taxonomy/snowflake-feature/interactive-warehouse
+id: build-real-time-bi-dashboard-interactive-warehouses
+summary: Build a live e-commerce BI dashboard on Snowflake using an interactive warehouse over a standard table, a Snowpark Container Services simulation service, and Streamlit in Snowflake.
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/interactive-warehouse
 environments: web
 language: en
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
-# Build a Real-Time BI Dashboard with Interactive Tables
+# Build a Real-Time BI Dashboard with Interactive Warehouses
 <!-- ------------------------ -->
 ## Overview
 
-Traditional analytical warehouses are optimized for large batch scans. When a dashboard needs to refresh every few seconds and answer sub-second queries at high concurrency, you need a different architecture. Snowflake's **interactive tables** and **interactive warehouses** close that gap: they maintain a warm in-memory cache tuned for selective, low-latency reads.
+Traditional analytical warehouses are optimized for large batch scans. When a dashboard needs to refresh every few seconds and answer sub-second queries at high concurrency, you need a different architecture. Snowflake's **interactive warehouses** close that gap: they maintain a warm in-memory cache tuned for selective, low-latency reads. They query standard tables directly, with no copy or conversion, an approach called zero-copy interactive analytics.
 
-In this quickstart, you will build a complete real-time analytics system for a synthetic e-commerce store. A **Snowpark Container Services (SPCS)** container generates orders server-side at a configurable rate, writing each tick into an interactive table through a stored procedure. An **interactive warehouse** keeps that table's cache warm and serves millisecond-latency queries to a **Streamlit in Snowflake** dashboard that refreshes automatically every few seconds.
+In this quickstart, you will build a complete real-time analytics system for a synthetic e-commerce store. A **Snowpark Container Services (SPCS)** container generates orders server-side at a configurable rate, writing each tick into a standard, clustered table through a stored procedure. An **interactive warehouse** keeps that table's cache warm and serves millisecond-latency queries to a **Streamlit in Snowflake** dashboard that refreshes automatically every few seconds.
 
 Everything runs inside a single Snowflake account. No Kafka, no external message bus, no managed services outside Snowflake.
 
-![Architecture diagram showing the data flow between the SPCS simulation service, stored procedure, interactive table, interactive warehouse, history and control tables, maintenance tasks, and the Streamlit dashboard.](assets/architecture-diagram.png)
+![Architecture diagram showing the data flow between the SPCS simulation service, stored procedure, live orders table, interactive warehouse, history and control tables, maintenance tasks, and the Streamlit dashboard.](assets/architecture-diagram.png)
 
-<!-- Editable source: https://excalidraw.com/#json=bQ6oGHlYPPAosL35KrNzf,QPKcLrtlIZzJUk9AVuRhbg -->
-<!-- Local source: assets/architecture-diagram.excalidraw -->
+<!-- Editable source: assets/architecture-diagram.excalidraw -->
 
 ### What You'll Learn
-- How to create an interactive table with a clustering key tuned for dashboard queries
-- How to attach an interactive table to an interactive warehouse and query it at sub-second latency
+- How to cluster a standard table with a key tuned for dashboard queries
+- How to query a standard table through an interactive warehouse at sub-second latency, with no data copy
 - How to build and deploy a long-running Python service on Snowpark Container Services
 - How to use `EXECUTE AS OWNER` in a stored procedure to bridge permission boundaries
 - How to build an auto-refreshing dashboard with `st.fragment` in Streamlit in Snowflake
 
 ### What You'll Build
 You will assemble five tightly integrated Snowflake objects into a single, self-contained real-time analytics system:
-- An SPCS simulation service continuously generates synthetic e-commerce orders and writes them, via a stored procedure, into an interactive table
+- An SPCS simulation service continuously generates synthetic e-commerce orders and writes them, via a stored procedure, into a clustered standard table
 - An interactive warehouse keeps that table warm for sub-second dashboard queries
 - A history table accumulates every tick for trend charts and heatmaps
 - A control table acts as the command channel between the dashboard and the simulation service
 - A Streamlit in Snowflake app ties everything together, giving you live KPI tiles, auto-refreshing charts, and full simulation controls in one interface
 
 ### Prerequisites
-- Access to a [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) with `ACCOUNTADMIN`. The account must be in a region that supports both [interactive tables and interactive warehouses](https://docs.snowflake.com/en/user-guide/interactive#region-availability) and [Snowpark Container Services](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview#available-regions).
+- Access to a [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) with `ACCOUNTADMIN`. The account must be in a region that supports both [interactive warehouses](https://docs.snowflake.com/en/user-guide/interactive#region-availability) and [Snowpark Container Services](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview#available-regions).
 - [Docker Desktop](https://docs.docker.com/get-docker/) installed and running locally.
 - [Git](https://git-scm.com/) installed.
 - Basic familiarity with SQL and Python.
@@ -49,8 +48,8 @@ You will assemble five tightly integrated Snowflake objects into a single, self-
 Fork and clone the companion repository:
 
 ```bash
-git clone https://github.com/sfc-gh-cnantasenamat/build-real-time-bi-dashboard-interactive-tables.git
-cd build-real-time-bi-dashboard-interactive-tables
+git clone https://github.com/sfc-gh-cnantasenamat/build-real-time-bi-dashboard-interactive-warehouses.git
+cd build-real-time-bi-dashboard-interactive-warehouses
 ```
 
 The repository has the following structure:
@@ -77,7 +76,7 @@ Here is a summary of the Snowflake objects you will create:
 
 | Object | Type | Purpose |
 |---|---|---|
-| `ORDERS` | Interactive Table | Current tick snapshot of live orders |
+| `ORDERS` | Table (clustered) | Current tick snapshot of live orders |
 | `ORDERS_HISTORY` | Table | Accumulates all historical ticks for charts and heatmaps |
 | `SIMULATION_CONTROL` | Table | Command channel between the dashboard and the simulation service |
 | `SP_SIMULATE_TICK` | Stored Procedure | Generates synthetic orders each tick |
@@ -100,7 +99,7 @@ CREATE SCHEMA   IF NOT EXISTS INTERACTIVE_STREAMING_DEMO.PUBLIC;
 
 ### Standard warehouse
 
-The standard warehouse handles DDL, stored procedure execution, and queries against regular tables. Interactive warehouses can only query interactive tables, so a separate standard warehouse is needed for everything else.
+The standard warehouse handles DDL, stored procedure execution, task runs, and the longer history queries. Interactive warehouses reject DML and `CALL` statements and cap queries at 5 seconds, so every write goes through this separate standard warehouse.
 
 ```sql
 CREATE WAREHOUSE IF NOT EXISTS INTERACTIVE_ANALYTICS_WH
@@ -112,12 +111,12 @@ CREATE WAREHOUSE IF NOT EXISTS INTERACTIVE_ANALYTICS_WH
 USE WAREHOUSE INTERACTIVE_ANALYTICS_WH;
 ```
 
-### Interactive table
+### Orders table
 
-`ORDERS` holds the current tick snapshot: only the most recently generated set of orders. The `CLUSTER BY` key matches the dashboard's `WHERE` clause: a recent time window filtered by region. Truncating the timestamp to the minute keeps the clustering key low-cardinality and prunes efficiently for "last N minutes" queries.
+`ORDERS` holds the current tick snapshot: only the most recently generated set of orders. It is a regular table, because interactive warehouses query standard tables directly with no data copy or conversion. The `CLUSTER BY` key matches the dashboard's `WHERE` clause: a recent time window filtered by region. Truncating the timestamp to the minute keeps the clustering key low-cardinality and prunes efficiently for "last N minutes" queries.
 
 ```sql
-CREATE OR REPLACE INTERACTIVE TABLE INTERACTIVE_STREAMING_DEMO.PUBLIC.ORDERS (
+CREATE OR REPLACE TABLE INTERACTIVE_STREAMING_DEMO.PUBLIC.ORDERS (
   ORDER_ID          STRING,
   ORDER_TS          TIMESTAMP_NTZ,
   REGION            STRING,
@@ -130,7 +129,7 @@ CLUSTER BY (DATE_TRUNC('MINUTE', ORDER_TS), REGION);
 
 ### Interactive warehouse
 
-Create the interactive warehouse and attach `ORDERS` to it so its data cache stays warm for the dashboard.
+Create the interactive warehouse and add `ORDERS` to it. Adding a table is optional, since an interactive warehouse can query any table, but it tells the warehouse to warm that table's data cache proactively instead of on the first dashboard query.
 
 ```sql
 CREATE INTERACTIVE WAREHOUSE IF NOT EXISTS INTERACTIVE_ANALYTICS_IWH
@@ -143,13 +142,16 @@ ALTER WAREHOUSE INTERACTIVE_ANALYTICS_IWH RESUME IF SUSPENDED;
 ALTER WAREHOUSE INTERACTIVE_ANALYTICS_IWH
   ADD TABLES (INTERACTIVE_STREAMING_DEMO.PUBLIC.ORDERS);
 
+ALTER WAREHOUSE INTERACTIVE_ANALYTICS_IWH
+  SET FALLBACK_WAREHOUSE = INTERACTIVE_ANALYTICS_WH;
+
 -- Switch back: interactive warehouses cannot run INSERT, UPDATE or DELETE.
 USE WAREHOUSE INTERACTIVE_ANALYTICS_WH;
 ```
 
 Creating a warehouse makes it the current warehouse for your session. The final `USE WAREHOUSE` switches back to the standard warehouse, because an interactive warehouse rejects DML such as the `INSERT` statements in the next steps with `Cannot run statement type 'INSERT' on an interactive warehouse`.
 
-> Interactive warehouses enforce a **5-second query timeout** and a **24-hour minimum auto-suspend**. Keep dashboard queries selective (narrow projections, filters aligned with the clustering key) for consistent sub-second latency.
+> Interactive warehouses enforce a **5-second query timeout** and a **24-hour minimum auto-suspend**. The `FALLBACK_WAREHOUSE` setting re-runs any query that exceeds the timeout on the standard warehouse instead of failing it, which mainly matters while the cache is still cold right after a resume. Keep dashboard queries selective (narrow projections, filters aligned with the clustering key) for consistent sub-second latency.
 
 ### History and control tables
 
@@ -188,7 +190,7 @@ VALUES (FALSE, 'normal', NULL, 1.0, CURRENT_TIMESTAMP(), 0);
 2. Appends the new rows to `ORDERS_HISTORY`.
 3. Increments the `TOTAL_ORDERS` counter in `SIMULATION_CONTROL`.
 
-The `EXECUTE AS OWNER` clause lets the service call the procedure without needing direct `INSERT OVERWRITE` permission on the interactive table, which is restricted to the owner role.
+The `EXECUTE AS OWNER` clause lets the service call the procedure without being granted write privileges on `ORDERS`, `ORDERS_HISTORY`, or `SIMULATION_CONTROL` directly.
 
 ```sql
 CREATE OR REPLACE PROCEDURE INTERACTIVE_STREAMING_DEMO.PUBLIC.SP_SIMULATE_TICK(
@@ -379,11 +381,11 @@ FROM TABLE(GENERATOR(ROWCOUNT => 2000));
 
 ### Verify the objects
 
-Open **Catalog > Database Explorer > INTERACTIVE_STREAMING_DEMO > PUBLIC** in Snowsight. The schema should list nine objects:
+Open **Catalog > Database Explorer > INTERACTIVE_STREAMING_DEMO > PUBLIC** in Snowsight. The schema should list eight objects:
 
-![Snowsight catalog view of the PUBLIC schema listing APP_STAGE, the two INTERACTIVE_ANALYTICS tasks, the ORDERS interactive table, ORDERS_HISTORY, an ORDERS-STREAMING pipe, SIM_REPO, SIMULATION_CONTROL, and SP_SIMULATE_TICK.](assets/snowsight-schema-objects.png)
+![Snowsight catalog view of the PUBLIC schema listing APP_STAGE, the two INTERACTIVE_ANALYTICS tasks, the ORDERS and ORDERS_HISTORY tables, SIM_REPO, SIMULATION_CONTROL, and SP_SIMULATE_TICK.](assets/snowsight-schema-objects.png)
 
-`ORDERS` is listed with the type **Interactive table**, which confirms that the `CREATE INTERACTIVE TABLE` statement worked. You will also see a pipe called `ORDERS-STREAMING` that you did not create yourself. Snowflake adds this default Snowpipe Streaming pipe to every interactive table automatically; this quickstart does not use it, and it is removed when you drop the database. The warehouses and the compute pool are account-level objects, so they appear under **Compute** rather than in this list.
+`ORDERS` is listed as a regular **Table**: the interactive warehouse reads it in place, so there is no special table type or extra object to create. The warehouses and the compute pool are account-level objects, so they appear under **Compute** rather than in this list.
 
 <!-- ------------------------ -->
 ## Build the Container
@@ -553,7 +555,7 @@ Each point on the chart is a 10-second bucket from `ORDERS_HISTORY`, and the ora
 
 The top row shows five live metrics:
 
-- **Total orders**: the cumulative order count since the last session reset, read from `SIMULATION_CONTROL`. The green badge underneath (for example **+20/tick**) is the size of the current tick, read from the `ORDERS` interactive table through `INTERACTIVE_ANALYTICS_IWH`.
+- **Total orders**: the cumulative order count since the last session reset, read from `SIMULATION_CONTROL`. The green badge underneath (for example **+20/tick**) is the size of the current tick, read from the `ORDERS` table through `INTERACTIVE_ANALYTICS_IWH`.
 - **Orders (15m)**: the order count within the selected time window. The label follows the **Time window** setting, and reads **Orders (all)** when the window is **All time** or the simulation is stopped.
 - **Revenue**: total revenue within the time window.
 - **Regions**: the number of regions with orders in the window.
@@ -628,26 +630,26 @@ DROP DATABASE     IF EXISTS INTERACTIVE_STREAMING_DEMO;
 <!-- ------------------------ -->
 ## Conclusion And Resources
 
-Congratulations! You built a complete real-time BI dashboard on Snowflake without any external infrastructure. You created an interactive table clustered for fast time-window queries, attached it to an interactive warehouse for sub-second read latency, deployed a containerized simulation service on Snowpark Container Services, and wired everything together through a live Streamlit in Snowflake dashboard with full simulation controls.
+Congratulations! You built a complete real-time BI dashboard on Snowflake without any external infrastructure. You clustered a standard table for fast time-window queries, served it through an interactive warehouse for sub-second read latency with no data copy, deployed a containerized simulation service on Snowpark Container Services, and wired everything together through a live Streamlit in Snowflake dashboard with full simulation controls.
 
 ### What You Learned
-- Creating an interactive table clustered on `(DATE_TRUNC('MINUTE', ORDER_TS), REGION)` for fast "last N minutes by region" aggregations
-- Attaching an interactive table to an interactive warehouse to keep the data cache warm and serve millisecond-latency queries
+- Clustering a standard table on `(DATE_TRUNC('MINUTE', ORDER_TS), REGION)` for fast "last N minutes by region" aggregations
+- Querying a standard table zero-copy through an interactive warehouse, and adding it to the warehouse to keep its data cache warm for millisecond-latency queries
 - Deploying a long-running Python service on SPCS with internal OAuth authentication, with no keys or passwords in the container
-- Using `EXECUTE AS OWNER` in a stored procedure to allow an SPCS service to write to an interactive table it does not own directly
+- Using `EXECUTE AS OWNER` in a stored procedure to allow an SPCS service to write to tables it does not own directly
 - Building an auto-refreshing dashboard with `st.fragment(run_every=...)` that re-queries Snowflake on a configurable timer
 
 ### Related Resources
 
 Documentation:
-- [Interactive tables and interactive warehouses](https://docs.snowflake.com/en/user-guide/interactive)
+- [Snowflake interactive analytics](https://docs.snowflake.com/en/user-guide/interactive)
+- [Performance for Snowflake interactive analytics](https://docs.snowflake.com/en/user-guide/interactive-performance)
 - [Snowpark Container Services overview](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview)
-- [CREATE INTERACTIVE TABLE](https://docs.snowflake.com/en/sql-reference/sql/create-interactive-table)
 - [CREATE INTERACTIVE WAREHOUSE](https://docs.snowflake.com/en/sql-reference/sql/create-interactive-warehouse)
 - [Streamlit in Snowflake](https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit)
 - [st.fragment: Streamlit docs](https://docs.streamlit.io/develop/api-reference/execution-flow/st.fragment)
 - [Snowflake Programmatic Access Tokens](https://docs.snowflake.com/en/user-guide/programmatic-access/programmatic-access-tokens-intro)
 
 Additional Reading:
-- [Introducing Interactive Tables and Interactive Warehouses: Snowflake Engineering Blog](https://www.snowflake.com/en/engineering-blog/)
+- [Zero-copy support for all table formats in interactive warehouses: release note](https://docs.snowflake.com/en/release-notes/2026/other/2026-09-14-interactive-zero-copy-ga)
 - [Snowpark Container Services: Build and Deploy guide](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/tutorials/tutorial-1)
