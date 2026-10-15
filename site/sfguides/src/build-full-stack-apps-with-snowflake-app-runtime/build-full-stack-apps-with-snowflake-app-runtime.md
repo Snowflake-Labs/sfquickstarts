@@ -125,6 +125,7 @@ Add a ***quickstart*** connection and test it:
 # Add the quickstart connection, then test it
 snow connection add --connection-name quickstart \
   --account <your_account> --user <your_user> \
+  --warehouse SFQUICKSTART_CHURNGUARD_WH \
   --authenticator 'OAUTH_AUTHORIZATION_CODE' \
   --client-store-temporary-credential \
   --no-interactive
