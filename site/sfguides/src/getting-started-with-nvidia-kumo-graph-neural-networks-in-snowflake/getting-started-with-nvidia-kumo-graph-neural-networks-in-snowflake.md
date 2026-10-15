@@ -27,14 +27,11 @@ Kumo turns your relational tables into a graph and trains a graph neural network
 
 ### What You'll Need
 
-* The Kumo wheel and the Kumo skill (links in [Get Kumo](#get-kumo))
-* A GPU compute pool for your notebook
-
-### Prerequisites
-
 * A [Snowflake account](https://signup.snowflake.com/) with access to a GPU compute pool and Snowflake Notebooks on Container Runtime
 * Cortex Code (CoCo) Desktop or CLI connected to that account
-* Customer, order header, order line, and product tables in a schema you can read and write (referred to below as `<DB>.<SCHEMA>`). This guide uses the `Customer`, `SalesOrderHeader`, `SalesOrderDetail`, and `Product` tables from the [Microsoft SQL Server sample OLTP database](https://github.com/Microsoft/sql-server-samples/tree/master/samples/databases/adventure-works/oltp-install-script); load them into Snowflake before you start.
+* The [Snowflake CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli/index) to load the sample data
+* A database and schema you can write to (referred to below as `<DB>.<SCHEMA>`)
+* The Kumo wheel and the Kumo skill (links in [Get Kumo](#get-kumo))
 
 ## Get Kumo
 
@@ -48,7 +45,21 @@ The file is a single `.whl` for Python 3.12 on Linux x86_64.
 
 Do these steps once per account. You do not repeat them for each session.
 
-### Step 1: Publish the wheel to a Snowflake Workspace with CoCo
+### Step 1: Load the sample data
+
+This guide uses the `Customer`, `SalesOrderHeader`, `SalesOrderDetail`, and `Product` tables from the [Microsoft SQL Server sample OLTP database](https://github.com/Microsoft/sql-server-samples/tree/master/samples/databases/adventure-works/oltp-install-script). The [loader script](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/getting-started-with-nvidia-kumo-graph-neural-networks-in-snowflake/assets/load_sample_data.sql) creates the four tables and loads them. Download the data files and the script, then run it:
+
+```bash
+BASE=https://raw.githubusercontent.com/microsoft/sql-server-samples/master/samples/databases/adventure-works/oltp-install-script
+for t in Customer Product SalesOrderHeader SalesOrderDetail; do curl -sLO "$BASE/$t.csv"; done
+curl -sLO https://raw.githubusercontent.com/Snowflake-Labs/sfquickstarts/master/site/sfguides/src/getting-started-with-nvidia-kumo-graph-neural-networks-in-snowflake/assets/load_sample_data.sql
+
+snow sql -f load_sample_data.sql -D "db=<DB>" -D "schema=<SCHEMA>" -D "wh=<WAREHOUSE>"
+```
+
+The script ends with a row count check: 19,820 customers, 504 products, 31,465 orders, and 121,317 order lines.
+
+### Step 2: Publish the wheel to a Snowflake Workspace with CoCo
 
 The wheel is too large to upload through the Snowsight UI, and several of its pinned dependencies need adjusting for the Snowflake Container Runtime image. Let CoCo handle both. Open CoCo and paste this prompt, replacing the path:
 
@@ -65,12 +76,13 @@ Publish it to my Snowflake Workspace so a Snowflake Notebook on Container Runtim
 
 CoCo uploads through the CLI, so the UI size limit does not apply.
 
-### Step 2: Install the Kumo skill in CoCo
+### Step 3: Install the Kumo skill in CoCo
 
-The skill teaches CoCo the Kumo SDK so it can help you build graphs and queries on your own data. Download and unzip it from **[KUMO_SKILL_LINK_PLACEHOLDER]**, then copy it into your CoCo skills folder:
+The skill teaches CoCo the Kumo SDK so it can help you build graphs and queries on your own data. It lives in the [Kumo agent skills repository](https://github.com/NVIDIA/kumo-engine/tree/main/agent-skills). Clone it and copy the skills into your CoCo skills folder:
 
 ```bash
-cp -r ~/Downloads/kumo-data-science ~/.snowflake/cortex/skills/
+git clone --depth 1 https://github.com/NVIDIA/kumo-engine.git
+cp -r kumo-engine/agent-skills/* ~/.snowflake/cortex/skills/
 ```
 
 **Restart CoCo** after copying so it picks up the new skill.
@@ -79,7 +91,7 @@ cp -r ~/Downloads/kumo-data-science ~/.snowflake/cortex/skills/
 
 Do these steps every time you start a new notebook session, since Container Runtime sessions do not persist installed packages.
 
-### Step 3: Install the wheel in the notebook
+### Step 4: Install the wheel in the notebook
 
 Create a Snowflake Notebook on Container Runtime with a GPU compute pool, then run:
 
@@ -230,5 +242,6 @@ You connected Kumo to Snowflake, built a graph over four tables, and predicted 3
 
 * Kumo wheel: [KUMO_WHEEL_LINK_PLACEHOLDER]
 * Sample dataset: [Microsoft SQL Server sample OLTP install script](https://github.com/Microsoft/sql-server-samples/tree/master/samples/databases/adventure-works/oltp-install-script)
-* Kumo skill for CoCo: [KUMO_SKILL_LINK_PLACEHOLDER]
+* Kumo skill for CoCo: [Kumo agent skills](https://github.com/NVIDIA/kumo-engine/tree/main/agent-skills)
+* Sample data loader: [load_sample_data.sql](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/getting-started-with-nvidia-kumo-graph-neural-networks-in-snowflake/assets/load_sample_data.sql)
 * Launch blog: [BLOG_LINK_PLACEHOLDER]
