@@ -1,7 +1,7 @@
 author: Jan Sommerfeld, Gilberto Hernandez, Yoav Ostrinsky
 id: build-data-pipelines-with-snowflake-dcm-projects
 summary: Learn how to split platform infrastructure and data pipelines into separate DCM Projects, deploy them sequentially, and build a medallion-architecture transformation layer.
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/product/data-engineering
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/dynamic-tables
 environments: web
 status: Published
 language: en
@@ -103,14 +103,18 @@ GRANT EXECUTE TASK ON ACCOUNT TO ROLE dcm_developer;
 GRANT MANAGE GRANTS ON ACCOUNT TO ROLE dcm_developer;
 ```
 
+> **New RBAC feature:** these access definitions use `GRANT INHERITED`, a Snowflake Public Preview capability. Grants marked `INHERITED` are automatically extended to objects created *later* in the container, so read roles stay correctly privileged without re-granting. It needs the one-time, account-level opt-in below — a behavior-change setting that is independent of DCM.
+
+```sql
+ALTER ACCOUNT SET FEATURE_RBAC_INHERITED_GRANTS = 'ENABLED';
+```
+
 ### 3. Grant Data Quality Privileges
 
 To define and test data quality expectations, grant the following:
 
 ```sql
 GRANT APPLICATION ROLE SNOWFLAKE.DATA_QUALITY_MONITORING_VIEWER TO ROLE dcm_developer;
-GRANT APPLICATION ROLE SNOWFLAKE.DATA_QUALITY_MONITORING_ADMIN TO ROLE dcm_developer;
-GRANT DATABASE ROLE SNOWFLAKE.DATA_METRIC_USER TO ROLE dcm_developer;
 GRANT EXECUTE DATA METRIC FUNCTION ON ACCOUNT TO ROLE dcm_developer WITH GRANT OPTION;
 ```
 
@@ -665,23 +669,26 @@ EXECUTE DCM PROJECT dcm_demo_2_finance_dev.projects.finance_pipeline DEPLOY
 
 Once the deployment completes, refresh the Database Explorer. You should see the `SILVER` and `GOLD` schemas inside `DCM_DEMO_2_FINANCE_DEV`, each populated with Dynamic Tables and views.
 
-All Dynamic Tables in this project use `INITIALIZE = ON_SCHEDULE`, which prevents them from refreshing immediately on creation. This keeps the deployment fast and predictable — especially important in production scenarios with large datasets. You'll trigger the initial refresh manually in the next step using `REFRESH ALL`.
+All Dynamic Tables in this project use `INITIALIZE = ON_SCHEDULE`, which prevents them from refreshing immediately on creation. This keeps the deployment fast and predictable — especially important in production scenarios with large datasets. You'll trigger the initial refresh manually in the next step with a multi-table `ALTER DYNAMIC TABLE ... REFRESH`.
 
 <!-- ------------------------ -->
 ## Query the Results
 
 With both projects deployed and data loaded, the Dynamic Tables are ready but haven't refreshed yet (they were created with `INITIALIZE = ON_SCHEDULE`). Open `scripts/04_query_results.sql` in a Snowsight worksheet and run the queries to trigger a refresh and verify the end-to-end pipeline.
 
-### Refresh All Dynamic Tables
+### Refresh the Dynamic Tables
 
-Since the Dynamic Tables were deployed with `INITIALIZE = ON_SCHEDULE`, they won't refresh until their scheduled lag interval triggers. Use `REFRESH ALL` to kick off the initial refresh immediately:
+Since the Dynamic Tables were deployed with `INITIALIZE = ON_SCHEDULE`, they won't refresh until their scheduled lag interval triggers. Use a single multi-table `ALTER DYNAMIC TABLE ... REFRESH` to kick off the initial refresh immediately — listing the GOLD fact tables plus `SILVER.DIM_TRADE`:
 
 ```sql
 USE ROLE dcm_demo_2_finance_dev_admin;
-EXECUTE DCM PROJECT dcm_demo_2_finance_dev.projects.finance_pipeline REFRESH ALL;
+ALTER DYNAMIC TABLE dcm_demo_2_finance_dev.gold.fact_market_history,
+                    dcm_demo_2_finance_dev.gold.fact_prospect,
+                    dcm_demo_2_finance_dev.gold.fact_cash_balances,
+                    dcm_demo_2_finance_dev.silver.dim_trade REFRESH;
 ```
 
-This triggers a refresh of every Dynamic Table managed by the Pipeline project. The refresh follows the dependency graph — silver-layer tables refresh first, then gold-layer tables that depend on them. Allow a minute or so for the refresh to complete before querying.
+Snowflake merges the upstream dependencies of every listed table into one pipeline and refreshes them at a single data timestamp; shared upstreams refresh once. `DIM_TRADE` is listed because the `FACT_HOLDINGS` view reads it — a view can't be refreshed, so its upstream Dynamic Table must be. Allow a minute or so for the refresh to complete before querying.
 
 ### Query Fact Tables
 
