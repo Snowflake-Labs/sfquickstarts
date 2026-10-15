@@ -70,7 +70,7 @@ The flow looks like this:
 ### What You Will Need
 - A free [Snowflake Account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)
 - Power BI Desktop (optional, for viewing/editing the .bim file)
-- Python 3.11+ and [uv](https://docs.astral.sh/uv/) installed locally
+- Python 3.11+ and [uv](https://docs.astral.sh/uv/getting-started/installation/) installed locally (`pip install uv` works if you don't have it)
 - Git installed locally
 
 
@@ -128,24 +128,30 @@ CREATE OR REPLACE VIEW TPCDS.PUBLIC.STORE AS
 
 ### Create the Semantic View
 
-The Ossie repository includes a pre-built TPCDS retail semantic model in Snowflake format at `converters/snowflake/tests/example_converted_tpcds_semantic_model.yaml`. This model defines five tables (store_sales, date_dim, customer, item, store), their relationships, and metrics like total_sales, total_profit, and customer_lifetime_value.
+This guide uses a TPCDS retail semantic model in Snowflake semantic view YAML format: [tpcds_semantic_model.yaml](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/connect-power-bi-with-ossie-semantics/assets/tpcds_semantic_model.yaml). It defines five tables (store_sales, date_dim, customer, item, store), their relationships, and metrics like total_sales, total_profit, and customer_lifetime_value.
 
-Upload the YAML to a stage and create the semantic view:
+> **Note**: This file is adapted from `converters/snowflake/tests/example_converted_tpcds_semantic_model.yaml` in the Apache Ossie repository. The original lists each table's primary key again under `unique_keys`, which Snowflake rejects with `duplicate primary or unique keys`. The version in this guide removes those duplicates.
+
+Create the semantic view by passing the file contents to `SYSTEM$CREATE_SEMANTIC_VIEW_FROM_YAML`:
 
 ```sql
--- Create a stage for semantic model files
-CREATE STAGE IF NOT EXISTS TPCDS.PUBLIC.SEMANTIC_MODELS;
-
--- Upload the YAML file (run from SnowSQL or Snowsight)
-PUT file://ossie/converters/snowflake/tests/example_converted_tpcds_semantic_model.yaml
-    @TPCDS.PUBLIC.SEMANTIC_MODELS AUTO_COMPRESS=FALSE OVERWRITE=TRUE;
-
--- Create the semantic view from the YAML
-CREATE OR REPLACE SEMANTIC VIEW TPCDS.PUBLIC.TPCDS_RETAIL_MODEL
-    YAML = (SELECT $1 FROM @TPCDS.PUBLIC.SEMANTIC_MODELS/example_converted_tpcds_semantic_model.yaml);
+CALL SYSTEM$CREATE_SEMANTIC_VIEW_FROM_YAML(
+    'TPCDS.PUBLIC',
+    $$
+    <paste the contents of tpcds_semantic_model.yaml here>
+    $$
+);
 ```
 
-> **Verify**: The TPCDS YAML in the Ossie repo is in Cortex Analyst semantic model format. Confirm that `CREATE SEMANTIC VIEW ... YAML =` accepts this format, or whether it needs to be converted to semantic view YAML first. Also verify the `SELECT $1 FROM @stage/file` syntax works for loading YAML from a stage.
+The view is named from the `name` field in the YAML, so this creates `TPCDS.PUBLIC.TPCDS_RETAIL_MODEL`. Confirm it returns data:
+
+```sql
+SELECT * FROM SEMANTIC_VIEW(
+    TPCDS.PUBLIC.TPCDS_RETAIL_MODEL
+    DIMENSIONS item.i_category
+    METRICS total_sales
+) ORDER BY total_sales DESC;
+```
 
 ### Export the Semantic View to Ossie format
 
@@ -214,17 +220,19 @@ This section demonstrates the reverse direction: making a change in Power BI's n
 
 ### Modify a measure in the Power BI model
 
-Open `model.bim` in a text editor, Tabular Editor, or Power BI Desktop. Find the `total_sales` measure and modify its DAX expression. For example, add a year filter:
+Open `model.bim` in a text editor, Tabular Editor, or Power BI Desktop. Find the `TOTAL_SALES` measure and modify its DAX expression. For example, limit it to the Electronics category:
 
 Before:
 ```
-SUM('store_sales'[ss_ext_sales_price])
+SUM('STORE_SALES'[SS_EXT_SALES_PRICE])
 ```
 
 After:
 ```
-CALCULATE(SUM('store_sales'[ss_ext_sales_price]), 'date_dim'[d_year] = 2002)
+CALCULATE(SUM('STORE_SALES'[SS_EXT_SALES_PRICE]), 'ITEM'[I_CATEGORY] = "Electronics")
 ```
+
+Table and column names are uppercase because Snowflake normalizes unquoted identifiers, and the export to Ossie keeps that casing.
 
 This simulates a business user or analyst making changes in Power BI's native language.
 
