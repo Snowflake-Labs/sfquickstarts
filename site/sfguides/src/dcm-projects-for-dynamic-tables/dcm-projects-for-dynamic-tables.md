@@ -587,7 +587,7 @@ DROP DCM PROJECT IF EXISTS dcm_demo.projects.dcm_dt_project_dev;
 
 `PURGE` drops every object the project created — database, tables, the four dynamic tables, views, the task, functions, warehouse, roles, and all their data. It is irreversible, and it leaves the project object behind, which is why the `DROP` follows.
 
-What the script does **not** drop matters more. The `dcm_demo` registry database, its `projects` schema and the `dcm_developer` role are shared by every guide in this series, so they are left in place, commented out with the reason. `dcm_demo` holds the project object of every DCM guide you have run; dropping it destroys those projects too, and leaves their objects orphaned with no way to purge them. Check before you uncomment anything:
+The `dcm_demo` database, its `projects` schema and the `dcm_developer` role are shared across every guide in this series, so the script leaves them in place, commented out. The `dcm_demo.projects` schema holds the project objects for every DCM guide in this series, so only drop it once you have finished with all of them. Check what it contains first:
 
 ```sql
 SHOW DCM PROJECTS IN SCHEMA dcm_demo.projects;
