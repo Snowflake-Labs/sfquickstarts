@@ -137,17 +137,17 @@ targets:
     templating_config: PROD
 ```
 
-A target is a deployment destination: which account to deploy into, which DCM Project object holds the state there, which role owns that project, and — the important line — which `templating_config` to render the definitions with. `default_target` is what you get when you omit `--target`. The file also ships with `DCM_STAGE` and `DCM_PROD_EU` targets; only `DCM_DEV` is used here.
+A target is a deployment destination: which account to deploy into, which DCM Project object holds the state there, which role owns that project, and which `templating_config` to render the definitions with. Replace `MYORG-MY_DEV_ACCOUNT` with the account identifier the setup script printed. `default_target` is what you get when you omit `--target`. The file also ships with `DCM_STAGE` and `DCM_PROD_EU` targets; only `DCM_DEV` is used here.
 
 Next comes **assets**. Everything under `sources/` is SQL that a `DEFINE` statement expresses in full, but some objects are backed by files instead — a Streamlit app is Python, not DDL. An asset is a named set of such files that the project carries along with its definitions:
 
 ```yaml
 assets:
-  dashboard:
+  orders_dashboard:
     path: 'streamlit/dashboard/**/*'
 ```
 
-That name is how a definition refers to the files, as `asset://dashboard`. The guide comes back to this in detail once there is data for the app to read; for now the thing to notice is that it sits at the **top level** of the manifest, alongside `targets` and `templating` rather than inside either.
+`orders_dashboard` is a name you choose, and a definition refers to the files by it, as `asset://orders_dashboard`. The guide comes back to this once there is data for the app to read. For now, note that it sits at the **top level** of the manifest, alongside `targets` and `templating` rather than inside either.
 
 The third section declares the templating configurations that targets select between:
 
@@ -176,7 +176,7 @@ templating:
 
 Values in `defaults` apply everywhere unless a configuration overrides them: `wh_size` is `X-SMALL` in DEV because DEV does not set it, and `LARGE` in PROD because PROD does. `env_suffix` is what lets a single definition file produce `DCM_DEMO_1_DEV` in development and `DCM_DEMO_1` in production. The `teams` list differs per environment too — one team in DEV, two in PROD.
 
-This is the point of the manifest: **one set of definition files, several environments, and the differences confined to YAML.** Nothing in `sources/` mentions DEV or PROD.
+This is what the manifest is for: **one set of definition files, several environments, and the differences confined to YAML.** Nothing in `sources/` mentions DEV or PROD.
 
 ### One definition file
 
@@ -307,14 +307,14 @@ TARGET_LAG = '30 minutes'
           data_retention_days: 3
 ```
 
-Two of the three are manifest edits. That is the point: the manifest is the control surface, and a two-line YAML change is about to produce a set of new objects.
+Two of the three are manifest edits: a two-line YAML change is about to produce a set of new objects.
 
 ### See only what changed
 
 The CLI has a delta mode for fast iteration:
 
 ```bash
-snow dcm plan --target DCM_DEV --delta
+snow dcm plan --delta --target DCM_DEV
 ```
 
 `--delta` reports the changes rather than the whole desired state, so it is what you run while iterating; in Snowsight, select **Delta** under **Plan Mode**. It only evaluates definitions that changed, so it cannot see drift made outside DCM — always run a full plan before deploying.
@@ -335,7 +335,7 @@ snow dcm plan --target DCM_DEV --save-output
 
 ![Plan results after the three changes](assets/plan_results_2.png)
 
-Exactly six, and every one is accounted for. The three creates are `DEV_TEAM_2`'s objects: a schema and two roles, produced by the Jinja loop and macro from those two lines of YAML. The three alters are the dynamic table's target lag, the warehouse's size, and `DCM_DEVELOPER` taking ownership of the three new objects.
+The three creates are `DEV_TEAM_2`'s objects: a schema and two roles, produced by the Jinja loop and macro from those two lines of YAML. The three alters are the dynamic table's target lag, the warehouse's size, and `DCM_DEVELOPER` taking ownership of the three new objects.
 
 Open `out/plan_result.json` and find the dynamic table. Its entire change is one nested attribute:
 
@@ -518,32 +518,32 @@ Ten category rows come back, `Pizza | 106.00 | 67.50 | 3` at the top. `DEFINE SE
 <!-- ------------------------ -->
 ## The App That Reads It
 
-Everything so far has been SQL that a `DEFINE` statement can express in full. A Streamlit app cannot be: it is Python files, and DCM needs a way to carry them. That is what **project assets** are for. Project assets, `DEFINE STREAMLIT` and `DEFINE CODE BUNDLE` are in public preview.
+Everything so far has been SQL that a `DEFINE` statement can express in full. A Streamlit app is Python files, so DCM carries it as **project assets**. Project assets, `DEFINE STREAMLIT` and `DEFINE CODE BUNDLE` are in public preview.
 
 An asset is a named set of source files, declared at the top level of `manifest.yml` — a sibling of `targets` and `templating`, not nested inside either:
 
 ```yaml
 assets:
-  dashboard:
+  orders_dashboard:
     path: 'streamlit/dashboard/**/*'
 ```
 
 The path is relative to the manifest and must live **outside `sources/`**, which is reserved for definitions, macros and tests. Use `path` for a single entry or `paths` for a list; each one can be a glob or a single file — a bare directory path is not accepted, so append `/**/*` to take a folder's contents. Globs support only `*` and `**` — no `?`, no brace expansion — and paths cannot contain Jinja. A pattern matching no files fails the run rather than deploying something empty.
 
-Then `DEFINE STREAMLIT` refers to the asset by name. That indirection is the point: the definition names a set of files rather than a path, so the project can pull in files that live outside `sources/` and import them during rendering:
+Then `DEFINE STREAMLIT` refers to the asset by name. Because the definition names a set of files rather than a path, the project can pull in files from outside `sources/` and import them during rendering:
 
 ```sql
 DEFINE STREAMLIT DCM_DEMO_1{{env_suffix}}.SERVE.ORDERS_DASHBOARD
-    FROM 'asset://dashboard/'
+    FROM 'asset://orders_dashboard/'
     MAIN_FILE = 'streamlit_app.py'
     QUERY_WAREHOUSE = DCM_DEMO_1_WH{{env_suffix}}
     COMPUTE_POOL = SYSTEM_COMPUTE_POOL_CPU
     RUNTIME_NAME = 'SYSTEM$ST_CONTAINER_RUNTIME_PY3_11'
     TITLE = 'Orders Dashboard'
-    COMMENT = 'Reads the ORDER_ANALYTICS semantic view; deployed from the dashboard asset';
+    COMMENT = 'Reads the ORDER_ANALYTICS semantic view; deployed from the orders_dashboard asset';
 ```
 
-The app reads the semantic view rather than the dynamic table, so the numbers on screen are the same metric definitions an agent would resolve. One detail matters for portability — **asset files are not Jinja-rendered**, so the app cannot use `{{env_suffix}}` to find its own database. It resolves that at runtime instead, which is why the identical file serves every environment:
+The app reads the semantic view rather than the dynamic table, so the numbers on screen are the same metric definitions an agent would resolve. For portability, note that **asset files are not Jinja-rendered**, so the app cannot use `{{env_suffix}}` to find its own database. It resolves that at runtime instead, which is why the identical file serves every environment:
 
 ```python
 session = get_active_session()
@@ -552,14 +552,14 @@ database = session.sql("SELECT CURRENT_DATABASE()").collect()[0][0]
 
 ![The deployed Orders Dashboard reading the semantic view](assets/order_dashboard.png)
 
-Now the useful part. Change nothing but the Python — add a chart, rename a heading — and plan again:
+Change nothing but the Python, for example add a chart or rename a heading, and plan again:
 
 ```console
 ALTER    STREAMLIT            DCM_DEMO_1_DEV.SERVE.ORDERS_DASHBOARD
 Planned 1 entity (0 to create, 1 to alter, 0 to drop).
 ```
 
-The plan tracks the **contents of the asset**, not just the `DEFINE` statement, and a deploy publishes a new version of the app. So the dashboard is versioned and promoted on exactly the same path as the tables it reads — one plan, one deploy, one changeset covering the pipeline and its front end. Redeploy again without touching anything and you get `No changes detected`, the same convergence you saw earlier.
+The plan tracks the **contents of the asset**, not just the `DEFINE` statement, and a deploy publishes a new version of the app. The dashboard is versioned and promoted the same way as the tables it reads, in one plan and one deploy. Redeploy again without touching anything and you get `No changes detected`, the same convergence you saw earlier.
 
 `DEFINE CODE BUNDLE` uses assets the same way, for packaging Python jobs rather than apps.
 
@@ -586,7 +586,7 @@ DROP DCM PROJECT IF EXISTS dcm_demo.projects.dcm_project_dev;
 
 `PURGE` drops every object the project created — database, schemas, tables, dynamic table, semantic view, Streamlit app, warehouse, roles, and all their data — and revokes its grants and removes its attachments. It is irreversible, and it leaves the project object behind, which is why the `DROP` follows.
 
-What it does **not** do is the important part. Three objects are shared across every guide in this series, and the script leaves them in place, commented out with the reason:
+Three objects are shared across every guide in this series, so the script leaves them in place, commented out:
 
 ```sql
 -- DROP SCHEMA IF EXISTS dcm_demo.projects;
@@ -595,11 +595,7 @@ What it does **not** do is the important part. Three objects are shared across e
 -- DROP ROLE IF EXISTS dcm_developer;
 ```
 
-The `USE ROLE ACCOUNTADMIN` is part of that commented block, not decoration: `dcm_developer` cannot drop itself, so uncommenting the role drop without the role switch fails.
-
-`dcm_demo` is the **registry database**. It holds the DCM Project object of every DCM guide you have ever run — not just this one. Dropping it destroys those projects too, and a project object is the only record of which objects a project owns; lose it and the objects are orphaned with no way to reconcile or purge them. `dcm_demo.projects` is the same problem one level narrower. And `dcm_developer` is a shared role that may own objects you created outside these guides — dropping a role that owns objects orphans them.
-
-This is the single most important safety point in the guide: **a cleanup script that drops the shared registry destroys other projects, not just its own.** Run the check the script offers before you uncomment anything, and if it returns projects you recognise, leave them alone:
+The `dcm_demo.projects` schema holds the project objects for every DCM guide in this series, so only drop it once you have finished with all of them. Check what it contains first:
 
 ```sql
 SHOW DCM PROJECTS IN SCHEMA dcm_demo.projects;
@@ -612,7 +608,7 @@ The script closes by verifying what went and what remains, and if `PURGE` ever f
 
 You declared a pipeline as code, planned it, deployed it, changed it, redeployed it, and watched the second deploy do nothing.
 
-That last part is the lesson. You now know that:
+You now know that:
 
 - A DCM Project declares a **destination**, not a path — no migration ledger, no replay
 - `plan` shows the blast radius before you pay for it, and the changeset is readable per entity
