@@ -149,8 +149,8 @@ snow sql -f scripts/setup-data.sql --connection quickstart  # sample data (usual
 
 What each one does:
 
-- *setup.sql* creates the **SFQUICKSTART_CHURNGUARD** database and checks for the TPC-DS sample data (about 65 million rows). If your account doesn't have it, the script creates it from the Snowflake share. You can also get it from [Snowflake Marketplace](https://docs.snowflake.com/en/user-guide/sample-data-tpcds#getting-tpc-ds-data-from-snowflake-marketplace).
-- *grants.sql* creates **SFQUICKSTART_CHURNGUARD_ROLE** and grants it to you. The role owns the quickstart database and can deploy apps, use the warehouse, and read the sample data. Each iteration adds its own grants when you rerun the script (Postgres in iteration 2, Cortex AI in iteration 3). The scripts use the **COMPUTE_WH** warehouse; if yours has a different name, change it in *setup.sql*, *grants.sql*, *setup-data.sql*, and *AGENTS.md*.
+- *setup.sql* creates the **SFQUICKSTART_CHURNGUARD** database and the **SFQUICKSTART_CHURNGUARD_WH** warehouse (X-Small, suspends after 60 seconds idle), and checks for the TPC-DS sample data (about 65 million rows). If your account doesn't have it, the script creates it from the Snowflake share. You can also get it from [Snowflake Marketplace](https://docs.snowflake.com/en/user-guide/sample-data-tpcds#getting-tpc-ds-data-from-snowflake-marketplace).
+- *grants.sql* creates **SFQUICKSTART_CHURNGUARD_ROLE** and grants it to you. The role owns the quickstart database and can deploy apps, use the warehouse, and read the sample data. Each iteration adds its own grants when you rerun the script (Postgres in iteration 2, Cortex AI in iteration 3).
 - *setup-data.sql* samples the TPC-DS 10 TB dataset once into two small tables, **CHURN_METRICS** (about 30,000 customers) and **CHURN_TRENDS** (monthly totals), so dashboard queries return in under a second. It samples with *TABLESAMPLE SYSTEM* instead of scanning the 29-billion-row fact tables.
 
 Check the tables:
@@ -196,7 +196,7 @@ snow connection test   # should show quickstart with SFQUICKSTART_CHURNGUARD_ROL
 
 ```toml
 role = "SFQUICKSTART_CHURNGUARD_ROLE"
-warehouse = "COMPUTE_WH"
+warehouse = "SFQUICKSTART_CHURNGUARD_WH"
 ```
 
 The setup scripts still switch to **ACCOUNTADMIN** themselves, so you can rerun *grants.sql* later without changing anything.
@@ -750,7 +750,7 @@ It drops:
 - The **CHURNGUARD_PG** Postgres instance
 - **CHURNGUARD_EAI**, **CHURNGUARD_PG_POLICY**, and the network rules
 - The **SFQUICKSTART_CHURNGUARD** database and everything in it
-- **SFQUICKSTART_CHURNGUARD_ROLE**
+- The **SFQUICKSTART_CHURNGUARD_WH** warehouse and **SFQUICKSTART_CHURNGUARD_ROLE**
 
 The script ends by listing anything left over; every list should be empty.
 
@@ -775,6 +775,7 @@ USE ROLE ACCOUNTADMIN;
 DROP INTEGRATION IF EXISTS CHURNGUARD_EAI;
 DROP NETWORK POLICY IF EXISTS CHURNGUARD_PG_POLICY;
 DROP DATABASE IF EXISTS SFQUICKSTART_CHURNGUARD;   -- includes the network rules
+DROP WAREHOUSE IF EXISTS SFQUICKSTART_CHURNGUARD_WH;
 DROP ROLE IF EXISTS SFQUICKSTART_CHURNGUARD_ROLE;
 ```
 
