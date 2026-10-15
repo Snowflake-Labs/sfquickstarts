@@ -1,7 +1,7 @@
 author: Chanin Nantasenamat
 id: build-real-time-bi-dashboard-interactive-warehouses
 summary: Build a live e-commerce BI dashboard on Snowflake using an interactive warehouse over a standard table, a Snowpark Container Services simulation service, and Streamlit in Snowflake.
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/interactive-warehouse
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/interactive-analytics
 environments: web
 language: en
 status: Published
@@ -19,13 +19,14 @@ Everything runs inside a single Snowflake account. No Kafka, no external message
 
 ![Architecture diagram showing the data flow between the SPCS simulation service, stored procedure, live orders table, interactive warehouse, history and control tables, maintenance tasks, and the Streamlit dashboard.](assets/architecture-diagram.png)
 
-<!-- Editable source: assets/architecture_diagram.py (matplotlib) -->
+<!-- Editable source: quickstart/build-real-time-bi-dashboard-interactive-warehouses/assets/architecture_diagram.py in the companion repo (matplotlib) -->
 
 ### What You'll Learn
 - How to cluster a standard table with a key tuned for dashboard queries
 - How to query a standard table through an interactive warehouse at sub-second latency, with no data copy
 - How to build and deploy a long-running Python service on Snowpark Container Services
-- How to use `EXECUTE AS OWNER` in a stored procedure to bridge permission boundaries
+- How to run a demo under a dedicated role instead of `ACCOUNTADMIN`
+- How to use `EXECUTE AS OWNER` to give a service a single, narrow write path
 - How to build an auto-refreshing dashboard with `st.fragment` in Streamlit in Snowflake
 
 ### What You'll Build
@@ -36,8 +37,8 @@ You will assemble five tightly integrated Snowflake objects into a single, self-
 - A control table acts as the command channel between the dashboard and the simulation service
 - A Streamlit in Snowflake app ties everything together, giving you live KPI tiles, auto-refreshing charts, and full simulation controls in one interface
 
-### Prerequisites
-- Access to a [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) with `ACCOUNTADMIN`. The account must be in a region that supports both [interactive warehouses](https://docs.snowflake.com/en/user-guide/interactive#region-availability) and [Snowpark Container Services](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview#available-regions).
+### What You'll Need
+- Access to a [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) with `ACCOUNTADMIN`, used once to create the demo role. The account must be in a region that supports both [interactive warehouses](https://docs.snowflake.com/en/user-guide/interactive#region-availability) and [Snowpark Container Services](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview#available-regions).
 - [Docker Desktop](https://docs.docker.com/get-docker/) installed and running locally.
 - [Git](https://git-scm.com/) installed.
 - Basic familiarity with SQL and Python.
@@ -76,6 +77,7 @@ Here is a summary of the Snowflake objects you will create:
 
 | Object | Type | Purpose |
 |---|---|---|
+| `INTERACTIVE_ANALYTICS_ROLE` | Role | Owns every object below, including the service |
 | `ORDERS` | Table (clustered) | Current tick snapshot of live orders |
 | `ORDERS_HISTORY` | Table | Accumulates all historical ticks for charts and heatmaps |
 | `SIMULATION_CONTROL` | Table | Command channel between the dashboard and the simulation service |
@@ -88,10 +90,30 @@ Here is a summary of the Snowflake objects you will create:
 | `INTERACTIVE_ANALYTICS_HISTORY_CLEANUP` | Task (warehouse) | Purges ORDERS_HISTORY rows older than 1 day |
 | `LIVE_ORDERS_DASHBOARD` | Streamlit in Snowflake | Live dashboard with KPI tiles, charts, and simulation controls |
 
-### Database and schema
+### Demo role
+
+`ACCOUNTADMIN` is used only for this block. It creates `INTERACTIVE_ANALYTICS_ROLE` and grants it the account-level privileges it needs to create its own database, warehouses, compute pool, and tasks. Every other object in this guide is created and owned by that role, so the long-running SPCS service never holds an `ACCOUNTADMIN` session.
 
 ```sql
 USE ROLE ACCOUNTADMIN;
+
+CREATE ROLE IF NOT EXISTS INTERACTIVE_ANALYTICS_ROLE
+  COMMENT = 'Owns all objects for the real-time BI dashboard demo';
+
+GRANT CREATE DATABASE, CREATE WAREHOUSE, CREATE COMPUTE POOL,
+      EXECUTE TASK, EXECUTE MANAGED TASK
+  ON ACCOUNT TO ROLE INTERACTIVE_ANALYTICS_ROLE;
+
+GRANT ROLE INTERACTIVE_ANALYTICS_ROLE TO ROLE SYSADMIN;
+
+SET MY_USER = CURRENT_USER();
+GRANT ROLE INTERACTIVE_ANALYTICS_ROLE TO USER IDENTIFIER($MY_USER);
+```
+
+### Database and schema
+
+```sql
+USE ROLE INTERACTIVE_ANALYTICS_ROLE;
 
 CREATE DATABASE IF NOT EXISTS INTERACTIVE_STREAMING_DEMO;
 CREATE SCHEMA   IF NOT EXISTS INTERACTIVE_STREAMING_DEMO.PUBLIC;
@@ -190,7 +212,7 @@ VALUES (FALSE, 'normal', NULL, 1.0, CURRENT_TIMESTAMP(), 0);
 2. Appends the new rows to `ORDERS_HISTORY`.
 3. Increments the `TOTAL_ORDERS` counter in `SIMULATION_CONTROL`.
 
-The `EXECUTE AS OWNER` clause lets the service call the procedure without being granted write privileges on `ORDERS`, `ORDERS_HISTORY`, or `SIMULATION_CONTROL` directly.
+The `EXECUTE AS OWNER` clause runs the writes with the privileges of the procedure's owner, `INTERACTIVE_ANALYTICS_ROLE`, so the procedure is the single path that modifies `ORDERS`, `ORDERS_HISTORY`, and `SIMULATION_CONTROL`.
 
 ```sql
 CREATE OR REPLACE PROCEDURE INTERACTIVE_STREAMING_DEMO.PUBLIC.SP_SIMULATE_TICK(
@@ -394,11 +416,12 @@ The simulation service is a lightweight Python container. It reads `SIMULATION_C
 
 ### How the service authenticates
 
-When running inside SPCS, the container automatically receives an OAuth token from Snowflake at `/snowflake/session/token`. The service reads this token and uses it to connect, so no password or key-pair is needed.
+When running inside SPCS, the container automatically receives an OAuth token from Snowflake at `/snowflake/session/token`. The service reads this token and uses it to connect, so no password or key-pair is needed. The session runs as the service's owner role, `INTERACTIVE_ANALYTICS_ROLE`.
 
 ```python
 # spcs/simulation_service.py (key excerpt)
 WAREHOUSE = os.environ.get("SNOWFLAKE_WAREHOUSE", "INTERACTIVE_ANALYTICS_WH")
+ROLE = os.environ.get("SNOWFLAKE_ROLE", "INTERACTIVE_ANALYTICS_ROLE")
 TOKEN_FILE = "/snowflake/session/token"
 
 def connect():
@@ -411,7 +434,7 @@ def connect():
         token=token,
         database="INTERACTIVE_STREAMING_DEMO",
         schema="PUBLIC",
-        role="ACCOUNTADMIN",
+        role=ROLE,
         warehouse=WAREHOUSE,
     )
 ```
@@ -432,7 +455,7 @@ SHOW IMAGE REPOSITORIES LIKE 'SIM_REPO'
 docker login <your_registry_url>
 ```
 
-When prompted, enter your Snowflake username and password (or a [programmatic access token](https://docs.snowflake.com/en/user-guide/programmatic-access/programmatic-access-tokens-intro)).
+When prompted, enter your Snowflake username and password (or a [programmatic access token](https://docs.snowflake.com/en/user-guide/programmatic-access-tokens)).
 
 > If you have the [Snowflake CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli/index) installed and a connection configured, `snow spcs image-registry login` logs Docker in to your account's registry using that connection, so you don't have to type a password.
 
@@ -463,7 +486,7 @@ To confirm the push, open `SIM_REPO` in Snowsight under **Catalog > Database Exp
 The `simulation_spec.yaml` file in the repository defines the container environment. Create the service from the inline specification below (the image path uses the path relative to your registry, which Snowflake resolves automatically):
 
 ```sql
-USE ROLE ACCOUNTADMIN;
+USE ROLE INTERACTIVE_ANALYTICS_ROLE;
 USE WAREHOUSE INTERACTIVE_ANALYTICS_WH;
 
 CREATE SERVICE IF NOT EXISTS
@@ -506,7 +529,7 @@ A healthy service logs its configuration, connects with the SPCS OAuth token, an
 ```
 INFO Simulation service starting (interval=1.0s, idle_suspend=3600s, rows_base=100, cache_ticks=5)
 INFO Connecting to GLOBAL Snowflake domain
-INFO Connected to Snowflake as ACCOUNTADMIN
+INFO Connected to Snowflake as INTERACTIVE_ANALYTICS_ROLE
 INFO Idle timer reset
 ```
 
@@ -517,6 +540,8 @@ Once the simulation is running, a `tick N: ... rows` line appears for every call
 Run these commands from the `streamlit/` directory using **SnowSQL** or the **Snowflake Python connector**:
 
 ```sql
+USE ROLE INTERACTIVE_ANALYTICS_ROLE;
+
 PUT file://streamlit_app.py
     @INTERACTIVE_STREAMING_DEMO.PUBLIC.APP_STAGE/streamlit/
     OVERWRITE=TRUE AUTO_COMPRESS=FALSE;
@@ -607,7 +632,8 @@ Remove all resources when finished to stop incurring costs.
 > **Warning:** Interactive warehouses have a **24-hour minimum billing period** once created. Drop the warehouse as soon as you are done to avoid unexpected charges.
 
 ```sql
-USE ROLE ACCOUNTADMIN;
+USE ROLE INTERACTIVE_ANALYTICS_ROLE;
+USE WAREHOUSE INTERACTIVE_ANALYTICS_WH;
 
 -- Stop the data feed before dropping objects.
 UPDATE INTERACTIVE_STREAMING_DEMO.PUBLIC.SIMULATION_CONTROL
@@ -625,6 +651,10 @@ DROP WAREHOUSE    IF EXISTS INTERACTIVE_ANALYTICS_IWH;
 DROP WAREHOUSE    IF EXISTS INTERACTIVE_ANALYTICS_WH;
 DROP COMPUTE POOL IF EXISTS INTERACTIVE_ANALYTICS_POOL;
 DROP DATABASE     IF EXISTS INTERACTIVE_STREAMING_DEMO;
+
+-- Remove the demo role last.
+USE ROLE ACCOUNTADMIN;
+DROP ROLE         IF EXISTS INTERACTIVE_ANALYTICS_ROLE;
 ```
 
 <!-- ------------------------ -->
@@ -636,7 +666,8 @@ Congratulations! You built a complete real-time BI dashboard on Snowflake withou
 - Clustering a standard table on `(DATE_TRUNC('MINUTE', ORDER_TS), REGION)` for fast "last N minutes by region" aggregations
 - Querying a standard table zero-copy through an interactive warehouse, and adding it to the warehouse to keep its data cache warm for millisecond-latency queries
 - Deploying a long-running Python service on SPCS with internal OAuth authentication, with no keys or passwords in the container
-- Using `EXECUTE AS OWNER` in a stored procedure to allow an SPCS service to write to tables it does not own directly
+- Running every demo object, including the SPCS service, under a dedicated role instead of `ACCOUNTADMIN`
+- Using `EXECUTE AS OWNER` so the stored procedure is the single write path for the simulation
 - Building an auto-refreshing dashboard with `st.fragment(run_every=...)` that re-queries Snowflake on a configurable timer
 
 ### Related Resources
@@ -648,7 +679,7 @@ Documentation:
 - [CREATE INTERACTIVE WAREHOUSE](https://docs.snowflake.com/en/sql-reference/sql/create-interactive-warehouse)
 - [Streamlit in Snowflake](https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit)
 - [st.fragment: Streamlit docs](https://docs.streamlit.io/develop/api-reference/execution-flow/st.fragment)
-- [Snowflake Programmatic Access Tokens](https://docs.snowflake.com/en/user-guide/programmatic-access/programmatic-access-tokens-intro)
+- [Snowflake Programmatic Access Tokens](https://docs.snowflake.com/en/user-guide/programmatic-access-tokens)
 
 Additional Reading:
 - [Zero-copy support for all table formats in interactive warehouses: release note](https://docs.snowflake.com/en/release-notes/2026/other/2026-09-14-interactive-zero-copy-ga)
