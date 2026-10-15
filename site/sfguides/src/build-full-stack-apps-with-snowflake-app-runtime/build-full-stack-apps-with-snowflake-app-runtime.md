@@ -268,7 +268,7 @@ Output:
 
 The prompt never names a framework, a chart library, or a file. Those choices are left to Cortex Code. The later prompts follow the same structure.
 
-### What Happens Next
+### What Happens
 
 The build and deploy take a few minutes, so follow along in the chat. Cortex Code generates code with an LLM, so layout, chart styles, and colors vary between runs; your app will do the same things as the screenshots but may not look identical.
 
@@ -283,6 +283,10 @@ The build and deploy take a few minutes, so follow along in the chat. Cortex Cod
 - **Styling** that follows the prompt's UI section
 
 **3. Deploy.** Cortex Code runs ***snow app deploy***, watches the build, and gives you the App URL once the service is **RUNNING**.
+
+### Key Concepts
+
+- **Owner's rights** means the app's queries run as the service's own role, so the code holds no credentials and you don't grant anything per user. See [Query Snowflake](https://docs.snowflake.com/en/developer-guide/snowflake-app-runtime/query-snowflake).
 
 ### Verify
 
@@ -299,10 +303,6 @@ The URL stays the same when you redeploy. The service upgrades in place, with no
 > **Note:** ***SHOW APPLICATION SERVICES*** may report **SUSPENDED** right after a deploy. That's normal: the service suspends when idle and resumes on the first request, so just open the URL.
 
 **Checkpoint:** the dashboard filters by segment and pivots by dimension. You're ready for iteration 2.
-
-### Key Concepts
-
-- **Owner's rights** means the app's queries run as the service's own role, so the code holds no credentials and you don't grant anything per user. See [Query Snowflake](https://docs.snowflake.com/en/developer-guide/snowflake-app-runtime/query-snowflake).
 
 ### Test Locally (Optional)
 
@@ -474,18 +474,27 @@ In this iteration ChurnGuard gets an agent. You ask a question from any page, an
 
 ### Setup
 
-Commit your iteration 2 work, merge in iteration 3, rerun grants (for the agent, the staging procedure, and the task), and run the iteration 3 setup:
+Commit your iteration 2 work if you haven't already, then merge in iteration 3:
 
 ```bash
-# Commit iteration 2, merge in iteration 3, then run grants and setup
+# Commit iteration 2, then merge in iteration 3
 git add -A && git commit -m "Iteration 2 done"
 git fetch origin && git merge --no-edit origin/iteration-3/ai-app
+```
 
+**Step 1 — Rerun grants.** This adds the privileges for the agent, the staging procedure, and the task:
+
+```bash
 snow sql -f scripts/grants.sql --connection quickstart
+```
+
+**Step 2 — Create the playbook, recommendations view, proposals table, staging procedure, and daily task:**
+
+```bash
 snow sql -f scripts/iteration-3-setup.sql --connection quickstart
 ```
 
-The setup creates the playbook, the recommendations view, the proposals table, the staging procedure, and the daily task. It also runs the task once, so proposals are ready right away. See [iteration-3-setup.sql](https://github.com/Snowflake-Labs/sfguide-build-full-stack-apps-with-snowflake-app-runtime/blob/iteration-3/ai-app/scripts/iteration-3-setup.sql) for the full SQL.
+The setup also runs the task once, so proposals are ready right away. See [iteration-3-setup.sql](https://github.com/Snowflake-Labs/sfguide-build-full-stack-apps-with-snowflake-app-runtime/blob/iteration-3/ai-app/scripts/iteration-3-setup.sql) for the full SQL.
 
 The playbook starts with five rules:
 
