@@ -134,6 +134,8 @@ snow connection test --connection quickstart
 
 The command writes the connection to your Snowflake config file. Replace *your_account* and *your_user* with your values. Cortex Code Desktop and the Cortex Code CLI read the same file.
 
+> **Note:** The guide uses the connection name ***quickstart***. If you use another name, change it in *.env*, *AGENTS.md*, and every ***--connection*** flag (including ***cortex mcp add*** in iteration 3).
+
 ### Run the Setup Scripts
 
 Run the three setup scripts in order:
@@ -142,13 +144,13 @@ Run the three setup scripts in order:
 # Run the setup scripts in order
 snow sql -f scripts/setup.sql --connection quickstart       # database and TPC-DS check
 snow sql -f scripts/grants.sql --connection quickstart      # quickstart role and grants
-snow sql -f scripts/setup-data.sql --connection quickstart  # sample data (1-3 minutes)
+snow sql -f scripts/setup-data.sql --connection quickstart  # sample data (usually under a minute)
 ```
 
 What each one does:
 
 - *setup.sql* creates the **SFQUICKSTART_CHURNGUARD** database and checks for the TPC-DS sample data (about 65 million rows). If your account doesn't have it, the script creates it from the Snowflake share. You can also get it from [Snowflake Marketplace](https://docs.snowflake.com/en/user-guide/sample-data-tpcds#getting-tpc-ds-data-from-snowflake-marketplace).
-- *grants.sql* creates **SFQUICKSTART_CHURNGUARD_ROLE** and grants it to you. The role owns the quickstart database and can deploy apps, use the warehouse, read the sample data, and call Cortex AI functions. The scripts use the **COMPUTE_WH** warehouse; if yours has a different name, change it in *grants.sql*, *setup-data.sql*, and *AGENTS.md*.
+- *grants.sql* creates **SFQUICKSTART_CHURNGUARD_ROLE** and grants it to you. The role owns the quickstart database and can deploy apps, use the warehouse, and read the sample data. Each iteration adds its own grants when you rerun the script (Postgres in iteration 2, Cortex AI in iteration 3). The scripts use the **COMPUTE_WH** warehouse; if yours has a different name, change it in *setup.sql*, *grants.sql*, *setup-data.sql*, and *AGENTS.md*.
 - *setup-data.sql* samples the TPC-DS 10 TB dataset once into two small tables, **CHURN_METRICS** (about 30,000 customers) and **CHURN_TRENDS** (monthly totals), so dashboard queries return in under a second. It samples with *TABLESAMPLE SYSTEM* instead of scanning the 29-billion-row fact tables.
 
 Check the tables:
@@ -189,6 +191,15 @@ echo dotenv > .envrc && direnv allow
 
 snow connection test   # should show quickstart with SFQUICKSTART_CHURNGUARD_ROLE
 ```
+
+**Set the connection's default role and warehouse.** ***snow app deploy*** uses the connection's default role, not ***--role*** or *.env*, so set it in your Snowflake config file (*~/.snowflake/connections.toml*). Add these two lines to the ***[quickstart]*** block, or update them if they're already there:
+
+```toml
+role = "SFQUICKSTART_CHURNGUARD_ROLE"
+warehouse = "COMPUTE_WH"
+```
+
+The setup scripts still switch to **ACCOUNTADMIN** themselves, so you can rerun *grants.sql* later without changing anything.
 
 Snowflake CLI commands, the Cortex Code CLI, and ***npm run dev*** started from this terminal now use that connection and role. The files hold no secrets, and the repo's *.gitignore* keeps *.env* and *.envrc* out of your commits.
 
@@ -284,6 +295,8 @@ Open the App URL. Click a segment in the churn-risk chart to filter the customer
 
 The URL stays the same when you redeploy. The service upgrades in place, with no downtime.
 
+> **Note:** ***SHOW APPLICATION SERVICES*** may report **SUSPENDED** right after a deploy. That's normal: the service suspends when idle and resumes on the first request, so just open the URL.
+
 **Checkpoint:** the dashboard filters by segment and pivots by dimension. You're ready for iteration 2.
 
 ### Key Concepts
@@ -353,15 +366,17 @@ git fetch origin && git merge --no-edit origin/iteration-2/workflow-app
 snow sql -f scripts/grants.sql --connection quickstart
 ```
 
-**Step 2 — Create the Postgres instance and data mirror.** Open the prompt file [02-postgres-setup.md](https://github.com/Snowflake-Labs/sfguide-build-full-stack-apps-with-snowflake-app-runtime/blob/iteration-2/workflow-app/prompts/02-postgres-setup.md) and paste it into Cortex Code Desktop. It uses the */snowflake-postgres* skill to:
+**Step 2 — Create the Postgres instance and data mirror.** Find your public IP address first (for example at [ifconfig.me](https://ifconfig.me)); the prompt asks for it so psql can create the table. Then open the prompt file [02-postgres-setup.md](https://github.com/Snowflake-Labs/sfguide-build-full-stack-apps-with-snowflake-app-runtime/blob/iteration-2/workflow-app/prompts/02-postgres-setup.md) and paste it into Cortex Code Desktop. It uses the */snowflake-postgres* skill to:
 
 - Create the **CHURNGUARD_PG** Postgres instance
-- Create the *actions* table, with the primary key mirroring needs
-- Store credentials as the **CHURNGUARD_PG_SECRET** and **CHURNGUARD_PG_HOST_SECRET** secrets
-- Create a network rule, an External Access Integration, and a network policy that allows only Snowpark Container Services egress IPs
+- Store credentials as the **CHURNGUARD_PG_SECRET** and **CHURNGUARD_PG_HOST_SECRET** secrets, right away, because the password is shown only once
+- Attach the **CHURNGUARD_PG_POLICY** network policy with two rules: **CHURNGUARD_PG_INGRESS_RULE** for Snowpark Container Services egress IPs, and a temporary **CHURNGUARD_PG_LOCAL_IP_RULE** for your IP
+- Create the *actions* table, with the primary key mirroring needs and an index that allows one open action per customer
+- Create a network rule and an External Access Integration for the app
 - Mirror the data to the **CHURNGUARD_MIRROR** database
+- Remove your IP from the policy, so only the app can reach Postgres
 
-> **Note:** The Postgres instance takes 3–5 minutes to provision. The prompt waits and checks for you. The network policy blocks your own machine; to use psql locally, see [Troubleshooting](#troubleshooting).
+> **Note:** The Postgres instance takes 3–5 minutes to provision. The prompt waits and checks for you. To use psql again later, see [Troubleshooting](#troubleshooting).
 
 **Step 3 — Create the dynamic table, notifications table, and alert:**
 
@@ -370,6 +385,8 @@ snow sql -f scripts/iteration-2-setup.sql --connection quickstart
 ```
 
 This creates the **ACTION_SUMMARY** dynamic table, which reads the mirrored *$live* view, plus the **NOTIFICATIONS** table and **ESCALATION_ALERT**.
+
+> **Note:** From here on, some objects use credits while they run: the Postgres instance, the dynamic table and alert (both every minute), and, in iteration 3, a daily task. Run [Cleanup](#cleanup) when you're done.
 
 ### The Prompt
 
@@ -391,7 +408,7 @@ await pool.query(
 );
 ```
 
-The action list and its KPI cards read from Postgres too, so a new action shows up the moment you save it.
+The action list and its KPI cards read from Postgres too, so a new action shows up the moment you save it. A customer can have only one open action: flagging them again shows *already flagged* instead of creating a duplicate.
 
 **3. Mirroring.** Postgres changes replicate to Snowflake automatically. **ACTION_SUMMARY** reads the mirrored *$live* view. The app never queries it.
 
@@ -516,11 +533,11 @@ An empty drawer suggests prompts for the current page.
 
 **5. Streaming answers.** An API route streams the *agent:run* REST API. An answer takes about 30 seconds, so the chat shows a thinking indicator, then each tool call, then the answer with tables and charts. When the agent stages proposals, the chat shows how many and links to the Agent Suggested tab.
 
-**6. Agent Suggested tab.** The Action Board gains a tab of pending proposals. Each card shows the customer, the action, and the playbook rule behind it. **Approve** writes the action to Postgres, **Dismiss** drops it, and **Approve All** handles every pending proposal. A badge shows how many are waiting.
+**6. Agent Suggested tab.** The Action Board gains a tab of pending proposals. Each card shows the customer, the action, and the playbook rule behind it. **Approve** writes the action to Postgres, **Dismiss** drops it, and **Approve All** handles every pending proposal. A badge shows how many are waiting. If a customer already has an open action, approving dismisses the proposal and tells you how many were skipped.
 
 **7. Threads.** The app reuses one agent thread per conversation, so follow-up questions keep their context.
 
-**8. MCP server.** The app serves an MCP server at ***/api/mcp*** with four tools: *flag_customer*, *list_actions*, *get_customer_risk*, and *get_churn_summary*. Snowflake authenticates every request as your user, so MCP clients connect with a Snowflake connection, not an API key.
+**8. MCP server.** The app serves an MCP server at ***/api/mcp*** with four tools: *flag_customer*, *list_actions*, *get_customer_risk*, and *get_churn_summary*. Snowflake authenticates every request as your user. The Cortex Code CLI connects with your Snowflake connection, not an API key; other MCP clients are redirected to the Snowflake login page.
 
 ### Key Concepts
 
@@ -562,6 +579,7 @@ Open the app and try the agent:
 cd churnguard
 cortex mcp add churnguard "$(snow app open --print-only --connection quickstart)/api/mcp" \
   --type http --snowflake-connection quickstart
+cortex mcp reconnect churnguard   # should report 4 tools
 cd ..
 cortex
 ```
@@ -572,7 +590,7 @@ Then ask the CLI, one at a time (your results will differ):
 |---|---|---|
 | *Using the churnguard MCP server, list open retention actions.* | list_actions | 11 open actions: 10 Offer, 1 Call |
 | *Find a high-risk customer with no open action and show their risk.* | get_churn_summary, get_customer_risk | Customer 56557609: High churn risk, $9,966 spend, 100% return rate. Recommended: Escalate (rule 1) |
-| *Flag that customer with the recommended action.* | flag_customer | Created action 8d701687-… (Escalate, status New) |
+| *Flag that customer with the recommended action.* | flag_customer | Created action 8d701687-… (Escalate, status New). Flag them again and the tool answers *already flagged*. |
 
 Open the Action Board in your browser: the new action is at the top of **All actions**, and **Open escalations** goes up by one. Within about a minute, once the mirror syncs and the alert runs, an escalation toast appears on every page.
 
@@ -585,15 +603,17 @@ Use the queries below, or paste the error into Cortex Code Desktop and ask *"Why
 
 | Symptom | Likely cause | Fix |
 |---|---|---|
-| *Insufficient privileges* on deploy | A grant is missing | Rerun *grants.sql* as **ACCOUNTADMIN** |
+| *Insufficient privileges* on deploy | A grant is missing, or the connection's default role isn't the quickstart role | Rerun *grants.sql* as **ACCOUNTADMIN**, and set ***role = "SFQUICKSTART_CHURNGUARD_ROLE"*** for the connection (see [Prepare Your Working Directory](#prepare-your-working-directory)) |
 | *Connection refused* or *SSL required* (iteration 2) | The Postgres instance isn't running yet | Wait for provisioning, then check the instance state |
-| psql can't reach Postgres from your machine | The network policy allows only Snowpark Container Services IPs | Add your public IP (replace *your-public-ip*) to **CHURNGUARD_PG_POLICY**, and remove it when you're done |
+| psql hangs (iteration 2) | The Postgres instance is suspended | Run ***ALTER POSTGRES INSTANCE CHURNGUARD_PG RESUME***, wait until **READY**, then retry |
+| psql can't reach Postgres from your machine | Setup removed your IP from the network policy | Add **CHURNGUARD_PG_LOCAL_IP_RULE** back to **CHURNGUARD_PG_POLICY** (below), and remove it when you're done |
+| Lost the Postgres *application* password | It's shown only once, at CREATE | Run ***ALTER POSTGRES INSTANCE CHURNGUARD_PG RESET ACCESS FOR 'application'*** and update **CHURNGUARD_PG_SECRET** |
 | The app can't reach Postgres | External Access Integration or secrets missing | Check **CHURNGUARD_EAI** and the two Postgres secrets exist |
 | Actions don't reach Snowflake | Mirroring runs about 30 seconds behind | Wait, then check the mirror state is **REPLICATING** |
 | No toast after an escalation | The dynamic table or alert hasn't refreshed | Check the dynamic table refresh history |
 | The chat shows errors (iteration 3) | The agent or semantic view is missing | Check both exist in the quickstart schema |
 | The Agent Suggested tab is empty | The task hasn't run or is suspended | Check task history, resume it, or run it now |
-| The MCP server won't connect | Wrong URL, connection, or role | The URL must be your App URL plus */api/mcp*; your connection test must pass; your role needs **USAGE** on the app |
+| The MCP server won't connect | Wrong URL, connection, or role | The URL must be your App URL plus */api/mcp*; your connection test must pass; your role needs **USAGE** on the app. Use the Cortex Code CLI: other MCP clients are redirected to the Snowflake login |
 
 The checks, grouped by area:
 
@@ -603,8 +623,13 @@ SHOW GRANTS TO ROLE SFQUICKSTART_CHURNGUARD_ROLE;
 SHOW POSTGRES INSTANCES IN ACCOUNT;
 SHOW EXTERNAL ACCESS INTEGRATIONS;
 SHOW SECRETS IN SCHEMA SFQUICKSTART_CHURNGUARD.PUBLIC;
--- Allow psql from your machine (remove it when you're done)
-ALTER NETWORK POLICY CHURNGUARD_PG_POLICY ADD ALLOWED_IP_LIST = ('<your-public-ip>/32');
+-- Allow psql from your machine again (if your IP changed, update the rule first:
+-- ALTER NETWORK RULE SFQUICKSTART_CHURNGUARD.PUBLIC.CHURNGUARD_PG_LOCAL_IP_RULE SET VALUE_LIST = ('<your-public-ip>/32');)
+ALTER NETWORK POLICY CHURNGUARD_PG_POLICY
+  ADD ALLOWED_NETWORK_RULE_LIST = ('SFQUICKSTART_CHURNGUARD.PUBLIC.CHURNGUARD_PG_LOCAL_IP_RULE');
+-- ...and remove it when you're done
+ALTER NETWORK POLICY CHURNGUARD_PG_POLICY
+  REMOVE ALLOWED_NETWORK_RULE_LIST = ('SFQUICKSTART_CHURNGUARD.PUBLIC.CHURNGUARD_PG_LOCAL_IP_RULE');
 
 -- Mirroring and the dynamic table
 SELECT * FROM CHURNGUARD_MIRROR.PUBLIC.ACTIONS$live LIMIT 5;
@@ -616,7 +641,7 @@ SELECT * FROM TABLE(INFORMATION_SCHEMA.DYNAMIC_TABLE_REFRESH_HISTORY(
 
 ```sql
 -- Agent, semantic view, and the daily task
-SHOW CORTEX AGENTS IN SCHEMA SFQUICKSTART_CHURNGUARD.PUBLIC;
+SHOW AGENTS IN SCHEMA SFQUICKSTART_CHURNGUARD.PUBLIC;
 SHOW SEMANTIC VIEWS IN SCHEMA SFQUICKSTART_CHURNGUARD.PUBLIC;
 SELECT * FROM TABLE(INFORMATION_SCHEMA.TASK_HISTORY(
     TASK_NAME => 'AGENT_SUGGESTION_TASK'
@@ -721,11 +746,13 @@ snow sql -f scripts/cleanup.sql --connection quickstart
 It drops:
 
 - The **APPLICATION SERVICE**
-- The data mirror and its **CHURNGUARD_MIRROR** database
+- The data mirror, its **CHURNGUARD_MIRROR** database, and its catalog integration
 - The **CHURNGUARD_PG** Postgres instance
-- **CHURNGUARD_EAI** and **CHURNGUARD_PG_POLICY**
+- **CHURNGUARD_EAI**, **CHURNGUARD_PG_POLICY**, and the network rules
 - The **SFQUICKSTART_CHURNGUARD** database and everything in it
 - **SFQUICKSTART_CHURNGUARD_ROLE**
+
+The script ends by listing anything left over; every list should be empty.
 
 > **Warning:** Make sure the script finishes. A Postgres instance left running keeps using credits.
 
@@ -740,21 +767,26 @@ DROP APPLICATION SERVICE IF EXISTS SFQUICKSTART_CHURNGUARD.PUBLIC.CHURNGUARD;
 
 -- The quickstart role owns the mirror and the Postgres instance
 USE ROLE SFQUICKSTART_CHURNGUARD_ROLE;
+-- Also drops the CHURNGUARD_MIRROR database and its catalog integration
 CALL SNOWFLAKE.POSTGRES.DROP_MIRROR('churnguard_mirror');
 DROP POSTGRES INSTANCE IF EXISTS CHURNGUARD_PG;
 
 USE ROLE ACCOUNTADMIN;
 DROP INTEGRATION IF EXISTS CHURNGUARD_EAI;
 DROP NETWORK POLICY IF EXISTS CHURNGUARD_PG_POLICY;
-DROP DATABASE IF EXISTS SFQUICKSTART_CHURNGUARD;
+DROP DATABASE IF EXISTS SFQUICKSTART_CHURNGUARD;   -- includes the network rules
 DROP ROLE IF EXISTS SFQUICKSTART_CHURNGUARD_ROLE;
 ```
 
-To remove the MCP server from the Cortex Code CLI:
+If *DROP_MIRROR* fails, *DROP POSTGRES INSTANCE* fails too, because the mirror's catalog integration still references the instance. *cleanup.sql* shows the error and handles both leftovers; by hand, run ***DROP INTEGRATION IF EXISTS CHURNGUARD_MIRROR_CATALOG_INTEGRATION***, and to drop the mirror database, first run ***GRANT OWNERSHIP ON DATABASE CHURNGUARD_MIRROR TO ROLE ACCOUNTADMIN*** (it's owned by the *snowflake* application).
+
+To remove what the guide set up on your machine:
 
 ```bash
 cortex mcp remove churnguard
 ```
+
+If you used psql, also remove the **CHURNGUARD_PG** entries from *~/.pgpass* and *~/.pg_service.conf*. Then set your connection's default ***role*** back to what it was: **SFQUICKSTART_CHURNGUARD_ROLE** no longer exists.
 
 ### Learn More
 
