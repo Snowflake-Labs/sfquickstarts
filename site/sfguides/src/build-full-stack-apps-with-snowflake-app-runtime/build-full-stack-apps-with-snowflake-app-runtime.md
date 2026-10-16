@@ -251,6 +251,8 @@ UI:
 Constraints:
 - Query only the local CHURN_METRICS and CHURN_TRENDS tables
   (do NOT query SNOWFLAKE_SAMPLE_DATA directly -- the fact tables are too large)
+- Add the usage markers from AGENTS.md (APP_ORIGIN in app.yml,
+  QUERY_TAG on the connection with "iter":"1")
 
 Output:
 - Deployed interactive dashboard at the Application Service URL
@@ -335,8 +337,11 @@ For every field, see the [app.yml reference](https://docs.snowflake.com/en/devel
 | **ignore** | Files left out of the upload |
 | **auto_resume** | Resume the service when a request arrives (default *true*) |
 | **auto_suspend_secs** | Idle seconds before the service suspends (default *0*, never; minimum *300*) |
+| **environment_variables** | Plain (non-secret) settings for the app. ChurnGuard sets *APP_ORIGIN* here (see the note below) |
 
 Each ***snow app deploy*** applies the whole manifest. Iteration 2 adds *secrets* and *external_access_integrations* so the app can reach Snowflake Postgres. Otherwise only the app code changes.
+
+> **Note:** ChurnGuard carries two anonymous usage markers: *APP_ORIGIN* in *app.yml* and a *QUERY_TAG* on every query the app runs. They tell Snowflake DevRel that an app started from this guide. They hold no customer data, and the app works the same without them. To opt out, delete both. *AGENTS.md* in the companion repo describes them.
 
 > **Tip:** With the default *auto_suspend_secs* of *0*, the app never suspends and keeps consuming credits while idle. For a lab, set it to *300* (five minutes), or run the cleanup when you finish. See [Scale and suspend apps](https://docs.snowflake.com/en/developer-guide/snowflake-app-runtime/scale-and-suspend).
 
