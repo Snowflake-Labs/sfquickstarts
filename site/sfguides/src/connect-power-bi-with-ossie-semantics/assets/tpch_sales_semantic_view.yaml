@@ -1,0 +1,99 @@
+name: tpch_sales
+description: Order sales by customer segment and nation
+tables:
+- name: orders
+  base_table:
+    database: OSSIE_DEMO
+    schema: PUBLIC
+    table: ORDERS
+  primary_key:
+    columns:
+    - o_orderkey
+  description: One row per customer order
+  dimensions:
+  - name: o_orderkey
+    expr: o_orderkey
+    description: Order identifier
+    data_type: NUMBER(38,0)
+  - name: o_custkey
+    expr: o_custkey
+    description: Customer who placed the order
+    data_type: NUMBER(38,0)
+  - name: o_orderstatus
+    expr: o_orderstatus
+    description: Order status (F = fulfilled, O = open, P = partial)
+    data_type: VARCHAR
+  time_dimensions:
+  - name: o_orderdate
+    expr: o_orderdate
+    description: Date the order was placed
+    data_type: DATE
+  facts:
+  - name: o_totalprice
+    expr: o_totalprice
+    description: Total price of the order
+    data_type: NUMBER(12,2)
+- name: customer
+  base_table:
+    database: OSSIE_DEMO
+    schema: PUBLIC
+    table: CUSTOMER
+  primary_key:
+    columns:
+    - c_custkey
+  description: Customers
+  dimensions:
+  - name: c_custkey
+    expr: c_custkey
+    description: Customer identifier
+    data_type: NUMBER(38,0)
+  - name: c_name
+    expr: c_name
+    description: Customer name
+    data_type: VARCHAR
+  - name: c_nationkey
+    expr: c_nationkey
+    description: Customer nation
+    data_type: NUMBER(38,0)
+  - name: c_mktsegment
+    expr: c_mktsegment
+    description: Market segment
+    data_type: VARCHAR
+- name: nation
+  base_table:
+    database: OSSIE_DEMO
+    schema: PUBLIC
+    table: NATION
+  primary_key:
+    columns:
+    - n_nationkey
+  description: Countries
+  dimensions:
+  - name: n_nationkey
+    expr: n_nationkey
+    description: Nation identifier
+    data_type: NUMBER(38,0)
+  - name: n_name
+    expr: n_name
+    description: Nation name
+    data_type: VARCHAR
+relationships:
+- name: orders_to_customer
+  left_table: orders
+  right_table: customer
+  relationship_columns:
+  - left_column: o_custkey
+    right_column: c_custkey
+- name: customer_to_nation
+  left_table: customer
+  right_table: nation
+  relationship_columns:
+  - left_column: c_nationkey
+    right_column: n_nationkey
+metrics:
+- name: total_sales
+  expr: SUM(orders.o_totalprice)
+  description: Total order value
+- name: order_count
+  expr: COUNT(orders.o_orderkey)
+  description: Number of orders
