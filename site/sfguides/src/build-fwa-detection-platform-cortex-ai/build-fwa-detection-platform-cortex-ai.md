@@ -21,6 +21,8 @@ Snowflake is uniquely suited for this because every one of these capabilities ru
 
 This guide builds a complete, end-to-end FWA detection platform for healthcare claims. Every SQL block is copy-pastable and validated. Nothing leaves Snowflake.
 
+![FWA Platform Architecture](assets/fwa-architecture-diagram.png)
+
 ### Why Now?
 - ML infrastructure now processes massive claim volumes in near real time at falling cost.
 - LLMs unlock explainability — AI returns reasoning behind a flag, giving investigators probable cause.
