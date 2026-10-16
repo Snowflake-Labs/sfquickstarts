@@ -56,7 +56,7 @@ The end-to-end workflow looks like this:
 
 ### What You Will Need
 - A free [Snowflake Account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) with access to `SNOWFLAKE_SAMPLE_DATA`
-- Git, Python 3.11+, and [uv](https://docs.astral.sh/uv/getting-started/installation/) installed locally (`pip install uv` works if you don't have it)
+- Git, Python 3.10+, and [uv](https://docs.astral.sh/uv/getting-started/installation/) installed locally (`pip install uv` works if you don't have it)
 - A text editor, or [Tabular Editor](https://github.com/TabularEditor/TabularEditor) to edit the Power BI model file
 
 
@@ -206,8 +206,9 @@ The three tables, their columns, and both relationships carry over. Each Snowfla
 
 The converter translates simple aggregates such as `SUM`, `COUNT`, `COUNT(DISTINCT ...)`, `AVG`, and division of those. A SQL expression outside that set becomes a `BLANK()` measure with a warning instead of a guessed formula.
 
-The converter prints warnings to stderr. For this model they are expected:
+The converter prints warnings and ends with a count of constructs it couldn't convert faithfully. For this model they are expected:
 
+- The file targets Ossie `0.1.1` and the converter targets `0.2.0.dev0`. The model in this guide converts fully despite the mismatch.
 - Snowflake-specific settings stored in `SNOWFLAKE` custom extensions have no Power BI equivalent and are dropped from `model.bim`.
 - Metrics have no home table in Ossie, so all measures are placed on the first table, `CUSTOMER`.
 - The table partitions use Direct Lake with placeholder workspace and item IDs. The model definition is complete, but it isn't connected to data. Connecting it is outside the scope of this guide.
@@ -218,7 +219,7 @@ The converter prints warnings to stderr. For this model they are expected:
 
 An analyst adds a measure in Power BI: total sales divided by the number of distinct customers.
 
-Open `~/ossie-demo/model.bim` in Tabular Editor or a text editor. Find the `CUSTOMER` table's `measures` list and add this entry after `TOTAL_SALES`:
+Open `~/ossie-demo/model.bim` in Tabular Editor or a text editor. Find the `CUSTOMER` table's `measures` list and add this entry at the end of the list. Put a comma after the measure before it:
 
 ```json
 {
