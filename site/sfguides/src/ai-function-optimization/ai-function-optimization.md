@@ -23,6 +23,8 @@ In this guide you will triage customer support tickets into five queues (`BILLIN
 3. Run an **AI function optimization** experiment that rewrites the function body and compares several models on cost and quality.
 4. Deploy the winning body as a new function version and compare all three approaches side by side.
 
+![Flow diagram: labeled tickets feed AI_CLASSIFY and a llama3.1-8b AI function, both are scored by evaluation experiments, an optimization experiment uses claude-opus-4-7 to rewrite the prompt across three models, and the winner is deployed as TRIAGE_TICKET_V2](assets/ai_function_optimization_flow.png)
+
 ### Prerequisites
 - Familiarity with SQL
 - Basic understanding of LLM prompting concepts
