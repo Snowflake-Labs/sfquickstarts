@@ -17,7 +17,7 @@ Duration: 5
 
 Public sector agencies rely on "pay and chase" — send the payment, then try to recover fraudulent dollars after the fact. A modern FWA platform needs to do many things at once: ingest and unify claims from disparate systems, profile provider behavior against peers in real time, run ML models for anomaly detection and predictive scoring, classify fraud types with LLM explainability, detect collusion rings through graph analysis, parse clinical documents and transcribe audio for evidence, and give investigators a natural-language interface to query it all — without moving sensitive PHI/PII outside the platform boundary.
 
-Snowflake is uniquely suited for this because every one of these capabilities runs natively inside a single platform — no data egress, no external ML infrastructure, no separate graph database, no third-party LLM APIs. Dynamic Tables replace batch ETL with continuous refresh. Snowflake ML trains and scores anomaly detection and classification models in pure SQL. Cortex AI functions (AI_CLASSIFY, COMPLETE, AI_PARSE_DOCUMENT, AI_TRANSCRIBE, AI_SUMMARIZE) bring LLM intelligence directly to your data. Cortex Search indexes unstructured evidence for retrieval. Cortex Agents orchestrate structured and unstructured queries behind a single natural-language interface. And Streamlit in Snowflake delivers the investigator UI — all governed by Snowflake's native RBAC, masking policies, and encryption.
+Snowflake is uniquely suited for this because every one of these capabilities runs natively inside a single platform — no data egress, no external ML infrastructure, no separate graph database, no third-party LLM APIs. Dynamic Tables replace batch ETL with continuous refresh. Snowflake ML trains and scores anomaly detection and classification models in pure SQL. Cortex AI functions (AI_CLASSIFY, AI_COMPLETE, AI_PARSE_DOCUMENT, AI_TRANSCRIBE, AI_SUMMARIZE) bring LLM intelligence directly to your data. Cortex Search indexes unstructured evidence for retrieval. Cortex Agents orchestrate structured and unstructured queries behind a single natural-language interface. And Streamlit in Snowflake delivers the investigator UI — all governed by Snowflake's native RBAC, masking policies, and encryption.
 
 This guide builds a complete, end-to-end FWA detection platform for healthcare claims. Every SQL block is copy-pastable and validated. Nothing leaves Snowflake.
 
@@ -28,7 +28,7 @@ This guide builds a complete, end-to-end FWA detection platform for healthcare c
 - LLMs unlock explainability — AI returns reasoning behind a flag, giving investigators probable cause.
 - Fraudsters use AI too (fake records, synthetic identities). Agencies must match these tools for defense.
 
-### Prerequisites
+### What You'll Need
 - Snowflake account with ACCOUNTADMIN (or roles with ML, Cortex AI, Cortex Search, Cortex Agent, and Streamlit privileges)
 - A warehouse (MEDIUM) and familiarity with SQL and basic Python
 - Cortex AI LLM functions require supported regions — check Snowflake docs for availability
@@ -238,7 +238,7 @@ INSERT INTO FWA_QS.DETECTION.AUDIO_METADATA VALUES
 > **Verify:** `SELECT COUNT(*) FROM FWA_QS.DETECTION.CLAIMS;` — expect 24 rows.
 
 <!-- ------------------------ -->
-## Provider Behavior Profiles (Dynamic Tables)
+## Provider Behavior Profiles
 
 Duration: 5
 
@@ -287,7 +287,7 @@ ORDER BY RISK_SCORE DESC;
 ```
 
 <!-- ------------------------ -->
-## Fraud Classification (Cortex AI)
+## Fraud Classification
 
 Duration: 10
 
@@ -306,14 +306,14 @@ SELECT
     p.SPECIALTY,
     pp.RISK_SCORE,
     pp.PEER_BILLING_RATIO,
-    SNOWFLAKE.CORTEX.AI_CLASSIFY(
+    AI_CLASSIFY(
         'Healthcare claim — Procedure: ' || c.PROCEDURE_CODE
             || ', Amount: $' || c.CLAIM_AMOUNT::VARCHAR
             || ', Specialty: ' || p.SPECIALTY
             || ', Provider risk score: ' || pp.RISK_SCORE::VARCHAR,
         ['Upcoding','Phantom Billing','Unbundling','Provider Ring','Identity Theft','Legitimate']
     ):"labels"[0]::VARCHAR                                     AS FRAUD_TYPE,
-    SNOWFLAKE.CORTEX.COMPLETE('llama3.1-70b',
+    AI_COMPLETE('llama3.3-70b',
         'You are a healthcare fraud analyst. In 2 sentences, explain why this claim '
         || 'may be fraudulent. Procedure: ' || c.PROCEDURE_CODE
         || ', Amount: $' || c.CLAIM_AMOUNT::VARCHAR
@@ -336,7 +336,7 @@ FROM FWA_QS.DETECTION.FRAUD_CLASSIFICATIONS;
 ```
 
 <!-- ------------------------ -->
-## Anomaly Detection and Predictive Scoring (Snowflake ML)
+## Anomaly Detection & Scoring
 
 Duration: 10
 
@@ -397,7 +397,7 @@ CREATE OR REPLACE SNOWFLAKE.ML.CLASSIFICATION FWA_QS.DETECTION.FRAUD_PREDICTION_
 ```
 
 <!-- ------------------------ -->
-## Fraud Ring Detection (Graph Analysis)
+## Fraud Ring Detection
 
 Duration: 5
 
@@ -464,7 +464,7 @@ SELECT * FROM FWA_QS.DETECTION.FRAUD_RINGS;
 ```
 
 <!-- ------------------------ -->
-## Document and Audio Analysis (Cortex AI)
+## Document & Audio Analysis
 
 Duration: 5
 
@@ -482,13 +482,11 @@ SELECT
     d.DOC_ID,
     d.FILE_NAME,
     d.CLAIM_ID,
-    SNOWFLAKE.CORTEX.AI_PARSE_DOCUMENT(
-        @FWA_QS.DETECTION.DOCUMENTS, d.FILE_NAME
-    ):content::VARCHAR AS EXTRACTED_TEXT,
-    SNOWFLAKE.CORTEX.COMPLETE('llama3.1-70b',
+    AI_PARSE_DOCUMENT(TO_FILE('@FWA_QS.DETECTION.DOCUMENTS', d.FILE_NAME)):content::VARCHAR AS EXTRACTED_TEXT,
+    AI_COMPLETE('llama3.3-70b',
         'You are a healthcare fraud auditor. Compare this clinical document to the claim details '
         || 'and list any mismatches. Document text: '
-        || SNOWFLAKE.CORTEX.AI_PARSE_DOCUMENT(@FWA_QS.DETECTION.DOCUMENTS, d.FILE_NAME):content::VARCHAR
+        || AI_PARSE_DOCUMENT(TO_FILE('@FWA_QS.DETECTION.DOCUMENTS', d.FILE_NAME)):content::VARCHAR
         || ' | Claim: procedure=' || c.PROCEDURE_CODE
         || ', diagnosis=' || c.DIAGNOSIS_CODE
         || ', amount=$' || c.CLAIM_AMOUNT::VARCHAR
@@ -511,13 +509,9 @@ SELECT
     a.AUDIO_ID,
     a.FILE_NAME,
     a.SOURCE_TYPE,
-    SNOWFLAKE.CORTEX.AI_TRANSCRIBE(
-        @FWA_QS.DETECTION.AUDIO_FILES, a.FILE_NAME
-    ) AS TRANSCRIPTION,
-    SNOWFLAKE.CORTEX.AI_SUMMARIZE(
-        SNOWFLAKE.CORTEX.AI_TRANSCRIBE(
-            @FWA_QS.DETECTION.AUDIO_FILES, a.FILE_NAME
-        )
+    AI_TRANSCRIBE(TO_FILE('@FWA_QS.DETECTION.AUDIO_FILES', a.FILE_NAME)) AS TRANSCRIPTION,
+    AI_SUMMARIZE(
+        AI_TRANSCRIBE(TO_FILE('@FWA_QS.DETECTION.AUDIO_FILES', a.FILE_NAME))
     ) AS SUMMARY
 FROM FWA_QS.DETECTION.AUDIO_METADATA a;
 ```
@@ -525,7 +519,7 @@ FROM FWA_QS.DETECTION.AUDIO_METADATA a;
 > **In production**, Snowflake Cortex AI provides a full suite of functions for audio and multilingual workflows: AI_TRANSCRIBE, AI_TRANSLATE, AI_SUMMARIZE, AI_CLASSIFY, AI_EXTRACT, AI_COMPLETE, AI_SENTIMENT, AI_PARSE_DOCUMENT. These run inside Snowflake — no external API calls, no data movement. Combine them to build end-to-end pipelines, e.g. AI_TRANSCRIBE → AI_TRANSLATE → AI_SUMMARIZE for multilingual hotline calls.
 
 <!-- ------------------------ -->
-## Investigation Agent (Cortex Agent)
+## Investigation Agent
 
 Duration: 15
 
@@ -553,9 +547,7 @@ CREATE OR REPLACE CORTEX SEARCH SERVICE FWA_QS.DETECTION.DOCUMENT_SEARCH
 AS (
     SELECT
         d.DOC_ID, d.CLAIM_ID, d.FILE_NAME, d.DOC_TYPE,
-        SNOWFLAKE.CORTEX.AI_PARSE_DOCUMENT(
-            @FWA_QS.DETECTION.DOCUMENTS, d.FILE_NAME
-        ):content::VARCHAR AS EXTRACTED_TEXT
+        AI_PARSE_DOCUMENT(TO_FILE('@FWA_QS.DETECTION.DOCUMENTS', d.FILE_NAME)):content::VARCHAR AS EXTRACTED_TEXT
     FROM FWA_QS.DETECTION.DOCUMENT_METADATA d
 );
 
@@ -567,9 +559,7 @@ CREATE OR REPLACE CORTEX SEARCH SERVICE FWA_QS.DETECTION.AUDIO_SEARCH
 AS (
     SELECT
         a.AUDIO_ID, a.FILE_NAME, a.SOURCE_TYPE, a.RELATED_PROVIDER,
-        SNOWFLAKE.CORTEX.AI_TRANSCRIBE(
-            @FWA_QS.DETECTION.AUDIO_FILES, a.FILE_NAME
-        )::VARCHAR AS TRANSCRIPTION_TEXT
+        AI_TRANSCRIBE(TO_FILE('@FWA_QS.DETECTION.AUDIO_FILES', a.FILE_NAME))::VARCHAR AS TRANSCRIPTION_TEXT
     FROM FWA_QS.DETECTION.AUDIO_METADATA a
 );
 
@@ -745,7 +735,7 @@ SELECT SNOWFLAKE.CORTEX.DATA_AGENT_RUN(
 ```
 
 <!-- ------------------------ -->
-## Streamlit Investigator Application
+## Streamlit Application
 
 Duration: 10
 
@@ -878,7 +868,7 @@ with tab6:
 ```
 
 <!-- ------------------------ -->
-## Security Best Practices
+## Security & Access Control
 
 Duration: 5
 
@@ -915,7 +905,7 @@ ALTER TABLE FWA_QS.DETECTION.BENEFICIARIES
 ```
 
 <!-- ------------------------ -->
-## Operating, Demoing, and Case Management
+## Operations & Case Management
 
 Duration: 10
 
@@ -976,7 +966,30 @@ ALTER TASK FWA_QS.DETECTION.RETRAIN_ON_NEW_LABELS RESUME;
 This completes the cycle: claims flow in (Phase 1) → get detected and scored (Phase 2) → investigators analyze evidence (Phase 3) → they decide and act, and those decisions improve the next round of detection (Phase 4 → back to Phase 2).
 
 <!-- ------------------------ -->
-## Conclusion and Resources
+## Clean Up
+
+Duration: 2
+
+To remove all objects created by this guide and stop the scheduled retrain task:
+
+```sql
+-- Suspend the scheduled task first
+ALTER TASK IF EXISTS FWA_QS.DETECTION.RETRAIN_ON_NEW_LABELS SUSPEND;
+
+-- Drop the database (removes all tables, views, dynamic tables, stages,
+-- ML models, search services, agent, stream, task, and Streamlit app)
+DROP DATABASE IF EXISTS FWA_QS;
+
+-- Drop the warehouse
+DROP WAREHOUSE IF EXISTS FWA_WH;
+
+-- Drop the custom roles
+DROP ROLE IF EXISTS FWA_ADMIN;
+DROP ROLE IF EXISTS FWA_INVESTIGATOR;
+```
+
+<!-- ------------------------ -->
+## Conclusion & Resources
 
 Duration: 2
 
@@ -984,7 +997,7 @@ Congratulations! You have built a complete Fraud, Waste, and Abuse detection pla
 
 ### What You Learned
 - How Dynamic Tables replace batch ETL with continuously refreshing provider profiles
-- How Cortex AI (AI_CLASSIFY, COMPLETE) classifies fraud with plain-English explanations
+- How Cortex AI (AI_CLASSIFY, AI_COMPLETE) classifies fraud with plain-English explanations
 - How Snowflake ML trains anomaly detection and classification models in pure SQL
 - How SQL graph analysis detects fraud rings without an external graph database
 - How Cortex AI functions parse documents and transcribe audio for evidence
@@ -998,11 +1011,11 @@ Congratulations! You have built a complete Fraud, Waste, and Abuse detection pla
 |---|---|---|
 | Data foundation | Tables, Stages | 2-3 |
 | Real-time profiles | Dynamic Tables | 4 |
-| Fraud classification | Cortex AI (AI_CLASSIFY, COMPLETE) | 5 |
+| Fraud classification | Cortex AI (AI_CLASSIFY, AI_COMPLETE) | 5 |
 | Anomaly detection | Snowflake ML Anomaly Detection | 6 |
 | Predictive scoring | Snowflake ML Classification | 6 |
 | Fraud ring mapping | SQL graph analysis | 7 |
-| Document analysis | Cortex AI (AI_PARSE_DOCUMENT, COMPLETE) | 8 |
+| Document analysis | Cortex AI (AI_PARSE_DOCUMENT, AI_COMPLETE) | 8 |
 | Audio analysis | Cortex AI (AI_TRANSCRIBE, AI_SUMMARIZE) | 8 |
 | Natural-language investigation | Cortex Agent + Cortex Search + Cortex Analyst | 9 |
 | Investigator UI | Streamlit in Snowflake | 10 |
