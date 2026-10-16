@@ -170,7 +170,7 @@ EXECUTE EXPERIMENT EVAL_BUILTIN_CLASSIFY;
 > **Note:** `EXECUTE EXPERIMENT` runs **asynchronously**. The evaluation keeps running in the background while you continue; you'll check its results in a later step.
 
 <!-- ------------------------ -->
-## Create an AI Function
+## Create a custom AI Function
 Duration: 4
 
 A custom AI function wraps `AI_COMPLETE` with a system prompt, a user template, and structured JSON output, and gives it a stable name you can call like any SQL function. To leave room for the optimizer, start with a **small, inexpensive model** and a **naive prompt** that omits the business rules.
