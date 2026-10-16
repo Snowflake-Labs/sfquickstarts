@@ -1,0 +1,74 @@
+name: FWA_Investigation_Model
+tables:
+  - name: CLAIMS
+    base_table:
+      database: FWA_QS
+      schema: DETECTION
+      table: CLAIMS
+    dimensions:
+      - name: CLAIM_ID
+        expr: CLAIM_ID
+        data_type: TEXT
+      - name: PROVIDER_ID
+        expr: PROVIDER_ID
+        data_type: TEXT
+      - name: BENEFICIARY_ID
+        expr: BENEFICIARY_ID
+        data_type: TEXT
+      - name: PROCEDURE_CODE
+        expr: PROCEDURE_CODE
+        data_type: TEXT
+    time_dimensions:
+      - name: CLAIM_DATE
+        expr: CLAIM_DATE
+        data_type: DATE
+    facts:
+      - name: CLAIM_AMOUNT
+        expr: CLAIM_AMOUNT
+        data_type: NUMBER
+
+  - name: PROVIDER_PROFILES
+    base_table:
+      database: FWA_QS
+      schema: DETECTION
+      table: PROVIDER_PROFILES
+    dimensions:
+      - name: PROVIDER_ID
+        expr: PROVIDER_ID
+        data_type: TEXT
+      - name: PROVIDER_NAME
+        expr: PROVIDER_NAME
+        data_type: TEXT
+      - name: SPECIALTY
+        expr: SPECIALTY
+        data_type: TEXT
+    facts:
+      - name: RISK_SCORE
+        expr: RISK_SCORE
+        data_type: NUMBER
+      - name: AVG_CLAIM_AMOUNT
+        expr: AVG_CLAIM_AMOUNT
+        data_type: NUMBER
+      - name: TOTAL_CLAIMS
+        expr: TOTAL_CLAIMS
+        data_type: NUMBER
+
+  - name: FRAUD_CLASSIFICATIONS
+    base_table:
+      database: FWA_QS
+      schema: DETECTION
+      table: FRAUD_CLASSIFICATIONS
+    dimensions:
+      - name: CLAIM_ID
+        expr: CLAIM_ID
+        data_type: TEXT
+      - name: FRAUD_TYPE
+        expr: FRAUD_TYPE
+        data_type: TEXT
+    facts:
+      - name: CLAIM_AMOUNT
+        expr: CLAIM_AMOUNT
+        data_type: NUMBER
+      - name: RISK_SCORE
+        expr: RISK_SCORE
+        data_type: NUMBER
