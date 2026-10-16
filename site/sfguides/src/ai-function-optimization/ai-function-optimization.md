@@ -12,7 +12,7 @@ open in snowflake: https://docs.snowflake.com/en/user-guide/snowflake-cortex/ai-
 # Build, Evaluate, and Optimize AI Functions in Snowflake
 <!-- ------------------------ -->
 ## Overview
-Duration: 3
+Total Duration: ~35 minutes
 
 Writing a prompt that works on a handful of examples is easy. Knowing whether it actually works across your data — and whether a cheaper model or a better prompt would do the job — is hard. Snowflake now lets you treat AI calls like any other engineered asset: **version** them, **measure** them against labeled data, and **optimize** them automatically, all in SQL.
 
@@ -46,7 +46,7 @@ In this guide you will triage customer support tickets into five queues (`BILLIN
 
 <!-- ------------------------ -->
 ## Setup
-Duration: 3
+Duration: 3 minutes
 
 ### Import the Notebook
 
@@ -68,7 +68,7 @@ USE SCHEMA VHOL_AI_DB.AI_FUNC;
 
 <!-- ------------------------ -->
 ## Load Labeled Data
-Duration: 3
+Duration: 3 minutes
 
 Optimization is only as good as the data you measure against. This lab uses 40 hand-labeled tickets. The last ten are deliberately tricky: they *mention* billing or cancelling but belong elsewhere, according to these routing rules:
 
@@ -135,7 +135,7 @@ ALTER DATASET VHOL_AI_DB.AI_FUNC.TICKETS_DS
 
 <!-- ------------------------ -->
 ## Baseline with AI_CLASSIFY
-Duration: 4
+Duration: 4 minutes
 
 Start with the simplest option: the built-in `AI_CLASSIFY` function. Preview it on the tricky tickets:
 
@@ -171,7 +171,7 @@ EXECUTE EXPERIMENT EVAL_BUILTIN_CLASSIFY;
 
 <!-- ------------------------ -->
 ## Create a custom AI Function
-Duration: 4
+Duration: 4 minutes
 
 A custom AI function wraps `AI_COMPLETE` with a system prompt, a user template, and structured JSON output, and gives it a stable name you can call like any SQL function. To leave room for the optimizer, start with a **small, inexpensive model** and a **naive prompt** that omits the business rules.
 
@@ -205,7 +205,7 @@ FROM SUPPORT_TICKETS ORDER BY TICKET_ID DESC LIMIT 10;
 
 <!-- ------------------------ -->
 ## Evaluate the Custom Function
-Duration: 5
+Duration: 5 minutes
 
 Use the same experiment type to score the custom function — only `query_text` changes.
 
@@ -264,7 +264,7 @@ Expect most misses to come from the tricky tickets — exactly the business rule
 
 <!-- ------------------------ -->
 ## Optimize the Function
-Duration: 10
+Duration: 10 minutes
 
 The optimizer (based on GEPA) uses a strong `reflection_model` to study failures, rewrites the entire function body — prompt, model reference, and SQL pre/post-processing — and scores each candidate **for every model in `models` concurrently**. `strategy: quality_first` favors accuracy; `budget` controls how many iterations it runs. `ultra-light` (about two iterations) fits a lab; use `light`, `medium`, or `heavy` for real workloads.
 
@@ -312,7 +312,7 @@ The notebook's `opt_status` cell joins `SHOW RUNS` with `SHOW RUN PARAMETERS` so
 
 <!-- ------------------------ -->
 ## Deploy the Winner
-Duration: 4
+Duration: 4 minutes
 
 The following block selects the run with the highest `val_score` (cheapest on ties), reads its optimized function body, and deploys it as `TRIAGE_TICKET_V2`. The original function stays in place so you can A/B test.
 
@@ -366,7 +366,7 @@ EXECUTE EXPERIMENT EVAL_TRIAGE_V2;
 
 <!-- ------------------------ -->
 ## Compare Results
-Duration: 4
+Duration: 4 minutes
 
 Once `EVAL_TRIAGE_V2` finishes, collect the scores from all three evaluations into one table:
 
@@ -421,7 +421,7 @@ The notebook includes two Python cells that chart the results:
 
 <!-- ------------------------ -->
 ## Clean Up
-Duration: 1
+Duration: 1 minute
 
 Remove everything created in this guide:
 
@@ -431,7 +431,7 @@ DROP DATABASE IF EXISTS VHOL_AI_DB;
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
-Duration: 1
+Duration: 1 minute
 
 Congratulations! You built an AI function, measured it against labeled data, and let Snowflake automatically rewrite its prompt and choose a model that balances cost and quality — all in SQL. You can apply the same loop of *dataset → evaluate → optimize → deploy → re-evaluate* to any classification, extraction, or generation task you run with Cortex AI.
 
