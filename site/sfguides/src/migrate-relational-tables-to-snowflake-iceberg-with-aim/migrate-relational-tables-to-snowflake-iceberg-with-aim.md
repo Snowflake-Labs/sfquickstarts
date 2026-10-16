@@ -42,7 +42,7 @@ A three-row `Sales.Orders` table in SQL Server, loaded into `ICEBERG_LAB.PUBLIC.
 
 ## Prepare the Source
 
-On the SQL Server instance you will register with SnowConvert AI, create `IcebergLab.Sales.Orders`. The same script is in [`assets/sqlserver-orders.sql`](./assets/sqlserver-orders.sql).
+On the SQL Server instance you will register with SnowConvert AI, create `IcebergLab.Sales.Orders`. The same script is in [`assets/sqlserver-orders.sql`](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/migrate-relational-tables-to-snowflake-iceberg-with-aim/assets/sqlserver-orders.sql).
 
 ```sql
 CREATE DATABASE IcebergLab;
@@ -50,6 +50,9 @@ GO
 USE IcebergLab;
 GO
 CREATE SCHEMA Sales;
+GO
+IF OBJECT_ID('Sales.Orders') IS NOT NULL
+    DROP TABLE Sales.Orders;
 GO
 CREATE TABLE Sales.Orders (
     OrderId INT NOT NULL PRIMARY KEY,
@@ -86,7 +89,7 @@ A `Status: Success` row means the plugin can read the table. This guide uses the
 
 ## Prepare Snowflake
 
-Create `ICEBERG_LAB` and an external stage named `ICEBERG_LAB.PUBLIC.EXTRACT_STAGE`. Replace the placeholders. The same script, including the optional customer-volume block, is in [`assets/snowflake-setup.sql`](./assets/snowflake-setup.sql).
+Create `ICEBERG_LAB` and an external stage named `ICEBERG_LAB.PUBLIC.EXTRACT_STAGE`. Replace the placeholders. The same script, including the optional customer-volume block, is in [`assets/snowflake-setup.sql`](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/migrate-relational-tables-to-snowflake-iceberg-with-aim/assets/snowflake-setup.sql).
 
 ```sql
 CREATE DATABASE IF NOT EXISTS ICEBERG_LAB;
