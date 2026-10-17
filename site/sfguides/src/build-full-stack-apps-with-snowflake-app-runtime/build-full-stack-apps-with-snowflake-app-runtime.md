@@ -211,7 +211,7 @@ Open the repo directory in Cortex Code Desktop. Your account name should appear 
 **How your app carries over.** Cortex Code generates the app in *churnguard/* on your ***my-app*** branch. Each iteration branch adds only that iteration's prompts and scripts, so at the start of the next iteration you commit your app and merge the next branch in. Edit only files in *churnguard/* and every merge stays conflict-free.
 
 <!-- ------------------------ -->
-## Iteration 1: Build the ChurnGuard Data Explorer
+## Iteration 1: Build the Data Explorer
 
 *See the risk. Explore the why.*
 
