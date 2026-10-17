@@ -224,8 +224,6 @@ ___
 ### Other Questions
 Your Agent is configured to handle a variety of complex queries that blend various types of data. Try these examples to further test the Agent:
 
-Here are some other questions you may ask.
-
 #### *Which product categories perform best on social media?*
 
 #### *What's the relationship between social media mentions and sales?*
