@@ -6,7 +6,6 @@ summary: Install Snowflake CoCo CLI, connect to your Snowflake account, and run 
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-fork repo link: https://github.com/Snowflake-Labs/sfguide-getting-started-with-coco-cli
 
 
 # Get Started with Snowflake CoCo CLI
@@ -24,15 +23,17 @@ In this guide you will install the CLI, connect it to a Snowflake account, and r
 - How to connect to a Snowflake account using browser-based SSO or a programmatic access token
 - How to ask natural-language questions and get SQL-backed answers
 - How to explore query results with the built-in table viewer
-- How to manage sessions so you can pause and resume work
+- How to manage sessions so you can pause, resume, and restrict work
 
 ### What You'll Build
 A working Snowflake CoCo CLI environment connected to your Snowflake account, ready for day-to-day use.
 
 ### Prerequisites
-- Access to a [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) (or [sign up for a free Snowflake CoCo CLI trial](https://signup.snowflake.com/cortex-code))
+- A paid Snowflake account, or [sign up for a free Snowflake CoCo CLI trial](https://signup.snowflake.com/cortex-code?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)
 - A terminal with `bash`, `zsh`, or `fish` (macOS / Linux) or PowerShell (Windows)
-- The SNOWFLAKE.CORTEX_USER database role (granted to all users by default through the PUBLIC role)
+- The SNOWFLAKE.CORTEX_USER or SNOWFLAKE.CORTEX_AGENT_USER database role. CORTEX_USER is granted to all users by default through the PUBLIC role, but your organization may have revoked it.
+
+> **Note:** Snowflake CoCo CLI is not available on standard Snowflake trial accounts (for example, accounts created at trial.snowflake.com). Use a paid account or the dedicated Snowflake CoCo CLI trial linked above.
 
 <!-- ------------------------ -->
 ## Install the CLI
@@ -46,6 +47,8 @@ curl -LsS https://ai.snowflake.com/static/cc-scripts/install.sh | sh
 ```
 
 The script installs the `cortex` executable to `~/.local/bin` and adds it to your PATH.
+
+> **Tip:** If the command fails because of custom options in your `~/.curlrc`, add the `-q` flag so `curl` ignores that file: `curl -qLsS https://ai.snowflake.com/static/cc-scripts/install.sh | sh`
 
 ### Windows (native)
 
@@ -100,7 +103,7 @@ Once connected, Snowflake CoCo CLI drops you into an interactive session. Type:
 
 This prints your active connection, role, warehouse, database, and schema.
 
-> **Tip:** Snowflake CoCo CLI defaults to the best available model for your account. Use `/model` to see or switch the active model at any time. See [Supported models](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-cli#supported-models) for the full list.
+> **Tip:** Use `/model` to see the models available to your role or to switch the active model at any time. Besides specific models, you can pick **Auto** (Snowflake selects the model), **Auto Intelligent** (favors the most capable models), or **Auto Efficient** (optimizes for cost). To set the model for a single launch, pass `--model`, as in `cortex --model auto`. See [Supported models](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-cli#supported-models) for details.
 
 > **Note:** If your preferred model is not available in your region, an ACCOUNTADMIN can enable [cross-region inference](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cross-region-inference) to access it from another region.
 
@@ -207,6 +210,22 @@ Want to try a different approach without losing your current progress? Fork the 
 
 This creates a new session branched from the current point.
 
+### Restrict a session
+
+To limit what Snowflake CoCo CLI can do in the current session, for example read-only access or only specific roles, apply a [Restricted Session Scope](https://docs.snowflake.com/en/user-guide/restricted-session-scope):
+
+```
+/guardrails
+```
+
+Select **Restrict this session**, then apply an existing scope or choose read-only access. Run `/guardrails status` to see the active restriction. You can also apply a named scope at launch:
+
+```bash
+cortex --with-restricted-session-scope=READONLY_PM
+```
+
+Once a restriction is active you can switch to another scope, but you can't remove or relax it in the current session. Start a new session to run without it.
+
 <!-- ------------------------ -->
 ## Conclusion And Resources
 
@@ -217,15 +236,15 @@ From here you can:
 - Enable plan mode (`/plan`) to review and approve each action before it runs
 - Connect [MCP servers](https://docs.snowflake.com/en/user-guide/cortex-code/extensibility.html#extensibility-mcp) for external tools like Slack, GitHub, Jira, and more
 - Add [custom skills](https://docs.snowflake.com/en/user-guide/cortex-code/extensibility.html#extensibility-skills) to tailor the assistant to your workflow
-- Schedule repeating tasks with [cortex automation](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-cli#automations)
-- Run sessions in a [cloud sandbox](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-cli#cloud-sandbox) with `cortex --cloud`
+- Schedule repeating tasks with [CoCo automations](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-automations)
+- Run tools in a Snowflake-managed [cloud sandbox](https://docs.snowflake.com/en/user-guide/cortex-code/cloud-sandbox) with `cortex --cloud`
 
 ### What You Learned
 - How to install Snowflake CoCo CLI on any supported platform
 - How to connect to Snowflake using SSO or a programmatic access token
 - How to ask natural-language questions and run SQL from the terminal
 - How to explore query results with the table viewer and `#` table references
-- How to manage, resume, fork, and rewind sessions
+- How to manage, resume, fork, rewind, and restrict sessions
 
 ### Related Resources
 
@@ -243,5 +262,5 @@ Guides:
 - [Getting Started with Snowflake CoCo Desktop](https://www.snowflake.com/en/developers/guides/getting-started-with-coco-desktop/)
 
 Additional Reading:
-- [Snowflake Developers Blog](https://developers.snowflake.com/blog/)
+- [Snowflake Developers Blog](https://www.snowflake.com/en/developers/blog/)
 - [Snowflake Community](https://community.snowflake.com/s/)
