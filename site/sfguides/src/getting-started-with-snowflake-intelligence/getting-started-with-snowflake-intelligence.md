@@ -19,8 +19,6 @@ Unlike standalone AI tools, CoWork is grounded in your enterprise data from day 
 
 By the end of this guide, you will have a working Cortex Agent connected to CoWork that can answer business questions across structured sales data and unstructured support tickets, generate charts, and take actions like sending summary emails.
 
-![Snowflake CoWork](assets/snowflake-cowork-home-page.png)
-
 ### Use Cases
 
 CoWork moves teams from reactive Q&A to proactive, context-aware intelligence that drives decisions and execution across various business use cases:
@@ -196,27 +194,27 @@ Tools are the capabilities an agent can use to accomplish a task. Think of them 
 
 Open <a href="https://ai.snowflake.com/_deeplink/#/ai?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_campaign=-us-en-all&utm_content=app-getting-started-with-si&utm_cta=developer-guides-deeplink" class="_deeplink">Snowflake CoWork</a> and make sure you're signed into the right account. If you're not sure, click on your name in the bottom left >> **Sign out** and sign back in. Also note that your role should be set to **SNOWFLAKE_INTELLIGENCE_ADMIN**, the warehouse should be set to **DASH_WH_SI**, and your agent should be set to Sales//AI.
 
-Now, let's ask the following questions.
+Now, let's ask the following questions. Answers are generated live, so wording, numbers, and chart styles will vary from run to run. The notes under each question describe what to look for.
 
 ### Q1. *Show me the trend of sales by product category between June and August.*
 
-![Q1](assets/qa_1.png)
+**What to expect:** The agent uses the **Sales_And_Marketing_Data** tool to query the semantic view and returns a chart of sales by product category for June through August. Fitness Wear stands out with a sharp jump in July (roughly three times June's sales).
 
 ___
 
 ### Q2. *What issues are reported with jackets recently in customer support tickets?*
 
-![Q2](assets/qa_2.png)
+**What to expect:** The agent uses the **Support_Cases** search tool and summarizes the matching tickets. They point to one recurring problem: ThermoJacket Pro jackets tearing along the seams, which customers describe as a manufacturing defect. The answer cites the tickets it used.
 
 ___
 
 ### Q3. *Why did sales of Fitness Wear grow so much in July?*
 
-![Q3](assets/qa_3.png)
+**What to expect:** The agent combines sales, marketing, and social media data to explain the spike. The main driver it finds is influencer activity: Fitness Wear social mentions rose several-fold in July, led by an influencer who posted about the category only that month. Expect a chart and a short explanation of how each data source supports the conclusion.
 
 ### Q4. *Send a summary email*
 
-*NOTE: Check your inbox to see the summary email that would have been sent to the current user's email address.*
+*NOTE: The agent calls the **Send_Email** tool and confirms that the email was sent. Check your inbox for the summary email, which goes to the current user's email address unless you specify another one.*
 
 ### Q5. *Send me this summary every Monday morning*
 
