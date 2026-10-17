@@ -6,7 +6,7 @@ environments: web
 status: Published
 language: en
 duration: 90
-feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
+feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 fork repo link: <https://github.com/Snowflake-Labs/sfguide-build-full-stack-apps-with-snowflake-app-runtime>
 
 # Build Full-Stack Apps with Snowflake App Runtime
@@ -684,7 +684,64 @@ Paste the error into Cortex Code Desktop and ask:
 Cortex Code can run diagnostic queries in your account.
 
 <!-- ------------------------ -->
-## What You Built and Where to Go Next
+## Cleanup
+
+Run this when you're done, including any Build Your Own App prompts in the next section. It removes everything the guide created:
+
+```bash
+snow sql -f scripts/cleanup.sql --connection quickstart
+```
+
+It drops:
+
+- The **APPLICATION SERVICE**
+- The data mirror, its **CHURNGUARD_MIRROR** database, and its catalog integration
+- The **CHURNGUARD_PG** Postgres instance
+- **CHURNGUARD_EAI**, **CHURNGUARD_PG_POLICY**, and the network rules
+- The **SFQUICKSTART_CHURNGUARD** database and everything in it
+- The **SFQUICKSTART_CHURNGUARD_WH** warehouse and **SFQUICKSTART_CHURNGUARD_ROLE**
+
+The script ends by listing anything left over; every list should be empty.
+
+> **Warning:** Make sure the script finishes. A Postgres instance left running keeps using credits.
+
+Leave **SNOWFLAKE_SAMPLE_DATA** in place unless you're sure nothing else in your account uses it.
+
+To clean up by hand:
+
+```sql
+-- Manual cleanup: run these in order
+USE ROLE ACCOUNTADMIN;
+DROP APPLICATION SERVICE IF EXISTS SFQUICKSTART_CHURNGUARD.PUBLIC.CHURNGUARD;
+
+-- The quickstart role owns the mirror and the Postgres instance
+USE ROLE SFQUICKSTART_CHURNGUARD_ROLE;
+-- Also drops the CHURNGUARD_MIRROR database and its catalog integration
+CALL SNOWFLAKE.POSTGRES.DROP_MIRROR('churnguard_mirror');
+DROP POSTGRES INSTANCE IF EXISTS CHURNGUARD_PG;
+
+USE ROLE ACCOUNTADMIN;
+DROP INTEGRATION IF EXISTS CHURNGUARD_EAI;
+DROP NETWORK POLICY IF EXISTS CHURNGUARD_PG_POLICY;
+DROP DATABASE IF EXISTS SFQUICKSTART_CHURNGUARD;   -- includes the network rules
+DROP WAREHOUSE IF EXISTS SFQUICKSTART_CHURNGUARD_WH;
+DROP ROLE IF EXISTS SFQUICKSTART_CHURNGUARD_ROLE;
+```
+
+If *DROP_MIRROR* fails, *DROP POSTGRES INSTANCE* fails too, because the mirror's catalog integration still references the instance. *cleanup.sql* shows the error and handles both leftovers; by hand, run ***DROP INTEGRATION IF EXISTS CHURNGUARD_MIRROR_CATALOG_INTEGRATION***, and to drop the mirror database, first run ***GRANT OWNERSHIP ON DATABASE CHURNGUARD_MIRROR TO ROLE ACCOUNTADMIN*** (it's owned by the *snowflake* application).
+
+To remove what the guide set up on your machine:
+
+```bash
+cortex mcp remove churnguard
+```
+
+If you used psql, also remove the **CHURNGUARD_PG** entries from *~/.pgpass* and *~/.pg_service.conf*. Then set your connection's default ***role*** back to what it was: **SFQUICKSTART_CHURNGUARD_ROLE** no longer exists.
+
+<!-- ------------------------ -->
+## Conclusion And Resources
+
+### What You Learned
 
 You built one app in three iterations, and each one added a kind of app:
 
@@ -749,70 +806,12 @@ More ideas to write as IDD prompts in the same shape:
 | **Cohort retention chart** | Show whether customers stay longer over time | Customers grouped by first purchase month or quarter; retention by month after; an *Explain this cohort* agent shortcut |
 | **Dark mode and mobile layout** | Make ChurnGuard comfortable on any screen, day or night | A remembered dark/light toggle; tables become cards on narrow screens; full-screen chat drawer; WCAG AA contrast in both themes |
 
-<!-- ------------------------ -->
-## Cleanup
-
-Run this once you're done with the Build Your Own App prompts. It removes everything the guide created:
-
-```bash
-snow sql -f scripts/cleanup.sql --connection quickstart
-```
-
-It drops:
-
-- The **APPLICATION SERVICE**
-- The data mirror, its **CHURNGUARD_MIRROR** database, and its catalog integration
-- The **CHURNGUARD_PG** Postgres instance
-- **CHURNGUARD_EAI**, **CHURNGUARD_PG_POLICY**, and the network rules
-- The **SFQUICKSTART_CHURNGUARD** database and everything in it
-- The **SFQUICKSTART_CHURNGUARD_WH** warehouse and **SFQUICKSTART_CHURNGUARD_ROLE**
-
-The script ends by listing anything left over; every list should be empty.
-
-> **Warning:** Make sure the script finishes. A Postgres instance left running keeps using credits.
-
-Leave **SNOWFLAKE_SAMPLE_DATA** in place unless you're sure nothing else in your account uses it.
-
-To clean up by hand:
-
-```sql
--- Manual cleanup: run these in order
-USE ROLE ACCOUNTADMIN;
-DROP APPLICATION SERVICE IF EXISTS SFQUICKSTART_CHURNGUARD.PUBLIC.CHURNGUARD;
-
--- The quickstart role owns the mirror and the Postgres instance
-USE ROLE SFQUICKSTART_CHURNGUARD_ROLE;
--- Also drops the CHURNGUARD_MIRROR database and its catalog integration
-CALL SNOWFLAKE.POSTGRES.DROP_MIRROR('churnguard_mirror');
-DROP POSTGRES INSTANCE IF EXISTS CHURNGUARD_PG;
-
-USE ROLE ACCOUNTADMIN;
-DROP INTEGRATION IF EXISTS CHURNGUARD_EAI;
-DROP NETWORK POLICY IF EXISTS CHURNGUARD_PG_POLICY;
-DROP DATABASE IF EXISTS SFQUICKSTART_CHURNGUARD;   -- includes the network rules
-DROP WAREHOUSE IF EXISTS SFQUICKSTART_CHURNGUARD_WH;
-DROP ROLE IF EXISTS SFQUICKSTART_CHURNGUARD_ROLE;
-```
-
-If *DROP_MIRROR* fails, *DROP POSTGRES INSTANCE* fails too, because the mirror's catalog integration still references the instance. *cleanup.sql* shows the error and handles both leftovers; by hand, run ***DROP INTEGRATION IF EXISTS CHURNGUARD_MIRROR_CATALOG_INTEGRATION***, and to drop the mirror database, first run ***GRANT OWNERSHIP ON DATABASE CHURNGUARD_MIRROR TO ROLE ACCOUNTADMIN*** (it's owned by the *snowflake* application).
-
-To remove what the guide set up on your machine:
-
-```bash
-cortex mcp remove churnguard
-```
-
-If you used psql, also remove the **CHURNGUARD_PG** entries from *~/.pgpass* and *~/.pg_service.conf*. Then set your connection's default ***role*** back to what it was: **SFQUICKSTART_CHURNGUARD_ROLE** no longer exists.
-
-### Learn More
+### Related Resources
 
 - [Deploy targets](https://docs.snowflake.com/en/developer-guide/snowflake-app-runtime/deploy-targets): deploy the same app to dev and prod
 - [Scale and suspend](https://docs.snowflake.com/en/developer-guide/snowflake-app-runtime/scale-and-suspend): control cost when the app is idle
 - [Developing secure runtime apps](https://docs.snowflake.com/en/developer-guide/snowflake-app-runtime/secure-development): caller's rights, identity checks, and secrets
 - [Cortex Code CLI](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-cli): automate your app from the terminal with MCP
-
-### Related Resources
-
 - [Snowflake App Runtime documentation](https://docs.snowflake.com/en/developer-guide/snowflake-app-runtime)
 - [Getting started with Snowflake App Runtime](https://docs.snowflake.com/en/developer-guide/snowflake-app-runtime/getting-started)
 - [app.yml manifest reference](https://docs.snowflake.com/en/developer-guide/snowflake-app-runtime/app-yml)
