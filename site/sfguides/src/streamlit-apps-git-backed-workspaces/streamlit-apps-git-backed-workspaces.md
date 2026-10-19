@@ -32,7 +32,6 @@ Both are editing the same `streamlit_app.py`, in the same repository, on the sam
 ### What You'll Build
 A small Cortex-powered Streamlit app (prompt pills that call `ai_complete()`) that ends up with contributions from both a Snowsight-only user and a command-line-only user, deployed as a shared Streamlit in Snowflake app.
 
-### The Collaboration Flow
 The diagram below summarizes how the two personas hand off work through Git over the course of this guide:
 
 ![Collaboration sequence: an admin configures Git access, Marcus clones and pushes a branch, Priya edits and pushes from Snowsight, Marcus adds a fourth prompt pill, and Priya pulls and deploys the app](assets/collaboration-flow.png)
