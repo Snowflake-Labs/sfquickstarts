@@ -6,7 +6,7 @@ summary: Use RelationalAI PyRel on Snowflake tables to find a hidden multi-tier 
 environments: web
 status: Draft
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Getting Started, RelationalAI, PyRel, Semantic Model, Supply Chain, Snowflake Notebooks, Cortex AI
+tags: Getting Started, RelationalAI, PyRel, Semantic Model, Supply Chain, Jupyter, Cortex AI
 
 # Getting Started with RelationalAI for Supply Chain Analysis
 <!-- ------------------------ -->
@@ -14,43 +14,69 @@ tags: Getting Started, RelationalAI, PyRel, Semantic Model, Supply Chain, Snowfl
 
 [RelationalAI](https://docs.relational.ai/) adds a semantic modelling and reasoning layer to Snowflake. You build models in Python with **PyRel**: *concepts* (suppliers, parts, orders), *properties* (a supplier's region) and *relationships* (a part contains another part), plus *rules* that derive new facts.
 
-The official [Start building with PyRel](https://docs.relational.ai/get-started/start-building-with-pyrel) guide runs from a local terminal and needs `uv`, a `raiconfig.yaml` file and a browser sign-in. A Snowflake Notebook already has an authenticated session, a warehouse and your data. This guide shows how to use that, and what PyRel adds next to SQL and an LLM.
+This guide builds on the official [Start building with PyRel](https://docs.relational.ai/get-started/start-building-with-pyrel) guide: same local setup, a richer model, and a question that shows what PyRel adds next to SQL and an LLM.
 
 The case: a tier-3 supplier stops delivering. Nobody buys from it directly. Which customer orders are at risk, why, and what do we do about it? Answering it means following two networks of unknown depth, the supplier tiers and the bill of materials, and the supplier network contains a cycle. SQL can do it, with complications. PyRel does it with a few rules. Cortex `AI_COMPLETE` then writes the mitigation plan from the facts PyRel derived.
 
-The notebook is only the surface for showing these concepts. The same model, rules and prompt run from any Python environment connected to Snowflake.
+The notebooks are only the surface for showing these concepts. They run locally in Jupyter for this demonstration, not as a recommended production setup. The reasoning runs in the RelationalAI app inside your Snowflake account, next to the data.
 
 ### What You Will Learn
 - Why PyRel needs a semantic model (ontology) over your tables, and how to map tables to it
 - How recursive rules handle multi-hop questions and cycles, compared with recursive CTEs
 - How to hand derived facts to an LLM, and check the plan it writes against those facts
-- How to run PyRel from a Snowflake Notebook: network access, the kernel restart after install, and reusing the notebook session
+- How to connect PyRel to Snowflake with `raiconfig.yaml`, and reuse its session for SQL and Cortex
 
 ### What You Will Build
 Two notebooks on a synthetic electronics supply chain (20 products, 315 parts, 80 suppliers in four tiers, 1,500 orders):
 
-1. `01_relationalai_setup.ipynb`: install, connect, first query.
+1. `01_relationalai_setup.ipynb`: connect, load the data, first query.
 2. `02_supplier_risk_to_plan.ipynb`: impact of a supplier failure, a check of the alternative supplier, a mitigation plan and a grounding check.
 
 > **How this guide was made.** The ontology, the PyRel rules and queries, the notebooks, the sample data and most of this text were generated with generative AI (Cortex Code), not written by hand. Every code cell was then run against the loaded tables and checked against the planted answers in `data/expected_results.json`. Treat the code as a working example to review and adapt, not as reference style for PyRel. In a production setting, an agent with an LLM will be used to generate the queries against the ontology. Building the ontology will be assisted by generatiev AI tooling as well.
 
 ### Prerequisites
-- A Snowflake account with the [RelationalAI Native App](https://app.snowflake.com/marketplace/listing/GZTYZOOIX8H/relationalai-relationalai) installed and activated ([setup guide](https://docs.relational.ai/get-started/set-up-relationalai-in-snowflake))
-- `ACCOUNTADMIN`, or an administrator who runs the two setup scripts for you
+- The [RelationalAI Native App](https://app.snowflake.com/marketplace/listing/GZTYZOOIX8H/relationalai-relationalai) installed and activated, with user access granted, as described in [Set up RelationalAI in Snowflake](https://docs.relational.ai/get-started/set-up-relationalai-in-snowflake). You need the role `RAI_DEVELOPER` and a `raiconfig.yaml` from your invite link.
+- An administrator who can run one short setup script as `ACCOUNTADMIN`
+- Python 3.10–3.14 on your machine
 - Access to Cortex `AI_COMPLETE` and a supported model in your region, or cross-region inference enabled
 
 <!-- ------------------------ -->
-## Load the Sample Data
+## Setup
 
-Run [`scripts/load_data.sql`](scripts/load_data.sql) as `ACCOUNTADMIN`. It:
+**1. Warehouse and schema (administrator).** Run [`scripts/setup.sql`](scripts/setup.sql) as `ACCOUNTADMIN`. It creates the warehouse `RAI_QS_WH`, with a 600-second statement timeout, and the schema `RAI_QUICKSTART.SUPPLY_CHAIN`, and grants both to `RAI_DEVELOPER`. Nothing else is needed: no integrations, network rules or extra roles. The RelationalAI setup already created the role and the OAuth integration that PyRel signs in with.
 
-- creates the role `RAI_QS_ROLE` (with `RAI_DEVELOPER`), granted to you;
-- creates the warehouse `RAI_QS_WH`, with a 600-second statement timeout;
-- creates the schema `RAI_QUICKSTART.SUPPLY_CHAIN`;
-- connects the companion Git repository and copies the CSV files from its `data/` directory to an internal stage (`COPY INTO` can't read a Git repository stage directly);
-- creates eleven tables with `CHANGE_TRACKING = TRUE`, loads them, and checks the row counts.
+**2. Python environment.** Clone or download this guide's folder. From that folder, create an environment, install PyRel and Jupyter, and register the environment as a Jupyter kernel:
 
-RelationalAI keeps its copy of source tables in sync through change data capture (CDC), which is why change tracking is on.
+```bash
+python -m venv .venv && source .venv/bin/activate
+pip install "relationalai>=1.30.1,<2.0" jupyter
+python -m ipykernel install --user --name rai-supply-chain --display-name "RAI supply chain"
+```
+
+The last line makes the environment show up as **RAI supply chain** in the kernel picker of Jupyter, VS Code or Cortex Code, wherever the environment lives. Prefer conda? Use `conda create -n rai-supply-chain python=3.12 -y && conda activate rai-supply-chain` instead of the first line.
+
+**3. Connection.** Save the `raiconfig.yaml` from your invite link in the guide folder, next to `notebooks/`, and set the warehouse to `RAI_QS_WH`:
+
+```yaml
+default_connection: sf
+direct_access: true
+connections:
+  sf:
+    type: snowflake
+    authenticator: oauth_authorization_code
+    account: <org>-<account>
+    warehouse: RAI_QS_WH
+    user: <your_user>
+    role: RAI_DEVELOPER
+    oauth_client_id: <oauth_client_id>
+    oauth_redirect_uri: http://localhost:54321/snowflake/oauth-redirect
+```
+
+Check it with `rai connect` from the guide folder. Then open the notebooks in `notebooks/` and select the kernel **RAI supply chain**. PyRel looks for `raiconfig.yaml` in the notebook's folder and its parent folders, so it finds the file one level up.
+
+**4. Load the data.** Notebook 01 uploads the CSV files from `data/` to a stage and runs [`scripts/load_data.sql`](scripts/load_data.sql). The script creates eleven tables with `CHANGE_TRACKING = TRUE` and checks the row counts. RelationalAI keeps its copy of source tables in sync through change data capture (CDC), which is why change tracking is on.
+
+The first PyRel query in notebook 01 starts a reasoning engine and indexes the tables. That takes a few minutes; later queries take seconds.
 
 The data is synthetic, with a few cases planted deliberately. [`data/README.md`](data/README.md) describes each one, and what the notebooks are looking for. This guide uses these:
 
@@ -61,73 +87,8 @@ The data is synthetic, with a few cases planted deliberately. [`data/README.md`]
 | Cycle | `S-T2-11` and `S-T2-14` depend on each other |
 | Qualified alternative | `S-T1-01` is approved for `P-141`: 1,500 per week, 70 days lead time |
 
-No Git integration? The script has a fallback: upload the CSV files to the stage in Snowsight, or with `snow stage copy`.
-
-<!-- ------------------------ -->
-## Admin Setup
-
-Run [`scripts/admin_setup.sql`](scripts/admin_setup.sql) as `ACCOUNTADMIN`, after `load_data.sql`. It does three things.
-
-**1. Checks that the RelationalAI app is healthy.**
-
-```sql
-CALL RELATIONALAI.APP.SERVICE_STATUS();  -- main and otel-collector: READY
-CALL RELATIONALAI.APP.CDC_STATUS();      -- CDC_ENABLED = TRUE
-```
-
-These are procedures, so use `CALL`, not `SELECT`. A `SUSPENDED` CDC engine is normal while idle.
-
-**2. Creates the external access integration `RAI_NOTEBOOK_ACCESS` with two egress rules.** You need both:
-
-| Rule | Why |
-|---|---|
-| `SNOWFLAKE.EXTERNAL_ACCESS.PYPI_RULE` | `relationalai` is not in the Snowflake Anaconda channel, so you install it from PyPI. |
-| RelationalAI results host | PyRel downloads query results from a presigned URL on the RelationalAI app's S3 stage. Without this rule the query reaches the engine, then fails with `Max retries exceeded ... HTTPSConnectionPool(host='sfc-...-customer-stage.s3.<region>.amazonaws.com')`. |
-
-The results host depends on your account and region. The script contains an example value. If your first query fails with the error above, copy the host from the message into `RAI_RESULTS_RULE`.
-
-**3. Grants `RAI_QS_ROLE` usage on the integration and on `SYSTEM_COMPUTE_POOL_CPU`, and the right to create notebooks in the schema.**
-
-<!-- ------------------------ -->
-## Create the Notebooks
-
-1. In Snowsight, go to **Projects » Notebooks** and import `notebooks/01_relationalai_setup.ipynb` and `notebooks/02_supplier_risk_to_plan.ipynb` into `RAI_QUICKSTART.SUPPLY_CHAIN`, as `RAI_QS_ROLE`.
-2. Set **Runtime** to **Run on container**. The warehouse runtime can't pip install from PyPI.
-3. Set **Compute pool** to `SYSTEM_COMPUTE_POOL_CPU` and **Query warehouse** to `RAI_QS_WH`.
-4. Open **⋮ » Notebook settings » External access** and enable `RAI_NOTEBOOK_ACCESS`.
-5. Upload `notebooks/supply_chain_ontology.py` next to notebook 02. It holds the semantic model that the notebook imports.
-
-The Container Runtime image ships Python 3.10, the lowest version PyRel supports.
-
-<!-- ------------------------ -->
-## Install and Connect
-
-Notebook 01 walks through this step by step. In short:
-
-```python
-%pip install -q "relationalai>=1.30.1,<2.0"
-```
-
-pip reports dependency conflicts for `mlruntimes-service` and `opentelemetry-proto`. You can ignore them for this guide.
-
-> **Restart the kernel now.** The install upgrades `protobuf` from 4.25 to 5.x, but the kernel still has the old version loaded. If you skip the restart, the first query fails with `ImportError: cannot import name 'runtime_version' from 'google.protobuf'`. Clearing modules from `sys.modules` does not help, because protobuf's compiled extension stays loaded. Use the **Restart** option in the kernel menu, then continue with the next cell. Don't rerun the install cell.
-
-In a notebook, PyRel detects the active Snowpark session automatically:
-
-```python
-from relationalai.config import create_config
-cfg = create_config()
-print(type(cfg).__name__)   # ConfigFromActiveSession
-```
-
-You don't need a `raiconfig.yaml`, a password or a token. PyRel runs with the notebook's role and warehouse.
-
-The first query starts a reasoning engine and indexes the tables. That takes a few minutes; later queries take seconds.
-
 <!-- ------------------------ -->
 ## The Semantic Model
-
-> **Generated, not handwritten.** This whole section, and `supply_chain_ontology.py` behind it, was generated with generative AI from the table definitions and the RelationalAI documentation. A person reviewed the result and it was validated by loading every table into the model and checking the counts. It was not designed by a domain modeller; for your own data, review the concepts and keys with someone who knows the business.
 
 PyRel doesn't reason over tables directly. It reasons over an **ontology**: the business concepts, how they relate, and which table populates what. `supply_chain_ontology.py` defines it once, and every rule and query in notebook 02 builds on it.
 
@@ -144,11 +105,19 @@ model.define(Part.lookup(id=bom.PARENT_PART_ID).contains(Part.lookup(id=bom.CHIL
 ```
 
 - `identify_by` sets a concept's key. `Supply` is keyed by a supplier and a part, because the pair carries its own data: capacity, lead time and price.
-- `Property` holds one value per key, here the quantity of a child in a parent. `Relationship` links one entity to many.
+- `Property` holds one value per key: here, one quantity per (parent, child) pair. `Relationship` is a set of facts with no key, for many-to-many links that carry no value, like `depends_on`.
 - Same-type slots get role names (`parent`, `child`), so the direction is explicit.
 - `model.Table()` maps a Snowflake table; column names are upper case, as Snowflake stores them.
 
-The full model used in this guide looks like this. Solid lines come from the tables. Dashed lines are facts that the rules in the next section derive. Yes/no facts are shown as ⚑ tags on their concept.
+The full model used in this guide is shown below. It describes an electronics manufacturer from order to raw supplier: customers place orders for products, each product is built from a bill of materials of parts, and parts are delivered by suppliers who depend on other suppliers, up to tier 4. It contains seven concepts (the boxes), their attributes (the text in each box) and the links between them (the arrows).
+
+An arrow means "is linked to", not "is a PyRel `Relationship`". Each arrow is one of three things in the code:
+
+- a **`Property` pointing to another concept**, when each entity has exactly one: an order *is placed by* one customer, *is for* one product. `contains` is also a Property, with one quantity per (parent, child) pair.
+- a **`Relationship`**, when the link is many-to-many and carries no value: `depends_on`.
+- a **key field of a link concept**. `Supply` and `QualifiedSupply` are entities keyed by a supplier and a part, so *of* and *by* point to the two ends of the key.
+
+Solid arrows come from the tables. Dashed arrows are facts that the rules in the next section derive. Yes/no facts are shown as ⚑ tags on their concept.
 
 ```mermaid
 flowchart LR
@@ -160,14 +129,14 @@ flowchart LR
     QSupply["QualifiedSupply<br/>(supplier, part)<br/>capacity, lead time, price<br/>⚑ is_usable"]
     Supplier["Supplier<br/>id, tier, region<br/>⚑ is_down"]
 
-    Order -->|customer| Customer
-    Order -->|product| Product
-    Product -->|top_part| Part
+    Order -->|is placed by| Customer
+    Order -->|is for| Product
+    Product -->|is built as| Part
     Part -->|"contains (qty)"| Part
-    Supply -->|part| Part
-    Supply -->|supplier| Supplier
-    QSupply -->|part| Part
-    QSupply -->|supplier| Supplier
+    Supply -->|of| Part
+    Supply -->|by| Supplier
+    QSupply -->|of| Part
+    QSupply -->|by| Supplier
     Supplier -->|depends_on| Supplier
 
     Part -.->|"includes (any level)"| Part
@@ -184,7 +153,7 @@ The question flows through it like this: `S-T3-07` is down, so everyone who `rel
 
 **The SQL attempt.** A recursive CTE can walk up the supplier tiers and down the bill of materials. Because of the cycle, you have to carry the visited path in an array, skip suppliers already on it, and cap the depth. Without that guard, a recursive query over the supplier network can run forever. When we built this guide, one ran for over an hour, which is why `RAI_QS_WH` has a statement timeout. The notebook shows the guarded query. It gives the right answer, but `depth < 10` is a guess, and each follow-up question needs the guard again.
 
-**The PyRel rules.** The rules below and in the notebook were generated with generative AI, then run and checked against the planted answers. "Relies on, at some tier" is two lines: a direct dependency, or a dependency of something you already rely on.
+**The PyRel rules.**  "Relies on, at some tier" is two lines: a direct dependency, or a dependency of something you already rely on.
 
 ```python
 Supplier.relies_on = model.Relationship(f"{Supplier:buyer} relies on {Supplier:upstream} at some tier")
@@ -205,8 +174,6 @@ Expected result:
 | Sensors needed | 29,286 |
 | Usable alternative | `S-T1-01`, first delivery 2027-01-04 |
 
-Python with NetworkX is a valid alternative. It handles the cycle too, but you pull the tables into the notebook's memory and keep two graphs in sync by hand. PyRel keeps the rules in the model, next to the data in Snowflake. Both are memory-bound: PyRel runs in an engine that has to be sized for the model.
-
 <!-- ------------------------ -->
 ## Write the Plan with Cortex
 
@@ -224,7 +191,7 @@ SELECT AI_COMPLETE(
 
 The prompt goes in as a bind parameter, so the facts never become part of the SQL text. `AI_COMPLETE` runs inside Snowflake.
 
-**Check the plan.** A final cell collects every number in the plan and looks it up in the facts pack. When we tested an earlier prompt, the model subtracted stock from demand on its own and wrote a shortfall that wasn't in the facts. The arithmetic was right, but nobody had checked it. The shortfall is now part of the facts, and the check reports any number that isn't. It doesn't judge the advice itself; a planner still reads the plan.
+**Check the plan.** A final cell collects every number in the plan and looks it up in the facts pack. An LLM tends to derive numbers of its own, such as a shortfall from demand and stock. Even when the arithmetic is right, that number hasn't been checked. So the facts pack already contains the derived numbers the plan needs, and the check reports any number that isn't in it. It doesn't judge the advice itself; a planner still reads the plan.
 
 The notebook writes `ORDERS_AT_RISK` and `MITIGATION_PLANS` back to the schema, so SQL, dashboards and tasks can use them.
 
@@ -233,14 +200,12 @@ The notebook writes `ORDERS_AT_RISK` and `MITIGATION_PLANS` back to the schema, 
 
 | Symptom | Cause | Fix |
 |---|---|---|
-| `pip install` hangs or can't reach PyPI | External access not enabled, or warehouse runtime | Use Container Runtime and enable `RAI_NOTEBOOK_ACCESS` |
-| `cannot import name 'runtime_version' from 'google.protobuf'` | Kernel not restarted after install | Restart the kernel, then rerun from the Connect step |
-| `TypeError: A Message class can only inherit from Message` | Modules purged instead of restarting the kernel | Restart the kernel |
-| `Max retries exceeded ... customer-stage.s3...amazonaws.com` | Results host not allowed in the integration | Add the host from the error to `RAI_RESULTS_RULE` |
-| `[Unknown Table] Failed to fetch schema for table` | Role can't see the table, or wrong name | Check grants and the fully qualified upper-case name |
-| `Unknown user-defined function RELATIONALAI.APP.SERVICE_STATUS` | Called with `SELECT` | Use `CALL` |
-| `ConfigFileNotFoundError` | Code running outside the notebook kernel (for example, a subprocess) | Run PyRel in the notebook kernel itself |
-| `ModuleNotFoundError: supply_chain_ontology` | Ontology file not next to the notebook | Upload `supply_chain_ontology.py` to the notebook's files |
+| `No module named 'relationalai'` | Notebook runs on another kernel | Select the kernel **RAI supply chain**; if it's missing, rerun the `ipykernel install` line with the environment active |
+| `rai connect` or the first cell can't find a config | `raiconfig.yaml` not in the guide folder or `notebooks/` | Move it there; PyRel searches the current folder and its parents |
+| Sign-in fails, or a role isn't allowed | Role in `raiconfig.yaml` isn't `RAI_DEVELOPER`, or your user lacks it | Set `role: RAI_DEVELOPER` and ask the administrator for the grant |
+| `Warehouse RAI_QS_WH` check fails | `setup.sql` not run, or a different warehouse in `raiconfig.yaml` | Run `setup.sql` and set `warehouse: RAI_QS_WH` |
+| `[Unknown Table] Failed to fetch schema for table` | Tables not loaded yet, or wrong name | Run notebook 01; use the fully qualified upper-case name |
+| `ModuleNotFoundError: supply_chain_ontology` | Notebook opened from a copy outside `notebooks/` | Open the notebook in `notebooks/`, next to `supply_chain_ontology.py` |
 | First query takes minutes | Engine start and table indexing, or a new table being synced | Wait; later queries are fast |
 | `AI_COMPLETE` fails with an unknown or unavailable model | Model not offered in your region | Pick another model for `LLM`, or enable cross-region inference |
 | A query runs until the 600-second timeout | Unguarded recursion on the supplier cycle | Use the guarded CTE, or the PyRel rules |
@@ -250,23 +215,20 @@ The notebook writes `ORDERS_AT_RISK` and `MITIGATION_PLANS` back to the schema, 
 
 ```sql
 USE ROLE ACCOUNTADMIN;
-DROP INTEGRATION IF EXISTS RAI_NOTEBOOK_ACCESS;     -- first: it uses a network rule inside the database
 DROP DATABASE IF EXISTS RAI_QUICKSTART;
-DROP INTEGRATION IF EXISTS RAI_QS_GIT_INTEGRATION;
 DROP WAREHOUSE IF EXISTS RAI_QS_WH;
-DROP ROLE IF EXISTS RAI_QS_ROLE;
 ```
 
-Dropping the database also drops the notebooks, the Git repository object and the network rule in it.
+This leaves the RelationalAI app, its roles and the OAuth integration in place. To stop the app's compute, see [Shut down the app](https://docs.relational.ai/manage/app/shut-down).
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
 
-You found a supplier risk that a tier-1 view hides, using PyRel rules over Snowflake tables from a notebook, and turned the result into a checked mitigation plan with Cortex.
+You found a supplier risk that a tier-1 view hides, using PyRel rules over Snowflake tables from a local notebook, and turned the result into a checked mitigation plan with Cortex.
 
 ### What You Learned
-- A Container Runtime notebook needs PyPI egress plus egress to the RelationalAI results host, and a kernel restart after the install
-- `create_config()` picks up the notebook session, so you need no config file or credentials
+- After the RelationalAI setup, a warehouse, a schema and a `raiconfig.yaml` are all you need: no integrations or extra roles
+- `model.config.get_session()` gives you a Snowpark session on the same connection, for SQL, uploads and Cortex
 - An ontology maps tables to concepts once; rules and queries build on it
 - Recursive rules handle multi-hop questions and cycles without a hand-written guard
 - An LLM writes the plan best from a small facts pack, and a simple check keeps its numbers honest
@@ -275,5 +237,4 @@ You found a supplier risk that a tier-1 view hides, using PyRel rules over Snowf
 - [Start building with PyRel](https://docs.relational.ai/get-started/start-building-with-pyrel)
 - [Set up RelationalAI in Snowflake](https://docs.relational.ai/get-started/set-up-relationalai-in-snowflake)
 - [RelationalAI project templates](https://docs.relational.ai/build/templates)
-- [Snowflake Notebooks on Container Runtime](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-on-spcs)
 - [AI_COMPLETE](https://docs.snowflake.com/en/sql-reference/functions/ai_complete)

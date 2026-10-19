@@ -9,7 +9,7 @@ Import it from the notebook:
 
     from supply_chain_ontology import model, Part, Product, Supplier, Supply, QualifiedSupply, Customer, Order
 
-In a Snowflake Notebook, Model() picks up the active session; no config file is needed.
+Model() reads the connection from raiconfig.yaml in the current folder or a parent folder.
 
 Note: this file was generated with generative AI (Cortex Code), not written by hand. It was
 validated by loading all tables and checking counts against the source tables. Review the

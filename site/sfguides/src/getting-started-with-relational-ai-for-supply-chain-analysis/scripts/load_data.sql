@@ -1,79 +1,28 @@
 -- =============================================================================
 -- RelationalAI for supply chain analysis: load the synthetic supply-chain data
 --
--- Creates a demo role, warehouse, database and tables, connects the quickstart
--- Git repository, and loads the CSV files from its data/ directory.
+-- Creates the tables and loads them from the CSV files on the internal stage DATA_STAGE.
+-- Notebook 01 uploads data/*.csv to the stage and runs this script for you.
+-- To run it by hand instead, upload the files first, for example with the Snowflake CLI:
+--   snow stage copy data/ @RAI_QUICKSTART.SUPPLY_CHAIN.DATA_STAGE
 --
--- Run as ACCOUNTADMIN (or a role that can create roles, warehouses, databases
--- and API integrations). Safe to re-run.
---
--- Using a fork of the companion repository? Change the ORIGIN of the Git repository and
--- API_ALLOWED_PREFIXES below.
+-- Run as RAI_DEVELOPER, after setup.sql. Safe to re-run.
 -- =============================================================================
-USE ROLE ACCOUNTADMIN;
-
--- ---------------------------------------------------------------------------
--- 1. Role, warehouse, database
--- ---------------------------------------------------------------------------
-CREATE ROLE IF NOT EXISTS RAI_QS_ROLE COMMENT = 'RelationalAI supply chain analysis quickstart';
-GRANT ROLE RAI_QS_ROLE TO ROLE SYSADMIN;
-SET my_user = CURRENT_USER();
-GRANT ROLE RAI_QS_ROLE TO USER IDENTIFIER($my_user);
-
--- RAI_DEVELOPER is created during the RelationalAI app setup and carries the
--- application role needed to run PyRel.
-GRANT ROLE RAI_DEVELOPER TO ROLE RAI_QS_ROLE;
-
-CREATE WAREHOUSE IF NOT EXISTS RAI_QS_WH
-  WAREHOUSE_SIZE = XSMALL AUTO_SUSPEND = 60 AUTO_RESUME = TRUE INITIALLY_SUSPENDED = TRUE;
--- Cap runaway statements (e.g. a recursive query looping on the planted supplier cycle).
-ALTER WAREHOUSE RAI_QS_WH SET STATEMENT_TIMEOUT_IN_SECONDS = 600;
-GRANT USAGE ON WAREHOUSE RAI_QS_WH TO ROLE RAI_QS_ROLE;
-
-CREATE DATABASE IF NOT EXISTS RAI_QUICKSTART;
-CREATE SCHEMA IF NOT EXISTS RAI_QUICKSTART.SUPPLY_CHAIN;
-GRANT OWNERSHIP ON DATABASE RAI_QUICKSTART TO ROLE RAI_QS_ROLE COPY CURRENT GRANTS;
-GRANT OWNERSHIP ON SCHEMA RAI_QUICKSTART.SUPPLY_CHAIN TO ROLE RAI_QS_ROLE COPY CURRENT GRANTS;
-
--- ---------------------------------------------------------------------------
--- 2. Git repository with the sample data (public repo, no secret needed)
---
---    The data lives in the companion repository, not in sfquickstarts itself:
---    Snowflake cannot clone sfquickstarts ("Git Repository exceeds set limits").
---    TODO: replace the placeholder with the published companion repository.
--- ---------------------------------------------------------------------------
-CREATE API INTEGRATION IF NOT EXISTS RAI_QS_GIT_INTEGRATION
-  API_PROVIDER = GIT_HTTPS_API
-  API_ALLOWED_PREFIXES = ('https://github.com/Snowflake-Labs')
-  ENABLED = TRUE;
-GRANT USAGE ON INTEGRATION RAI_QS_GIT_INTEGRATION TO ROLE RAI_QS_ROLE;
-
-USE ROLE RAI_QS_ROLE;
+USE ROLE RAI_DEVELOPER;
 USE WAREHOUSE RAI_QS_WH;
 USE SCHEMA RAI_QUICKSTART.SUPPLY_CHAIN;
 
-CREATE OR REPLACE GIT REPOSITORY RAI_QS_REPO
-  API_INTEGRATION = RAI_QS_GIT_INTEGRATION
-  ORIGIN = 'https://github.com/Snowflake-Labs/sfguide-getting-started-with-relational-ai-for-supply-chain-analysis.git';
-ALTER GIT REPOSITORY RAI_QS_REPO FETCH;
-
--- COPY INTO cannot read a Git repository directly: copy the CSVs to an internal stage first.
+-- ---------------------------------------------------------------------------
+-- 1. Stage and file format
+-- ---------------------------------------------------------------------------
 CREATE STAGE IF NOT EXISTS DATA_STAGE;
-COPY FILES INTO @DATA_STAGE
-  FROM @RAI_QS_REPO/branches/main/data/
-  PATTERN = '.*[.]csv';
 
--- Alternative without Git: upload the files from data/ yourself, then skip the two Git
--- statements above. In Snowsight: Data > Databases > RAI_QUICKSTART > SUPPLY_CHAIN >
--- Stages > DATA_STAGE > + Files. Or with the Snowflake CLI:
---   snow stage copy data/ @RAI_QUICKSTART.SUPPLY_CHAIN.DATA_STAGE --recursive
-LIST @DATA_STAGE;
-
+-- DATE_FORMAT is fixed so the load doesn't depend on the account's DATE_INPUT_FORMAT.
 CREATE OR REPLACE FILE FORMAT CSV_FORMAT
-  TYPE = CSV PARSE_HEADER = TRUE FIELD_OPTIONALLY_ENCLOSED_BY = '"';
+  TYPE = CSV PARSE_HEADER = TRUE FIELD_OPTIONALLY_ENCLOSED_BY = '"' DATE_FORMAT = 'YYYY-MM-DD';
 
 -- ---------------------------------------------------------------------------
--- 3. Tables
+-- 2. Tables
 --    CHANGE_TRACKING is required: RelationalAI syncs source tables via CDC.
 -- ---------------------------------------------------------------------------
 CREATE OR REPLACE TABLE PARTS (
@@ -152,7 +101,7 @@ CREATE OR REPLACE TABLE ORDERS (
 ) CHANGE_TRACKING = TRUE COMMENT = 'Open customer orders';
 
 -- ---------------------------------------------------------------------------
--- 4. Load
+-- 3. Load
 -- ---------------------------------------------------------------------------
 COPY INTO PARTS                 FROM @DATA_STAGE/parts.csv                 FILE_FORMAT = CSV_FORMAT MATCH_BY_COLUMN_NAME = CASE_INSENSITIVE FORCE = TRUE;
 COPY INTO PRODUCTS              FROM @DATA_STAGE/products.csv              FILE_FORMAT = CSV_FORMAT MATCH_BY_COLUMN_NAME = CASE_INSENSITIVE FORCE = TRUE;
@@ -167,7 +116,7 @@ COPY INTO CUSTOMERS             FROM @DATA_STAGE/customers.csv             FILE_
 COPY INTO ORDERS                FROM @DATA_STAGE/orders.csv                FILE_FORMAT = CSV_FORMAT MATCH_BY_COLUMN_NAME = CASE_INSENSITIVE FORCE = TRUE;
 
 -- ---------------------------------------------------------------------------
--- 5. Check row counts
+-- 4. Check row counts
 --    Expected: PARTS 315, PRODUCTS 20, BOM 469, SUBSTITUTES 60, SUPPLIERS 80,
 --    SUPPLIER_PARTS 483, SUPPLIER_DEPENDENCIES 81, QUALIFIED_SUPPLIERS 1, INVENTORY 315, CUSTOMERS 100, ORDERS 1500
 -- ---------------------------------------------------------------------------
@@ -183,3 +132,5 @@ UNION ALL SELECT 'INVENTORY', COUNT(*) FROM INVENTORY
 UNION ALL SELECT 'CUSTOMERS', COUNT(*) FROM CUSTOMERS
 UNION ALL SELECT 'ORDERS', COUNT(*) FROM ORDERS
 ORDER BY table_name;
+
+
