@@ -1,9 +1,17 @@
 """Supply-chain ontology for the RelationalAI supply chain analysis quickstart.
 
-The ontology is the semantic model RelationalAI reasons over: the business concepts
-(parts, suppliers, orders, ...), how they relate, and how each Snowflake table maps
-onto them. Every later chapter (BOM explosion, supplier failure, buildability, graph
-analysis, allocation) queries and extends this one model instead of re-stating joins.
+An ontology describes a business in its own terms: the things it talks about (concepts),
+the facts about them (properties) and how they connect (relationships). This file
+declares that vocabulary once, then maps each Snowflake table onto it. The rules and
+queries in notebook 02 build on this model instead of restating joins.
+
+The file has four parts:
+    1. Concepts       the kinds of things, and how each one is identified
+    2. Properties     facts with exactly one value per entity
+    3. Links          connections between entities, including the bill of materials
+    4. Mapping        which table and column supplies which fact
+
+Declaring something (sections 1-3) adds no data. Data only enters in section 4.
 
 Import it from the notebook:
 
@@ -19,10 +27,12 @@ from relationalai.semantics import Date, Float, Integer, Model, String
 
 SCHEMA = "RAI_QUICKSTART.SUPPLY_CHAIN"
 
+# The model holds everything below: declarations, mappings, and later the rules from notebook 02.
 model = Model("SupplyChain")
 
 # =============================================================================
 # 1. Concepts: the things the business talks about, each with a stable identity
+#    identify_by is the key: two rows with the same id are the same entity, like a primary key.
 # =============================================================================
 Part = model.Concept("Part", identify_by={"id": String})
 Product = model.Concept("Product", identify_by={"id": String})
@@ -30,13 +40,16 @@ Supplier = model.Concept("Supplier", identify_by={"id": String})
 Customer = model.Concept("Customer", identify_by={"id": String})
 Order = model.Concept("Order", identify_by={"id": String})
 # A supplier-part pair carries its own data (capacity, lead time, price), so it is a
-# concept in its own right rather than a plain link.
+# concept in its own right rather than a plain link. Its key is made of two other entities.
 Supply = model.Concept("Supply", identify_by={"supplier": Supplier, "part": Part})
 # A supplier approved for a part but not supplying it yet: an option, not part of today's network.
 QualifiedSupply = model.Concept("QualifiedSupply", identify_by={"supplier": Supplier, "part": Part})
 
 # =============================================================================
 # 2. Properties: one value per entity (many-to-one)
+#    Each property is written as a sentence, its "reading". In {Type:name}, the type comes first
+#    and the name becomes the field: Part.name(...) sets it, Part.name reads it.
+#    The value can also be another concept: an order has one customer (Order.customer below).
 # =============================================================================
 Part.name = model.Property(f"{Part} is named {String:name}")
 Part.kind = model.Property(f"{Part} is of kind {String:kind}")              # FINISHED | ASSEMBLY | COMPONENT
@@ -70,8 +83,11 @@ Order.due_date = model.Property(f"{Order} is due on {Date:due_date}")
 Order.value = model.Property(f"{Order} is worth {Float:value}")
 
 # =============================================================================
-# 3. Relationships: links between entities (many-to-many, possibly with data)
-#    Same-type slots get role names (parent/child, original/substitute, ...).
+# 3. Links between entities of the same kind
+#    A Property is functional: all fields but the last form the key, the last is the one value.
+#    So contains has one qty per (parent, child) pair, while a parent can still have many children.
+#    A Relationship has no key: it is a plain set of facts, for many-to-many links without a value.
+#    Same-type slots get role names (parent/child, original/substitute, ...), so the direction is explicit.
 # =============================================================================
 # Bill of materials: (parent, child) -> quantity. Variable depth, shared subassemblies.
 Part.contains = model.Property(f"{Part:parent} contains {Part:child} {Integer:qty} times")
@@ -82,6 +98,12 @@ Supplier.depends_on = model.Relationship(f"{Supplier:buyer} depends on {Supplier
 
 # =============================================================================
 # 4. Mapping: which table populates which concept, property and relationship
+#    model.Table() points at a Snowflake table; its columns are read as table.COLUMN (upper case).
+#    model.define(...) states facts that hold for every row of the tables it mentions:
+#      Concept.new(id=...)     creates an entity per row (or reuses it if the key already exists)
+#      Concept.lookup(id=...)  finds an existing entity by key, e.g. to resolve a foreign key
+#      x := ...                names the new entity, so the properties after it attach to it
+#    RelationalAI keeps its copy of these tables in sync through change data capture (CDC).
 # =============================================================================
 parts = model.Table(f"{SCHEMA}.PARTS")
 products = model.Table(f"{SCHEMA}.PRODUCTS")
@@ -95,14 +117,17 @@ customers = model.Table(f"{SCHEMA}.CUSTOMERS")
 orders = model.Table(f"{SCHEMA}.ORDERS")
 qualified = model.Table(f"{SCHEMA}.QUALIFIED_SUPPLIERS")
 
+# One row of PARTS gives one Part with its name, kind and cost. Stock comes from a second table.
 model.define(p := Part.new(id=parts.PART_ID),
              p.name(parts.PART_NAME), p.kind(parts.PART_TYPE), p.unit_cost(parts.UNIT_COST))
 model.define(Part.lookup(id=inventory.PART_ID).on_hand(inventory.ON_HAND_QTY))
 
+# PRODUCTS.PART_ID is a foreign key: lookup() turns it into a link to the Part entity.
 model.define(pr := Product.new(id=products.PRODUCT_ID),
              pr.name(products.PRODUCT_NAME), pr.list_price(products.LIST_PRICE),
              pr.top_part(Part.lookup(id=products.PART_ID)))
 
+# Link tables: each row links two existing entities, found by their keys.
 model.define(Part.lookup(id=bom.PARENT_PART_ID).contains(Part.lookup(id=bom.CHILD_PART_ID), bom.QTY_PER))
 model.define(Part.lookup(id=substitutes.PART_ID).substitute(
     Part.lookup(id=substitutes.SUBSTITUTE_PART_ID), substitutes.RATIO))
@@ -113,6 +138,7 @@ model.define(s := Supplier.new(id=suppliers.SUPPLIER_ID),
 model.define(Supplier.lookup(id=supplier_deps.SUPPLIER_ID).depends_on(
     Supplier.lookup(id=supplier_deps.DEPENDS_ON_SUPPLIER_ID)))
 
+# Supply and QualifiedSupply are keyed by two entities, so new() takes a Supplier and a Part.
 model.define(sp := Supply.new(supplier=Supplier.lookup(id=supplier_parts.SUPPLIER_ID),
                               part=Part.lookup(id=supplier_parts.PART_ID)),
              sp.capacity_per_week(supplier_parts.CAPACITY_PER_WEEK),
