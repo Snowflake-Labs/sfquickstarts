@@ -28,14 +28,14 @@ Kumo turns your relational tables into a graph and trains a graph neural network
 ### What You'll Need
 
 * A [Snowflake account](https://signup.snowflake.com/) with access to a GPU compute pool and Snowflake Notebooks on Container Runtime
-* Cortex Code (CoCo) Desktop or CLI connected to that account
+* A role that can create an external access integration (or an administrator who can create one for you)
+* Cortex Code (CoCo) Desktop or CLI connected to that account, for the optional Kumo skill
 * The [Snowflake CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli/index) to load the sample data
 * A database and schema you can write to (referred to below as `<DB>.<SCHEMA>`)
-* The Kumo wheel and the Kumo skill (links in [Get Kumo](#get-kumo))
 
 ## Get Kumo
 
-Kumo Engine is published by NVIDIA as the [`kumo-engine`](https://pypi.org/project/kumo-engine/) package on PyPI. Download the wheel from the **Download files** tab; it is a single `.whl` for Linux x86_64 and Python 3.11 or later.
+Kumo Engine is published by NVIDIA as the [`kumo-engine`](https://pypi.org/project/kumo-engine/) package on PyPI. You install it directly in the notebook with `pip`, so there is nothing to download ahead of time.
 
 Source code, examples, and agent skills are in the [NVIDIA Kumo Engine repository](https://github.com/NVIDIA/kumo-engine), and the full reference is in the [Kumo Engine documentation](https://docs.nvidia.com/sdgm/kumo-engine/get-started-with-kumo-engine/overview).
 
@@ -57,24 +57,19 @@ snow sql -f load_sample_data.sql -D "db=<DB>" -D "schema=<SCHEMA>" -D "wh=<WAREH
 
 The script ends with a row count check: 19,820 customers, 504 products, 31,465 orders, and 121,317 order lines.
 
-### Step 2: Publish the wheel to a Snowflake Workspace with CoCo
+### Step 2: Allow the notebook to reach PyPI
 
-The wheel is too large to upload through the Snowsight UI, and several of its pinned dependencies need adjusting for the Snowflake Container Runtime image. Let CoCo handle both. Open CoCo and paste this prompt, replacing the path:
+Snowflake provides a built in network rule for PyPI. Create an external access integration that uses it:
 
-```text
-I downloaded the Kumo wheel to <LOCAL_PATH_TO_WHEEL>.
-Publish it to my Snowflake Workspace so a Snowflake Notebook on Container Runtime (Python 3.12, GPU) can pip install it.
+```sql
+CREATE EXTERNAL ACCESS INTEGRATION IF NOT EXISTS PYPI_ACCESS_INTEGRATION
+  ALLOWED_NETWORK_RULES = (SNOWFLAKE.EXTERNAL_ACCESS.PYPI_RULE)
+  ENABLED = TRUE;
 
-1. Inspect the wheel METADATA and compare every Requires-Dist pin against the packages already present in the Container Runtime GPU py312 image.
-2. Where a pin conflicts with the base image (for example torch, fsspec, cryptography, faiss) or names a package that does not exist on PyPI, relax or rename that pin in METADATA, rebuild the RECORD hashes, and keep the PEP 427 filename valid. Do not downgrade packages the base image depends on.
-3. Write a requirements.txt containing only the third party packages the base image is missing, with versions that satisfy pip check.
-4. Upload the patched wheel and requirements.txt to my Workspace under kumo/ using the cortex ws CLI, not the UI.
-5. Print the final Workspace paths and a summary of every pin you changed and why.
+GRANT USAGE ON INTEGRATION PYPI_ACCESS_INTEGRATION TO ROLE <YOUR_ROLE>;
 ```
 
-CoCo uploads through the CLI, so the UI size limit does not apply.
-
-### Step 3: Install the Kumo skill in CoCo
+### Step 3: Install the Kumo skill in CoCo (optional)
 
 The skill teaches CoCo the Kumo SDK so it can help you build graphs and queries on your own data. It lives in the [Kumo agent skills repository](https://github.com/NVIDIA/kumo-engine/tree/main/agent-skills). Clone it and copy the skills into your CoCo skills folder:
 
@@ -89,13 +84,18 @@ cp -r kumo-engine/agent-skills/* ~/.snowflake/cortex/skills/
 
 Do these steps every time you start a new notebook session, since Container Runtime sessions do not persist installed packages.
 
-### Step 4: Install the wheel in the notebook
+### Step 4: Install Kumo in the notebook
 
-Create a Snowflake Notebook on Container Runtime with a GPU compute pool, then run:
+Create a Snowflake Notebook on Container Runtime with these settings:
+
+* **Compute pool:** a GPU pool, for example `GPU_NV_M`
+* **Runtime:** GPU Container Runtime **2.9 (Python 3.12)**
+* **External access:** `PYPI_ACCESS_INTEGRATION`
+
+Then run:
 
 ```python
-!pip install -q -r kumo/requirements.txt
-!pip install -q --no-deps kumo/<KUMO_WHEEL_FILENAME>.whl
+!pip install "kumo-engine[snowflake]"
 ```
 
 **Restart the kernel** now. Kumo will not import until you do.
@@ -103,7 +103,7 @@ Create a Snowflake Notebook on Container Runtime with a GPU compute pool, then r
 ## Import Libraries
 
 ```python
-import kumoai as kumo
+import kumo.engine as kumo
 from kumoapi.graph import Edge
 from kumoapi.typing import Stype
 from kumoapi.model_plan import RunMode
@@ -125,13 +125,17 @@ connector.table_names()
 
 ## Define Tables
 
-`kumo.Table` wraps each source table with its primary key and time column. Foreign keys are often inferred as numbers, so mark them as IDs.
+`kumo.Table` wraps each source table with its primary key and time column. Foreign keys are often inferred as numbers, so mark them as IDs. Columns that are entirely empty cannot be typed, so leave them out.
 
 ```python
+def columns_except(table, *empty):
+    return [c.name for c in connector[table].columns if c.name not in empty]
+
 customer = kumo.Table.from_source_table(connector["Customer"], primary_key="CustomerID")
 
 orders = kumo.Table.from_source_table(
-    connector["SalesOrderHeader"], primary_key="SalesOrderID", time_column="OrderDate"
+    connector["SalesOrderHeader"], columns_except("SalesOrderHeader", "Comment"),
+    primary_key="SalesOrderID", time_column="OrderDate",
 ).with_column("CustomerID", stype=Stype.ID)
 
 order_lines = kumo.Table.from_source_table(
@@ -139,7 +143,8 @@ order_lines = kumo.Table.from_source_table(
 ).with_column("SalesOrderID", stype=Stype.ID).with_column("ProductID", stype=Stype.ID)
 
 product = kumo.Table.from_source_table(
-    connector["Product"], primary_key="ProductID", time_column="SellStartDate"
+    connector["Product"], columns_except("Product", "DiscontinuedDate"),
+    primary_key="ProductID", time_column="SellStartDate",
 )
 ```
 
@@ -190,7 +195,7 @@ result.metrics
 
 ## Predict
 
-`predict` writes scores straight to a Snowflake table.
+`predict` writes scores straight to a Snowflake table. For a yes or no question like this one, `binary_classification_threshold` sets the probability above which a customer is predicted to reorder.
 
 ```python
 trainer.predict(
@@ -202,6 +207,7 @@ trainer.predict(
         table_name="<PREDICTIONS_TABLE_NAME>",
         write_mode=WriteMode.OVERWRITE,
     ),
+    binary_classification_threshold=0.5,
 )
 ```
 
@@ -229,7 +235,7 @@ You connected Kumo to Snowflake, built a graph over four tables, and predicted 3
 
 ### What You Learned
 
-* How to publish the Kumo wheel to a Snowflake Workspace and install it in a notebook
+* How to install Kumo from PyPI in a GPU notebook
 * How to connect Kumo to Snowflake tables and describe them as a graph
 * How to write a predictive query, train a graph neural network with `fit`, and score with `predict`
 * How to write predictions to a Snowflake table and suspend GPU compute when done
