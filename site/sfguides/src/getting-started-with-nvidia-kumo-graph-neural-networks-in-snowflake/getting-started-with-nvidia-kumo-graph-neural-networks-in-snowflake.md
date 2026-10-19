@@ -35,11 +35,9 @@ Kumo turns your relational tables into a graph and trains a graph neural network
 
 ## Get Kumo
 
-Download the Kumo wheel from:
+Kumo Engine is published by NVIDIA as the [`kumo-engine`](https://pypi.org/project/kumo-engine/) package on PyPI. Download the wheel from the **Download files** tab; it is a single `.whl` for Linux x86_64 and Python 3.11 or later.
 
-**[KUMO_WHEEL_LINK_PLACEHOLDER]** (NGC or Hugging Face, link to be published)
-
-The file is a single `.whl` for Python 3.12 on Linux x86_64.
+Source code, examples, and agent skills are in the [NVIDIA Kumo Engine repository](https://github.com/NVIDIA/kumo-engine), and the full reference is in the [Kumo Engine documentation](https://docs.nvidia.com/sdgm/kumo-engine/get-started-with-kumo-engine/overview).
 
 ## One Time Setup
 
@@ -240,8 +238,10 @@ You connected Kumo to Snowflake, built a graph over four tables, and predicted 3
 
 * [Snowflake ML documentation](https://docs.snowflake.com/en/developer-guide/snowflake-ml/overview)
 
-* Kumo wheel: [KUMO_WHEEL_LINK_PLACEHOLDER]
+* [Snowflake and NVIDIA Kumo launch blog](https://www.snowflake.com/en/blog/nvidia-kumo-graph-ml-snowflake/)
+* [Kumo Engine documentation](https://docs.nvidia.com/sdgm/kumo-engine/get-started-with-kumo-engine/overview)
+* [NVIDIA Kumo Engine on GitHub](https://github.com/NVIDIA/kumo-engine)
+* [kumo-engine on PyPI](https://pypi.org/project/kumo-engine/)
 * Sample dataset: [Microsoft SQL Server sample OLTP install script](https://github.com/Microsoft/sql-server-samples/tree/master/samples/databases/adventure-works/oltp-install-script)
 * Kumo skill for CoCo: [Kumo agent skills](https://github.com/NVIDIA/kumo-engine/tree/main/agent-skills)
 * Sample data loader: [load_sample_data.sql](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/getting-started-with-nvidia-kumo-graph-neural-networks-in-snowflake/assets/load_sample_data.sql)
-* Launch blog: [BLOG_LINK_PLACEHOLDER]
