@@ -20,7 +20,7 @@ You will build **ChurnGuard**, a customer retention app, by describing what you 
 | Iteration | What You Build | Snowflake Features |
 |-----------|---------------|-------------------|
 | **1 — Explore your data** | A churn dashboard you can pivot and drill into. *See the risk. Explore the why.* | Application Service, *querySnowflake*, *app.yml* |
-| **2 — Run the workflow** | An Action Board where teams flag customers, assign actions, and track them to resolution. *Turn insight into action.* | Snowflake Postgres, data mirroring, dynamic tables, alerts, External Access Integration |
+| **2 — Run the workflow** | An Action Board where teams flag customers, assign actions, and track them to resolution. *Turn insight into action.* | Snowflake tables, dynamic tables, alerts |
 | **3 — Bring AI into the app** | A Cortex Agent inside the app that answers questions and proposes actions for you to approve. *Ask your data. Get a next step.* | Cortex Agent, semantic view, serverless task, MCP server |
 
 Snowflake App Runtime runs the app on Snowflake as an **APPLICATION SERVICE**. You don't build Docker images, manage a registry, or set up a pipeline. One command deploys it.
@@ -44,25 +44,25 @@ Each iteration uses an [Intent-Driven Development (IDD)](https://dev.to/kameshsa
 The three iterations map to the three kinds of app Snowflake App Runtime is built for:
 
 - **Advanced data exploration:** build an interactive app on governed data, with full control of the UI, that queries Snowflake without managing credentials
-- **Workflow apps:** read and write governed data with shared state and approvals. Keep operational data (fast row inserts and updates) in Snowflake Postgres, mirror it to Snowflake, and let dynamic tables and alerts carry the logic so the app stays thin
+- **Workflow apps:** read and write governed data with shared state and approvals. Write operational data to a Snowflake table and let dynamic tables and alerts carry the logic so the app stays thin
 - **AI apps and agents:** embed a Cortex Agent that reasons over your data and calls your app's tools, and expose those tools as an MCP server for agentic automation
 - **The App Runtime lifecycle:** the describe, build, deploy, iterate loop, the *app.yml* manifest, and in-place upgrades at a stable URL
 
 ### What You'll Need
 
-> **Important:** Snowflake App Runtime isn't available on [trial accounts](https://docs.snowflake.com/en/user-guide/admin-trial-account). You need an account where App Runtime is enabled.
+> **Important:** In a hands-on lab, use the Snowflake account your lab provides. Otherwise, you need an account where Snowflake App Runtime is enabled. Iteration 3 uses Cortex AI, which is off by default on self-service [trial accounts](https://docs.snowflake.com/en/user-guide/admin-trial-account) until you add a credit card.
 
 - A [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) with Snowflake App Runtime enabled.
 - **ACCOUNTADMIN** access for the setup scripts, which:
   - Create a custom role and database
   - Grant **BIND SERVICE ENDPOINT** so the app gets a URL
-  - Grant **CREATE EXTERNAL ACCESS INTEGRATION** and **CREATE NETWORK POLICY** for Postgres connectivity (iteration 2)
-  - Grant the **snowflake.postgres_mirror_admin** application role for data mirroring (iteration 2)
+  - Grant **EXECUTE ALERT** for the escalation alert (iteration 2)
+  - Grant **EXECUTE MANAGED TASK** for the daily staging task (iteration 3)
   - Grant the **SNOWFLAKE.CORTEX_USER** database role for the Cortex Agent (iteration 3)
 
   After setup, you work as the dedicated **SFQUICKSTART_CHURNGUARD_ROLE**.
 
-You probably have Git and Node.js already. The table lists every tool so you can check versions. psql and the Cortex Code CLI are optional:
+You probably have Git and Node.js already. The table lists every tool so you can check versions. The Cortex Code CLI is optional:
 
 | Tool | Version | Used for | Get it |
 |------|---------|----------|--------|
@@ -71,7 +71,6 @@ You probably have Git and Node.js already. The table lists every tool so you can
 | Snowflake CLI | 3.26.0+ | Running scripts and deploying the app | [Install](https://docs.snowflake.com/developer-guide/snowflake-cli/installation/installation) |
 | Node.js and npm | 20+ | Building the app locally | [Download](https://nodejs.org/en/download) |
 | Git | Any recent | Cloning the repo and switching iterations | [Download](https://git-scm.com/downloads) |
-| psql | Any recent | Optional: connecting to Postgres from your terminal (iteration 2) | [Download](https://www.postgresql.org/download/) or *brew install libpq* on macOS |
 
 If you want to try the MCP server in iteration 3, install the Cortex Code CLI:
 
@@ -96,8 +95,7 @@ snow --version
 node --version
 git --version
 
-# optional tools
-psql --version
+# optional tool
 cortex --version
 ```
 
@@ -125,7 +123,6 @@ Add a ***quickstart*** connection and test it:
 # Add the quickstart connection, then test it
 snow connection add --connection-name quickstart \
   --account <your_account> --user <your_user> \
-  --warehouse SFQUICKSTART_CHURNGUARD_WH \
   --authenticator 'OAUTH_AUTHORIZATION_CODE' \
   --client-store-temporary-credential \
   --no-interactive
@@ -134,6 +131,8 @@ snow connection test --connection quickstart
 ```
 
 The command writes the connection to your Snowflake config file. Replace *your_account* and *your_user* with your values. Cortex Code Desktop and the Cortex Code CLI read the same file.
+
+The connection doesn't set a warehouse yet, because **SFQUICKSTART_CHURNGUARD_WH** doesn't exist until *setup.sql* creates it. A connection test with a missing warehouse fails. You add the warehouse and role to the connection after the setup scripts run.
 
 > **Note:** The guide uses the connection name ***quickstart***. If you use another name, change it in *.env*, *AGENTS.md*, and every ***--connection*** flag (including ***cortex mcp add*** in iteration 3).
 
@@ -151,13 +150,14 @@ snow sql -f scripts/setup-data.sql --connection quickstart  # sample data (usual
 What each one does:
 
 - *setup.sql* creates the **SFQUICKSTART_CHURNGUARD** database and the **SFQUICKSTART_CHURNGUARD_WH** warehouse (X-Small, suspends after 60 seconds idle), and checks for the TPC-DS sample data (about 65 million rows). If your account doesn't have it, the script creates it from the Snowflake share. You can also get it from [Snowflake Marketplace](https://docs.snowflake.com/en/user-guide/sample-data-tpcds#getting-tpc-ds-data-from-snowflake-marketplace).
-- *grants.sql* creates **SFQUICKSTART_CHURNGUARD_ROLE** and grants it to you. The role owns the quickstart database and can deploy apps, use the warehouse, and read the sample data. Each iteration adds its own grants when you rerun the script (Postgres in iteration 2, Cortex AI in iteration 3).
+- *grants.sql* creates **SFQUICKSTART_CHURNGUARD_ROLE** and grants it to you. The role owns the quickstart database and can deploy apps, use the warehouse, and read the sample data. Each iteration adds its own grants when you rerun the script (the escalation alert in iteration 2, Cortex AI and tasks in iteration 3).
 - *setup-data.sql* samples the TPC-DS 10 TB dataset once into two small tables, **CHURN_METRICS** (about 30,000 customers) and **CHURN_TRENDS** (monthly totals), so dashboard queries return in under a second. It samples with *TABLESAMPLE SYSTEM* instead of scanning the 29-billion-row fact tables.
 
 Check the tables:
 
 ```bash
-snow sql --connection quickstart --role SFQUICKSTART_CHURNGUARD_ROLE -q "
+snow sql --connection quickstart --role SFQUICKSTART_CHURNGUARD_ROLE \
+  --warehouse SFQUICKSTART_CHURNGUARD_WH -q "
   SELECT 'CHURN_METRICS' AS tbl, COUNT(*) AS row_count
     FROM SFQUICKSTART_CHURNGUARD.PUBLIC.CHURN_METRICS
   UNION ALL
@@ -251,8 +251,7 @@ UI:
 Constraints:
 - Query only the local CHURN_METRICS and CHURN_TRENDS tables
   (do NOT query SNOWFLAKE_SAMPLE_DATA directly -- the fact tables are too large)
-- Add the usage markers from AGENTS.md (APP_ORIGIN in app.yml,
-  QUERY_TAG on the connection with "iter":"1")
+- Add the usage marker from AGENTS.md (APP_ORIGIN in app.yml)
 
 Output:
 - Deployed interactive dashboard at the Application Service URL
@@ -339,9 +338,9 @@ For every field, see the [app.yml reference](https://docs.snowflake.com/en/devel
 | **auto_suspend_secs** | Idle seconds before the service suspends (default *0*, never; minimum *300*) |
 | **environment_variables** | Plain (non-secret) settings for the app. ChurnGuard sets *APP_ORIGIN* here (see the note below) |
 
-Each ***snow app deploy*** applies the whole manifest. Iteration 2 adds *secrets* and *external_access_integrations* so the app can reach Snowflake Postgres. Otherwise only the app code changes.
+Each ***snow app deploy*** applies the whole manifest. In the later iterations only the app code changes: the app reaches its new tables through the same owner's rights connection, so the manifest stays the same.
 
-> **Note:** ChurnGuard carries two anonymous usage markers: *APP_ORIGIN* in *app.yml* and a *QUERY_TAG* on every query the app runs. They tell Snowflake DevRel that an app started from this guide. They hold no customer data, and the app works the same without them. To opt out, delete both. *AGENTS.md* in the companion repo describes them.
+> **Note:** ChurnGuard carries one anonymous usage marker: *APP_ORIGIN* in *app.yml*. It tells Snowflake DevRel that an app started from this guide. It holds no customer data, and the app works the same without it. To opt out, delete it. *AGENTS.md* in the companion repo describes it.
 
 > **Tip:** With the default *auto_suspend_secs* of *0*, the app never suspends and keeps consuming credits while idle. For a lab, set it to *300* (five minutes), or run the cleanup when you finish. See [Scale and suspend apps](https://docs.snowflake.com/en/developer-guide/snowflake-app-runtime/scale-and-suspend).
 
@@ -354,7 +353,7 @@ A dashboard tells you who is at risk. It doesn't help you do anything about it. 
 
 ![Iteration 2 architecture](assets/iter2_architecture.png)
 
-The app reads and writes actions only in Snowflake Postgres, so the Action Board always shows the latest state. In Snowflake, data mirroring, a dynamic table, and an alert run separately. The only thing the app reads from that pipeline is the **NOTIFICATIONS** table.
+The app reads and writes actions in the **ACTIONS** table, so the Action Board always shows the latest state. Separately, a dynamic table and an alert turn those actions into notifications. The only thing the app reads from that pipeline is the **NOTIFICATIONS** table.
 
 ### Setup
 
@@ -366,82 +365,55 @@ git add -A && git commit -m "Iteration 1 done"
 git fetch origin && git merge --no-edit origin/iteration-2/workflow-app
 ```
 
-**Step 1 — Rerun grants.** This adds the Postgres, External Access Integration, mirroring, and alert privileges:
+**Step 1 — Rerun grants.** This adds the alert privilege:
 
 ```bash
 snow sql -f scripts/grants.sql --connection quickstart
 ```
 
-**Step 2 — Create the Postgres instance and data mirror.** Find your public IP address first (for example at [ifconfig.me](https://ifconfig.me)); the prompt asks for it so psql can create the table. Then open the prompt file [02-postgres-setup.md](https://github.com/Snowflake-Labs/sfguide-build-full-stack-apps-with-snowflake-app-runtime/blob/iteration-2/workflow-app/prompts/02-postgres-setup.md) and paste it into Cortex Code Desktop. It uses the */snowflake-postgres* skill to:
-
-- Create the **CHURNGUARD_PG** Postgres instance
-- Store credentials as the **CHURNGUARD_PG_SECRET** and **CHURNGUARD_PG_HOST_SECRET** secrets, right away, because the password is shown only once
-- Attach the **CHURNGUARD_PG_POLICY** network policy with two rules: **CHURNGUARD_PG_INGRESS_RULE** for Snowpark Container Services egress IPs, and a temporary **CHURNGUARD_PG_LOCAL_IP_RULE** for your IP
-- Create the *actions* table, with the primary key mirroring needs and an index that allows one open action per customer
-- Create a network rule and an External Access Integration for the app
-- Mirror the data to the **CHURNGUARD_MIRROR** database
-- Remove your IP from the policy, so only the app can reach Postgres
-
-> **Note:** The Postgres instance takes 3–5 minutes to provision. The prompt waits and checks for you. To use psql again later, see [Troubleshooting](#troubleshooting).
-
-**Step 3 — Create the dynamic table, notifications table, and alert:**
+**Step 2 — Create the actions table, dynamic table, notifications table, and alert:**
 
 ```bash
 snow sql -f scripts/iteration-2-setup.sql --connection quickstart
 ```
 
-This creates the **ACTION_SUMMARY** dynamic table, which reads the mirrored *$live* view, plus the **NOTIFICATIONS** table and **ESCALATION_ALERT**.
+This creates the **ACTIONS** table that the app writes to and the **ACTION_SUMMARY** dynamic table that reads it, plus the **NOTIFICATIONS** table and **ESCALATION_ALERT**.
 
-> **Note:** From here on, some objects use credits while they run: the Postgres instance, the dynamic table and alert (both every minute), and, in iteration 3, a daily task. Run [Cleanup](#cleanup) when you're done.
+> **Note:** From here on, some objects use credits while they run: the dynamic table and alert (both every minute) and, in iteration 3, a daily task. Run [Cleanup](#cleanup) when you're done.
 
 ### The Prompt
 
-Open the prompt file [02-add-workflow.md](https://github.com/Snowflake-Labs/sfguide-build-full-stack-apps-with-snowflake-app-runtime/blob/iteration-2/workflow-app/prompts/02-add-workflow.md) and paste it into Cortex Code Desktop. It asks for an Action Board, writes to Postgres with parameterized queries, and toast notifications driven by a Snowflake alert.
+Open the prompt file [02-add-workflow.md](https://github.com/Snowflake-Labs/sfguide-build-full-stack-apps-with-snowflake-app-runtime/blob/iteration-2/workflow-app/prompts/02-add-workflow.md) and paste it into Cortex Code Desktop. It asks for an Action Board that writes to the **ACTIONS** table with bind variables, and toast notifications driven by a Snowflake alert.
 
 ### What Happens
 
 Cortex Code changes the existing app. It doesn't start over.
 
-**1. Postgres connection.** A *lib/postgres.ts* module opens a connection pool with credentials from the Snowflake secrets that *app.yml* mounts. The connection uses SSL, which Snowflake Postgres requires.
-
-**2. Write routes.** New API routes insert and update actions with parameterized queries:
+**1. Write routes.** New API routes insert and update actions in **ACTIONS** with *querySnowflake* and bind variables:
 
 ```typescript
-const pool = getPgPool()
-await pool.query(
-  "INSERT INTO actions (customer_key, assigned_to, action_type, notes) VALUES ($1, $2, $3, $4)",
-  [customerKey, assignedTo, actionType, notes]
-);
+await querySnowflake(
+  `MERGE INTO SFQUICKSTART_CHURNGUARD.PUBLIC.ACTIONS t
+   USING (SELECT ? AS ACTION_ID, ? AS CUSTOMER_KEY, ? AS ASSIGNED_TO, ? AS ACTION_TYPE, ? AS NOTES) s
+     ON t.CUSTOMER_KEY = s.CUSTOMER_KEY AND t.STATUS <> 'Resolved'
+   WHEN NOT MATCHED THEN
+     INSERT (ACTION_ID, CUSTOMER_KEY, ASSIGNED_TO, ACTION_TYPE, NOTES)
+     VALUES (s.ACTION_ID, s.CUSTOMER_KEY, s.ASSIGNED_TO, s.ACTION_TYPE, s.NOTES)`,
+  { binds: [id, customerKey, assignedTo, actionType, notes] },
+)
 ```
 
-The action list and its KPI cards read from Postgres too, so a new action shows up the moment you save it. A customer can have only one open action: flagging them again shows *already flagged* instead of creating a duplicate.
+The action list and its KPI cards read **ACTIONS** too, so a new action shows up the moment you save it. A customer can have only one open action: when one exists, the *MERGE* inserts nothing, and the form shows *already flagged* instead of creating a duplicate.
 
-**3. Mirroring.** Postgres changes replicate to Snowflake automatically. **ACTION_SUMMARY** reads the mirrored *$live* view. The app never queries it.
+**2. Summaries.** **ACTION_SUMMARY** reads **ACTIONS** and refreshes within a minute. The app never queries it.
 
-**4. Notifications.** **ESCALATION_ALERT** runs every minute. When the dynamic table shows open escalations, it writes a row to **NOTIFICATIONS**. The app polls that table and shows a toast. No email or webhook needed.
+**3. Notifications.** **ESCALATION_ALERT** runs every minute. When the dynamic table shows open escalations, it writes a row to **NOTIFICATIONS**. The app polls that table and shows a toast. No email or webhook needed.
 
-**5. Manifest.** *app.yml* gains *secrets* for the Postgres credentials and host, and *external_access_integrations* for network access to Postgres.
-
-**6. Redeploy.** The app upgrades in place at the same URL.
-
-### Understanding the Updated app.yml
-
-Compare *app.yml* with the iteration 1 version. Cortex Code added two blocks:
-
-![Updated app.yml with secrets and EAI highlighted](assets/iter2_app_yml.png)
-
-| New field | Purpose |
-|-----------|---------|
-| **secrets** | Mounts Snowflake secrets inside the running app. Each entry maps a name the code uses, such as *PG_CREDENTIALS*, to a secret object. Credentials never appear in source code. |
-| **external_access_integrations** | Lets the app make outbound network calls. **CHURNGUARD_EAI** pairs the Postgres network rule (host and port) with the secrets above. |
-
-The *install*, *build*, *run*, and *ignore* fields don't change. Adding these two blocks is all the app needs to reach Postgres.
+**4. Redeploy.** *app.yml* doesn't change, because the app reaches the new tables through the same connection as the dashboard. The app upgrades in place at the same URL.
 
 ### Key Concepts
 
-- **Snowflake Postgres** is managed PostgreSQL inside Snowflake, built for fast row-level inserts and updates from apps. See [Snowflake Postgres](https://docs.snowflake.com/en/user-guide/snowflake-postgres/about).
-- **Data mirroring** copies Postgres changes into Snowflake continuously. The *$live* view is about 30 seconds behind, with no ETL to build. See [Data mirroring](https://docs.snowflake.com/en/user-guide/snowflake-postgres/postgres-data-mirroring).
-- **External Access Integrations** pair a network rule with secrets so an app can call an outside host. See [External network access](https://docs.snowflake.com/en/developer-guide/external-network-access/creating-using-external-network-access).
+- **Snowflake tables for app writes.** The app writes actions to a standard table with bind variables, through the same owner's rights connection it uses for reads. Snowflake doesn't enforce primary keys or unique constraints on standard tables, so the app validates its input, and the *MERGE* keeps one open action per customer. See [Query Snowflake from your app](https://docs.snowflake.com/en/developer-guide/snowflake-app-runtime/query-snowflake).
 - **Dynamic tables** keep a query result up to date. **ACTION_SUMMARY** refreshes within a minute, so the alert reads totals instead of raw rows. See [Dynamic tables](https://docs.snowflake.com/en/user-guide/dynamic-tables-about).
 - **Alerts** run a check on a schedule and act when it's true. **ESCALATION_ALERT** keeps notification logic in Snowflake, not in the app. See [Alerts](https://docs.snowflake.com/en/user-guide/alerts).
 
@@ -451,10 +423,9 @@ Open the app and run through the workflow:
 
 1. Find a high-risk customer in the customer table.
 2. Click **Flag** and choose **Escalate** as the action type.
-3. Open the **Action Board**. The new action and its KPI cards appear right away, because both read from Postgres.
-4. Click the status badge to move it from New to In Progress to Resolved.
-5. Wait 1–2 minutes while the data mirrors, the dynamic table refreshes, and the alert runs.
-6. A toast appears for the escalation. Dismiss it.
+3. Open the **Action Board**. The new action and its KPI cards appear right away, because both read the **ACTIONS** table.
+4. Wait 1–2 minutes while the dynamic table refreshes and the alert runs. A toast appears for the escalation. Dismiss it.
+5. Click the status badge to move the action from New to In Progress to Resolved.
 
 ![Retention action form](assets/iter2_action_form.png)
 
@@ -548,7 +519,7 @@ An empty drawer suggests prompts for the current page.
 
 **5. Streaming answers.** An API route streams the *agent:run* REST API. An answer takes about 30 seconds, so the chat shows a thinking indicator, then each tool call, then the answer with tables and charts. When the agent stages proposals, the chat shows how many and links to the Agent Suggested tab.
 
-**6. Agent Suggested tab.** The Action Board gains a tab of pending proposals. Each card shows the customer, the action, and the playbook rule behind it. **Approve** writes the action to Postgres, **Dismiss** drops it, and **Approve All** handles every pending proposal. A badge shows how many are waiting. If a customer already has an open action, approving dismisses the proposal and tells you how many were skipped.
+**6. Agent Suggested tab.** The Action Board gains a tab of pending proposals. Each card shows the customer, the action, and the playbook rule behind it. **Approve** writes the action to **ACTIONS**, **Dismiss** drops it, and **Approve All** handles every pending proposal. A badge shows how many are waiting. If a customer already has an open action, approving dismisses the proposal and tells you how many were skipped.
 
 **7. Threads.** The app reuses one agent thread per conversation, so follow-up questions keep their context.
 
@@ -607,7 +578,7 @@ Then ask the CLI, one at a time (your results will differ):
 | *Find a high-risk customer with no open action and show their risk.* | get_churn_summary, get_customer_risk | Customer 56557609: High churn risk, $9,966 spend, 100% return rate. Recommended: Escalate (rule 1) |
 | *Flag that customer with the recommended action.* | flag_customer | Created action 8d701687-… (Escalate, status New). Flag them again and the tool answers *already flagged*. |
 
-Open the Action Board in your browser: the new action is at the top of **All actions**, and **Open escalations** goes up by one. Within about a minute, once the mirror syncs and the alert runs, an escalation toast appears on every page.
+Open the Action Board in your browser: the new action is at the top of **All actions**, and **Open escalations** goes up by one. Within 1–2 minutes, once the dynamic table refreshes and the alert runs, an escalation toast appears on every page.
 
 **Checkpoint:** the agent answers questions, stages proposals you can approve, and the MCP server works from the CLI. ChurnGuard is complete.
 
@@ -619,13 +590,11 @@ Use the queries below, or paste the error into Cortex Code Desktop and ask *"Why
 | Symptom | Likely cause | Fix |
 |---|---|---|
 | *Insufficient privileges* on deploy | A grant is missing, or the connection's default role isn't the quickstart role | Rerun *grants.sql* as **ACCOUNTADMIN**, and set ***role = "SFQUICKSTART_CHURNGUARD_ROLE"*** for the connection (see [Prepare Your Working Directory](#prepare-your-working-directory)) |
-| *Connection refused* or *SSL required* (iteration 2) | The Postgres instance isn't running yet | Wait for provisioning, then check the instance state |
-| psql hangs (iteration 2) | The Postgres instance is suspended | Run ***ALTER POSTGRES INSTANCE CHURNGUARD_PG RESUME***, wait until **READY**, then retry |
-| psql can't reach Postgres from your machine | Setup removed your IP from the network policy | Add **CHURNGUARD_PG_LOCAL_IP_RULE** back to **CHURNGUARD_PG_POLICY** (below), and remove it when you're done |
-| Lost the Postgres *application* password | It's shown only once, at CREATE | Run ***ALTER POSTGRES INSTANCE CHURNGUARD_PG RESET ACCESS FOR 'application'*** and update **CHURNGUARD_PG_SECRET** |
-| The app can't reach Postgres | External Access Integration or secrets missing | Check **CHURNGUARD_EAI** and the two Postgres secrets exist |
-| Actions don't reach Snowflake | Mirroring runs about 30 seconds behind | Wait, then check the mirror state is **REPLICATING** |
-| No toast after an escalation | The dynamic table or alert hasn't refreshed | Check the dynamic table refresh history |
+| *Could not use warehouse* on ***snow connection test*** | The connection names **SFQUICKSTART_CHURNGUARD_WH** before *setup.sql* creates it | Remove ***warehouse*** from the connection, run the setup scripts, then add it back (see [Prepare Your Working Directory](#prepare-your-working-directory)) |
+| *Refusing to merge unrelated histories* | Your clone has the iteration branches from before they were rebuilt | Run ***git fetch origin***, then merge again |
+| *ACTIONS does not exist* (iteration 2) | *iteration-2-setup.sql* hasn't run | Run it with ***snow sql*** (iteration 2 setup, step 2) |
+| No toast after an escalation | The dynamic table or alert hasn't refreshed, or the escalation is already resolved | Wait 1–2 minutes with the escalation open, then check the dynamic table refresh history and alert history |
+| Cortex errors on a trial account (iteration 3) | AI features are off by default on self-service trials | Add a credit card to the account (see [trial accounts](https://docs.snowflake.com/en/user-guide/admin-trial-account)) |
 | The chat shows errors (iteration 3) | The agent or semantic view is missing | Check both exist in the quickstart schema |
 | The Agent Suggested tab is empty | The task hasn't run or is suspended | Check task history, resume it, or run it now |
 | The MCP server won't connect | Wrong URL, connection, or role | The URL must be your App URL plus */api/mcp*; your connection test must pass; your role needs **USAGE** on the app. Use the Cortex Code CLI: other MCP clients are redirected to the Snowflake login |
@@ -633,25 +602,19 @@ Use the queries below, or paste the error into Cortex Code Desktop and ask *"Why
 The checks, grouped by area:
 
 ```sql
--- Grants, Postgres, and network
+-- Grants
 SHOW GRANTS TO ROLE SFQUICKSTART_CHURNGUARD_ROLE;
-SHOW POSTGRES INSTANCES IN ACCOUNT;
-SHOW EXTERNAL ACCESS INTEGRATIONS;
-SHOW SECRETS IN SCHEMA SFQUICKSTART_CHURNGUARD.PUBLIC;
--- Allow psql from your machine again (if your IP changed, update the rule first:
--- ALTER NETWORK RULE SFQUICKSTART_CHURNGUARD.PUBLIC.CHURNGUARD_PG_LOCAL_IP_RULE SET VALUE_LIST = ('<your-public-ip>/32');)
-ALTER NETWORK POLICY CHURNGUARD_PG_POLICY
-  ADD ALLOWED_NETWORK_RULE_LIST = ('SFQUICKSTART_CHURNGUARD.PUBLIC.CHURNGUARD_PG_LOCAL_IP_RULE');
--- ...and remove it when you're done
-ALTER NETWORK POLICY CHURNGUARD_PG_POLICY
-  REMOVE ALLOWED_NETWORK_RULE_LIST = ('SFQUICKSTART_CHURNGUARD.PUBLIC.CHURNGUARD_PG_LOCAL_IP_RULE');
 
--- Mirroring and the dynamic table
-SELECT * FROM CHURNGUARD_MIRROR.PUBLIC.ACTIONS$live LIMIT 5;
-CALL SNOWFLAKE.POSTGRES.LIST_MIRRORED_TABLES('churnguard_mirror');
+-- Actions, the dynamic table, and the alert
+SELECT * FROM SFQUICKSTART_CHURNGUARD.PUBLIC.ACTIONS ORDER BY CREATED_AT DESC LIMIT 5;
+SELECT * FROM SFQUICKSTART_CHURNGUARD.PUBLIC.ACTION_SUMMARY;
 SELECT * FROM TABLE(INFORMATION_SCHEMA.DYNAMIC_TABLE_REFRESH_HISTORY(
     NAME => 'SFQUICKSTART_CHURNGUARD.PUBLIC.ACTION_SUMMARY'
 )) ORDER BY REFRESH_END_TIME DESC LIMIT 5;
+SELECT * FROM TABLE(INFORMATION_SCHEMA.ALERT_HISTORY(
+    SCHEDULED_TIME_RANGE_START => DATEADD('hour', -1, CURRENT_TIMESTAMP())
+)) ORDER BY SCHEDULED_TIME DESC LIMIT 5;
+SELECT * FROM SFQUICKSTART_CHURNGUARD.PUBLIC.NOTIFICATIONS ORDER BY CREATED_AT DESC LIMIT 5;
 ```
 
 ```sql
@@ -695,15 +658,10 @@ snow sql -f scripts/cleanup.sql --connection quickstart
 It drops:
 
 - The **APPLICATION SERVICE**
-- The data mirror, its **CHURNGUARD_MIRROR** database, and its catalog integration
-- The **CHURNGUARD_PG** Postgres instance
-- **CHURNGUARD_EAI**, **CHURNGUARD_PG_POLICY**, and the network rules
-- The **SFQUICKSTART_CHURNGUARD** database and everything in it
+- The **SFQUICKSTART_CHURNGUARD** database and everything in it, including the dynamic table, alert, task, and agent
 - The **SFQUICKSTART_CHURNGUARD_WH** warehouse and **SFQUICKSTART_CHURNGUARD_ROLE**
 
-The script ends by listing anything left over; every list should be empty.
-
-> **Warning:** Make sure the script finishes. A Postgres instance left running keeps using credits.
+The script ends by listing anything left over; every list should be empty. If you followed an earlier version of this guide that used Snowflake Postgres, the script also removes the Postgres instance, data mirror, External Access Integration, and network policy.
 
 Leave **SNOWFLAKE_SAMPLE_DATA** in place unless you're sure nothing else in your account uses it.
 
@@ -713,22 +671,10 @@ To clean up by hand:
 -- Manual cleanup: run these in order
 USE ROLE ACCOUNTADMIN;
 DROP APPLICATION SERVICE IF EXISTS SFQUICKSTART_CHURNGUARD.PUBLIC.CHURNGUARD;
-
--- The quickstart role owns the mirror and the Postgres instance
-USE ROLE SFQUICKSTART_CHURNGUARD_ROLE;
--- Also drops the CHURNGUARD_MIRROR database and its catalog integration
-CALL SNOWFLAKE.POSTGRES.DROP_MIRROR('churnguard_mirror');
-DROP POSTGRES INSTANCE IF EXISTS CHURNGUARD_PG;
-
-USE ROLE ACCOUNTADMIN;
-DROP INTEGRATION IF EXISTS CHURNGUARD_EAI;
-DROP NETWORK POLICY IF EXISTS CHURNGUARD_PG_POLICY;
-DROP DATABASE IF EXISTS SFQUICKSTART_CHURNGUARD;   -- includes the network rules
+DROP DATABASE IF EXISTS SFQUICKSTART_CHURNGUARD;
 DROP WAREHOUSE IF EXISTS SFQUICKSTART_CHURNGUARD_WH;
 DROP ROLE IF EXISTS SFQUICKSTART_CHURNGUARD_ROLE;
 ```
-
-If *DROP_MIRROR* fails, *DROP POSTGRES INSTANCE* fails too, because the mirror's catalog integration still references the instance. *cleanup.sql* shows the error and handles both leftovers; by hand, run ***DROP INTEGRATION IF EXISTS CHURNGUARD_MIRROR_CATALOG_INTEGRATION***, and to drop the mirror database, first run ***GRANT OWNERSHIP ON DATABASE CHURNGUARD_MIRROR TO ROLE ACCOUNTADMIN*** (it's owned by the *snowflake* application).
 
 To remove what the guide set up on your machine:
 
@@ -736,7 +682,7 @@ To remove what the guide set up on your machine:
 cortex mcp remove churnguard
 ```
 
-If you used psql, also remove the **CHURNGUARD_PG** entries from *~/.pgpass* and *~/.pg_service.conf*. Then set your connection's default ***role*** back to what it was: **SFQUICKSTART_CHURNGUARD_ROLE** no longer exists.
+Then set your connection's default ***role*** back to what it was: **SFQUICKSTART_CHURNGUARD_ROLE** no longer exists.
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
@@ -746,7 +692,7 @@ If you used psql, also remove the **CHURNGUARD_PG** entries from *~/.pgpass* and
 You built one app in three iterations, and each one added a kind of app:
 
 - **Explore your data.** A dashboard you can pivot and drill into, deployed with one command and no credentials in your code.
-- **Run the workflow.** Operational writes (fast row inserts and updates) to Snowflake Postgres, mirrored into Snowflake, where a dynamic table and an alert drive notifications.
+- **Run the workflow.** Operational writes to a Snowflake table, where a dynamic table and an alert drive notifications.
 - **Bring AI into the app.** A Cortex Agent grounded in a playbook. It proposes actions, a person approves them, a task stages them daily, and an MCP server lets other agents use the app.
 
 Every iteration followed the same loop:
@@ -817,8 +763,8 @@ More ideas to write as IDD prompts in the same shape:
 - [app.yml manifest reference](https://docs.snowflake.com/en/developer-guide/snowflake-app-runtime/app-yml)
 - [Query Snowflake from your app](https://docs.snowflake.com/en/developer-guide/snowflake-app-runtime/query-snowflake)
 - [Access control for Snowflake App Runtime](https://docs.snowflake.com/en/developer-guide/snowflake-app-runtime/access-control)
-- [Snowflake Postgres](https://docs.snowflake.com/en/user-guide/snowflake-postgres/about)
-- [Postgres data mirroring](https://docs.snowflake.com/en/user-guide/snowflake-postgres/postgres-data-mirroring)
+- [Dynamic tables](https://docs.snowflake.com/en/user-guide/dynamic-tables-about)
+- [Alerts](https://docs.snowflake.com/en/user-guide/alerts)
 - [Cortex Agents](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents)
 - [Cortex Agents Run API](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents-run)
 - [Cortex Code Desktop](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-desktop)
