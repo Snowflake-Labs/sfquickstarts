@@ -90,33 +90,33 @@ SET user_name = (SELECT CURRENT_USER());
 GRANT ROLE dcm_developer TO USER IDENTIFIER($user_name);
 ```
 
-### 2. Grant Infrastructure Privileges
+### 2. Enable Inherited Grants
 
-The DCM_DEVELOPER role needs privileges to create infrastructure objects through DCM deployments:
-
-```sql
-GRANT CREATE WAREHOUSE ON ACCOUNT TO ROLE dcm_developer;
-GRANT CREATE ROLE ON ACCOUNT TO ROLE dcm_developer;
-GRANT CREATE DATABASE ON ACCOUNT TO ROLE dcm_developer;
-GRANT EXECUTE MANAGED TASK ON ACCOUNT TO ROLE dcm_developer;
-GRANT EXECUTE TASK ON ACCOUNT TO ROLE dcm_developer;
-GRANT MANAGE GRANTS ON ACCOUNT TO ROLE dcm_developer;
-```
-
-> **New RBAC feature:** these access definitions use `GRANT INHERITED`, a Snowflake Public Preview capability. Grants marked `INHERITED` are automatically extended to objects created *later* in the container, so read roles stay correctly privileged without re-granting. It needs the one-time, account-level opt-in below — a behavior-change setting that is independent of DCM.
+> **Inherited grants.** An `INHERITED` grant covers current *and* future objects of a type inside a container, as one grant rather than one per object, so the team read roles stay correctly privileged as new staging tables arrive. This project's access definitions use them. They require a one-time, account-level opt-in that is independent of DCM, and cannot be combined with `WITH GRANT OPTION`, `CASCADE` or `RESTRICT`.
 
 ```sql
 ALTER ACCOUNT SET FEATURE_RBAC_INHERITED_GRANTS = 'ENABLED';
 ```
 
-### 3. Grant Data Quality Privileges
+### 3. Grant Account-Level Privileges
 
-To define and test data quality expectations, grant the following:
+Account-level privileges cannot be granted by a project on itself, so they all happen here, before the first plan. The script grants `DCM_DEVELOPER` a **superset**: every guide in this series shares this role, so one run of any guide's pre-deploy script prepares you for all of them, and each grant carries a comment saying what capability it buys. The ones this guide relies on create the databases, warehouses and team roles, and let the project grant on objects it does not own:
 
 ```sql
-GRANT APPLICATION ROLE SNOWFLAKE.DATA_QUALITY_MONITORING_VIEWER TO ROLE dcm_developer;
-GRANT EXECUTE DATA METRIC FUNCTION ON ACCOUNT TO ROLE dcm_developer WITH GRANT OPTION;
+GRANT CREATE WAREHOUSE ON ACCOUNT TO ROLE dcm_developer;
+GRANT CREATE ROLE      ON ACCOUNT TO ROLE dcm_developer;
+GRANT CREATE DATABASE  ON ACCOUNT TO ROLE dcm_developer;
+GRANT MANAGE GRANTS    ON ACCOUNT TO ROLE dcm_developer;
 ```
+
+The data quality expectations need the minimal pair below. The Platform project passes `EXECUTE DATA METRIC FUNCTION` on to the Finance team's admin role, and a role can only pass on a privilege it holds `WITH GRANT OPTION` — without it, the first plan fails with "Grant not executed: Insufficient privileges":
+
+```sql
+GRANT EXECUTE DATA METRIC FUNCTION ON ACCOUNT TO ROLE dcm_developer WITH GRANT OPTION;
+GRANT APPLICATION ROLE SNOWFLAKE.DATA_QUALITY_MONITORING_VIEWER TO ROLE dcm_developer;
+```
+
+The script's last section creates the Platform DCM Project object; it is covered in the Deploy the Platform Project step.
 
 <!-- ------------------------ -->
 ## Explore the Platform Project
@@ -740,26 +740,27 @@ The overall status is **FAILED** because `no_kids` is violated — some prospect
 <!-- ------------------------ -->
 ## Cleanup
 
-When you're done, open `scripts/05_cleanup.sql` in a Snowsight worksheet and run it to tear down all objects. `EXECUTE DCM PROJECT ... PURGE` drops every object each project created. Run Pipeline's PURGE first to clean out its silver/gold DTs while its host database still exists; Platform's PURGE then drops the databases, warehouses, and roles (including the database that held the Pipeline project object itself).
+When you're done, open `scripts/05_cleanup.sql` in a Snowsight worksheet and run it. It purges both projects and drops the Platform project object:
 
 ```sql
--- Pipeline first: purge DTs, views, and DMF attachments inside dcm_demo_2_finance_dev
 USE ROLE dcm_demo_2_finance_dev_admin;
 EXECUTE DCM PROJECT dcm_demo_2_finance_dev.projects.finance_pipeline PURGE;
 
--- Platform: drops dcm_demo_2_finance_dev, dcm_demo_2_marketing_dev, dcm_demo_2_dev,
--- warehouses, and all team roles. The Pipeline project object goes with the Finance DB.
 USE ROLE dcm_developer;
 EXECUTE DCM PROJECT dcm_demo.projects.dcm_platform_dev PURGE;
 
--- Platform project object itself (in the shared dcm_demo DB), plus the scaffolding
 DROP DCM PROJECT IF EXISTS dcm_demo.projects.dcm_platform_dev;
-DROP SCHEMA IF EXISTS dcm_demo.projects;
-DROP DATABASE IF EXISTS dcm_demo;
-
-USE ROLE ACCOUNTADMIN;
-DROP ROLE IF EXISTS dcm_developer;
 ```
+
+`PURGE` drops every object a project created — databases, tables, dynamic tables, views, warehouses, roles, and all their data. It is irreversible. Order matters: purge Pipeline first, while its host database still exists; Platform's purge then drops the databases, warehouses and team roles, including `dcm_demo_2_finance_dev`, which takes the Pipeline project object with it. `PURGE` leaves the Platform project object behind, which is why the `DROP` follows.
+
+The `dcm_demo` database, its `projects` schema and the `dcm_developer` role are shared across every guide in this series, so the script leaves them in place, commented out. The `dcm_demo.projects` schema holds the project objects for every DCM guide in this series, so only drop it once you have finished with all of them. Check what it contains first:
+
+```sql
+SHOW DCM PROJECTS IN SCHEMA dcm_demo.projects;
+```
+
+If `PURGE` ever fails, the known cause is a data metric function attachment, which this guide has; dropping the table the DMF is attached to removes the attachment, after which `PURGE` succeeds.
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
