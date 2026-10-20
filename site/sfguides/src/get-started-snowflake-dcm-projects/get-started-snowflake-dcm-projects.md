@@ -28,10 +28,6 @@ DCM Projects can be managed using Snowsight, the Snowflake CLI, SQL, or Cortex C
 
 This guide shows two of those interfaces side by side. Every plan and deploy step below gives you the Snowsight Workspaces path and the equivalent `snow` CLI command, so you can follow whichever fits how you work.
 
-### Prerequisites
-- Basic knowledge of Snowflake concepts (databases, schemas, tables, roles)
-- Familiarity with SQL
-
 ### What You'll Learn
 - What a DCM Project declares, and how a manifest maps one codebase onto several environments
 - How to read a plan changeset and deploy it with an alias
@@ -42,6 +38,7 @@ This guide shows two of those interfaces side by side. Every plan and deploy ste
 
 ### What You'll Need
 - A [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) with ACCOUNTADMIN access
+- Basic knowledge of Snowflake concepts (databases, schemas, tables, roles)
 - [Snowflake CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli/installation/installation) if you want to follow the CLI path
 - Familiarity with SQL
 
@@ -82,7 +79,7 @@ Once the workspace is created you will see the repository files in the file expl
 Every operational step in this guide is given twice: once for Snowsight, and once for the [Snowflake CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli/installation/installation) if you would rather drive the project from a terminal against your own copy of the repository.
 
 <!-- ------------------------ -->
-## Prerequisites and Setup
+## Setup
 
 Run the first script. **In Snowsight:** open `scripts/01_pre_deploy.sql` in a worksheet and run each section in order. **With the Snowflake CLI:**
 
@@ -599,6 +596,12 @@ The `dcm_demo.projects` schema holds the project objects for every DCM guide in 
 
 ```sql
 SHOW DCM PROJECTS IN SCHEMA dcm_demo.projects;
+```
+
+The inherited-grants account parameter enabled during setup also stays on. It is account-wide and the other guides in this series need it; the script carries the commented-out line to turn it off:
+
+```sql
+-- ALTER ACCOUNT SET FEATURE_RBAC_INHERITED_GRANTS = 'DISABLED';
 ```
 
 The script closes by verifying what went and what remains, and if `PURGE` ever fails it tells you to suspend the project's scheduled objects first so nothing keeps consuming credits while you investigate.
