@@ -254,6 +254,30 @@ CoWork includes more capabilities you can try with the same agent:
 * **File upload:** Attach a CSV, PDF, or image directly in the chat for additional context.
 
 <!-- ------------------------ -->
+## Clean Up
+
+To remove the objects created in this guide:
+
+* In Snowflake CoWork, open **Automations** and delete the automation you created in Q5.
+* Run the following SQL statements. Dropping `DASH_DB_SI` also removes the semantic view, Cortex Search services, and `SEND_EMAIL` procedure created in this guide.
+
+```sql
+USE ROLE ACCOUNTADMIN;
+
+DROP AGENT IF EXISTS SNOWFLAKE_INTELLIGENCE.AGENTS.SALES_AI;
+DROP DATABASE IF EXISTS DASH_DB_SI;
+DROP WAREHOUSE IF EXISTS DASH_WH_SI;
+DROP NOTIFICATION INTEGRATION IF EXISTS EMAIL_INTEGRATION;
+DROP API INTEGRATION IF EXISTS SNOWFLAKE_LABS_SI_GIT_API_INTEGRATION;
+DROP ROLE IF EXISTS SNOWFLAKE_INTELLIGENCE_ADMIN;
+
+-- setup.sql changed your default role and warehouse; reset them as needed
+-- ALTER USER <your_user> SET DEFAULT_ROLE = <role> DEFAULT_WAREHOUSE = <warehouse>;
+```
+
+> NOTE: This leaves the `SNOWFLAKE_INTELLIGENCE` database and the `SNOWFLAKE_INTELLIGENCE_OBJECT_DEFAULT` CoWork object in place, since other agents in your account may use them.
+
+<!-- ------------------------ -->
 ## Conclusion And Resources
 
 Congratulations! You've successfully built a Cortex Agent for Snowflake CoWork that can respond to questions by reasoning over both structured and unstructured data.
