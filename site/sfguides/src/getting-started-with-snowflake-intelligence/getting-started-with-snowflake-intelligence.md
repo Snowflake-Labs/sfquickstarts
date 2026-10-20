@@ -29,7 +29,18 @@ CoWork moves teams from reactive Q&A to proactive, context-aware intelligence th
 
 * **Self-service data exploration:** Enable all business users to independently explore data and get immediate answers to complex questions, reducing reliance on data teams and accelerating decisions across the organization.
 
-### Prerequisites
+### What You'll Learn
+
+* How to create a semantic view so Cortex Analyst can answer questions about structured data
+* How to create a Cortex Search service over unstructured support tickets
+* How to build a Cortex Agent with Cortex Analyst, Cortex Search, and a custom email tool
+* How to ask questions, get charts, and set up an automation in Snowflake CoWork
+
+### What You'll Build
+
+A **Sales//AI** agent in Snowflake CoWork that answers questions across retail sales, marketing, social media, and support data, generates charts, and emails summaries on demand or on a schedule.
+
+### What You'll Need
 
 * [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) installed
 
@@ -219,6 +230,8 @@ ___
 ### Q5. *Send me this summary every Monday morning*
 
 This turns a one-time answer into an [Automation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/snowflake-cowork/automations) that re-runs the question on fresh data and emails you the results. You can review and manage it from the **Automations** tab.
+
+**What to expect:** The agent confirms the schedule and the first delivery date, and the new automation appears under **Automations** with its schedule. From there, or by asking in chat, you can edit, reschedule, pause, resume, or delete it.
 ___
 
 ### Other Questions
