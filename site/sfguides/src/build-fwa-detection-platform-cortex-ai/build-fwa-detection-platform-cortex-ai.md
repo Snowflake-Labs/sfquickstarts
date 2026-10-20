@@ -5,6 +5,7 @@ categories: snowflake-site:taxonomy/solution-center/certification/quickstart,sno
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+fork repo link: https://github.com/sfc-gh-rkumar/sfguide-fwa-detection-platform-cortex-ai
 language: en
 
 # Build a Fraud, Waste, and Abuse Detection Platform with Snowflake Cortex AI
@@ -91,7 +92,39 @@ CREATE STAGE IF NOT EXISTS FWA_QS.DETECTION.DOCUMENTS
   ENCRYPTION = (TYPE = 'SNOWFLAKE_SSE');
 CREATE STAGE IF NOT EXISTS FWA_QS.DETECTION.AUDIO_FILES
   ENCRYPTION = (TYPE = 'SNOWFLAKE_SSE');
+-- Stage for the Cortex Analyst semantic model YAML (used in the Investigation Agent step)
+CREATE STAGE IF NOT EXISTS FWA_QS.DETECTION.SEMANTIC_MODELS
+  ENCRYPTION = (TYPE = 'SNOWFLAKE_SSE');
 ```
+
+### Load Sample Files from GitHub
+
+The synthetic claim documents (PDFs), audio recordings (MP3s), and semantic model YAML live in the [companion repository](https://github.com/sfc-gh-rkumar/sfguide-fwa-detection-platform-cortex-ai). Snowflake's Git integration clones the public repo and copies the files straight into your stages, so there is nothing to download or upload by hand.
+
+```sql
+-- API integration that lets Snowflake read the public companion repo (no credentials needed)
+CREATE OR REPLACE API INTEGRATION FWA_GIT_API_INTEGRATION
+  API_PROVIDER = git_https_api
+  API_ALLOWED_PREFIXES = ('https://github.com/sfc-gh-rkumar')
+  ENABLED = TRUE;
+
+-- Clone the companion repo into Snowflake as a Git repository object
+CREATE OR REPLACE GIT REPOSITORY FWA_QS.DETECTION.FWA_SAMPLE_FILES
+  API_INTEGRATION = FWA_GIT_API_INTEGRATION
+  ORIGIN = 'https://github.com/sfc-gh-rkumar/sfguide-fwa-detection-platform-cortex-ai.git';
+
+-- Copy the sample files from the repo into the stages
+COPY FILES INTO @FWA_QS.DETECTION.DOCUMENTS
+  FROM @FWA_QS.DETECTION.FWA_SAMPLE_FILES/branches/main/data/documents/;
+COPY FILES INTO @FWA_QS.DETECTION.AUDIO_FILES
+  FROM @FWA_QS.DETECTION.FWA_SAMPLE_FILES/branches/main/data/audio/;
+COPY FILES INTO @FWA_QS.DETECTION.SEMANTIC_MODELS
+  FROM @FWA_QS.DETECTION.FWA_SAMPLE_FILES/branches/main/semantic_model/;
+```
+
+> **Verify:** `LIST @FWA_QS.DETECTION.DOCUMENTS;` shows 3 PDFs and `LIST @FWA_QS.DETECTION.AUDIO_FILES;` shows 2 MP3s.
+>
+> Prefer a manual upload? Download the files from the [companion repository](https://github.com/sfc-gh-rkumar/sfguide-fwa-detection-platform-cortex-ai) and upload them to the same stages in Snowsight (**Catalog » Database Explorer » FWA_QS » DETECTION » Stages**).
 
 ### Create Base Tables
 
@@ -296,7 +329,7 @@ Materialize LLM-driven classification so downstream services can index the resul
 ```sql
 -- Materialize LLM results into a table so Cortex Search can index them
 -- AI_CLASSIFY: assigns each claim to a fraud category
--- COMPLETE: generates a plain-English explanation for investigators
+-- AI_COMPLETE: generates a plain-English explanation for investigators
 CREATE OR REPLACE TABLE FWA_QS.DETECTION.FRAUD_CLASSIFICATIONS AS
 SELECT
     c.CLAIM_ID,
@@ -320,7 +353,7 @@ SELECT
         || ', Peer billing ratio: ' || pp.PEER_BILLING_RATIO::VARCHAR || 'x'
         || ', Prior auth gap rate: ' || pp.PRIOR_AUTH_GAP_RATE::VARCHAR
         || ', On watch list: ' || pp.ON_WATCH_LIST::VARCHAR
-    )                                                          AS EXPLANATION
+    )::VARCHAR                                                 AS EXPLANATION
 FROM FWA_QS.DETECTION.CLAIMS c
 JOIN FWA_QS.DETECTION.PROVIDERS p ON c.PROVIDER_ID = p.PROVIDER_ID
 JOIN FWA_QS.DETECTION.PROVIDER_PROFILES pp ON c.PROVIDER_ID = pp.PROVIDER_ID
@@ -470,51 +503,65 @@ Duration: 5
 
 ### Document Analysis
 
-Parse clinical documents, compare to the associated claim, and flag mismatches:
+Parse each claim document once and store the text. Downstream steps (mismatch analysis, the Cortex Search service, and the Streamlit app) read the stored text instead of re-parsing the PDFs.
 
 ```sql
--- Upload documents first, then parse and analyze:
--- PUT file:///path/to/doc.pdf @FWA_QS.DETECTION.DOCUMENTS;
-
--- AI_PARSE_DOCUMENT: extracts text/OCR from PDFs and images on the stage
--- COMPLETE: compares extracted text against claim details to find mismatches
+-- AI_PARSE_DOCUMENT: extracts text (with OCR) from the PDFs on the stage
+CREATE OR REPLACE TABLE FWA_QS.DETECTION.DOCUMENT_TEXT AS
 SELECT
     d.DOC_ID,
-    d.FILE_NAME,
     d.CLAIM_ID,
-    AI_PARSE_DOCUMENT(TO_FILE('@FWA_QS.DETECTION.DOCUMENTS', d.FILE_NAME)):content::VARCHAR AS EXTRACTED_TEXT,
+    d.FILE_NAME,
+    d.DOC_TYPE,
+    AI_PARSE_DOCUMENT(TO_FILE('@FWA_QS.DETECTION.DOCUMENTS', d.FILE_NAME)):content::VARCHAR AS EXTRACTED_TEXT
+FROM FWA_QS.DETECTION.DOCUMENT_METADATA d;
+
+-- AI_COMPLETE: compares each document against its claim and lists mismatches
+CREATE OR REPLACE TABLE FWA_QS.DETECTION.DOCUMENT_FINDINGS AS
+SELECT
+    t.DOC_ID,
+    t.CLAIM_ID,
+    t.DOC_TYPE,
     AI_COMPLETE('llama3.3-70b',
         'You are a healthcare fraud auditor. Compare this clinical document to the claim details '
-        || 'and list any mismatches. Document text: '
-        || AI_PARSE_DOCUMENT(TO_FILE('@FWA_QS.DETECTION.DOCUMENTS', d.FILE_NAME)):content::VARCHAR
+        || 'and list any mismatches. Document text: ' || t.EXTRACTED_TEXT
         || ' | Claim: procedure=' || c.PROCEDURE_CODE
         || ', diagnosis=' || c.DIAGNOSIS_CODE
         || ', amount=$' || c.CLAIM_AMOUNT::VARCHAR
-    ) AS MISMATCH_ANALYSIS
-FROM FWA_QS.DETECTION.DOCUMENT_METADATA d
-JOIN FWA_QS.DETECTION.CLAIMS c ON d.CLAIM_ID = c.CLAIM_ID;
+    )::VARCHAR AS MISMATCH_ANALYSIS
+FROM FWA_QS.DETECTION.DOCUMENT_TEXT t
+JOIN FWA_QS.DETECTION.CLAIMS c ON t.CLAIM_ID = c.CLAIM_ID;
 ```
+
+> **Verify:** `SELECT DOC_ID, MISMATCH_ANALYSIS FROM FWA_QS.DETECTION.DOCUMENT_FINDINGS;` The sample documents are written to conflict with their claims: C-3002 bills a high-complexity visit (99215) for a 12-minute follow-up, C-3003's own note says the visit was low complexity, and C-3013 documents a different procedure and diagnosis with no patient check-in.
 
 ### Audio Analysis
 
-Transcribe hotline calls or whistleblower reports, summarize, and extract key entities:
+Transcribe each hotline call and whistleblower report once and store the transcript, then summarize it.
 
 ```sql
--- Upload audio first, then transcribe and summarize:
--- PUT file:///path/to/call.mp3 @FWA_QS.DETECTION.AUDIO_FILES;
-
 -- AI_TRANSCRIBE: converts speech to text directly from audio files on the stage
--- AI_SUMMARIZE: condenses the transcript into key findings
+-- It returns an object; the :text field holds the transcript
+CREATE OR REPLACE TABLE FWA_QS.DETECTION.AUDIO_TRANSCRIPTS AS
 SELECT
     a.AUDIO_ID,
     a.FILE_NAME,
     a.SOURCE_TYPE,
-    AI_TRANSCRIBE(TO_FILE('@FWA_QS.DETECTION.AUDIO_FILES', a.FILE_NAME)) AS TRANSCRIPTION,
-    AI_SUMMARIZE(
-        AI_TRANSCRIBE(TO_FILE('@FWA_QS.DETECTION.AUDIO_FILES', a.FILE_NAME))
-    ) AS SUMMARY
+    a.RELATED_PROVIDER,
+    a.RECEIVED_DATE,
+    AI_TRANSCRIBE(TO_FILE('@FWA_QS.DETECTION.AUDIO_FILES', a.FILE_NAME)):text::VARCHAR AS TRANSCRIPTION
 FROM FWA_QS.DETECTION.AUDIO_METADATA a;
+
+-- AI_SUMMARIZE: condenses each transcript into key findings
+SELECT
+    AUDIO_ID,
+    SOURCE_TYPE,
+    RELATED_PROVIDER,
+    AI_SUMMARIZE(TRANSCRIPTION) AS SUMMARY
+FROM FWA_QS.DETECTION.AUDIO_TRANSCRIPTS;
 ```
+
+> **Verify:** The hotline call (A-6001) reports that P-1001 bills 10-minute visits as 99215 and shares an address with Beta Health Corp. The whistleblower report (A-6002) reports that P-1002 and Gamma Clinic share bank account 8888.
 
 > **In production**, Snowflake Cortex AI provides a full suite of functions for audio and multilingual workflows: AI_TRANSCRIBE, AI_TRANSLATE, AI_SUMMARIZE, AI_CLASSIFY, AI_EXTRACT, AI_COMPLETE, AI_SENTIMENT, AI_PARSE_DOCUMENT. These run inside Snowflake — no external API calls, no data movement. Combine them to build end-to-end pipelines, e.g. AI_TRANSCRIBE → AI_TRANSLATE → AI_SUMMARIZE for multilingual hotline calls.
 
@@ -539,28 +586,27 @@ AS (
     FROM FWA_QS.DETECTION.FRAUD_CLASSIFICATIONS
 );
 
--- Search service over parsed document text (clinical notes, invoices)
+-- Search service over the parsed document text stored in the previous step
+-- (Search services index stored text; they cannot call AI_PARSE_DOCUMENT themselves)
 CREATE OR REPLACE CORTEX SEARCH SERVICE FWA_QS.DETECTION.DOCUMENT_SEARCH
   ON EXTRACTED_TEXT
+  ATTRIBUTES CLAIM_ID, DOC_TYPE
   WAREHOUSE = FWA_WH
   TARGET_LAG = '1 hour'
 AS (
-    SELECT
-        d.DOC_ID, d.CLAIM_ID, d.FILE_NAME, d.DOC_TYPE,
-        AI_PARSE_DOCUMENT(TO_FILE('@FWA_QS.DETECTION.DOCUMENTS', d.FILE_NAME)):content::VARCHAR AS EXTRACTED_TEXT
-    FROM FWA_QS.DETECTION.DOCUMENT_METADATA d
+    SELECT DOC_ID, CLAIM_ID, FILE_NAME, DOC_TYPE, EXTRACTED_TEXT
+    FROM FWA_QS.DETECTION.DOCUMENT_TEXT
 );
 
--- Search service over transcribed audio (hotline calls, whistleblower reports)
+-- Search service over the stored audio transcripts (hotline calls, whistleblower reports)
 CREATE OR REPLACE CORTEX SEARCH SERVICE FWA_QS.DETECTION.AUDIO_SEARCH
-  ON TRANSCRIPTION_TEXT
+  ON TRANSCRIPTION
+  ATTRIBUTES RELATED_PROVIDER, SOURCE_TYPE
   WAREHOUSE = FWA_WH
   TARGET_LAG = '1 hour'
 AS (
-    SELECT
-        a.AUDIO_ID, a.FILE_NAME, a.SOURCE_TYPE, a.RELATED_PROVIDER,
-        AI_TRANSCRIBE(TO_FILE('@FWA_QS.DETECTION.AUDIO_FILES', a.FILE_NAME))::VARCHAR AS TRANSCRIPTION_TEXT
-    FROM FWA_QS.DETECTION.AUDIO_METADATA a
+    SELECT AUDIO_ID, FILE_NAME, SOURCE_TYPE, RELATED_PROVIDER, TRANSCRIPTION
+    FROM FWA_QS.DETECTION.AUDIO_TRANSCRIPTS
 );
 
 -- Search service over fraud ring clusters — find providers by ring membership
@@ -584,7 +630,7 @@ AS (
 
 ### Semantic Model
 
-Save the following as `fwa_semantic_model.yaml` and upload to the stage:
+The semantic model was copied to `@FWA_QS.DETECTION.SEMANTIC_MODELS` in the setup step. It is shown here for reference:
 
 ```yaml
 # fwa_semantic_model.yaml
@@ -669,11 +715,6 @@ tables:
 ### Create Analyst Tool and Agent
 
 ```sql
--- Stage to hold the semantic model YAML file
-CREATE STAGE IF NOT EXISTS FWA_QS.DETECTION.SEMANTIC_MODELS
-  ENCRYPTION = (TYPE = 'SNOWFLAKE_SSE');
--- PUT file:///path/to/fwa_semantic_model.yaml @FWA_QS.DETECTION.SEMANTIC_MODELS;
-
 -- Create a Cortex Agent using CREATE AGENT with a YAML specification
 -- The agent orchestrates: an Analyst tool (structured SQL via semantic model)
 -- and Cortex Search services (unstructured text search)
@@ -694,6 +735,14 @@ CREATE OR REPLACE AGENT FWA_QS.DETECTION.INVESTIGATION_AGENT
         type: "cortex_search"
         name: "CLUSTER_SEARCH"
         description: "Searches fraud ring cluster details and connected providers"
+    - tool_spec:
+        type: "cortex_search"
+        name: "DOCUMENT_SEARCH"
+        description: "Searches parsed claim documents: invoices, clinical notes, and procedure reports"
+    - tool_spec:
+        type: "cortex_search"
+        name: "AUDIO_SEARCH"
+        description: "Searches transcripts of fraud hotline calls and whistleblower reports"
 
   tool_resources:
     FWA_ANALYST:
@@ -705,6 +754,10 @@ CREATE OR REPLACE AGENT FWA_QS.DETECTION.INVESTIGATION_AGENT
       search_service: "FWA_QS.DETECTION.FRAUD_EXPLANATIONS_SEARCH"
     CLUSTER_SEARCH:
       search_service: "FWA_QS.DETECTION.CLUSTER_SEARCH"
+    DOCUMENT_SEARCH:
+      search_service: "FWA_QS.DETECTION.DOCUMENT_SEARCH"
+    AUDIO_SEARCH:
+      search_service: "FWA_QS.DETECTION.AUDIO_SEARCH"
   $$;
 ```
 
@@ -726,10 +779,10 @@ SELECT SNOWFLAKE.CORTEX.DATA_AGENT_RUN(
     TRUE
 );
 
--- Test 3: routes to fraud explanations search service
+-- Test 3: routes to the audio search service (hotline and whistleblower transcripts)
 SELECT SNOWFLAKE.CORTEX.DATA_AGENT_RUN(
     'FWA_QS.DETECTION.INVESTIGATION_AGENT',
-    $${"messages": [{"role": "user", "content": [{"type": "text", "text": "Why were claims from Provider P-1001 flagged as upcoding?"}]}]}$$,
+    $${"messages": [{"role": "user", "content": [{"type": "text", "text": "Summarize any whistleblower or hotline reports that mention a shared bank account."}]}]}$$,
     TRUE
 );
 ```
@@ -841,10 +894,22 @@ with tab4:
 # --- Tab 5: Document & Audio ---
 with tab5:
     st.header("Document & Audio Analysis")
-    st.subheader("Documents")
-    st.info("Upload files to @FWA_QS.DETECTION.DOCUMENTS and populate DOCUMENT_METADATA to see results.")
-    st.subheader("Audio")
-    st.info("Upload files to @FWA_QS.DETECTION.AUDIO_FILES and populate AUDIO_METADATA to see results.")
+    st.subheader("Document vs. Claim Mismatches")
+    findings = session.sql("""
+        SELECT DOC_ID, CLAIM_ID, DOC_TYPE, MISMATCH_ANALYSIS
+        FROM FWA_QS.DETECTION.DOCUMENT_FINDINGS
+        ORDER BY DOC_ID
+    """).to_pandas()
+    for _, row in findings.iterrows():
+        with st.expander(f"{row['DOC_ID']} | Claim {row['CLAIM_ID']} | {row['DOC_TYPE']}"):
+            st.markdown(row["MISMATCH_ANALYSIS"])
+    st.subheader("Hotline and Whistleblower Transcripts")
+    transcripts = session.sql("""
+        SELECT AUDIO_ID, SOURCE_TYPE, RELATED_PROVIDER, RECEIVED_DATE, TRANSCRIPTION
+        FROM FWA_QS.DETECTION.AUDIO_TRANSCRIPTS
+        ORDER BY RECEIVED_DATE
+    """).to_pandas()
+    st.dataframe(transcripts, use_container_width=True)
 
 # --- Tab 6: Investigation Agent ---
 with tab6:
@@ -986,6 +1051,9 @@ DROP WAREHOUSE IF EXISTS FWA_WH;
 -- Drop the custom roles
 DROP ROLE IF EXISTS FWA_ADMIN;
 DROP ROLE IF EXISTS FWA_INVESTIGATOR;
+
+-- Drop the Git API integration (account-level, so DROP DATABASE does not remove it)
+DROP INTEGRATION IF EXISTS FWA_GIT_API_INTEGRATION;
 ```
 
 <!-- ------------------------ -->
