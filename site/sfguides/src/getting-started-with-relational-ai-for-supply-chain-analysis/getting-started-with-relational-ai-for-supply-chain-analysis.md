@@ -32,7 +32,7 @@ Two notebooks on a synthetic electronics supply chain (20 products, 315 parts, 8
 1. `01_relationalai_setup.ipynb`: connect, load the data, first query.
 2. `02_supplier_risk_to_plan.ipynb`: impact of a supplier failure, a check of the alternative supplier, a mitigation plan and a grounding check.
 
-> **How this guide was made.** The ontology, the PyRel rules and queries, the notebooks, the sample data and most of this text were generated with generative AI (Cortex Code), not written by hand. Every code cell was then run against the loaded tables and checked against the planted answers in `data/expected_results.json`. Treat the code as a working example to review and adapt, not as reference style for PyRel. In a production setting, an agent with an LLM will be used to generate the queries against the ontology. Building the ontology will be assisted by generatiev AI tooling as well.
+> **How this guide was made.** The ontology, the PyRel rules and queries, the notebooks, the sample data and most of this text were generated with generative AI (Cortex Code), not written by hand. Every code cell was then run against the loaded tables and checked against the planted answers in `assets/data/expected_results.json`. Treat the code as a working example to review and adapt, not as reference style for PyRel. In a production setting, an agent with an LLM will be used to generate the queries against the ontology. Building the ontology will be assisted by generatiev AI tooling as well.
 
 ### Prerequisites
 - The [RelationalAI Native App](https://app.snowflake.com/marketplace/listing/GZTYZOOIX8H/relationalai-relationalai) installed and activated, with user access granted, as described in [Set up RelationalAI in Snowflake](https://docs.relational.ai/get-started/set-up-relationalai-in-snowflake). You need the role `RAI_DEVELOPER` and a `raiconfig.yaml` from your invite link.
@@ -43,7 +43,7 @@ Two notebooks on a synthetic electronics supply chain (20 products, 315 parts, 8
 <!-- ------------------------ -->
 ## Setup
 
-**1. Warehouse and schema (administrator).** Run [`scripts/setup.sql`](scripts/setup.sql) as `ACCOUNTADMIN`. It creates the warehouse `RAI_QS_WH`, with a 600-second statement timeout, and the schema `RAI_QUICKSTART.SUPPLY_CHAIN`, and grants both to `RAI_DEVELOPER`. Nothing else is needed: no integrations, network rules or extra roles. The RelationalAI setup already created the role and the OAuth integration that PyRel signs in with.
+**1. Warehouse and schema (administrator).** Run [`assets/scripts/setup.sql`](assets/scripts/setup.sql) as `ACCOUNTADMIN`. It creates the warehouse `RAI_QS_WH`, with a 600-second statement timeout, and the schema `RAI_QUICKSTART.SUPPLY_CHAIN`, and grants both to `RAI_DEVELOPER`. Nothing else is needed: no integrations, network rules or extra roles. The RelationalAI setup already created the role and the OAuth integration that PyRel signs in with.
 
 **2. Python environment.** Clone or download this guide's folder. From that folder, create an environment, install PyRel and Jupyter, and register the environment as a Jupyter kernel:
 
@@ -55,7 +55,7 @@ python -m ipykernel install --user --name rai-supply-chain --display-name "RAI s
 
 The last line makes the environment show up as **RAI supply chain** in the kernel picker of Jupyter, VS Code or Cortex Code, wherever the environment lives. Prefer conda? Use `conda create -n rai-supply-chain python=3.12 -y && conda activate rai-supply-chain` instead of the first line.
 
-**3. Connection.** Save the `raiconfig.yaml` from your invite link in the guide folder, next to `notebooks/`, and set the warehouse to `RAI_QS_WH`:
+**3. Connection.** Save the `raiconfig.yaml` from your invite link in the guide folder, next to `assets/`, and set the warehouse to `RAI_QS_WH`:
 
 ```yaml
 default_connection: sf
@@ -72,13 +72,13 @@ connections:
     oauth_redirect_uri: http://localhost:54321/snowflake/oauth-redirect
 ```
 
-Check it with `rai connect` from the guide folder. Then open the notebooks in `notebooks/` and select the kernel **RAI supply chain**. PyRel looks for `raiconfig.yaml` in the notebook's folder and its parent folders, so it finds the file one level up.
+Check it with `rai connect` from the guide folder. Then open the notebooks in `assets/notebooks/` and select the kernel **RAI supply chain**. PyRel looks for `raiconfig.yaml` in the notebook's folder and its parent folders, so it finds the file two levels up.
 
-**4. Load the data.** Notebook 01 uploads the CSV files from `data/` to a stage and runs [`scripts/load_data.sql`](scripts/load_data.sql). The script creates eleven tables with `CHANGE_TRACKING = TRUE` and checks the row counts. RelationalAI keeps its copy of source tables in sync through change data capture (CDC), which is why change tracking is on.
+**4. Load the data.** Notebook 01 uploads the CSV files from `assets/data/` to a stage and runs [`assets/scripts/load_data.sql`](assets/scripts/load_data.sql). The script creates eleven tables with `CHANGE_TRACKING = TRUE` and checks the row counts. RelationalAI keeps its copy of source tables in sync through change data capture (CDC), which is why change tracking is on.
 
 The first PyRel query in notebook 01 starts a reasoning engine and indexes the tables. That takes a few minutes; later queries take seconds.
 
-The data is synthetic, with a few cases planted deliberately. [`data/README.md`](data/README.md) describes each one, and what the notebooks are looking for. This guide uses these:
+The data is synthetic, with a few cases planted deliberately. [`assets/data/README.md`](assets/data/README.md) describes each one, and what the notebooks are looking for. This guide uses these:
 
 | Case | In the data |
 |---|---|
@@ -201,11 +201,11 @@ The notebook writes `ORDERS_AT_RISK` and `MITIGATION_PLANS` back to the schema, 
 | Symptom | Cause | Fix |
 |---|---|---|
 | `No module named 'relationalai'` | Notebook runs on another kernel | Select the kernel **RAI supply chain**; if it's missing, rerun the `ipykernel install` line with the environment active |
-| `rai connect` or the first cell can't find a config | `raiconfig.yaml` not in the guide folder or `notebooks/` | Move it there; PyRel searches the current folder and its parents |
+| `rai connect` or the first cell can't find a config | `raiconfig.yaml` not in the guide folder or `assets/notebooks/` | Move it there; PyRel searches the current folder and its parents |
 | Sign-in fails, or a role isn't allowed | Role in `raiconfig.yaml` isn't `RAI_DEVELOPER`, or your user lacks it | Set `role: RAI_DEVELOPER` and ask the administrator for the grant |
 | `Warehouse RAI_QS_WH` check fails | `setup.sql` not run, or a different warehouse in `raiconfig.yaml` | Run `setup.sql` and set `warehouse: RAI_QS_WH` |
 | `[Unknown Table] Failed to fetch schema for table` | Tables not loaded yet, or wrong name | Run notebook 01; use the fully qualified upper-case name |
-| `ModuleNotFoundError: supply_chain_ontology` | Notebook opened from a copy outside `notebooks/` | Open the notebook in `notebooks/`, next to `supply_chain_ontology.py` |
+| `ModuleNotFoundError: supply_chain_ontology` | Notebook opened from a copy outside `assets/notebooks/` | Open the notebook in `assets/notebooks/`, next to `supply_chain_ontology.py` |
 | First query takes minutes | Engine start and table indexing, or a new table being synced | Wait; later queries are fast |
 | `AI_COMPLETE` fails with an unknown or unavailable model | Model not offered in your region | Pick another model for `LLM`, or enable cross-region inference |
 | A query runs until the 600-second timeout | Unguarded recursion on the supplier cycle | Use the guarded CTE, or the PyRel rules |
