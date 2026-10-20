@@ -291,7 +291,7 @@ The build and deploy take a few minutes, so follow along in the chat. Cortex Cod
 
 ### Verify
 
-> **Tip:** Run ***snow app open --connection quickstart*** to open the app in your browser, or add ***--print-only*** to print its URL. Add ***--watch*** if the deploy is still finishing.
+> **Tip:** Cortex Code shows the App URL when the deploy finishes, so you can click it, or ask Cortex Code to open the app. It runs ***snow app open --connection quickstart***, which you can also run yourself: add ***--print-only*** to print the URL, or ***--watch*** while a deploy is still finishing.
 
 Open the App URL. Click a segment in the churn-risk chart to filter the customer table, then switch the pivot to another dimension.
 
@@ -383,7 +383,80 @@ This creates the **ACTIONS** table that the app writes to and the **ACTION_SUMMA
 
 ### The Prompt
 
-Open the prompt file [02-add-workflow.md](https://github.com/Snowflake-Labs/sfguide-build-full-stack-apps-with-snowflake-app-runtime/blob/iteration-2/workflow-app/prompts/02-add-workflow.md) and paste it into Cortex Code Desktop. It asks for an Action Board that writes to the **ACTIONS** table with bind variables, and toast notifications driven by a Snowflake alert.
+Open the prompt file [02-add-workflow.md](https://github.com/Snowflake-Labs/sfguide-build-full-stack-apps-with-snowflake-app-runtime/blob/iteration-2/workflow-app/prompts/02-add-workflow.md) and paste it into Cortex Code Desktop, or copy it from here. It asks for an Action Board that writes to the **ACTIONS** table with bind variables, and toast notifications driven by a Snowflake alert.
+
+```text
+/snowflake-apps
+
+Goal: Add retention workflow capabilities to ChurnGuard so teams
+can act on churn insights -- flag customers, assign tasks, and
+track resolution -- writing to a Snowflake table, with a dynamic
+table and an alert turning those writes into notifications.
+
+Requirements:
+- "Flag for Retention" action button on high-risk customer rows
+- Retention action form: assignee, action type
+  (Call / Email / Offer / Escalate), notes field
+- Write flagged actions to SFQUICKSTART_CHURNGUARD.PUBLIC.ACTIONS
+  (created by iteration-2-setup.sql; columns ACTION_ID, CUSTOMER_KEY,
+  ASSIGNED_TO, ACTION_TYPE, STATUS, NOTES, CREATED_AT, UPDATED_AT,
+  CREATED_BY) with querySnowflake and ? bind variables
+- One open action per customer: POST /api/actions creates the action
+  with a single MERGE ... WHEN NOT MATCHED THEN INSERT that matches the
+  customer's actions that aren't Resolved, using an ACTION_ID generated
+  in the app (crypto.randomUUID()). If the MERGE inserts no row, look up
+  the open action and return HTTP 409 with "already flagged: <action_id>".
+  The form shows that message as a toast instead of creating a duplicate
+- Read the action list from the ACTIONS table
+- Action Board page: all tasks with status badges
+  (New / In Progress / Resolved)
+- Status update controls to move tasks through the workflow
+  (UPDATE ACTIONS, setting UPDATED_AT)
+- Summary KPI cards on the Action Board computed from the
+  ACTIONS table (same source as the action list -- no sync delay)
+- Global toast notifications from the NOTIFICATIONS table
+  (populated by ESCALATION_ALERT -- the alert reads the
+  ACTION_SUMMARY dynamic table; the DT exists solely to power
+  the Snowflake alert pipeline)
+
+Architecture:
+- App reads and writes the ACTIONS table (action list, KPI summaries,
+  status transitions -- all through querySnowflake)
+- Alert pipeline (Snowflake-only): ACTION_SUMMARY DT reads ACTIONS
+  (1 minute target lag) -> ESCALATION_ALERT fires on open escalations ->
+  writes to NOTIFICATIONS table
+- App reads NOTIFICATIONS and displays them as global toasts
+
+UI:
+- Action Board as a clean list/table with status pill badges
+  and 25-per-page pagination
+- Summary metric cards above the action table
+- Global toast notifications for escalation alerts (visible on any page)
+- Slide-over or modal form for creating actions -- not a separate page
+- Inline status transitions (click badge to advance)
+- Table action columns use icon buttons with the label as tooltip/alt text
+- Visual distinction between action statuses using color coding
+- Consistent design language with the existing explorer dashboard
+
+Constraints:
+- Use ? bind variables for every query that takes a value
+- Use owner's rights for all Snowflake queries (the default)
+- Snowflake doesn't enforce primary keys or CHECK constraints on
+  standard tables: validate action types and statuses in the API
+- Return timestamps to the browser as ISO 8601 strings
+- app.yml doesn't change in this iteration: no secrets or
+  external access integrations are needed
+- Keep the existing dashboard views working. Adding the Flag for
+  Retention column to the customer table is the only dashboard change
+- Keep the APP_ORIGIN usage marker from AGENTS.md
+
+Output:
+- Updated app with a new Action Board page
+- Snowflake writes for action CRUD operations
+- Action summaries computed from the ACTIONS table (no sync delay)
+- Global toast notifications from Snowflake alerts
+- Redeploy to the same Application Service URL
+```
 
 ### What Happens
 
@@ -486,9 +559,125 @@ The playbook starts with five rules:
 
 Iteration 3 uses two prompts, like iteration 2.
 
-**1. Semantic view and agent.** Open the prompt file [03-agent-setup.md](https://github.com/Snowflake-Labs/sfguide-build-full-stack-apps-with-snowflake-app-runtime/blob/iteration-3/ai-app/prompts/03-agent-setup.md) and paste it into Cortex Code Desktop. It uses */agent-studio* to create the **CHURNGUARD_SV** semantic view and the **CHURNGUARD_AGENT** agent, then tests the agent.
+**1. Semantic view and agent.** Open the prompt file [03-agent-setup.md](https://github.com/Snowflake-Labs/sfguide-build-full-stack-apps-with-snowflake-app-runtime/blob/iteration-3/ai-app/prompts/03-agent-setup.md) and paste it into Cortex Code Desktop. It uses */agent-studio* to create the **CHURNGUARD_SV** semantic view and the **CHURNGUARD_AGENT** agent, then tests the agent. You can also copy it from here:
 
-**2. Agent in the app.** Open the prompt file [03-add-agent.md](https://github.com/Snowflake-Labs/sfguide-build-full-stack-apps-with-snowflake-app-runtime/blob/iteration-3/ai-app/prompts/03-add-agent.md) and paste it into Cortex Code Desktop. It uses */snowflake-apps* to add the chat drawer, the Agent Suggested tab, the approve flow, and the MCP server, then redeploys.
+```text
+/agent-studio
+
+Goal: Give ChurnGuard a Cortex Agent that explores churn data, recommends
+retention actions from the RETENTION_PLAYBOOK, and stages proposals via a
+custom tool.
+
+Requirements:
+
+1. Create semantic view CHURNGUARD_SV over:
+   - CHURN_METRICS (customer-level orders, spend, returns, churn risk)
+   - CHURN_TRENDS (monthly active vs churning customers)
+   - CUSTOMER_RECOMMENDATIONS (recommended action, rule, reason,
+     open-action flag per customer)
+   - ACTION_SUMMARY and NOTIFICATIONS (action counts, escalations)
+   Add synonyms (at-risk, churner, retention action, playbook) and
+   verified queries for: top high-risk customers by spend, churn risk
+   by credit rating, monthly churn trend, high-risk customers with no
+   open action.
+
+2. Create agent CHURNGUARD_AGENT (model auto, display name "ChurnGuard")
+   with tools:
+   - Cortex Analyst on CHURNGUARD_SV, warehouse SFQUICKSTART_CHURNGUARD_WH
+   - Data to Chart for trends and comparisons
+
+3. Register a custom tool `stage_retention_actions` backed by stored
+   procedure STAGE_RETENTION_PROPOSALS. The tool writes proposals to
+   PROPOSED_ACTIONS and returns the count of staged proposals.
+
+4. Instructions:
+   - Recommend actions only from CUSTOMER_RECOMMENDATIONS; cite the
+     rule REASON. Never invent an action type.
+   - Skip customers where HAS_OPEN_ACTION is true
+   - At most 5 proposals per turn
+   - When the user asks to flag or stage actions, call
+     stage_retention_actions right away with max_proposals = 5. Don't
+     list candidates or ask for confirmation first: proposals are only
+     suggestions, and people approve them on the app's Agent Suggested
+     tab, which the next prompt (03-add-agent.md) adds. Until then they
+     wait in PROPOSED_ACTIONS. Summarize what was staged.
+   - Be concise; prefer a table for lists of customers
+
+5. Test the agent with these questions, in the Snowsight agent playground
+   or through the agent's REST API:
+   - "Who are the top 5 high-risk customers by spend and what should we do?"
+   - "Show the monthly churn trend as a chart"
+   - "Flag high-risk customers for retention" (should call the tool)
+
+Constraints:
+- Use role SFQUICKSTART_CHURNGUARD_ROLE; create objects in
+  SFQUICKSTART_CHURNGUARD.PUBLIC
+
+Output:
+- CHURNGUARD_SV semantic view with verified queries
+- CHURNGUARD_AGENT answering the test questions, with the custom tool
+  staging proposals into PROPOSED_ACTIONS
+```
+
+**2. Agent in the app.** Open the prompt file [03-add-agent.md](https://github.com/Snowflake-Labs/sfguide-build-full-stack-apps-with-snowflake-app-runtime/blob/iteration-3/ai-app/prompts/03-add-agent.md) and paste it into Cortex Code Desktop. It uses */snowflake-apps* to add the chat drawer, the Agent Suggested tab, the approve flow, and the MCP server, then redeploys. You can also copy it from here:
+
+```text
+/snowflake-apps
+
+Goal: Make ChurnGuard agent-assisted with proactive recommendations,
+an MCP server for external automation, and consistent UI polish.
+
+Requirements:
+- API route streaming the agent:run REST API (SSE) for CHURNGUARD_AGENT,
+  one thread per conversation
+- Chat drawer opened from the header and Cmd+K; thread survives page
+  navigation, with a "New conversation" action
+- Contextual entry points that pre-fill context: details row "Ask about
+  this customer", segment bar "Explain this segment", High-risk KPI
+  "Why?", Action Board card "Suggest next step", escalation toast
+- Page-aware suggested prompts in an empty drawer
+- Render agent tables and charts inline; when the agent calls
+  stage_retention_actions, show the staged count and link to the
+  Agent Suggested tab
+- "Agent Suggested" tab on Action Board reading PROPOSED_ACTIONS
+  (pending) via querySnowflake: each card shows customer key, action
+  type, and rule reason. "Approve All" button above the list;
+  per-card Approve / Dismiss. Approve writes to ACTIONS via
+  POST /api/actions, assigned to "Retention team", and sets
+  PROPOSED_ACTIONS.STATUS = 'approved'.
+  If POST /api/actions answers 409 "already flagged", mark the
+  proposal 'dismissed' with STATUS_REASON set to that message instead
+  of failing. Approve All
+  approves the rest and reports how many were skipped as duplicates.
+  Tab badge showing pending count.
+- Toast notification when pending proposals exist on page load
+- MCP server at /api/mcp exposing tools: flag_customer, list_actions,
+  get_customer_risk, get_churn_summary. Auth via Snowflake ingress.
+  flag_customer uses the same one-open-action-per-customer rule as
+  POST /api/actions and returns "already flagged: <action_id>" as a
+  tool error instead of creating a duplicate.
+
+UI:
+- Multi-phase loading: thinking indicator, live status steps from the
+  stream, shimmer, then the streamed answer
+- All agent entry points (header button, contextual row/card actions,
+  Agent Suggested tab) use the same sparkle/wand icon for consistency
+- Table/list action columns: icon buttons with label as tooltip
+- Approval buttons (Approve, Dismiss, Approve All): icon + label
+- Action cards show customer, action, and rule reason
+- Consistent with the existing ChurnGuard design language
+
+Constraints:
+- The agent never writes directly; Approve calls POST /api/actions
+- Keep Dashboard and Action Board working; Action Board refreshes
+  after approve
+- MCP server shares the same auth as the app's API routes
+- Keep the APP_ORIGIN usage marker from AGENTS.md
+
+Output:
+- Agent-assisted ChurnGuard with Agent Suggested tab, MCP server,
+  redeployed to the same Application Service URL
+```
 
 ### What Happens
 
