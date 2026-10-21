@@ -1,0 +1,22 @@
+dataset:
+  dataset_type: CORTEX AGENT
+  table_name: USER$<your user>.PE_VERIFICATION_DEMO.WATERFALL_EVAL_INPUT
+  dataset_name: WATERFALL_EVAL_DATASET
+  column_mapping:
+    query_text: INPUT_QUERY
+    ground_truth: GROUND_TRUTH
+evaluation:
+  agent_params:
+    agent_name: USER$<your user>.PE_VERIFICATION_DEMO.WATERFALL_REVIEW_AGENT
+    agent_type: CORTEX AGENT
+    agent_version: VERSION$1
+  run_params:
+    label: Synthetic waterfall verification v1
+  source_metadata:
+    type: dataset
+    dataset_name: WATERFALL_EVAL_DATASET
+metrics:
+  - name: answer_correctness
+    version: v3_0
+  - name: logical_consistency
+    version: v3_0
