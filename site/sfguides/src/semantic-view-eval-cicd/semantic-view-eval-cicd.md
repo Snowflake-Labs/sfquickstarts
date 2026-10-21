@@ -333,21 +333,21 @@ Save any notebook results, evaluation evidence, and source changes you want to r
 1. Disable the GitHub Actions workflow (**Actions » Deploy and evaluate Cortex project » ⋯ » Disable workflow**, or `gh workflow disable deploy.yml`) and cancel any active runs, so a push can't recreate resources while you clean up.
 2. Drop the objects `setup.sql` created. Run this in Snowsight as ACCOUNTADMIN. Dropping the database also removes the demo tables, semantic view, agent, Streamlit app, stages, procedures and evaluation datasets inside it.
 
-   ```sql
-   USE ROLE ACCOUNTADMIN;
+```sql
+USE ROLE ACCOUNTADMIN;
 
-   DROP DATABASE IF EXISTS SV_EVAL_CICD;
-   DROP USER IF EXISTS SV_EVAL_CICD_USER;
-   DROP ROLE IF EXISTS SV_EVAL_CICD_ROLE;
-   -- Only if COMPUTE_WH was created by setup.sql (it uses CREATE WAREHOUSE IF NOT EXISTS):
-   -- DROP WAREHOUSE IF EXISTS COMPUTE_WH;
-   ```
+DROP DATABASE IF EXISTS SV_EVAL_CICD;
+DROP USER IF EXISTS SV_EVAL_CICD_USER;
+DROP ROLE IF EXISTS SV_EVAL_CICD_ROLE;
+-- Only if COMPUTE_WH was created by setup.sql (it uses CREATE WAREHOUSE IF NOT EXISTS):
+-- DROP WAREHOUSE IF EXISTS COMPUTE_WH;
+```
 
 3. Delete the imported notebooks and the git-backed workspace in Snowsight, then remove the repository secret:
 
-   ```bash
-   gh secret delete SNOWFLAKE_ACCOUNT
-   ```
+```bash
+gh secret delete SNOWFLAKE_ACCOUNT
+```
 
 ## Conclusion And Resources
 

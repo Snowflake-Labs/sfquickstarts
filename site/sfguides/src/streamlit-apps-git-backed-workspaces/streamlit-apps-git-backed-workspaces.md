@@ -32,46 +32,9 @@ Both are editing the same `streamlit_app.py`, in the same repository, on the sam
 ### What You'll Build
 A small Cortex-powered Streamlit app (prompt pills that call `ai_complete()`) that ends up with contributions from both a Snowsight-only user and a command-line-only user, deployed as a shared Streamlit in Snowflake app.
 
-### The Collaboration Flow
 The diagram below summarizes how the two personas hand off work through Git over the course of this guide:
 
-```mermaid
-sequenceDiagram
-    participant Admin as Admin (ACCOUNTADMIN)
-    participant GitHub
-    participant Marcus as Marcus (CLI)
-    participant Priya as Priya (Snowsight Workspace)
-    participant Streamlit as Deployed STREAMLIT App
-
-    Note over Admin,GitHub: Setup (one-time)
-    Admin->>GitHub: CREATE SECRET + API INTEGRATION
-    Admin->>Marcus: GRANT USAGE on integration
-    Admin->>Priya: GRANT USAGE on integration
-
-    Note over Marcus,GitHub: Marcus Clones the Repo
-    Marcus->>GitHub: git clone + checkout -b feature/collab-tutorial
-    Marcus->>GitHub: git push -u origin feature/collab-tutorial
-
-    Note over Priya,GitHub: Priya Creates a Workspace
-    Priya->>GitHub: Create git-backed workspace (OAuth2 / PAT)
-    Priya->>Priya: Switch branch → feature/collab-tutorial
-    Priya->>Priya: Convert to Streamlit app + edit intro copy
-    Priya->>Priya: Run (private dev preview)
-    Priya->>GitHub: Commit + Push
-
-    Note over Marcus,GitHub: Marcus Pulls and Edits
-    GitHub->>Marcus: git pull (gets Priya's commit)
-    Marcus->>Marcus: Add 4th prompt pill
-    Marcus->>GitHub: git commit + git push
-
-    Note over Priya,GitHub: Priya Pulls Marcus's Change
-    GitHub->>Priya: Pull (gets Marcus's commit)
-    Priya->>Priya: Verify 4th pill in code/preview
-
-    Note over Priya,Streamlit: Deploy the App
-    Priya->>Streamlit: Deploy workspace code
-    Streamlit-->>Admin: SHOW STREAMLITS (verify)
-```
+![Collaboration sequence: an admin configures Git access, Marcus clones and pushes a branch, Priya edits and pushes from Snowsight, Marcus adds a fourth prompt pill, and Priya pulls and deploys the app](assets/collaboration-flow.png)
 
 ### What You'll Need
 - Access to a [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) with Cortex AI enabled
@@ -317,21 +280,21 @@ Keep any changes you want to retain in GitHub before removing tutorial resources
 
 1. Drop the Snowflake objects you created in this guide. Replace `<db>.<schema>` with the database and schema you picked in the **Deploy** dialog. The API integration requires `ACCOUNTADMIN`, the same role you used to create it in **Setup**. Skip the integration and secret if you used an existing OAuth integration instead.
 
-   ```sql
-   USE ROLE ACCOUNTADMIN;
+```sql
+USE ROLE ACCOUNTADMIN;
 
-   DROP STREAMLIT IF EXISTS <db>.<schema>.STREAMLIT_APP;
-   DROP GIT REPOSITORY IF EXISTS my_db.my_schema.simple_streamlit_app_check;
-   DROP API INTEGRATION IF EXISTS github_git_api_integration;
-   DROP SECRET IF EXISTS my_db.my_schema.github_pat;
-   ```
+DROP STREAMLIT IF EXISTS <db>.<schema>.STREAMLIT_APP;
+DROP GIT REPOSITORY IF EXISTS my_db.my_schema.simple_streamlit_app_check;
+DROP API INTEGRATION IF EXISTS github_git_api_integration;
+DROP SECRET IF EXISTS my_db.my_schema.github_pat;
+```
 
 2. Delete the `simple-streamlit-app` workspace from **Projects » Workspaces** once its changes are pushed to GitHub.
 3. Delete the feature branch from your fork once you have merged or saved the work you want to keep:
 
-   ```bash
-   git push origin --delete feature/collab-tutorial
-   ```
+```bash
+git push origin --delete feature/collab-tutorial
+```
 
 4. Revoke the GitHub personal access token you created for this guide under **GitHub » Settings » Developer settings » Personal access tokens**.
 
