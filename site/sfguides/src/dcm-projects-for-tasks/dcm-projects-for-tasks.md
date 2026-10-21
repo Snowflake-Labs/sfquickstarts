@@ -306,11 +306,12 @@ Adding or removing an attachment here changes the CHECK_DATA_QUALITY task's beha
 
 ### Alerts — `sources/definitions/alerts.sql`
 
-The failed-task alert is defined declaratively with `DEFINE ALERT`, so the alert lives alongside the tasks it monitors and evolves through the same Plan/Deploy cycle. The alert is created suspended — you'll resume it once in `scripts/02_post_deploy.sql` with ALTER ALERT ... RESUME. The recipient email comes from the same `{{notification_recipient}}` manifest value the finalizer uses, so you only configure it in one place.
+The failed-task alert is defined declaratively with `DEFINE ALERT`, so the alert lives alongside the tasks it monitors and evolves through the same Plan/Deploy cycle. The alert deploys with a `STARTED` target state, so it begins checking on its schedule as soon as you deploy. The condition filters on DATABASE_NAME because INFORMATION_SCHEMA.TASK_HISTORY returns task runs from every database in the account, not only the one named in its qualifier — without the filter, a failed task anywhere in the account would trigger this alert. The recipient email comes from the same `{{notification_recipient}}` manifest value the finalizer uses, so you only configure it in one place.
 
 ```sql
 DEFINE ALERT DCM_DEMO_4{{env_suffix}}.PIPELINE.FAILED_TASK_ALERT
     SCHEDULE = '60 MINUTE'
+    STARTED
     IF (EXISTS (
         SELECT NAME, SCHEMA_NAME
         FROM TABLE(DCM_DEMO_4{{env_suffix}}.INFORMATION_SCHEMA.TASK_HISTORY(
@@ -318,7 +319,8 @@ DEFINE ALERT DCM_DEMO_4{{env_suffix}}.PIPELINE.FAILED_TASK_ALERT
                 TIMEADD('DAY', -7, CURRENT_TIMESTAMP),
                 SNOWFLAKE.ALERT.LAST_SUCCESSFUL_SCHEDULED_TIME())),
             SCHEDULED_TIME_RANGE_END   => SNOWFLAKE.ALERT.SCHEDULED_TIME(),
-            ERROR_ONLY                 => TRUE))))
+            ERROR_ONLY                 => TRUE))
+        WHERE DATABASE_NAME = 'DCM_DEMO_4{{env_suffix}}'))
     THEN
         BEGIN
             LET task_names STRING := (
