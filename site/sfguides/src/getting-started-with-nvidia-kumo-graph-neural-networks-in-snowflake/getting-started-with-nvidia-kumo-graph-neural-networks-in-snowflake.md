@@ -4,7 +4,7 @@ summary: Build, train, and run an NVIDIA Kumo graph neural network on your relat
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/snowpark-container-services, snowflake-site:taxonomy/snowflake-feature/model-development
 environments: web
 language: en
-status: Hidden
+status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 # Getting Started with NVIDIA Kumo Graph Neural Networks in Snowflake
