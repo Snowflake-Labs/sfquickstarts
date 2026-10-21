@@ -522,9 +522,7 @@ The judge still classifies the case correctly in both rows; `p_authorizes_paymen
 
 #### Running the judge in the notebook
 
-The notebook applies the same pattern to its retrieval track. The configuration cell sets `DECISION_MODEL = 'snowflake-decision'` alongside the ColBERT settings:
-
-![Decision model configuration](assets/snowflake-decision.png)
+The notebook applies the same pattern to its retrieval track. The configuration cell sets `DECISION_MODEL = 'snowflake-decision'` alongside the ColBERT settings.
 
 The definitions cell builds one `choice` question per synthetic case, hashes each payload for approval, and records a deterministic expectation from the facts alone. It makes no billable calls.
 
