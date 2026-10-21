@@ -18,7 +18,7 @@ That is the whole idea, and it is worth being precise about what it replaces. A 
 
 A DCM Project encodes a *destination*. Each `DEFINE` statement states the object you want and the properties it should have. When you deploy, DCM inspects what exists, compares it to what you declared, and issues only the differences. There is no migration ledger to keep, because there is nothing to replay — the files are always the current desired state, and the account converges on them. Run a deploy twice and the second one does nothing.
 
-You get two things from that. The first is a **plan**: a dry run that tells you exactly which objects would be created, altered and dropped before anything happens. The second is **convergence**: `DEFINE` executes as `CREATE OR ALTER`, so redeploying reconciles an object in place rather than recreating it.
+You get two things from that. The first is a **plan**: a dry run that tells you exactly which objects would be created, altered and dropped before anything happens. The second is **convergence**: `DEFINE` executes as CREATE OR ALTER, so redeploying reconciles an object in place rather than recreating it.
 
 DCM Projects is generally available. Some of the features this guide touches are in public preview and are called out where they appear.
 
@@ -26,11 +26,7 @@ DCM Projects is generally available. Some of the features this guide touches are
 
 DCM Projects can be managed using Snowsight, the Snowflake CLI, SQL, or Cortex Code. You can author, debug and deploy a project by hand in Snowflake Workspaces or your local IDE, use Cortex Code to do it via natural-language prompts, or automate deployments through CI/CD pipelines. Cortex Code also ships a skill that automates the workflow of migrating existing Snowflake objects into a DCM Project, so you do not have to hand-write `DEFINE` statements for objects that already exist.
 
-This guide shows two of those interfaces side by side. Every plan and deploy step below gives you the Snowsight Workspaces path and the equivalent `snow` CLI command, so you can follow whichever fits how you work.
-
-### Prerequisites
-- Basic knowledge of Snowflake concepts (databases, schemas, tables, roles)
-- Familiarity with SQL
+This guide shows two of those interfaces side by side. Every plan and deploy step below gives you the Snowsight Workspaces path and the equivalent snow CLI command, so you can follow whichever fits how you work.
 
 ### What You'll Learn
 - What a DCM Project declares, and how a manifest maps one codebase onto several environments
@@ -42,6 +38,7 @@ This guide shows two of those interfaces side by side. Every plan and deploy ste
 
 ### What You'll Need
 - A [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) with ACCOUNTADMIN access
+- Basic knowledge of Snowflake concepts (databases, schemas, tables, roles)
 - [Snowflake CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli/installation/installation) if you want to follow the CLI path
 - Familiarity with SQL
 
@@ -61,7 +58,7 @@ If you want to work in Snowsight rather than locally, create a Snowsight Workspa
 
 1. Navigate to **Projects > Workspaces** in Snowsight.
 2. Click **Create** (+) and select **Git repository**.
-3. Enter the repository URL: `https://github.com/snowflake-labs/snowflake-dcm-projects`
+3. Enter the repository URL: https://github.com/snowflake-labs/snowflake-dcm-projects
 4. Select an API Integration for GitHub ([create one if needed](https://docs.snowflake.com/en/user-guide/ui-snowsight/workspaces-git#label-create-a-git-workspace)).
 5. Select **Public repository**.
 
@@ -75,14 +72,14 @@ Once the workspace is created you will see the repository files in the file expl
 
 | File | When to run |
 |---|---|
-| `scripts/01_pre_deploy.sql` | Once, before the first plan |
-| `scripts/02_post_deploy.sql` | After the first successful deploy |
-| `scripts/03_cleanup.sql` | When you are finished |
+| scripts/01_pre_deploy.sql | Once, before the first plan |
+| scripts/02_post_deploy.sql | After the first successful deploy |
+| scripts/03_cleanup.sql | When you are finished |
 
 Every operational step in this guide is given twice: once for Snowsight, and once for the [Snowflake CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli/installation/installation) if you would rather drive the project from a terminal against your own copy of the repository.
 
 <!-- ------------------------ -->
-## Prerequisites and Setup
+## Setup
 
 Run the first script. **In Snowsight:** open `scripts/01_pre_deploy.sql` in a worksheet and run each section in order. **With the Snowflake CLI:**
 
@@ -90,9 +87,9 @@ Run the first script. **In Snowsight:** open `scripts/01_pre_deploy.sql` in a wo
 snow sql -f scripts/01_pre_deploy.sql
 ```
 
-It does four things. It creates the `DCM_DEVELOPER` role and grants it to you. It enables inherited grants at the account level. It grants `DCM_DEVELOPER` a superset of account-level privileges — every guide in this series shares this role, and each grant carries a comment saying what capability it buys. Account-level privileges cannot be granted by a project on itself, which is why they all happen here, before the first plan.
+It does four things. It creates the DCM_DEVELOPER role and grants it to you. It enables inherited grants at the account level. It grants DCM_DEVELOPER a superset of account-level privileges — every guide in this series shares this role, and each grant carries a comment saying what capability it buys. Account-level privileges cannot be granted by a project on itself, which is why they all happen here, before the first plan.
 
-> **Inherited grants.** An `INHERITED` grant covers current *and* future objects of a type inside a container. `GRANT ON ALL` snapshots what exists right now; `GRANT ON FUTURE` covers only what comes later. An inherited grant covers both, as one grant rather than one per object, which is why it is the recommended pattern in DCM Projects. It requires an account-level opt-in and cannot be combined with `WITH GRANT OPTION`, `CASCADE` or `RESTRICT`.
+> **Inherited grants.** An `INHERITED` grant covers current *and* future objects of a type inside a container. GRANT ON ALL snapshots what exists right now; GRANT ON FUTURE covers only what comes later. An inherited grant covers both, as one grant rather than one per object, which is why it is the recommended pattern in DCM Projects. It requires an account-level opt-in and cannot be combined with WITH GRANT OPTION, `CASCADE` or `RESTRICT`.
 
 ```sql
 ALTER ACCOUNT SET FEATURE_RBAC_INHERITED_GRANTS = 'ENABLED';
@@ -101,11 +98,11 @@ ALTER ACCOUNT SET FEATURE_RBAC_INHERITED_GRANTS = 'ENABLED';
 Finally the script creates the DCM Project object itself — the account-side object that tracks state — and prints your account identifier and username:
 
 ```sql
-CREATE OR REPLACE DCM PROJECT dcm_demo.projects.dcm_project_dev
+CREATE DCM PROJECT IF NOT EXISTS dcm_demo.projects.dcm_project_dev
     COMMENT = 'for testing DCM Projects Quickstarts';
 ```
 
-Copy the account identifier from that last query into `account_identifier` under the `DCM_DEV` target in `DCM_Projects_Get_Started/manifest.yml`. A mismatched `account_identifier` is only a warning, not an error, but fixing it keeps the warning out of your output.
+Copy the account identifier from that last query into account_identifier under the DCM_DEV target in `DCM_Projects_Get_Started/manifest.yml`. A mismatched account_identifier is only a warning, not an error, but fixing it keeps the warning out of your output.
 
 If you are working in Snowsight, refresh your browser after running this script so Snowsight picks up the newly created DCM Project object. It will not appear in the Workspaces project selector until you do.
 
@@ -137,7 +134,7 @@ targets:
     templating_config: PROD
 ```
 
-A target is a deployment destination: which account to deploy into, which DCM Project object holds the state there, which role owns that project, and which `templating_config` to render the definitions with. Replace `MYORG-MY_DEV_ACCOUNT` with the account identifier the setup script printed. `default_target` is what you get when you omit `--target`. The file also ships with `DCM_STAGE` and `DCM_PROD_EU` targets; only `DCM_DEV` is used here.
+A target is a deployment destination: which account to deploy into, which DCM Project object holds the state there, which role owns that project, and which templating_config to render the definitions with. Replace MYORG-MY_DEV_ACCOUNT with the account identifier the setup script printed. default_target is what you get when you omit --target. The file also ships with DCM_STAGE and DCM_PROD_EU targets; only DCM_DEV is used here.
 
 Next comes **assets**. Everything under `sources/` is SQL that a `DEFINE` statement expresses in full, but some objects are backed by files instead — a Streamlit app is Python, not DDL. An asset is a named set of such files that the project carries along with its definitions:
 
@@ -147,7 +144,7 @@ assets:
     path: 'streamlit/dashboard/**/*'
 ```
 
-`orders_dashboard` is a name you choose, and a definition refers to the files by it, as `asset://orders_dashboard`. The guide comes back to this once there is data for the app to read. For now, note that it sits at the **top level** of the manifest, alongside `targets` and `templating` rather than inside either.
+orders_dashboard is a name you choose, and a definition refers to the files by it, as asset://orders_dashboard. The guide comes back to this once there is data for the app to read. For now, note that it sits at the **top level** of the manifest, alongside targets and templating rather than inside either.
 
 The third section declares the templating configurations that targets select between:
 
@@ -174,7 +171,7 @@ templating:
           data_retention_days: 30
 ```
 
-Values in `defaults` apply everywhere unless a configuration overrides them: `wh_size` is `X-SMALL` in DEV because DEV does not set it, and `LARGE` in PROD because PROD does. `env_suffix` is what lets a single definition file produce `DCM_DEMO_1_DEV` in development and `DCM_DEMO_1` in production. The `teams` list differs per environment too — one team in DEV, two in PROD.
+Values in defaults apply everywhere unless a configuration overrides them: wh_size is X-SMALL in DEV because DEV does not set it, and LARGE in PROD because PROD does. env_suffix is what lets a single definition file produce DCM_DEMO_1_DEV in development and DCM_DEMO_1 in production. The teams list differs per environment too — one team in DEV, two in PROD.
 
 This is what the manifest is for: **one set of definition files, several environments, and the differences confined to YAML.** Nothing in `sources/` mentions DEV or PROD.
 
@@ -211,7 +208,7 @@ QUALIFY ROW_NUMBER() OVER (
     ) = 1;
 ```
 
-The other four files follow the same pattern: `raw.sql` declares the database, the `RAW` schema and the three landing tables, `access.sql` the warehouse, a read role, its grants and a tag, `serve.sql` a semantic view over the dynamic table and the Streamlit app that reads it, and `jinja_demo.sql` the templated team objects covered in "Templating and Per-Environment Config".
+The other four files follow the same pattern: `raw.sql` declares the database, the RAW schema and the three landing tables, `access.sql` the warehouse, a read role, its grants and a tag, `serve.sql` a semantic view over the dynamic table and the Streamlit app that reads it, and `jinja_demo.sql` the templated team objects covered in "Templating and Per-Environment Config".
 
 <!-- ------------------------ -->
 ## First Plan and Deploy
@@ -220,7 +217,7 @@ Always plan first. A plan renders the templates, compiles the SQL, compares the 
 
 **Jinja renders before DCM sees any of the SQL.** The template engine runs first and produces plain SQL; only then does DCM parse it. That ordering has consequences you will meet in "Templating and Per-Environment Config", and it means the SQL DCM actually evaluated is a real artifact you can read — the plan writes it out, and looking at it is the fastest way to understand what a template did.
 
-**In Snowsight:** the DCM control panel is the first tab in the bottom panel of your workspace. Select the project **get-started-snowflake-dcm-projects/DCM_Projects_Get_Started**. The `DCM_DEV` target is already selected because it is the manifest default; click the target profile to confirm it points at `DCM_PROJECT_DEV` with the `DEV` templating configuration. Then click the play button to the right of **Plan**.
+**In Snowsight:** the DCM control panel is the first tab in the bottom panel of your workspace. Select the project **get-started-snowflake-dcm-projects/DCM_Projects_Get_Started**. The DCM_DEV target is already selected because it is the manifest default; click the target profile to confirm it points at DCM_PROJECT_DEV with the DEV templating configuration. Then click the play button to the right of **Plan**.
 
 ![DCM control panel with the project selected](assets/select_project.png)
 
@@ -238,22 +235,22 @@ On a clean account this reports:
 
 ![Plan results showing the planned changes](assets/plan_results.png)
 
-`--save-output` writes the rendered definitions and a `plan_result.json` under `out/`. The JSON carries a per-entity `changes[]` array, which is where you look when a summary count surprises you. In Snowsight the same rendered output appears in a new `out` folder above `sources` in the file explorer — open the rendered `jinja_demo.sql` side by side with the original to see how the templating resolved.
+--save-output writes the rendered definitions and a `plan_result.json` under `out/`. The JSON carries a per-entity changes[] array, which is where you look when a summary count surprises you. In Snowsight the same rendered output appears in a new out folder above sources in the file explorer — open the rendered `jinja_demo.sql` side by side with the original to see how the templating resolved.
 
 ### Reading the changeset
 
 Two things in that summary deserve an explanation.
 
-**Why one alter, on a first deploy?** The altered entity is `ROLE DCM_DEVELOPER`, acquiring `OWNERSHIP` on each newly created object. The project-owner role has to exist *before* the project can be created — it is what owns the project — so it is never something DCM creates. A first deploy of any DCM Project therefore shows exactly this one alter. It is not drift, and there is nothing to fix.
+**Why one alter, on a first deploy?** The altered entity is ROLE DCM_DEVELOPER, acquiring `OWNERSHIP` on each newly created object. The project-owner role has to exist *before* the project can be created — it is what owns the project — so it is never something DCM creates. A first deploy of any DCM Project therefore shows exactly this one alter. It is not drift, and there is nothing to fix.
 
 **Why 18 entities from 13 `DEFINE` statements?** The arithmetic is worth following, because it shows what DCM is actually tracking. The thirteen definitions in the non-template files cover one database, three schemas, three tables, one dynamic table, one semantic view, one Streamlit app, one warehouse, one role and one tag. The remaining five come from elsewhere:
 
 | Source | Entities |
 |---|---|
-| `DEFINE` statements | 13 |
-| `PUBLIC` schema, planned with every database | 1 |
-| Jinja loop and macro expanding `DEV_TEAM_1` | 3 |
-| `ROLE DCM_DEVELOPER` gaining ownership | 1 |
+| DEFINE statements | 13 |
+| PUBLIC schema, planned with every database | 1 |
+| Jinja loop and macro expanding DEV_TEAM_1 | 3 |
+| ROLE DCM_DEVELOPER gaining ownership | 1 |
 | **Total** | **18** |
 
 An entity is not a line of SQL. It is an object DCM will own and reconcile on every future deploy.
@@ -262,7 +259,7 @@ An entity is not a line of SQL. It is an object DCM will own and reconcile on ev
 
 When the changeset matches what you expected, deploy it.
 
-**In Snowsight:** in the DCM control panel, set the operation to **Deploy** instead of **Plan**, add a deployment alias such as `initial-deployment`, and run it.
+**In Snowsight:** in the DCM control panel, set the operation to **Deploy** instead of **Plan**, add a deployment alias such as initial-deployment, and run it.
 
 ![Deploy confirmation dialog](assets/deploy_dialog.png)
 
@@ -276,31 +273,31 @@ snow dcm deploy --target DCM_DEV --alias initial-deployment
 18 (17 created, 1 altered, 0 dropped)
 ```
 
-The `--alias` is a label on this deployment, the way a commit message labels a commit. It appears in the project's deployment history, so six weeks later you can tell which deploy introduced a change without diffing object definitions.
+The --alias is a label on this deployment, the way a commit message labels a commit. It appears in the project's deployment history, so six weeks later you can tell which deploy introduced a change without diffing object definitions.
 
-Refresh the Database Explorer on the left of Snowsight and you will see `DCM_DEMO_1_DEV` with all of the created objects inside it.
+Refresh the Database Explorer on the left of Snowsight and you will see DCM_DEMO_1_DEV with all of the created objects inside it.
 
 ![Database Explorer showing the deployed objects](assets/deployed_objects.png)
 
 <!-- ------------------------ -->
 ## Change It and Redeploy
 
-This is the loop that matters. The sources ship with three edits already written out and commented, marked `CHANGE STEP 1 of 3` through `3 of 3`. Make all three.
+This is the loop that matters. The sources ship with three edits already written out and commented, marked CHANGE STEP 1 of 3 through 3 of 3. Make all three.
 
-**Step 1 — in `sources/definitions/analytics.sql`**, comment out the current `TARGET_LAG` and uncomment the replacement:
+**Step 1 — in `sources/definitions/analytics.sql`**, comment out the current TARGET_LAG and uncomment the replacement:
 
 ```sql
 -- TARGET_LAG = '1 hour'
 TARGET_LAG = '30 minutes'
 ```
 
-**Step 2 — in `manifest.yml`**, under the `DEV` configuration, uncomment the warehouse size so DEV stops inheriting `X-SMALL` from `defaults`:
+**Step 2 — in `manifest.yml`**, under the DEV configuration, uncomment the warehouse size so DEV stops inheriting X-SMALL from defaults:
 
 ```yaml
       wh_size: "SMALL"
 ```
 
-**Step 3 — in `manifest.yml`**, add a second team to the DEV `teams` list:
+**Step 3 — in `manifest.yml`**, add a second team to the DEV teams list:
 
 ```yaml
         - name: "DEV_TEAM_2"
@@ -317,7 +314,7 @@ The CLI has a delta mode for fast iteration:
 snow dcm plan --delta --target DCM_DEV
 ```
 
-`--delta` reports the changes rather than the whole desired state, so it is what you run while iterating; in Snowsight, select **Delta** under **Plan Mode**. It only evaluates definitions that changed, so it cannot see drift made outside DCM — always run a full plan before deploying.
+--delta reports the changes rather than the whole desired state, so it is what you run while iterating; in Snowsight, select **Delta** under **Plan Mode**. It only evaluates definitions that changed, so it cannot see drift made outside DCM — always run a full plan before deploying.
 
 ### Then the full plan
 
@@ -335,7 +332,7 @@ snow dcm plan --target DCM_DEV --save-output
 
 ![Plan results after the three changes](assets/plan_results_2.png)
 
-The three creates are `DEV_TEAM_2`'s objects: a schema and two roles, produced by the Jinja loop and macro from those two lines of YAML. The three alters are the dynamic table's target lag, the warehouse's size, and `DCM_DEVELOPER` taking ownership of the three new objects.
+The three creates are DEV_TEAM_2's objects: a schema and two roles, produced by the Jinja loop and macro from those two lines of YAML. The three alters are the dynamic table's target lag, the warehouse's size, and DCM_DEVELOPER taking ownership of the three new objects.
 
 Open `out/plan_result.json` and find the dynamic table. Its entire change is one nested attribute:
 
@@ -343,13 +340,13 @@ Open `out/plan_result.json` and find the dynamic table. Its entire change is one
 target_lag.seconds  3600 -> 1800
 ```
 
-No refresh mode change, no body change, no re-initialization. This is the cheap case, and it is worth knowing which cases are cheap: **`WAREHOUSE` and `TARGET_LAG` are the only dynamic-table attributes that alter in place.** Any change to a dynamic table's *body* — including appending a column at the end — forces a re-initialization or a full refresh. Neither is wrong to do; the point is that a plan tells you the blast radius before you pay for it.
+No refresh mode change, no body change, no re-initialization. This is the cheap case, and it is worth knowing which cases are cheap: **`WAREHOUSE` and TARGET_LAG are the only dynamic-table attributes that alter in place.** Any change to a dynamic table's *body* — including appending a column at the end — forces a re-initialization or a full refresh. Neither is wrong to do; the point is that a plan tells you the blast radius before you pay for it.
 
-Adding a team creates objects. Removing an entry from the `teams` list would produce `DROP`s of that team's real objects, with their data. Don't try it here — but know that it is what a plan would show you, which is precisely why you run one.
+Adding a team creates objects. Removing an entry from the teams list would produce `DROP`s of that team's real objects, with their data. Don't try it here — but know that it is what a plan would show you, which is precisely why you run one.
 
 ### Deploy, then deploy again
 
-**In Snowsight:** set the operation to **Deploy**, give it the alias `lag-wh-and-team2`, and run it.
+**In Snowsight:** set the operation to **Deploy**, give it the alias lag-wh-and-team2, and run it.
 
 ![Deploy dialog for the second deployment](assets/deploy_dialog_2.png)
 
@@ -363,7 +360,7 @@ snow dcm deploy --target DCM_DEV --alias lag-wh-and-team2
 6 (3 created, 3 altered, 0 dropped)
 ```
 
-Now deploy a second time with no edits in between, under a new alias — `no-op-proof` — from either interface:
+Now deploy a second time with no edits in between, under a new alias — no-op-proof — from either interface:
 
 ```bash
 snow dcm deploy --target DCM_DEV --alias no-op-proof
@@ -373,7 +370,7 @@ snow dcm deploy --target DCM_DEV --alias no-op-proof
 No changes detected.
 ```
 
-Nothing happened, and nothing needed to. This is the difference between declaring state and running a script. `DEFINE` executes as **`CREATE OR ALTER`**, not `CREATE OR REPLACE`: the second deploy compared the declared state to the account, found them identical, and stopped. The dynamic table was not rebuilt. The tables were not recreated and their data was not lost. There is no ledger recording that the change already ran — the account simply already matches the files.
+Nothing happened, and nothing needed to. This is the difference between declaring state and running a script. `DEFINE` executes as **CREATE OR ALTER**, not CREATE OR REPLACE: the second deploy compared the declared state to the account, found them identical, and stopped. The dynamic table was not rebuilt. The tables were not recreated and their data was not lost. There is no ledger recording that the change already ran — the account simply already matches the files.
 
 That is why the same project can be deployed on every merge to main without a migration ledger, and why a deploy is safe to retry after a network failure.
 
@@ -386,7 +383,7 @@ A deployed project is a live inventory of the objects it owns. Ask it:
 SHOW ENTITIES IN DCM PROJECT dcm_demo.projects.dcm_project_dev;
 ```
 
-Every entity the project manages appears here, with its type and name — 16 after the first deploy, not the 18 the plan reported. The `PUBLIC` schema and `DCM_DEVELOPER` were in the changeset, but neither is a managed entity. This is the boundary of the project's authority: an object in this list is reconciled on every deploy, and an object that is not is invisible to DCM even if it sits in the same database.
+Every entity the project manages appears here, with its type and name — 16 after the first deploy, not the 18 the plan reported. The PUBLIC schema and DCM_DEVELOPER were in the changeset, but neither is a managed entity. This is the boundary of the project's authority: an object in this list is reconciled on every deploy, and an object that is not is invisible to DCM even if it sits in the same database.
 
 That distinction is what makes the next command matter, because it tells you how the inventory got to its current shape:
 
@@ -394,7 +391,7 @@ That distinction is what makes the next command matter, because it tells you how
 SHOW DEPLOYMENTS IN DCM PROJECT dcm_demo.projects.dcm_project_dev;
 ```
 
-You should see three deployments — `initial-deployment`, `lag-wh-and-team2`, and `no-op-proof` — which is where the aliases pay off. The third one changed nothing, and the history records that too.
+You should see three deployments — initial-deployment, lag-wh-and-team2, and no-op-proof — which is where the aliases pay off. The third one changed nothing, and the history records that too.
 
 Together these two commands are the answer to "what is in this environment, and who put it there", without reading a single definition file. On a shared account they are also how you tell your own project's objects apart from a sibling project's, which matters when it is time to clean up.
 
@@ -420,7 +417,7 @@ The "Anatomy of a DCM Project" section showed the manifest supplying values. Thi
 {% endfor %}
 ```
 
-There are exactly three ideas here. A **loop** over the manifest's `teams` list. A **dictionary value** injected into a real object property — `data_retention_days` from the YAML becomes the schema's actual `DATA_RETENTION_TIME_IN_DAYS`, which is why `DEV_TEAM_2` was planned with a retention of 3. And a **macro call**, which is where the roles come from:
+There are exactly three ideas here. A **loop** over the manifest's teams list. A **dictionary value** injected into a real object property — data_retention_days from the YAML becomes the schema's actual DATA_RETENTION_TIME_IN_DAYS, which is why DEV_TEAM_2 was planned with a retention of 3. And a **macro call**, which is where the roles come from:
 
 ```sql
 {% macro create_team_roles(team) %}
@@ -442,7 +439,7 @@ Deployed to DEV this loop runs twice. Deployed to PROD it runs for Marketing and
 
 ### The render-order gotcha, worked
 
-Jinja renders *before* Snowflake parses the SQL. The consequence catches everyone at least once: **a `{{ ... }}` expression inside a `--` comment is still evaluated.** Commenting a line out hides it from Snowflake. It does not hide it from the template engine, which has already finished by then.
+Jinja renders *before* Snowflake parses the SQL. The consequence catches everyone at least once: **a `{{ ... }}` expression inside a -- comment is still evaluated.** Commenting a line out hides it from Snowflake. It does not hide it from the template engine, which has already finished by then.
 
 `sources/definitions/raw.sql` carries a deliberate demonstration. This line is inert SQL but live Jinja:
 
@@ -450,13 +447,13 @@ Jinja renders *before* Snowflake parses the SQL. The consequence catches everyon
 --   this database is DCM_DEMO_1{{env_suffix}}
 ```
 
-Run a plan with `--save-output` and read the same line back in `out/rendered/sources/definitions/raw.sql`. The suffix has been substituted *inside the comment*:
+Run a plan with --save-output and read the same line back in `out/rendered/sources/definitions/raw.sql`. The suffix has been substituted *inside the comment*:
 
 ```text
 --   this database is DCM_DEMO_1_DEV
 ```
 
-Harmless here, because `env_suffix` always has a value. It stops being harmless the moment a commented-out line references something that does not resolve — the plan fails on a line you believed was disabled. The same applies to prose: never write Jinja delimiters as literal text in a comment you intend as explanation, because the engine reads them as code and not as English. To write about a Jinja expression, use a Jinja comment — `{# ... #}` — which the engine strips instead of evaluating.
+Harmless here, because env_suffix always has a value. It stops being harmless the moment a commented-out line references something that does not resolve — the plan fails on a line you believed was disabled. The same applies to prose: never write Jinja delimiters as literal text in a comment you intend as explanation, because the engine reads them as code and not as English. To write about a Jinja expression, use a Jinja comment — `{# ... #}` — which the engine strips instead of evaluating.
 
 So: the "comment out the alternative" pattern is safe in plain SQL and a trap in templated SQL. And `out/rendered/` is the first place to look whenever a template surprises you — it is the exact SQL DCM evaluated.
 
@@ -489,7 +486,7 @@ GRANT INHERITED SELECT on all tables in database DCM_DEMO_1{{env_suffix}}
 
 The second one covers every table in the database, including tables a future deploy has not created yet — one grant rather than one per object.
 
-Grants are not entities in their own right; they belong to the role that holds them. That is why a plan reports `ALTER ROLE` rather than a list of individual grants, and why the very first deploy showed one alter on `DCM_DEVELOPER`: taking ownership of each new object is itself a grant.
+Grants are not entities in their own right; they belong to the role that holds them. That is why a plan reports `ALTER ROLE` rather than a list of individual grants, and why the very first deploy showed one alter on DCM_DEVELOPER: taking ownership of each new object is itself a grant.
 
 <!-- ------------------------ -->
 ## Seed Data and Query
@@ -500,7 +497,7 @@ The deploy created empty structures. Seed them. **In Snowsight:** open `scripts/
 snow sql -f scripts/02_post_deploy.sql
 ```
 
-The script seeds the menu and ten orders, refreshes the dynamic table, and queries the result. It is safe to re-run: the menu insert skips rows that already exist, and the order inserts compute an offset from the current maximum `ORDER_ID`, so each run appends ten fresh orders instead of colliding with previous ones. It uses a session variable rather than a `BEGIN...END` block, because `snow sql -f` splits a script at semicolons and would break the block apart.
+The script seeds the menu and ten orders, refreshes the dynamic table, and queries the result. It is safe to re-run: the menu insert skips rows that already exist, and the order inserts compute an offset from the current maximum ORDER_ID, so each run appends ten fresh orders instead of colliding with previous ones. It uses a session variable rather than a BEGIN...END block, because snow sql -f splits a script at semicolons and would break the block apart.
 
 The dynamic table builds **20 enriched rows**. Then the semantic view answers in business terms — you name dimensions and metrics, and it resolves the aggregation:
 
@@ -513,14 +510,14 @@ SELECT * FROM SEMANTIC_VIEW(
 ORDER BY TOTAL_REVENUE DESC;
 ```
 
-Ten category rows come back, `Pizza | 106.00 | 67.50 | 3` at the top. `DEFINE SEMANTIC VIEW` means the vocabulary your BI tools and AI agents depend on is versioned and reviewed in the same plan diff as the pipeline producing the numbers.
+Ten category rows come back, Pizza | 106.00 | 67.50 | 3 at the top. DEFINE SEMANTIC VIEW means the vocabulary your BI tools and AI agents depend on is versioned and reviewed in the same plan diff as the pipeline producing the numbers.
 
 <!-- ------------------------ -->
 ## The App That Reads It
 
-Everything so far has been SQL that a `DEFINE` statement can express in full. A Streamlit app is Python files, so DCM carries it as **project assets**. Project assets, `DEFINE STREAMLIT` and `DEFINE CODE BUNDLE` are in public preview.
+Everything so far has been SQL that a `DEFINE` statement can express in full. A Streamlit app is Python files, so DCM carries it as **project assets**. Project assets, `DEFINE STREAMLIT` and DEFINE CODE BUNDLE are in public preview.
 
-An asset is a named set of source files, declared at the top level of `manifest.yml` — a sibling of `targets` and `templating`, not nested inside either:
+An asset is a named set of source files, declared at the top level of `manifest.yml` — a sibling of targets and templating, not nested inside either:
 
 ```yaml
 assets:
@@ -528,7 +525,7 @@ assets:
     path: 'streamlit/dashboard/**/*'
 ```
 
-The path is relative to the manifest and must live **outside `sources/`**, which is reserved for definitions, macros and tests. Use `path` for a single entry or `paths` for a list; each one can be a glob or a single file — a bare directory path is not accepted, so append `/**/*` to take a folder's contents. Globs support only `*` and `**` — no `?`, no brace expansion — and paths cannot contain Jinja. A pattern matching no files fails the run rather than deploying something empty.
+The path is relative to the manifest and must live **outside `sources/`**, which is reserved for definitions, macros and tests. Use path for a single entry or paths for a list; each one can be a glob or a single file — a bare directory path is not accepted, so append `/**/*` to take a folder's contents. Globs support only `*` and `**` — no `?`, no brace expansion — and paths cannot contain Jinja. A pattern matching no files fails the run rather than deploying something empty.
 
 Then `DEFINE STREAMLIT` refers to the asset by name. Because the definition names a set of files rather than a path, the project can pull in files from outside `sources/` and import them during rendering:
 
@@ -559,14 +556,14 @@ ALTER    STREAMLIT            DCM_DEMO_1_DEV.SERVE.ORDERS_DASHBOARD
 Planned 1 entity (0 to create, 1 to alter, 0 to drop).
 ```
 
-The plan tracks the **contents of the asset**, not just the `DEFINE` statement, and a deploy publishes a new version of the app. The dashboard is versioned and promoted the same way as the tables it reads, in one plan and one deploy. Redeploy again without touching anything and you get `No changes detected`, the same convergence you saw earlier.
+The plan tracks the **contents of the asset**, not just the `DEFINE` statement, and a deploy publishes a new version of the app. The dashboard is versioned and promoted the same way as the tables it reads, in one plan and one deploy. Redeploy again without touching anything and you get No changes detected, the same convergence you saw earlier.
 
-`DEFINE CODE BUNDLE` uses assets the same way, for packaging Python jobs rather than apps.
+DEFINE CODE BUNDLE uses assets the same way, for packaging Python jobs rather than apps.
 
 <!-- ------------------------ -->
 ## Detach and Clean Up
 
-Before tearing anything down, know that there is a gentler option. **Detaching** stops DCM managing something without destroying it. `DROP DCM PROJECT` on its own — without a `PURGE` first — removes the project and its deployment history, and leaves every entity, grant and attachment in place as an ordinary unmanaged object. To release a single grant instead, run `ALTER DCM PROJECT ... UNMANAGE GRANT` and remove the matching `GRANT` from your definitions, or the next deploy takes it back.
+Before tearing anything down, know that there is a gentler option. **Detaching** stops DCM managing something without destroying it. DROP DCM PROJECT on its own — without a `PURGE` first — removes the project and its deployment history, and leaves every entity, grant and attachment in place as an ordinary unmanaged object. To release a single grant instead, run ALTER DCM PROJECT ... UNMANAGE GRANT and remove the matching `GRANT` from your definitions, or the next deploy takes it back.
 
 This guide cleans up fully. **In Snowsight:** open `scripts/03_cleanup.sql` in a worksheet and run it. **With the Snowflake CLI:**
 
@@ -595,10 +592,16 @@ Three objects are shared across every guide in this series, so the script leaves
 -- DROP ROLE IF EXISTS dcm_developer;
 ```
 
-The `dcm_demo.projects` schema holds the project objects for every DCM guide in this series, so only drop it once you have finished with all of them. Check what it contains first:
+The dcm_demo.projects schema holds the project objects for every DCM guide in this series, so only drop it once you have finished with all of them. Check what it contains first:
 
 ```sql
 SHOW DCM PROJECTS IN SCHEMA dcm_demo.projects;
+```
+
+The inherited-grants account parameter enabled during setup also stays on. It is account-wide and the other guides in this series need it; the script carries the commented-out line to turn it off:
+
+```sql
+-- ALTER ACCOUNT SET FEATURE_RBAC_INHERITED_GRANTS = 'DISABLED';
 ```
 
 The script closes by verifying what went and what remains, and if `PURGE` ever fails it tells you to suspend the project's scheduled objects first so nothing keeps consuming credits while you investigate.
@@ -611,8 +614,8 @@ You declared a pipeline as code, planned it, deployed it, changed it, redeployed
 You now know that:
 
 - A DCM Project declares a **destination**, not a path — no migration ledger, no replay
-- `plan` shows the blast radius before you pay for it, and the changeset is readable per entity
-- `DEFINE` executes as **`CREATE OR ALTER`**, so redeploying converges instead of recreating
+- plan shows the blast radius before you pay for it, and the changeset is readable per entity
+- `DEFINE` executes as **CREATE OR ALTER**, so redeploying converges instead of recreating
 - The manifest is the control surface: one codebase, many environments, differences confined to YAML
 - Jinja renders **before** DCM parses the SQL — including inside comments
 - **Project assets** carry the files a `DEFINE` statement cannot express, so an app ships with its pipeline
