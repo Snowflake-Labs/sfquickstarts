@@ -194,7 +194,7 @@ Now try the agent the way your business users will, in Snowflake CoWork.
     - "Which channels yield the highest click-through rates?" (Cortex Analyst)
     - "What was customer feedback around our back to school campaign?" (Cortex Search)
     - "Generate a report for the holiday gift guide campaign" (campaign-report skill and code execution)
-    - "Based on Pew Research Center's Americans' Social Media Use 2025 report, which platforms reach the most U.S. adults, and how do our social campaigns compare?" (web search and Cortex Analyst)
+    - "According to the FTC's Disclosures 101 for Social Media Influencers guide, what are the best practices for disclosing paid partnerships in our social media influencer campaigns?" (web search)
 
 To give other users access, grant them `USAGE` on the agent and on the objects its tools use. See [User access and settings for agents](https://docs.snowflake.com/en/user-guide/snowflake-cortex/snowflake-cowork/deploy-agents).
 
@@ -202,7 +202,7 @@ To give other users access, grant them `USAGE` on the agent and on the objects i
 
 When a response includes a chart or table worth keeping, select **Save** to turn it into an artifact. Artifacts are live references: they keep the underlying query and visualization, refresh against current data, and can be shared with teammates, who see results filtered by their own data permissions.
 
-- Ask "Show me total revenue and average ROI by campaign type as a bar chart" and save the chart.
+- Ask "Show me total revenue and average ROI by campaign type as a chart" and save the chart.
 - Open the artifacts hub and find it under **Saved**, then open it and ask a follow-up question.
 - Optionally, share the conversation with a teammate through a link.
 
@@ -212,7 +212,7 @@ See [Artifacts in Snowflake CoWork](https://docs.snowflake.com/en/user-guide/sno
 
 Automations turn a question into a recurring report delivered to your email, re-run against the latest data each time.
 
-- Ask "Give me a weekly summary of our top 5 campaigns by ROI with key metrics", then reply "Send me this report every Monday at 9 AM".
+- Ask "Give me a weekly summary of our top 5 campaigns by ROI with key metrics and visualizations", then reply "Send me this report every Monday at 9 AM".
 - Or create one manually from the **Automations** tab with a name, instructions and frequency.
 - Review the automation in the **Automations** tab, and cancel it when you are done. Automations run on your compute.
 
