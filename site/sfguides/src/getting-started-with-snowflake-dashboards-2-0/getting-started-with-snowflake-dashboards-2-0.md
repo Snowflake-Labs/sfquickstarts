@@ -12,6 +12,8 @@ fork repo link: https://github.com/sfc-gh-cnantasenamat/getting-started-with-sno
 
 ## Overview
 
+> **Note:** Dashboards 2.0 is in private preview and is available only to enrolled accounts. Confirm with your account team that your account has access before you start.
+
 It's Monday morning and revenue is behind target. The BI dashboard says attainment is 86%, the AI assistant says 84%, and the sales-ops spreadsheet says something else. Each tool has its own copy of the metric logic, so the team spends the meeting reconciling numbers instead of asking why the quarter is slipping. Even once the numbers agree, finding the cause means paging through a multi-page dashboard and drilling down filter by filter.
 
 In this guide, you'll build **Revenue Pulse** to work through that morning check on a synthetic dataset: a fictional B2B software company with 54 accounts, 3 product lines, and 24 months of revenue through September 30, 2026. The data contains a story. Q3 2026 net revenue is barely up (0.8%) year over year and $1.09M behind target. EMEA Enterprise is the largest single miss, and APAC is behind too. Your task is to trace that shortfall from the company-wide total to the regions, accounts, and recorded drivers behind it, using a shared overview for the daily check and follow-up questions with a consistent basis for comparison.
@@ -52,10 +54,10 @@ The architecture below shows how the dashboard and Revenue Advisor use the share
 
 ![Architecture: the Git repo and setup script feed a semantic view that both the Cortex Agent and the dashboard query; the dashboard is published to a role and explored in CoWork](assets/architecture.png)
 
-### Prerequisites
+### What You'll Need
 - Access to a [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)
 - A role that can create databases, API integrations, semantic views, agents, and roles (this guide uses `ACCOUNTADMIN`)
-- Access to Dashboards 2.0, Cortex Code in Snowsight Workspaces, and Snowflake CoWork in your account. At the time of this revision, the [dashboard documentation](https://docs.snowflake.com/en/LIMITEDACCESS/cowork-dashboards) labels the feature private preview; confirm enrollment with your account team
+- Access to Dashboards 2.0, Cortex Code in Snowsight Workspaces, and Snowflake CoWork in your account. [Dashboards 2.0](https://docs.snowflake.com/en/LIMITEDACCESS/cowork-dashboards) is in private preview, so confirm enrollment with your account team
 - A role with the `MANAGE ACCESS ON DASHBOARD ARTIFACTS` privilege, which is needed to publish dashboards as artifacts and choose who can view them. It is [granted to `PUBLIC` by default](https://docs.snowflake.com/en/release-notes/bcr-bundles/un-bundled/bcr-manage-access-dashboard-artifacts) unless your administrator revoked it
 
 Everything in this guide runs in Snowsight. You don't need Python, a CLI, or a local copy of the code. The [companion repository](https://github.com/sfc-gh-cnantasenamat/getting-started-with-snowflake-dashboards-2-0) holds the SQL, the synthetic data, and the dashboard file, and Snowflake reads them directly from GitHub.
@@ -420,7 +422,7 @@ Keep existing tiles and filters intact, then validate the file.
 
 **Expected output:** A regional bar chart showing signed variance in USD against a zero reference, with readable labels or tooltips.
 
-**Check:** With Q3 selected and no other filters, EMEA has the largest regional shortfall. The sum of the regional variances should equal the variance card. Use the displayed signs, not colour alone, to read the result.
+**Check:** With Q3 selected and no other filters, EMEA has the largest regional shortfall. The sum of the regional variances should equal the variance card. Use the displayed signs, not color alone, to read the result.
 
 ![Completed reference regional variance bars for Q3, with EMEA and APAC below zero and Americas above zero](assets/regional-variance-bars.png)
 
@@ -438,13 +440,13 @@ Put regions on one axis and segments on the other.
 Calculate each cell as total net revenue divided by total target.
 Show attainment as a percentage in each cell and include revenue,
 target, and signed variance in the tooltip.
-Use a fixed colour scale from 55% to 120% and a visible legend.
+Use a fixed color scale from 55% to 120% and a visible legend.
 Apply all four filters and validate the file.
 ```
 
 **Expected output:** A region-by-segment attainment grid with percentage labels, a fixed-scale legend, and financial measures in tooltips.
 
-**Check:** The unfiltered Q3 heatmap should contain nine region-segment combinations. EMEA Enterprise should be about 57.9%, while Americas Enterprise is about 117%. A fixed scale keeps colours comparable when filters change.
+**Check:** The unfiltered Q3 heatmap should contain nine region-segment combinations. EMEA Enterprise should be about 57.9%, while Americas Enterprise is about 117%. A fixed scale keeps colors comparable when filters change.
 
 ![Completed reference Q3 attainment heatmap, with EMEA Enterprise at 57.9% and Americas Enterprise at 117%](assets/target-attainment-heatmap.png)
 
@@ -551,7 +553,7 @@ Validate the file.
 ```text
 Add an account bubble chart with total target on the horizontal
 axis and attainment on the vertical axis. Use net revenue for
-bubble size and region for colour. Add a 100% attainment reference
+bubble size and region for color. Add a 100% attainment reference
 line and account names in tooltips. Apply all dashboard filters.
 Validate the file and preserve the existing table and charts.
 ```
@@ -651,14 +653,14 @@ then trend and regional views, followed by driver and account detail.
 In the text tile, describe only the actions we verified and how to
 clear their selections. If no chart actions are supported, title it
 Try Dashboard Filters instead and explain the filter chips.
-Keep labels readable and chart colours consistent. Preserve all
+Keep labels readable and chart colors consistent. Preserve all
 SQL, filter bindings, and tile IDs while adjusting layout.
 Validate the file; do not publish or change sharing.
 ```
 
 **Expected output:** A single-page layout ordered from summary to detail, with concise instructions for verified controls and reset actions. Existing SQL, bindings, and tile IDs remain intact.
 
-**Check:** Read the dashboard at your normal browser size. Labels should fit, legends should explain units and colours, and the instructions should match the controls that actually work.
+**Check:** Read the dashboard at your normal browser size. Labels should fit, legends should explain units and colors, and the instructions should match the controls that actually work.
 
 ## Validate the Dashboard
 
@@ -811,9 +813,9 @@ viewer-role test. Do not grant access or change any sharing settings.
 
 In the dashboard toolbar, choose **Share > Publish as artifact**. The dialog notes that viewers run the dashboard with their own privileges ([caller's rights](https://docs.snowflake.com/en/LIMITEDACCESS/cowork-dashboards)), not the owner's. The role's grants decide what each viewer sees.
 
-Add `DASHBOARD_DEMO_SALES_OPS` with **Can view** access. When this guide was tested, the role search box sometimes already contained `PUBLIC`. Clear it so the dashboard is shared only with the sales-ops role. Then select **Publish**.
+Add `DASHBOARD_DEMO_SALES_OPS` with **Can view** access. If `PUBLIC` is already in the role search box, clear it so the dashboard is shared only with the sales-ops role. Then select **Publish**.
 
-A confirmation appears, and the toolbar button changes to **Publish changes**. Open **Share** again and check **Who has access**. During testing, `PUBLIC` was granted **Can view** on publish even though the dialog didn't show it beforehand. If `PUBLIC` is listed, select its trash icon so only the owner and `DASHBOARD_DEMO_SALES_OPS` remain.
+A confirmation appears, and the toolbar button changes to **Publish changes**. Open **Share** again and check **Who has access**. If `PUBLIC` is listed, select its trash icon so only the owner and `DASHBOARD_DEMO_SALES_OPS` remain.
 
 After publishing, make edits in the Workspaces editor and use **Publish changes** to push them.
 
@@ -920,7 +922,7 @@ Do not drop objects, delete files, revoke grants, or publish changes.
 Remove the published dashboard and the workspace first:
 
 1. Open the dashboard's **Share** dialog and remove every role from **Who has access**.
-2. Delete the artifact from CoWork (**Artifacts**, open it, **More options > Delete**). During testing, the CoWork delete returned an error. With every role removed, the artifact stays visible only to you.
+2. Delete the artifact from CoWork (**Artifacts**, open it, **More options > Delete**). If the delete doesn't complete, the artifact stays visible only to you, because every role was removed in the previous step.
 3. In **Workspaces**, delete only the draft file or dedicated tutorial workspace you created. If the Git workspace was created solely for this tutorial, select **...** (More options) next to its name, select **Delete**, and confirm. Do not delete a workspace that contains unrelated work. If you published both dashboard versions, review and remove each tutorial artifact separately.
 
 ### Remove the Demo Objects
