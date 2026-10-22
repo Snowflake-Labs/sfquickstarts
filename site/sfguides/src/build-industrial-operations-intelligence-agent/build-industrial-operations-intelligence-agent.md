@@ -2,7 +2,7 @@ author: Reinout Korbee
 id: build-industrial-operations-intelligence-agent
 language: en
 summary: Build an industrial operations intelligence data foundation with inline synthetic data for production, quality, asset reliability, and supply analysis.
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/industry/manufacturing, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/cortex-analyst, snowflake-site:taxonomy/snowflake-feature/cortex-search
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfquickstarts/issues
