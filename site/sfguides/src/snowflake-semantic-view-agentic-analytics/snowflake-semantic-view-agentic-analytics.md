@@ -8,34 +8,34 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 
- # Build Agentic Analytics with Semantic Views
+# Build Agentic Analytics with Semantic Views
 
- ## Overview
+## Overview
 
- In this hands-on lab, you'll build business-friendly semantic views on top of enterprise data warehouses and enhance them with AI-powered natural language querying through Cortex Analyst. You'll create intelligent agents using Snowflake Intelligence that can answer cross-functional business questions by automatically routing queries across Sales, Marketing, Finance, and HR semantic views.
+In this hands-on lab, you'll build business-friendly semantic views on top of enterprise data warehouses and enhance them with AI-powered natural language querying through Cortex Analyst. You'll create intelligent agents using Snowflake Intelligence that can answer cross-functional business questions by automatically routing queries across Sales, Marketing, Finance, and HR semantic views.
 
- This guide covers creating a comprehensive data foundation, deploying semantic views manually and using AI assistance (Semantic View Autopilot), querying them using Semantic SQL and Cortex Analyst, and finally deploying a cross-functional intelligent agent using Snowflake Intelligence.
+This guide covers creating a comprehensive data foundation, deploying semantic views manually and using AI assistance (Semantic View Autopilot), querying them using Semantic SQL and Cortex Analyst, and finally deploying a cross-functional intelligent agent using Snowflake Intelligence.
 
- ### What You'll Learn
- - Build a comprehensive data foundation with dimension and fact tables.
- - Create business-friendly Semantic Views for Sales, Marketing, and Finance domains.
- - Use Semantic View Autopilot (SVA) to AI-generate and enhance semantic views for HR.
- - Query Semantic Views using Cortex Analyst (natural language querying).
- - Deploy a cross-functional Intelligent Agent using Snowflake Intelligence.
+### What You'll Learn
+- Build a comprehensive data foundation with dimension and fact tables.
+- Create business-friendly Semantic Views for Sales, Marketing, and Finance domains.
+- Use Semantic View Autopilot (SVA) to AI-generate and enhance semantic views for HR.
+- Query Semantic Views using Cortex Analyst (natural language querying).
+- Deploy a cross-functional Intelligent Agent using Snowflake Intelligence.
 
- ### What You'll Build
- You will build a complete Agentic Analytics solution including:
- * **Data Foundation**: 13 dimension tables, 4 fact tables, Salesforce CRM integration
- * **Semantic Views**: Business-friendly layers for Sales, Marketing, Finance & HR
- * **AI Enhancement**: Auto-generate semantic views using Semantic View Autopilot
- * **Natural Language Querying**: Query data with plain English via Cortex Analyst
- * **Interactive Apps**: Streamlit visualizations and chat interfaces
- * **Intelligent Agents**: Cross-functional AI agents for business analytics
+### What You'll Build
+You will build a complete Agentic Analytics solution including:
+* **Data Foundation**: 13 dimension tables, 4 fact tables, Salesforce CRM integration
+* **Semantic Views**: Business-friendly layers for Sales, Marketing, Finance & HR
+* **AI Enhancement**: Auto-generate semantic views using Semantic View Autopilot
+* **Natural Language Querying**: Query data with plain English via Cortex Analyst
+* **Interactive Apps**: Streamlit visualizations and chat interfaces
+* **Intelligent Agents**: Cross-functional AI agents for business analytics
 
- ### Prerequisites
- - A Snowflake account.
- - Access to the Snowsight interface (web environment).
- - Account Administrator (`ACCOUNTADMIN`) role access for initial setup.
+### What You'll Need
+- Access to a [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)
+- Access to the Snowsight interface (web environment).
+- Account Administrator (`ACCOUNTADMIN`) role access for initial setup.
 
 
 ## Setup
