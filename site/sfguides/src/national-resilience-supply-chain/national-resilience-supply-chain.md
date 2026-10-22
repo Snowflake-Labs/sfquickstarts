@@ -53,7 +53,7 @@ federal coordination unit. All data in this tutorial is synthetic.
 -   A role authorized to create and use the objects in this guide. Use
     least-privilege roles in production.
 
-## 1. Setup and Data Foundation
+## Setup and Data Foundation
 
 Create a database, schema, and warehouse for the demo. Run the SQL in a
 Snowflake worksheet using a role with the required privileges.
@@ -249,7 +249,7 @@ UNION ALL SELECT 'IOT_SENSOR_READINGS', COUNT(*) FROM IOT_SENSOR_READINGS
 UNION ALL SELECT 'QUALITY_INCIDENTS', COUNT(*) FROM QUALITY_INCIDENTS;
 ```
 
-## 2. Unified Operating Picture (Governed Views)
+## Unified Operating Picture (Governed Views)
 
 Planners need a single place to see supplier concentration, delayed
 shipments, and recent quality signals. Aggregate each fact table before
@@ -312,7 +312,7 @@ AS
 SELECT * FROM VW_UNIFIED_OPERATING_PICTURE;
 ```
 
-## 3. Disruption Scenario Simulation (Cortex AI)
+## Disruption Scenario Simulation (Cortex AI)
 
 The scenario view traces each component at a facility to the programs
 that depend on it and compares normal lead time with the alternative
@@ -382,7 +382,7 @@ Review generated explanations before acting on them. They are
 decision-support content, not verified intelligence or a substitute for
 analyst judgment.
 
-## 4. Predictive Scoring with ML in Snowpark
+## Predictive Scoring with ML in Snowpark
 
 This section demonstrates the shape of a supervised supplier-risk
 workflow. The small synthetic label table is for demonstrating data
@@ -457,7 +457,7 @@ define a time-aware train/test split, assess class imbalance and model
 quality, document features, monitor drift, and register versioned models
 using the current Snowpark ML Model Registry API.
 
-## 5. Investigation Agent (Cortex Agent and CoWork)
+## Investigation Agent (Cortex Agent and CoWork)
 
 A Cortex Agent can help users ask natural-language questions over
 governed supply chain data. Agent creation syntax and availability can
@@ -488,7 +488,7 @@ Validate answers against the underlying governed views. Natural-language
 responses should not be treated as authoritative without checking the
 source data.
 
-## 6. Streamlit Application
+## Streamlit Application
 
 The following minimal Streamlit-in-Snowflake example displays the
 facility scenario. Create a Streamlit app in the
@@ -538,7 +538,7 @@ to your organization's security model. This minimal example is a
 foundation for adding KPI tiles, charts, risk-feed summaries, and
 approved investigation workflows.
 
-## 7. Best Practices
+## Best Practices
 
 -   **Use least privilege.** Separate setup, data engineering, analyst,
     and sharing roles. Avoid using `ACCOUNTADMIN` for routine
@@ -562,6 +562,17 @@ approved investigation workflows.
 -   **Start with a pilot.** Validate the dependency model and workflow
     for one supply chain before expanding to more programs and agencies.
 
+## Clean Up
+
+The commands below permanently delete the demo database and all objects
+contained within it. Run them only when you no longer need the tutorial
+data. The warehouse is a separate account-level object and is dropped
+separately.
+
+``` sql
+DROP DATABASE IF EXISTS PACIFIC_SHIELD_DEMO;
+DROP WAREHOUSE IF EXISTS NEXUS_WH;
+```
 ## Conclusion And Resources
 
 This reference guide demonstrates how Snowflake can bring supply-chain
@@ -588,15 +599,5 @@ Useful documentation:
 -   [Secure Data
     Sharing](https://docs.snowflake.com/en/user-guide/data-sharing-intro)
 
-## Clean Up
 
-The commands below permanently delete the demo database and all objects
-contained within it. Run them only when you no longer need the tutorial
-data. The warehouse is a separate account-level object and is dropped
-separately.
-
-``` sql
-DROP DATABASE IF EXISTS PACIFIC_SHIELD_DEMO;
-DROP WAREHOUSE IF EXISTS NEXUS_WH;
-```
 
