@@ -5,7 +5,7 @@ language: en
 summary: Build a supply chain resilience platform with Snowflake Cortex AI, Snowpark ML, governed views, and Streamlit to identify and model disruptions.
 environments: web
 status: Published
-feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+feedback link: https://github.com/Snowflake-Labs/sfquickstarts/issues
 
 # Build a National Resilience & Supply Chain Stability Platform with Cortex AI
 
