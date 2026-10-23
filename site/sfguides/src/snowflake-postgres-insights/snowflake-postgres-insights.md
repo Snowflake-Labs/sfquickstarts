@@ -19,7 +19,24 @@ In this guide you will enable pgInsights, explore the Snowsight Insights pages, 
 ### Prerequisites
 - A Snowflake Postgres instance running **Postgres 18.6 or later**. If you don't have one, follow the [Getting Started with Snowflake Postgres](https://quickstarts.snowflake.com/guide/getting-started-with-snowflake-postgres/) quickstart first.
 - `psql` installed locally and connected to your instance
+- An instance that has been refreshed recently. If your instance has been running for a while, run a **Refresh** so it picks up the latest minor version, OS patches, and Snowflake Postgres features (including pgInsights). Check your current version with `SELECT version();`.
 - An existing database with some table activity (queries, inserts, updates) so pgInsights has metrics to collect
+
+### Refresh your instance
+
+A Refresh replaces your instance without changing its configured resources. Your connection string stays the same, but there is a brief service interruption during the failover, so make sure your applications can reconnect.
+
+To refresh from Snowsight, go to **Postgres**, select your instance, then choose **Manage** > **Refresh**. Select **Bypass maintenance window and apply immediately** if you don't want to wait for your next maintenance window.
+
+To refresh with SQL, run `ALTER POSTGRES INSTANCE` with the instance's **current** `COMPUTE_FAMILY` value:
+
+```sql
+ALTER POSTGRES INSTANCE my_instance
+  SET COMPUTE_FAMILY = STANDARD_M
+  APPLY IMMEDIATELY;
+```
+
+Use `DESCRIBE POSTGRES INSTANCE my_instance;` to track progress. The refresh is complete when the instance returns to the `Ready` state. For more detail, see [Snowflake Postgres instance management](https://docs.snowflake.com/en/user-guide/snowflake-postgres/managing-instances).
 
 ### What You'll Learn
 - How to enable and verify pgInsights with two SQL commands
@@ -82,6 +99,26 @@ For the complete table and metric reference, see the [pgInsights documentation](
 pgInsights needs real database activity to have something to show. Run your application's normal workload, replay production queries against a staging copy, or simply run a mix of queries by hand — SELECTs, INSERTs, UPDATEs, and JOINs all contribute useful metrics.
 
 Let the workload run for at least 5 minutes so pgInsights has time to capture multiple snapshots.
+
+### Generate fake traffic with Cortex Code
+
+If you don't have a workload handy, Cortex Code (CoCo) can build sample data and a load generator for you. Install either:
+
+- [CoCo CLI](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-cli) for macOS, Linux, and Windows
+- [CoCo Desktop](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-desktop) for macOS and Windows
+
+Then give it a prompt like this one:
+
+```
+Connect to my Snowflake Postgres instance using psql. Create a sample e-commerce
+schema (customers, products, orders, order_items) and load it with about 100,000
+rows of realistic fake data. Then write and run a script that generates a mixed
+workload for 10 minutes: frequent point SELECTs, a few slow JOIN/aggregate
+queries, steady INSERTs and UPDATEs on orders, and occasional long-running
+transactions that hold row locks so I can see blocking and wait events.
+```
+
+Adjust the row counts and duration to fit your instance size.
 
 <!-- ------------------------ -->
 ## Explore the Snowsight Insights Pages
@@ -247,7 +284,7 @@ pgInsights requires Postgres 18.6 or later. If the `insights` extension doesn't 
 <!-- ------------------------ -->
 ## Clean Up
 
-When you are done testing:
+If you are done testing and no longer want Insights metrics collection, you can remove the extension.
 
 ```sql
 -- Remove the extension and all insights tables
@@ -258,7 +295,6 @@ DROP EXTENSION insights CASCADE;
 <!-- ------------------------ -->
 ## Resources
 
-- Read the [pgInsights extension documentation](https://docs.snowflake.com/LIMITEDACCESS/user-guide/snowflake-postgres/postgres-insights) for the complete table and metric reference
-- Read the [Insights pages guide](https://docs.snowflake.com/LIMITEDACCESS/user-guide/snowflake-postgres/postgres-instance-ui) for details on every chart in the Snowsight panel
-- Connect Grafana or another dashboard tool to the `insights` schema for ongoing visualization and alerting
+- Read the [Insights extension documentation](https://docs.snowflake.com/user-guide/snowflake-postgres/insights) for the complete table and metric reference
+
 
