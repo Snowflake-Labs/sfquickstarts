@@ -5,7 +5,7 @@ summary: Build a Cortex Agent with skills, code execution and web search, optimi
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/snowflake-intelligence, snowflake-site:taxonomy/snowflake-feature/cortex-analyst, snowflake-site:taxonomy/snowflake-feature/cortex-search
 environments: web
 status: Published
-feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+feedback link: https://github.com/Snowflake-Labs/sfquickstarts/issues
 fork repo link: https://github.com/sfc-gh-ebotwick/build_deploy_ai_agents_snowflake_cowork_vhol
 
 # Build, Evaluate and Deploy AI Agents with Snowflake CoWork
@@ -21,13 +21,6 @@ The agent answers questions about a fictional company's marketing campaigns. It 
 - The **code execution** sandbox, used by the skill to render reports
 - **Web search**, for external context such as industry reports and regulatory guidance
 
-### Prerequisites
-- A Snowflake account with access to the `ACCOUNTADMIN` role (the setup script creates a role, database, warehouse and an API integration, and sets an account parameter)
-- Access to Cortex Agents, Agent Evaluations, CoCo and Snowflake CoWork in your account's region
-- Basic familiarity with SQL and Snowsight
-
-> **Account-level change:** The agent uses the web search tool, which requires `ENABLE_CORTEX_WEBSEARCH = TRUE` on the **entire account**. This lets any Cortex Agent, CoWork or CoCo user in the account with web search configured send queries to an external web search provider. Review this with your security and governance stakeholders before running the setup script. The script explains how to skip this step and how to revert it.
-
 ### What You'll Learn
 - How to give a Cortex Agent an agent skill, code execution and web search
 - How to run Cortex Agent Evaluations with built-in and custom LLM-judge metrics
@@ -37,8 +30,12 @@ The agent answers questions about a fictional company's marketing campaigns. It 
 - How business users interact with the agent in Snowflake CoWork, including Artifacts and Automations
 
 ### What You'll Need
-- A Snowflake account and user as described in the prerequisites
+- A Snowflake account with access to the `ACCOUNTADMIN` role (the setup script creates a role, database, warehouse and an API integration, and sets an account parameter)
+- Access to Cortex Agents, Agent Evaluations, CoCo and Snowflake CoWork in your account's region
+- Basic familiarity with SQL and Snowsight
 - A browser for Snowsight and CoCo in Snowsight, or optionally the [CoCo CLI](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-cli)
+
+> **Account-level change:** The agent uses the web search tool, which requires `ENABLE_CORTEX_WEBSEARCH = TRUE` on the **entire account**. This lets any Cortex Agent, CoWork or CoCo user in the account with web search configured send queries to an external web search provider. Review this with your security and governance stakeholders before running the setup script. The script explains how to skip this step and how to revert it.
 
 ### What You'll Build
 - A `MARKETING_AGENT` Cortex Agent backed by a semantic view, a Cortex Search service and a campaign report skill
@@ -236,15 +233,20 @@ To remove the lab objects, run the following as `ACCOUNTADMIN`. Cancel any CoWor
 
 ```sql
 USE ROLE ACCOUNTADMIN;
+-- If you set COWORK_AI_HOL_ROLE as your default role, reset it before dropping the role.
+-- Replace <your_previous_role> with the role you used before this guide.
+SET MY_USER = CURRENT_USER();
+ALTER USER IDENTIFIER($MY_USER) SET DEFAULT_ROLE = <your_previous_role>;
+
 DROP DATABASE IF EXISTS COWORK_AI_HOL_DB;
 DROP WAREHOUSE IF EXISTS COWORK_AI_HOL_WH;
 DROP API INTEGRATION IF EXISTS GIT_API_INTEGRATION_COWORK_AI_HOL;
 DROP ROLE IF EXISTS COWORK_AI_HOL_ROLE;
--- Only if web search was not already enabled before this guide:
-ALTER ACCOUNT UNSET ENABLE_CORTEX_WEBSEARCH;
-```
 
-If you changed your default role, set it back with `ALTER USER IDENTIFIER($MY_USER) SET DEFAULT_ROLE = <your_previous_role>;` (after `SET MY_USER = CURRENT_USER();`).
+-- Web search is an ACCOUNT-WIDE setting. Uncomment ONLY if it was not enabled
+-- before this guide and nothing else in the account relies on it.
+-- ALTER ACCOUNT UNSET ENABLE_CORTEX_WEBSEARCH;
+```
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
