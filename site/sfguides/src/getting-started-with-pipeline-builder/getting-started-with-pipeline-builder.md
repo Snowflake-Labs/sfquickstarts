@@ -159,23 +159,27 @@ A Pipeline Builder pipeline lives in a project folder in your workspace. Let's c
 
 1. In Snowsight, select **Projects** > **Workspaces**, and open your workspace.
 2. In the file explorer, select **Add new**, and then select **Pipeline Builder**.
-3. In the **Create Pipeline Builder** dialog, enter `tasty_daily_sales` for the **Name**.
-4. For **Database and schema**, select `TASTY_PIPELINE_QS_DB.PIPELINE`. This is where the pipeline's DCM project object is created.
-5. Select **Create**.
+3. In the **Create Pipeline Builder** dialog, enter `Pipeline_builder_quickstart` for the **Name**.
+4. For **Project location**, keep **New folder (Pipeline_builder_quickstart)**, so the pipeline gets its own folder in the workspace.
+5. For **Database and schema**, select `TASTY_PIPELINE_QS_DB.PIPELINE`. This is where the pipeline's DCM project object is created.
+6. Select **Create**.
 
-Pipeline Builder creates a **tasty_daily_sales** project folder and opens an empty canvas. The folder contains:
+![Create Pipeline Builder dialog](assets/create-pipeline-dialog.png)
+
+Pipeline Builder creates a **Pipeline_builder_quickstart** project folder and opens an empty canvas. The folder contains:
 
 - **manifest.yml**: the DCM project's manifest, including its deployment target
-- **pipeline.yml** (or a similar definition file): the tasks, task graphs, and Code Bundles you build on the canvas
-- **sources/**: a folder for other DCM definition files
+- **sources/**: a folder for DCM definition files
 
-You won't edit these files in this Quickstart. Pipeline Builder writes to them for you as you work on the canvas.
+When you add your first task, Pipeline Builder also creates **pipeline.yml**, which holds the tasks, task graphs, and Code Bundles you build on the canvas. You won't edit these files in this Quickstart. Pipeline Builder writes to them for you.
+
+![Pipeline_builder_quickstart project folder](assets/project-folder.png)
 
 ### Add two notebooks
 
-Now add the two notebooks your teammate has been running by hand. Create them in the **tasty_daily_sales** folder, not in **sources/** or **out/**. Pipeline Builder can't turn files in those two folders into tasks.
+Now add the two notebooks your teammate has been running by hand. Create them in the **Pipeline_builder_quickstart** folder, not in **sources/** or **out/**. Pipeline Builder can't turn files in those two folders into tasks.
 
-In the file explorer, create a notebook named **01_clean_orders.ipynb** in the **tasty_daily_sales** folder. Add a single SQL cell that removes duplicate and invalid orders and writes the result to a staging table:
+In the file explorer, create a notebook named **01_clean_orders.ipynb** in the **Pipeline_builder_quickstart** folder. Select **+ SQL** to add a single SQL cell that removes duplicate and invalid orders and writes the result to a staging table:
 
 ```sql
 CREATE OR REPLACE TABLE TASTY_PIPELINE_QS_DB.STAGING.ORDERS_CLEAN AS
@@ -184,6 +188,8 @@ FROM TASTY_PIPELINE_QS_DB.RAW.ORDERS
 WHERE order_ts IS NOT NULL
   AND order_total > 0;
 ```
+
+![Notebook with a single SQL cell](assets/notebook-sql-cell.png)
 
 Then create a second notebook named **02_daily_sales.ipynb** in the same folder, with a single SQL cell that builds the table analysts read every morning:
 
@@ -212,7 +218,7 @@ Here's what the notebooks do:
 
 This is where Pipeline Builder starts saving you work. Instead of publishing your notebooks or uploading files to a stage, you drag them onto the canvas.
 
-If the canvas isn't open, go back to it: select the **Pipeline Builder** tab for **tasty_daily_sales** at the top of the editor, or, in the file explorer, hover over the **tasty_daily_sales** folder and select the **Open pipeline builder** icon. Keep the file explorer visible next to the canvas, then drag **01_clean_orders.ipynb** from the file explorer and drop it anywhere on the canvas.
+If the canvas isn't open, go back to it: select the **Pipeline Builder** tab for **Pipeline_builder_quickstart** at the top of the editor, or, in the file explorer, hover over the **Pipeline_builder_quickstart** folder and select the **Open pipeline builder** icon. Keep the file explorer visible next to the canvas, then drag **01_clean_orders.ipynb** from the file explorer and drop it anywhere on the canvas.
 
 Pipeline Builder adds a card with a **Notebook** badge and opens the task's settings drawer. Behind the scenes, it also creates a Code Bundle that packages the project's code so Snowflake can run it, and fills in a default runtime, compute pool, and warehouse.
 
@@ -222,11 +228,15 @@ In the drawer, on the **General** tab:
 2. Confirm that **Entrypoint** points at **01_clean_orders.ipynb**.
 3. Under **Execution**, for **Warehouse**, select `TASTY_PIPELINE_QS_WH`.
 
+![Task drawer for clean_orders_task](assets/first-task-drawer.png)
+
 On the **Specification** tab:
 
 1. For **Compute pool**, select `TASTY_PIPELINE_QS_POOL`.
 2. For **Query warehouse**, select `TASTY_PIPELINE_QS_WH`. This warehouse runs the SQL that the notebook issues.
 3. Leave **Runtime version** at its default.
+
+![Specification tab](assets/specification-tab.png)
 
 > **Note:** If a field shows an error with a **Fix** action, the value is close to an existing object, for example a name with the wrong case. Select **Fix** to correct it.
 
@@ -237,6 +247,10 @@ Now drag **02_daily_sales.ipynb** onto the right side of the **clean_orders_task
 Pipeline Builder adds a second task, connects the two cards, and makes the new task run after **clean_orders_task**. The new task reuses the same Code Bundle.
 
 In its drawer, confirm that **Name** is `TASTY_PIPELINE_QS_DB.PIPELINE.daily_sales_task`, and under **Execution**, set **Warehouse** to `TASTY_PIPELINE_QS_WH`. On the **Specification** tab, select the same compute pool and query warehouse as the first task.
+
+Then select the **clean_orders_task** card and check its **Warehouse** again. Connecting the tasks can clear it. If it's empty, set it to `TASTY_PIPELINE_QS_WH`.
+
+![Two connected tasks on the canvas](assets/two-tasks-connected.png)
 
 You now have two connected cards on the canvas. You can also connect cards by dragging from the outgoing connector on the right of one card to the incoming connector on the left of another.
 
@@ -255,6 +269,8 @@ Pipeline Builder also moved any values the tasks share, such as the warehouse, i
 6. Under **Task defaults**, confirm that **Warehouse** is `TASTY_PIPELINE_QS_WH`. Any task in the graph that doesn't set its own warehouse uses this one.
 7. Under **Tasks in this graph**, confirm both tasks are listed, with **clean_orders_task** marked **Root**.
 
+![Task graph settings](assets/task-graph-settings.png)
+
 You can open the same settings from any task: select the task, select the **Graph** tab, and then select **Edit graph settings**.
 
 <!-- ------------------------ -->
@@ -263,7 +279,9 @@ You can open the same settings from any task: select the task, select the **Grap
 Nothing you've built exists in your account yet. A pipeline doesn't run until you deploy it, and deploying starts with a plan that shows exactly what will change.
 
 1. Select **Deploy** in the upper-right corner of the canvas. If you don't see it, collapse the workspace's bottom pane.
-2. In the **Review planned changes** dialog, review the list. This first deployment creates the Code Bundle, the **clean_orders_task** and **daily_sales_task** tasks, and the **TASTY_DAILY_SALES_GRAPH** task graph.
+2. In the **Review planned changes** dialog, review the list. This first deployment creates the Code Bundle, the **clean_orders_task** and **daily_sales_task** tasks, and the **TASTY_DAILY_SALES_GRAPH** task graph. It also lists an **ALTER** on **TASTY_PIPELINE_QS_ROLE**.
+![Review planned changes dialog](assets/review-planned-changes.png)
+
 3. Select **Deploy**.
 
 While the deployment runs, the **Deploy** button changes to **Cancel**. When it finishes, a **Deployed Project** button appears next to **Deploy**.
@@ -276,8 +294,13 @@ This plan-then-deploy loop comes from DCM. The project files describe the object
 The graph is deployed but suspended. Let's run it once now instead of waiting for 6:00 AM.
 
 1. Select **Deployed Project**. The DCM project opens in Snowsight on the **Objects** tab, which lists the tasks, task graph, and Code Bundle the project manages.
+
+![Deployed project objects](assets/deployed-project-objects.png)
 2. Select **TASTY_DAILY_SALES_GRAPH** to open its details page.
-3. Select the **Graph** tab, and then select the **Run Task Graph** icon.
+3. Select the **Graph** tab, and then select the **Run Task Graph** (play) icon in the toolbar above the graph.
+
+![Run Task Graph icon on the Graph tab](assets/run-task-graph.png)
+
 4. To watch the run while it's in progress, open a task's details page (for example, select **clean_orders_task** on the **Objects** tab of the DCM project) and select its **Run History** tab. The task graph's **Overview** tab shows the run once it finishes.
 
 You can also run the graph from SQL:
@@ -316,6 +339,8 @@ Because the pipeline is a DCM project, every deployment brings your account in l
 
 Select **Deploy** again without changing anything. Pipeline Builder shows "No changes to deploy." and doesn't deploy. Deployments are safe to repeat.
 
+![No changes to deploy](assets/no-changes-to-deploy.png)
+
 ### Add a task
 
 Analysts have asked for a daily leaderboard of the top five trucks. Let's add a SQL task after **daily_sales_task** that rebuilds it on every run.
@@ -335,7 +360,9 @@ LIMIT 5;
 ```
 
 5. If you used **Create**, connect **daily_sales_task** to the new card.
-6. Select **Deploy**. The plan shows one task to create and an alter to the task graph. Select **Deploy**.
+6. Select **Deploy**. The plan shows **TOP_TRUCKS_TASK** as a task to create and an **ALTER** on **TASTY_PIPELINE_QS_ROLE**. Select **Deploy**.
+
+![Plan for adding a task](assets/plan-add-task.png)
 
 A SQL task is also how you run stored procedures or any other Snowflake object from a pipeline.
 
@@ -344,6 +371,8 @@ A SQL task is also how you run stored procedures or any other Snowflake object f
 Now suppose the analysts change their minds. On the **top_trucks_task** card, select the **⋮** menu, and then select **Delete**. Select **Deploy**.
 
 This time, the plan shows **top_trucks_task** as a task to drop. Deleting a card removes it from the project files, and the next deployment drops the task from your account. You never write a `DROP TASK`.
+
+![Plan for deleting a task](assets/plan-drop-task.png)
 
 > **Note:** The deployment drops the task, but not the `TOP_TRUCKS` table the task created if it ran. DCM manages the objects defined in the project, such as tasks, task graphs, and Code Bundles. Tables that your code creates at run time aren't part of the project.
 
@@ -375,16 +404,16 @@ and schedule the graph every Monday at 7:00 AM America/Los_Angeles, suspended.
 
 CoCo writes the tasks, the connection between them, and the task graph settings to the new project's definition file, so you can review its work on the canvas before anything is deployed. Select each card to check its SQL. To check the schedule, select **Objects** on the canvas toolbar, select **Task graphs**, and then select the graph CoCo created. If it looks right, select **Deploy** to plan and deploy it, just like the first pipeline.
 
-To change an existing pipeline with CoCo, open the CoCo chat in your workspace and use the `/pipeline-builder` skill. For example, ask it to add a task to **tasty_daily_sales**.
+To change an existing pipeline with CoCo, open the CoCo chat in your workspace and use the `/pipeline-builder` skill. For example, ask it to add a task to **Pipeline_builder_quickstart**.
 
 <!-- ------------------------ -->
 ## Advanced: Optional Modules
 
-You've built, deployed, run, and changed a pipeline. That's the core of Pipeline Builder. The modules below go further. Each one starts from the **tasty_daily_sales** pipeline as you left it in Change It Like Code, and none depend on each other, so pick the ones that match your pipelines.
+You've built, deployed, run, and changed a pipeline. That's the core of Pipeline Builder. The modules below go further. Each one starts from the **Pipeline_builder_quickstart** pipeline as you left it in Change It Like Code, and none depend on each other, so pick the ones that match your pipelines.
 
 Each module ends with a deployment. To compare what changed, review the **Review planned changes** dialog before you select **Deploy**.
 
-Before you start, make sure you're back on the **tasty_daily_sales** canvas, not the pipeline CoCo generated in the previous step. Select its **Pipeline Builder** tab, or, in the file explorer, hover over the **tasty_daily_sales** folder and select the **Open pipeline builder** icon.
+Before you start, make sure you're back on the **Pipeline_builder_quickstart** canvas, not the pipeline CoCo generated in the previous step. Select its **Pipeline Builder** tab, or, in the file explorer, hover over the **Pipeline_builder_quickstart** folder and select the **Open pipeline builder** icon.
 
 For every task you add in these modules, set **Warehouse** to `TASTY_PIPELINE_QS_WH` under **Execution** on the task's **General** tab, as you did for the first two tasks.
 
@@ -413,7 +442,8 @@ clean_orders_task ──> CHECK_VOLUME ──> FULL_PATH
 
 1. Hover over the **clean_orders_task** card and select **+** on its outgoing connector to add a **SQL** task.
 2. Set **Name** to `TASTY_PIPELINE_QS_DB.PIPELINE.CHECK_VOLUME`.
-3. In the **Source** editor, enter:
+3. Under **Execution**, set **Warehouse** to `TASTY_PIPELINE_QS_WH`.
+4. In the **Source** editor, enter:
 
 ```sql
 EXECUTE IMMEDIATE $$
@@ -435,18 +465,23 @@ The block computes the path into a variable first, because `SYSTEM$SET_RETURN_VA
 
 1. Hover over the **CHECK_VOLUME** card and select **+** on its outgoing connector to add a **SQL** task.
 2. Set **Name** to `TASTY_PIPELINE_QS_DB.PIPELINE.FULL_PATH`.
-3. In the **Source** editor, enter:
+3. Under **Execution**, set **Warehouse** to `TASTY_PIPELINE_QS_WH`.
+4. In the **Source** editor, enter:
 
 ```sql
 INSERT INTO TASTY_PIPELINE_QS_DB.ANALYTICS.RUN_LOG (source, message)
 VALUES ('FULL_PATH', 'Full refresh branch ran');
 ```
 
-4. Select the **Task** tab. Under **Dependencies** > **Additional conditions**, enter:
+![FULL_PATH General tab](assets/full-path-general.png)
+
+5. Select the **Task** tab. Under **Dependencies** > **Additional conditions**, enter:
 
 ```sql
 SYSTEM$GET_PREDECESSOR_RETURN_VALUE('CHECK_VOLUME') = 'FULL'
 ```
+
+![Branching condition on FULL_PATH](assets/branching-condition.png)
 
 #### Step 3: Create the incremental branch
 
@@ -454,24 +489,31 @@ SYSTEM$GET_PREDECESSOR_RETURN_VALUE('CHECK_VOLUME') = 'FULL'
 
 1. Hover over the **CHECK_VOLUME** card and select **+** on its outgoing connector again to add a second **SQL** task.
 2. Set **Name** to `TASTY_PIPELINE_QS_DB.PIPELINE.INCREMENTAL_PATH`.
-3. In the **Source** editor, enter:
+3. Under **Execution**, set **Warehouse** to `TASTY_PIPELINE_QS_WH`.
+4. In the **Source** editor, enter:
 
 ```sql
 INSERT INTO TASTY_PIPELINE_QS_DB.ANALYTICS.RUN_LOG (source, message)
 VALUES ('INCREMENTAL_PATH', 'Incremental branch ran');
 ```
 
-4. Select the **Task** tab. Under **Dependencies** > **Additional conditions**, enter:
+5. Select the **Task** tab. Under **Dependencies** > **Additional conditions**, enter:
 
 ```sql
 SYSTEM$GET_PREDECESSOR_RETURN_VALUE('CHECK_VOLUME') = 'INCREMENTAL'
 ```
 
+![Branching condition on INCREMENTAL_PATH](assets/branching-incremental.png)
+
 > **Note:** `SYSTEM$GET_PREDECESSOR_RETURN_VALUE` takes the name of a predecessor task without its database and schema, which is why the condition uses `'CHECK_VOLUME'` rather than the fully qualified name. The name is case-sensitive.
 
 #### Step 4: Deploy and run
 
-Deploy the pipeline, and then run the task graph. When the run finishes, check which branch ran:
+Deploy the pipeline, and then run the task graph.
+
+![Plan for the branching tasks](assets/plan-branching.png)
+
+When the run finishes, check which branch ran:
 
 ```sql
 SELECT logged_at, source, message
@@ -479,22 +521,27 @@ FROM TASTY_PIPELINE_QS_DB.ANALYTICS.RUN_LOG
 ORDER BY logged_at;
 ```
 
-`ORDERS_CLEAN` has 5,000 rows, so you should see only `FULL_PATH`. `INCREMENTAL_PATH` shows as skipped in the task's run history.
+`ORDERS_CLEAN` has 5,000 rows, so you should see only `FULL_PATH`. `INCREMENTAL_PATH` doesn't write a row, because its condition isn't met.
 
 ### A2: Handle Failures
 
 When a step fails, you want to know. A task with the **At least one failed** condition runs only when something upstream fails.
 
-1. Add a SQL task named `FORCE_FAIL` after **daily_sales_task** with source `SELECT 1/0;`. This stands in for a step that breaks.
-2. Add a SQL task named `ON_FAILURE` after **FORCE_FAIL** with this source:
+1. Hover over the **daily_sales_task** card and select **+** on its outgoing connector to add a **SQL** task. Set **Name** to `TASTY_PIPELINE_QS_DB.PIPELINE.FORCE_FAIL`, set **Warehouse** to `TASTY_PIPELINE_QS_WH` under **Execution**, and enter `SELECT 1/0;` in the **Source** editor. This stands in for a step that breaks.
+2. Hover over the **FORCE_FAIL** card and select **+** on its outgoing connector to add a **SQL** task. Set **Name** to `TASTY_PIPELINE_QS_DB.PIPELINE.ON_FAILURE`, set **Warehouse** to `TASTY_PIPELINE_QS_WH` under **Execution**, and in the **Source** editor, enter:
 
 ```sql
 INSERT INTO TASTY_PIPELINE_QS_DB.ANALYTICS.RUN_LOG (source, message)
 VALUES ('ON_FAILURE', 'A pipeline step failed');
 ```
 
-3. Select the **ON_FAILURE** card to open its settings drawer, select the **Task** tab, and under **Dependencies**, set **Predecessors condition** to **At least one failed**.
+3. On the **ON_FAILURE** drawer, select the **Task** tab, and under **Dependencies**, set **Predecessors condition** to **At least one failed**.
+
+![At least one failed condition on ON_FAILURE](assets/failure-condition.png)
+
 4. Deploy and run the graph.
+
+![Plan for the failure handler](assets/plan-failure-handler.png)
 
 **FORCE_FAIL** fails, and **ON_FAILURE** runs and writes to `RUN_LOG`. In production, the handler could call a stored procedure that sends an alert. When you're done, delete both cards and deploy.
 
@@ -516,6 +563,8 @@ FROM TASTY_PIPELINE_QS_DB.ANALYTICS.DAILY_TRUCK_SALES;
 
 4. Open the task graph settings: select **Objects** on the canvas toolbar, select **Task graphs**, and then select **TASTY_DAILY_SALES_GRAPH**. You can also select any task in the graph, select its **Graph** tab, and then select **Edit graph settings**.
 5. Under **Task graph settings**, for **Finalizer task**, select **RUN_SUMMARY**.
+
+![Finalizer task setting](assets/finalizer-setting.png)
 6. Deploy, and then run the task graph.
 
 When the run finishes, check `RUN_LOG`:
@@ -526,7 +575,9 @@ FROM TASTY_PIPELINE_QS_DB.ANALYTICS.RUN_LOG
 ORDER BY logged_at;
 ```
 
-The last row is from `RUN_SUMMARY`, written after every other task in the graph finished.
+The last row is from `RUN_SUMMARY`, written after every other task in the graph finished. On the graph's **Graph** tab in Snowsight, the finalizer appears with a **Finalized by** label.
+
+![Task graph with a finalizer](assets/finalizer-graph.png)
 
 <!-- ------------------------ -->
 ## Clean Up
@@ -538,8 +589,8 @@ As the guide role, purge the project. `PURGE` runs a deployment with no definiti
 ```sql
 USE ROLE TASTY_PIPELINE_QS_ROLE;
 
-EXECUTE DCM PROJECT TASTY_PIPELINE_QS_DB.PIPELINE.TASTY_DAILY_SALES PURGE AS "quickstart cleanup";
-DROP DCM PROJECT IF EXISTS TASTY_PIPELINE_QS_DB.PIPELINE.TASTY_DAILY_SALES;
+EXECUTE DCM PROJECT TASTY_PIPELINE_QS_DB.PIPELINE.PIPELINE_BUILDER_QUICKSTART PURGE AS "quickstart cleanup";
+DROP DCM PROJECT IF EXISTS TASTY_PIPELINE_QS_DB.PIPELINE.PIPELINE_BUILDER_QUICKSTART;
 ```
 
 If you deployed the CoCo pipeline, purge and drop it the same way:
@@ -567,7 +618,7 @@ DROP WAREHOUSE IF EXISTS TASTY_PIPELINE_QS_WH;
 DROP ROLE IF EXISTS TASTY_PIPELINE_QS_ROLE;
 ```
 
-Finally, in your workspace, delete the **tasty_daily_sales** and **tasty_menu_popularity** folders.
+Finally, in your workspace, delete the **Pipeline_builder_quickstart** and **tasty_menu_popularity** folders.
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
