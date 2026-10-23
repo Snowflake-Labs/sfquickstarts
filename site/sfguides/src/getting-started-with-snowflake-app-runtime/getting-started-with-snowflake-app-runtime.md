@@ -3,7 +3,7 @@ id: getting-started-with-snowflake-app-runtime
 summary: Create, preview, change, and deploy your first Snowflake App Runtime app from a Snowsight workspace with Cortex Code. No local install required.
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart,snowflake-site:taxonomy/product/applications-and-collaboration,snowflake-site:taxonomy/snowflake-feature/build
 environments: web
-status: Hidden
+status: Published
 language: en
 duration: 30
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
