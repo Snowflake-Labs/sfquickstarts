@@ -1,0 +1,282 @@
+name: KEYSTONE_CASEWORKER
+description: Synthetic Keystone caseworker eligibility, program enrollment and duplicate-review
+  analytics. Data is fictional. An UNRESOLVED record is not necessarily a duplicate
+  or a review case. Use booleans for program enrollment and avoid presenting sample-only
+  counts as population totals.
+tables:
+  - name: V_SNAP_ELIGIBILITY
+    base_table:
+      database: KEYSTONE_DEMO
+      schema: MART
+      table: V_SNAP_ELIGIBILITY
+    primary_key:
+      columns:
+        - MASTER_ID
+    dimensions:
+      - name: MASTER_ID
+        expr: MASTER_ID
+        data_type: VARCHAR
+      - name: FIRST_NAME
+        expr: FIRST_NAME
+        data_type: VARCHAR
+      - name: LAST_NAME
+        expr: LAST_NAME
+        data_type: VARCHAR
+      - name: CITY
+        expr: CITY
+        data_type: VARCHAR
+      - name: ZIP
+        expr: ZIP
+        data_type: VARCHAR
+      - name: HOUSEHOLD_SIZE
+        expr: HOUSEHOLD_SIZE
+        data_type: NUMBER
+      - name: GROSS_MONTHLY_LIMIT
+        expr: GROSS_MONTHLY_LIMIT
+        data_type: NUMBER
+      - name: ELIGIBILITY_RESULT
+        expr: ELIGIBILITY_RESULT
+        data_type: VARCHAR
+      - name: DETERMINATION_REASON
+        expr: DETERMINATION_REASON
+        data_type: VARCHAR
+      - name: CURRENTLY_ENROLLED_SNAP
+        expr: CURRENTLY_ENROLLED_SNAP
+        data_type: BOOLEAN
+    facts:
+      - name: MONTHLY_INCOME
+        expr: MONTHLY_INCOME
+        data_type: FLOAT
+  - name: V_CROSS_PROGRAM_ENROLLMENT
+    base_table:
+      database: KEYSTONE_DEMO
+      schema: MART
+      table: V_CROSS_PROGRAM_ENROLLMENT
+    primary_key:
+      columns:
+        - MASTER_ID
+    dimensions:
+      - name: MASTER_ID
+        expr: MASTER_ID
+        data_type: VARCHAR
+      - name: FIRST_NAME
+        expr: FIRST_NAME
+        data_type: VARCHAR
+      - name: LAST_NAME
+        expr: LAST_NAME
+        data_type: VARCHAR
+      - name: CITY
+        expr: CITY
+        data_type: VARCHAR
+      - name: ZIP
+        expr: ZIP
+        data_type: VARCHAR
+      - name: ENROLLED_SNAP
+        expr: ENROLLED_SNAP
+        data_type: BOOLEAN
+      - name: ENROLLED_MEDICAID
+        expr: ENROLLED_MEDICAID
+        data_type: BOOLEAN
+      - name: ENROLLED_CHILDCARE
+        expr: ENROLLED_CHILDCARE
+        data_type: BOOLEAN
+      - name: ENROLLED_WORKFORCE
+        expr: ENROLLED_WORKFORCE
+        data_type: BOOLEAN
+      - name: PROGRAM_ENROLLMENT_COUNT
+        expr: PROGRAM_ENROLLMENT_COUNT
+        data_type: NUMBER
+      - name: SOURCE_SYSTEMS
+        expr: SOURCE_SYSTEMS
+        data_type: VARCHAR
+  - name: V_CASEWORKER_CONTEXT
+    base_table:
+      database: KEYSTONE_DEMO
+      schema: MART
+      table: V_CASEWORKER_CONTEXT
+    primary_key:
+      columns:
+        - MASTER_ID
+    dimensions:
+      - name: MASTER_ID
+        expr: MASTER_ID
+        data_type: VARCHAR
+      - name: FIRST_NAME
+        expr: FIRST_NAME
+        data_type: VARCHAR
+      - name: LAST_NAME
+        expr: LAST_NAME
+        data_type: VARCHAR
+      - name: CITY
+        expr: CITY
+        data_type: VARCHAR
+      - name: SOURCE_RECORD_COUNT
+        expr: SOURCE_RECORD_COUNT
+        data_type: NUMBER
+      - name: SYSTEMS_FOUND_IN
+        expr: SYSTEMS_FOUND_IN
+        data_type: NUMBER
+      - name: DETERMINISTIC_MATCHES
+        expr: DETERMINISTIC_MATCHES
+        data_type: NUMBER
+      - name: PROBABILISTIC_MATCHES
+        expr: PROBABILISTIC_MATCHES
+        data_type: NUMBER
+      - name: BEST_MATCH_SCORE
+        expr: BEST_MATCH_SCORE
+        data_type: NUMBER
+      - name: ELIGIBILITY_RESULT
+        expr: ELIGIBILITY_RESULT
+        data_type: VARCHAR
+      - name: DETERMINATION_REASON
+        expr: DETERMINATION_REASON
+        data_type: VARCHAR
+      - name: HOUSEHOLD_SIZE
+        expr: HOUSEHOLD_SIZE
+        data_type: NUMBER
+      - name: GROSS_MONTHLY_LIMIT
+        expr: GROSS_MONTHLY_LIMIT
+        data_type: NUMBER
+      - name: CURRENTLY_ENROLLED_SNAP
+        expr: CURRENTLY_ENROLLED_SNAP
+        data_type: BOOLEAN
+      - name: ENROLLED_MEDICAID
+        expr: ENROLLED_MEDICAID
+        data_type: BOOLEAN
+      - name: ENROLLED_CHILDCARE
+        expr: ENROLLED_CHILDCARE
+        data_type: BOOLEAN
+      - name: ENROLLED_WORKFORCE
+        expr: ENROLLED_WORKFORCE
+        data_type: BOOLEAN
+    facts:
+      - name: MONTHLY_INCOME
+        expr: MONTHLY_INCOME
+        data_type: FLOAT
+  - name: V_LIVE_PIPELINE_STATUS
+    base_table:
+      database: KEYSTONE_DEMO
+      schema: MART
+      table: V_LIVE_PIPELINE_STATUS
+    dimensions:
+      - name: RAW_EVENT_COUNT
+        expr: RAW_EVENT_COUNT
+        data_type: NUMBER
+      - name: RESOLVED_EVENT_COUNT
+        expr: RESOLVED_EVENT_COUNT
+        data_type: NUMBER
+      - name: MATERIALIZED_EVENT_COUNT
+        expr: MATERIALIZED_EVENT_COUNT
+        data_type: NUMBER
+    time_dimensions:
+      - name: LATEST_RAW_AT
+        expr: LATEST_RAW_AT
+        data_type: TIMESTAMP_NTZ
+      - name: LATEST_MATERIALIZED_AT
+        expr: LATEST_MATERIALIZED_AT
+        data_type: TIMESTAMP_NTZ
+  - name: V_LIVE_DASHBOARD
+    base_table:
+      database: KEYSTONE_DEMO
+      schema: MART
+      table: V_LIVE_DASHBOARD
+    dimensions:
+      - name: SOURCE_RECORDS
+        expr: SOURCE_RECORDS
+        data_type: NUMBER
+      - name: CONSTITUENTS
+        expr: CONSTITUENTS
+        data_type: NUMBER
+      - name: MULTI_SYSTEM
+        expr: MULTI_SYSTEM
+        data_type: NUMBER
+      - name: DUPLICATES
+        expr: DUPLICATES
+        data_type: NUMBER
+      - name: ELIG_PASS
+        expr: ELIG_PASS
+        data_type: NUMBER
+      - name: ELIG_FAIL
+        expr: ELIG_FAIL
+        data_type: NUMBER
+      - name: ELIG_REVIEW
+        expr: ELIG_REVIEW
+        data_type: NUMBER
+      - name: ELIGIBLE_NOT_ENROLLED
+        expr: ELIGIBLE_NOT_ENROLLED
+        data_type: NUMBER
+      - name: RAW_EVENT_COUNT
+        expr: RAW_EVENT_COUNT
+        data_type: NUMBER
+      - name: RESOLVED_EVENT_COUNT
+        expr: RESOLVED_EVENT_COUNT
+        data_type: NUMBER
+      - name: MATERIALIZED_EVENT_COUNT
+        expr: MATERIALIZED_EVENT_COUNT
+        data_type: NUMBER
+    time_dimensions:
+      - name: LATEST_RAW_AT
+        expr: LATEST_RAW_AT
+        data_type: TIMESTAMP_NTZ
+      - name: LATEST_MATERIALIZED_AT
+        expr: LATEST_MATERIALIZED_AT
+        data_type: TIMESTAMP_NTZ
+  - name: V_DUPLICATE_ENROLLMENT
+    base_table:
+      database: KEYSTONE_DEMO
+      schema: MART
+      table: V_DUPLICATE_ENROLLMENT
+    primary_key:
+      columns:
+        - MASTER_ID
+    dimensions:
+      - name: MASTER_ID
+        expr: MASTER_ID
+        data_type: VARCHAR
+      - name: AFFECTED_PROGRAM
+        expr: AFFECTED_PROGRAM
+        data_type: VARCHAR
+      - name: ENROLLMENT_RECORDS
+        expr: ENROLLMENT_RECORDS
+        data_type: NUMBER
+      - name: RECORD_NAME
+        expr: RECORD_NAME
+        data_type: VARCHAR
+verified_queries:
+  - name: 0;1
+    question: What are the matching evidence, program enrollment status, and SNAP
+      eligibility determination details for constituent KM-000013?
+    sql: SELECT MASTER_ID, FIRST_NAME, LAST_NAME, SOURCE_RECORD_COUNT, SYSTEMS_FOUND_IN,
+      DETERMINISTIC_MATCHES, PROBABILISTIC_MATCHES, BEST_MATCH_SCORE, ELIGIBILITY_RESULT,
+      DETERMINATION_REASON, MONTHLY_INCOME, HOUSEHOLD_SIZE, GROSS_MONTHLY_LIMIT, CURRENTLY_ENROLLED_SNAP,
+      ENROLLED_MEDICAID, ENROLLED_CHILDCARE, ENROLLED_WORKFORCE FROM v_caseworker_context
+      WHERE MASTER_ID = 'KM-000013'
+    verified_at: 1790812401
+    verified_by: Semantic Model Generator
+  - name: 1;1
+    question: What is the current live dashboard snapshot showing all key metrics
+      for caseworker operations?
+    sql: SELECT SOURCE_RECORDS, CONSTITUENTS, MULTI_SYSTEM, DUPLICATES, ELIG_PASS,
+      ELIG_FAIL, ELIG_REVIEW, ELIGIBLE_NOT_ENROLLED, RAW_EVENT_COUNT, RESOLVED_EVENT_COUNT,
+      MATERIALIZED_EVENT_COUNT, LATEST_RAW_AT, LATEST_MATERIALIZED_AT FROM v_live_dashboard
+    verified_at: 1790812401
+    verified_by: Semantic Model Generator
+  - name: 2;1
+    question: What is the current live intake pipeline status?
+    sql: SELECT RAW_EVENT_COUNT, RESOLVED_EVENT_COUNT, MATERIALIZED_EVENT_COUNT, LATEST_RAW_AT,
+      LATEST_MATERIALIZED_AT FROM v_live_pipeline_status
+    verified_at: 1790812401
+    verified_by: Semantic Model Generator
+  - name: 3;1
+    question: How many constituents passed, failed, or need manual review for SNAP
+      eligibility?
+    sql: SELECT ELIGIBILITY_RESULT, COUNT(*) AS CONSTITUENTS FROM v_snap_eligibility
+      GROUP BY ELIGIBILITY_RESULT
+    verified_at: 1790812401
+    verified_by: Semantic Model Generator
+  - name: 4;1
+    question: How many eligible residents are not enrolled in SNAP?
+    sql: SELECT COUNT(*) AS ELIGIBLE_NOT_ENROLLED FROM v_snap_eligibility WHERE ELIGIBILITY_RESULT
+      = 'PASS' AND CURRENTLY_ENROLLED_SNAP = FALSE
+    verified_at: 1790812401
+    verified_by: Semantic Model Generator
