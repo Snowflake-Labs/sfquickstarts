@@ -1,5 +1,5 @@
 author: Kamesh Sampath
-id: build-full-stack-apps-with-snowflake-app-runtime
+id: build-an-ai-retention-app-with-snowflake-app-runtime
 summary: Build and deploy three types of Snowflake App Runtime apps — from an interactive dashboard to a workflow app to an AI-powered agentic experience — using structured prompts in Cortex Code Desktop.
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart,snowflake-site:taxonomy/product/applications-and-collaboration,snowflake-site:taxonomy/product/ai,snowflake-site:taxonomy/snowflake-feature/build
 environments: web
@@ -9,7 +9,7 @@ duration: 90
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 fork repo link: <https://github.com/Snowflake-Labs/sfguide-build-full-stack-apps-with-snowflake-app-runtime>
 
-# Build Full-Stack Apps with Snowflake App Runtime
+# Build an AI Retention App with Snowflake App Runtime
 <!-- ------------------------ -->
 ## Overview
 
