@@ -6,7 +6,7 @@ categories: snowflake-site:taxonomy/solution-center/certification/quickstart, sn
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfquickstarts/issues
-fork repo link: https://github.com/sfc-gh-ebotwick/build_deploy_ai_agents_snowflake_cowork_vhol
+fork repo link: https://github.com/Snowflake-Labs/sfguide-build-evaluate-and-deploy-ai-agents-with-snowflake-cowork
 
 # Build, Evaluate and Deploy AI Agents with Snowflake CoWork
 <!-- ------------------------ -->
@@ -45,7 +45,7 @@ The agent answers questions about a fictional company's marketing campaigns. It 
 <!-- ------------------------ -->
 ## Run the Setup Script
 
-Download [SETUP.sql](https://github.com/sfc-gh-ebotwick/build_deploy_ai_agents_snowflake_cowork_vhol/blob/main/SETUP.sql) and open it in a new SQL worksheet or workspace file in Snowsight. Review it, then run the entire script starting as `ACCOUNTADMIN`. It takes roughly 5-10 minutes, including the first evaluation run.
+Download [SETUP.sql](https://github.com/Snowflake-Labs/sfguide-build-evaluate-and-deploy-ai-agents-with-snowflake-cowork/blob/main/SETUP.sql) and open it in a new SQL worksheet or workspace file in Snowsight. Review it, then run the entire script starting as `ACCOUNTADMIN`. It takes roughly 5-10 minutes, including the first evaluation run.
 
 The script does the following:
 
@@ -261,7 +261,7 @@ You built a Cortex Agent that combines structured analytics, unstructured search
 - How CoWork Artifacts and Automations extend an agent into everyday business workflows
 
 ### Related Resources
-- [Lab code and data on GitHub](https://github.com/sfc-gh-ebotwick/build_deploy_ai_agents_snowflake_cowork_vhol)
+- [Lab code and data on GitHub](https://github.com/Snowflake-Labs/sfguide-build-evaluate-and-deploy-ai-agents-with-snowflake-cowork)
 - [Cortex Agents](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents)
 - [Cortex Agent evaluations](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents-evaluations)
 - [Agent skills](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents-skills)
