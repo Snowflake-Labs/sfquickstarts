@@ -1,0 +1,1 @@
+"""Executable project examples and synthetic fixtures."""

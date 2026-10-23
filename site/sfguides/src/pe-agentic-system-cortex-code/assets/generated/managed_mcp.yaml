@@ -1,0 +1,22 @@
+tools:
+- name: review_distribution_reconciliation
+  title: Review synthetic distribution reconciliation
+  type: GENERIC
+  identifier: <your db>.<your schema>.REVIEW_RECONCILIATION
+  description: Review one synthetic distribution case for completeness and conservation.
+    Returns recorded amounts, discrepancy and blocking status. Does not verify contractual
+    entitlements or authorize payments. Accepts BALANCED, SHORTFALL, OVERALLOCATED,
+    MISSING or INCOMPLETE; unknown cases are blocked by the function.
+  config:
+    type: function
+    warehouse: <your warehouse>
+    query_timeout: 30
+    input_schema:
+      type: object
+      properties:
+        P_CASE_ID:
+          type: string
+          description: Synthetic case identifier to review.
+      required:
+      - P_CASE_ID
+      additionalProperties: false

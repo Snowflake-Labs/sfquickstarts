@@ -1,0 +1,36 @@
+{
+  "environment": {
+    "platform": "macOS-26.6.2-arm64-arm-64bit",
+    "python": "3.11.6",
+    "numpy": "2.4.2"
+  },
+  "workload": {
+    "scenarios": 2000,
+    "months": 60,
+    "tranches": 4
+  },
+  "speed": {
+    "python_decimal": {
+      "median_s": 0.27149187499890104,
+      "min_s": 0.2595712499896763,
+      "runs": 3
+    },
+    "python_float": {
+      "median_s": 0.1323209589900216,
+      "min_s": 0.12977312499424443,
+      "runs": 3
+    },
+    "numpy_masked": {
+      "median_s": 0.004436791990883648,
+      "min_s": 0.004214584012515843,
+      "runs": 3
+    }
+  },
+  "divergence": {
+    "breach_pct": 0.8045,
+    "default_pct": 0.2455,
+    "distinct_path_lengths": 55
+  },
+  "numpy_advantage_over_exact": 61.19103071695495,
+  "decimal_object_array_penalty_vs_list": 0.5716026674838455
+}
