@@ -4,7 +4,7 @@ summary: Learn how to build an end-to-end customer LTV prediction model — from
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai
 language: en
 environments: web
-status: Published 
+status: Draft
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Data Science, Machine Learning, Snowflake ML, Model Registry, SPCS, Cortex Code, LTV, Regression
 
