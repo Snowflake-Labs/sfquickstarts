@@ -1,3 +1,12 @@
+<!--
+id: identity-resolution-eligibility
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/industry/public-sector, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/dynamic-tables, snowflake-site:taxonomy/snowflake-feature/cortex-analyst
+language: en
+summary: Build an identity resolution and benefits eligibility platform with Snowflake Dynamic Tables, Cortex AI, governed sharing, and a caseworker app on Snowflake App Runtime.
+environments: web
+status: Published
+feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+-->
 # Build an Identity Resolution and Eligibility Platform for Public Sector with Cortex AI
 
 Resolve residents across disconnected program systems into one trusted
@@ -52,7 +61,8 @@ agency. All data in this tutorial is synthetic.
 
 ## 1. Setup and Data Foundation
 
-Download `Lab_Script.sql` from this guide's `assets/` folder. Open it
+Download `scripts/Lab_Script.sql` from the
+[companion GitHub repository](COMPANION_REPO_URL). Open it
 in a Snowsight SQL worksheet, select **Run All**, and wait about 5
 minutes on a Medium warehouse. The script creates the `KEYSTONE_DEMO`
 database and everything inside it.
@@ -281,13 +291,13 @@ There is no local backend to manage and no credentials in the browser.
 
 ### Deploy
 
-Download `keystone-console.zip` from this guide's `assets/` folder,
-unzip it, add a Snowflake CLI connection, and deploy:
+Clone the [companion GitHub repository](COMPANION_REPO_URL), add a
+Snowflake CLI connection, and deploy the `keystone-console` app:
 
 ``` bash
-# Unzip the app
-unzip keystone-console.zip
-cd keystone-console
+# Get the app
+git clone COMPANION_REPO_URL.git
+cd <repo-name>/keystone-console
 
 # Add a connection (one time)
 snow connection add --connection-name keystone \
