@@ -3,20 +3,19 @@ id: snowflake-postgres-insights
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/snowflake-feature/postgres
 language: en
 environments: web
-status: Draft
-feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+status: Published
+feedback link: https://github.com/Snowflake-Labs/sfquickstarts/issues
 authors: Elizabeth Christensen
-tags: Postgres
 
 # Monitor Snowflake Postgres with pgInsights
 <!-- ------------------------ -->
 ## Overview
 
-pgInsights is a built-in Postgres extension for Snowflake Postres that continuously collects performance and health metrics from your Snowflake Postgres instance. It samples about 34 different Postgres statistics views every 30 seconds and stores the results in queryable tables inside your database. No external agents, collectors, or time-series databases are required.
+pgInsights is a built-in Postgres extension for Snowflake Postgres that continuously collects performance and health metrics from your Snowflake Postgres instance. It samples about 34 different Postgres statistics views every 30 seconds and stores the results in queryable tables inside your database. No external agents, collectors, or time-series databases are required.
 
 In this guide you will enable pgInsights, explore the Snowsight Insights pages, and query the underlying data with plain SQL. By the end you will know how to use the "metric, interpretation, action" workflow to spot health issues, identify the queries causing them, and take action before they become application incidents.
 
-### Prerequisites
+### What You'll Need
 - A Snowflake Postgres instance running **Postgres 18.6 or later**. If you don't have one, follow the [Getting Started with Snowflake Postgres](https://quickstarts.snowflake.com/guide/getting-started-with-snowflake-postgres/) quickstart first.
 - `psql` installed locally and connected to your instance
 - An instance that has been refreshed recently. If your instance has been running for a while, run a **Refresh** so it picks up the latest minor version, OS patches, and Snowflake Postgres features (including pgInsights). Check your current version with `SELECT version();`.
