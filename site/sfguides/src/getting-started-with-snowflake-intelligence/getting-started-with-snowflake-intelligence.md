@@ -19,8 +19,6 @@ Unlike standalone AI tools, CoWork is grounded in your enterprise data from day 
 
 By the end of this guide, you will have a working Cortex Agent connected to CoWork that can answer business questions across structured sales data and unstructured support tickets, generate charts, and take actions like sending summary emails.
 
-![Snowflake CoWork](assets/snowflake-cowork-home-page.png)
-
 ### Use Cases
 
 CoWork moves teams from reactive Q&A to proactive, context-aware intelligence that drives decisions and execution across various business use cases:
@@ -31,11 +29,22 @@ CoWork moves teams from reactive Q&A to proactive, context-aware intelligence th
 
 * **Self-service data exploration:** Enable all business users to independently explore data and get immediate answers to complex questions, reducing reliance on data teams and accelerating decisions across the organization.
 
-### Prerequisites
+### What You'll Learn
+
+* How to create a semantic view so Cortex Analyst can answer questions about structured data
+* How to create a Cortex Search service over unstructured support tickets
+* How to build a Cortex Agent with Cortex Analyst, Cortex Search, and a custom email tool
+* How to ask questions, get charts, and set up an automation in Snowflake CoWork
+
+### What You'll Build
+
+A **Sales//AI** agent in Snowflake CoWork that answers questions across retail sales, marketing, social media, and support data, generates charts, and emails summaries on demand or on a schedule.
+
+### What You'll Need
 
 * [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) installed
 
-* Access to a [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) with the ACCOUNTADMIN role in a region where you have access to the [supported models](https://docs.snowflake.com/en/user-guide/snowflake-cortex/snowflake-intelligence#supported-models-and-regions). Otherwise, you will need to enable [cross-region inference](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cross-region-inference/?utm_source=snowflake-devrel&utm_medium=developer-guides).
+* Access to a [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) with the ACCOUNTADMIN role in a region where you have access to the supported models. Otherwise, you will need to enable [cross-region inference](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cross-region-inference/?utm_source=snowflake-devrel&utm_medium=developer-guides) (see the optional statement at the end of `setup.sql`).
 
 
 <!-- ------------------------ -->
@@ -46,7 +55,9 @@ CoWork moves teams from reactive Q&A to proactive, context-aware intelligence th
 
 * Clone [GitHub repository](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-intelligence).
 
-* In Snowsight, [create a SQL Worksheet](https://docs.snowflake.com/en/user-guide/ui-snowsight-worksheets-gs?_fsi=THrZMtDg,%20THrZMtDg&_fsi=THrZMtDg,%20THrZMtDg#create-worksheets-from-a-sql-file) and open [setup.sql](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-intelligence/blob/main/setup.sql) to execute all statements in order from top to bottom.
+* In Snowsight, on the left hand navigation menu, select **Projects** >> **Workspaces**, click on **+ Add new** >> **SQL File**, and copy the contents of [setup.sql](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-intelligence/blob/main/setup.sql) into it.
+
+* Execute all statements in order from top to bottom. Among other things, the script creates the Snowflake CoWork object (`SNOWFLAKE_INTELLIGENCE_OBJECT_DEFAULT`), grants the **SNOWFLAKE_INTELLIGENCE_ADMIN** role usage on it, and creates the **SEND_EMAIL** stored procedure used later as a custom tool.
 
 
 > NOTE: Switch your user role in Snowsight to **SNOWFLAKE_INTELLIGENCE_ADMIN**.
@@ -56,9 +67,14 @@ CoWork moves teams from reactive Q&A to proactive, context-aware intelligence th
 This tool enables the agent to query structured data in Snowflake by generating SQL. It relies on semantic views, which are mappings between business concepts (e.g., "product name," "sales") and the underlying tables and columns in your Snowflake account. This abstraction helps the LLM understand how to query your data effectively, even if your tables have complex or arbitrary naming conventions.
 
 * In Snowsight, on the left hand navigation menu, select <a href="https://app.snowflake.com/_deeplink/#/cortex/analyst?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_campaign=-us-en-all&utm_content=app-getting-started-with-si&utm_cta=developer-guides-deeplink" class="_deeplink">**AI & ML** >> **Analyst**</a>
-* On the top right, confirm that the role is set to **SNOWFLAKE_INTELLIGENCE_ADMIN** click on **Create new** down arrow and select **Upload your YAML file** 
-* Upload [marketing_campaigns.yaml](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-intelligence/blob/main/marketing_campaigns.yaml) | Select database, schema, and stage: **DASH_DB_SI.RETAIL** >> **SEMANTIC_MODELS** 
-* On the top right, click on **Save** 
+* On the top right, confirm that the role is set to **SNOWFLAKE_INTELLIGENCE_ADMIN**, click on **Create new** down arrow and select **Create new Semantic View**
+    - Location: **DASH_DB_SI.RETAIL**
+    - Name: SALES_AND_MARKETING_DATA
+    - Description: *Semantic view for sales and marketing data analysis across campaigns, products, transactions, and social media engagement.*
+* Click on **Next**, then **Skip** (no example SQL queries needed)
+* Select the **DASH_DB_SI.RETAIL** schema and the **MARKETING_CAMPAIGN_METRICS**, **PRODUCTS**, **SALES**, and **SOCIAL_MEDIA** tables, then click on **Next**
+* Select all available columns, then click on **Next**
+* Review and accept the suggested relationships and metrics, then click on **Save** and wait for the semantic view to be created
 
 ### Cortex Search
 
@@ -139,12 +155,12 @@ Tools are the capabilities an agent can use to accomplish a task. Think of them 
 * Tools
   - **Cortex Analyst**
     - Click on **+ Add**
-        - Add: Semantic model file **DASH_DB_SI.RETAIL.SEMANTIC_MODELS** >> **marketing_campaigns.yaml**
+        - Add: Semantic view **DASH_DB_SI.RETAIL** >> **SALES_AND_MARKETING_DATA**
         - Name: Sales_And_Marketing_Data
 
-        - Description: *The Sales and Marketing Data model in DASH_DB_SI.RETAIL schema provides a complete view of retail business performance by connecting marketing campaigns, product information, sales data, and social media engagement. The model enables tracking of marketing campaign effectiveness through clicks and impressions, while linking to actual sales performance across different regions. Social media engagement is monitored through influencer activities and mentions, with all data connected through product categories and IDs. The temporal alignment across tables allows for comprehensive analysis of marketing impact on sales performance and social media engagement over time.*
+        - Description: *The Sales and Marketing Data semantic view in DASH_DB_SI.RETAIL schema provides a complete view of retail business performance by connecting marketing campaigns, product information, sales data, and social media engagement. The view enables tracking of marketing campaign effectiveness through clicks and impressions, while linking to actual sales performance across different regions. Social media engagement is monitored through influencer activities and mentions, with all data connected through product categories and IDs. The temporal alignment across tables allows for comprehensive analysis of marketing impact on sales performance and social media engagement over time.*
 
-        - Warehouse: **DASH_WH_SI**
+        - Warehouse: Custom >> **DASH_WH_SI**
         - Query timeout (seconds): 60
 
   - **Cortex Search Services**
@@ -189,39 +205,77 @@ Tools are the capabilities an agent can use to accomplish a task. Think of them 
 
 Open <a href="https://ai.snowflake.com/_deeplink/#/ai?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_campaign=-us-en-all&utm_content=app-getting-started-with-si&utm_cta=developer-guides-deeplink" class="_deeplink">Snowflake CoWork</a> and make sure you're signed into the right account. If you're not sure, click on your name in the bottom left >> **Sign out** and sign back in. Also note that your role should be set to **SNOWFLAKE_INTELLIGENCE_ADMIN**, the warehouse should be set to **DASH_WH_SI**, and your agent should be set to Sales//AI.
 
-Now, let's ask the following questions.
+Now, let's ask the following questions. Answers are generated live, so wording, numbers, and chart styles will vary from run to run. The notes under each question describe what to look for.
 
 ### Q1. *Show me the trend of sales by product category between June and August.*
 
-![Q1](assets/qa_1.png)
+**What to expect:** The agent uses the **Sales_And_Marketing_Data** tool to query the semantic view and returns a chart of sales by product category for June through August. Fitness Wear stands out with a sharp jump in July (roughly three times June's sales).
 
 ___
 
 ### Q2. *What issues are reported with jackets recently in customer support tickets?*
 
-![Q2](assets/qa_2.png)
+**What to expect:** The agent uses the **Support_Cases** search tool and summarizes the matching tickets. They point to one recurring problem: ThermoJacket Pro jackets tearing along the seams, which customers describe as a manufacturing defect. The answer cites the tickets it used.
 
 ___
 
 ### Q3. *Why did sales of Fitness Wear grow so much in July?*
 
-![Q3](assets/qa_3.png)
+**What to expect:** The agent combines sales, marketing, and social media data to explain the spike. The main driver it finds is influencer activity: Fitness Wear social mentions rose several-fold in July, led by an influencer who posted about the category only that month. Expect a chart and a short explanation of how each data source supports the conclusion.
 
 ### Q4. *Send a summary email*
 
-*NOTE: Check your inbox to see the summary email that would have been sent to the current user's email address.*
+*NOTE: The agent calls the **Send_Email** tool and confirms that the email was sent. Check your inbox for the summary email, which goes to the current user's email address unless you specify another one.*
+
+### Q5. *Send me this summary every Monday morning*
+
+This turns a one-time answer into an [Automation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/snowflake-cowork/automations) that re-runs the question on fresh data and emails you the results. You can review and manage it from the **Automations** tab.
+
+**What to expect:** The agent confirms the schedule and the first delivery date, and the new automation appears under **Automations** with its schedule. From there, or by asking in chat, you can edit, reschedule, pause, resume, or delete it.
 ___
 
 ### Other Questions
 Your Agent is configured to handle a variety of complex queries that blend various types of data. Try these examples to further test the Agent:
-
-Here are some other questions you may ask.
 
 #### *Which product categories perform best on social media?*
 
 #### *What's the relationship between social media mentions and sales?*
 
 #### *How do different regions respond to marketing campaigns?*
+
+### Go Further
+
+CoWork includes more capabilities you can try with the same agent:
+
+* **Deep Research:** Select **+** in the message bar >> **Deep Research** and ask an open-ended question like *"Which product categories show the strongest link between marketing spend, social mentions, and sales, and why?"* to get a multi-step, cited report.
+* **Artifacts:** Save charts and tables from any answer so you can share and revisit them without regenerating.
+* **User skills:** Codify a repeatable workflow once and invoke it with **/**.
+* **Document generation:** Turn analysis into PDF, Word, PowerPoint, or HTML reports. This requires adding the code execution tool to the agent.
+* **File upload:** Attach a CSV, PDF, or image directly in the chat for additional context.
+
+<!-- ------------------------ -->
+## Clean Up
+
+To remove the objects created in this guide:
+
+* In Snowflake CoWork, open **Automations** and delete the automation you created in Q5.
+* Run the following SQL statements. Dropping `DASH_DB_SI` also removes the semantic view, Cortex Search services, and `SEND_EMAIL` procedure created in this guide.
+
+```sql
+USE ROLE ACCOUNTADMIN;
+
+DROP AGENT IF EXISTS SNOWFLAKE_INTELLIGENCE.AGENTS.SALES_AI;
+DROP DATABASE IF EXISTS DASH_DB_SI;
+DROP WAREHOUSE IF EXISTS DASH_WH_SI;
+DROP NOTIFICATION INTEGRATION IF EXISTS EMAIL_INTEGRATION;
+DROP API INTEGRATION IF EXISTS SNOWFLAKE_LABS_SI_GIT_API_INTEGRATION;
+DROP ROLE IF EXISTS SNOWFLAKE_INTELLIGENCE_ADMIN;
+
+-- setup.sql changed your default role and warehouse; reset them as needed
+-- ALTER USER <your_user> SET DEFAULT_ROLE = <role> DEFAULT_WAREHOUSE = <warehouse>;
+```
+
+> NOTE: This leaves the `SNOWFLAKE_INTELLIGENCE` database and the `SNOWFLAKE_INTELLIGENCE_OBJECT_DEFAULT` CoWork object in place, since other agents in your account may use them.
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
@@ -235,7 +289,8 @@ You've learned how to create the fundamental building blocks for Snowflake CoWor
 ### Related Resources
 
 - [GitHub Repository](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-intelligence)
-- [Snowflake CoWork Documentation](https://docs.snowflake.com/user-guide/snowflake-cortex/snowflake-intelligence)
+- [Snowflake CoWork Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/snowflake-cowork)
+- [Overview of Semantic Views](https://docs.snowflake.com/en/user-guide/views-semantic/overview)
 - [Best Practices to Building Cortex Agents](https://www.snowflake.com/en/developers/guides/best-practices-to-building-cortex-agents/)
 
 

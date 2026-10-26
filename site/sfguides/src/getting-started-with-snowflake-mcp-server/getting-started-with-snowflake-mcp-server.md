@@ -12,88 +12,109 @@ authors: Dash Desai
 
 ## Overview
 
-
-The Snowflake MCP Server allows AI agents to securely retrieve data from Snowflake accounts without needing to deploy separate infrastructure. MCP clients discover and invoke tools, and retrieve data required for the application. The Snowflake MCP Server includes Cortex Analyst and Cortex Search as tools on the standards-based interface. It is now available with Model Context Protocol (MCP) so that AI Agents can discover and invoke tools (Cortex Analyst, Cortex Search) via a unified and standard based interface.
+The Snowflake-managed MCP server lets AI agents securely retrieve data from Snowflake accounts without deploying separate infrastructure. MCP clients discover and invoke tools, and retrieve the data their applications need, through a single standards-based interface built on the [Model Context Protocol (MCP)](https://modelcontextprotocol.io/). The server can expose Cortex Analyst, Cortex Search, Cortex Agents, SQL execution, and your own functions and procedures as tools.
 
 **Top 3 Benefits**
 
-* Governed By Design: Enforce the same trusted governance policies, from role-based access to masking, for the MCP server as you do for your data.
-* Reduced Integration: With the MCP Server, integration happens once. Any compatible agent can then connect without new development, accelerating adoption and reducing maintenance costs.
-* Extensible Framework: Provide agents with out-of-the-box secure access to structured and unstructured data. You can refine the tools to improve how agents interact with your data.
+* **Governed by design:** Enforce the same trusted governance policies, from role-based access to masking, for the MCP server as you do for your data.
+* **Reduced integration:** With the MCP server, integration happens once. Any compatible agent or client can then connect without new development, accelerating adoption and reducing maintenance costs.
+* **Extensible framework:** Give agents secure access to structured and unstructured data out of the box, and refine the tools to improve how agents interact with your data.
 
 **Why It Matters**
 
-MCP Server on Snowflake simplifies the application architecture and eliminates the need for custom integrations. Enterprises can expedite delivery of generative AI applications with richer insights on a standards based architecture and a robust governance model with the Snowflake AI data cloud.
+The MCP server on Snowflake simplifies application architecture and eliminates the need for custom integrations. Enterprises can deliver generative AI applications faster, with richer insights, on a standards-based architecture and a robust governance model.
 
 ![MCP](assets/mcp.png)
 
-### Prerequisites
+### What You'll Learn
 
-* Access to a Snowflake account with ACCOUNTADMIN role. If you do not have access to an account, create a [free Snowflake trial account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides).
-* Access to [Cursor](https://cursor.com/).
+- How to create the building blocks for a Snowflake MCP server: a Cortex Search service, a semantic view, and a custom tool
+- How to create a Snowflake-managed MCP server and grant least-privileged access to it
+- How to connect any MCP client to the server and verify it with `curl`
+- How to expose a Cortex Agent as an MCP tool
 
-### What You Will Learn
+### What You'll Build
 
-- How to create building blocks for Snowflake MCP Server that can intelligently respond to questions by reasoning over data
-- How to configure Cursor to interact with Snowflake MCP Server
+A Snowflake-managed MCP server that answers financial services questions over structured and unstructured data, which you can use from the MCP client of your choice.
 
-### What You Will Build
+### What You'll Need
 
-A Snowflake MCP Server that intelligently responds to questions by reasoning over data from within Cursor.
+* Access to a Snowflake account with the ACCOUNTADMIN role. If you don't have an account, create a [free Snowflake trial account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides).
+* `curl` or another HTTP client, to test the server.
+* Optional: any MCP client that supports remote (HTTP) MCP servers, such as Cursor, Claude, ChatGPT, VS Code, or a client you build yourself. You can complete the guide with `curl` alone.
 
 <!-- ------------------------ -->
 ## Setup
 
-
 ### Create Objects
 
-* Clone [GitHub repo](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-mcp-server).
+* Clone the [GitHub repository](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-mcp-server).
+* In Snowsight, on the left hand navigation menu, select **Projects** >> **Workspaces**, click on **+ Add new** >> **SQL File**, and copy the contents of [setup.sql](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-mcp-server/blob/main/setup.sql) into it.
+* Execute all statements in order from top to bottom.
 
-* In Snowsight, [create a SQL Worksheet](https://docs.snowflake.com/en/user-guide/ui-snowsight-worksheets-gs?_fsi=THrZMtDg,%20THrZMtDg&_fsi=THrZMtDg,%20THrZMtDg#create-worksheets-from-a-sql-file) and open [setup.sql](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-mcp-server/blob/main/setup.sql) to execute all statements in order from top to bottom.
+The script runs as **ACCOUNTADMIN** and creates:
 
-### Programmatic Access Token
+* The **DASH_MCP_DB.DATA** schema with financial services tables loaded from AWS S3, and the **DASH_WH_S** warehouse
+* The **SEND_EMAIL** stored procedure and **EMAIL_INTEGRATION** notification integration, used later as a custom tool
+* The **DASH_MCP_ROLE** role, granted to you. MCP clients use this least-privileged role instead of ACCOUNTADMIN.
 
-Create a [Programmatic Access Token (PAT)](https://docs.snowflake.com/en/user-guide/programmatic-access-tokens) **for your role** and make a note/local copy of it. (You will need to paste it later.)
+> NOTE: If Cortex Analyst models aren't available in your region, uncomment the `ALTER ACCOUNT SET CORTEX_ENABLED_CROSS_REGION` statement near the top of the script to enable [cross-region inference](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cross-region-inference/?utm_source=snowflake-devrel&utm_medium=developer-guides).
 
 ### Cortex Search Service
 
-This tool allows the agent to search and retrieve information from unstructured text data, such as customer support tickets, Slack conversations, or contracts. It leverages Cortex Search to index and query these text "chunks," enabling the agent to perform Retrieval Augmented Generation (RAG).
+This tool lets an agent search and retrieve information from unstructured text, such as customer support tickets, Slack conversations, or contracts. It uses Cortex Search to index and query the text, enabling [Retrieval Augmented Generation](https://www.snowflake.com/en/fundamentals/rag/) (RAG).
 
-* In Snowsight, on the left hand navigation menu, select <a href="https://app.snowflake.com/_deeplink/#/cortex/search?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_campaign=-us-en-all&utm_content=app-getting-started-with-snowflake-mcp-server&utm_cta=developer-guides-deeplink" class="_deeplink">**AI & ML** >> **Cortex Search**</a> 
-* On the top right, click on **Create**
+* In Snowsight, on the left hand navigation menu, select <a href="https://app.snowflake.com/_deeplink/#/cortex/search?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_campaign=-us-en-all&utm_content=app-getting-started-with-snowflake-mcp-server&utm_cta=developer-guides-deeplink" class="_deeplink">**AI & ML** >> **Cortex Search**</a> and click on **Create**
     - Role and Warehouse: **ACCOUNTADMIN** | **DASH_WH_S**
     - Database and Schema: **DASH_MCP_DB.DATA**
-    - Name: Support_Tickets
-    - Select data to be indexed: select FACT_SUPPORT_TICKETS table
-    - Select a search column: select DESCRIPTION
-    - Select attribute column(s): select CATEGORY, SUBCATEGORY, PRIORITY, CHANNEL, STATUS, SATISFACTION_SCORE 
-    - Select columns to include in the service: Select all
-    - Configure your Search Service: Keep default values and select **DASH_WH_S** for "Warehouse for indexing"
+    - Name: **SUPPORT_TICKETS**
+* Click on **Next** and complete the remaining steps:
+    - Select data to be indexed: **Table or view** >> **FACT_SUPPORT_TICKETS**
+    - Columns to include in the search results: select all
+    - Search column: **DESCRIPTION**
+    - Attribute (filter) columns: **CATEGORY**, **SUBCATEGORY**, **PRIORITY**, **CHANNEL**, **STATUS**, **SATISFACTION_SCORE**
+    - Target lag: keep the default, then click on **Create**
 
-### Cortex Analyst - Semantic View
+> NOTE: Enter the name in uppercase. Snowsight double-quotes service names, so a mixed-case name such as `Support_Tickets` becomes case-sensitive and won't match the `DASH_MCP_DB.DATA.SUPPORT_TICKETS` identifier used in the MCP server specification.
 
-This tool enables the agent to query structured data in Snowflake by generating SQL. It relies on semantic views, which are mappings between business concepts (e.g., "product name," "sales") and the underlying tables and columns in your Snowflake account. This abstraction helps the LLM understand how to query your data effectively, even if your tables have complex or arbitrary naming conventions.
+### Cortex Analyst Semantic View
 
-* In Snowsight, on the left hand navigation menu, select <a href="https://app.snowflake.com/_deeplink/#/cortex/analyst?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_campaign=-us-en-all&utm_content=app-getting-started-with-snowflake-mcp-server&utm_cta=developer-guides-deeplink" class="_deeplink">**AI & ML** >> **Cortex Analyst**</a>
-* On the top right, click on **Create new** down arrow and select **Upload your YAML file** 
-* Upload [FINANCIAL_SERVICES_ANALYTICS.yaml](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-mcp-server/blob/main/FINANCIAL_SERVICES_ANALYTICS.yaml) | Select database, schema, and stage: **DASH_MCP_DB.DATA** >> **SEMANTIC_MODELS** 
-* On the top right, click on **Save**
+This tool lets an agent query structured data by generating SQL. It relies on a semantic view, which maps business concepts (for example, "customer lifetime value" or "risk profile") to the underlying tables and columns. The Snowflake-managed MCP server supports semantic views only, not legacy semantic model YAML files on a stage.
 
-#### Semantic View
+* Download [FINANCIAL_SERVICES_ANALYTICS.yaml](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-mcp-server/blob/main/FINANCIAL_SERVICES_ANALYTICS.yaml) from the repository you cloned.
+* In Snowsight, on the left hand navigation menu, select **Projects** >> **Workspaces** and click on **+ Add new** >> **Semantic View**. This opens [Semantic View Autopilot](https://docs.snowflake.com/en/user-guide/views-semantic/autopilot).
+    - Location: **DASH_MCP_DB.DATA**
+    - Name: **FINANCIAL_SERVICES_ANALYTICS**
+* When Autopilot asks for context, choose to upload a YAML specification and select **FINANCIAL_SERVICES_ANALYTICS.yaml**. Autopilot converts it into a semantic view.
+* Save the semantic view.
 
-* In Snowsight, [create Semantic View](https://docs.snowflake.com/en/user-guide/views-semantic/ui#label-views-semantic-ui-create) based on the YAML file.
+### Grant Access to the Tools
+
+Run the following in your SQL file so that **DASH_MCP_ROLE** can use the search service and semantic view.
+
+```sql
+USE ROLE ACCOUNTADMIN;
+
+GRANT USAGE ON CORTEX SEARCH SERVICE DASH_MCP_DB.DATA.SUPPORT_TICKETS TO ROLE DASH_MCP_ROLE;
+GRANT SELECT ON SEMANTIC VIEW DASH_MCP_DB.DATA.FINANCIAL_SERVICES_ANALYTICS TO ROLE DASH_MCP_ROLE;
+```
+
+> NOTE: Access to an MCP server doesn't grant access to its tools. The role an MCP client uses needs a privilege on each underlying object: USAGE on Cortex Search services, agents, functions, and procedures, and SELECT on semantic views.
 
 <!-- ------------------------ -->
 ## Snowflake MCP Server
 
 > PREREQUISITE: Successful completion of steps outlined under **Setup**.
 
-#### Create Snowflake MCP Server
+### Create the MCP Server
 
-To create the Snowflake MCP server, run the following in the same SQL worksheet.
+Run the following in the same SQL file to create the MCP server and grant **DASH_MCP_ROLE** access to it.
 
 ```sql
-create or replace mcp server dash_mcp_server from specification
+USE ROLE ACCOUNTADMIN;
+USE SCHEMA DASH_MCP_DB.DATA;
+
+CREATE OR REPLACE MCP SERVER DASH_MCP_SERVER FROM SPECIFICATION
 $$
 tools:
   - name: "Finance_and_Risk_Assessment_Semantic_View"
@@ -108,12 +129,15 @@ tools:
     title: "Support Tickets Cortex Search"
   - name: "SQL_Execution_Tool"
     type: "SYSTEM_EXECUTE_SQL"
-    description: "A tool to execute SQL queries against the connected Snowflake database."
+    description: "A tool to execute read-only SQL queries against the connected Snowflake database."
     title: "SQL Execution Tool"
+    config:
+      read_only: true
+      warehouse: "DASH_WH_S"
   - name: "Send_Email"
     identifier: "DASH_MCP_DB.DATA.SEND_EMAIL"
     type: "GENERIC"
-    description: "A custom tool to send emails to user's verified email address."
+    description: "A custom tool to send emails to the user's verified email address."
     title: "Send_Email"
     config:
       type: "procedure"
@@ -128,167 +152,213 @@ tools:
             description: "If the email is not provided, send it to the current user's email address."
             type: "string"
           subject:
-            description: "If subject is not provided, use Snowflake Intelligence."
+            description: "If subject is not provided, use Snowflake MCP Server."
             type: "string"
 $$;
+
+GRANT USAGE ON MCP SERVER DASH_MCP_DB.DATA.DASH_MCP_SERVER TO ROLE DASH_MCP_ROLE;
 ```
 
-Before proceeding, test the connection using `curl` to make sure your account URL/MCP server endpoint and PAT are correct. NOTE: Replace **<YOUR-ORG-YOUR-ACCOUNT>** and **<YOUR-PAT-TOKEN>** with your values.
+The server exposes four tools:
 
-```curl
-curl -X POST "https://<YOUR-ORG-YOUR-ACCOUNT>.snowflakecomputing.com/api/v2/databases/dash_mcp_db/schemas/data/mcp-servers/dash_mcp_server" \
+* **Finance_and_Risk_Assessment_Semantic_View** (Cortex Analyst): turns a question into SQL over the semantic view. It returns the generated SQL, not the query results.
+* **Support_Tickets_Cortex_Search** (Cortex Search): searches support ticket descriptions.
+* **SQL_Execution_Tool**: runs read-only SQL, such as the SQL that Cortex Analyst generates.
+* **Send_Email** (custom tool): calls the **SEND_EMAIL** stored procedure.
+
+### Create a Programmatic Access Token
+
+MCP clients authenticate with a [programmatic access token (PAT)](https://docs.snowflake.com/en/user-guide/programmatic-access-tokens) or OAuth. This guide uses a PAT because every client and `curl` support it. Restrict the token to **DASH_MCP_ROLE** so that clients never run with ACCOUNTADMIN privileges.
+
+* In Snowsight, on the left hand navigation menu, select **Governance & security** >> **Users & roles** and select your user.
+* Under **Programmatic access tokens**, click on **Generate new token**.
+    - Name: **MCP_GUIDE_TOKEN**
+    - Expires in: choose a short expiration, such as 7 days
+    - Select **One specific role (recommended)** and choose **DASH_MCP_ROLE**
+* Click on **Generate**, then copy the token and store it somewhere safe. You can't view it again after you close the dialog.
+
+> NOTE: A PAT for a person user only works if the user is subject to a [network policy](https://docs.snowflake.com/en/user-guide/network-policies). If your account or user has no network policy, select **Bypass requirement for network policy** in the dialog for a temporary bypass, or ask your administrator to add one.
+
+You can also generate the token with SQL:
+
+```sql
+ALTER USER ADD PROGRAMMATIC ACCESS TOKEN MCP_GUIDE_TOKEN
+  ROLE_RESTRICTION = 'DASH_MCP_ROLE'
+  DAYS_TO_EXPIRY = 7;
+```
+
+> NOTE: For production, Snowflake recommends [OAuth](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents-mcp#set-up-oauth-authentication) instead of hardcoded tokens. Most hosted clients, such as Claude and ChatGPT, connect with OAuth.
+
+### Find Your MCP Server URL
+
+Every MCP client connects to the same URL:
+
+```
+https://<YOUR-ACCOUNT-URL>/api/v2/databases/DASH_MCP_DB/schemas/DATA/mcp-servers/DASH_MCP_SERVER
+```
+
+To get your account hostname, run:
+
+```sql
+SELECT REPLACE(LOWER(CURRENT_ORGANIZATION_NAME() || '-' || CURRENT_ACCOUNT_NAME()), '_', '-') || '.snowflakecomputing.com' AS account_url;
+```
+
+> NOTE: Use hyphens (-), not underscores (_), in the hostname. MCP clients fail to connect, often with a TLS certificate error, when the hostname contains underscores.
+
+### Verify with curl
+
+Before you configure a client, list the server's tools with `curl`. Replace **<YOUR-ACCOUNT-URL>** and **<YOUR-PAT>** with your values.
+
+```bash
+curl -X POST "https://<YOUR-ACCOUNT-URL>/api/v2/databases/DASH_MCP_DB/schemas/DATA/mcp-servers/DASH_MCP_SERVER" \
   --header 'Content-Type: application/json' \
-  --header 'Accept: application/json' \
-  --header "Authorization: Bearer <YOUR-PAT-TOKEN>" \
+  --header 'Accept: application/json, text/event-stream' \
+  --header "Authorization: Bearer <YOUR-PAT>" \
   --data '{
     "jsonrpc": "2.0",
-    "id": 12345,
+    "id": 1,
     "method": "tools/list",
     "params": {}
   }'
 ```
 
-After running this command, you should see the list of configured tools as shown below. If not, make sure your account and PAT are correct.
+**What to expect:** A JSON response that lists the four tools by name (`Finance_and_Risk_Assessment_Semantic_View`, `Support_Tickets_Cortex_Search`, `SQL_Execution_Tool`, and `Send_Email`), each with an `inputSchema`. For example, the Cortex Analyst tool takes a `message`, the search tool takes a `query` plus optional `columns`, `filter`, and `limit`, and the SQL tool takes `sql`. If you get an error instead, check the account URL, the PAT, and the network policy note above.
+
+Then call a tool. This example asks the SQL tool to count customers:
+
+```bash
+curl -X POST "https://<YOUR-ACCOUNT-URL>/api/v2/databases/DASH_MCP_DB/schemas/DATA/mcp-servers/DASH_MCP_SERVER" \
+  --header 'Content-Type: application/json' \
+  --header 'Accept: application/json, text/event-stream' \
+  --header "Authorization: Bearer <YOUR-PAT>" \
+  --data '{
+    "jsonrpc": "2.0",
+    "id": 2,
+    "method": "tools/call",
+    "params": {
+      "name": "SQL_Execution_Tool",
+      "arguments": { "sql": "SELECT COUNT(*) FROM DASH_MCP_DB.DATA.DIM_CUSTOMERS" }
+    }
+  }'
+```
+
+**What to expect:** A result whose `content` contains the query output, a count of 5,000 customers. Tool calls can stream their response as [Server-Sent Events](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents-mcp#discover-and-invoke-tools), which is why the `Accept` header lists both `application/json` and `text/event-stream`. In that case the JSON arrives in a `data:` line.
+
+<!-- ------------------------ -->
+## Connect an MCP Client
+
+Any MCP client that supports remote (HTTP) MCP servers can use your server. Every client needs the same three things:
+
+* **Server URL:** the URL from the previous step
+* **Authentication:** an `Authorization: Bearer <YOUR-PAT>` header, or OAuth if your client supports it
+* **Role:** the PAT is restricted to **DASH_MCP_ROLE**, so the client sees only the objects that role can use
+
+Add the server using your client's MCP settings. Most clients use a JSON configuration with a `url` and `headers`, similar to the example below. For step-by-step instructions for Claude, ChatGPT, Cursor, and other clients, see [Connect from common MCP clients](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents-mcp#connect-from-common-mcp-clients).
+
+### Example: Cursor
+
+In Cursor, add the server to `.cursor/mcp.json` in your project, or to `~/.cursor/mcp.json` to make it available in every project. Replace **<YOUR-ACCOUNT-URL>** and **<YOUR-PAT>** with your values.
 
 ```json
 {
-  "jsonrpc" : "2.0",
-  "id" : 12345,
-  "result" : {
-    "tools" : [ {
-      "name" : "Finance & Risk Assessment Semantic View",
-      "description" : "Comprehensive semantic model for financial services analytics, providing unified business definitions and relationships across customer data, transactions, marketing campaigns, support interactions, and risk assessments.",
-      "title" : "Financial And Risk Assessment",
-      "inputSchema" : {
-        "type" : "object",
-        "description" : "A message and additional parameters for Cortex Analyst.",
-        "properties" : {
-          "message" : {
-            "description" : "The user's question.",
-            "type" : "string"
-          }
-        },
-        "required" : [ "message" ]
+  "mcpServers": {
+    "snowflake": {
+      "url": "https://<YOUR-ACCOUNT-URL>/api/v2/databases/DASH_MCP_DB/schemas/DATA/mcp-servers/DASH_MCP_SERVER",
+      "headers": {
+        "Authorization": "Bearer <YOUR-PAT>"
       }
-    }, {
-      "name" : "Support Tickets Cortex Search",
-      "description" : "A tool that performs keyword and vector search over unstructured support tickets data.",
-      "title" : "Support Tickets Cortex Search",
-      "inputSchema" : {
-        "type" : "object",
-        "description" : "A search query and additional parameters for search.",
-        "properties" : {
-          "query" : {
-            "description" : "Unstructured text query.",
-            "type" : "string"
-          },
-          "columns" : {
-            "description" : "List of columns to return.",
-            "type" : "array",
-            "items" : {
-              "type" : "string"
-            }
-          },
-          "filter" : {
-            "description" : "Filter query. Cortex Search supports filtering on the ATTRIBUTES columns specified in the CREATE CORTEX SEARCH SERVICE command.\nCortex Search supports four matching operators:\n1. TEXT or NUMERIC equality: @eq\n2. ARRAY contains: @contains\n3. NUMERIC or DATE/TIMESTAMP greater than or equal to: @gte\n4. NUMERIC or DATE/TIMESTAMP less than or equal to: @lte\nThese matching operators can be composed with various logical operators:\n- @and\n- @or\n- @not\nThe following usage notes apply:\n  Matching against NaN ('not a number') values in the source query are handled as\n  described in Special values. Fixed-point numeric values with more than 19 digits (not\n  including leading zeroes) do not work with @eq, @gte, or @lte and will not be returned\n  by these operators (although they could still be returned by the overall query with the\n  use of @not).\nTIMESTAMP and DATE filters accept values of the form: YYYY-MM-DD and, for timezone\naware dates: YYYY-MM-DD+HH:MM. If the timezone offset is not specified, the date is interpreted in UTC.\nThese operators can be combined into a single filter object.\nExample:\nFiltering on rows where NUMERIC column numeric_col is between 10.5 and 12.5 (inclusive):\n  { \"@and\": [\n    { \"@gte\": { \"numeric_col\": 10.5 } },\n    { \"@lte\": { \"numeric_col\": 12.5 } }\n  ]}\n",
-            "type" : "object"
-          },
-          "limit" : {
-            "description" : "Max number of results to return.",
-            "type" : "integer",
-            "default" : 10
-          }
-        },
-        "required" : [ "query" ]
-      }
-    }, {
-      "name" : "SQL Execution Tool",
-      "description" : "A tool to execute SQL queries against the connected Snowflake database.",
-      "title" : "SQL Execution Tool",
-      "inputSchema" : {
-        "type" : "object",
-        "description" : "Tool to execute a SQL query.",
-        "properties" : {
-          "sql" : {
-            "description" : "Single SQL query to execute.",
-            "type" : "string"
-          }
-        }
-      }
-    } ]
+    }
   }
 }
 ```
 
-Now let's try this out in Cursor, but note that you should be able to use other clients like CrewAI, Claude by Anthropic, Devin by Cognition, and Agentforce by Salesforce.
+Then open **Cursor Settings**, go to the MCP section, and confirm that the **snowflake** server is enabled and lists its tools.
 
-#### Cursor
+> NOTE: Don't commit a file that contains your PAT to source control. Keep the token in a local or global configuration file, or use OAuth instead.
 
-In Cursor, open or create `mcp.json` located at the root of your project and add the following. NOTE: Replace **<YOUR-ORG-YOUR-ACCOUNT>** and **<YOUR-PAT-TOKEN>** with your values.
+<!-- ------------------------ -->
+## Ask Questions
 
-```json
-{
-    "mcpServers": {
-      "Snowflake MCP Server": {
-        "url": "https://<YOUR-ORG-YOUR-ACCOUNT>.snowflakecomputing.com/api/v2/databases/dash_mcp_db/schemas/data/mcp-servers/dash_mcp_server",
-            "headers": {
-              "Authorization": "Bearer <YOUR-PAT-TOKEN>"
-            }
-      }
-    }
-}
-```
+Once your client lists the Snowflake tools, start a new chat and ask the following questions. Answers are generated live, so wording and formatting vary by client and model. Your client's model decides which tool to call, so the notes below describe what to look for.
 
-Then, select **Cursor** -> **Settings** -> **Cursor Settings** -> **Tools & MCP** and you should see **Snowflake MCP Server** under **Installed Servers**.
+### Q1. *What is the average customer lifetime value by region for customers with Low risk profile?*
 
-### Q&A in Cursor
+**What to expect:** The client calls the Cortex Analyst tool, which returns the SQL it generated, then runs that SQL with the SQL tool. You should see five regions with similar averages of roughly $48,000 to $52,500, with Central the highest and East the lowest.
 
-Assuming you're able to see the tools under newly installed **Snowflake MCP Server**, let's chat! Start a new chat in Cursor and set your `mcp.json` as context to ask the following sample questions.
+### Q2. *Show me the risk profile distribution across customer segments with transaction volumes. Include the number of customers, transaction counts, and average transactions per customer for each segment and risk profile combination.*
 
-#### Q1. Show me the results for risk profile distribution across customer segments with transaction volumes. Include the number of customers, transaction counts, and average transactions per customer for each segment and risk profile combination.
+**What to expect:** The same Cortex Analyst plus SQL pattern, returning a table with 12 rows, one for each combination of the four customer segments (Basic, Standard, Premium, and VIP) and three risk profiles (Low, Medium, and High). Each customer averages roughly 9 to 11 transactions.
 
-#### Q2. What is the average customer lifetime value by region for customers with Low risk profile?
+### Q3. *Can you summarize the overall sentiment based on the support tickets?*
 
-#### Q3. What is the risk profile distribution across customer segments and their correlation with transaction volumes?
+**What to expect:** The client calls the Cortex Search tool, then summarizes the tickets it retrieves. Many tickets are routine questions about rates, fees, and accounts.
 
-#### Q4. Can you summarize the overall sentiments based on the support calls?
+### Q4. *Which support categories would benefit most from automated responses based on ticket analysis?*
 
-#### Q5. Which support categories would benefit most from automated responses based on transcript analysis?
+**What to expect:** Depending on your client, it searches the tickets, queries **FACT_SUPPORT_TICKETS** with SQL, or both. The categories have similar ticket volumes, so expect the answer to focus on routine categories, such as rate questions, general questions, and fee inquiries, and on response times and satisfaction scores.
 
 ### Custom Tools
 
-You can also create functions and procedures that be add as custom tools to execute tasks like sending emails. This can be accomplished using `type: "GENERIC"` in the MCP server config.
+Custom tools let you expose your own functions and stored procedures through the MCP server with `type: "GENERIC"` in the specification. The **Send_Email** tool calls the **SEND_EMAIL** stored procedure, which sends email through the **EMAIL_INTEGRATION** notification integration.
 
-Let's try that out that in Cursor. Enter the following prompt...
+Enter the following prompt, replacing **YOUR-EMAIL-ADDRESS** with your [verified email address](https://docs.snowflake.com/en/user-guide/ui-snowsight-profile#verify-your-email-address):
 
-#### Send me an email with a summary of the analysis to YOUR-EMAIL-ADDRESS.
+#### *Send me an email with a summary of the analysis to YOUR-EMAIL-ADDRESS.*
 
-Provided that you're entered your verified email address, you should see something like this.
+**What to expect:** The client calls the **Send_Email** tool, which returns `Email sent successfully`. Check your inbox for the summary. Snowflake only sends email to verified addresses.
 
-* Email Prompt in Cursor
+<!-- ------------------------ -->
+## Optional: Expose a Cortex Agent
 
-  ![MCP Server Email Prompt](assets/snowflake-mcp-server-email-prompt.png)
+For governed business questions, Snowflake recommends exposing a [Cortex Agent](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents) as an MCP tool. The agent then chooses between Cortex Analyst, Cortex Search, and SQL itself, instead of leaving that choice to the client's model.
 
-  -----
-
-* Email
-
-  ![MCP Server Email](assets/snowflake-mcp-server-email.png)
-
-  ### Optional -- Agent Calling
-
-To see how you can call agent(s) that you have access to, follow these steps. 
-
-* [Create an agent for Snowflake Documentation](https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake-intelligence-and-cke/). 
-
-> NOTE: You may also use an existing agent that you have access to.
-
-* Recreate the Snowflake MCP Server as follows. Notice new `type: "CORTEX_AGENT_RUN"` added at the end.
+Run the following to create an agent over the same semantic view and search service, then recreate the MCP server with a `CORTEX_AGENT_RUN` tool added.
 
 ```sql
-create or replace mcp server dash_mcp_server from specification
+USE ROLE ACCOUNTADMIN;
+USE SCHEMA DASH_MCP_DB.DATA;
+
+CREATE OR REPLACE AGENT DASH_MCP_DB.DATA.FINANCIAL_ANALYST_AGENT
+  COMMENT = 'Answers financial services questions using the semantic view and support tickets'
+  FROM SPECIFICATION
+$$
+models:
+  orchestration: auto
+instructions:
+  response: "Answer concisely and cite the data you used."
+tools:
+  - tool_spec:
+      type: cortex_analyst_text_to_sql
+      name: Finance_and_Risk_Assessment
+      description: "Customers, transactions, marketing campaigns, support interactions, and risk assessments."
+  - tool_spec:
+      type: cortex_search
+      name: Support_Tickets
+      description: "Unstructured support ticket descriptions."
+tool_resources:
+  Finance_and_Risk_Assessment:
+    semantic_view: DASH_MCP_DB.DATA.FINANCIAL_SERVICES_ANALYTICS
+    execution_environment:
+      type: warehouse
+      warehouse: DASH_WH_S
+  Support_Tickets:
+    name: DASH_MCP_DB.DATA.SUPPORT_TICKETS
+    id_column: TICKET_ID
+    title_column: SUBJECT
+    max_results: 5
+$$;
+
+GRANT USAGE ON AGENT DASH_MCP_DB.DATA.FINANCIAL_ANALYST_AGENT TO ROLE DASH_MCP_ROLE;
+GRANT DATABASE ROLE SNOWFLAKE.CORTEX_AGENT_USER TO ROLE DASH_MCP_ROLE;
+
+CREATE OR REPLACE MCP SERVER DASH_MCP_SERVER FROM SPECIFICATION
 $$
 tools:
+  - name: "Financial_Analyst_Agent"
+    identifier: "DASH_MCP_DB.DATA.FINANCIAL_ANALYST_AGENT"
+    type: "CORTEX_AGENT_RUN"
+    description: "Agent that answers financial services questions by combining the semantic view and support tickets."
+    title: "Financial Analyst Agent"
   - name: "Finance_and_Risk_Assessment_Semantic_View"
     identifier: "DASH_MCP_DB.DATA.FINANCIAL_SERVICES_ANALYTICS"
     type: "CORTEX_ANALYST_MESSAGE"
@@ -301,17 +371,15 @@ tools:
     title: "Support Tickets Cortex Search"
   - name: "SQL_Execution_Tool"
     type: "SYSTEM_EXECUTE_SQL"
-    description: "A tool to execute SQL queries against the connected Snowflake account."
+    description: "A tool to execute read-only SQL queries against the connected Snowflake database."
     title: "SQL Execution Tool"
-  - name: "Snowflake_Documentation_Agent"
-    identifier: "SNOWFLAKE_INTELLIGENCE.AGENTS.SNOWFLAKE_DOCUMENTATION"
-    type: "CORTEX_AGENT_RUN"
-    description: "An agent that performs keyword and vector search over Snowflake Documentation."
-    title: "Snowflake Documentation"
+    config:
+      read_only: true
+      warehouse: "DASH_WH_S"
   - name: "Send_Email"
     identifier: "DASH_MCP_DB.DATA.SEND_EMAIL"
     type: "GENERIC"
-    description: "A custom tool to send emails to user's verified email address."
+    description: "A custom tool to send emails to the user's verified email address."
     title: "Send_Email"
     config:
       type: "procedure"
@@ -326,30 +394,57 @@ tools:
             description: "If the email is not provided, send it to the current user's email address."
             type: "string"
           subject:
-            description: "If subject is not provided, use Snowflake Intelligence."
+            description: "If subject is not provided, use Snowflake MCP Server."
             type: "string"
 $$;
+
+GRANT USAGE ON MCP SERVER DASH_MCP_DB.DATA.DASH_MCP_SERVER TO ROLE DASH_MCP_ROLE;
 ```
 
-* Ask questions that will be routed to `Snowflake_Documentation_Agent`
+> NOTE: `CREATE OR REPLACE MCP SERVER` drops the previous grants on the server, so run the `GRANT USAGE ON MCP SERVER` statement again after you recreate it.
 
-#### Q1. How do I create an agent?
+Reconnect or refresh the server in your client so that it picks up the new **Financial_Analyst_Agent** tool, which takes a `text` argument. Then ask a question that spans both data sources:
 
-#### Q2. What are virtual warehouses in Snowflake, and how do I properly size them?
+#### *Which support categories would benefit most from automated responses, and how do Low risk customers compare on lifetime value by region?*
+
+**What to expect:** The agent answers both parts in one response, typically with a table for each, and lists the tools it used. Agent responses include intermediate steps such as reasoning and tool results, so they can be much larger than other tool responses.
+
+<!-- ------------------------ -->
+## Clean Up
+
+To remove the objects created in this guide, run the following SQL statements:
+
+```sql
+USE ROLE ACCOUNTADMIN;
+
+ALTER USER REMOVE PROGRAMMATIC ACCESS TOKEN MCP_GUIDE_TOKEN;
+
+DROP DATABASE IF EXISTS DASH_MCP_DB;
+DROP WAREHOUSE IF EXISTS DASH_WH_S;
+DROP NOTIFICATION INTEGRATION IF EXISTS EMAIL_INTEGRATION;
+DROP ROLE IF EXISTS DASH_MCP_ROLE;
+```
+
+Dropping **DASH_MCP_DB** also removes the MCP server, agent, semantic view, Cortex Search service, and **SEND_EMAIL** procedure. Also remove the Snowflake server from your MCP client's configuration.
+
+> NOTE: Dropping **DASH_MCP_ROLE** invalidates any PAT restricted to it. If `setup.sql` uncommented the cross-region inference statement, you can reset it with `ALTER ACCOUNT UNSET CORTEX_ENABLED_CROSS_REGION;`.
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
 
-Congratulations! You've successfully created a Snowflake MCP Server that intelligently responds to questions by reasoning over data from within Cursor.
+Congratulations! You've created a Snowflake-managed MCP server that answers questions over structured and unstructured data, and connected it to the MCP client of your choice with least-privileged access.
 
 ### What You Learned
 
-- How to create building blocks for Snowflake MCP Server that can intelligently respond to questions by reasoning over data
-- How to configure Cursor to interact with Snowflake MCP Server
+- How to create the building blocks for a Snowflake MCP server: a Cortex Search service, a semantic view, and a custom tool
+- How to create a Snowflake-managed MCP server and grant least-privileged access to it
+- How to connect any MCP client to the server and verify it with `curl`
+- How to expose a Cortex Agent as an MCP tool
 
 ### Related Resources
 
-- [GitHub Repo](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-mcp-server)
-- [Snowflake-managed MCP server Docs](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents-mcp)
-
-
+- [GitHub Repository](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-mcp-server)
+- [Snowflake-managed MCP server documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents-mcp)
+- [CREATE MCP SERVER](https://docs.snowflake.com/en/sql-reference/sql/create-mcp-server)
+- [Programmatic access tokens](https://docs.snowflake.com/en/user-guide/programmatic-access-tokens)
+- [Model Context Protocol](https://modelcontextprotocol.io/)
