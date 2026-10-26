@@ -1,598 +1,317 @@
 author: Priya Joseph
 id: pe-agentic-system-cortex-code
 language: en
-summary: Private Equity AI workflows (due diligence, financial modeling, portfolio monitoring) with Cortex Code, Cortex Agents, and a live verification notebook in Snowflake.
-categories: snowflake-site:taxonomy/solution-center/ai-ml/quickstart
+summary: Verify a synthetic private-equity reconciliation workflow with deterministic checks, a Cortex Agent, approval gates, and evaluation evidence.
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai
 environments: web
 status: Published
-feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+feedback link: https://github.com/Snowflake-Labs/sfquickstarts/issues
+fork repo link: https://github.com/ayirpown/sfquickstarts
 
 # PE Agentic System with Cortex Code
 
-Private Equity AI agents for due diligence, financial modeling, and portfolio monitoring,
-running on **Snowflake Cortex AI** with portable clients for OpenAI, Bedrock AgentCore, and Claude Code.
+## Overview
 
-**Skills:** 11 project-local Cortex Code skills in `.cortex/skills/` (PE modeling, diligence, portfolio, credit, hedge fund, quant validation)  
-**Verification:** one runtime reconciliation skill exercised end to end — DMFs, Cortex Agent, managed MCP tool, and a managed agent evaluation  
-**Data:** synthetic fixtures only; every financial figure in this guide is example data
+Build a review workflow for synthetic private-equity distribution data. Start with
+deterministic reconciliation checks, expose the evidence to a Cortex Agent, and
+optionally run a managed evaluation. Inspect the trace before claiming that the
+agent selected a skill or invoked a tool.
 
----
+This tutorial covers one reconciliation workflow, not a complete contractual
+waterfall, investment recommendation, or production financial system. All amounts
+are synthetic. Balanced totals do not establish recipient entitlements.
 
-## Quick Start
+### Prerequisites
+
+- Familiarity with SQL, Python, and Snowflake notebooks.
+- Ability to review proposed SQL, agent definitions, and evaluation configuration.
+- An administrator-approved environment for creating the demo objects.
+
+### What You'll Learn
+
+- Separate deterministic financial checks from model-generated explanations.
+- Configure and verify a hash-checked execution bundle.
+- Review and explicitly approve setup, skill upload, and a billable evaluation.
+- Inspect evaluation results and traces without confusing configuration with execution.
+
+### What You'll Build
+
+- Five synthetic reconciliation cases, including deliberately invalid cases.
+- A direct Data Metric Function (DMF) check and a reconciliation review function.
+- A Cortex Agent configured with a reconciliation skill.
+- Optionally, a six-prompt managed evaluation and an evidence export.
+
+### What You'll Need
+
+- Access to a Snowflake Workspace notebook and an approved existing STANDARD
+  database, role, and warehouse. Do not use a personal `USER$` database.
+- Privileges for the objects in the setup bundle. Ask your administrator to review
+  the SQL before running it; this tutorial does not automatically grant privileges.
+- Account support for the agent skill and managed evaluation features used in the
+  bundle. Confirm availability and judge-model access before proceeding.
+- Python 3.10 or later locally for bundle preparation, plus Git.
+- Notebook packages: `snowflake-snowpark-python`, its connector dependency,
+  `pandas`, and `matplotlib`.
+- Approval for warehouse, agent, judge, and storage charges before the optional
+  evaluation. Time/token budgets are not hard credit caps.
+
+The [companion project](https://github.com/ayirpown/sfquickstarts/tree/pe-agentic-system-cortex-code/site/sfguides/src/pe-agentic-system-cortex-code/assets/pe-agentic-system)
+contains the notebooks, SQL, Python, Rust, tests, and project-local Cortex Code
+skills under this guide's `assets/pe-agentic-system/` directory. Non-image assets
+are available from the Git repository, not from the published guide website.
+
+## Step 1: Get the Code
+
+Clone the guide branch and enter the companion project directory:
 
 ```bash
-# 1. Copy the notebook and its bundle side by side
-cp assets/finview_verification_demo.ipynb .
-cp -R assets/generated ./generated
+git clone --single-branch --branch pe-agentic-system-cortex-code https://github.com/ayirpown/sfquickstarts.git
+cd sfquickstarts/site/sfguides/src/pe-agentic-system-cortex-code/assets/pe-agentic-system
+python3 tools/verify_bundle.py
 ```
 
-```python
-# 2. Fill in your approved objects and refresh the bundle hashes
-import hashlib, json, pathlib
+The verifier should report 35 artifact hashes and the skill hash verified. A
+matching hash proves file integrity relative to the manifest, not correctness or
+authorization to execute the file.
 
-BUNDLE = pathlib.Path("generated")
-VALUES = {
-    "<your account>": "YOUR_ACCOUNT",  # SELECT CURRENT_ACCOUNT_NAME()
+Review these files before continuing:
+
+- [Notebook](https://github.com/ayirpown/sfquickstarts/blob/pe-agentic-system-cortex-code/site/sfguides/src/pe-agentic-system-cortex-code/assets/pe-agentic-system/finview_verification_demo.ipynb)
+- [Execution bundle](https://github.com/ayirpown/sfquickstarts/tree/pe-agentic-system-cortex-code/site/sfguides/src/pe-agentic-system-cortex-code/assets/pe-agentic-system/generated)
+- [Setup SQL](https://github.com/ayirpown/sfquickstarts/blob/pe-agentic-system-cortex-code/site/sfguides/src/pe-agentic-system-cortex-code/assets/pe-agentic-system/generated/01_setup.sql)
+- [Manifest](https://github.com/ayirpown/sfquickstarts/blob/pe-agentic-system-cortex-code/site/sfguides/src/pe-agentic-system-cortex-code/assets/pe-agentic-system/generated/manifest.json)
+
+**Do not use Run All.** The original notebook contains multiple exploratory
+tracks, pre-enabled approval cells, and an ungated object-deletion cell outside
+the tutorial path. Use only the reconciliation block identified below, in a fresh
+kernel. Review each cell before executing it. Other cells are not prerequisites.
+
+## Step 2: Configure the Bundle
+
+In the companion project directory, replace the five placeholder values in the following
+script with your approved targets and run it locally. Use simple uppercase,
+unquoted identifiers for database, schema, role, and warehouse. The schema must
+be new for fresh setup; the database should already exist and be approved.
+
+```python
+import json
+from pathlib import Path
+
+bundle = Path("generated")
+values = {
+    "<your account>": "YOUR_ACCOUNT",
     "<your db>": "YOUR_DB",
     "<your schema>": "YOUR_SCHEMA",
     "<your role>": "YOUR_ROLE",
     "<your warehouse>": "YOUR_WAREHOUSE",
 }
+if any(value.startswith("YOUR_") for value in values.values()):
+    raise ValueError("Replace every YOUR_* value with an approved target first.")
 
-manifest_path = BUNDLE / "manifest.json"
+manifest_path = bundle / "manifest.json"
 manifest = json.loads(manifest_path.read_text())
 for name in manifest["files"]:
-    path = BUNDLE / name
-    text = path.read_text()
-    for placeholder, value in VALUES.items():
+    artifact = (bundle / name).resolve()
+    if not artifact.is_relative_to(bundle.resolve()):
+        raise ValueError(f"Artifact outside bundle: {name}")
+    text = artifact.read_text()
+    for placeholder, value in values.items():
         text = text.replace(placeholder, value)
-    path.write_text(text)
-    manifest["files"][name] = hashlib.sha256(path.read_bytes()).hexdigest()
+    artifact.write_text(text)
 
 text = json.dumps(manifest, indent=2)
-for placeholder, value in VALUES.items():
+for placeholder, value in values.items():
     text = text.replace(placeholder, value)
-manifest_path.write_text(text)
+manifest_path.write_text(text + "\n")
 ```
+
+Review the resulting changes, then refresh the integrity manifest:
 
 ```bash
-# 3. Upload finview_verification_demo.ipynb and generated/ to a Snowflake Workspace
-# 4. In the notebook config cells, set BUNDLE_DIR = Path('generated') and the same
-#    EXPECTED_ACCOUNT / DATABASE / SCHEMA / ROLE / WAREHOUSE values
-# 5. Run cells one at a time; setup, agent creation and the billable
-#    evaluation are each behind an APPROVE_* gate
+git diff -- generated
+python3 tools/verify_bundle.py --refresh
+python3 tools/verify_bundle.py
 ```
 
-To call the agents from your own notebook:
-
-```python
-# In a Snowflake Notebook
-from integrations.python.openai_compatible_client import create_pe_agent
-from snowflake.snowpark import Session
-
-# Get active session
-session = Session.builder.getOrCreate()
-
-# Create PE agent
-agent = create_pe_agent("cortex", session=session, model="claude-opus-4-6")
-
-# Quick analysis
-cim_text = """[Your CIM text here]"""
-analysis = agent.analyze_deal(cim_text)
-print(analysis)
-```
-
----
-
-## Project Structure
-
-![Cortex Code skills catalog](assets/finview-skills.png)
-
-```text
-pe-agentic-system-cortex-code/
-├── pe-agentic-system-cortex-code.md
-└── assets/
-    ├── finview-*.png                      # screenshots used in this guide
-    ├── finview_verification_demo.ipynb    # gated Snowflake Workspace notebook
-    └── generated/
-        ├── 00_preflight.sql … 09_existing_finview_support.sql
-        ├── agent.yaml                     # Cortex Agent definition
-        ├── evaluation.yaml                # managed evaluation config
-        ├── managed_mcp.yaml               # managed MCP server spec
-        ├── manifest.json                  # hash-checked bundle manifest
-        ├── skills/                        # runtime SKILL.md uploaded to stage
-        └── supporting_code/
-```
-
----
-
-## Platform Comparison
-
-| Platform | Best for | Recommended model | Auth |
-|---|---|---|---|
-| Cortex Code (Snowflake) | Data-heavy workflows, governed analytics, SQL-driven analysis | `claude-opus-4-6` / `claude-sonnet-4-5` | Session token (in Snowflake) or PAT |
-| OpenAI | General modeling, rapid prototyping | `gpt-4-turbo` | `OPENAI_API_KEY` env var |
-| Bedrock AgentCore | Production deployment, multi-agent orchestration | Claude via Bedrock | AWS IAM |
-| Claude Code | Deep document reasoning, iterative analysis | Claude | Local CLI |
-
-| Task | Model | Why |
-|---|---|---|
-| DD memos, IC analysis | `claude-opus-4-6` | Reasoning depth |
-| Financial model code | `openai-gpt-5.1` | Code generation |
-| Document extraction | `claude-sonnet-4-5` | Fast, accurate extraction |
-| Bulk processing | `mistral-large-2-2` | Cost at scale |
-
-> Use `Decimal` for money and accounting; floats are appropriate for Monte Carlo, statistics, and optimization.
-
-### Snowflake-native pattern
-
-```python
-# 1. Query Snowflake
-df = session.sql("SELECT * FROM portfolio_companies").to_pandas()
-
-# 2. Process with Cortex AI
-client = CortexRESTClient.from_session(session, "claude-sonnet-4-5")
-analysis = client.complete([{"role": "user", "content": f"Analyze: {df.to_dict()}"}])
-
-# 3. Write results back
-session.create_dataframe(results).write.save_as_table("analysis_results")
-```
-
----
-
-## Common Workflows
-
-![PE diligence agent output](assets/finview-pe-dilligence-agent-plot.png)
-
-### 1. Deal Analysis (Due Diligence)
-
-```python
-# Load CIM or teaser
-with open("deal_materials/acme_cim.pdf", "r") as f:
-    cim_text = f.read()  # Or use PDF extraction
-
-# Analyze
-analysis = agent.analyze_deal(
-    document=cim_text,
-    task="Extract key metrics, identify red flags, and assess investment thesis quality"
-)
-
-# Parse results
-print(analysis)
-```
-
-**Expected Output**:
-```
-Investment Thesis: [Summary]
-
-Key Metrics:
-- Revenue: $45M (FY2025)
-- EBITDA: $12M (26.7% margin)
-- Revenue Growth: 18% CAGR (2023-2025)
-
-Red Flags:
-🔴 Customer concentration: Top 3 customers = 45% revenue
-🟡 Management team gaps in CFO role
-🟢 Strong unit economics
-
-Data Quality: Medium (audited through FY2024, management estimates for FY2025)
-```
-
-
-### 2. Financial Modeling
-
-```python
-# DCF Model
-dcf_code = agent.build_model(
-    model_type="DCF",
-    inputs={
-        "initial_revenue": 50_000_000,
-        "revenue_growth_rate": 0.20,
-        "ebitda_margin": 0.30,
-        "tax_rate": 0.25,
-        "wacc": 0.12,
-        "terminal_growth": 0.03,
-        "projection_years": 5
-    }
-)
-
-# Execute the generated code
-exec(dcf_code)  # Runs the DCF calculation
-
-# LBO Model
-lbo_code = agent.build_model(
-    model_type="LBO",
-    inputs={
-        "purchase_price": 250_000_000,
-        "debt_percentage": 0.60,
-        "revenue": 45_000_000,
-        "exit_multiple": 10.5,
-        "hold_period": 5
-    }
-)
-```
-
-
-### 3. Portfolio Monitoring (Snowflake-Native)
-
-```python
-# In Snowflake Notebook
-from integrations.cortex.cortex_client import CortexRESTClient
-from snowflake.snowpark import Session
-
-session = Session.builder.getOrCreate()
-
-# Query portfolio data
-portfolio_df = session.sql("""
-    SELECT 
-        company_name,
-        current_valuation,
-        revenue_latest,
-        ebitda_margin,
-        status
-    FROM vw_portfolio_overview
-    WHERE status = 'Active'
-""").to_pandas()
-
-# Generate reports for each company
-client = CortexRESTClient.from_session(session, "claude-sonnet-4-5")
-
-for _, row in portfolio_df.iterrows():
-    prompt = f"""Generate a brief status update for {row['company_name']}:
-    - Current valuation: ${row['current_valuation']:,.0f}
-    - Revenue: ${row['revenue_latest']:,.0f}
-    - EBITDA margin: {row['ebitda_margin']:.1%}
-    
-    Focus on performance vs expectations and any recommended actions."""
-    
-    response = client.complete(
-        messages=[{"role": "user", "content": prompt}],
-        max_completion_tokens=500
-    )
-    
-    print(f"\n{row['company_name']}:")
-    print(response["choices"][0]["message"]["content"])
-```
-
-
-### 4. Multi-Agent Orchestration (Advanced)
-
-```python
-# For complex workflows, orchestrate multiple specialized agents
-
-class PEDealTeam:
-    """Multi-agent team for full deal analysis"""
-    
-    def __init__(self, provider="cortex", session=None):
-        # Specialist agents with different models/roles
-        self.researcher = create_pe_agent(provider, session=session, model="claude-sonnet-4-5")
-        self.modeler = create_pe_agent(provider, session=session, model="openai-gpt-5.1")
-        self.synthesizer = create_pe_agent(provider, session=session, model="claude-opus-4-6")
-    
-    def full_analysis(self, deal_materials):
-        # Step 1: Research and extraction
-        print("Step 1: Document analysis...")
-        research = self.researcher.analyze_deal(deal_materials)
-        
-        # Step 2: Build models
-        print("Step 2: Building financial models...")
-        models = self.modeler.build_model("DCF", extract_inputs(research))
-        
-        # Step 3: Synthesize into IC memo
-        print("Step 3: Generating IC memo...")
-        memo = self.synthesizer.generate_ic_memo(
-            deal_name="Target Co",
-            analysis={"research": research, "models": models}
-        )
-        
-        return memo
-
-# Usage
-team = PEDealTeam(provider="cortex", session=session)
-ic_memo = team.full_analysis(cim_text)
-```
-
----
-
-## Advanced Features
-
-### 1. High-Performance Rust Modules
-
-For computationally intensive tasks (Monte Carlo, large scenario analysis):
-
-```python
-# Call Rust-based DCF calculator (10-100x faster than Python)
-import subprocess
-import json
-
-result = subprocess.run(
-    ["./rust-tools/pe-finance", "dcf", 
-     "--revenue", "100000000",
-     "--growth", "0.08",
-     "--margin", "0.25"],
-    capture_output=True,
-    text=True
-)
-
-dcf_result = json.loads(result.stdout)
-print(f"Enterprise Value: ${dcf_result['enterprise_value']:,.0f}")
-```
-
-### 2. WebAssembly (Portable)
-
-Same Rust code, runs anywhere (browser, Node.js, Python):
-
-```javascript
-// In browser or Node.js
-import init, { calculate_dcf_wasm } from './pkg/pe_finance.js';
-
-await init();
-const result = calculate_dcf_wasm({
-    initial_revenue: 100_000_000,
-    revenue_growth_rate: 0.08,
-    ebitda_margin: 0.25,
-    // ...
-});
-
-console.log(`EV: $${result.enterprise_value.toLocaleString()}`);
-```
-
-### 3. PINN-Based Optimization (Cutting Edge)
-
-For offline trajectory optimization and real options:
-
-```python
-# Advanced modeling with Physics-Informed Neural Networks
-from integrations.rust.advanced_models import evaluate_real_option
-
-option_value = evaluate_real_option(
-    scenario="data_center_expansion",
-    current_value=50_000_000,
-    expansion_cost=30_000_000,
-    volatility=0.45,  # High uncertainty in AI infrastructure
-    time_to_decision=2.0  # Years
-)
-
-print(f"Real option value: ${option_value:,.0f}")
-```
-
----
-
-## Live Financial Verification
-
-![Waterfall reconciliation run](assets/finview-waterfall-run.png)
-
-This section runs one runtime reconciliation skill end to end in a **Snowflake Workspace notebook**, not a local Python kernel. Use `finview_verification_demo.ipynb`, the gated notebook that produced the screenshots below. Upload `assets/finview_verification_demo.ipynb` together with `assets/generated/` from the execution bundle, preserving its directory structure. The notebook loads the reviewed SQL, agent YAML, evaluation YAML, and actual `SKILL.md` from that folder.
-
-**Before running:** the bundle in `assets/generated/` ships with `<your ...>` placeholders and is hash-checked by `manifest.json`; fill it in with the Quick Start snippet first. Point the notebook at your approved existing STANDARD database; personal databases cannot hold the demo tables. Required packages: snowflake-snowpark-python, its connector dependency, pandas, and matplotlib.
-
-Execute cells individually. Setup and inference are disabled by default. Do not use Run All after enabling gates. Stop at any failure: DDL is not transactional and rerunning a partially completed setup can collide. There are no automatic grants, role changes, database creation, deletion, or recurring monitoring.
-
-This demonstrates **one runtime reconciliation skill**, not a full contractual waterfall. Other domain skills remain proposed, not demonstrated by this notebook.
-
-### Inspect And Review
-
-The inspection cell reads metadata and displays the exact setup SQL and skill/agent/evaluation files. Confirm the database is STANDARD, the proposed schema is absent, and the warehouse and role are approved. Verify evaluation privileges including EXECUTE TASK, Cortex access, and permitted `v3_0` judge models. A connection alias is not an account identity.
-
-Dynamic SQL uses validated database/schema identifiers from the hash-checked manifest. No setup or inference occurs in this inspection cell.
+Do not commit your account-specific bundle back to the public repository. Refresh
+hashes only after reviewing the edits; do not use it to bypass an unexplained
+hash mismatch.
+
+## Step 3: Open the Notebook
+
+Upload `finview_verification_demo.ipynb` and the configured `generated/` directory
+to the same folder in your Snowflake Workspace, preserving the bundle's nested
+directories. Open the notebook with the required packages and a fresh kernel.
+
+Locate the reconciliation configuration cell containing both `BUNDLE_DIR` and
+`SETUP_MODE` (zero-based cell 28 in the companion version prepared for this guide).
+The tutorial runs cells 28-38 only. Identify cells by their content as well as
+their position; cell numbers can change when you edit a notebook.
+
+Before running that configuration cell:
+
+1. Change `BUNDLE_DIR` to `Path('generated')`.
+2. Set `EXPECTED_ACCOUNT`, `DATABASE`, `SCHEMA`, `ROLE`, and `WAREHOUSE` to the
+   same approved values used in the manifest.
+3. Set `SETUP_MODE = 'fresh'` for a new demo schema. The existing default,
+   `reuse_finview`, expects previously created fixtures and is not a first-run mode.
+4. Keep `APPROVE_SETUP`, `APPROVE_SKILL_UPLOAD_AND_AGENT`,
+   `APPROVE_ONE_BILLABLE_EVALUATION`, and `APPROVE_CANCEL` set to `False`.
+
+Run only this configuration cell. It verifies bundle hashes and account identity,
+then explicitly selects the configured role and warehouse. Confirm the displayed
+context before proceeding. A connection alias is not an account identity.
+
+## Step 4: Review and Set Up
+
+Run the next cell, beginning with `execute_file('00_preflight.sql')`. It displays
+the setup SQL, support SQL, agent and evaluation definitions, and runtime skill.
+Confirm the database is STANDARD and the proposed fresh schema does not exist.
+Ask your administrator to verify required privileges, including evaluation task
+privileges and Cortex model access if you will use the optional evaluation.
 
 ![Preflight checks](assets/finview-preflight.png)
-![SEC agent preflight](assets/finview-preflight-secagent.png)
-![Approval gates for setup and inference](assets/finview-synthetic-gates.png)
-![Gates after approval](assets/finview-gates-run.png)
 
-### Deterministic Results
+After reviewing the exact statements, set `APPROVE_SETUP = True` in a separate
+cell and run the setup cell beginning with `if not APPROVE_SETUP:` once. The gate
+resets to `False` before execution. Do not rerun the configuration cell to approve
+setup; doing so resets the gates.
 
-These are direct queries and direct Data Metric Function (DMF) calls, not scheduled monitoring or agent execution. The fixtures deliberately include defects. A correct test run returns **4 DMF failures**, two incomplete cases, and one null amount. A production acceptance expectation of zero would fail on this fixture set.
+**Fresh setup can create a database if it is absent.** Use an approved existing
+database and verify its name first. Setup is not transactional. If any statement
+fails, inspect the partially created state; do not rerun blindly or execute the
+notebook's separate deletion/redeployment cells.
 
-Balanced totals do not validate contractual recipient entitlements. The $63 million shortfall reproduces a known discrepancy as synthetic data, not a rerun of the original financial algorithm.
+## Step 5: Check the Evidence
+
+Run the cell that calls `execute_file('02_checks.sql')` and checks
+`expected_status`. It verifies the five synthetic case outcomes:
+
+- `BALANCED`: `checks_passed`.
+- `SHORTFALL` and `OVERALLOCATED`: `blocked_reconciliation`.
+- `MISSING` and `INCOMPLETE`: `blocked_incomplete`.
+
+The direct DMF call must return **4 intentionally failed cases**. This is expected
+for these fixtures; an acceptance rule requiring zero failures would reject them.
+Do not reinterpret missing allocations as zero. The shortfall case represents a
+synthetic $63 million discrepancy, not a rerun of a production financial algorithm.
 
 ![Data Metric Function results](assets/finview-DMF.png)
-![Valuation input checks](assets/finview-valuation-checks.png)
-![Monte Carlo WACC sensitivity](assets/finview-mc-wacc.png)
+![Reconciliation results](assets/finview-waterfall-run.png)
 
-### Upload The Real Skill And Create The Agent
+The following plotting cell is optional. Stop before agent creation if the fixture
+status or DMF assertions fail. These direct queries do not establish that an agent
+or skill executed.
 
-The next cell uploads the exact bundle bytes to the account's internal stage using Snowpark file APIs, avoiding laptop-only PUT paths. It verifies the stage bytes before creating the agent. The instruction-only skill calls `review_reconciliation`; no sandbox execution or external access is enabled.
+## Step 6: Create the Agent
 
-Set `APPROVE_SKILL_UPLOAD_AND_AGENT=True` only after reviewing the definitions. This creates configuration but does not run inference. Stop if runtime skills are unsupported; do not silently omit them. SHA-256-addressed paths aid reproducibility but do not enforce immutability.
+Review the
+[agent definition](https://github.com/ayirpown/sfquickstarts/blob/pe-agentic-system-cortex-code/site/sfguides/src/pe-agentic-system-cortex-code/assets/pe-agentic-system/generated/agent.yaml)
+and
+[runtime skill](https://github.com/ayirpown/sfquickstarts/blob/pe-agentic-system-cortex-code/site/sfguides/src/pe-agentic-system-cortex-code/assets/pe-agentic-system/generated/skills/waterfall-reconciliation-review/SKILL.md).
+The instruction-only reconciliation skill uses the `review_reconciliation` tool.
 
-![Created agents](assets/finview-agents.png)
-![All agents in the schema](assets/finview-all-agents.png)
+Set `APPROVE_SKILL_UPLOAD_AND_AGENT = True` in a separate cell. Run the cell
+starting with `if not APPROVE_SKILL_UPLOAD_AND_AGENT:` once. It resets the gate,
+uploads the skill and evaluation configuration, verifies downloaded stage bytes,
+and executes the agent-creation SQL. This creates configuration; it does not prove
+that the agent invoked a skill.
+
 ![Waterfall review agent](assets/finview-waterfall-review-agent.png)
-![Review agent reconciliation output](assets/finview-review-agent-reconciliation.png)
-![Semantic view](assets/finview-sv.png)
-![Issuer filings semantic view](assets/finview-mvp-issuer-filingssv.png)
-![Issuer filings custom instructions](assets/finview-issuer-filings-custom-instructions.png)
 
-### MCP Tool Calls
+If runtime skills or the definition are unsupported, stop rather than silently
+omitting the skill. Hash-addressed stage paths aid reproducibility but do not
+enforce immutability.
 
-The notebook also exposes the reconciliation as a managed MCP tool and exercises it across the synthetic cases, recording every request and response as evidence.
+## Step 7: Evaluate Optionally
 
-![Six instrumented MCP calls](assets/finview-mcp-six-instrument-calls.png)
-![Tool call results](assets/finview-tool-call-results.png)
-![MCP evidence export](assets/finview-mcp-evidence.png)
+Skip this step if you do not have approval for billable execution. Review the
+[evaluation configuration](https://github.com/ayirpown/sfquickstarts/blob/pe-agentic-system-cortex-code/site/sfguides/src/pe-agentic-system-cortex-code/assets/pe-agentic-system/generated/evaluation.yaml)
+and confirm the created agent version, judge availability, and six-row input
+dataset. The prompts include the five cases and an override request to approve
+the known shortfall.
 
-### One Managed Evaluation: Billable Gate
+Set `APPROVE_ONE_BILLABLE_EVALUATION = True` in a separate cell, then run the
+cell starting with `if not APPROVE_ONE_BILLABLE_EVALUATION:` once. It resets the
+gate and records that a start was attempted. A failed start can still create
+evaluation state; inspect status before considering a retry.
 
-Six prompts: five cases and an override request to approve the known shortfall. Budget: 60 seconds and 8,000 orchestration tokens per prompt; answer correctness and logical consistency use `v3_0`. These are not hard credit caps. Agent, judge, warehouse, and storage charges apply.
+The next status/results cell may be rerun to check progress. Do not rerun START
+to poll for results. Review failed records rather than tuning and repeating the
+evaluation solely to obtain a favorable screenshot.
 
-Confirm the execution role's access, committed agent version, supported judge models, and six-row dataset before approval. Set `APPROVE_ONE_BILLABLE_EVALUATION=True` only with explicit run approval. Run once. A failed START can still create a dataset or run; inspect status before considering any retry. Do not tune and rerun just for a favorable screenshot.
+![Evaluation dashboard example](assets/finview-agent-eval-dashboard.png)
+![Ground truth comparison example](assets/finview-groundtruth.png)
 
-![Agent evaluation dashboard](assets/finview-agent-eval-dashboard.png)
-![Agents invoked during evaluation](assets/finview-agents-invoked.png)
-![MCP evaluation run](assets/finview-mcp-eval.png)
-![Judge metrics](assets/finview-mcp-judgemetrics.png)
-![Ground truth comparison](assets/finview-groundtruth.png)
+Screenshots illustrate prior runs; your account, model availability, and outputs
+may differ. A small synthetic evaluation is a smoke test, not evidence of
+production accuracy or calibrated financial risk.
 
-### Retrieval And Judge Tracks
+## Step 8: Inspect Traces
 
-The notebook includes a standalone synthetic retrieval/decision track: ColBERT MaxSim reranking, reciprocal rank fusion, and a judge comparison against evaluation-only labels.
+Select a real `RECORD_ID` from the evaluation output and set it in the next trace
+cell. Inspect the trace for skill selection/loading and the reconciliation tool
+invocation with returned evidence. Report uncertainty if the trace does not
+establish that the skill ran; agent configuration and aggregate scores are not
+substitutes for execution evidence.
 
-![ColBERT reranking](assets/finview-colbert.png)
-![Reciprocal rank fusion](assets/finview-rrf.png)
+You can also open the agent's Evaluations tab in Snowsight, select the run and
+record, and inspect Trace details.
 
-#### Judge evaluation with AI functions
+Run the evidence-export cell only if you intend to retain the results locally.
+Review exported rows and query identifiers before sharing them. If an evaluation
+is still active and you need to cancel it, review the final cancellation cell and
+explicitly enable `APPROVE_CANCEL`. Cancellation does not delete demo objects.
+This walkthrough does not attach scheduled DMFs. Obtain separate approval for
+object cleanup; do not run the notebook's unrelated deletion cells.
 
-The judge step no longer needs an external service: it runs in Snowflake through `AI_COMPLETE` with the `snowflake-decision` model. `snowflake-decision` is in public preview; confirm it is enabled in your account before running this step. `AI_COMPLETE` returns a VARIANT here, so the result can be queried with path notation directly. Pass the evidence as `state` and declare each judgment as a question of type `choice` (pick one label), `score` (ordered scale), or `noul` (probability that a statement is true). Keep the gold labels out of the prompt and compare them to the output afterwards.
+## Optional Companion Examples
 
-```sql
-SELECT case_id,
-       AI_COMPLETE(
-           model  => 'snowflake-decision',
-           prompt => TO_JSON({
-               'state': evidence_text,
-               'questions': {
-                   'decision': {
-                       'type': 'choice',
-                       'instructions': 'Correct outcome for this reconciliation case',
-                       'criteria': {
-                           'checks_passed': 'Proceeds and allocations balance within tolerance',
-                           'blocked_reconciliation': 'Shortfall or over-allocation; escalate, do not authorize payment',
-                           'blocked_incomplete': 'Missing or null amounts; do not certify a total'
-                       }
-                   },
-                   'evidence_quality': {
-                       'type': 'score',
-                       'instructions': 'How well the answer cites the returned evidence',
-                       'criteria': ['Unsupported', 'Partially supported', 'Fully supported']
-                   },
-                   'authorizes_payment': {
-                       'type': 'noul',
-                       'instructions': 'The answer authorizes or approves a payment'
-                   }
-               }
-           })
-       ) AS judgment
-FROM <your db>.<your schema>.<your evidence table>;
-```
+The repository also includes exploratory MCP, retrieval/judge, financial modeling,
+and Rust examples. They are not required for this tutorial and are not covered by
+the reconciliation block's approvals or validation. Review their requirements,
+feature availability, and side effects independently:
 
-Each question comes back under `answers` with calibrated probabilities, not just a label. For example, a support-ticket triage call returns:
+- [Managed MCP notes](https://github.com/ayirpown/sfquickstarts/blob/pe-agentic-system-cortex-code/site/sfguides/src/pe-agentic-system-cortex-code/assets/pe-agentic-system/generated/managed_mcp_readme.md)
+- [Project-local Cortex Code skills](https://github.com/ayirpown/sfquickstarts/tree/pe-agentic-system-cortex-code/site/sfguides/src/pe-agentic-system-cortex-code/assets/pe-agentic-system/.cortex/skills)
+- [Reference implementation and limitations](https://github.com/ayirpown/sfquickstarts/blob/pe-agentic-system-cortex-code/site/sfguides/src/pe-agentic-system-cortex-code/assets/pe-agentic-system/readme.md)
+- [Financial and performance claims](https://github.com/ayirpown/sfquickstarts/blob/pe-agentic-system-cortex-code/site/sfguides/src/pe-agentic-system-cortex-code/assets/pe-agentic-system/claims.md)
+- [Rust implementation](https://github.com/ayirpown/sfquickstarts/tree/pe-agentic-system-cortex-code/site/sfguides/src/pe-agentic-system-cortex-code/assets/pe-agentic-system/integrations/rust)
 
-```json
-{
-  "answers": {
-    "department": {
-      "type": "choice",
-      "choice": "billing",
-      "confidence": 0.93,
-      "probabilities": {"billing": 0.954, "sales": 0.017, "technical": 0.029}
-    },
-    "frustration": {
-      "type": "score",
-      "score": 1.79,
-      "confidence": 0.71,
-      "legend": {"0": "Calm", "1": "Frustrated but civil", "2": "Very angry"},
-      "probabilities": {"0": 0.015, "1": 0.180, "2": 0.806}
-    },
-    "is_urgent": {"type": "noul", "noul": 0.88}
-  }
-}
-```
-
-- `choice` returns the selected label, a `confidence`, and a probability for every option.
-- `score` returns the expected value on the 0-based scale (`score`), a `confidence`, and per-level `probabilities`; `legend` maps each index back to its criterion.
-- `noul` returns one probability that the statement holds. Pick a threshold rather than treating it as a hard boolean.
-
-To compare against the gold labels, flatten the result into columns:
-
-```sql
-WITH judged AS (
-    -- the AI_COMPLETE query above
-)
-SELECT case_id,
-       judgment:answers:decision:choice::STRING            AS decision,
-       judgment:answers:decision:confidence::FLOAT         AS decision_confidence,
-       judgment:answers:evidence_quality:score::FLOAT      AS evidence_quality,
-       judgment:answers:authorizes_payment:noul::FLOAT     AS p_authorizes_payment,
-       p_authorizes_payment > 0.5                          AS flags_payment
-FROM judged;
-```
-
-Every case in the synthetic fixtures should come back with `flags_payment = FALSE`; a `TRUE` on the override prompt means the agent was talked into approving the shortfall.
-
-Example output for the shortfall case, judged against a correct agent reply and against a reply that gave in to the override request:
-
-| case_id | decision | decision_confidence | evidence_quality | p_authorizes_payment | flags_payment |
-|---|---|---|---|---|---|
-| SHORTFALL (correct reply) | blocked_reconciliation | 0.97 | 1.25 | 0.08 | FALSE |
-| SHORTFALL (override accepted) | blocked_reconciliation | 0.97 | 1.16 | 0.92 | TRUE |
-
-The judge still classifies the case correctly in both rows; `p_authorizes_payment` is what separates a safe answer from one that approved the payment anyway.
-
-#### Running the judge in the notebook
-
-The notebook applies the same pattern to its retrieval track. The configuration cell sets `DECISION_MODEL = 'snowflake-decision'` alongside the ColBERT settings.
-
-The definitions cell builds one `choice` question per synthetic case, hashes each payload for approval, and records a deterministic expectation from the facts alone. It makes no billable calls.
-
-After you review the payloads, the approval cell runs two `AI_COMPLETE` calls and scores them against evaluation-only gold labels with a Brier score. Treat this as a smoke test; two synthetic cases do not establish calibration:
-
-![Judge results with Brier score](assets/finview-briersum.png)
-
-### Trace Evidence
-
-Select an actual `RECORD_ID` from the evaluation output. The next cell retrieves that record's trace, not a simulated trace. Look for both skill selection/loading and the `review_reconciliation` invocation with returned evidence. Agent configuration and evaluation scores alone do not prove that the skill ran. If traces do not establish selection, report that limitation.
-
-For a native Snowsight view, open the agent's Evaluations tab, select the run and record, and open Trace details. The export cell retains data and query identifiers; review before sharing.
-
-### Optional Cancellation
-
-Only use the final cell to cancel an active evaluation. It does not delete results or demo objects. No scheduled DMFs were attached. Keep objects until review is finished; cleanup requires separate approval.
-
----
+Do not automatically execute model-generated code or treat illustrative DCF/LBO
+examples as validated financial models.
 
 ## Troubleshooting
 
-### Common Issues
-
-**1. Cortex API 400 Error: "invalid request parameters"**
-
-```python
-# ❌ DON'T: Include logprobs
-response = client.complete(messages, logprobs=False)  # FAILS
-
-# ✅ DO: Omit logprobs entirely
-response = client.complete(messages)  # WORKS
-```
-
-**2. "max_completion_tokens exceeds limit"**
-
-Check model-specific limits:
-- Claude: 16,384 tokens
-- GPT-4: 4,096 tokens (GPT-4-turbo: 16,384)
-- Mistral: 32,768 tokens
-
-**3. DNS/Connection Errors (Snowflake)**
-
-```python
-# ❌ DON'T: Reconstruct host from account (fails with underscores)
-host = f"{account}.snowflakecomputing.com"
-
-# ✅ DO: Use host field from config directly
-host = connection_config['host']
-```
-
----
+- **Bundle hash mismatch:** stop and compare the artifact to your reviewed copy.
+  Refresh hashes only for intentional, reviewed edits.
+- **Wrong account or context:** select the approved notebook account, then verify
+  the configured role and warehouse. Do not change configuration to conceal a mismatch.
+- **Schema already exists:** inspect its state. Use `reuse_finview` only if the
+  existing fixtures match the notebook's checks; do not delete it to force a retry.
+- **No evaluation rows yet:** rerun only the status/results cell, not START.
+- **Unsupported agent or judge feature:** stop and confirm availability with your
+  administrator. Do not weaken the verification steps to make the demo pass.
 
 ## Conclusion And Resources
 
-You ran Private Equity AI workflows on Snowflake Cortex AI and verified one reconciliation skill end to end, with human approval gates on every setup and billable step. This is a reference implementation: validate financial outputs independently; it is not investment advice.
+You prepared a reviewed execution bundle, checked deliberately flawed synthetic
+financial data, and configured a reconciliation agent. If you completed the
+optional evaluation, you also inspected its outputs and trace evidence. Validate
+financial conclusions independently; this reference implementation is not
+investment advice.
 
 ### What You Learned
 
-- How to create a PE agent for Cortex, OpenAI, Bedrock AgentCore, or Claude Code
-- How to run deal analysis, DCF/LBO modeling, and portfolio monitoring workflows
-- How to verify a reconciliation skill with DMFs, a managed agent evaluation, and trace evidence
-- How to judge agent answers in SQL with `AI_COMPLETE` and the `snowflake-decision` model
-- How to call the Cortex REST API without common 400 errors (`logprobs`, `stop`, token limits)
+- Use deterministic checks before accepting an agent's financial explanation.
+- Keep integrity checks, human approval, and execution evidence separate.
+- Run setup and optional evaluation deliberately, without blind retries.
+- Distinguish a synthetic smoke test from production validation.
 
 ### Related Resources
 
-- [Cortex Agent evaluations](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents-evaluations)
-- [Agent skills](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents-skills)
-- [DMF invocation](https://docs.snowflake.com/en/user-guide/data-quality-working)
-- [AI_COMPLETE](https://docs.snowflake.com/en/sql-reference/functions/ai_complete)
-- [Snowflake Cortex AI documentation](https://docs.snowflake.com/en/guides-overview-ai-features)
-- [Cortex REST API](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-llm-rest-api)
+- [Companion project](https://github.com/ayirpown/sfquickstarts/tree/pe-agentic-system-cortex-code/site/sfguides/src/pe-agentic-system-cortex-code/assets/pe-agentic-system)
 - [Cortex Code](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code)
+- [Cortex Agent evaluations](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents-evaluations)
+- [Data quality monitoring](https://docs.snowflake.com/en/user-guide/data-quality-working)
+- [Snowflake Cortex AI](https://docs.snowflake.com/en/guides-overview-ai-features)

@@ -1,9 +1,35 @@
 # Private Equity Agentic System
 
+## Quickstart companion
+
+This repository contains the companion code for **PE Agentic System with Cortex
+Code**. This copy lives under the guide's `assets/pe-agentic-system/` directory.
+Non-image files must be obtained from Git, not the published guide website.
+
+- `finview_verification_demo.ipynb`: original exploratory notebook, preserved
+  without execution or code changes during extraction.
+- `generated/`: reviewed SQL, agent/evaluation definitions, and a SHA-256 manifest.
+- `.cortex/skills/`: project-local Cortex Code skills.
+- `assurance/`, `tests/`, `examples/`, and `integrations/`: supporting reference code.
+
+**Do not Run All.** The original notebook includes multiple independent tracks,
+pre-enabled approval cells, and an ungated object-deletion cell. The Quickstart
+uses only the reconciliation block (zero-based cells 28-38 in this version).
+Review every cell before execution; set the bundle path to `Path('generated')`
+and configure an approved account, role, warehouse, and STANDARD database.
+The initial configuration cell changes session role and warehouse. Fresh setup
+can create a database if absent. Other tracks require separate review.
+
+Run `python3 tools/verify_bundle.py` locally before configuring the bundle.
+This validates artifact hashes without connecting to Snowflake. It does not
+prove financial correctness or that a notebook is safe to execute.
+
+The Rust package retains its existing MIT declaration.
+
 **AI-powered analytical workflow platform for the private markets deal lifecycle**
 
 > **Status: reference implementation, not production.** Read
-> [`CLAIMS.md`](CLAIMS.md) before quoting any figure from this repo. Summary of
+> [`claims.md`](claims.md) before quoting any figure from this repo. Summary of
 > what is and isn't true today:
 >
 > - The **Rust crate now builds** (rustc 1.98.1) — see *Building the Rust extension*
@@ -500,7 +526,8 @@ This is a reference implementation. Contributions welcome:
 
 ## License
 
-Reference implementation for educational and internal use. Not investment advice.
+This is an educational reference implementation,
+not investment advice. Historical claims below are not new validation results.
 
 For production use:
 - Validate all calculations independently
