@@ -31,7 +31,7 @@ _A  = "#fcd34d"   # amber-300    (muted)
 _G  = "#6ee7b7"   # emerald-300  (muted)
 
 _RISK_COLOR = {"HIGH": _R, "MEDIUM": _A, "LOW": _G}
-_CATEGORIES = ["PII_RISK", "SECURITY", "PERSONAL_USE", "USAGE_ANOMALY", "CUSTOM"]
+_CATEGORIES = ["PII_RISK", "SECURITY", "PERSONAL_USE", "COMPETITOR", "USAGE_ANOMALY", "CUSTOM"]
 _RISK_LEVELS = ["HIGH", "MEDIUM", "LOW"]
 _RULE_TYPES  = ["KEYWORD", "REGEX", "SEMANTIC"]
 _TARGETS     = ["PROMPT", "RESPONSE", "BOTH"]
@@ -85,11 +85,22 @@ def _load_rules(_session):
         return pd.DataFrame()
 
 
+def _rule_name_taken(session, tbl, name, exclude_id=None) -> bool:
+    """True if another rule already uses this name (case-insensitive)."""
+    excl = f" AND RULE_ID != {int(exclude_id)}" if exclude_id is not None else ""
+    rows = session.sql(
+        f"SELECT 1 FROM {tbl} WHERE UPPER(TRIM(RULE_NAME)) = UPPER(TRIM('{escape_sql_literal(name)}')){excl} LIMIT 1"
+    ).collect()
+    return bool(rows)
+
+
 def _save_rule(session, name, desc, rtype, conditions, risk, category, target="PROMPT"):
     tbl   = fq_table(session, TABLE_POLICY_RULES)
     actor = escape_sql_literal(get_current_user(session))
     cond_json = escape_sql_literal(json.dumps(conditions))
     try:
+        if _rule_name_taken(session, tbl, name):
+            return False, f"A rule named '{name}' already exists. Choose a different name."
         session.sql(f"""
             INSERT INTO {tbl} (RULE_NAME, DESCRIPTION, RULE_TYPE, CONDITIONS, RISK_LEVEL, CATEGORY, TARGET, CREATED_BY)
             SELECT '{escape_sql_literal(name)}', '{escape_sql_literal(desc)}',
@@ -111,6 +122,8 @@ def _update_rule(session, rule_id: int, name: str, desc: str, rtype: str,
     safe_name = escape_sql_literal(name)
     safe_desc = escape_sql_literal(desc)
     try:
+        if _rule_name_taken(session, tbl, name, exclude_id=rule_id):
+            return False, f"A rule named '{name}' already exists. Choose a different name."
         session.sql(f"""
             UPDATE {tbl}
             SET RULE_NAME   = '{safe_name}',

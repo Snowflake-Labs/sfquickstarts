@@ -202,6 +202,17 @@ def _load_wow(_session):
 
 
 @st.cache_data(ttl=300, show_spinner=False)
+def _load_ai_settings(_session):
+    """Return (is_enabled: bool, raw_value: str) for AI_SETTINGS account parameter."""
+    try:
+        rows = _session.sql("SHOW PARAMETERS LIKE 'AI_SETTINGS' IN ACCOUNT").collect()
+        val  = str(rows[0]["value"]) if rows and rows[0]["value"] else ""
+        return "enabled: true" in val.lower(), val
+    except Exception:
+        return False, ""
+
+
+@st.cache_data(ttl=300, show_spinner=False)
 def _load_cortex_params(_session):
     try:
         rows = _session.sql("SHOW PARAMETERS LIKE 'CORTEX%' IN ACCOUNT").collect()
@@ -626,12 +637,7 @@ def render(session):
     st.divider()
 
     # ── Cortex AI Guardrails headline ─────────────────────────────────────────
-    try:
-        _gr_rows = session.sql("SHOW PARAMETERS LIKE 'AI_SETTINGS' IN ACCOUNT").collect()
-        _gr_val  = str(_gr_rows[0]["value"]) if _gr_rows and _gr_rows[0]["value"] else ""
-        _gr_on   = "enabled: true" in _gr_val.lower()
-    except Exception:
-        _gr_on, _gr_val = False, ""
+    _gr_on, _gr_val = _load_ai_settings(session)
 
     if _gr_on:
         _gr_chip = _chip("🛡️ Cortex AI Guardrails — Enabled", "ok")
@@ -669,7 +675,7 @@ ALTER ACCOUNT UNSET AI_SETTINGS;
 SHOW PARAMETERS LIKE 'AI_SETTINGS' IN ACCOUNT;""", language="sql")
 
         if not _gr_on:
-            st.info("Also ensure cross-region inference is enabled: `ALTER ACCOUNT SET CORTEX_ENABLED_CROSS_REGION = 'ANY';`")
+            st.info("Also ensure cross-region inference is enabled: `ALTER ACCOUNT SET CORTEX_ENABLED_CROSS_REGION = 'ANY_REGION';`")
 
     st.divider()
 
@@ -745,7 +751,7 @@ SHOW PARAMETERS LIKE 'AI_SETTINGS' IN ACCOUNT;""", language="sql")
             chips = []
 
             cr = params.get("CORTEX_ENABLED_CROSS_REGION","")
-            if cr in ("ANY_REGION","AWS_US","AWS_EU","AWS_APJ","AZURE_US","AZURE_EU"):
+            if cr and str(cr).upper() != "DISABLED":
                 chips.append(_chip(f"Cross-region: {cr}", "ok"))
             else:
                 chips.append(_chip(f"Cross-region: {cr or 'DISABLED'}", "err"))
@@ -1024,8 +1030,10 @@ SHOW PARAMETERS LIKE 'AI_SETTINGS' IN ACCOUNT;""", language="sql")
                   help="Mean time from prompt submission to model response, in seconds.")
         k4.metric("Success Rate",   f"{kpi['success_rate']:.2f}%",
                   help="Percentage of spans that completed with STATUS = SUCCESS.")
-        st.caption("⚠️ Prompts and users here come from **CC_PROMPT_EVENTS** (observability), not billing. "
-                   "For billing-based totals and credits, see **Usage Trends** or **Cost Attribution**.")
+        st.caption("⚠️ Prompts, users and any credit figures here come from **CC_PROMPT_EVENTS**, built from "
+                   "`SNOWFLAKE.LOCAL.AI_OBSERVABILITY_EVENTS`. Snowflake delivers trace data on a **best-effort** "
+                   "basis, so credits shown here are **estimates**. The ACCOUNT_USAGE usage-history views are the "
+                   "authoritative source for billed credits — see **Usage Trends** or **Cost Attribution**.")
 
         st.divider()
 

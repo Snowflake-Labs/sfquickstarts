@@ -338,7 +338,6 @@ Request queues for admin approval with message: "Only 12 credits available acros
 
         if st.button("Apply Alert Schedule", key="btn_alert_schedule",
                      help="Runs ALTER ALERT SET SCHEDULE / SUSPEND for both alerts."):
-            from config import fq_table
             _fq = fq_table(session, "CC_APP_CONFIG")
             _db_schema = ".".join(_fq.split(".")[:2])
             _errors = []

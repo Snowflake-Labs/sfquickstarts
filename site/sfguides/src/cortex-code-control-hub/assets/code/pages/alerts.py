@@ -16,6 +16,7 @@ from config import (
     TABLE_ALERT_HISTORY,
     SP_CHECK_ALERTS,
     escape_sql_literal,
+    sanitize_identifier,
     fq_table,
     fq_sp,
     get_current_user,
@@ -89,7 +90,13 @@ def _load_alert_history(_session, days: int):
 def render(session):
     st.header("Alerts",
               help="Configure alert rules, manage notification settings, and view alert history.")
-    st.caption("Batch alerts check every 5 minutes. Real-time alerts fire within 1 minute of a high-severity prompt insight.")
+    st.caption(
+        "Alerts fire after **SP_CC_CLASSIFY_PROMPTS** scans recent prompts and writes violations to CC_PROMPT_VIOLATIONS. "
+        "Alert latency = observability lag (~2–5 min) + classify task interval (default: nightly at 2am UTC). "
+        "**Note:** This is NOT real-time detection. To reduce latency, change the classify task schedule "
+        "to run more frequently (e.g. every 30 min) via Setup → Settings → Alert Schedule, "
+        "or run `ALTER TASK CC_CLASSIFY_PROMPTS_TASK SET SCHEDULE = 'USING CRON */30 * * * * UTC'`."
+    )
 
     tab_rules, tab_history, tab_config, tab_health = st.tabs([
         "Alert Rules", "Alert History", "Notification Config", "Alert Health"
@@ -280,8 +287,8 @@ def render(session):
                 # Also try to update ALLOWED_RECIPIENTS on the integration
                 if email_val.strip():
                     recipients = [e.strip() for e in email_val.strip().split(",") if e.strip()]
-                    allowed_list = ", ".join(f"'{r}'" for r in recipients)
-                    integration_name = notif_val.strip() or "CC_EMAIL_INTEGRATION"
+                    allowed_list = ", ".join(f"'{escape_sql_literal(r)}'" for r in recipients)
+                    integration_name = sanitize_identifier(notif_val.strip() or "CC_EMAIL_INTEGRATION")
                     try:
                         session.sql(f"""
                             ALTER NOTIFICATION INTEGRATION {integration_name}
@@ -303,10 +310,11 @@ def render(session):
 
         if test_notif:
             recipients_to_test = email_val.strip() or current_email
-            integration_to_test = notif_val.strip() or current_notif or "CC_EMAIL_INTEGRATION"
+            integration_to_test = sanitize_identifier(notif_val.strip() or current_notif or "CC_EMAIL_INTEGRATION")
             if not recipients_to_test:
                 st.warning("Enter a recipient email address first.")
             else:
+                safe_recipients = escape_sql_literal(recipients_to_test)
                 with st.spinner(f"Sending test email to {recipients_to_test}…"):
                     try:
                         html_body = (
@@ -346,7 +354,7 @@ def render(session):
                         session.sql(f"""
                             CALL SYSTEM$SEND_EMAIL(
                                 '{integration_to_test}',
-                                '{recipients_to_test}',
+                                '{safe_recipients}',
                                 'CoCo Hub — Test Email',
                                 '{html_sql}',
                                 'text/html'
@@ -359,7 +367,7 @@ def render(session):
                         if "ALLOWED_RECIPIENTS" in err or "not authorized" in err.lower():
                             st.markdown("**The integration's `ALLOWED_RECIPIENTS` may not include your address. Run as ACCOUNTADMIN:**")
                             recipients = [r.strip() for r in recipients_to_test.split(",") if r.strip()]
-                            allowed_list = ", ".join(f"'{r}'" for r in recipients)
+                            allowed_list = ", ".join(f"'{escape_sql_literal(r)}'" for r in recipients)
                             st.code(
                                 f"ALTER NOTIFICATION INTEGRATION {integration_to_test}\n"
                                 f"SET ALLOWED_RECIPIENTS = ({allowed_list});",

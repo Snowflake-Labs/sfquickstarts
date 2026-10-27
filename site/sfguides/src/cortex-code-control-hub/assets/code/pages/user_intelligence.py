@@ -222,7 +222,7 @@ def _load_prompt_search(_session, username: str, days: int, keyword: str):
               AND EVENT_DATE >= DATEADD('day', -{days}, CURRENT_DATE())
               AND (PROMPT ILIKE '%{safe_k}%' OR RESPONSE ILIKE '%{safe_k}%')
             ORDER BY EVENT_TS DESC
-            LIMIT 100
+            LIMIT 2000
         """).to_pandas()
         if not df.empty:
             df.columns = [c.upper() for c in df.columns]

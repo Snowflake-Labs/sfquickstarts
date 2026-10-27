@@ -1,4 +1,4 @@
-# CoCo Control Hub — Project Context (v3.1)
+# CoCo Control Hub — Project Context (v3.3)
 
 ## What This Is
 A **Streamlit-in-Snowflake (SiS)** admin dashboard for governing Snowflake Cortex Code usage
@@ -38,7 +38,7 @@ how much it costs, whether usage is compliant with responsible AI policies, and 
 | `policy_rules.py` | Responsible AI | Admin |
 | `alerts.py` | Responsible AI | Admin |
 | `model_intelligence.py` | Intelligence | Admin |
-| `user_quotas.py` | Access & Limits | Admin (Preview) |
+| `user_quotas.py` | Access & Limits | Admin |
 
 ## Snowflake Objects
 **Tables:** CC_CREDIT_CONFIG, CC_AUDIT_LOG, CC_USAGE_DAILY_SUMMARY, CC_USAGE_HOURLY_SUMMARY,
@@ -51,13 +51,24 @@ CC_NATIVE_QUOTAS
 SP_CC_UNSET_USER_CREDIT_LIMIT, SP_CC_GRANT_CORTEX_ACCESS, SP_CC_REVOKE_CORTEX_ACCESS,
 SP_CC_REBALANCE_CREDITS, SP_CC_BULK_GRANT_ACCESS, SP_CC_BULK_SET_COHORT_LIMITS,
 SP_CC_COMPUTE_REBALANCE, SP_CC_REFRESH_USAGE_SUMMARIES, SP_CC_DAILY_RESET_LIMITS,
-SP_CC_RESOLVE_USER_COHORTS, SP_CC_ENFORCE_MODEL_ACCESS
+SP_CC_RESOLVE_USER_COHORTS, SP_CC_ENFORCE_MODEL_ACCESS, SP_CC_REVOKE_MODEL_ACCESS,
+SP_CC_EXPIRE_TEMPORARY_CREDITS, SP_CC_LIST_USERS, SP_CC_GET_USER_PARAM, SP_CC_MANAGE_ROLE_GRANT
+
+**Ownership:** the credit-limit SPs (SET/UNSET credit limit, REBALANCE_CREDITS, BULK_SET_COHORT_LIMITS,
+COMPUTE_REBALANCE, DAILY_RESET_LIMITS, EXPIRE_TEMPORARY_CREDITS) must stay owned by ACCOUNTADMIN —
+Snowflake only allows an ACCOUNTADMIN-owned owner's-rights SP to set CORTEX_CODE_* limit parameters.
+Run Setup Phases A and C with the app owned by ACCOUNTADMIN. Setup grants USAGE on every SP to
+CC_APP_ROLE and CC_SP_OWNER_ROLE (tasks and alerts run as CC_SP_OWNER_ROLE).
 
 **Phase C SPs (analytics, owner-rights):** SP_CC_CLASSIFY_PROMPTS, SP_CC_CHECK_ALERTS,
 SP_CC_EVALUATE_RESPONSES, SP_CC_REFRESH_BUDGET_USAGE, SP_CC_MANAGE_QUOTA
 
 **Tasks:** CC_REFRESH_USAGE_SUMMARIES (30 min), CC_DAILY_RESET_LIMITS (midnight UTC),
-CC_CLASSIFY_PROMPTS_TASK (2am UTC), CC_ALERT_CHECK (1hr), CC_REALTIME_VIOLATION_ALERT (1hr)
+CC_EXPIRE_TEMPORARY_CREDITS (hourly), CC_CLASSIFY_PROMPTS_TASK (2am UTC),
+CC_REFRESH_BUDGET_USAGE (2am UTC, starts suspended)
+**Alerts:** CC_ALERT_CHECK (1hr), CC_REALTIME_VIOLATION_ALERT (1hr) — both start suspended
+
+**CC_CREDIT_CONFIG temporary-limit columns:** IS_TEMPORARY, EXPIRES_AT, PREV_CLI/SNOWSIGHT/DESKTOP_DAILY_LIMIT, MEMBERS_JSON
 
 **Roles:** CC_SP_OWNER_ROLE, CC_APP_ROLE, CC_ADMIN_ROLE, CC_USER_ROLE
 
@@ -77,9 +88,12 @@ CC_CLASSIFY_PROMPTS_TASK (2am UTC), CC_ALERT_CHECK (1hr), CC_REALTIME_VIOLATION_
 - `SESSION_ID` in CC_PROMPT_EVENTS = real terminal session ID from `CodingAgentRun.session_id`
   (falls back to trace_id for non-interactive requests)
 - Cost Attribution per-request joins billing on `Agent` span `request_id` (not Step-0)
-- Native per-user quotas use `SNOWFLAKE.CORE.QUOTA` objects (Preview feature)
+- Native per-user quotas use `SNOWFLAKE.CORE.QUOTA` objects (generally available)
+- Model access is model RBAC only (`SNOWFLAKE."CORTEX-MODEL-ROLE-*"`); `CORTEX_MODELS_ALLOWLIST` is retired by BCR-2378
+- Cortex Code access: CORTEX_USER or CORTEX_AGENT_USER; COPILOT_USER is transitional (BCR-2445)
 
 ## Deployment
 Update `snowflake.yml` (database/schema/warehouse) and `config.yaml` (admin roles),
-then run `snow streamlit deploy --replace`. Use Setup page for all object creation.
+then run `snow streamlit deploy --replace`. Use Setup page for all object creation
+(Phases A and C with the app owned by ACCOUNTADMIN).
 See DEPLOYMENT_GUIDE.md for full instructions.

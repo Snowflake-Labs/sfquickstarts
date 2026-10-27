@@ -20,6 +20,7 @@ from config import (
     SURFACES,
     TABLE_CREDIT_CONFIG,
     TABLE_CREDIT_REQUESTS,
+    TABLE_MODEL_CONFIG,
     TABLE_MODEL_ROLE_MAPPING,
     escape_sql_literal,
     fq_table,
@@ -349,9 +350,10 @@ def _render_admin_section(session):
                              help="Approves and applies the change."):
                     if is_model_request:
                         _approve_model_request(session, req_id, requester, surface)
-                    else:
-                        _approve_credit_request(session, row)
-                    st.rerun()
+                        st.rerun()
+                    elif _approve_credit_request(session, row):
+                        st.rerun()
+                    # On failure stay on the page so the error remains visible
             with col_r:
                 if st.button("Reject", key=f"reject_{req_id}",
                              help="Denies the request."):
@@ -386,10 +388,18 @@ def _approve_credit_request(session, row):
                      details={"request_id": int(req_id), "surface": surface, "amount": amount, "note": "already_unlimited"},
                      old_value="-1", new_value="-1")
         st.success(f"✓ Approved (user already unlimited)")
-        return
+        return True
     current = float(val) if val else 0
     new_limit = current + amount
-    call_sp(session, SP_SET_USER_CREDIT_LIMIT, requester, surface, str(int(new_limit)))
+    ok, sp_msg = call_sp(session, SP_SET_USER_CREDIT_LIMIT, requester, surface, str(int(new_limit)))
+    if not ok:
+        # Limit was not changed: keep the request PENDING so it can be retried
+        log_activity(session, "APPROVE_REQUEST", target_user=requester,
+                     details={"request_id": int(req_id), "surface": surface, "amount": amount,
+                              "error": sp_msg[:500]},
+                     old_value=str(current), new_value=str(current), status="FAILED")
+        st.error(f"✗ Could not raise {requester}'s {surface} limit — request left PENDING. {sp_msg}")
+        return False
 
     tbl = fq_table(session, TABLE_CREDIT_REQUESTS)
     safe_admin = escape_sql_literal(admin)
@@ -406,6 +416,7 @@ def _approve_credit_request(session, row):
                  details={"request_id": int(req_id), "surface": surface, "amount": amount},
                  old_value=str(current), new_value=str(new_limit))
     st.success(f"✓ Approved +{amount} for {requester}")
+    return True
 
 
 def _approve_model_request(session, req_id, requester, surface):
@@ -430,7 +441,7 @@ def _approve_model_request(session, req_id, requester, surface):
         tbl_mc  = fq_table(session, TABLE_MODEL_CONFIG)
         safe_mn = escape_sql_literal(model_name)
         rows = session.sql(f"""
-            SELECT TIER FROM {tbl_mc}
+            SELECT CATEGORY FROM {tbl_mc}
             WHERE UPPER(MODEL_NAME) = UPPER('{safe_mn}') LIMIT 1
         """).collect()
         if rows:

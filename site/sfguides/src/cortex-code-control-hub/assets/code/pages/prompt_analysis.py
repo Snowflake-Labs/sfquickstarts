@@ -151,7 +151,7 @@ def _load_user_violations(_session, username: str, days: int):
             WHERE USER_NAME = '{safe}'
               AND VIOLATION_DATE >= DATEADD('day', -{days}, CURRENT_DATE())
             ORDER BY DETECTED_AT DESC
-            LIMIT 100
+            LIMIT 1000
         """).to_pandas()
         if not df.empty:
             df.columns = [c.upper() for c in df.columns]
@@ -191,12 +191,12 @@ def render(session):
 
     # ── Lookback ──────────────────────────────────────────────────────────────
     if "pa_days" not in st.session_state:
-        st.session_state["pa_days"] = 7
+        st.session_state["pa_days"] = 30
 
     col_d, col_nav = st.columns([1, 5])
     with col_d:
-        days = st.selectbox("Lookback", [7, 14, 30],
-                            index=[7,14,30].index(st.session_state["pa_days"]),
+        days = st.selectbox("Lookback", [7, 14, 30, 90],
+                            index=[7,14,30,90].index(st.session_state["pa_days"]),
                             key="pa_days_sel", label_visibility="collapsed",
                             help="Days of history to analyse. Reads from pre-computed CC_PROMPT_ANALYSIS_DAILY — instant at any scale.")
         if days != st.session_state["pa_days"]:
@@ -383,7 +383,7 @@ def render(session):
 
         feed_key = f"pa_feed_{active_days}"
         if feed_key not in st.session_state:
-            st.caption(f"Up to 500 most recent insights in the last {active_days} days.")
+            st.caption(f"Up to 5,000 most recent insights in the last {active_days} days.")
             col_f, col_risk, col_match, col_ct, _ = st.columns([1, 1, 1, 1, 1])
             with col_f:
                 filter_rule = st.selectbox("Filter by rule", ["All"] + (
@@ -403,7 +403,7 @@ def render(session):
                                          key="pa_feed_ct",
                                          help="PROMPT = insight from user message. RESPONSE = insight from AI response.")
             if st.button("Load Insights", key="btn_load_feed", type="primary",
-                         help="Queries CC_PROMPT_VIOLATIONS with current filters. Results capped at 500 rows."):
+                         help="Queries CC_PROMPT_VIOLATIONS with current filters. Results capped at 5,000 rows."):
                 tv   = fq_table(session, TABLE_PROMPT_VIOLATIONS)
                 where = f"VIOLATION_DATE >= DATEADD('day', -{active_days}, CURRENT_DATE())"
                 if filter_rule != "All":
@@ -422,7 +422,7 @@ def render(session):
                                    COALESCE(CONTENT_TYPE,'PROMPT') AS CONTENT_TYPE,
                                    PROMPT_PREVIEW, DETECTED_AT
                             FROM {tv} WHERE {where}
-                            ORDER BY DETECTED_AT DESC LIMIT 500
+                            ORDER BY DETECTED_AT DESC LIMIT 5000
                         """).to_pandas()
                         fdf.columns = [c.upper() for c in fdf.columns]
                         st.session_state[feed_key] = fdf
