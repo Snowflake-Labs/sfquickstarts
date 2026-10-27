@@ -216,10 +216,10 @@ def stage(changes: dict[str, Any], repo: str, head_sha: str) -> list[dict[str, s
 
 
 def stage_journeys(changes: dict[str, Any], repo: str, head_sha: str) -> None:
-    """Parse, prepare and collect every touched journey topic.
+    """Build the preview payload for each changed journey topic.
 
-    Journey topics are always English, and their payloads are named after the topic
-    folder, which is the name the deploy side looks them up by.
+    The deploy job looks for aem_payload_<topic folder>.json and, for now, stages
+    journey topics in English only, so the payload is named and built to match.
     """
     for guide in changes.get("journey_guides", []):
         if not isinstance(guide, dict):

@@ -25,10 +25,11 @@ Rename = tuple[str, str]
 
 
 def _folder(path: str) -> tuple[str, str] | None:
-    """Return the folder a path publishes under, and the path within that folder.
+    """Return the folder whose name is the page URL, and the file's path inside it.
 
-    Journey topics publish flat under the topic folder's name, so a topic is keyed
-    by that name alone: renaming the journey folder above it changes no URL.
+    For journeys that is the topic folder: journeys/waf/reliability/x.md publishes
+    at guides/reliability, so the topic is keyed as "reliability" and renaming
+    journeys/waf/ does not count as a rename.
     """
     if path.startswith(QUICKSTART_PREFIX):
         folder = folder_of(path)
