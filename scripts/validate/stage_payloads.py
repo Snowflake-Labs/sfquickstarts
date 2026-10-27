@@ -56,12 +56,16 @@ def load_changes() -> dict[str, Any]:
 
 
 def markdown_for(name: str) -> Path | None:
-    """Return the guide's markdown file on disk.
+    """Return the quickstart's markdown file on disk.
 
     Any folder holding more than one root markdown file fails a blocking check, so
     by the time this runs the choice is unambiguous.
     """
-    folder = CONTENT_DIR / QUICKSTART_PREFIX / name
+    return markdown_in(CONTENT_DIR / QUICKSTART_PREFIX / name, name)
+
+
+def markdown_in(folder: Path, name: str) -> Path | None:
+    """Return the markdown named after the folder, else the first one in it."""
     if not folder.is_dir():
         return None
     preferred = folder / f"{name}.md"
@@ -104,10 +108,18 @@ def _run(command: list[str], description: str) -> bool:
     return True
 
 
-def parse_guide(name: str, md_path: Path, repo: str, head_sha: str) -> Path | None:
-    """Turn one guide's markdown into the JSON the deploy job uploads."""
+def parse_guide(
+    name: str, md_path: Path, repo: str, head_sha: str, source_path: str
+) -> Path | None:
+    """Turn one guide's markdown into the JSON the deploy job uploads.
+
+    parse_markdown.py points images at {base}/{folder}/assets/, so the base is the
+    guide folder's parent at the head commit and the folder name is passed as the
+    quickstart name. `name` only names the output file.
+    """
     parsed = Path(f"parsed_content_{name}.json")
-    base_image_url = f"https://raw.githubusercontent.com/{repo}/{head_sha}/site/sfguides/src"
+    parent_dir, folder = source_path.rsplit("/", 1)
+    base_image_url = f"https://raw.githubusercontent.com/{repo}/{head_sha}/{parent_dir}"
     ok = _run(
         [
             sys.executable,
@@ -116,7 +128,7 @@ def parse_guide(name: str, md_path: Path, repo: str, head_sha: str) -> Path | No
             "--commit-sha",
             head_sha,
             "--quickstart-name",
-            name,
+            folder,
             "--base-image-url",
             base_image_url,
             "--output-json",
@@ -146,9 +158,9 @@ def prepare_payload(name: str, parsed: Path, lang: str, head_sha: str) -> None:
     )
 
 
-def collect_images(name: str) -> int:
-    """Copy a guide's images into the artifact."""
-    assets = CONTENT_DIR / QUICKSTART_PREFIX / name / "assets"
+def collect_images(name: str, source_path: str) -> int:
+    """Copy a guide's downloaded images into the artifact under `name`."""
+    assets = CONTENT_DIR / source_path / "assets"
     if not assets.is_dir():
         return 0
 
@@ -195,11 +207,40 @@ def stage(changes: dict[str, Any], repo: str, head_sha: str) -> list[dict[str, s
             continue
 
         print(f"Parsing {name} ({md_path}, language {lang})")
-        parsed = parse_guide(name, md_path, repo, head_sha)
+        source_path = f"{QUICKSTART_PREFIX}{name}"
+        parsed = parse_guide(name, md_path, repo, head_sha, source_path)
         if parsed is not None:
             prepare_payload(name, parsed, lang, head_sha)
-        print(f"  collected {collect_images(name)} image(s)")
+        print(f"  collected {collect_images(name, source_path)} image(s)")
     return staged
+
+
+def stage_journeys(changes: dict[str, Any], repo: str, head_sha: str) -> None:
+    """Parse, prepare and collect every touched journey guide.
+
+    Journey guides are always English, and their payloads are named after the guide
+    folder, which is the name the deploy side looks them up by.
+    """
+    for guide in changes.get("journey_guides", []):
+        if not isinstance(guide, dict):
+            continue
+        try:
+            name = validate.guide_name(guide.get("name"))
+            source_path = validate.repo_path(guide.get("source_path"))
+        except validate.ValidationError as exc:
+            _warn(f"skipping journey guide: {exc}")
+            continue
+
+        md_path = markdown_in(CONTENT_DIR / source_path, name)
+        if md_path is None:
+            _warn(f"no markdown downloaded for journey guide {source_path}")
+            continue
+
+        print(f"Parsing journey guide {name} ({md_path})")
+        parsed = parse_guide(name, md_path, repo, head_sha, source_path)
+        if parsed is not None:
+            prepare_payload(name, parsed, validate.DEFAULT_LANGUAGE, head_sha)
+        print(f"  collected {collect_images(name, source_path)} image(s)")
 
 
 def record(staged: list[dict[str, str]]) -> None:
@@ -226,6 +267,7 @@ def main() -> int:
     head_sha = validate.sha40(os.environ.get("PR_HEAD_SHA"))
 
     staged = stage(changes, repo, head_sha)
+    stage_journeys(changes, repo, head_sha)
     collect_sidebars(changes)
     record(staged)
     return 0

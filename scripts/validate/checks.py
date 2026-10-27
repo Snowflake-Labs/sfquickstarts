@@ -229,9 +229,15 @@ def _id_errors(guide_id: str | None, prefixed: str) -> list[str]:
 
 
 def check_frontmatter(content: Content) -> dict[str, Any] | None:
-    """Fail when a guide's frontmatter id disagrees with its filename or folder."""
+    """Fail when a quickstart's frontmatter id disagrees with its filename or folder.
+
+    Journey guides are exempt: their folder names are short sidebar slugs and their
+    ids are not, by design (e.g. cost-optimization/well-architected-framework-...).
+    """
     issues = []
     for prefixed in content.changed_markdown:
+        if not display(prefixed).startswith(QUICKSTART_PREFIX):
+            continue
         text = content.text(prefixed)
         if text is None:
             continue
