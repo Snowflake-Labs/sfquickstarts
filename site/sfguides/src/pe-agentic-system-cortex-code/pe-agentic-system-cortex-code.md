@@ -60,6 +60,8 @@ contains the notebooks, SQL, Python, Rust, tests, and project-local Cortex Code
 skills under this guide's `assets/pe-agentic-system/` directory. Non-image assets
 are available from the Git repository, not from the published guide website.
 
+![Project-local Cortex Code skills](assets/finview-skills.png)
+
 ## Step 1: Get the Code
 
 Clone the Quickstarts repository and enter the companion project directory:
@@ -173,6 +175,11 @@ privileges and Cortex model access if you will use the optional evaluation.
 
 ![Preflight checks](assets/finview-preflight.png)
 
+The approval flags start as `False`. The first screenshot shows the gates before approval, the second after you set them in a separate cell:
+
+![Approval gates before setup](assets/finview-synthetic-gates.png)
+![Approval gates after approval](assets/finview-gates-run.png)
+
 After reviewing the exact statements, set `APPROVE_SETUP = True` in a separate
 cell and run the setup cell beginning with `if not APPROVE_SETUP:` once. The gate
 resets to `False` before execution. Do not rerun the configuration cell to approve
@@ -200,6 +207,11 @@ synthetic $63 million discrepancy, not a rerun of a production financial algorit
 ![Data Metric Function results](assets/finview-DMF.png)
 ![Reconciliation results](assets/finview-waterfall-run.png)
 
+The notebook also runs input checks on valuation assumptions and a Monte Carlo sensitivity on WACC. Both use synthetic inputs:
+
+![Valuation input checks](assets/finview-valuation-checks.png)
+![Monte Carlo WACC sensitivity](assets/finview-mc-wacc.png)
+
 The following plotting cell is optional. Stop before agent creation if the fixture
 status or DMF assertions fail. These direct queries do not establish that an agent
 or skill executed.
@@ -219,6 +231,11 @@ and executes the agent-creation SQL. This creates configuration; it does not pro
 that the agent invoked a skill.
 
 ![Waterfall review agent](assets/finview-waterfall-review-agent.png)
+![Created agents](assets/finview-agents.png)
+
+An example answer, in which the agent blocks the shortfall case and cites the reconciliation evidence:
+
+![Review agent reconciliation output](assets/finview-review-agent-reconciliation.png)
 
 If runtime skills or the definition are unsupported, stop rather than silently
 omitting the skill. Hash-addressed stage paths aid reproducibility but do not
@@ -243,6 +260,7 @@ evaluation solely to obtain a favorable screenshot.
 
 ![Evaluation dashboard example](assets/finview-agent-eval-dashboard.png)
 ![Ground truth comparison example](assets/finview-groundtruth.png)
+![Agents invoked during evaluation](assets/finview-agents-invoked.png)
 
 Screenshots illustrate prior runs; your account, model availability, and outputs
 may differ. A small synthetic evaluation is a smoke test, not evidence of
@@ -270,8 +288,48 @@ object cleanup; do not run the notebook's unrelated deletion cells.
 
 The repository also includes exploratory MCP, retrieval/judge, financial modeling,
 and Rust examples. They are not required for this tutorial and are not covered by
-the reconciliation block's approvals or validation. Review their requirements,
-feature availability, and side effects independently:
+the reconciliation block's approvals or validation. Each track has its own
+`APPROVE_*` flags. Review their requirements, feature availability, and side
+effects independently. The screenshots below come from earlier runs.
+
+### Managed MCP Tool
+
+The notebook can expose the reconciliation as a managed MCP tool, call it for each
+synthetic case, and export every request and response as evidence. A TruLens run
+then scores those calls with a Cortex judge model.
+
+![Six instrumented MCP calls](assets/finview-mcp-six-instrument-calls.png)
+![Tool call results](assets/finview-tool-call-results.png)
+![MCP evidence export](assets/finview-mcp-evidence.png)
+![MCP evaluation run](assets/finview-mcp-eval.png)
+![MCP judge metrics](assets/finview-mcp-judgemetrics.png)
+
+### SEC Filing Agents
+
+A separate track builds semantic views over SEC filing data and two analyst agents
+for diligence and capital-markets disclosure. Run its preflight cell before
+creating anything.
+
+![SEC agent preflight](assets/finview-preflight-secagent.png)
+![Semantic view](assets/finview-sv.png)
+![Issuer filings semantic view](assets/finview-mvp-issuer-filingssv.png)
+![Issuer filings custom instructions](assets/finview-issuer-filings-custom-instructions.png)
+![All agents in the schema](assets/finview-all-agents.png)
+![PE diligence agent output](assets/finview-pe-dilligence-agent-plot.png)
+
+### Retrieval And Judge
+
+A standalone synthetic track reranks passages with ColBERT MaxSim, fuses rankings
+with reciprocal rank fusion, and judges answers with `AI_COMPLETE` and the
+`snowflake-decision` model. The model is in public preview. The judge scores two
+synthetic cases with a Brier score. Treat it as a smoke test, not a calibration
+result.
+
+![ColBERT reranking](assets/finview-colbert.png)
+![Reciprocal rank fusion](assets/finview-rrf.png)
+![Judge results with Brier score](assets/finview-briersum.png)
+
+### More Companion Files
 
 - [Managed MCP notes](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/pe-agentic-system-cortex-code/assets/pe-agentic-system/generated/managed_mcp_readme.md)
 - [Project-local Cortex Code skills](https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/pe-agentic-system-cortex-code/assets/pe-agentic-system/.cortex/skills)
