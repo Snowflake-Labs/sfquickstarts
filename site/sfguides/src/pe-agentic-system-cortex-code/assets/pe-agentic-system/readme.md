@@ -12,8 +12,9 @@ Non-image files must be obtained from Git, not the published guide website.
 - `.cortex/skills/`: project-local Cortex Code skills.
 - `assurance/`, `tests/`, `examples/`, and `integrations/`: supporting reference code.
 
-**Do not Run All.** The original notebook includes multiple independent tracks,
-pre-enabled approval cells, and an ungated object-deletion cell. The Quickstart
+**Do not Run All.** The notebook includes multiple independent tracks. Every
+approval flag starts as `False`. Any cell that creates, replaces, deletes, or bills
+raises an error until you set its `APPROVE_*` flag to `True`. The Quickstart
 uses only the reconciliation block (zero-based cells 28-38 in this version).
 Review every cell before execution; set the bundle path to `Path('generated')`
 and configure an approved account, role, warehouse, and STANDARD database.

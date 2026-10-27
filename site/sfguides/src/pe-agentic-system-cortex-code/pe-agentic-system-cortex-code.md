@@ -6,7 +6,7 @@ categories: snowflake-site:taxonomy/solution-center/certification/quickstart, sn
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfquickstarts/issues
-fork repo link: https://github.com/ayirpown/sfquickstarts
+fork repo link: https://github.com/Snowflake-Labs/sfquickstarts
 
 # PE Agentic System with Cortex Code
 
@@ -55,17 +55,17 @@ are synthetic. Balanced totals do not establish recipient entitlements.
 - Approval for warehouse, agent, judge, and storage charges before the optional
   evaluation. Time/token budgets are not hard credit caps.
 
-The [companion project](https://github.com/ayirpown/sfquickstarts/tree/pe-agentic-system-cortex-code/site/sfguides/src/pe-agentic-system-cortex-code/assets/pe-agentic-system)
+The [companion project](https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/pe-agentic-system-cortex-code/assets/pe-agentic-system)
 contains the notebooks, SQL, Python, Rust, tests, and project-local Cortex Code
 skills under this guide's `assets/pe-agentic-system/` directory. Non-image assets
 are available from the Git repository, not from the published guide website.
 
 ## Step 1: Get the Code
 
-Clone the guide branch and enter the companion project directory:
+Clone the Quickstarts repository and enter the companion project directory:
 
 ```bash
-git clone --single-branch --branch pe-agentic-system-cortex-code https://github.com/ayirpown/sfquickstarts.git
+git clone https://github.com/Snowflake-Labs/sfquickstarts.git
 cd sfquickstarts/site/sfguides/src/pe-agentic-system-cortex-code/assets/pe-agentic-system
 python3 tools/verify_bundle.py
 ```
@@ -76,14 +76,15 @@ authorization to execute the file.
 
 Review these files before continuing:
 
-- [Notebook](https://github.com/ayirpown/sfquickstarts/blob/pe-agentic-system-cortex-code/site/sfguides/src/pe-agentic-system-cortex-code/assets/pe-agentic-system/finview_verification_demo.ipynb)
-- [Execution bundle](https://github.com/ayirpown/sfquickstarts/tree/pe-agentic-system-cortex-code/site/sfguides/src/pe-agentic-system-cortex-code/assets/pe-agentic-system/generated)
-- [Setup SQL](https://github.com/ayirpown/sfquickstarts/blob/pe-agentic-system-cortex-code/site/sfguides/src/pe-agentic-system-cortex-code/assets/pe-agentic-system/generated/01_setup.sql)
-- [Manifest](https://github.com/ayirpown/sfquickstarts/blob/pe-agentic-system-cortex-code/site/sfguides/src/pe-agentic-system-cortex-code/assets/pe-agentic-system/generated/manifest.json)
+- [Notebook](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/pe-agentic-system-cortex-code/assets/pe-agentic-system/finview_verification_demo.ipynb)
+- [Execution bundle](https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/pe-agentic-system-cortex-code/assets/pe-agentic-system/generated)
+- [Setup SQL](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/pe-agentic-system-cortex-code/assets/pe-agentic-system/generated/01_setup.sql)
+- [Manifest](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/pe-agentic-system-cortex-code/assets/pe-agentic-system/generated/manifest.json)
 
-**Do not use Run All.** The original notebook contains multiple exploratory
-tracks, pre-enabled approval cells, and an ungated object-deletion cell outside
-the tutorial path. Use only the reconciliation block identified below, in a fresh
+**Do not use Run All.** The notebook contains multiple exploratory tracks outside
+the tutorial path. Every approval flag starts as `False`. Any cell that creates,
+replaces, deletes, or bills raises an error until you set its `APPROVE_*` flag to
+`True` in a separate cell. Use only the reconciliation block identified below, in a fresh
 kernel. Review each cell before executing it. Other cells are not prerequisites.
 
 ## Step 2: Configure the Bundle
@@ -206,9 +207,9 @@ or skill executed.
 ## Step 6: Create the Agent
 
 Review the
-[agent definition](https://github.com/ayirpown/sfquickstarts/blob/pe-agentic-system-cortex-code/site/sfguides/src/pe-agentic-system-cortex-code/assets/pe-agentic-system/generated/agent.yaml)
+[agent definition](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/pe-agentic-system-cortex-code/assets/pe-agentic-system/generated/agent.yaml)
 and
-[runtime skill](https://github.com/ayirpown/sfquickstarts/blob/pe-agentic-system-cortex-code/site/sfguides/src/pe-agentic-system-cortex-code/assets/pe-agentic-system/generated/skills/waterfall-reconciliation-review/SKILL.md).
+[runtime skill](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/pe-agentic-system-cortex-code/assets/pe-agentic-system/generated/skills/waterfall-reconciliation-review/SKILL.md).
 The instruction-only reconciliation skill uses the `review_reconciliation` tool.
 
 Set `APPROVE_SKILL_UPLOAD_AND_AGENT = True` in a separate cell. Run the cell
@@ -226,7 +227,7 @@ enforce immutability.
 ## Step 7: Evaluate Optionally
 
 Skip this step if you do not have approval for billable execution. Review the
-[evaluation configuration](https://github.com/ayirpown/sfquickstarts/blob/pe-agentic-system-cortex-code/site/sfguides/src/pe-agentic-system-cortex-code/assets/pe-agentic-system/generated/evaluation.yaml)
+[evaluation configuration](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/pe-agentic-system-cortex-code/assets/pe-agentic-system/generated/evaluation.yaml)
 and confirm the created agent version, judge availability, and six-row input
 dataset. The prompts include the five cases and an override request to approve
 the known shortfall.
@@ -272,11 +273,11 @@ and Rust examples. They are not required for this tutorial and are not covered b
 the reconciliation block's approvals or validation. Review their requirements,
 feature availability, and side effects independently:
 
-- [Managed MCP notes](https://github.com/ayirpown/sfquickstarts/blob/pe-agentic-system-cortex-code/site/sfguides/src/pe-agentic-system-cortex-code/assets/pe-agentic-system/generated/managed_mcp_readme.md)
-- [Project-local Cortex Code skills](https://github.com/ayirpown/sfquickstarts/tree/pe-agentic-system-cortex-code/site/sfguides/src/pe-agentic-system-cortex-code/assets/pe-agentic-system/.cortex/skills)
-- [Reference implementation and limitations](https://github.com/ayirpown/sfquickstarts/blob/pe-agentic-system-cortex-code/site/sfguides/src/pe-agentic-system-cortex-code/assets/pe-agentic-system/readme.md)
-- [Financial and performance claims](https://github.com/ayirpown/sfquickstarts/blob/pe-agentic-system-cortex-code/site/sfguides/src/pe-agentic-system-cortex-code/assets/pe-agentic-system/claims.md)
-- [Rust implementation](https://github.com/ayirpown/sfquickstarts/tree/pe-agentic-system-cortex-code/site/sfguides/src/pe-agentic-system-cortex-code/assets/pe-agentic-system/integrations/rust)
+- [Managed MCP notes](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/pe-agentic-system-cortex-code/assets/pe-agentic-system/generated/managed_mcp_readme.md)
+- [Project-local Cortex Code skills](https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/pe-agentic-system-cortex-code/assets/pe-agentic-system/.cortex/skills)
+- [Reference implementation and limitations](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/pe-agentic-system-cortex-code/assets/pe-agentic-system/readme.md)
+- [Financial and performance claims](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/pe-agentic-system-cortex-code/assets/pe-agentic-system/claims.md)
+- [Rust implementation](https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/pe-agentic-system-cortex-code/assets/pe-agentic-system/integrations/rust)
 
 Do not automatically execute model-generated code or treat illustrative DCF/LBO
 examples as validated financial models.
@@ -310,7 +311,7 @@ investment advice.
 
 ### Related Resources
 
-- [Companion project](https://github.com/ayirpown/sfquickstarts/tree/pe-agentic-system-cortex-code/site/sfguides/src/pe-agentic-system-cortex-code/assets/pe-agentic-system)
+- [Companion project](https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/pe-agentic-system-cortex-code/assets/pe-agentic-system)
 - [Cortex Code](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code)
 - [Cortex Agent evaluations](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents-evaluations)
 - [Data quality monitoring](https://docs.snowflake.com/en/user-guide/data-quality-working)
