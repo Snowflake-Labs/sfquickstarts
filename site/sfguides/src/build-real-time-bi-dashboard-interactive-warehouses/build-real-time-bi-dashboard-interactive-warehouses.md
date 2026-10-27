@@ -49,7 +49,7 @@ You will assemble five tightly integrated Snowflake objects into a single, self-
 Fork and clone the companion repository:
 
 ```bash
-git clone https://github.com/sfc-gh-cnantasenamat/build-real-time-bi-dashboard-interactive-warehouses.git
+git clone https://github.com/Snowflake-Labs/build-real-time-bi-dashboard-interactive-warehouses.git
 cd build-real-time-bi-dashboard-interactive-warehouses
 ```
 
