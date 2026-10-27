@@ -13,7 +13,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from checks import QUICKSTART_PREFIX, folder_of
+from checks import JOURNEY_PREFIX, QUICKSTART_PREFIX, folder_of
 
 # Share of a folder's removed files that must reappear elsewhere before the pair is
 # treated as a rename rather than two unrelated edits.
@@ -22,6 +22,33 @@ MATCH_PERCENT = 50
 RENAME_MESSAGE = "Renaming guide URLs is not currently supported. Please revert the name change."
 
 Rename = tuple[str, str]
+
+
+def _folder(path: str) -> tuple[str, str] | None:
+    """Return the folder a path publishes under, and the path within that folder.
+
+    Journey topics publish flat under the topic folder's name, so a topic is keyed
+    by that name alone: renaming the journey folder above it changes no URL.
+    """
+    if path.startswith(QUICKSTART_PREFIX):
+        folder = folder_of(path)
+        return (folder, path[len(QUICKSTART_PREFIX) + len(folder) + 1 :]) if folder else None
+    if not path.startswith(JOURNEY_PREFIX) or "/_" in path or path.endswith(".json"):
+        return None
+    folder = path.split("/assets/", 1)[0] if "/assets/" in path else path.rsplit("/", 1)[0]
+    if "/" not in folder:
+        return None
+    return f"{JOURNEY_PREFIX}.../{folder.rsplit('/', 1)[1]}", path[len(folder) + 1 :]
+
+
+def _key(path: str) -> str | None:
+    located = _folder(path)
+    return located[0] if located else None
+
+
+def _example(folder: str) -> str:
+    prefix = "" if folder.startswith(JOURNEY_PREFIX) else QUICKSTART_PREFIX
+    return f"{prefix}{folder}/..."
 
 
 def _paths(entries: list[dict[str, Any]], status: str) -> list[str]:
@@ -39,10 +66,10 @@ def _grouped(paths: list[str]) -> dict[str, set[str]]:
         # Underscore folders are staging areas; the shell pass skipped them here.
         if path.startswith(f"{QUICKSTART_PREFIX}_"):
             continue
-        folder = folder_of(path)
-        if folder is None:
+        located = _folder(path)
+        if located is None:
             continue
-        relative = path[len(QUICKSTART_PREFIX) + len(folder) + 1 :]
+        folder, relative = located
         groups.setdefault(folder, set()).add(relative)
     return groups
 
@@ -56,7 +83,7 @@ def explicit(entries: list[dict[str, Any]]) -> list[Rename]:
         old, new = entry.get("previous_filename"), entry.get("filename")
         if not isinstance(old, str) or not isinstance(new, str) or old == new:
             continue
-        old_folder, new_folder = folder_of(old), folder_of(new)
+        old_folder, new_folder = _key(old), _key(new)
         if old_folder and new_folder and old_folder != new_folder:
             found.append((old_folder, new_folder))
     return found
@@ -84,7 +111,7 @@ def _active_folders(entries: list[dict[str, Any]]) -> set[str]:
     for entry in entries:
         if entry.get("status") not in ("added", "modified"):
             continue
-        folder = folder_of(entry.get("filename", ""))
+        folder = _key(entry.get("filename", ""))
         if folder:
             folders.add(folder)
     return folders
@@ -122,9 +149,7 @@ def check(entries: list[dict[str, Any]]) -> dict[str, Any] | None:
         {
             "old_folder": old_folder,
             "new_folder": new_folder,
-            "example_file": (
-                f"{QUICKSTART_PREFIX}{old_folder}/... -> {QUICKSTART_PREFIX}{new_folder}/..."
-            ),
+            "example_file": f"{_example(old_folder)} -> {_example(new_folder)}",
         }
         for old_folder, new_folder in ordered
         if not _allowed((old_folder, new_folder), all_renames, active)
