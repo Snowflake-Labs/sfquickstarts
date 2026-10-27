@@ -11,9 +11,6 @@ tags: Postgres
 # Mirror Data from Snowflake Postgres to Snowflake
 <!-- ------------------------ -->
 
->**Note:
->Postgres Mirror features are in preview and under rapid development. Some features may not be available.**<br>
-
 If you have operational data in Snowflake Postgres, you can use **Postgres Mirror** to automatically replicate tables into Snowflake for analytics. Mirror uses change data capture (CDC) under the hood to keep Snowflake tables in sync with Postgres — no ETL pipelines, no external tooling, and no manual data movement.
 
 In this quickstart, you will create an operational Postgres database with a simple IoT schema, set up Postgres Mirror to replicate those tables into Snowflake, and verify that new data flows through automatically.
