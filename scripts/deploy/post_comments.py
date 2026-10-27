@@ -178,10 +178,7 @@ def _frontmatter(report: dict[str, Any] | None) -> str | None:
     heading = "### 📄 Frontmatter Validation Failed"
     if not mdsafe.as_list(report.get("issues")):
         return f"{heading}\n\nFrontmatter id check failed."
-    blurb = (
-        "Frontmatter id must be slugified and match file and folder (journey topics: "
-        "match the file, and set `sidebar: true` and `sidebar_json`)."
-    )
+    blurb = "Frontmatter id must be slugified and match file and folder."
     return f"{heading}\n\n{blurb}\n\n{_issue_list(report, 'errors', '; ')}"
 
 
