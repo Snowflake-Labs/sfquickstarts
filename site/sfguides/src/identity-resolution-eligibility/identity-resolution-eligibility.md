@@ -1,12 +1,12 @@
-<!--
 id: identity-resolution-eligibility
+author: Cole Tindall
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/industry/public-sector, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/dynamic-tables, snowflake-site:taxonomy/snowflake-feature/cortex-analyst
 language: en
 summary: Build an identity resolution and benefits eligibility platform with Snowflake Dynamic Tables, Cortex AI, governed sharing, and a caseworker app on Snowflake App Runtime.
 environments: web
 status: Published
-feedback link: https://github.com/Snowflake-Labs/sfguides/issues
--->
+feedback link: https://github.com/Snowflake-Labs/sfquickstarts/issues
+
 # Build an Identity Resolution and Eligibility Platform for Public Sector with Cortex AI
 
 Resolve residents across disconnected program systems into one trusted
@@ -59,7 +59,7 @@ agency. All data in this tutorial is synthetic.
     before deploying).
 -   Familiarity with SQL and basic JavaScript/React.
 
-## 1. Setup and Data Foundation
+## Setup and Data Foundation
 
 Download `scripts/Lab_Script.sql` from the
 [companion GitHub repository](COMPANION_REPO_URL). Open it
@@ -108,7 +108,7 @@ Step 2.1 parses every source into the same columns (first name, last
 name, DOB, SSN, city, ZIP, income, household size) so the systems can
 be compared.
 
-## 2. Identity Resolution
+## Identity Resolution
 
 ### Deterministic Match (Step 2.2)
 
@@ -158,7 +158,7 @@ FROM KEYSTONE_DEMO.CORE.CONSTITUENT_MASTER;
 Expect about 400,000–410,000 residents, roughly half found in two or
 more systems. The data is random, so counts vary between builds.
 
-## 3. Eligibility Automation
+## Eligibility Automation
 
 ### Eligibility Rule (Step 3.1)
 
@@ -207,7 +207,7 @@ the console's Live Overview tab reads.
 SELECT * FROM KEYSTONE_DEMO.MART.V_LIVE_DASHBOARD;
 ```
 
-## 4. Governance and Secure Sharing
+## Governance and Secure Sharing
 
 ### Tag Sensitive Columns (Step 4.1)
 
@@ -237,7 +237,7 @@ program enrollment, but no SSN and no income.
 agency queries live data, and nothing is copied. To deliver it, run
 `ALTER SHARE KEYSTONE_PUBLIC_HEALTH_SHARE ADD ACCOUNTS = <org>.<account>;`.
 
-## 5. Cortex Agent
+## Cortex Agent
 
 ### Semantic View (Step 5.1)
 
@@ -283,7 +283,7 @@ In Snowsight, navigate to **AI & ML » Agents** and open
 -   "How many eligible residents are not enrolled in SNAP?"
 -   "Recap the matching evidence and SNAP eligibility for KM-000013."
 
-## 6. Caseworker Application
+## Caseworker Application
 
 The caseworker console is a Next.js app deployed on Snowflake App
 Runtime. It runs entirely in Snowflake as an `APPLICATION SERVICE`.
@@ -341,7 +341,7 @@ route calls the Cortex Agent via `DATA_AGENT_RUN`. The React UI in
 For development before deploying:
 
 ``` bash
-cd keystone-console   # the unzipped folder from the deploy step
+cd keystone-console   # the cloned folder from the deploy step
 npm install
 SNOWFLAKE_CONNECTION_NAME=keystone npm run dev
 ```
@@ -349,7 +349,7 @@ SNOWFLAKE_CONNECTION_NAME=keystone npm run dev
 Open `http://localhost:3000`. Queries authenticate through your `snow`
 CLI connection.
 
-## 7. Best Practices
+## Best Practices
 
 -   **Start with deterministic matching.** Exact keys such as SSN
     resolve most records before any fuzzy scoring.
@@ -372,6 +372,32 @@ CLI connection.
 -   **Start with a pilot.** Validate matching thresholds and the
     eligibility rule for one program before expanding.
 
+## Clean Up
+
+Remove the application service, the share, and the database. The
+warehouse is left in place.
+
+``` sql
+-- From a Snowsight worksheet:
+USE ROLE SYSADMIN;
+DROP APPLICATION SERVICE IF EXISTS KEYSTONE_DEMO.APP.KEYSTONE_CASEWORKER_CONSOLE;
+
+USE ROLE ACCOUNTADMIN;
+DROP SHARE IF EXISTS KEYSTONE_PUBLIC_HEALTH_SHARE;
+DROP DATABASE IF EXISTS KEYSTONE_DEMO;
+```
+
+Or from the CLI:
+
+``` bash
+cd keystone-console   # the cloned folder from the deploy step
+snow app teardown --force --connection keystone
+```
+
+> The Dynamic Tables refresh every 1–5 minutes and the application
+> service runs continuously; both use credits. Run the cleanup when
+> you are done.
+
 ## Conclusion And Resources
 
 This reference guide demonstrates how Snowflake can bring records from
@@ -391,30 +417,4 @@ Useful documentation:
 -   [Secure Data Sharing](https://docs.snowflake.com/en/user-guide/data-sharing-intro)
 -   [Semantic Views](https://docs.snowflake.com/en/user-guide/views-semantic/overview)
 -   [Cortex Agents](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents)
--   [Snowflake App Runtime](https://docs.snowflake.com/en/developer-guide/snowflake-apps/about)
-
-## Clean Up
-
-Remove the application service, the share, and the database. The
-warehouse is left in place.
-
-``` sql
--- From a Snowsight worksheet:
-USE ROLE SYSADMIN;
-DROP APPLICATION SERVICE IF EXISTS KEYSTONE_DEMO.APP.KEYSTONE_CASEWORKER_CONSOLE;
-
-USE ROLE ACCOUNTADMIN;
-DROP SHARE IF EXISTS KEYSTONE_PUBLIC_HEALTH_SHARE;
-DROP DATABASE IF EXISTS KEYSTONE_DEMO;
-```
-
-Or from the CLI:
-
-``` bash
-cd keystone-console   # the unzipped folder from the deploy step
-snow app teardown --force --connection keystone
-```
-
-> The Dynamic Tables refresh every 1–5 minutes and the application
-> service runs continuously; both use credits. Run the cleanup when
-> you are done.
+-   [Snowflake App Runtime](https://docs.snowflake.com/en/developer-guide/snowflake-app-runtime/about-snowflake-app-runtime)
