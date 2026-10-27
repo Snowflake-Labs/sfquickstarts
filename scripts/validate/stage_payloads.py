@@ -216,9 +216,9 @@ def stage(changes: dict[str, Any], repo: str, head_sha: str) -> list[dict[str, s
 
 
 def stage_journeys(changes: dict[str, Any], repo: str, head_sha: str) -> None:
-    """Parse, prepare and collect every touched journey guide.
+    """Parse, prepare and collect every touched journey topic.
 
-    Journey guides are always English, and their payloads are named after the guide
+    Journey topics are always English, and their payloads are named after the topic
     folder, which is the name the deploy side looks them up by.
     """
     for guide in changes.get("journey_guides", []):
@@ -228,15 +228,15 @@ def stage_journeys(changes: dict[str, Any], repo: str, head_sha: str) -> None:
             name = validate.guide_name(guide.get("name"))
             source_path = validate.repo_path(guide.get("source_path"))
         except validate.ValidationError as exc:
-            _warn(f"skipping journey guide: {exc}")
+            _warn(f"skipping journey topic: {exc}")
             continue
 
         md_path = markdown_in(CONTENT_DIR / source_path, name)
         if md_path is None:
-            _warn(f"no markdown downloaded for journey guide {source_path}")
+            _warn(f"no markdown downloaded for journey topic {source_path}")
             continue
 
-        print(f"Parsing journey guide {name} ({md_path})")
+        print(f"Parsing journey topic {name} ({md_path})")
         parsed = parse_guide(name, md_path, repo, head_sha, source_path)
         if parsed is not None:
             prepare_payload(name, parsed, validate.DEFAULT_LANGUAGE, head_sha)

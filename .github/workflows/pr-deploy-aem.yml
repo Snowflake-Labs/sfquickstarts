@@ -388,7 +388,7 @@ jobs:
           GUIDE_NAME: ${{ matrix.guide.name }}
           SOURCE_PATH: ${{ matrix.guide.source_path }}
           HEAD_SHA: ${{ needs.resolve_context.outputs.head_sha }}
-          # The template production publishes journey guides from, so the preview
+          # The template production publishes journey topics from, so the preview
           # carries the sidebar rather than rendering as a plain quickstart.
           PAGE_BASE_PATH: /content/snowflake-site/global/en/developers/guides/journey-sidebar-base
           ARTIFACT_DIR: artifact
