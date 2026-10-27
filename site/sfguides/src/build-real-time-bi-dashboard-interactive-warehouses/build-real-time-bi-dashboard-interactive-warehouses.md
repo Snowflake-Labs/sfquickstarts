@@ -173,7 +173,9 @@ USE WAREHOUSE INTERACTIVE_ANALYTICS_WH;
 
 Creating a warehouse makes it the current warehouse for your session. The final `USE WAREHOUSE` switches back to the standard warehouse, because an interactive warehouse rejects DML such as the `INSERT` statements in the next steps with `Cannot run statement type 'INSERT' on an interactive warehouse`.
 
-> Interactive warehouses enforce a **5-second query timeout** and a **24-hour minimum auto-suspend**. The `FALLBACK_WAREHOUSE` setting re-runs any query that exceeds the timeout on the standard warehouse instead of failing it, which mainly matters while the cache is still cold right after a resume. Keep dashboard queries selective (narrow projections, filters aligned with the clustering key) for consistent sub-second latency.
+> Interactive warehouses enforce a **5-second query timeout** and a **24-hour minimum auto-suspend**. The timeout protects your p99 latency: a long-running query can't tie up the warehouse and slow down every dashboard query waiting behind it. The `FALLBACK_WAREHOUSE` setting re-runs any query that exceeds the timeout on the standard warehouse instead of failing it, which mainly matters while the cache is still cold right after a resume. Keep dashboard queries selective (narrow projections, filters aligned with the clustering key) for consistent sub-second latency.
+
+> **Tip:** Because an interactive warehouse only auto-suspends after 24 hours of inactivity, it can bill until Saturday evening after Friday's last query. Schedule a task to `SUSPEND` it Friday evening and another to `RESUME` it early Monday, ahead of your first users, so the cache is warmed before the first query hits.
 
 ### History and control tables
 
@@ -629,7 +631,7 @@ Click **New session** at the bottom of the **Simulation** sidebar section, then 
 
 Remove all resources when finished to stop incurring costs.
 
-> **Warning:** Interactive warehouses have a **24-hour minimum billing period** once created. Drop the warehouse as soon as you are done to avoid unexpected charges.
+> **Warning:** Interactive warehouses are billed for a **1-hour minimum** each time they start or resume, then per second after that. Because they only auto-suspend after **24 hours of inactivity**, an idle interactive warehouse keeps running and billing. Drop the warehouse as soon as you are done to avoid unexpected charges.
 
 ```sql
 USE ROLE INTERACTIVE_ANALYTICS_ROLE;
