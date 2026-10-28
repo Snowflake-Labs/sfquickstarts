@@ -45,7 +45,7 @@ The agent answers questions about a fictional company's marketing campaigns. It 
 <!-- ------------------------ -->
 ## Run the Setup Script
 
-Download [SETUP.sql](https://github.com/Snowflake-Labs/sfguide-build-evaluate-and-deploy-ai-agents-with-snowflake-cowork/blob/main/SETUP.sql) and open it in a new SQL worksheet or workspace file in Snowsight. Review it, then run the entire script starting as `ACCOUNTADMIN`. It takes roughly 5-10 minutes, including the first evaluation run.
+Download [SETUP.sql](https://github.com/Snowflake-Labs/build_deploy_ai_agents_snowflake_cowork_vhol/blob/main/SETUP.sql) and open it in a new SQL worksheet or workspace file in Snowsight. Review it, then run the entire script starting as `ACCOUNTADMIN`. It takes roughly 5-10 minutes, including the first evaluation run.
 
 The script does the following:
 
@@ -122,10 +122,6 @@ Now use CoCo to analyze the evaluation results and improve the agent. CoCo inclu
 Choose one and use it for the rest of the guide.
 
 **CoCo in Snowsight:** Switch to `COWORK_AI_HOL_ROLE`, then select the CoCo icon in the lower-right corner of Snowsight to open the CoCo panel. See [CoCo in Snowsight](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-snowsight).
-
-When CoCo asks **Run this command?**, you can select **Allow all commands in this session** to avoid approving each step.
-
-![Allow all commands in this session](assets/always_allow_commands.png)
 
 **CoCo CLI:** Install the CLI and create a connection whose role is `COWORK_AI_HOL_ROLE`, following [CoCo CLI](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-cli):
 
