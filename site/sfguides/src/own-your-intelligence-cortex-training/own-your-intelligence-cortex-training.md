@@ -191,7 +191,6 @@ requirements = [
     f"cortex-training @ {SDK_URL}#sha256={SDK_SHA256}",
     "transformers==4.57.6",
     "openai==2.6.1",
-    "ipywidgets==8.1.7",  # Ray (loaded by Snowflake ML) uses it for rich notebook output.
     f"snowflake-ml-python=={metadata.version('snowflake-ml-python')}",
     f"matplotlib=={metadata.version('matplotlib')}",
 ]
