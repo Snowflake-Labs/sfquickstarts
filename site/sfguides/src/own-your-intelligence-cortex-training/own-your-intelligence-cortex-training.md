@@ -728,6 +728,8 @@ response = northwind.chat.completions.create(
 print(response.choices[0].message.content)
 ```
 
+![Running the call cell in a Snowflake notebook: the cell runs for about a second and prints DECISION: BACKUP SUPPLIER, QTY: 360, POLICY: NW-4, with a planner note](assets/call-the-model.gif)
+
 In one test run, the endpoint answered `DECISION: BACKUP SUPPLIER | QTY: 360 | POLICY: NW-4 | NOTE: Primary supplier is on watch. Place with the backup supplier and copy Seattle procurement.`, which matches the policy.
 
 ### Drop the Deployment
