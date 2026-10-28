@@ -634,7 +634,9 @@ plt.show()
 plt.close(fig)
 ```
 
-In one test run, the base model scored 0 of 20 on both measures, and the tuned model scored 19 of 20 on decisions and 20 of 20 on house style. The one miss had the right decision with the wrong policy code. Your results can differ.
+![Training loss falling over 60 steps, and base vs tuned scores on 20 held-out SKUs: base 0 of 20, tuned 20 of 20 for both correct decisions and house style](assets/training-loss-and-scores.png)
+
+In the run shown above, the base model scored 0 of 20 on both measures, and the tuned model scored 20 of 20 on both. Results can vary between runs; another run scored 19 of 20 on decisions, with one wrong policy code.
 
 ## Save a Checkpoint
 
@@ -679,6 +681,8 @@ print("Checkpoint retained:", checkpoint_id)
 This cell creates a four-GPU evaluation deployment from the checkpoint and exposes an OpenAI-compatible endpoint. Training and serving share the account's GPU cap, so it first makes sure the training job is released. If the deployment fails to start, it is dropped.
 
 ```python
+from urllib.parse import urlparse
+
 release_job(job_id, "FINISHED")  # Training and serving share the GPU cap; free training first. No-op if released.
 deployment_id = client.create_model_deployment({
     "deployment": {"class": "EVALUATION", "min_replicas": 1,
@@ -688,7 +692,9 @@ deployment_id = client.create_model_deployment({
 })["deployment"]
 try:
     base_url = client.wait_for_model_deployment(deployment_id)["base_url"].rstrip("/")
-    if not base_url.startswith(f"https://{ACCOUNT_HOST.lower()}/"):
+    # Accounts have more than one valid hostname, so accept any HTTPS Snowflake host.
+    endpoint = urlparse(base_url)
+    if endpoint.scheme != "https" or not (endpoint.hostname or "").endswith(".snowflakecomputing.com"):
         raise RuntimeError("Unexpected inference URL; refusing to send the PAT there.")
 except BaseException:
     client.drop_model_deployment(deployment_id)
