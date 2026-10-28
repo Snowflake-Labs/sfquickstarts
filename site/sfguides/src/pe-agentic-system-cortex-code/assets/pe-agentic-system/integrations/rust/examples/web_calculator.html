@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PE Finance Calculator (WebAssembly)</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+        }
+        
+        .subtitle {
+            color: rgba(255, 255, 255, 0.9);
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 1.1rem;
+        }
+        
+        .calculator-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .card h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+        
+        .input-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            color: #555;
+            font-weight: 600;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
+        
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 10px;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .result {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            border-radius: 6px;
+            margin-top: 20px;
+        }
+        
+        .result h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+        
+        .metric {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .metric:last-child {
+            border-bottom: none;
+        }
+        
+        .metric-label {
+            color: #666;
+            font-weight: 500;
+        }
+        
+        .metric-value {
+            color: #333;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+        
+        .metric-value.highlight {
+            color: #667eea;
+            font-size: 1.3rem;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+        
+        .performance {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin-top: 15px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            color: #856404;
+        }
+        
+        .footer {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.8);
+            margin-top: 40px;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .calculator-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 PE Finance Calculator</h1>
+        <p class="subtitle">High-Performance Financial Modeling with WebAssembly (Rust)</p>
+        
+        <div class="calculator-grid">
+            <!-- DCF Calculator -->
+            <div class="card">
+                <h2>DCF Valuation</h2>
+                <div class="input-group">
+                    <label>Initial Revenue ($)</label>
+                    <input type="number" id="dcf-revenue" value="100000000" step="1000000">
+                </div>
+                <div class="input-group">
+                    <label>Growth Rate (%)</label>
+                    <input type="number" id="dcf-growth" value="15" step="1">
+                </div>
+                <div class="input-group">
+                    <label>EBITDA Margin (%)</label>
+                    <input type="number" id="dcf-margin" value="25" step="1">
+                </div>
+                <div class="input-group">
+                    <label>Tax Rate (%)</label>
+                    <input type="number" id="dcf-tax" value="25" step="1">
+                </div>
+                <div class="input-group">
+                    <label>WACC (%)</label>
+                    <input type="number" id="dcf-wacc" value="12" step="0.5">
+                </div>
+                <div class="input-group">
+                    <label>Terminal Growth (%)</label>
+                    <input type="number" id="dcf-terminal" value="3" step="0.5">
+                </div>
+                <div class="input-group">
+                    <label>Projection Years</label>
+                    <input type="number" id="dcf-years" value="5" step="1" min="1" max="10">
+                </div>
+                <button onclick="calculateDCF()">Calculate DCF</button>
+                
+                <div id="dcf-result" class="result" style="display: none;">
+                    <h3>Results</h3>
+                    <div class="metric">
+                        <span class="metric-label">Enterprise Value</span>
+                        <span class="metric-value highlight" id="dcf-ev">-</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">PV of FCFs</span>
+                        <span class="metric-value" id="dcf-pv-fcf">-</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Terminal Value (PV)</span>
+                        <span class="metric-value" id="dcf-terminal-value">-</span>
+                    </div>
+                    <div class="performance" id="dcf-perf"></div>
+                </div>
+            </div>
+            
+            <!-- LBO Calculator -->
+            <div class="card">
+                <h2>LBO Returns</h2>
+                <div class="input-group">
+                    <label>Purchase Price ($)</label>
+                    <input type="number" id="lbo-price" value="250000000" step="1000000">
+                </div>
+                <div class="input-group">
+                    <label>Debt % (0-100)</label>
+                    <input type="number" id="lbo-debt" value="60" step="5" min="0" max="100">
+                </div>
+                <div class="input-group">
+                    <label>Entry EBITDA ($)</label>
+                    <input type="number" id="lbo-ebitda" value="50000000" step="1000000">
+                </div>
+                <div class="input-group">
+                    <label>Exit Multiple</label>
+                    <input type="number" id="lbo-exit-mult" value="5.5" step="0.5">
+                </div>
+                <div class="input-group">
+                    <label>EBITDA Growth (% CAGR)</label>
+                    <input type="number" id="lbo-growth" value="8" step="1">
+                </div>
+                <div class="input-group">
+                    <label>Hold Period (Years)</label>
+                    <input type="number" id="lbo-hold" value="5" step="1" min="1" max="10">
+                </div>
+                <button onclick="calculateLBO()">Calculate LBO</button>
+                
+                <div id="lbo-result" class="result" style="display: none;">
+                    <h3>Results</h3>
+                    <div class="metric">
+                        <span class="metric-label">MOIC</span>
+                        <span class="metric-value highlight" id="lbo-moic">-</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">IRR</span>
+                        <span class="metric-value highlight" id="lbo-irr">-</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Entry Equity</span>
+                        <span class="metric-value" id="lbo-entry-eq">-</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Exit Equity Value</span>
+                        <span class="metric-value" id="lbo-exit-eq">-</span>
+                    </div>
+                    <div class="performance" id="lbo-perf"></div>
+                </div>
+            </div>
+            
+            <!-- Monte Carlo -->
+            <div class="card">
+                <h2>Monte Carlo Simulation</h2>
+                <div class="input-group">
+                    <label>Base Revenue ($)</label>
+                    <input type="number" id="mc-revenue" value="100000000" step="1000000">
+                </div>
+                <div class="input-group">
+                    <label>Revenue Volatility (%)</label>
+                    <input type="number" id="mc-vol" value="15" step="1">
+                </div>
+                <div class="input-group">
+                    <label>EBITDA Margin Mean (%)</label>
+                    <input type="number" id="mc-margin-mean" value="25" step="1">
+                </div>
+                <div class="input-group">
+                    <label>EBITDA Margin Std Dev (%)</label>
+                    <input type="number" id="mc-margin-std" value="5" step="1">
+                </div>
+                <div class="input-group">
+                    <label>WACC Mean (%)</label>
+                    <input type="number" id="mc-wacc-mean" value="12" step="1">
+                </div>
+                <div class="input-group">
+                    <label>WACC Std Dev (%)</label>
+                    <input type="number" id="mc-wacc-std" value="2" step="0.5">
+                </div>
+                <div class="input-group">
+                    <label>Simulations</label>
+                    <input type="number" id="mc-sims" value="10000" step="1000" min="1000" max="100000">
+                </div>
+                <button onclick="calculateMonteCarlo()">Run Simulation</button>
+                
+                <div id="mc-result" class="result" style="display: none;">
+                    <h3>Results</h3>
+                    <div class="metric">
+                        <span class="metric-label">Mean EV</span>
+                        <span class="metric-value highlight" id="mc-mean">-</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Median EV</span>
+                        <span class="metric-value" id="mc-median">-</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">5th-95th Percentile</span>
+                        <span class="metric-value" id="mc-range">-</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Std Deviation</span>
+                        <span class="metric-value" id="mc-std">-</span>
+                    </div>
+                    <div class="performance" id="mc-perf"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Powered by <strong>WebAssembly (Rust)</strong> | PE Agentic System</p>
+            <p>30-100x faster than JavaScript | Runs entirely in your browser</p>
+        </div>
+    </div>
+    
+    <script type="module">
+        import init, { wasm_calculate_dcf, wasm_calculate_lbo, wasm_monte_carlo } from '../pkg/pe_finance.js';
+        
+        // Initialize WebAssembly module
+        let wasmReady = false;
+        
+        async function initWasm() {
+            try {
+                await init();
+                wasmReady = true;
+                console.log('✅ WebAssembly module loaded successfully');
+            } catch (e) {
+                console.error('❌ Failed to load WebAssembly:', e);
+                alert('Failed to load calculator. Please ensure the WebAssembly module is built.\n\nRun: wasm-pack build --target web --features wasm');
+            }
+        }
+        
+        initWasm();
+        
+        // Format currency
+        function formatCurrency(value) {
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(value);
+        }
+        
+        // DCF Calculation
+        window.calculateDCF = function() {
+            if (!wasmReady) {
+                alert('WebAssembly module not ready. Please wait...');
+                return;
+            }
+            
+            const start = performance.now();
+            
+            const result = wasm_calculate_dcf(
+                parseFloat(document.getElementById('dcf-revenue').value),
+                parseFloat(document.getElementById('dcf-growth').value) / 100,
+                parseFloat(document.getElementById('dcf-margin').value) / 100,
+                parseFloat(document.getElementById('dcf-tax').value) / 100,
+                parseFloat(document.getElementById('dcf-wacc').value) / 100,
+                parseFloat(document.getElementById('dcf-terminal').value) / 100,
+                parseInt(document.getElementById('dcf-years').value)
+            );
+            
+            const elapsed = performance.now() - start;
+            const dcf = JSON.parse(result);
+            
+            document.getElementById('dcf-ev').textContent = formatCurrency(dcf.enterprise_value);
+            document.getElementById('dcf-pv-fcf').textContent = formatCurrency(dcf.total_pv_fcf);
+            document.getElementById('dcf-terminal-value').textContent = formatCurrency(dcf.pv_terminal);
+            document.getElementById('dcf-perf').textContent = `⚡ Calculated in ${elapsed.toFixed(2)}ms`;
+            document.getElementById('dcf-result').style.display = 'block';
+        };
+        
+        // LBO Calculation
+        window.calculateLBO = function() {
+            if (!wasmReady) {
+                alert('WebAssembly module not ready. Please wait...');
+                return;
+            }
+            
+            const start = performance.now();
+            
+            const result = wasm_calculate_lbo(
+                parseFloat(document.getElementById('lbo-price').value),
+                parseFloat(document.getElementById('lbo-debt').value) / 100,
+                parseFloat(document.getElementById('lbo-ebitda').value),
+                parseFloat(document.getElementById('lbo-exit-mult').value),
+                parseFloat(document.getElementById('lbo-growth').value) / 100,
+                parseInt(document.getElementById('lbo-hold').value)
+            );
+            
+            const elapsed = performance.now() - start;
+            const lbo = JSON.parse(result);
+            
+            document.getElementById('lbo-moic').textContent = `${lbo.moic.toFixed(2)}x`;
+            document.getElementById('lbo-irr').textContent = `${(lbo.irr * 100).toFixed(1)}%`;
+            document.getElementById('lbo-entry-eq').textContent = formatCurrency(lbo.entry_equity);
+            document.getElementById('lbo-exit-eq').textContent = formatCurrency(lbo.exit_equity_value);
+            document.getElementById('lbo-perf').textContent = `⚡ Calculated in ${elapsed.toFixed(2)}ms`;
+            document.getElementById('lbo-result').style.display = 'block';
+        };
+        
+        // Monte Carlo Calculation
+        window.calculateMonteCarlo = function() {
+            if (!wasmReady) {
+                alert('WebAssembly module not ready. Please wait...');
+                return;
+            }
+            
+            const simulations = parseInt(document.getElementById('mc-sims').value);
+            document.getElementById('mc-result').innerHTML = '<div class="loading">Running ' + simulations.toLocaleString() + ' simulations...</div>';
+            document.getElementById('mc-result').style.display = 'block';
+            
+            // Use setTimeout to allow UI to update
+            setTimeout(() => {
+                const start = performance.now();
+                
+                const result = wasm_monte_carlo(
+                    parseFloat(document.getElementById('mc-revenue').value),
+                    parseFloat(document.getElementById('mc-vol').value) / 100,
+                    parseFloat(document.getElementById('mc-margin-mean').value) / 100,
+                    parseFloat(document.getElementById('mc-margin-std').value) / 100,
+                    parseFloat(document.getElementById('mc-wacc-mean').value) / 100,
+                    parseFloat(document.getElementById('mc-wacc-std').value) / 100,
+                    0.03,  // terminal growth
+                    5,     // years
+                    simulations
+                );
+                
+                const elapsed = performance.now() - start;
+                const mc = JSON.parse(result);
+                
+                document.getElementById('mc-result').innerHTML = `
+                    <h3>Results</h3>
+                    <div class="metric">
+                        <span class="metric-label">Mean EV</span>
+                        <span class="metric-value highlight" id="mc-mean">${formatCurrency(mc.mean)}</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Median EV</span>
+                        <span class="metric-value" id="mc-median">${formatCurrency(mc.median)}</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">5th-95th Percentile</span>
+                        <span class="metric-value" id="mc-range">${formatCurrency(mc.percentile_5)} - ${formatCurrency(mc.percentile_95)}</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Std Deviation</span>
+                        <span class="metric-value" id="mc-std">${formatCurrency(mc.std_dev)}</span>
+                    </div>
+                    <div class="performance">⚡ ${simulations.toLocaleString()} simulations in ${(elapsed/1000).toFixed(2)}s (~${Math.round(simulations/elapsed*1000).toLocaleString()}/sec)</div>
+                `;
+            }, 50);
+        };
+    </script>
+</body>
+</html>

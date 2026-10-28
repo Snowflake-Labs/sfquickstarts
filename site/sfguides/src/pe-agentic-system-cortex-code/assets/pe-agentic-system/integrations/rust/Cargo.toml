@@ -1,0 +1,71 @@
+[package]
+name = "pe-finance"
+version = "1.0.0"
+edition = "2021"
+authors = ["PE Agentic System"]
+description = "High-performance financial modeling for Private Equity"
+
+[lib]
+name = "pe_finance"
+crate-type = ["cdylib", "rlib"]  # cdylib for Python/Wasm, rlib for Rust
+
+[dependencies]
+# Core dependencies
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+# Precise decimal arithmetic (CRITICAL for finance)
+rust_decimal = { version = "1.35", features = ["maths", "serde"] }
+rust_decimal_macros = "1.35"
+
+# Date/time
+chrono = { version = "0.4", features = ["serde"] }
+
+# Statistics and math
+statrs = "0.17"
+rand = "0.8"
+rand_distr = "0.4"
+
+# Python bindings (optional, for PyO3)
+pyo3 = { version = "0.22", features = ["extension-module"], optional = true }
+
+# WebAssembly bindings (optional)
+wasm-bindgen = { version = "0.2", optional = true }
+wasm-bindgen-futures = { version = "0.4", optional = true }
+
+# Console (for Wasm debugging)
+console_error_panic_hook = { version = "0.1", optional = true }
+
+# Performance
+rayon = "1.10"  # Parallel processing
+
+# WebAssembly needs an explicit entropy source: rand 0.8 pulls getrandom 0.2,
+# which refuses to build for wasm32-unknown-unknown unless the "js" feature is
+# enabled so it can bind crypto.getRandomValues(). Scoped to wasm32 so native
+# and Python builds are unaffected.
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+getrandom = { version = "0.2", features = ["js"] }
+
+[features]
+default = []
+python = ["pyo3"]
+wasm = ["wasm-bindgen", "wasm-bindgen-futures", "console_error_panic_hook"]
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+strip = true
+
+[profile.release.build-override]
+opt-level = 3
+
+# Python packaging with maturin
+[tool.maturin]
+features = ["python"]
+python-source = "python"
+
+# Dev dependencies for testing
+[dev-dependencies]
+criterion = "0.5"
+approx = "0.5"

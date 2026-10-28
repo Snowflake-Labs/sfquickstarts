@@ -1,0 +1,62 @@
+# Core dependencies for PE Agentic System
+
+# Python basics
+python-dateutil>=2.8.2
+pandas>=2.0.0
+numpy>=1.24.0
+
+# Snowflake integration
+snowflake-connector-python>=3.7.0
+snowflake-snowpark-python>=1.11.0
+
+# OpenAI
+openai>=1.12.0
+
+# AWS Bedrock
+boto3>=1.34.0
+
+# Data handling
+pyarrow>=15.0.0
+
+# Configuration
+tomli>=2.0.1; python_version < '3.11'
+pyyaml>=6.0            # config/models.yaml model routing (config-driven)
+
+# Cryptography (for JWT auth)
+cryptography>=42.0.0
+
+# High-performance computing (optional)
+# Uncomment if using Rust bindings
+# maturin>=1.4.0
+
+# Decimal precision (stdlib, but explicit for docs)
+# decimal - built-in
+
+# Optional: Rust/PyO3 bindings
+# Build with: cd integrations/rust && maturin develop
+# pyo3>=0.20.0
+
+# Optional: WebAssembly runtime
+# wasmtime>=18.0.0
+
+# Development tools (optional)
+pytest>=8.0.0
+jupyter>=1.0.0
+ipykernel>=6.29.0
+black>=24.0.0
+ruff>=0.2.0
+
+# Visualization (optional)
+plotly>=5.18.0
+matplotlib>=3.8.0
+
+# Excel support (optional)
+openpyxl>=3.1.0
+xlsxwriter>=3.2.0
+
+# PDF processing (optional)
+pypdf>=4.0.0
+
+# Additional utilities
+requests>=2.31.0
+tqdm>=4.66.0
