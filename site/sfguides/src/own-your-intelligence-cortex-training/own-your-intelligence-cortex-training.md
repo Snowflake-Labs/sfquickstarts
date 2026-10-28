@@ -39,7 +39,7 @@ No OpenAI account, local Python, Docker, or repository checkout is needed.
 
 ## Setup
 
-Create a notebook in **Projects > Workspaces** on a CPU Container Runtime with Python 3.10 or later, and give its service a 15-minute idle timeout. Add each code block below as a cell, in order, with the explanation as a markdown cell above it.
+Download the [notebook](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/own-your-intelligence-cortex-training/assets/own-your-intelligence-cortex-training.ipynb). In **Projects > Workspaces**, select **+ Add new > Upload files** and upload it, then open it on a CPU Container Runtime with Python 3.10 or later. Give its service a 15-minute idle timeout. The notebook contains every code block below, in order, each with its explanation.
 
 One restart is required. Run the configuration, object, and PAT cells first. Then open **Connected > Manage service**, select the secret `CT_QUICKSTART_DB.LAB.CT_PAT`, and enable both `CT_QUICKSTART_API_EAI` and `CT_QUICKSTART_DOWNLOAD_EAI`. Save so the service restarts, rerun the configuration cell, and continue with the install cell.
 
