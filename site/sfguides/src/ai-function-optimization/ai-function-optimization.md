@@ -5,8 +5,8 @@ summary: Build a custom AI function with CREATE AI FUNCTION, measure it with an 
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions
 environments: web
 status: Published
-feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-fork repo link: https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/ai-function-optimization/assets/vhol_ai_evaluate_optimize.ipynb
+feedback link: https://github.com/Snowflake-Labs/sfquickstarts/issues
+fork repo link: https://github.com/Snowflake-Labs/sfquickstarts
 open in snowflake: https://docs.snowflake.com/en/user-guide/snowflake-cortex/ai-function-studio
 
 # Build, Evaluate, and Optimize AI Functions in Snowflake
@@ -276,7 +276,7 @@ CREATE EXPERIMENT OPT_TRIAGE
   TYPE = 'AI_FUNCTION_OPTIMIZATION'
   FROM SPECIFICATION $$
     function:
-      function_name: VHOL_AI_DB.AI_FUNC.TRIAGE_TICKET
+      function_name: "VHOL_AI_DB.AI_FUNC.TRIAGE_TICKET(VARCHAR)"
     metrics:
       - name: exact_match
     dataset:
