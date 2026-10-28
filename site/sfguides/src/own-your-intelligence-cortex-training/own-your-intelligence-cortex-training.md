@@ -634,6 +634,10 @@ plt.show()
 plt.close(fig)
 ```
 
+Here is one held-out SKU, NW-1005, sent with the same prompt to both models. The base model restates the inputs without making a decision. The tuned model applies policy NW-4, because a supplier on watch outranks short cover.
+
+![Before and after for NW-1005. Base Qwen3-8B restates the inputs and is cut off at the sampling limit without a decision. The Northwind-tuned model answers DECISION: BACKUP SUPPLIER, QTY: 360, POLICY: NW-4, with a planner note; its single-line answer is shown one field per line](assets/before-after-nw-1005.png)
+
 ![Training loss falling over 60 steps, and base vs tuned scores on 20 held-out SKUs: base 0 of 20, tuned 20 of 20 for both correct decisions and house style](assets/training-loss-and-scores.png)
 
 In the run shown above, the base model scored 0 of 20 on both measures, and the tuned model scored 20 of 20 on both. Results can vary between runs; another run scored 19 of 20 on decisions, with one wrong policy code.
