@@ -18,32 +18,34 @@ The solution creates a fictional firm called **Simulated Asset Management (SAM)*
 - Real securities data from SEC filings via **Snowflake Public Data (Free)**
 - 11 investment strategies across equity, multi-asset, ESG, and alternatives
 - Synthetic broker research, earnings transcripts, policy documents, and client data
-- 8 specialised Cortex Agents with 36+ runtime skills
-- 3 ML workflow notebooks (market regime, factor models, credit risk)
+- 8 specialised Cortex Agents with 36 runtime skills
+- 2 ML models trained and registered during the build (market regime, credit risk), plus 3 ML workflow notebooks
 
 ## Prerequisites
 
-- A Snowflake account with Cortex AI enabled
+- A Snowflake account with Cortex AI enabled and CORTEX_ENABLED_CROSS_REGION set to ANY_REGION
 - **Snowflake Public Data (Free)** Marketplace listing installed (auto-installed by setup script)
-- ACCOUNTADMIN role access (for initial setup only — runtime uses a dedicated SAM_DEMO_ROLE)
+- ACCOUNTADMIN role access (for initial setup only — the build runs as `FSI_DEMO_BUILD_ROLE` and the demo as `SAM_DEMO_USER_ROLE`)
 
 ## Architecture
 
 The solution runs entirely within Snowflake using native AI features — no external infrastructure, APIs, or data movement required.
 
-**Data Foundation**: A dimensional model with 48+ tables — dimensions (securities, issuers, portfolios, benchmarks, clients) and facts (positions, transactions, prices, ESG scores, attribution). Real securities sourced from 14,000+ instruments via Snowflake Public Data.
+**Data Foundation**: A dimensional model with more than 100 tables and views — dimensions (securities, issuers, portfolios, benchmarks, clients) and facts (positions, transactions, prices, ESG scores, attribution, private markets). Real securities sourced from Snowflake Public Data across a 503-instrument universe, with broker recommendations grounded in real prices and SEC fundamentals.
 
 **Document Corpus**: Synthetic documents (broker research, press releases, NGO reports, policy documents, regulatory texts) generated via a template hydration engine. Real SEC filings (10-K, 10-Q) and earnings transcripts loaded from the marketplace share.
 
-**Cortex Search Services**: 16 search services indexing documents by type with filterable attributes (ticker, company, document type, jurisdiction, severity). Enables semantic search across thousands of documents.
+**Cortex Search Services**: 12 search services indexing documents by type with filterable attributes (ticker, company, document type, jurisdiction, severity). Enables semantic search across thousands of documents.
 
-**Cortex Analyst Semantic Views**: 10+ semantic views defining relationships and metrics across portfolio, market, attribution, research, and operational data. Translates natural language into SQL for instant analytical answers.
+**Cortex Analyst Semantic Views**: 17 semantic views defining relationships and metrics across portfolio, market, attribution, research, operational, private markets and ML data. Translates natural language into SQL for instant analytical answers.
 
 **Cortex Agents**: 8 agents with role-specific instructions, tool access, and orchestration skills. Each agent intelligently combines Cortex Analyst, Cortex Search, and stored procedure tools to answer complex multi-source questions.
 
 **Snowflake CoWork**: The conversational interface where users interact with agents via natural language. Agents orchestrate tools, produce visualisations, and generate PDF reports — all within a chat experience.
 
-**ML Workflows**: 3 notebook-based ML demonstrations using Snowflake Feature Store, Model Registry, and Cortex ML functions for market regime detection, factor model training, and credit risk scoring.
+**ML Models**: The build trains a market regime model and a credit risk model, registers them in the Snowflake Model Registry with a `PRODUCTION` alias, and scores them in SQL. Training data comes from Feature Store feature views, so each model version has lineage back to its data. Three notebooks walk through the same workflows interactively, plus a factor model.
+
+**Code Bundles**: The build itself runs inside Snowflake as a Code Bundle created from your Git workspace, so there is nothing to install locally.
 
 ## Agents
 
@@ -58,13 +60,15 @@ The solution runs entirely within Snowflake using native AI features — no exte
 | **Private Equity Copilot** | PE Deal Team | Deal pipeline screening, due diligence search, expert network insights, value creation tracking |
 | **Private Credit Copilot** | Credit Analyst | Credit portfolio monitoring, covenant tracking, rate sensitivity, deal pipeline, ML credit scoring |
 
-## ML Notebooks
+## ML Models and Notebooks
 
-| Notebook | Technique | Output |
-|----------|-----------|--------|
-| **Market Regime Detection** | XGBoost classification on macro indicators | RISK_ON / TRANSITIONAL / RISK_OFF regime labels |
-| **Factor Model Workflow** | Multi-factor model with SHAP explanations | Factor loadings, IC scores, Fama-French decomposition |
-| **Credit Risk Scoring** | Gradient boosted PD model | Probability of default scores per borrower |
+| Model / notebook | Technique | Output | Built by |
+|----------|-----------|--------|----------|
+| **Market Regime Detection** (`MARKET_REGIME_GMM`) | Gaussian mixture model on volatility, momentum and dispersion features | RISK_ON / TRANSITIONAL / RISK_OFF regime per day | Build and `market_regime_detection.ipynb` |
+| **Credit Risk Scoring** (`CREDIT_RISK_XGBOOST`) | XGBoost classifier with SHAP explanations | Probability of next-quarter covenant stress per borrower | Build and `credit_risk_model.ipynb` |
+| **Factor Model Workflow** | Multi-factor model with SHAP explanations | Factor scores, factor returns, predicted returns, optimal weights | `factor_discovery.ipynb` |
+
+The Private Credit Copilot calls the credit risk model directly through a what-if tool, so a user can ask how a borrower's default risk changes if, for example, leverage rises by 20%.
 
 ## Key Features
 
@@ -80,12 +84,15 @@ The solution runs entirely within Snowflake using native AI features — no exte
 | **Monte Carlo Simulation** | Portfolio Copilot | 10,000-path simulation with block bootstrap for VaR and drawdown analysis |
 | **Scenario Sensitivity** | Portfolio Copilot | What-if shock analysis (rate moves, vol spikes, growth shocks) |
 | **Counterfactual Attribution** | Portfolio Copilot | "What if we had held different weights?" alternative history analysis |
-| **Portfolio Optimizer** | Portfolio Copilot | Max Sharpe, min variance, risk parity, and efficient frontier construction |
+| **Historical Backtest** | Portfolio Copilot | Backtest custom portfolio weights over a chosen period and rebalancing frequency |
+| **Brinson Attribution** | Portfolio Copilot | On-demand attribution of any portfolio against a benchmark over any period |
 | **M&A Simulation** | Executive Copilot | Model AUM impact, revenue synergies, and integration scenarios |
-| **PDF Report Generator** | All agents | Branded PDF reports with presigned download URLs |
-| **Data Origin** | All agents | Explain data lineage for any semantic field (source table, transformation, refresh) |
+| **Default Risk What-If** | Private Credit Copilot | Score a borrower with the registered credit risk model under changed financials, with SHAP drivers |
+| **Thesis Tracker** | Research Copilot | Create and update investment theses |
+| **PDF Report Generator** | Six agents | Branded PDF reports with presigned download URLs |
+| **Data Origin** | Portfolio and Executive Copilots | Explain data lineage for any semantic field (source table, transformation, refresh) |
 
-**Portfolio Construction and Backtesting**: The Portfolio Copilot can construct model portfolios, optimise allocations (max Sharpe, min variance, risk parity), run full historical backtests with custom weights, and validate with Monte Carlo simulation — enabling a complete "build, test, validate" workflow in conversation.
+**Portfolio Construction and Backtesting**: Guided by its portfolio construction and optimiser skills, the Portfolio Copilot can construct model portfolios, optimise allocations (max Sharpe, min variance, risk parity), run full historical backtests with custom weights, and validate with Monte Carlo simulation — enabling a complete "build, test, validate" workflow in conversation.
 
 **Real Data Integration**: SEC financials, stock prices, institutional holdings (13F), insider trading, dividends, and economic indicators — all from Snowflake Public Data (Free).
 
@@ -101,30 +108,44 @@ The solution runs entirely within Snowflake using native AI features — no exte
 2. Click **+** then **From Git repository**
 3. Repository URL: `https://github.com/Snowflake-Labs/sfguide-agentic-ai-for-asset-management.git`
 4. Authentication: Public repository (no auth needed)
-5. Name the workspace (e.g., "SAM Demo")
+5. Name the workspace (eg SAM_DEMO_WORKSPACE) or use the default name
 
-### Step 2: Run Infrastructure Setup (2 minutes)
+### Step 2: Run Setup (45-60 minutes)
 
-Open [`scripts/setup.sql`](scripts/setup.sql) in the workspace and execute it. This creates:
-- `SAM_DEMO` database with all schemas
-- `SAM_DEMO_ROLE` with required privileges (including task execution)
+1. Open [`https://github.com/Snowflake-Labs/sfguide-agentic-ai-for-asset-management/blob/main/scripts/setup.sql`](scripts/setup.sql) in the workspace.
+2. Set `$ws_name` in Section 0, at the top of the script, to the name of the workspace you created in Step 1. Run `SHOW WORKSPACES IN ACCOUNT` if you need to check the name. This is the only value you need to edit.
+3. Execute the whole script as `ACCOUNTADMIN`.
+
+Sections 1-8 create the infrastructure:
+- `SAM_DEMO` and `FSI_DEMO_CONFIG` databases with all schemas
 - `SAM_DEMO_EXECUTION_WH` and `SAM_DEMO_CORTEX_WH` warehouses
+- `FSI_DEMO_BUILD_ROLE` (build) and `SAM_DEMO_USER_ROLE` (demo use) with the required privileges
+- Compute pools for the Code Bundle and the ML notebooks
 - Marketplace data share (Snowflake Public Data - Free)
-- Cortex AI enablement and Snowflake CoWork
+- Cortex AI enablement for the`FSI_DEMO_BUILD_ROLE` (build) and `SAM_DEMO_USER_ROLE` (demo use) roles
 
-### Step 3: Run Data and AI Build (15-20 minutes)
+Section 9 creates a Code Bundle from your workspace and runs the build inside Snowflake. The build creates all tables, documents, search services, semantic views, ML models, agents, skills, tools, signals and evaluation datasets.
 
-1. Open `python/workspace_main.py` in the workspace
-2. Connect a **notebook service** when prompted:
-   - Python version: 3.11+
-   - Compute pool: any available pool
-   - Artifact repositories (optional): SNOWFLAKE.SNOWPARK.PYPI_SHARED_REPOSITORY
-3. Open the Terminal and run:
-   `pip install -r "$PWD/requirements.txt"`
-4. Restart the kernel
-5. Click **Run**
+If the `CREATE OR REPLACE CODE BUNDLE` result says the source directory does not exist or contains no files, `$ws_name` does not match your workspace. Fix it and re-run that statement before continuing.
 
-The build creates all tables, documents, search services, semantic views, agents, skills, tools, signals, and evaluation datasets.
+The build leaves the demo data frozen at the build date. To keep it current, install the weekly refresh task afterwards, which advances prices, documents and briefings every Monday:
+
+```sql
+EXECUTE CODE BUNDLE SAM_DEMO.AI.SAM_BUILD_BUNDLE
+    ENTRYPOINT = 'python/workspace_main.py'
+    ARGUMENTS  = ('--scope', 'automation');
+```
+
+### Step 3: Use the Agents
+
+1. Navigate to **AI & ML > Snowflake CoWork**
+2. Select any agent
+3. Start asking questions. The repository's [`https://github.com/Snowflake-Labs/sfguide-agentic-ai-for-asset-management/blob/main/demo_scripts/`](demo_scripts/) folder has a step-by-step script for each demo scenario.
+
+### Clean-Up
+
+Run the [`https://github.com/Snowflake-Labs/sfguide-agentic-ai-for-asset-management/blob/main/scripts/teardown.sql`](scripts/teardown.sql) to remove all the objects that is created by this setup.
+
 
 ## Business Impact
 
@@ -142,4 +163,4 @@ The build creates all tables, documents, search services, semantic views, agents
 
 **[GitHub Repository →](https://github.com/Snowflake-Labs/sfguide-agentic-ai-for-asset-management)**
 
-The repository contains setup scripts, sample data, semantic model definitions, agent skills, ML notebooks, and step-by-step instructions for deploying the complete solution.
+The repository contains the setup script, build code, reference data, semantic view definitions, agent skills, ML notebooks, demo scenario scripts, and data model and lineage documentation.
