@@ -34,19 +34,19 @@ For an enterprise with 5,000–50,000 users this doesn't scale:
 
 ## What's Inside
 
-### 16 Pages
+### 18 Pages
 
 | Page | Purpose |
 |---|---|
 | **Setup** | 7-step Account Prerequisites + Phases A–E wizard. Creates all objects, seeds defaults. No CLI required. |
 | **Home** | Executive snapshot: KPIs, surface split (CLI/Snowsight/Desktop), top users, model breakdown, AI Guardrails status, daily trend. |
-| **Access Management** | Grant `CORTEX_USER` + `COPILOT_USER` to users, roles, or by user tag. View role inheritance. |
-| **Credit Configuration** | Set daily limits at account, cohort (role or tag), or individual user level. Temporary overrides auto-revert. Native AI Budgets (Preview) for agent-level hard enforcement. |
+| **Access Management** | Grant `CORTEX_USER` or `CORTEX_AGENT_USER` (plus transitional `COPILOT_USER`) to users, roles, role patterns, or by user tag. View role inheritance. |
+| **Credit Configuration** | Set daily limits at account, cohort (role or tag), or individual user level. Patterns create one cohort per matched role or tag value. Temporary limits auto-revert (hourly). Native AI Budgets (Preview) for agent-level spend tracking. |
 | **Usage Trends** | Stacked area trend, timezone-aware heatmap, spike detection, recommendations. |
 | **Budget Forecast** | Linear regression projections. Trend-adjusted 7d / 30d / 90d. Per-cohort spend breakdown. |
-| **Model Access** | Discover models in use, assign to tiers (TIER_1/2/3), map tiers to roles, enforce via `CORTEX_MODELS_ALLOWLIST` + model RBAC. |
+| **Model Access** | Discover models in use, assign to tiers (TIER_1/2/3), map tiers to roles (or role patterns), enforce via model RBAC (`SNOWFLAKE."CORTEX-MODEL-ROLE-*"` application roles). |
 | **AI Observability** | Account → Cohort → User drill-down. DAU, WoW, Cortex AI Guardrails status, latency, prompt intelligence with surface split (CLI/Snowsight/Desktop), tool call tracking, Token Economics, Cache Hit Rate. |
-| **Cost Attribution** | Per-prompt & per-session credit costs via ACCOUNT_USAGE join. Configurable USD/credit rate. Cohort cost breakdown. |
+| **Cost Attribution** | Per-prompt & real terminal session credit costs via ACCOUNT_USAGE join (`Agent` span → billing). Configurable USD/credit rate. Cohort cost breakdown. |
 | **Prompt Insights** | Responsible AI governance dashboard. HIGH/MEDIUM/LOW severity classification, user governance profiles, insights feed. Classifies **both user prompts and AI responses**. |
 | **Policy Rules** | Admin-configurable keyword, regex, or AI_CLASSIFY (semantic) rules. Rules can target prompts, AI responses, or both. |
 | **Credit Requests** | User self-service: request more credits or a model tier upgrade. Admin/domain-lead approval queue with system recommendations. |
@@ -54,6 +54,8 @@ For an enterprise with 5,000–50,000 users this doesn't scale:
 | **Audit Log** | Immutable log of every grant, limit change, approval, rejection, and rebalance. Filterable, CSV export. |
 | **User Intelligence** | Full per-user profile: credits, tokens, cache efficiency, governance score, prompt search. |
 | **Model Intelligence** | LLM comparison: latency (P50/P95), Token Economics, Cache Hit Rate, Custom Quality (Experimental), Prompt Insights per model. |
+| **User Quotas** | Native per-user quotas (`SNOWFLAKE.CORE.QUOTA`, generally available) — one quota per matched role with patterns. |
+| **Alerts** | Email alerts for credit spikes and HIGH-severity prompt insights. |
 
 ---
 
@@ -141,18 +143,19 @@ Tag-based hard enforcement for Cortex Agent objects — automated REVOKE USAGE w
 
 ### Owner-Rights Execution Model
 
-All SQL — including `ALTER USER`, `GRANT DATABASE ROLE`, and `CREATE TABLE` — runs as the role that **owns the Streamlit object** (recommended: ACCOUNTADMIN). End users never need elevated privileges. Every privileged action is channelled through stored procedures that validate inputs before executing.
+All SQL — including `ALTER USER`, `GRANT DATABASE ROLE`, and `CREATE TABLE` — runs as the role that **owns the Streamlit object** (required: ACCOUNTADMIN when running Setup Phases A and C). End users never need elevated privileges. Every privileged action is channelled through stored procedures that validate inputs before executing.
 
 ### Role Separation
 
 | Role | Owns | Purpose |
 |---|---|---|
-| `CC_SP_OWNER_ROLE` | All SPs and tasks | Has MANAGE GRANTS + ALTER USER privileges. Assumed by nobody — only used via EXECUTE AS OWNER. |
+| `CC_SP_OWNER_ROLE` | CC_ tables, tasks, alerts, most SPs | Has MANAGE GRANTS + ALTER USER privileges. Assumed by nobody — only used via EXECUTE AS OWNER. Tasks and alerts run as this role. |
+| `ACCOUNTADMIN` | Credit-limit SPs | Snowflake only lets an owner's-rights SP set `CORTEX_CODE_*_DAILY_EST_CREDIT_LIMIT_PER_USER` when ACCOUNTADMIN owns it. Never transfer these SPs. |
 | `CC_APP_ROLE` | App tables | Streamlit runtime role. Can read/write CC_* tables and CALL SPs. |
 | `CC_ADMIN_ROLE` | — | Inherits CC_APP_ROLE. Grant to platform admins who manage the app. |
 | `CC_USER_ROLE` | — | Inherits CC_APP_ROLE. Grant to Cortex Code end users. |
 
-> **In practice** you don't need CC_ADMIN_ROLE or CC_USER_ROLE. Just add your existing org roles to `admin.roles` in `config.yaml`. The only non-negotiable role is `CC_SP_OWNER_ROLE` — it's what makes `ALTER USER` safe without handing out ACCOUNTADMIN.
+> **In practice** you don't need CC_ADMIN_ROLE or CC_USER_ROLE. Just add your existing org roles to `admin.roles` in `config.yaml`. The only non-negotiable role is `CC_SP_OWNER_ROLE` — it's what makes most privileged actions safe without handing out ACCOUNTADMIN. Credit-limit SPs are the exception and stay ACCOUNTADMIN-owned.
 
 ---
 
@@ -194,11 +197,11 @@ For each potential donor in the cohort:
 
 Before deploying, run these 7 one-time grants in Snowsight. The Setup page shows copy-paste SQL for each:
 
-1. **Cross-region inference** — `ALTER ACCOUNT SET CORTEX_ENABLED_CROSS_REGION = 'ANY'`
-2. **AI Observability access** — `GRANT DATABASE ROLE SNOWFLAKE.AI_OBSERVABILITY_READER TO ROLE CC_SP_OWNER_ROLE`
+1. **Cross-region inference** — `ALTER ACCOUNT SET CORTEX_ENABLED_CROSS_REGION = 'ANY_REGION'` (or region groups such as `'AWS_US'`)
+2. **AI Observability access** — `GRANT APPLICATION ROLE SNOWFLAKE.AI_OBSERVABILITY_READER TO ROLE CC_SP_OWNER_ROLE`
 3. **ACCOUNT_USAGE access** — `GRANT IMPORTED PRIVILEGES ON DATABASE SNOWFLAKE TO ROLE CC_SP_OWNER_ROLE`
-4. **Model access for users** — `GRANT DATABASE ROLE SNOWFLAKE.CORTEX_USER TO ROLE CC_USER_ROLE`
-5. **Credit limits** _(optional)_ — `ALTER ACCOUNT SET CORTEX_CODE_CREDIT_LIMIT = N`
+4. **Model access for users** — `GRANT DATABASE ROLE SNOWFLAKE.CORTEX_USER TO ROLE CC_USER_ROLE` (or `CORTEX_AGENT_USER`)
+5. **Credit limits** _(optional)_ — per-surface daily: `ALTER ACCOUNT SET CORTEX_CODE_SNOWSIGHT_DAILY_EST_CREDIT_LIMIT_PER_USER = 20` (also CLI, DESKTOP variants). Old `CORTEX_CODE_CREDIT_LIMIT` is deprecated.
 6. **AI Guardrails** _(Enterprise, optional)_ — `ALTER ACCOUNT SET AI_SETTINGS = $$ guardrails: ... $$`
 7. **Native AI Budgets** _(Preview, optional)_ — tag-based budget enforcement for Cortex Agent objects
 
@@ -224,12 +227,12 @@ snow streamlit deploy --connection YOUR_CONNECTION --database YOUR_DB --schema Y
 
 ### Step 3 — Run Setup Phases
 
-Open the app → **Setup** page:
+Open the app → **Setup** page. **The app must be owned by ACCOUNTADMIN for Phases A and C** (they create the credit-limit SPs):
 - **Phase A** — Create all objects (roles, tables, tasks, stream, email integration)
 - **Phase B** — Seed default settings
 - **Phase C** — Create stored procedures
 - **Phase D** — Initial data load (D1: usage summaries, D2: prompt events, D3: model config)
-- **Phase E** — Verify all objects exist
+- **Phase E** — Verify all objects exist, credit-limit SP ownership, and new columns
 
 ---
 
@@ -308,7 +311,7 @@ Four independent layers: Python identifier validation → SQL literal escaping (
 | ACCOUNTADMIN (one-time) | For Account Prerequisites (step 0) and setup |
 | Cortex Code enabled on account | Contact your Snowflake account team if not active |
 | Any warehouse (XSMALL sufficient) | App is read-heavy; smallest warehouse works fine |
-| Snowflake CLI (optional) | `pip install snowflake-cli` — for `snow streamlit deploy` |
+| Snowflake CLI | `pip install snowflake-cli` — required for `snow streamlit deploy` (or upload the files in Snowsight) |
 
 ---
 
@@ -398,16 +401,42 @@ CALL <DB>.<SCHEMA>.SP_CC_CLASSIFY_PROMPTS(4320);  -- 180 × 24 = 4320 hours
 
 ---
 
+## Upgrading an Existing Installation
+
+This release adds temporary-limit expiry, new security checks on the privileged stored procedures, and keeps the credit-limit stored procedures owned by ACCOUNTADMIN. **Run Phases A and C after updating.**
+
+1. Get the latest code from `assets/code/` and keep your own values in `config.yaml` and `snowflake.yml` (database, schema, warehouse, admin roles).
+2. Redeploy the app: `snow streamlit deploy --replace --connection <your_connection>`
+3. Make sure the app is **owned by ACCOUNTADMIN** — Setup runs as the app owner, and the credit-limit SPs only work when ACCOUNTADMIN owns them:
+   ```sql
+   SHOW STREAMLITS IN SCHEMA <db>.<schema>;   -- check the "owner" column
+   GRANT OWNERSHIP ON STREAMLIT <db>.<schema>.CORTEX_CODE_CREDIT_MANAGER TO ROLE ACCOUNTADMIN COPY CURRENT GRANTS;
+   ```
+4. If not done before, grant AI Observability access (it is an **application** role):
+   `GRANT APPLICATION ROLE SNOWFLAKE.AI_OBSERVABILITY_READER TO ROLE CC_SP_OWNER_ROLE;`
+5. Open the app → **Setup** → run **Phase A**. It is idempotent: it adds the temporary-limit columns to `CC_CREDIT_CONFIG`, creates the hourly `CC_EXPIRE_TEMPORARY_CREDITS` task, recreates the SPs, re-applies USAGE grants, and resumes alerts and the budget refresh task if they were running.
+6. Run **Phase C**.
+7. Run **Phase E**. All checks must be green — including ownership of the credit-limit SPs and the new columns.
+8. Confirm the tasks are running: `SHOW TASKS LIKE 'CC_%' IN SCHEMA <db>.<schema>;`
+
+**Behaviour changes in this release**
+- Model Access no longer offers an account-wide option (`CORTEX_MODELS_ALLOWLIST` is retired by BCR-2378). Use **Role Directly** or **Role Members** (model RBAC).
+- Access grants offer `CORTEX_USER` or `CORTEX_AGENT_USER`; `COPILOT_USER` is transitional (BCR-2445).
+- Temporary limits created before this release have no expiry date recorded and will not auto-revert — re-apply them as Temporary if needed.
+- If the app was owned by a custom role, transfer it to ACCOUNTADMIN for Phases A and C, then transfer it back.
+
+---
+
 ## Deploying Updates — What to Re-Run
 
 After a code-only deploy (`snow streamlit deploy --replace`):
 
 | Changed | Re-run needed |
 |---|---|
-| `sp_definitions.py` | Phase C (recreate SPs) + Phase D2 (re-backfill if needed) |
+| `sp_definitions.py` | Phase C as ACCOUNTADMIN (recreate SPs) + Phase D2 (re-backfill if needed) |
 | `pages/*.py` only | None — takes effect on page reload |
 | `config.yaml` admin roles | None — read at runtime |
-| `prerequisites.sql` | Phase A only if new tables added |
+| `prerequisites.sql` | Phase A (as ACCOUNTADMIN; idempotent) whenever it changes |
 
 
 ---

@@ -1,6 +1,6 @@
 # CoCo Control Hub — Solution Document
 
-**Version:** 3.1
+**Version:** 3.3
 
 ---
 
@@ -27,7 +27,7 @@ A **Streamlit-in-Snowflake (SiS) application** that wraps native parameters with
 
 1. **Access Management** — Grant/revoke Cortex Code access via UI
 2. **Credit Configuration** — Account, cohort, and user-level daily limits
-3. **Native Per-User Quotas** _(Preview)_ — Hard monthly/daily enforcement via `SNOWFLAKE.CORE.QUOTA`
+3. **Native Per-User Quotas** _(generally available)_ — Hard monthly/daily enforcement via `SNOWFLAKE.CORE.QUOTA`
 4. **Usage Trends** — Pre-aggregated dashboards with date/cohort filters and forecasting
 5. **Cost Attribution** — Per-prompt and per-session credit costs via billing join
 6. **AI Observability** — 11-tab span-level intelligence: latency, tokens, tool calls, sessions
@@ -53,7 +53,7 @@ A **Streamlit-in-Snowflake (SiS) application** that wraps native parameters with
 Human Roles                  App Roles                    Snowflake
 ─────────────               ──────────                   ─────────
 ACCOUNTADMIN ──(one-time)──► CC_SP_OWNER_ROLE            ALTER ACCOUNT/USER
-                              │ Owns all SPs               GRANT/REVOKE ROLES
+                              │ Owns most SPs              GRANT/REVOKE ROLES
                               │ Has MANAGE GRANTS           SHOW PARAMETERS
                               │ NEVER assumed by humans     CREATE QUOTA
                               │
@@ -65,9 +65,11 @@ CC_USER_ROLE  ──────────────► CC_APP_ROLE         
                               ✗ CANNOT ALTER USER directly
 ```
 
-**Why this works:** The app runs as `CC_APP_ROLE` — it can only CALL stored procedures. The SPs
-execute as owner (`CC_SP_OWNER_ROLE`) which has elevated privileges. Input validation (regex,
-whitelist) happens inside each SP.
+**Why this works:** Privileged actions go through stored procedures that execute as their owner
+and validate every input (regex, allowlists, and a block on system roles as grant targets). Most SPs
+are owned by `CC_SP_OWNER_ROLE`. The credit-limit SPs stay owned by **ACCOUNTADMIN**, because
+Snowflake only lets an owner's-rights SP set `CORTEX_CODE_*_DAILY_EST_CREDIT_LIMIT_PER_USER` when
+ACCOUNTADMIN owns it — so Setup Phases A and C must run with the app owned by ACCOUNTADMIN.
 
 ### 2.2 Data Architecture
 
@@ -126,7 +128,7 @@ cortex-code-credit-manager/
 │   ├── setup.py                  5-phase install wizard (admin)
 │   ├── access_management.py      Grant/revoke Cortex access (admin)
 │   ├── credit_config.py          Account/cohort/user limits + AI Budgets (admin)
-│   ├── user_quotas.py            Native per-user quotas — SNOWFLAKE.CORE.QUOTA (Preview)
+│   ├── user_quotas.py            Native per-user quotas — SNOWFLAKE.CORE.QUOTA
 │   ├── model_access.py           Model tier management + role-model mapping (admin)
 │   ├── credit_requests.py        Request form (user) + approval queue (admin)
 │   ├── usage_trends.py           Trend charts, heatmap, spike detection (admin)
@@ -153,7 +155,7 @@ cortex-code-credit-manager/
 
 ## 4. Key Features
 
-### Native Per-User Quotas (Preview)
+### Native Per-User Quotas
 Uses `SNOWFLAKE.CORE.QUOTA` objects for hard monthly/daily enforcement. Blocks fire within
 **minutes** of breach and auto-release at cycle reset. Cohort scoping via `CC_COHORT_TAG` —
 all resolved cohort members are tagged and the quota scopes to that tag.
@@ -179,27 +181,31 @@ Uses `SNOWFLAKE.CORTEX.AI_COMPLETE` with a configurable judge model.
 
 ## 5. Stored Procedures
 
-All SPs are `EXECUTE AS OWNER` (CC_SP_OWNER_ROLE).
+All SPs are `EXECUTE AS OWNER`. Credit-limit SPs (marked †) must stay owned by ACCOUNTADMIN; Setup grants USAGE on every SP to CC_APP_ROLE and CC_SP_OWNER_ROLE.
 
 | SP | Phase | Purpose |
 |---|---|---|
-| SP_CC_SET_ACCOUNT_CREDIT_LIMIT | A | ALTER ACCOUNT SET surface limit |
-| SP_CC_SET_USER_CREDIT_LIMIT | A | ALTER USER SET surface limit |
-| SP_CC_UNSET_USER_CREDIT_LIMIT | A | ALTER USER UNSET surface limit |
-| SP_CC_GRANT_CORTEX_ACCESS | A | GRANT DATABASE ROLE to user |
-| SP_CC_REVOKE_CORTEX_ACCESS | A | REVOKE DATABASE ROLE from user |
-| SP_CC_REBALANCE_CREDITS | A | Transfer credits between users |
-| SP_CC_BULK_GRANT_ACCESS | A | Batch grant to role members |
-| SP_CC_BULK_SET_COHORT_LIMITS | A | Batch set limits for all cohort members |
-| SP_CC_COMPUTE_REBALANCE | A | EWMA prediction + donor selection |
+| SP_CC_SET_ACCOUNT_CREDIT_LIMIT † | A | ALTER ACCOUNT SET surface limit |
+| SP_CC_SET_USER_CREDIT_LIMIT † | A | ALTER USER SET surface limit |
+| SP_CC_UNSET_USER_CREDIT_LIMIT † | A | ALTER USER UNSET surface limit |
+| SP_CC_GRANT_CORTEX_ACCESS | A | GRANT a Cortex database role to a user |
+| SP_CC_REVOKE_CORTEX_ACCESS | A | REVOKE a Cortex database role from a user |
+| SP_CC_REBALANCE_CREDITS † | A | Transfer credits between users |
+| SP_CC_BULK_GRANT_ACCESS | A | Batch grant of allowed Cortex database roles to users |
+| SP_CC_BULK_SET_COHORT_LIMITS † | A | Batch set limits for all cohort members |
+| SP_CC_COMPUTE_REBALANCE † | A | EWMA prediction + donor selection |
 | SP_CC_REFRESH_USAGE_SUMMARIES | A | Incremental MERGE from ACCOUNT_USAGE |
-| SP_CC_DAILY_RESET_LIMITS | A | Reset rebalanced limits to cohort defaults |
+| SP_CC_DAILY_RESET_LIMITS † | A | Reset rebalanced limits to cohort defaults |
+| SP_CC_EXPIRE_TEMPORARY_CREDITS † | A | Revert expired temporary limits (cohorts and user overrides) |
+| SP_CC_MANAGE_ROLE_GRANT | A + C | Role-to-role / Cortex DB-role grants (system roles blocked) |
+| SP_CC_LIST_USERS / SP_CC_GET_USER_PARAM | A + C | Owner's-rights user listing / read CORTEX_CODE_* parameters |
+| SP_CC_ENFORCE_MODEL_ACCESS / SP_CC_REVOKE_MODEL_ACCESS | A | Grant / revoke model application roles |
 | SP_CC_RESOLVE_USER_COHORTS | A | Build CC_USER_COHORT_RESOLVED from role grants |
 | SP_CC_CLASSIFY_PROMPTS | C | Nightly prompt classification + cost attribution |
 | SP_CC_CHECK_ALERTS | C | Batch + real-time alert evaluation |
 | SP_CC_EVALUATE_RESPONSES | C | LLM-as-Judge quality scoring |
 | SP_CC_REFRESH_BUDGET_USAGE | C | AI Budget spending refresh |
-| SP_CC_MANAGE_QUOTA | C | Native per-user quota management (Preview) |
+| SP_CC_MANAGE_QUOTA | C | Native per-user quota management |
 
 ---
 
@@ -209,6 +215,8 @@ All SPs are `EXECUTE AS OWNER` (CC_SP_OWNER_ROLE).
 |---|---|---|
 | CC_REFRESH_USAGE_SUMMARIES | Every 30 min | Incremental refresh of daily + hourly summaries |
 | CC_DAILY_RESET_LIMITS | Midnight UTC | Restore rebalanced limits to cohort defaults |
+| CC_EXPIRE_TEMPORARY_CREDITS | Hourly | Revert expired temporary limits |
+| CC_REFRESH_BUDGET_USAGE | 2am UTC (starts suspended) | AI Budget spending refresh |
 | CC_CLASSIFY_PROMPTS_TASK | 2am UTC | Nightly prompt classification + cost attribution |
-| CC_ALERT_CHECK | Every 1 hr | Batch alert evaluation with email notifications |
-| CC_REALTIME_VIOLATION_ALERT | Every 1 hr | Stream-based HIGH severity detection |
+| CC_ALERT_CHECK (alert) | Every 1 hr (starts suspended) | Batch alert evaluation with email notifications |
+| CC_REALTIME_VIOLATION_ALERT (alert) | Every 1 hr (starts suspended) | Stream-based HIGH severity detection |

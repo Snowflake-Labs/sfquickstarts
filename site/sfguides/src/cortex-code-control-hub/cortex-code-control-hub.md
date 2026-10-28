@@ -20,7 +20,7 @@ At enterprise scale, organizations need governance patterns layered on top of Co
 CoCo Control Hub provides all of this in a single Streamlit app — no external services, no credentials outside Snowflake, deployable in under 30 minutes.
 
 ### What You'll Build
-- A 16-page governance application running inside Snowflake
+- An 18-page governance application running inside Snowflake
 - Cohort-based credit budgets by Snowflake role or user tag
 - EWMA-based intelligent credit rebalancing across CLI, Snowsight, and Desktop surfaces
 - Interactive model tier management (TIER_1 / TIER_2 / TIER_3)
@@ -29,12 +29,14 @@ CoCo Control Hub provides all of this in a single Streamlit app — no external 
 - Full session observability — prompts, token economics, cache hit rate
 - Budget forecasting and cost attribution
 - Native AI Budgets and Cortex AI Guardrails integration
+- Native per-user quotas (`SNOWFLAKE.CORE.QUOTA`) for hard enforcement
 - Full audit trail on every admin action
 
 ### Prerequisites
-- Snowflake account with ACCOUNTADMIN access (one-time setup only)
+- Snowflake account with ACCOUNTADMIN access (for initial setup, and to own the app while Setup Phases A and C run — on install and on every upgrade)
 - Cortex Code enabled on the account
-- Snowflake CLI installed: `curl -LsS https://ai.snowflake.com/static/cc-scripts/install.sh | sh`
+- **Snowflake CLI** (`snow`) installed — the deploy step runs `snow streamlit deploy`. See [Installing Snowflake CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli/installation/installation).
+- **Cortex Code CLI** (optional, for the AI-assisted deploy in `GETTING_STARTED.md`): `curl -LsS https://ai.snowflake.com/static/cc-scripts/install.sh | sh`
 - Any warehouse (XSMALL sufficient)
 
 ### What You'll Learn
@@ -75,7 +77,7 @@ Streamlit (owned by ACCOUNTADMIN)
 
 ### Surface Detection
 
-CoCo Control Hub tracks usage across three Cortex Code surfaces. Surface is resolved from `AI_OBSERVABILITY_EVENTS.CODING_AGENT` using a 3-level COALESCE:
+CoCo Control Hub tracks usage across three Cortex Code surfaces. Surface is resolved from the span attributes in `SNOWFLAKE.LOCAL.AI_OBSERVABILITY_EVENTS` — `RECORD_ATTRIBUTES['snow.ai.observability.agent.coding_agent.origin_application']`, then `...coding_agent.entrypoint`, then `...coding_agent.client_type` — using a 3-level COALESCE (shorthand below; `coding_agent.x` means `RECORD_ATTRIBUTES['snow.ai.observability.agent.coding_agent.x']`):
 
 ```sql
 UPPER(COALESCE(
@@ -106,7 +108,7 @@ deployment:
   schema: YOUR_SCHEMA
 
 roles:
-  sp_owner: CC_SP_OWNER_ROLE   # or reuse existing elevated role
+  sp_owner: CC_SP_OWNER_ROLE   # or reuse existing elevated role (credit-limit SPs still stay ACCOUNTADMIN-owned)
   app_role: CC_APP_ROLE        # or existing Streamlit runtime role
   admin_role: CC_ADMIN_ROLE
   user_role: CC_USER_ROLE
@@ -129,7 +131,7 @@ Download the source files from the Snowflake-Labs sfquickstarts repository:
 https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/cortex-code-control-hub/assets/code
 ```
 
-Edit `config.yaml` with your database and schema:
+Edit `config.yaml` with your database and schema, and replace the `MY_DATABASE` / `MY_SCHEMA` / `MY_WAREHOUSE` placeholders in `snowflake.yml`:
 
 ```yaml
 deployment:
@@ -144,20 +146,29 @@ admin:
 ### Step 2: Deploy the Streamlit App
 
 ```bash
-snow streamlit deploy \
-  --connection YOUR_CONNECTION \
-  --database YOUR_DATABASE \
-  --schema YOUR_SCHEMA
+snow streamlit deploy --connection YOUR_CONNECTION
+```
+
+Make sure the app is owned by ACCOUNTADMIN before running Setup (Setup runs as the app owner):
+
+```sql
+SHOW STREAMLITS IN SCHEMA YOUR_DATABASE.YOUR_SCHEMA;   -- "owner" column
+GRANT OWNERSHIP ON STREAMLIT YOUR_DATABASE.YOUR_SCHEMA.CORTEX_CODE_CREDIT_MANAGER
+  TO ROLE ACCOUNTADMIN COPY CURRENT GRANTS;
 ```
 
 ### Step 3: In-App Setup
 
 Open the app in Snowsight and navigate to **Setup**:
 
-1. Click **Run Check** — verifies all required objects (tables, SPs, tasks, roles)
-2. Click **Create Missing Objects** — runs `prerequisites.sql` and creates all tables, SPs, and tasks
-3. Click **Seed Default Settings** — populates `CC_APP_CONFIG` with defaults and seeds policy rules
-4. Click **Run Initial Data Refresh** — backfills 30 days of usage data from `AI_OBSERVABILITY_EVENTS`
+1. **Account Prerequisites** — run the 7 SQL blocks shown on the page in a worksheet as ACCOUNTADMIN (cross-region inference, `AI_OBSERVABILITY_READER` application role, ACCOUNT_USAGE access, Cortex roles for users, and optional limits, guardrails and budgets)
+2. **Phase A — Create Objects** — runs `prerequisites.sql` (roles, tables, tasks, alerts, stream, email integration, core SPs), creates the bulk/rebalance/model-access SPs, and grants SP USAGE to the app and SP owner roles
+3. **Phase B — Seed Defaults** — populates `CC_APP_CONFIG` and policy rules
+4. **Phase C — Create Stored Procedures** — classification, alerting, evaluation, budget and quota SPs
+5. **Phase D — Initial Data Load** — backfills usage summaries and prompt events
+6. **Phase E — Verify** — every object, credit-limit SP ownership, and the temporary-limit columns must be green
+
+Phases A and C must run with the app owned by ACCOUNTADMIN — the credit-limit SPs only work when ACCOUNTADMIN owns them. The Setup page warns if it is not.
 
 <!-- ------------------------ -->
 ## Cohort Credit Management
@@ -169,9 +180,9 @@ Cohort budgets let you govern credit consumption at the team level — by Snowfl
 
 Navigate to **Credit Configuration → Cohort (Role or Tag)** tab:
 
-1. Select **Role** and choose a Snowflake role (e.g., your data engineering team role)
+1. Select **Role** and choose a Snowflake role (e.g., your data engineering team role) — or enter a pattern such as `ENG_*` to create one cohort per matching role
 2. Set daily limits for CLI, Snowsight, and Desktop surfaces
-3. Choose **Permanent** or **Temporary** (with auto-revert date)
+3. Choose **Permanent** or **Temporary** (with an end date — the hourly `CC_EXPIRE_TEMPORARY_CREDITS` task restores the previous limits after it)
 4. Click **Apply to Cohort**
 
 One SP call applies to all members server-side. No O(N) Python round-trips. No browser timeouts.
@@ -222,12 +233,14 @@ Duration: 5
 
 ### Session-Level Visibility
 
-The **Observability** page reads directly from `SNOWFLAKE.ACCOUNT_USAGE.AI_OBSERVABILITY_EVENTS` to provide session-level analytics with zero additional pipelines:
+The **Observability** page reads from `SNOWFLAKE.LOCAL.AI_OBSERVABILITY_EVENTS` (via the nightly `CC_PROMPT_EVENTS` table) to provide session-level analytics with zero additional pipelines:
 
 - Every session: prompts sent, tokens used (input/output/cache), estimated credits, entrypoint surface
 - Cache hit rate: `cache_read_tokens / (cache_read_tokens + cache_write_tokens)` — indicates how well Prompt Cache is performing
 - Token economics: input vs output vs cached token breakdown per session
 - Cohort drill-down: filter to any role's members and see their individual session detail
+
+> **Source of truth for credits:** Snowflake delivers AI observability trace data on a best-effort basis, so credit figures derived from it are **estimates**. The `ACCOUNT_USAGE` usage-history views are authoritative for billed credits; the **Usage Trends** and **Cost Attribution** pages use them.
 
 ### Usage Trends
 
@@ -286,7 +299,12 @@ Navigate to **Model Access → Role-Model Mapping**:
 
 1. Select a Snowflake role
 2. Use the quick-assign buttons (auto-generated from configured tiers) or multiselect
-3. Choose enforcement method: per-user `CORTEX_MODELS_ALLOWLIST`, account-wide, or save only
+3. Choose enforcement method (model RBAC — grants `SNOWFLAKE."CORTEX-MODEL-ROLE-*"` application roles):
+   - **Role Directly** (recommended) — grants the model application roles to the role; all current and future members inherit them
+   - **Role Members** — per-user model RBAC: grants the model application roles to each current member individually
+   - **Save mapping only** — record the mapping and enforce later
+
+   There is no account-wide option: the `CORTEX_MODELS_ALLOWLIST` account parameter is being retired by [BCR-2378](https://docs.snowflake.com/en/release-notes/bcr-bundles/2026_07/bcr-2378) (2026_07 bundle, generally enabled January 2027).
 4. Click **Save & Apply**
 
 <!-- ------------------------ -->
@@ -301,9 +319,69 @@ Three grant paths:
 
 **Individual Users (Search)** — server-side search against `ACCOUNT_USAGE.USERS`. Works at 50,000+ users without loading them all into the browser.
 
-**Account Role** — recommended for scale. Grants `SNOWFLAKE.CORTEX_USER` and `SNOWFLAKE.COPILOT_USER` to an account role. All current and future members inherit automatically.
+**Account Role** — recommended for scale. Grants the Cortex database roles to an account role. All current and future members inherit automatically.
 
-**By User Tag** — queries `SNOWFLAKE.ACCOUNT_USAGE.TAG_REFERENCES` to find users with a specific tag value (e.g., `DEPARTMENT = CLINICAL_DS`).
+Database roles offered on every path:
+
+- `SNOWFLAKE.CORTEX_USER` — full Cortex access, including Cortex Code
+- `SNOWFLAKE.CORTEX_AGENT_USER` — least-privilege alternative for Cortex Code (agent features only)
+- `SNOWFLAKE.COPILOT_USER` — **transitional**. CoCo in Snowsight requires it only until [BCR-2445](https://docs.snowflake.com/en/release-notes/bcr-bundles/un-bundled/bcr-2445) reaches your account (rolling out from October 2026); after that, granting or revoking it has no effect on CoCo.
+
+**By User Tag** — queries `SNOWFLAKE.ACCOUNT_USAGE.TAG_REFERENCES` to find users with a specific tag value (e.g., `DEPARTMENT = DATA_SCIENCE`).
+
+<!-- ------------------------ -->
+## Upgrading an Existing Installation
+Duration: 5
+
+This release adds temporary-limit expiry, new security checks on the privileged stored procedures, and keeps the credit-limit stored procedures owned by ACCOUNTADMIN. **Run Phases A and C after updating.**
+
+1. Get the latest code from `assets/code/` and keep your own values in `config.yaml` and `snowflake.yml` (database, schema, warehouse, admin roles).
+2. Redeploy the app: `snow streamlit deploy --replace --connection <your_connection>`
+3. Make sure the app is **owned by ACCOUNTADMIN** — Setup runs as the app owner, and the credit-limit SPs only work when ACCOUNTADMIN owns them:
+   ```sql
+   SHOW STREAMLITS IN SCHEMA <db>.<schema>;   -- check the "owner" column
+   GRANT OWNERSHIP ON STREAMLIT <db>.<schema>.CORTEX_CODE_CREDIT_MANAGER TO ROLE ACCOUNTADMIN COPY CURRENT GRANTS;
+   ```
+4. If not done before, grant AI Observability access (it is an **application** role):
+   `GRANT APPLICATION ROLE SNOWFLAKE.AI_OBSERVABILITY_READER TO ROLE CC_SP_OWNER_ROLE;`
+5. Open the app → **Setup** → run **Phase A**. It is idempotent: it adds the temporary-limit columns to `CC_CREDIT_CONFIG`, creates the hourly `CC_EXPIRE_TEMPORARY_CREDITS` task, recreates the SPs, re-applies USAGE grants, and resumes alerts and the budget refresh task if they were running.
+6. Run **Phase C**.
+7. Run **Phase E**. All checks must be green — including ownership of the credit-limit SPs and the new columns.
+8. Confirm the tasks are running: `SHOW TASKS LIKE 'CC_%' IN SCHEMA <db>.<schema>;`
+
+**Behaviour changes in this release**
+- Model Access no longer offers an account-wide option (`CORTEX_MODELS_ALLOWLIST` is retired by BCR-2378). Use **Role Directly** or **Role Members** (model RBAC).
+- Access grants offer `CORTEX_USER` or `CORTEX_AGENT_USER`; `COPILOT_USER` is transitional (BCR-2445).
+- Temporary limits created before this release have no expiry date recorded and will not auto-revert — re-apply them as Temporary if needed.
+- If the app was owned by a custom role, transfer it to ACCOUNTADMIN for Phases A and C, then transfer it back.
+
+<!-- ------------------------ -->
+## Native Per-User Quotas
+Duration: 3
+
+### Hard Enforcement with SNOWFLAKE.CORE.QUOTA
+
+The **User Quotas** page manages Snowflake's native per-user quotas (`SNOWFLAKE.CORE.QUOTA` objects, generally available). These complement the app's daily limits:
+
+| | Daily limits (Credit Configuration) | Native quotas (User Quotas) |
+|---|---|---|
+| **Mechanism** | `ALTER USER SET CORTEX_CODE_*_DAILY_EST_CREDIT_LIMIT_PER_USER` | `SNOWFLAKE.CORE.QUOTA` object |
+| **Cycle** | Daily, per surface | Monthly, weekly and daily, aligned to the UTC calendar (custom cycle start dates are not supported) |
+| **Scope** | Per user, per cohort | One quota per role cohort |
+
+From the page you can create quotas (one per matched role when you use a role pattern), review live limits and remove quotas. See [Per-user quotas](https://docs.snowflake.com/en/user-guide/budgets/per-user-quotas).
+
+<!-- ------------------------ -->
+## How This Complements Native Controls
+Duration: 2
+
+Snowflake now provides native per-user quotas and MDM policy enforcement (preview), which overlap parts of this app's cost and policy features. Use the native controls for hard platform-level enforcement; the app adds the governance workflow around them:
+
+- **Per-user overrides** on top of cohort defaults, including temporary limits that auto-revert
+- **Self-service credit requests** with an admin and domain-lead approval queue
+- **Intelligent rebalancing** of unused credits between users
+- **Pattern-based administration** — apply limits, access and model RBAC to many roles, users or tag values at once
+- **A full audit trail** of every admin action in `CC_AUDIT_LOG`
 
 <!-- ------------------------ -->
 ## Conclusion
@@ -311,7 +389,7 @@ Duration: 2
 
 ### What You Built
 
-- A fully operational enterprise governance layer for Cortex Code with 16 pages
+- A fully operational enterprise governance layer for Cortex Code with 18 pages
 - Cohort budgets, self-service rebalancing, model tiers, and audit trail — all inside Snowflake
 - Owner-rights SP architecture that scales to 50,000+ users without external services
 - Semantic responsible AI monitoring powered by Cortex LLM functions
