@@ -6,7 +6,7 @@ summary: Build VidPrep, a Streamlit-in-Snowflake app that uses AI_TRANSCRIBE and
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-fork repo link: https://github.com/sfc-gh-cnantasenamat/ai-powered-video-publishing
+fork repo link: https://github.com/streamlit/ai-powered-video-publishing
 
 
 # Build an AI-Powered Video Publishing App on Snowflake
@@ -81,7 +81,7 @@ CREATE EXTERNAL ACCESS INTEGRATION IF NOT EXISTS PYPI_ACCESS
 
 ### Clone the project
 ```bash
-git clone https://github.com/sfc-gh-cnantasenamat/ai-powered-video-publishing.git
+git clone https://github.com/streamlit/ai-powered-video-publishing.git
 cd ai-powered-video-publishing
 ```
 
@@ -445,4 +445,4 @@ Documentation:
 - [Runtime environments for Streamlit apps](https://docs.snowflake.com/en/developer-guide/streamlit/app-development/runtime-environments)
 
 Additional Reading:
-- [ai-powered-video-publishing on GitHub](https://github.com/sfc-gh-cnantasenamat/ai-powered-video-publishing)
+- [ai-powered-video-publishing on GitHub](https://github.com/streamlit/ai-powered-video-publishing)
