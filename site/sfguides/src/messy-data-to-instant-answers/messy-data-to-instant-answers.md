@@ -1,6 +1,6 @@
 author: Kevin Nguyen
 id: messy-data-to-instant-answers
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/feature/cortex-ai, snowflake-site:taxonomy/feature/cortex-analyst, snowflake-site:taxonomy/feature/cortex-search, snowflake-site:taxonomy/feature/semantic-views, snowflake-site:taxonomy/feature/notebooks, snowflake-site:taxonomy/use-case/data-transformation, snowflake-site:taxonomy/use-case/business-intelligence
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/cortex-analyst, snowflake-site:taxonomy/snowflake-feature/cortex-search, snowflake-site:taxonomy/snowflake-feature/snowflake-intelligence, snowflake-site:taxonomy/snowflake-feature/unstructured-data-analysis
 language: en
 summary: Watch an AI agent give a confident wrong answer over messy online-store return data, then fix the data with Snowflake CoCo, translate and tag multilingual customer comments with AI functions, and ask again in Snowflake CoWork to get numbers backed by customer quotes.
 environments: web
@@ -43,6 +43,10 @@ You'll start by asking an agent that question over the raw data, and you'll get 
 - The ACCOUNTADMIN role (trial users have it by default) and the `COMPUTE_WH` warehouse
 - The lab's GitHub repository, [github.com/Snowflake-Labs/sfguide-messy-data-to-instant-answers](https://github.com/Snowflake-Labs/sfguide-messy-data-to-instant-answers). You'll clone it in the next section.
 - Clean-up at the end (STEP 11) is up to you. The search service keeps a small amount of compute running until you drop it.
+
+### What You'll Need
+- A web browser with access to Snowsight
+- The lab files from the GitHub repository above: `lab.ipynb` and the three data files (CSV and JSON)
 
 The data is 2,000 order lines: big enough that you can't eyeball the answer, small enough that every step runs in seconds. The same steps work unchanged on millions of rows.
 
