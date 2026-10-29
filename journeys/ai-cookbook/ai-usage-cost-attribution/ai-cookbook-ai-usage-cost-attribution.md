@@ -38,7 +38,7 @@ When not to use this:
 
 - One-off questions such as "what did AI cost last week". Ask the bundled `cost-intelligence` skill in Cortex Code instead.
 - Organization-wide reporting across accounts. The same views exist in `ORGANIZATION_USAGE` (organization account only, higher latency); this recipe covers one account.
-- Per-request tracing of what an agent did. See [diagnose-agent-requests](https://www.snowflake.com/en/developers/guides/ai-cookbook/diagnose-agent-requests/).
+- Per-request tracing of what an agent did. See [diagnose-agent-requests](/en/developers/guides/ai-cookbook/diagnose-agent-requests/).
 
 ## How it works
 

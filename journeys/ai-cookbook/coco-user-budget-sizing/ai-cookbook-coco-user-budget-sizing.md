@@ -35,13 +35,13 @@ Give every Cortex Code (CoCo) user room to work, stop runaway spend before it hi
 - You have a few heavy users and want them governed separately from everyone else.
 - Finance wants alerts on team-level spend without anyone being blocked by them.
 
-Not the right fit if you only need to report on CoCo spend after the fact. For that, start with [AI usage and cost attribution](https://www.snowflake.com/en/developers/guides/ai-cookbook/ai-usage-cost-attribution/).
+Not the right fit if you only need to report on CoCo spend after the fact. For that, start with [AI usage and cost attribution](/en/developers/guides/ai-cookbook/ai-usage-cost-attribution/).
 
 ## How it works
 
 ![How it works: Size Cortex Code per-user limits from real usage](https://raw.githubusercontent.com/Snowflake-Labs/sfquickstarts/master/journeys/ai-cookbook/coco-user-budget-sizing/assets/coco-user-budget-sizing-01.png)
 
-This recipe owns the per-user quotas for CoCo. It builds on [AI usage and cost attribution](https://www.snowflake.com/en/developers/guides/ai-cookbook/ai-usage-cost-attribution/) for reporting. Don't also add the `CORTEX CODE` shared resource to that recipe's quota: CoCo users would then sit under two independent quotas, each of which can block them.
+This recipe owns the per-user quotas for CoCo. It builds on [AI usage and cost attribution](/en/developers/guides/ai-cookbook/ai-usage-cost-attribution/) for reporting. Don't also add the `CORTEX CODE` shared resource to that recipe's quota: CoCo users would then sit under two independent quotas, each of which can block them.
 
 Four ideas shape the setup:
 

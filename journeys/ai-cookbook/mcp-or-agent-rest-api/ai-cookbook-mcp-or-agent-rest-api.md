@@ -37,8 +37,8 @@ Both options call the same Cortex Agent object, over the same semantic views and
 
 When not to use this:
 
-- You have already chosen the REST API for users without Snowflake accounts and need the implementation: see [multi-tenant agents](https://www.snowflake.com/en/developers/guides/ai-cookbook/multi-tenant-agents/).
-- Agent runs regularly exceed your MCP client's per-call time limit. See [long-running agents over MCP](https://www.snowflake.com/en/developers/guides/ai-cookbook/long-running-agents-over-mcp/).
+- You have already chosen the REST API for users without Snowflake accounts and need the implementation: see [multi-tenant agents](/en/developers/guides/ai-cookbook/multi-tenant-agents/).
+- Agent runs regularly exceed your MCP client's per-call time limit. See [long-running agents over MCP](/en/developers/guides/ai-cookbook/long-running-agents-over-mcp/).
 
 ## How it works
 
@@ -69,14 +69,14 @@ Key concepts:
 | What policies key on | `CURRENT_USER()`, `CURRENT_ROLE()` | `SYS_CONTEXT('SNOWFLAKE$SESSION_ATTRIBUTES', ...)` set by the application |
 | Response transport | `tools/call` returns a Server-Sent Events stream, on by default for every account since 2026-08-20 ([BCR-2405](https://docs.snowflake.com/en/release-notes/bcr-bundles/un-bundled/bcr-2405)); see [operational limits](#mcp-best-practices) and [Check the stream](#verify) | Streams typed agent events by default (text deltas, thinking, tool use and results, then a final `response` event); `stream: false` returns one JSON object |
 | Conversation memory | Held by the client; the tool receives a message | Server-side threads with `thread_id` and `parent_message_id` |
-| Long-running work | The agent runs for the duration of one tool call, so any per-call limit in the client applies; see [long-running agents over MCP](https://www.snowflake.com/en/developers/guides/ai-cookbook/long-running-agents-over-mcp/) | Synchronous runs time out at 15 minutes; `background: true` runs up to 6 hours, and you reconnect with the Stream Agent Run endpoint |
+| Long-running work | The agent runs for the duration of one tool call, so any per-call limit in the client applies; see [long-running agents over MCP](/en/developers/guides/ai-cookbook/long-running-agents-over-mcp/) | Synchronous runs time out at 15 minutes; `background: true` runs up to 6 hours, and you reconnect with the Stream Agent Run endpoint |
 | Forcing or restricting tools | Not exposed; the client routes by tool name and description | `tool_choice` |
 | Changing the front door | `CREATE OR REPLACE MCP SERVER` drops all grants on the server; reapply them in the same script | Your application's own release process |
 | Engineering cost | One MCP server and one OAuth integration | An application you build, run, and maintain |
 
 ## Prerequisites
 
-These cover the MCP lane example in `sql/`. The REST lane is implemented in [multi-tenant agents](https://www.snowflake.com/en/developers/guides/ai-cookbook/multi-tenant-agents/).
+These cover the MCP lane example in `sql/`. The REST lane is implemented in [multi-tenant agents](/en/developers/guides/ai-cookbook/multi-tenant-agents/).
 
 | Requirement | Notes |
 |---|---|
@@ -209,7 +209,7 @@ Start with one server that exposes one `CORTEX_AGENT_RUN` tool per domain agent.
 
 ### Keep business logic server-side
 
-Snowflake sees the message the client sends to the agent and everything the agent does. It does not see the client's own system prompt, custom instructions, or skills, or any turn the client answered without calling a Snowflake tool. Logic encoded on the client side is invisible to Snowflake, unversioned, and unavailable to every other surface. Put it in the agent's orchestration and response instructions and in the semantic view, so every client inherits it and every change is reviewable. For turning agent traffic into semantic view improvements, see [refinement loop from agent logs](https://www.snowflake.com/en/developers/guides/ai-cookbook/refinement-loop-from-agent-logs/).
+Snowflake sees the message the client sends to the agent and everything the agent does. It does not see the client's own system prompt, custom instructions, or skills, or any turn the client answered without calling a Snowflake tool. Logic encoded on the client side is invisible to Snowflake, unversioned, and unavailable to every other surface. Put it in the agent's orchestration and response instructions and in the semantic view, so every client inherits it and every change is reviewable. For turning agent traffic into semantic view improvements, see [refinement loop from agent logs](/en/developers/guides/ai-cookbook/refinement-loop-from-agent-logs/).
 
 ### Deploy changes through version control
 
@@ -247,7 +247,7 @@ A Snowflake `GIT REPOSITORY` object clones a remote repository into the account 
 
 ## Agents REST API best practices
 
-The full pattern, with runnable code, is in [multi-tenant agents](https://www.snowflake.com/en/developers/guides/ai-cookbook/multi-tenant-agents/).
+The full pattern, with runnable code, is in [multi-tenant agents](/en/developers/guides/ai-cookbook/multi-tenant-agents/).
 
 ### What only the REST API provides
 
@@ -376,7 +376,7 @@ With `--compare-json`, the same call sent with `Accept: application/json` return
 | The client parses `tools/call` as one JSON body and gets nothing | Responses are SSE streams since 2026-08-20 | Send `Accept: application/json, text/event-stream`, read `data:` events, and end on stream close rather than waiting for `[DONE]`. |
 | A client that sends the SSE `Accept` header still gets one JSON body | Something on the path (a client library, gateway, or proxy) rewrote or dropped the header; streaming is on by default and needs no account change | Run `client/mcp_stream_check.py` from the client's network and compare with a run from outside it. |
 | Calls fail with HTTP 504 after a fixed idle time | A proxy buffers the response, so keep-alives never reach it | Disable response buffering for the MCP path; the stream check's longest silence shows whether keep-alives get through. |
-| Calls fail at the same duration however the stream behaves | The client's own per-request limit | Reset the limit on progress if the client supports it, make the agent faster, or split the work into submit and fetch calls: [long-running agents over MCP](https://www.snowflake.com/en/developers/guides/ai-cookbook/long-running-agents-over-mcp/). |
+| Calls fail at the same duration however the stream behaves | The client's own per-request limit | Reset the limit on progress if the client supports it, make the agent faster, or split the work into submit and fetch calls: [long-running agents over MCP](/en/developers/guides/ai-cookbook/long-running-agents-over-mcp/). |
 
 ## Teardown
 

@@ -161,7 +161,7 @@ ALTER TABLE SALES_BOOKINGS ADD ROW ACCESS POLICY SALES_THEATER_POLICY ON (THEATE
 
 The policy is created once with a `FALSE` body and updated with `SET BODY`, so re-runs never need to detach it. `DROP ALL ROW ACCESS POLICIES` before `ADD` guarantees the table has exactly one policy. Inside an agent run, `CURRENT_ROLE()` is the role the run executes under (for these users, their default role).
 
-The sales table is stored at one grain (territory by quarter), so `SUM` is always correct. If your table mixes detail rows with pre-aggregated roll-ups, fix that first: see [mixed-grain data and verified queries](https://www.snowflake.com/en/developers/guides/ai-cookbook/mixed-grain-and-verified-queries/).
+The sales table is stored at one grain (territory by quarter), so `SUM` is always correct. If your table mixes detail rows with pre-aggregated roll-ups, fix that first: see [mixed-grain data and verified queries](/en/developers/guides/ai-cookbook/mixed-grain-and-verified-queries/).
 
 ### The routing evaluation
 
@@ -175,7 +175,7 @@ metrics:
     version: "v3"
 ```
 
-Pinning `v3` keeps scores comparable between runs. To score routing directly, add `- name: "tool_selection_accuracy"` with `version: "v3"`; that metric is in Public Preview and reads the `ground_truth_invocations` already in the dataset. For the full evaluation workflow see [agent evaluations](https://www.snowflake.com/en/developers/guides/ai-cookbook/agent-evaluations/).
+Pinning `v3` keeps scores comparable between runs. To score routing directly, add `- name: "tool_selection_accuracy"` with `version: "v3"`; that metric is in Public Preview and reads the `ground_truth_invocations` already in the dataset. For the full evaluation workflow see [agent evaluations](/en/developers/guides/ai-cookbook/agent-evaluations/).
 
 ### Optional: show the orchestrator in Snowflake CoWork
 
@@ -249,7 +249,7 @@ Expect one row per metric with `n = 5`. Look at low-scoring inputs with `METRIC_
 | A user with several roles sees an unexpected slice | The policy keys on `CURRENT_ROLE()` only; role hierarchy is not followed | Add an entitlement row per role that should see data, or switch to `IS_ROLE_IN_SESSION` if you want hierarchy and secondary roles to count |
 | Follow-up questions lose context | Specialists run in a fresh `DATA_AGENT_RUN` with no thread | The orchestrator's instructions rewrite follow-ups as self-contained questions |
 | Charts from the specialist never appear | Only text and tables that the bridge returns cross the hop | Send chart-heavy users to the specialist directly, or accept the markdown table |
-| Slow or costly answers | Each delegated question is at least two agent runs; three for cross-domain | Budget each agent separately; token budgets cover orchestration only, not tool tokens. For usage and cost by agent, see [AI usage and cost attribution](https://www.snowflake.com/en/developers/guides/ai-cookbook/ai-usage-cost-attribution/) |
+| Slow or costly answers | Each delegated question is at least two agent runs; three for cross-domain | Budget each agent separately; token budgets cover orchestration only, not tool tokens. For usage and cost by agent, see [AI usage and cost attribution](/en/developers/guides/ai-cookbook/ai-usage-cost-attribution/) |
 | Edited questions in `ROUTING_EVAL_INPUT` are not evaluated | The dataset is a snapshot taken when it was created; 08 creates it once | Use a new dataset name in 08 (and in the YAML `source_metadata`) after changing the input table |
 | Evaluation scores do not reflect persona behavior | Evaluations run as the role that starts them and cannot pass session attributes | Evaluate routing and answer quality as the admin; test the boundary with persona users |
 

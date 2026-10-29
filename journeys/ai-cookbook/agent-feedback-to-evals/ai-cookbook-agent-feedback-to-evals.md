@@ -13,7 +13,7 @@ fork_repo_link: https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/s
 
 ## Overview
 
-Real users tell you where an agent falls short in two ways: they click thumbs down, or they ask the same thing again in different words. This recipe reads both signals from the agent's observability events, confirms each candidate with a single LLM call, drafts a self-contained test question with ground-truth criteria, drops near-duplicates, and writes `EVAL_DATASET` in the `INPUT_QUERY` / `GROUND_TRUTH` shape that [agent evaluations](https://www.snowflake.com/en/developers/guides/ai-cookbook/agent-evaluations/) runs against.
+Real users tell you where an agent falls short in two ways: they click thumbs down, or they ask the same thing again in different words. This recipe reads both signals from the agent's observability events, confirms each candidate with a single LLM call, drafts a self-contained test question with ground-truth criteria, drops near-duplicates, and writes `EVAL_DATASET` in the `INPUT_QUERY` / `GROUND_TRUTH` shape that [agent evaluations](/en/developers/guides/ai-cookbook/agent-evaluations/) runs against.
 
 | At a glance | |
 |---|---|
@@ -35,8 +35,8 @@ Real users tell you where an agent falls short in two ways: they click thumbs do
 
 When not to use this:
 
-- You need to score answers: that is `EXECUTE_AI_EVALUATION`; see [agent evaluations](https://www.snowflake.com/en/developers/guides/ai-cookbook/agent-evaluations/).
-- You need latency or per-request debugging: see [diagnose-agent-requests](https://www.snowflake.com/en/developers/guides/ai-cookbook/diagnose-agent-requests/).
+- You need to score answers: that is `EXECUTE_AI_EVALUATION`; see [agent evaluations](/en/developers/guides/ai-cookbook/agent-evaluations/).
+- You need latency or per-request debugging: see [diagnose-agent-requests](/en/developers/guides/ai-cookbook/diagnose-agent-requests/).
 - You cannot grant a role access to conversation text. Without `READ UNREDACTED AI OBSERVABILITY EVENTS TABLE`, questions and feedback text read as NULL and there is nothing to mine.
 
 ## How it works
@@ -67,7 +67,7 @@ When not to use this:
 4. `sql/04_simulate_traffic.sql`: replays 8 scripted conversations (13 turns) through `DATA_AGENT_RUN`, one thread per conversation, logging every call in `RUN_LOG`.
 5. Optional: `notebooks/01_submit_feedback.ipynb` sends the thumbs up or down in `FEEDBACK_SCRIPT` through the Feedback REST API.
 6. `sql/05_mine_signals.sql`: builds `AGENT_TURNS`, `FEEDBACK_EVENTS`, `TURN_PAIRS`, `EVAL_CANDIDATES`, `CANDIDATE_EMBEDDINGS`, and `EVAL_DATASET`, then prints a funnel.
-7. Review `EVAL_CANDIDATES`, then run the dataset with [agent evaluations](https://www.snowflake.com/en/developers/guides/ai-cookbook/agent-evaluations/).
+7. Review `EVAL_CANDIDATES`, then run the dataset with [agent evaluations](/en/developers/guides/ai-cookbook/agent-evaluations/).
 8. `sql/99_teardown.sql` when done.
 
 ## Walkthrough
@@ -131,7 +131,7 @@ dataset:
     ground_truth: "GROUND_TRUTH"
 ```
 
-`GROUND_TRUTH` contains `ground_truth_output` (read by `answer_correctness`) and `expected_tools`, plus `intent`, `source`, `source_request_id`, and `review_status` for your own filtering. Staging the config and running `EXECUTE_AI_EVALUATION` is covered in [agent evaluations](https://www.snowflake.com/en/developers/guides/ai-cookbook/agent-evaluations/).
+`GROUND_TRUTH` contains `ground_truth_output` (read by `answer_correctness`) and `expected_tools`, plus `intent`, `source`, `source_request_id`, and `review_status` for your own filtering. Staging the config and running `EXECUTE_AI_EVALUATION` is covered in [agent evaluations](/en/developers/guides/ai-cookbook/agent-evaluations/).
 
 ## Verify
 

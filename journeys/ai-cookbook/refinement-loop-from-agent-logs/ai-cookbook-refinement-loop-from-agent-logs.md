@@ -36,9 +36,9 @@ An agent's first week of real questions is the best specification its semantic v
 
 When not to use it:
 
-- There is no traffic yet. Build the first evaluation set from expected questions instead; see [agent-feedback-to-evals](https://www.snowflake.com/en/developers/guides/ai-cookbook/agent-feedback-to-evals/) for turning traffic into an evaluation dataset once it exists.
-- You are debugging one slow or failing request. [diagnose-agent-requests](https://www.snowflake.com/en/developers/guides/ai-cookbook/diagnose-agent-requests/) breaks a single trace down span by span.
-- The wrong numbers come from the data model (mixed grains, fan traps), not from missing definitions. [mixed-grain-and-verified-queries](https://www.snowflake.com/en/developers/guides/ai-cookbook/mixed-grain-and-verified-queries/) covers the mixed-grain case; the `sv_diagnostics` snippet under [Related skills](#related-skills) covers joins.
+- There is no traffic yet. Build the first evaluation set from expected questions instead; see [agent-feedback-to-evals](/en/developers/guides/ai-cookbook/agent-feedback-to-evals/) for turning traffic into an evaluation dataset once it exists.
+- You are debugging one slow or failing request. [diagnose-agent-requests](/en/developers/guides/ai-cookbook/diagnose-agent-requests/) breaks a single trace down span by span.
+- The wrong numbers come from the data model (mixed grains, fan traps), not from missing definitions. [mixed-grain-and-verified-queries](/en/developers/guides/ai-cookbook/mixed-grain-and-verified-queries/) covers the mixed-grain case; the `sv_diagnostics` snippet under [Related skills](#related-skills) covers joins.
 
 ## How it works
 
@@ -96,7 +96,7 @@ COUNT_IF(SPAN = 'SystemExecuteSQLTool_system_execute_sql')                      
 BOOLOR_AGG(A:"snow.ai.observability.agent.tool.sql_execution.verified_query_used"::BOOLEAN)            AS USED_VERIFIED_QUERY
 ```
 
-The documentation defines the table function, the event layout, and the `CORTEX_AGENT_FEEDBACK` record name for explicit feedback. The span and attribute names above are what the events hold today, not a documented contract, so `04_triage.sql` shows how to list them if a column comes back empty. Explicit thumbs up or down is a separate signal: [agent-feedback-to-evals](https://www.snowflake.com/en/developers/guides/ai-cookbook/agent-feedback-to-evals/) links feedback events to turns.
+The documentation defines the table function, the event layout, and the `CORTEX_AGENT_FEEDBACK` record name for explicit feedback. The span and attribute names above are what the events hold today, not a documented contract, so `04_triage.sql` shows how to list them if a column comes back empty. Explicit thumbs up or down is a separate signal: [agent-feedback-to-evals](/en/developers/guides/ai-cookbook/agent-feedback-to-evals/) links feedback events to turns.
 
 ### 2. Triage the first-draft view
 
@@ -124,9 +124,9 @@ The trace tells you which part of the view to change. Each cause has a different
 | The same question answered ad hoc every week | No verified query | Add it to `AI_VERIFIED_QUERIES`, with `ONBOARDING_QUESTION TRUE` for the ones new users should see |
 | A question the view can't answer | Scope | `AI_QUESTION_CATEGORIZATION` to say so, or a different agent or view |
 | Wrong view or tool chosen | Overlapping tool descriptions in the agent | Rewrite the agent's tool descriptions to be mutually exclusive |
-| Wrong totals, not wrong words | The data model (grain, joins) | See [mixed-grain-and-verified-queries](https://www.snowflake.com/en/developers/guides/ai-cookbook/mixed-grain-and-verified-queries/) and the `sv_diagnostics` snippet |
+| Wrong totals, not wrong words | The data model (grain, joins) | See [mixed-grain-and-verified-queries](/en/developers/guides/ai-cookbook/mixed-grain-and-verified-queries/) and the `sv_diagnostics` snippet |
 
-For writing the descriptions themselves, [description-quality](https://www.snowflake.com/en/developers/guides/ai-cookbook/description-quality/) has a rubric and a linter. For pattern-level fixes (derived metrics, semi-additive metrics, time intelligence, range joins), use the `semantic-view-patterns` skill in apply mode rather than hand-writing them.
+For writing the descriptions themselves, [description-quality](/en/developers/guides/ai-cookbook/description-quality/) has a rubric and a linter. For pattern-level fixes (derived metrics, semi-additive metrics, time intelligence, range joins), use the `semantic-view-patterns` skill in apply mode rather than hand-writing them.
 
 ### 4. Ship the expert's answers
 

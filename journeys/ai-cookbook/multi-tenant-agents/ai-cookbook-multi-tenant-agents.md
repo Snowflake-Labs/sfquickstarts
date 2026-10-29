@@ -36,7 +36,7 @@ Serve every tenant from one Cortex Agent, one semantic view, and one Snowflake s
 
 When not to use it:
 
-- End users have Snowflake identities. Use roles and a row access policy on `CURRENT_ROLE()`, as in [multi-agent orchestration](https://www.snowflake.com/en/developers/guides/ai-cookbook/multi-agent-orchestration/), or OAuth passthrough, as in [OAuth token passthrough](https://www.snowflake.com/en/developers/guides/ai-cookbook/oauth-token-passthrough/).
+- End users have Snowflake identities. Use roles and a row access policy on `CURRENT_ROLE()`, as in [multi-agent orchestration](/en/developers/guides/ai-cookbook/multi-agent-orchestration/), or OAuth passthrough, as in [OAuth token passthrough](/en/developers/guides/ai-cookbook/oauth-token-passthrough/).
 - You cannot put a trusted server in front of Snowflake. Anything that can call the agent as the service user can name any end user bound to it.
 
 ## How it works
@@ -183,7 +183,7 @@ Direct SQL checks as the service user, each in a new session: no attribute retur
 | An admin testing in a worksheet sees nothing | Fail closed: the admin is not the bound service user | Test as the service user, or add an entitlement bound to your own user for testing and remove it afterwards |
 | Evaluation runs return empty answers | Agent evaluations cannot pass session attributes, so the policy sees no end user | Evaluate answer quality on a non-tenant copy of the data, and test isolation with the client as in Verify |
 | A tenant's data leaks through another table | A table the agent can read has no policy | Run the `POLICY_REFERENCES` query at the end of 03 for every table the app role can read |
-| Usage views show only the service user | Agent usage history records the Snowflake user, not the end user | Log `end_user_id` with each response's `X-Snowflake-Request-Id` header in your app; `CORTEX_AGENT_USAGE_HISTORY` has a `REQUEST_ID` column to join on. See [AI usage and cost attribution](https://www.snowflake.com/en/developers/guides/ai-cookbook/ai-usage-cost-attribution/) |
+| Usage views show only the service user | Agent usage history records the Snowflake user, not the end user | Log `end_user_id` with each response's `X-Snowflake-Request-Id` header in your app; `CORTEX_AGENT_USAGE_HISTORY` has a `REQUEST_ID` column to join on. See [AI usage and cost attribution](/en/developers/guides/ai-cookbook/ai-usage-cost-attribution/) |
 | `ALTER USER ... SET RSA_PUBLIC_KEY` fails with insufficient privileges | The session role has neither OWNERSHIP nor `MODIFY PROGRAMMATIC AUTHENTICATION METHODS` on the service user | Run Quickstart step 6 with `--role COOKBOOK_MULTI_TENANT_AGENTS_ADMIN`; 01 grants it that privilege |
 | `CREATE OR REPLACE AGENT` removed the app role's access | Replaced without `COPY GRANTS` | 04 uses `COPY GRANTS`; otherwise re-run 05 |
 

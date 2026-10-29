@@ -37,8 +37,8 @@ Most agent projects stall on scope, not technology. "Talk to your data" is not a
 
 When not to use it:
 
-- The agent is already scoped and has an evaluation dataset. Go to [agent evaluations](https://www.snowflake.com/en/developers/guides/ai-cookbook/agent-evaluations/) and [agent CI/CD with dbt](https://www.snowflake.com/en/developers/guides/ai-cookbook/agent-ci-cd-with-dbt/).
-- You need a production multi-tenant access model. This recipe scopes the requirement; [multi-tenant agents](https://www.snowflake.com/en/developers/guides/ai-cookbook/multi-tenant-agents/) implements it.
+- The agent is already scoped and has an evaluation dataset. Go to [agent evaluations](/en/developers/guides/ai-cookbook/agent-evaluations/) and [agent CI/CD with dbt](/en/developers/guides/ai-cookbook/agent-ci-cd-with-dbt/).
+- You need a production multi-tenant access model. This recipe scopes the requirement; [multi-tenant agents](/en/developers/guides/ai-cookbook/multi-tenant-agents/) implements it.
 
 ## How it works
 
@@ -63,12 +63,12 @@ Source: [diagrams/cortex-agents-reference-architecture.svg](https://github.com/S
 The diagram is hub and spoke, with the agent object at the center. Solid arrows into the agent are enforced controls, dashed arrows are telemetry the agent emits, and orange arrows leave Snowflake.
 
 1. **The agent is a schema-level object.** It bundles the orchestration model, instructions, and tool configuration, carries grants like any other object, and has versions and aliases, so callers never wire models, retrieval, or SQL execution themselves.
-2. **There are three ways in.** The REST `agent:run` endpoint serves an application that drives the conversation, `SNOWFLAKE.CORTEX.DATA_AGENT_RUN` serves SQL, tasks, and procedures, and the Snowflake-managed MCP server serves an MCP client that discovers and calls tools itself; [MCP or the Agents REST API](https://www.snowflake.com/en/developers/guides/ai-cookbook/mcp-or-agent-rest-api/) covers the choice.
+2. **There are three ways in.** The REST `agent:run` endpoint serves an application that drives the conversation, `SNOWFLAKE.CORTEX.DATA_AGENT_RUN` serves SQL, tasks, and procedures, and the Snowflake-managed MCP server serves an MCP client that discovers and calls tools itself; [MCP or the Agents REST API](/en/developers/guides/ai-cookbook/mcp-or-agent-rest-api/) covers the choice.
 3. **Identity is the caller's.** A run uses the calling user's default role (the REST API can override it with a header), and every tool runs with that role's privileges unless the tool is defined to run with its owner's rights. The caller needs the `SNOWFLAKE.CORTEX_USER` or `SNOWFLAKE.CORTEX_AGENT_USER` database role, USAGE on the agent, and privileges on every object its tools use.
 4. **Tools decide what the agent can reach.** Semantic views, search services, and procedures are the grounding, and an agent with no tools answers only from the model's general knowledge. Cortex Search queries run with the service owner's rights, so any role with USAGE on the service sees what the owner indexed.
 5. **Cortex serves the model and holds the conversation.** The agent names a model, or `auto`, which Cortex serves with cross-region inference where the account's `CORTEX_ENABLED_CROSS_REGION` setting allows, with no model endpoint or API key to manage. Threads hold conversation state server-side, so callers pass `thread_id` and `parent_message_id` instead of replaying history.
 6. **Two built-in tool types reach the public internet**: web search and MCP connectors. Everything else, including model inference, runs within Snowflake unless you give a custom tool an external access integration, and an answer returned to a caller outside Snowflake leaves with the response.
-7. **Cost and behavior are observable and bounded per run, per agent, and per user.** The usage view and monitoring events show what happened, the orchestration budget caps one run, custom budgets track spend without blocking requests, and per-user quotas set credit limits with optional blocking. [AI usage and cost attribution](https://www.snowflake.com/en/developers/guides/ai-cookbook/ai-usage-cost-attribution/) turns the usage view into chargeback.
+7. **Cost and behavior are observable and bounded per run, per agent, and per user.** The usage view and monitoring events show what happened, the orchestration budget caps one run, custom budgets track spend without blocking requests, and per-user quotas set credit limits with optional blocking. [AI usage and cost attribution](/en/developers/guides/ai-cookbook/ai-usage-cost-attribution/) turns the usage view into chargeback.
 
 #### What you build versus what Snowflake provides
 
@@ -217,7 +217,7 @@ CALL EXECUTE_AI_EVALUATION('STATUS', OBJECT_CONSTRUCT('run_name', 'phase_1_basel
   '@COOKBOOK_SCOPING_AGENTIC_IMPLEMENTATIONS.LAB.EVAL_CONFIGS/eval_config.yaml');
 ```
 
-The role that runs it also needs `EXECUTE TASK` on the account, which `01_setup.sql` grants to the lab role, `CREATE TASK` and `CREATE FILE FORMAT` on the schema, which the lab role has as the schema owner, and USAGE and MONITOR on the agent; see the evaluation access requirements in References. The [agent CI/CD with dbt](https://www.snowflake.com/en/developers/guides/ai-cookbook/agent-ci-cd-with-dbt/) recipe turns this baseline into a gate.
+The role that runs it also needs `EXECUTE TASK` on the account, which `01_setup.sql` grants to the lab role, `CREATE TASK` and `CREATE FILE FORMAT` on the schema, which the lab role has as the schema owner, and USAGE and MONITOR on the agent; see the evaluation access requirements in References. The [agent CI/CD with dbt](/en/developers/guides/ai-cookbook/agent-ci-cd-with-dbt/) recipe turns this baseline into a gate.
 
 ### Activity 5: Scope multi-tenancy (10 minutes)
 
@@ -244,7 +244,7 @@ CALL SET_SYS_CONTEXT('SNOWFLAKE$SESSION_ATTRIBUTES', 'app_user_id', 'user_003');
 -- Now only the East and Northeast rows are visible.
 ```
 
-Record in the spec that agent evaluations cannot pass session attributes, so a tenant-filtered agent needs a separate test plan. [Multi-tenant agents](https://www.snowflake.com/en/developers/guides/ai-cookbook/multi-tenant-agents/) covers the full pattern, including the REST `variables` payload.
+Record in the spec that agent evaluations cannot pass session attributes, so a tenant-filtered agent needs a separate test plan. [Multi-tenant agents](/en/developers/guides/ai-cookbook/multi-tenant-agents/) covers the full pattern, including the REST `variables` payload.
 
 ### The agent spec
 
@@ -360,7 +360,7 @@ Against a deployed agent, `sql/04_observability.sql` reports how many real-usage
 | `START` fails with "Ensure your role has CREATE TASK ON SCHEMA and EXECUTE TASK ON ACCOUNT" | Evaluation runs are managed by tasks | Run as the lab role, which `01_setup.sql` grants `EXECUTE TASK ON ACCOUNT` and which owns the `LAB` schema |
 | The platform diagram shows an orchestration model the account cannot use | Model availability depends on the account's cross-region inference scope (`CORTEX_ENABLED_CROSS_REGION`) | Before the workshop, check which orchestration models the account's cross-region scope allows |
 | A tool you presented turns out to be in preview | Preview status changes; for example, analytical search and the tool selection and execution evaluation metrics are in Public Preview | Check the current status of every tool you plan to mention against the docs before the conversation |
-| A customer's MCP client that parses responses itself mishandles the managed MCP server's output | `tools/call` responses stream as server-sent events (since August 20, 2026) | Re-check the current streaming behavior in the MCP docs and test the client against it; see [MCP or the Agents REST API](https://www.snowflake.com/en/developers/guides/ai-cookbook/mcp-or-agent-rest-api/) |
+| A customer's MCP client that parses responses itself mishandles the managed MCP server's output | `tools/call` responses stream as server-sent events (since August 20, 2026) | Re-check the current streaming behavior in the MCP docs and test the client against it; see [MCP or the Agents REST API](/en/developers/guides/ai-cookbook/mcp-or-agent-rest-api/) |
 
 ## Teardown
 

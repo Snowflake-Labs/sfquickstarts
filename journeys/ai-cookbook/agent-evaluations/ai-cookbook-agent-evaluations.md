@@ -242,7 +242,7 @@ SELECT SNOWFLAKE.CORTEX.DATA_AGENT_RUN(
   'COOKBOOK_AGENT_EVALUATIONS.MARKETING.CMO_ASSISTANT!PRODUCTION', $${"messages": [...]}$$);
 ```
 
-See the [agent versioning and promotion guide](https://www.snowflake.com/en/developers/guides/ai-cookbook/agent-versioning-and-promotion/)
+See the [agent versioning and promotion guide](/en/developers/guides/ai-cookbook/agent-versioning-and-promotion/)
 for how aliases, DEFAULT, and rollback behave.
 
 ### Scheduled runs

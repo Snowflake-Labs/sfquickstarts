@@ -56,7 +56,7 @@ When not to use it:
 | Requirement | Notes |
 |---|---|
 | Account on AWS commercial region with Cortex AI Gateway | Preview. `SHOW AI GATEWAYS` returns one row. |
-| Gateway `logging.enabled: true` | `DESCRIBE AI GATEWAY SNOWFLAKE`. Payload capture (`capture_payload.request_response: true`) is needed only for the analyzer's Conversations and Search tabs. This recipe does not change the spec; to change it safely, use the snapshot and restore in [gateway-governance-quickstart](https://www.snowflake.com/en/developers/guides/ai-cookbook/gateway-governance-quickstart/). |
+| Gateway `logging.enabled: true` | `DESCRIBE AI GATEWAY SNOWFLAKE`. Payload capture (`capture_payload.request_response: true`) is needed only for the analyzer's Conversations and Search tabs. This recipe does not change the spec; to change it safely, use the snapshot and restore in [gateway-governance-quickstart](/en/developers/guides/ai-cookbook/gateway-governance-quickstart/). |
 | `ACCOUNTADMIN` | For `sql/01` to `03` and `99`. |
 | The agent host's IPv4 egress address | A `TYPE = SERVICE` user can generate or use a programmatic access token only while it is subject to a network policy. `sql/01` creates `COOKBOOK_LANGCHAIN_MCP_AGENT_TRACING_SVC_POLICY` and sets it on the service user only. It allows `client_cidr`, which defaults to `CURRENT_IP_ADDRESS()` of the setup session as a `/32`. If `client/agent.py` runs on another host, set `client_cidr` in `sql/01` to that host's address. The account-level network policy, if any, is not changed. |
 | Models | Defaults are `claude-sonnet-4-6` and `openai-gpt-5-mini`. Override with `AGENT_CLAUDE_MODEL` and `AGENT_OPENAI_MODEL`. |

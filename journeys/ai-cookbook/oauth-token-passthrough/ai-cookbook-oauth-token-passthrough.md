@@ -36,7 +36,7 @@ Let a bot, orchestrator, or web backend call a Cortex Agent with the signed-in u
 
 When not to use it:
 
-- End users are external and should not become Snowflake users. Use [multi-tenant agents](https://www.snowflake.com/en/developers/guides/ai-cookbook/multi-tenant-agents/) with one service user and session attributes.
+- End users are external and should not become Snowflake users. Use [multi-tenant agents](/en/developers/guides/ai-cookbook/multi-tenant-agents/) with one service user and session attributes.
 - The relay cannot obtain a user-delegated token (only an app-only token). Then every call is the app, not the person.
 
 ## How it works
@@ -131,7 +131,7 @@ body = {"messages": [{"role": "user", "content": [{"type": "text", "text": quest
 answer = "\n".join(b["text"] for b in r.json()["content"] if b.get("type") == "text")
 ```
 
-Take the token from the signed-in session, never from the message body, and do not log it. To add tenant context on top of identity, include a `variables` block with immutable session attributes, as in [multi-tenant agents](https://www.snowflake.com/en/developers/guides/ai-cookbook/multi-tenant-agents/).
+Take the token from the signed-in session, never from the message body, and do not log it. To add tenant context on top of identity, include a `variables` block with immutable session attributes, as in [multi-tenant agents](/en/developers/guides/ai-cookbook/multi-tenant-agents/).
 
 ## Verify
 

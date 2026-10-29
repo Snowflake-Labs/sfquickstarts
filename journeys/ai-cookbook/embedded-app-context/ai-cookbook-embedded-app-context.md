@@ -36,8 +36,8 @@ Embed a Cortex Agent in a dashboard so that "why is this going up?" means the ch
 
 When not to use it:
 
-- The context decides what data a user may see. Context in a prompt is a hint, not an access control; enforce data boundaries with grants and row access policies, as in [multi-tenant agents](https://www.snowflake.com/en/developers/guides/ai-cookbook/multi-tenant-agents/).
-- The "context" is a document the user uploaded. See [document context](https://www.snowflake.com/en/developers/guides/ai-cookbook/document-context/).
+- The context decides what data a user may see. Context in a prompt is a hint, not an access control; enforce data boundaries with grants and row access policies, as in [multi-tenant agents](/en/developers/guides/ai-cookbook/multi-tenant-agents/).
+- The "context" is a document the user uploaded. See [document context](/en/developers/guides/ai-cookbook/document-context/).
 
 ## How it works
 

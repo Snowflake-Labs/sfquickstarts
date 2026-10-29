@@ -41,7 +41,7 @@ the two ways to write the fixes back without losing grants.
 When not to use it:
 
 - Answers are off by a clean multiple, or a join fans out. Fix the model first: see
-  [mixed-grain tables](https://www.snowflake.com/en/developers/guides/ai-cookbook/mixed-grain-and-verified-queries/) and the `sv_diagnostics` snippet under
+  [mixed-grain tables](/en/developers/guides/ai-cookbook/mixed-grain-and-verified-queries/) and the `sv_diagnostics` snippet under
   [Related skills](#related-skills).
 - You need an accuracy number. This recipe improves inputs; measure outcomes with an evaluation set.
 

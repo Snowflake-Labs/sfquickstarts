@@ -36,8 +36,8 @@ fork_repo_link: https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/s
 When not to use this:
 
 - Aggregate latency and usage reports across many requests: use the `agent-observability-report` sub-skill of the bundled `agent-studio` skill, or Snowsight's agent Observability pane.
-- Scoring answer quality: use [agent evaluations](https://www.snowflake.com/en/developers/guides/ai-cookbook/agent-evaluations/).
-- Cost questions: see [ai-usage-cost-attribution](https://www.snowflake.com/en/developers/guides/ai-cookbook/ai-usage-cost-attribution/).
+- Scoring answer quality: use [agent evaluations](/en/developers/guides/ai-cookbook/agent-evaluations/).
+- Cost questions: see [ai-usage-cost-attribution](/en/developers/guides/ai-cookbook/ai-usage-cost-attribution/).
 
 ## How it works
 
