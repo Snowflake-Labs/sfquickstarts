@@ -21,8 +21,8 @@ Every recipe is runnable end to end, with setup, verification, and teardown. The
 
 | Recipe | What it covers | Stage | Topics | Status |
 |---|---|---|---|---|
-| [Evaluate and promote Cortex Agent versions](https://www.snowflake.com/en/developers/guides/ai-cookbook/agent-evaluations/) | Run Cortex Agent evaluations with pinned metric versions and a custom judge, compare two committed versions, and promote the winner by alias. | Evaluate, Operate | Cortex Agents | GA |
-| [Agent versioning and promotion](https://www.snowflake.com/en/developers/guides/ai-cookbook/agent-versioning-and-promotion/) | Commit, alias, promote, A/B route, and roll back Cortex Agent versions with runnable SQL and the behaviors observed along the way. | Operate | Cortex Agents | GA |
+| [Evaluate and promote Cortex Agent versions](https://publish-p57963-e462098.adobeaemcloud.com/en/developers/guides/ai-cookbook/agent-evaluations/) | Run Cortex Agent evaluations with pinned metric versions and a custom judge, compare two committed versions, and promote the winner by alias. | Evaluate, Operate | Cortex Agents | GA |
+| [Agent versioning and promotion](https://publish-p57963-e462098.adobeaemcloud.com/en/developers/guides/ai-cookbook/agent-versioning-and-promotion/) | Commit, alias, promote, A/B route, and roll back Cortex Agent versions with runnable SQL and the behaviors observed along the way. | Operate | Cortex Agents | GA |
 
 Each recipe's code is a reference implementation: review it and adapt it to your environment before production. Questions about Snowflake features go through your usual Snowflake support channels; problems with the cookbook code go to [GitHub issues](https://github.com/Snowflake-Labs/cortex-ai-cookbook/issues).
 

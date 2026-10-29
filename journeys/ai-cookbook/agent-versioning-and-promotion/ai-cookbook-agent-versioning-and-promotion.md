@@ -174,7 +174,7 @@ same two statements pointed backwards. Named versions are immutable, so a rollba
 restores exactly the configuration that served before.
 
 Before promoting, evaluate the candidate by version. The
-[agent evaluations recipe](https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/recipes/cortex-agents/agent-versioning-and-promotion/../../cortex-agents/agent-evaluations/) runs the same
+[agent evaluations recipe](https://publish-p57963-e462098.adobeaemcloud.com/en/developers/guides/ai-cookbook/agent-evaluations/) runs the same
 dataset against two committed versions and promotes the winner with this alias
 move. Agent evaluations have four system metrics: answer correctness, logical
 consistency, tool selection accuracy, and tool execution accuracy. The two tool

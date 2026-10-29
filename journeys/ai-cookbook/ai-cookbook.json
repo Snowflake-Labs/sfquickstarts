@@ -3,22 +3,22 @@
     {
       "id": "ai-cookbook",
       "label": "Cortex AI Cookbook",
-      "url": "https://www.snowflake.com/en/developers/guides/ai-cookbook/",
+      "url": "https://publish-p57963-e462098.adobeaemcloud.com/en/developers/guides/ai-cookbook/",
       "subcategories": [
         {
           "id": "cortex-agents",
           "label": "Cortex Agents",
-          "url": "https://www.snowflake.com/en/developers/guides/ai-cookbook/",
+          "url": "https://publish-p57963-e462098.adobeaemcloud.com/en/developers/guides/ai-cookbook/",
           "topics": [
             {
               "id": "agent-evaluations",
               "label": "Evaluate and promote Cortex Agent versions",
-              "url": "https://www.snowflake.com/en/developers/guides/ai-cookbook/agent-evaluations/"
+              "url": "https://publish-p57963-e462098.adobeaemcloud.com/en/developers/guides/ai-cookbook/agent-evaluations/"
             },
             {
               "id": "agent-versioning-and-promotion",
               "label": "Agent versioning and promotion",
-              "url": "https://www.snowflake.com/en/developers/guides/ai-cookbook/agent-versioning-and-promotion/"
+              "url": "https://publish-p57963-e462098.adobeaemcloud.com/en/developers/guides/ai-cookbook/agent-versioning-and-promotion/"
             }
           ]
         }
