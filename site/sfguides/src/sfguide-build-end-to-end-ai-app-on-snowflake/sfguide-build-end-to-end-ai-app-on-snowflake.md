@@ -5,7 +5,6 @@ language: en
 summary: Build a complete AI-powered retail analytics platform on Snowflake — from streaming ingestion through Cortex Agents, Semantic Views, and MCP Servers.
 environments: web
 status: Published
-open in snowflake link: https://app.snowflake.com/templates/?template=build_an_end_to_end_ai_app_on_snowflake&utm_source=snowflake-devrel&utm_medium=developer-guides&utm_content=sfguide-build-end-to-end-ai-app-on-snowflake&utm_cta=developer-guides-deeplink
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 
