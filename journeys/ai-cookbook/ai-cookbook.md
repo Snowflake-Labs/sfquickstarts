@@ -1,3 +1,18 @@
+sidebar: true
+sidebar_json: ai-cookbook
+author: Bala Krishnamoorthy, Parker Erickson
+id: ai-cookbook
+categories: snowflake-site:taxonomy/product/ai
+language: en
+summary: Deployment patterns for Cortex AI, drawn from real Snowflake deployments, with verified code to adapt to your own account.
+environments: web
+status: Published
+fork_repo_link: https://github.com/Snowflake-Labs/cortex-ai-cookbook
+
+# Cortex AI Cookbook
+
+## Overview
+
 Deployment patterns for Cortex AI, drawn from real Snowflake deployments. Each recipe explains the design and the security model, then gives you verified code to run in your own account and adapt.
 
 [View on GitHub](https://github.com/Snowflake-Labs/cortex-ai-cookbook)

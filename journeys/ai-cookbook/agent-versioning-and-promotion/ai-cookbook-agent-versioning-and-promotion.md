@@ -1,3 +1,18 @@
+sidebar: true
+sidebar_json: ai-cookbook
+author: Parker Erickson
+id: ai-cookbook-agent-versioning-and-promotion
+categories: snowflake-site:taxonomy/product/ai
+language: en
+summary: Commit, alias, promote, A/B route, and roll back Cortex Agent versions with runnable SQL and the behaviors observed along the way.
+environments: web
+status: Published
+fork_repo_link: https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/recipes/cortex-agents/agent-versioning-and-promotion
+
+# Agent versioning and promotion
+
+## Overview
+
 Run a Cortex Agent the way you run any production service: develop on a mutable
 LIVE version, freeze it into an immutable named version, point a PRODUCTION alias
 at the version you trust, send a slice of traffic to a CANARY alias, and promote

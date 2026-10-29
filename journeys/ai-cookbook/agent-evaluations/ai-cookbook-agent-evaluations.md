@@ -1,3 +1,18 @@
+sidebar: true
+sidebar_json: ai-cookbook
+author: Bala Krishnamoorthy, Parker Erickson
+id: ai-cookbook-agent-evaluations
+categories: snowflake-site:taxonomy/product/ai
+language: en
+summary: Run Cortex Agent evaluations with pinned metric versions and a custom judge, compare two committed versions, and promote the winner by alias.
+environments: web
+status: Published
+fork_repo_link: https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/recipes/cortex-agents/agent-evaluations
+
+# Evaluate and promote Cortex Agent versions
+
+## Overview
+
 Score a Cortex Agent against a small ground-truth dataset, change one thing,
 score the new version the same way, and promote it to the PRODUCTION alias only
 if it wins. Everything runs in SQL: a dataset table, a YAML config on a stage,
