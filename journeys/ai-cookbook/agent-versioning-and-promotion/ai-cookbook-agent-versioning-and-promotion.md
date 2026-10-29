@@ -21,7 +21,7 @@ When not to use it:
 
 ## How it works
 
-![Versioning flow: create an agent, commit a version, alias it LIVE, then promote or roll back](assets/agent-versioning-and-promotion.png)
+![Versioning flow: create an agent, commit a version, alias it LIVE, then promote or roll back](https://raw.githubusercontent.com/Snowflake-Labs/sfquickstarts/991c25b49527b1f22e5d8678baba2b3ddeb795bf/journeys/ai-cookbook/agent-versioning-and-promotion/assets/agent-versioning-and-promotion.png)
 
 
 Key concepts:

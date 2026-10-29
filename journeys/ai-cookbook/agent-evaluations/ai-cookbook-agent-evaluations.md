@@ -23,7 +23,7 @@ When not to use it:
 
 ## How it works
 
-![Evaluation flow: dataset, config, and two agent versions into EXECUTE_AI_EVALUATION, then a gate that sets the PRODUCTION alias on pass](assets/agent-evaluations.png)
+![Evaluation flow: dataset, config, and two agent versions into EXECUTE_AI_EVALUATION, then a gate that sets the PRODUCTION alias on pass](https://raw.githubusercontent.com/Snowflake-Labs/sfquickstarts/991c25b49527b1f22e5d8678baba2b3ddeb795bf/journeys/ai-cookbook/agent-evaluations/assets/agent-evaluations.png)
 
 
 Key concepts:
