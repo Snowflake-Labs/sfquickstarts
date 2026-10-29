@@ -70,12 +70,6 @@ There are no setup scripts to run first. Your first action is to create a **Git-
    - Check **Public repository**.
 4. Click **Create**.
 
-
-![Create API Integration dialog](assets/api-integration-dialog.jpg)
-
-
-![Create workspace from Git repository dialog](assets/git-workspace-dialog.jpg)
-
 > **What just happened?** The Workspace dialog created a Git API integration for you, a one-time step that tells Snowflake which GitHub account is an allowed source for Git-backed Workspaces.
 
 The Workspace opens with the repo's files in the file explorer on the left. Check that you see `lab.ipynb` and a `data/` folder with three files.
@@ -275,9 +269,6 @@ Click on the blue **CoCo** icon and send this prompt. Compare CoCo's SQL with th
 | "Using each line's latest event…" | Puts the rule for a return into the table, so no one has to apply it later |
 | The exact column names (`order_dt`, `latest_return_status`, `is_returned`, `is_delivered`) | Later cells and the semantic view use these names, so they have to match |
 
-
-![CoCo creating the order line returns table](assets/coco-curate-prompt.jpg)
-
 <details>
 <summary>Expected output (check against this)</summary>
 
@@ -468,9 +459,6 @@ LEFT JOIN ONLINE_RETURNS.CURATED.RETURN_COMMENT_INSIGHTS c USING (order_line_id)
 
 </details>
 
-
-![CoCo writing the AI functions SQL](assets/coco-ai-functions-prompt.jpg)
-
 ### Look at what the AI decided
 
 The warehouse lead pointed at shoes in EMEA, so look there. Run the **`review_labels`** cell. It shows the first 10 comments on returned Footwear lines in EMEA, with each translation and label.
@@ -509,9 +497,6 @@ Expected result:
 | 100 | **0** | **75** |
 
 The keyword search finds nothing, because every comment is written in another language. The AI labels show that three out of four Footwear returns in EMEA are about size.
-
-
-![Before and after AI results](assets/before-after-ai.jpg)
 
 ### Check the answer before handing it to an agent
 
@@ -780,6 +765,9 @@ Before you move on, check the **Tools** list. It should show exactly:
    ![Snowflake CoWork in the navigation](assets/cowork-navigation.jpg)
 
 2. Select **RETURNS_AGENT** from the agent list.
+
+   ![Selecting RETURNS_AGENT in CoWork](assets/cowork-agent-select.jpg)
+
 3. Ask these two questions in the same conversation. The first one is the example question you added, so you can click it instead of typing it.
    1. *"Which product categories have the highest and lowest return rate? Show it as a chart."*
 
