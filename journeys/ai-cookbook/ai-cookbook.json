@@ -1,0 +1,28 @@
+{
+  "categories": [
+    {
+      "id": "ai-cookbook",
+      "label": "Cortex AI Cookbook",
+      "url": "/guides/ai-cookbook/",
+      "subcategories": [
+        {
+          "id": "cortex-agents",
+          "label": "Cortex Agents",
+          "url": "/guides/ai-cookbook/",
+          "topics": [
+            {
+              "id": "agent-evaluations",
+              "label": "Evaluate and promote Cortex Agent versions",
+              "url": "/guides/ai-cookbook/agent-evaluations/"
+            },
+            {
+              "id": "agent-versioning-and-promotion",
+              "label": "Agent versioning and promotion",
+              "url": "/guides/ai-cookbook/agent-versioning-and-promotion/"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
