@@ -58,6 +58,9 @@ There are no setup scripts to run first. Your first action is to create a **Git-
 
 1. In Snowsight, navigate to **Projects » Workspaces**.
 2. Click the **+** icon next to **Workspaces/Databases** → **Create new Git workspace**.
+
+   ![Create new Git workspace menu](assets/git-workspace-menu.jpg)
+
 3. Fill in:
    - **Repository URL:** `https://github.com/Snowflake-Labs/sfguide-messy-data-to-instant-answers`
    - **Workspace name:** `messy-data-to-answers`
@@ -85,6 +88,9 @@ You created this workspace from the lab's GitHub repo in the guide. You'll work 
 
 1. Open **`lab.ipynb`** from the file explorer on the left, if it isn't open already.
 2. Click **Connect** next to the Run button and select **Create and connect**.
+
+   ![Connect menu with Create and connect](assets/notebook-create-and-connect.jpg)
+
 3. Wait for the status bar at the bottom of the notebook to show **Connected**. The first connection can take a few minutes while Snowflake starts the notebook's compute; read the rest of this step and STEP 2 while you wait. If it's still stuck (for example at 99%) after about 5 minutes, refresh the browser tab.
 
    ![Connect your notebook dialog](assets/connect-notebook-dialog.jpg)
@@ -115,6 +121,9 @@ The repo's `data/` folder has three files:
 | `return_comments.json` | What customers typed in the returns portal about why they're sending the item back: 775 comments, about a third of them in German, French, or Spanish. |
 
 Run the **`upload_files`** cell. It finds each file in your workspace and copies it, unchanged, to the stage `ONLINE_RETURNS.RAW.LAB_FILES`. You should see three `Uploaded` lines.
+
+![Output of the upload_files cell](assets/upload-files-output.jpg)
+
 
 Now run the **`load_raw`** cell. It creates three raw tables and copies each file from the stage into one of them:
 
@@ -204,6 +213,12 @@ The two columns come from two different places:
 - **`reported_returns`** counts order lines where the export's `order_status` is `returned`, in any capitalization. This is what the quick agent counted.
 - **`completed_returns`** finds each order line's **latest** return event and counts it if that event is a refund or an exchange. A return that was only requested, or that the warehouse rejected, doesn't count.
 
+
+![CoCo prompt comparing reported and completed returns](assets/coco-compare-prompt.jpg)
+
+
+![CoCo results comparing reported and completed returns](assets/coco-compare-results.jpg)
+
 > **Short on time?** Every CoCo prompt in this lab that builds something has its expected SQL in the notebook, right under the prompt. Paste it into the empty cell below the prompt and run it.
 
 Expected result:
@@ -216,9 +231,6 @@ Expected result:
 | Home | 125 | 75 |
 
 The warehouse lead was right. The export reports **75** Footwear returns, but **200** were completed. That's why the quick agent called Footwear the best category. In every other category, the export reports *more* returns than were completed.
-
-
-![CoCo comparing reported and completed returns](assets/coco-compare-returns.jpg)
 
 ### Look at two order lines up close
 
@@ -262,6 +274,9 @@ Click on the blue **CoCo** icon and send this prompt. Compare CoCo's SQL with th
 | "Convert item_price to a number and order_date to a date column named order_dt" | Turns text into real types you can sum and filter on |
 | "Using each line's latest event…" | Puts the rule for a return into the table, so no one has to apply it later |
 | The exact column names (`order_dt`, `latest_return_status`, `is_returned`, `is_delivered`) | Later cells and the semantic view use these names, so they have to match |
+
+
+![CoCo creating the order line returns table](assets/coco-curate-prompt.jpg)
 
 <details>
 <summary>Expected output (check against this)</summary>
@@ -467,6 +482,9 @@ Read each translation and decide whether you agree with its label:
 - **If you agree with all of them,** continue to the next cell.
 - **If you disagree with a label,** the fix is in the label descriptions, not in the comment. Ask CoCo to sharpen the description of the label that should have matched, for example: *"In RETURN_COMMENT_INSIGHTS, the comment [paste it] was tagged [label] but should be [label]. Make that label's AI_CLASSIFY description clearer, then rebuild RETURN_COMMENT_INSIGHTS and RETURN_REVIEW."* Then run this cell again.
 
+![Asking CoCo to sharpen a label description](assets/coco-sharpen-label.jpg)
+
+
 ### Before and after AI
 
 Here's what the AI bought you. Run the **`before_after`** cell. It answers one question two ways for the 100 returned Footwear lines in EMEA: *how many are about size?*
@@ -541,6 +559,9 @@ Click on the blue **CoCo** icon and send this prompt:
 
 The service takes a minute or so to build.
 
+![Cortex Search service building](assets/search-service-build.jpg)
+
+
 <details>
 <summary>Expected output (check against this)</summary>
 
@@ -590,6 +611,9 @@ The steps continue below and in the guide; follow along from either.
 The quick agent's semantic view defined a return the wrong way. This one uses the rule from STEP 5.
 
 1. In Snowsight, navigate to **AI & ML » Analyst**.
+
+   ![AI & ML Analyst page](assets/analyst-navigation.jpg)
+
 2. Click **Create in Workspaces** in the top right.
 3. Click **Create with CoCo**. Snowsight opens a new `.sv.yaml` file, and the CoCo panel asks what to build.
 4. Send CoCo this prompt:
@@ -605,16 +629,22 @@ The quick agent's semantic view defined a return the wrong way. This one uses th
    | "Metrics: … (count where is_delivered) …" | Each calculation, spelled out once, so Analyst never has to guess what "return rate" means |
    | "Add verified queries for: …" | The questions you expect most, so Analyst has checked examples to follow |
 
+
+   ![CoCo prompt for the semantic view](assets/coco-semantic-view-prompt.jpg)
+
 5. Allow CoCo to create the draft. This creates an editable draft; it doesn't publish the view yet.
 6. Review the draft. Confirm it contains:
    - **Dimensions:** `CATEGORY`, `REGION`, `RETURN_REASON`, `LATEST_RETURN_STATUS`, `IS_DELIVERED`, `IS_RETURNED`
+
+      ![Semantic view dimensions](assets/semantic-view-dimensions.jpg)
+
    - **Metrics:** `DELIVERED_LINES`, `RETURNED_LINES`, `RETURNED_VALUE`, `RETURN_RATE`. Open `RETURN_RATE` and check that it divides returned lines by **delivered** lines, not all lines.
+
+      ![Semantic view metrics](assets/semantic-view-metrics.jpg)
+
    - **Verified queries:** three, one for each question in the prompt
 
    CoCo may add descriptions or synonyms. That's fine. If a metric is missing or defined differently, ask CoCo to fix it before publishing (*"return_rate should divide returned_lines by delivered_lines"*).
-
-   ![CoCo drafting the semantic view](assets/coco-semantic-view.jpg)
-
 7. Click **Publish** in the top right. Confirm **Name** `RETURNS_SV`, **Database** `ONLINE_RETURNS`, and **Schema** `ANALYTICS`, then click **Publish**.
 
    ![Deploy semantic view dialog](assets/deploy-semantic-view.jpg)
@@ -680,6 +710,9 @@ An **agent** reads a question, decides which tool can answer it, calls the tool,
 
 1. In Snowsight, navigate to **AI & ML » Agent Studio**.
 2. Select **RETURNS_AGENT** (database `ONLINE_RETURNS`, schema `ANALYTICS`).
+
+   ![Selecting RETURNS_AGENT in Agent Studio](assets/agent-select.jpg)
+
 3. Click **Configuration**.
 4. Under **General**, set what people see in CoWork before they ask anything. The description tells them what the agent knows about, and the example questions appear as one-click starters.
    - **Description:** `Answers questions about Northwind Outfitters returns: return rates and returned value by category and region, and what customers said about why they returned items.`
@@ -693,6 +726,9 @@ An **agent** reads a question, decides which tool can answer it, calls the tool,
    - **Instructions:** `Use returns_analytics for any count, rate, value, or ranking question. Use customer_comments to find what customers said, and quote them when you explain a reason.`
    - **Response instructions:** `A return is an order line whose latest return status is refunded or exchanged. Return rate is returned lines divided by delivered lines. State counts, percentages, and USD values precisely. When you search customer_comments for quotes, filter to latest_return_status refunded or exchanged. Quote the comment text exactly as the search returns it: it holds the customer's original wording, followed by the English translation in parentheses when the original is not in English. Start with the answer and answer only the question asked.`
 
+   ![Agent Instructions tab](assets/agent-instructions.jpg)
+
+
 ### Tools: how the agent gets its answers
 
 The agent doesn't read your tables directly. It answers by calling **tools**, and you'll give it two:
@@ -701,9 +737,6 @@ The agent doesn't read your tables directly. It answers by calling **tools**, an
 - **Cortex Search** over `RETURN_COMMENTS_SEARCH`, for what customers actually said.
 
 You give each tool a **name** and a **description**. The agent reads the descriptions to decide which tool fits a question, and the instructions you just pasted refer to the tools by name (`returns_analytics`, `customer_comments`). A tool's name is only a label inside the agent; it doesn't have to match the object it points to. A *why* question uses both tools: numbers from Analyst, quotes from Search.
-
-
-   ![Agent Instructions tab](assets/agent-instructions.jpg)
 
 6. Under **Tools**, remove the **QUICK_RETURNS_SV** tool (the quick semantic view from STEP 3). Then add Cortex Analyst by clicking on the **+ Add semantic view** button:
    - **Databases/Schemas:** `ONLINE_RETURNS.ANALYTICS`
@@ -743,10 +776,19 @@ Before you move on, check the **Tools** list. It should show exactly:
 **Snowflake CoWork** is where anyone on the team chats with your agents, without opening a notebook or writing SQL. Agents you can use show up there automatically.
 
 1. In Snowsight, navigate to **AI & ML » Snowflake CoWork**.
+
+   ![Snowflake CoWork in the navigation](assets/cowork-navigation.jpg)
+
 2. Select **RETURNS_AGENT** from the agent list.
 3. Ask these two questions in the same conversation. The first one is the example question you added, so you can click it instead of typing it.
    1. *"Which product categories have the highest and lowest return rate? Show it as a chart."*
+
+      ![CoWork answer with a chart](assets/cowork-chart-answer.jpg)
+
    2. *"Why are customers returning footwear in EMEA? Show me what they said."*
+
+      ![CoWork answer with customer quotes](assets/cowork-quotes-answer.jpg)
+
 
 **Expected:**
 
@@ -758,9 +800,6 @@ Before you move on, check the **Tools** list. It should show exactly:
 Click the steps in each answer to see which tool the agent used: Cortex Analyst for question 1, and both tools for question 2.
 
 In STEP 3, the same agent said Apparel was worst (about 45%) and Footwear best (about 14%). The only difference is the work you did on the data.
-
-
-![CoWork answer with chart](assets/cowork-answer.jpg)
 
 ### Turn the answers into a report
 
@@ -781,10 +820,10 @@ Answers in a chat are useful to you. A report is something you can hand to the m
 
 The agent writes and runs code with its **Code Execution** tool to build the file, then CoWork shows a preview you can open and download. This takes a minute or two.
 
-**Expected:** a styled one-page report showing Footwear highest at **42.1%**; EMEA footwear at **100** of **150** delivered lines returned (**66.7%**), worth **$12,490**, mostly Wrong size (75 lines, **$9,435**); three quotes in German, French, or Spanish with translations; and three recommendations. Layout and wording will vary, so judge the report by its numbers and quotes.
-
 
 ![The HTML report built in CoWork](assets/cowork-report.jpg)
+
+**Expected:** a styled one-page report showing Footwear highest at **42.1%**; EMEA footwear at **100** of **150** delivered lines returned (**66.7%**), worth **$12,490**, mostly Wrong size (75 lines, **$9,435**); three quotes in German, French, or Spanish with translations; and three recommendations. Layout and wording will vary, so judge the report by its numbers and quotes.
 
 Every number in that report traces back to a definition you wrote, and every quote to a real return. That's the difference from STEP 3.
 
