@@ -86,6 +86,7 @@ jobs:
             large-files-error.json
             categories-error.json
             frontmatter-error.json
+            sidebar-error.json
             validation-error.json
             profanity-report.json
             non-markdown-root-info.json

@@ -182,6 +182,14 @@ def _frontmatter(report: dict[str, Any] | None) -> str | None:
     return f"{heading}\n\n{blurb}\n\n{_issue_list(report, 'errors', '; ')}"
 
 
+def _sidebars(report: dict[str, Any] | None) -> str | None:
+    if report is None:
+        return None
+    heading = "### 🧭 Journey Sidebar Validation Failed"
+    blurb = "Sidebar files must be valid JSON."
+    return f"{heading}\n\n{blurb}\n\n{_issue_list(report, 'errors', '; ')}"
+
+
 def _profanity(report: dict[str, Any] | None, heading: str, blurb: str, footer: str) -> str | None:
     if report is None:
         return None
@@ -221,6 +229,7 @@ def failure_body(reports: Reports) -> str | None:
         _language(reports.read("validation-error.json")),
         _categories(reports.read("categories-error.json")),
         _frontmatter(reports.read("frontmatter-error.json")),
+        _sidebars(reports.read("sidebar-error.json")),
         _profanity(
             reports.read("profanity-report.json"),
             "### 🚫 Profanity Check Failed",

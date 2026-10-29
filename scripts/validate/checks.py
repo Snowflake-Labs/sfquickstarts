@@ -9,6 +9,7 @@ key to build the pull request comment, so field names here are load-bearing.
 
 from __future__ import annotations
 
+import json
 import re
 from dataclasses import dataclass
 from pathlib import Path
@@ -17,6 +18,7 @@ from typing import Any
 from lib import md, validate
 
 QUICKSTART_PREFIX = "site/sfguides/src/"
+JOURNEY_PREFIX = "journeys/"
 ASSETS_SEGMENT = "/assets/"
 IMAGE_SUFFIXES = (".jpg", ".jpeg", ".png", ".gif", ".svg", ".webp", ".bmp", ".ico")
 
@@ -223,8 +225,20 @@ def _id_errors(guide_id: str | None, prefixed: str) -> list[str]:
         errors.append("id must be slugified (lowercase letters/digits, single dashes)")
     if guide_id != stem:
         errors.append(f"id must match filename ('{stem}')")
-    if guide_id != folder:
+    # Journey topic folders are short sidebar slugs, so their ids match the file only.
+    if guide_id != folder and not display(prefixed).startswith(JOURNEY_PREFIX):
         errors.append(f"id must match folder name ('{folder}')")
+    return errors
+
+
+def _journey_errors(text: str) -> list[str]:
+    """A journey topic must declare the sidebar it renders with."""
+    errors = []
+    if (md.field(text, "sidebar") or "").strip().lower() != "true":
+        errors.append("journey topics must set 'sidebar: true'")
+    sidebar_json = md.field(text, "sidebar_json")
+    if not sidebar_json or not SLUG_ID_RE.match(sidebar_json):
+        errors.append("journey topics must set 'sidebar_json' to their sidebar file's name")
     return errors
 
 
@@ -236,8 +250,27 @@ def check_frontmatter(content: Content) -> dict[str, Any] | None:
         if text is None:
             continue
         errors = _id_errors(md.field(text, "id"), prefixed)
+        if display(prefixed).startswith(JOURNEY_PREFIX):
+            errors += _journey_errors(text)
         if errors:
             issues.append({"file": display(prefixed), "errors": errors})
+
+    return {"issues": issues} if issues else None
+
+
+def check_sidebars(content: Content) -> dict[str, Any] | None:
+    """Fail when a changed journey sidebar file is not valid JSON."""
+    issues = []
+    for path in content.all_changed_files:
+        if not path.startswith(JOURNEY_PREFIX) or not path.endswith(".json"):
+            continue
+        target = content.root / path
+        if target.is_symlink() or not target.is_file():
+            continue
+        try:
+            json.loads(target.read_text(encoding="utf-8"))
+        except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+            issues.append({"file": path, "errors": [str(exc)]})
 
     return {"issues": issues} if issues else None
 
