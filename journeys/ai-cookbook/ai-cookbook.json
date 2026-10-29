@@ -1,0 +1,168 @@
+{
+  "categories": [
+    {
+      "id": "ai-cookbook",
+      "label": "Cortex AI Cookbook",
+      "url": "https://www.snowflake.com/en/developers/guides/ai-cookbook/",
+      "subcategories": [
+        {
+          "id": "cortex-agents",
+          "label": "Cortex Agents",
+          "url": "",
+          "topics": [
+            {
+              "id": "scoping-agentic-implementations",
+              "label": "Scoping agentic implementations: from 'talk to your data' to a testable agent spec",
+              "url": "https://www.snowflake.com/en/developers/guides/ai-cookbook/scoping-agentic-implementations/"
+            },
+            {
+              "id": "embedded-app-context",
+              "label": "Embedded app context for a Cortex Agent",
+              "url": "https://www.snowflake.com/en/developers/guides/ai-cookbook/embedded-app-context/"
+            },
+            {
+              "id": "document-context",
+              "label": "Attach documents to Cortex Agent conversations",
+              "url": "https://www.snowflake.com/en/developers/guides/ai-cookbook/document-context/"
+            },
+            {
+              "id": "multi-agent-orchestration",
+              "label": "Multi-agent orchestration with caller's-rights delegation",
+              "url": "https://www.snowflake.com/en/developers/guides/ai-cookbook/multi-agent-orchestration/"
+            },
+            {
+              "id": "agent-causal-grounding",
+              "label": "Causally grounded Cortex Agent that refuses when the data cannot answer",
+              "url": "https://www.snowflake.com/en/developers/guides/ai-cookbook/agent-causal-grounding/"
+            },
+            {
+              "id": "oauth-token-passthrough",
+              "label": "OAuth token passthrough to a Cortex Agent",
+              "url": "https://www.snowflake.com/en/developers/guides/ai-cookbook/oauth-token-passthrough/"
+            },
+            {
+              "id": "multi-tenant-agents",
+              "label": "Multi-tenant agents with session attributes and fail-closed policies",
+              "url": "https://www.snowflake.com/en/developers/guides/ai-cookbook/multi-tenant-agents/"
+            },
+            {
+              "id": "agent-evaluations",
+              "label": "Evaluate and promote Cortex Agent versions",
+              "url": "https://www.snowflake.com/en/developers/guides/ai-cookbook/agent-evaluations/"
+            },
+            {
+              "id": "agent-versioning-and-promotion",
+              "label": "Agent versioning and promotion",
+              "url": "https://www.snowflake.com/en/developers/guides/ai-cookbook/agent-versioning-and-promotion/"
+            },
+            {
+              "id": "agent-ci-cd-with-dbt",
+              "label": "Agent CI/CD with dbt: per-PR builds, versioned deploys, and an evaluation gate",
+              "url": "https://www.snowflake.com/en/developers/guides/ai-cookbook/agent-ci-cd-with-dbt/"
+            }
+          ]
+        },
+        {
+          "id": "snowflake-mcp",
+          "label": "Snowflake MCP",
+          "url": "",
+          "topics": [
+            {
+              "id": "mcp-or-agent-rest-api",
+              "label": "Snowflake-managed MCP or the Cortex Agents REST API",
+              "url": "https://www.snowflake.com/en/developers/guides/ai-cookbook/mcp-or-agent-rest-api/"
+            },
+            {
+              "id": "long-running-agents-over-mcp",
+              "label": "Long-running Cortex Agent runs over managed MCP",
+              "url": "https://www.snowflake.com/en/developers/guides/ai-cookbook/long-running-agents-over-mcp/"
+            }
+          ]
+        },
+        {
+          "id": "ai-observability",
+          "label": "AI Observability",
+          "url": "",
+          "topics": [
+            {
+              "id": "agent-feedback-to-evals",
+              "label": "Turn agent feedback and rephrased questions into an evaluation dataset",
+              "url": "https://www.snowflake.com/en/developers/guides/ai-cookbook/agent-feedback-to-evals/"
+            },
+            {
+              "id": "ai-usage-cost-attribution",
+              "label": "AI usage and cost attribution across agents, CoWork, Cortex Code, and AI functions",
+              "url": "https://www.snowflake.com/en/developers/guides/ai-cookbook/ai-usage-cost-attribution/"
+            },
+            {
+              "id": "diagnose-agent-requests",
+              "label": "Diagnose slow Cortex Agent requests from their traces",
+              "url": "https://www.snowflake.com/en/developers/guides/ai-cookbook/diagnose-agent-requests/"
+            },
+            {
+              "id": "coco-user-budget-sizing",
+              "label": "Size Cortex Code per-user limits from real usage",
+              "url": "https://www.snowflake.com/en/developers/guides/ai-cookbook/coco-user-budget-sizing/"
+            }
+          ]
+        },
+        {
+          "id": "semantic-views",
+          "label": "Semantic Views",
+          "url": "",
+          "topics": [
+            {
+              "id": "mixed-grain-and-verified-queries",
+              "label": "Mixed-grain tables: diagnose and fix wrong agent answers with a GRAIN dimension and verified queries",
+              "url": "https://www.snowflake.com/en/developers/guides/ai-cookbook/mixed-grain-and-verified-queries/"
+            },
+            {
+              "id": "description-quality",
+              "label": "Semantic view description quality: a rubric, a linter, and how to apply fixes",
+              "url": "https://www.snowflake.com/en/developers/guides/ai-cookbook/description-quality/"
+            },
+            {
+              "id": "refinement-loop-from-agent-logs",
+              "label": "Refine a semantic view from agent logs: triage, SME review, and verified queries",
+              "url": "https://www.snowflake.com/en/developers/guides/ai-cookbook/refinement-loop-from-agent-logs/"
+            }
+          ]
+        },
+        {
+          "id": "cortex-ai-functions",
+          "label": "Cortex AI Functions",
+          "url": "",
+          "topics": [
+            {
+              "id": "agentic-schema-mapping",
+              "label": "Agentic schema mapping: messy CSVs to canonical tables with a Cortex Agent",
+              "url": "https://www.snowflake.com/en/developers/guides/ai-cookbook/agentic-schema-mapping/"
+            },
+            {
+              "id": "pii-redaction",
+              "label": "PII redaction with AI_REDACT, AI_COMPLETE extraction, and an entity cache",
+              "url": "https://www.snowflake.com/en/developers/guides/ai-cookbook/pii-redaction/"
+            }
+          ]
+        },
+        {
+          "id": "cortex-ai-gateway",
+          "label": "Cortex AI Gateway",
+          "url": "",
+          "topics": [
+            {
+              "id": "langchain-mcp-agent-tracing",
+              "label": "LangChain agents on Cortex AI Gateway with MCP tools and traces",
+              "url": "https://www.snowflake.com/en/developers/guides/ai-cookbook/langchain-mcp-agent-tracing/"
+            },
+            {
+              "id": "gateway-governance-quickstart",
+              "label": "Cortex AI Gateway governance quickstart",
+              "url": "https://www.snowflake.com/en/developers/guides/ai-cookbook/gateway-governance-quickstart/"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
