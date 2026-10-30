@@ -194,7 +194,7 @@ StreamSnow sorts the feedback, builds the changes the same governed way with one
 Brand settings you ask for, such as theme colors and fonts, go into `streamsnow.config.yaml`, so every future app in the repository starts with them.
 
 <!-- ------------------------ -->
-## Tie a Number Back to SQL
+## Verify a Metric
 
 Every page has a runnable SQL file in `apps/<slug>/sql_review/`, with one section per metric in on-screen order. Open `01_overview.sql` in Snowsight or any SQL editor and run the revenue section. It should return the number on the Overview page.
 
