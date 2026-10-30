@@ -56,7 +56,7 @@ CREATE OR REPLACE API INTEGRATION tb_dbt_git_api_integration
 
 Let's now clone the example dbt project we will use in the rest of this lab. 
 
-1. From the Workspaces list above the workspace files area, under Create Workspace, select From Git repository.
+1. Select the + button next to Workspaces and Databases, and then select Git workspace.
 2. In the popup, enter the following fields:
     1. Repository URL: `https://github.com/Snowflake-Labs/getting-started-with-dbt-on-snowflake.git`
     2. Workspace name: `tasty_bytes`
