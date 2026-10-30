@@ -158,7 +158,7 @@ Once you have compiled the project, you can view the compiled SQL by clicking th
 
 You can also view the DAG to see how models interact with one another. In the panel below the editor, select the DAG tab to open the DAG.
 
-![dag](assets/dag.png)
+![view-dag](assets/view-dag.png)
 
 ### dbt run
 
