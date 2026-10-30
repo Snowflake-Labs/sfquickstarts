@@ -3,8 +3,8 @@ summary: Configure External OAuth authentication for Snowflake Postgres using Mi
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/snowflake-feature/postgres
 language: en
 environments: web
-status: Hidden
-feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+status: Published
+feedback link: https://github.com/Snowflake-Labs/sfquickstarts/issues
 authors: Elizabeth Christensen
 fork repo link: https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/snowflake-postgres-external-oauth-entra
 tags: Postgres
@@ -28,7 +28,7 @@ This guide covers two authentication patterns that can be configured simultaneou
 | Application user | Client credentials | Client secret | `appid` in `roles` claim | Service accounts, scripts, apps |
 | Human user | Delegated (auth code) | User login (interactive) | `email` in `scp` claim | End users authenticating as themselves |
 
-### Prerequisites
+### What You'll Need
 
 - A running Snowflake Postgres instance ([Getting Started with Snowflake Postgres](https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake-postgres/))
 - A Snowflake role with OWNERSHIP or MODIFY privilege on the Postgres instance
@@ -49,7 +49,7 @@ This guide covers two authentication patterns that can be configured simultaneou
 - A working External OAuth integration between Microsoft Entra ID and Snowflake Postgres, supporting both application (client credentials) and human (delegated) authentication flows.
 
 <!-- ------------------------ -->
-## Register the Resource App in Entra ID
+## Register the Resource App
 
 You need two app registrations in Entra ID:
 
@@ -108,6 +108,18 @@ Record these values:
 | App role value | App roles page (`Postgres.Login.Role`) | `SCOPES` for application flow |
 | Tenant ID | Overview page | Part of `ISSUER` URL |
 
+### Add the email optional claim (for delegated/human flow)
+
+Entra v1 access tokens don't include the `email` claim by default. Add it to the resource app so the delegated token carries the value Postgres maps on:
+
+1. In the resource app, select **Token configuration** in the left menu.
+2. Select **+ Add optional claim**.
+3. For **Token type**, select **Access**.
+4. Check `email` and select **Add**.
+5. If prompted, check **Turn on the Microsoft Graph email permission** and select **Add**.
+
+> The `email` claim is only populated when the user has an email address set in Entra ID.
+
 <!-- ------------------------ -->
 ## Configure the Client App
 
@@ -165,7 +177,7 @@ Replace the placeholder values with the ones you recorded:
 
 ```sql
 ALTER POSTGRES INSTANCE my_postgres_instance SET
-  AUTHENTICATION_AUTHORITY = EXTERNAL_OAUTH,
+  AUTHENTICATION_AUTHORITY = EXTERNAL_OAUTH
   AUTHENTICATION_PROPERTIES = (
     ISSUER = 'https://sts.windows.net/<tenant-id>/',
     AUDIENCE = 'api://<RESOURCE_APP_ID>',
@@ -200,10 +212,10 @@ ALTER POSTGRES INSTANCE my_postgres_instance SET
 >
 > The `ISSUER` in your Postgres configuration must match exactly — including the trailing slash for v1. This guide uses the v1 endpoint.
 
-For the full property reference, see [Configure authentication for Snowflake Postgres](https://docs.snowflake.com/en/LIMITEDACCESS/user-guide/snowflake-postgres/postgres-external-oauth).
+For the full property reference, see [Configure authentication for Snowflake Postgres](https://docs.snowflake.com/en/user-guide/snowflake-postgres/postgres-authentication).
 
 <!-- ------------------------ -->
-## Map Postgres Users to Token Claims
+## Map Users to Claims
 
 Connect to your Postgres instance with existing credentials (for example, the `snowflake_admin` user):
 
@@ -299,6 +311,40 @@ PGPASSWORD="<delegated_access_token>" psql \
 If the connection succeeds, External OAuth is working. The Postgres instance validated the JWT signature, checked the issuer, audience, and scopes, and matched the mapping claim to the user's `oauth_identifier`.
 
 <!-- ------------------------ -->
+## Clean Up
+
+If you created these resources only for this guide, remove them when you're done.
+
+### Drop the Postgres roles
+
+Connect to `my_database` as `snowflake_admin`, then revoke the roles' privileges and drop them:
+
+```sql
+DROP OWNED BY app_user, jane_smith;
+DROP ROLE app_user;
+DROP ROLE jane_smith;
+```
+
+### Revert the instance's authentication settings
+
+Run the following in Snowflake to return the instance to Postgres authentication. Setting `AUTHENTICATION_PROPERTIES` to `NULL` removes the stored issuer, audience, and accepted tokens.
+
+```sql
+ALTER POSTGRES INSTANCE my_postgres_instance SET
+  AUTHENTICATION_AUTHORITY = POSTGRES
+  AUTHENTICATION_PROPERTIES = NULL;
+```
+
+> Switching to External OAuth revoked the `application` role's password. After you revert, run `ALTER POSTGRES INSTANCE my_postgres_instance RESET ACCESS FOR 'application';` if your apps need it.
+
+### Delete the Entra ID resources
+
+1. In the [Azure Portal](https://portal.azure.com), go to **Microsoft Entra ID** > **App registrations**.
+2. Select the client app, then select **Certificates & secrets** and delete the `postgres-oauth` client secret.
+3. On the client app's **Overview** page, select **Delete** and confirm.
+4. Select the resource app, then select **Delete** on its **Overview** page and confirm.
+
+<!-- ------------------------ -->
 ## Conclusion and Resources
 
 You've configured External OAuth authentication for Snowflake Postgres using Microsoft Entra ID, supporting both application and human user flows.
@@ -313,7 +359,7 @@ You've configured External OAuth authentication for Snowflake Postgres using Mic
 
 ### Related Resources
 
-- [Snowflake Postgres Authentication Documentation](https://docs.snowflake.com/en/LIMITEDACCESS/user-guide/snowflake-postgres/postgres-external-oauth)
+- [Snowflake Postgres Authentication Documentation](https://docs.snowflake.com/en/user-guide/snowflake-postgres/postgres-authentication)
 - [Snowflake Postgres Documentation](https://docs.snowflake.com/en/user-guide/snowflake-postgres/about)
 - [Getting Started with Snowflake Postgres Quickstart](https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake-postgres/)
 - [Microsoft Entra ID: Register an application](https://learn.microsoft.com/en-us/entra/identity-platform/quickstart-register-app)
