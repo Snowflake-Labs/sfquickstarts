@@ -196,7 +196,7 @@ Now we'll run `dbt deps` to pull in the dbt_utils package. The dbt_utils package
 From the dbt toolbar, you get dropdowns for the project, target, and command. Clicking the play button will run the relevant command. You can also click the down arrow to override the arguments. 
 
 1. From the toolbar, select dev and deps. 
-2. Click the dropdown arrow and enter `dbt_access_integration`. This [external access integration](https://docs.snowflake.com/en/sql-reference/sql/create-external-access-integration) has already been configured for you. 
+2. Click the dropdown arrow, and under External Access Integration, select `DBT_ACCESS_INTEGRATION`, the [external access integration](https://docs.snowflake.com/en/sql-reference/sql/create-external-access-integration) you created above. 
 3. Click Execute.
 
 ![dbt-deps](assets/dbt-deps.png)
