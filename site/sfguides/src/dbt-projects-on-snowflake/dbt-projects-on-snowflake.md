@@ -197,7 +197,7 @@ From the dbt toolbar, you get dropdowns for the project, target, and command. Cl
 
 1. From the toolbar, select dev and deps. 
 2. Click the dropdown arrow and enter `dbt_access_integration`. This [external access integration](https://docs.snowflake.com/en/sql-reference/sql/create-external-access-integration) has already been configured for you. 
-3. Click the Deps button.
+3. Click Execute.
 
 ![dbt-deps](assets/dbt-deps.png)
 
