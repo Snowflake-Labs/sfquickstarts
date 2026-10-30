@@ -206,9 +206,17 @@ DCM applies the declared policy with the FORCE option, so it replaces a masking 
 
 Duration: 3
 
+![Select the DCM_Projects_Governance project](assets/select_project.png)
+
 Select the DCM_Projects_Governance project and the DCM_DEV target in the DCM control panel, then run **Plan**. You should see the governance objects being created: the database, schemas, CUSTOMER table, both tags, the masking policy, the row access policy, the network rule/policy, and the authentication policy. The CUSTOMER table shows the row access policy being set, and the EMAIL column shows the masking policy being set.
 
+![Plan results: 16 entities, 15 to create and 1 to alter](assets/plan_results.png)
+
 Once the plan looks correct, set the operation to **Deploy** and run it.
+
+After the deployment, open the CUSTOMER table in the catalog and select the **Access** tab. Both policies DCM attached are listed:
+
+![CUSTOMER table with the EMAIL_MASK masking policy and the CUSTOMER_COUNTRY_FILTER row access policy applied](assets/customer_policies.png)
 
 > **CLI Alternative:**
 > ```
@@ -285,6 +293,8 @@ SELECT customer_id, first_name, email, country FROM dcm_demo_5_dev.raw.customer 
 | 4 | David | david.nguyen@example.com | USA |
 | 5 | Elena | elena.rossi@example.it | Italy |
 
+![DCM_DEVELOPER sees all five rows with clear emails](assets/developer_unmasked.png)
+
 Now switch to the restricted analyst role:
 
 ```sql
@@ -297,6 +307,8 @@ SELECT customer_id, first_name, email, country FROM dcm_demo_5_dev.raw.customer 
 | 1 | Alice | *****@example.com | USA |
 | 2 | Bob | *****@example.com | USA |
 | 4 | David | *****@example.com | USA |
+
+![The analyst role sees only USA rows with masked emails](assets/analyst_masked.png)
 
 The analyst sees **only USA rows** (the row access policy DCM attached filtered out the UK and Italy customers) **and** a **masked email** (the masking policy DCM attached with ATTACH MASKING POLICY) — both enforced by policies DCM manages as code.
 
