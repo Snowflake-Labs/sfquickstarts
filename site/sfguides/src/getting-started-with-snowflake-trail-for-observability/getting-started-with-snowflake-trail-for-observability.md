@@ -452,12 +452,12 @@ Clicking into any task run will bring you to the Run History for that task.
 >
 > For a step-by-step guide with examples, try one of these quickstarts:
 >
-> - [Incremental Processing with Streams, CHANGES and Row Timestamps](/en/developers/guides/incremental-processing-with-streams-changes-and-row-timestamps/)
+> - [Getting Started with Streams & Tasks](/en/developers/guides/getting-started-with-streams-and-tasks/)
 > - [Getting Started with Snowflake Task Graphs](/en/developers/guides/getting-started-with-task-graphs/)
 
 ### Additional Resources
 
-- [Incremental Processing with Streams, CHANGES and Row Timestamps](/en/developers/guides/incremental-processing-with-streams-changes-and-row-timestamps/)
+- [Getting Started with Streams & Tasks](/en/developers/guides/getting-started-with-streams-and-tasks/)
 - [Getting Started with Snowflake Task Graphs](/en/developers/guides/getting-started-with-task-graphs/)
 - [Introduction to tasks | Snowflake Documentation](https://docs.snowflake.com/en/user-guide/tasks-intro)
 - [Task graphs | Snowflake Documentation](https://docs.snowflake.com/en/user-guide/tasks-graphs)
@@ -574,5 +574,5 @@ Now that you have explored the basics of Snowflake Trail, consider these possibl
 - [Getting Started with Snowflake Task Graphs](/en/developers/guides/getting-started-with-task-graphs/)
 - [Getting Started with Snowpipe Streaming and Azure Event Hubs](/en/developers/guides/getting-started-with-snowpipe-streaming-azure-eventhubs/)
 - [Getting Started with Snowpipe](/en/developers/guides/getting-started-with-snowpipe/)
-- [Incremental Processing with Streams, CHANGES and Row Timestamps](/en/developers/guides/incremental-processing-with-streams-changes-and-row-timestamps/)
+- [Getting Started with Streams & Tasks](/en/developers/guides/getting-started-with-streams-and-tasks/)
 - [Getting Started with Traces](/en/developers/guides/getting-started-with-traces/)
