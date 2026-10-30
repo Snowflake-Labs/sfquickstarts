@@ -138,9 +138,17 @@ We will keep the values in `dbt_projects_profiles.yml` unchanged.
 
 ### dbt compile
 
-We will now run `dbt compile`. From the dropdown, click compile and run it. 
+We will now run `dbt compile`. From the command list, select Compile, and then select the execute button. To set additional flags or an external access integration before you run a command, select the down arrow next to the execute button.
 
 ![dbt-compile](assets/dbt-compile.png)
+
+Select Advanced in that window to see more options for the run:
+
+- **Version:** Choose which dbt version runs the command, for example `dbt 1.12.3`.
+- **Override Environment Variables:** Replace individual environment variables for this run only.
+- **Defer to Production:** Resolve models you haven't built in development to their existing production versions, so you can run part of your project without rebuilding everything upstream.
+
+![dbt-compile-advanced](assets/dbt-compile-advanced.png)
 
 #### View Compiled SQL
 
