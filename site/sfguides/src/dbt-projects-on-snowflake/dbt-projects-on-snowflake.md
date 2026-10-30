@@ -277,13 +277,18 @@ Now that we have updated and validated our dbt project, let's deploy it so we ca
 
 1. On the right side of the workspace editor, select Connect > Deploy dbt project
 2. Ensure your role is `accountadmin`
-3. Select database `tasty_bytes_dbt_db` and schema `public`
-4. Under Select or Create dbt Object, select Create dbt Object and name it `dbt_project`
-5. Deploy!
+3. Under Select location, select database `tasty_bytes_dbt_db` and schema `public`
+4. Under Select or create dbt project, select Create dbt project
+5. Under Enter Name, enter `tasty_bytes`
+6. (Optional) Set a Default Target, choose a dbt Version, and select an External Access Integration if your project runs `dbt deps`
+7. Scroll down and keep Auto Compile and Default Writeback set to their default values (on)
+8. Deploy!
 
 After you deploy, the Connect menu shows the name of your dbt project object, with options to redeploy, disconnect, or view the project.
 
 ![deploy-dbt](assets/deploy-dbt.png)
+
+![deploy-dbt-2](assets/deploy-dbt-2.png)
 
 ### View git
 
@@ -296,7 +301,7 @@ Workspaces are fully git backed. To view changes and commit, click changes from 
 
 ### Orchestrate with Tasks
 
-Navigate to <a href="https://app.snowflake.com/_deeplink/#/data/databases/TASTY_BYTES_DBT_DB/schemas/PUBLIC?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_content=dbt-projects-on-snowflake&utm_cta=developer-guides-deeplink" class="_deeplink">Catalog > Database Explorer > TASTY_BYTES_DBT_DB > PUBLIC</a> > dbt Projects > DBT_PROJECT to view the project details. You can also select View project from the Connect menu in your workspace. From the Run History tab, you can view all runs associated with the project. To run the project once without a schedule, select Execute, choose an operation and profile, and then select Run.
+Navigate to <a href="https://app.snowflake.com/_deeplink/#/data/databases/TASTY_BYTES_DBT_DB/schemas/PUBLIC?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_content=dbt-projects-on-snowflake&utm_cta=developer-guides-deeplink" class="_deeplink">Catalog > Database Explorer > TASTY_BYTES_DBT_DB > PUBLIC</a> > dbt Projects > TASTY_BYTES to view the project details. You can also select View project from the Connect menu in your workspace. From the Run History tab, you can view all runs associated with the project. To run the project once without a schedule, select Execute, choose an operation and profile, and then select Run.
 
 ![project-details](assets/dbt_project_details.png)
 
@@ -328,13 +333,13 @@ USE ROLE accountadmin;
 CREATE OR REPLACE TASK tasty_bytes_dbt_db.public.dbt_run_task
 	WAREHOUSE=TASTY_BYTES_DBT_WH
 	SCHEDULE='60 MINUTES'
-	AS EXECUTE DBT PROJECT "TASTY_BYTES_DBT_DB"."PUBLIC"."DBT_PROJECT" args='run --target dev';
+	AS EXECUTE DBT PROJECT "TASTY_BYTES_DBT_DB"."PUBLIC"."TASTY_BYTES" args='run --target dev';
 
 
 CREATE OR REPLACE TASK tasty_bytes_dbt_db.public.dbt_test_task
 	WAREHOUSE=TASTY_BYTES_DBT_WH
 	AFTER tasty_bytes_dbt_db.public.dbt_run_task
-	AS EXECUTE DBT PROJECT "TASTY_BYTES_DBT_DB"."PUBLIC"."DBT_PROJECT" args='test --target dev';
+	AS EXECUTE DBT PROJECT "TASTY_BYTES_DBT_DB"."PUBLIC"."TASTY_BYTES" args='test --target dev';
 
 -- Run the tasks once
 ALTER TASK tasty_bytes_dbt_db.public.dbt_test_task RESUME;
