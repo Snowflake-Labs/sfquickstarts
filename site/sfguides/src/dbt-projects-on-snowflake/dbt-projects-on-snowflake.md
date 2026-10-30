@@ -75,43 +75,6 @@ The repository includes a setup script, `tasty_bytes_dbt_demo/setup/tasty_bytes_
 2. Comment out STEP 4 (the GitHub secret and API integration). You already created the API integration, and this lab uses a public repository, so you don't need a secret.
 3. Run all of the uncommented commands.
 
-### Explore the Data
-Let's explore the data we will be using in this lab. 
-
-1. Create a new SQL file in your workspace and name it `data_profile.sql`.
-2. Copy and paste the code below into the new file.
-3. Run the queries. 
-
-``` sql 
-USE WAREHOUSE tasty_bytes_dbt_wh;
-USE ROLE accountadmin; 
-
--- What tables exist?
-SHOW TABLES IN SCHEMA tasty_bytes_dbt_db.raw;
-
--- What is the scale of data? 
-SELECT COUNT(*) FROM tasty_bytes_dbt_db.raw.order_header;
-
--- Understand a query that might be used in a mart -- in this case sales grouped by customer
-SELECT 
-    cl.customer_id,
-    cl.city,
-    cl.country,
-    cl.first_name,
-    cl.last_name,
-    cl.phone_number,
-    cl.e_mail,
-    SUM(oh.order_total) AS total_sales,
-    ARRAY_AGG(DISTINCT oh.location_id) AS visited_location_ids_array
-FROM tasty_bytes_dbt_db.raw.customer_loyalty cl
-JOIN tasty_bytes_dbt_db.raw.order_header oh
-ON cl.customer_id = oh.customer_id
-GROUP BY cl.customer_id, cl.city, cl.country, cl.first_name,
-cl.last_name, cl.phone_number, cl.e_mail;
-```
-
-![data-profile](assets/data-profile.png)
-
 
 <!-- ------------------------ -->
 ## Operate dbt Projects on Snowflake
