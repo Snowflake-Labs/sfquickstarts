@@ -1,4 +1,4 @@
-id: snowflake-postgres-external-oauth-entra
+id: snowflake-postgres-external-oauth-entra-id
 summary: Configure External OAuth authentication for Snowflake Postgres using Microsoft Entra ID
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/snowflake-feature/postgres
 language: en
@@ -6,7 +6,7 @@ environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfquickstarts/issues
 authors: Elizabeth Christensen
-fork repo link: https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/snowflake-postgres-external-oauth-entra
+fork repo link: https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/snowflake-postgres-external-oauth-entra-id
 tags: Postgres
 
 # Configure External OAuth for Snowflake Postgres with Microsoft Entra ID
