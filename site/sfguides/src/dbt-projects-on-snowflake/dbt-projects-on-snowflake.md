@@ -59,7 +59,7 @@ Let's now clone the example dbt project we will use in the rest of this lab.
 1. From the Workspaces list above the workspace files area, under Create Workspace, select From Git repository.
 2. In the popup, enter the following fields:
     1. Repository URL: `https://github.com/Snowflake-Labs/getting-started-with-dbt-on-snowflake.git`
-    2. Workspace Name: `Example-dbt-Project`
+    2. Workspace name: `tasty_bytes`
     3. API Integration: `TB_DBT_GIT_API_INTEGRATION`
     4. Select Public Repository. Note: Private repos can be authenticated with personal access tokens and GitHub users can authenticate with [OAuth](https://docs.snowflake.com/en/developer-guide/git/git-setting-up#configure-for-authenticating-with-oauth).
 3. Click Create!
