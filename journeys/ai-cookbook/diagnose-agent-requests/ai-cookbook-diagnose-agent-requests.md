@@ -7,7 +7,7 @@ language: en
 summary: A caller's-rights procedure that reads one agent request's trace, computes a time breakdown by span, and returns an LLM explanation.
 environments: web
 status: Published
-fork_repo_link: https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/site/cortex-ai-cookbook/src/diagnose-agent-requests
+fork_repo_link: https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/recipes/ai-observability/diagnose-agent-requests
 
 # Diagnose slow Cortex Agent requests from their traces
 
@@ -25,8 +25,8 @@ fork_repo_link: https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/s
 | Regions | Any region with Cortex Agents and AI_COMPLETE for the chosen model |
 | Privileges | ACCOUNTADMIN for 01_setup.sql only; callers need MONITOR on the agent and SNOWFLAKE.CORTEX_USER |
 | Last verified | 2026-10-04 |
-| Code | [Recipe folder on GitHub](https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/site/cortex-ai-cookbook/src/diagnose-agent-requests) · [Teardown script](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/diagnose-agent-requests/sql/99_teardown.sql) |
-| Problems | [Open an issue](https://github.com/Snowflake-Labs/cortex-ai-cookbook/issues/new?template=recipe-problem.yml&title=%5Bdiagnose-agent-requests%5D%20&recipe=site%2Fcortex-ai-cookbook%2Fsrc%2Fdiagnose-agent-requests) |
+| Code | [Recipe folder on GitHub](https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/recipes/ai-observability/diagnose-agent-requests) · [Teardown script](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/ai-observability/diagnose-agent-requests/sql/99_teardown.sql) |
+| Problems | [Open an issue](https://github.com/Snowflake-Labs/cortex-ai-cookbook/issues/new?template=recipe-problem.yml&title=%5Bdiagnose-agent-requests%5D%20&recipe=recipes%2Fai-observability%2Fdiagnose-agent-requests) |
 
 ## When to use this
 
@@ -168,7 +168,7 @@ Clone the repository first (`git clone https://github.com/Snowflake-Labs/cortex-
 ```text
 Install or enable the bundled agent-studio skill if it is not already available; use its
 agent-observability-report sub-skill for any fleet-level latency questions. Then, from
-site/cortex-ai-cookbook/src/diagnose-agent-requests:
+recipes/ai-observability/diagnose-agent-requests:
 1. Run SELECT CURRENT_ACCOUNT(), CURRENT_REGION(), CURRENT_ROLE(); and show me the result.
    Stop if it is not the account I expect.
 2. Run sql/01_setup.sql (it switches to ACCOUNTADMIN to create the role), then

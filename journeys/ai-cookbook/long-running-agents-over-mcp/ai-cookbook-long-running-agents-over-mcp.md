@@ -7,7 +7,7 @@ language: en
 summary: Split one long MCP tool call into a fast submit and a bounded fetch over background agent runs, so no call nears a client's timeout and caller's rights still apply.
 environments: web
 status: Published
-fork_repo_link: https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/site/cortex-ai-cookbook/src/long-running-agents-over-mcp
+fork_repo_link: https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/recipes/snowflake-mcp/long-running-agents-over-mcp
 
 # Long-running Cortex Agent runs over managed MCP
 
@@ -25,8 +25,8 @@ Some MCP clients cap how long a single tool call may take, and some agent questi
 | Regions | AWS or Azure (background agent runs are GA there); Cortex Agents available in the region or through cross-region inference |
 | Privileges | ACCOUNTADMIN to create the recipe roles, warehouse, and database; everything else runs as COOKBOOK_LONG_RUNNING_AGENTS_OVER_MCP_ADMIN |
 | Last verified | 2026-10-04 |
-| Code | [Recipe folder on GitHub](https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/site/cortex-ai-cookbook/src/long-running-agents-over-mcp) · [Teardown script](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/long-running-agents-over-mcp/sql/99_teardown.sql) |
-| Problems | [Open an issue](https://github.com/Snowflake-Labs/cortex-ai-cookbook/issues/new?template=recipe-problem.yml&title=%5Blong-running-agents-over-mcp%5D%20&recipe=site%2Fcortex-ai-cookbook%2Fsrc%2Flong-running-agents-over-mcp) |
+| Code | [Recipe folder on GitHub](https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/recipes/snowflake-mcp/long-running-agents-over-mcp) · [Teardown script](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/snowflake-mcp/long-running-agents-over-mcp/sql/99_teardown.sql) |
+| Problems | [Open an issue](https://github.com/Snowflake-Labs/cortex-ai-cookbook/issues/new?template=recipe-problem.yml&title=%5Blong-running-agents-over-mcp%5D%20&recipe=recipes%2Fsnowflake-mcp%2Flong-running-agents-over-mcp) |
 
 ## When to use this
 
@@ -60,16 +60,16 @@ Key concepts:
 | Cortex Agents | Available in your region, or cross-region inference enabled. The agents use `orchestration: auto`. |
 | ACCOUNTADMIN for setup | Only to create the two recipe roles, the warehouse, and the database in `01_setup.sql` and to drop them in teardown. |
 | A SQL session that stays open for a whole run | Only for the SQL checks in Verify, where submit and fetch must share one session that keeps the user role until fetch returns: a Snowsight worksheet, or one `snow sql -f` file. Separate `snow sql -q` calls do not work. The setup scripts can each run in their own session. |
-| Python 3.9+ (optional) | For [`client/submit_fetch_client.py`](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/long-running-agents-over-mcp/client/submit_fetch_client.py), standard library only. |
+| Python 3.9+ (optional) | For [`client/submit_fetch_client.py`](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/snowflake-mcp/long-running-agents-over-mcp/client/submit_fetch_client.py), standard library only. |
 | An OAuth access token or programmatic access token (optional) | For the sample client. Restrict a PAT to `COOKBOOK_LONG_RUNNING_AGENTS_OVER_MCP_USER`. A person user can generate a PAT without a network policy but can sign in with it only while subject to one, at account or user level ([programmatic access tokens](https://docs.snowflake.com/en/user-guide/programmatic-access-tokens)). |
 
 ## Quickstart
 
-1. [`sql/01_setup.sql`](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/long-running-agents-over-mcp/sql/01_setup.sql): roles, warehouse, database, synthetic Northwind bookings, and a semantic view.
-2. [`sql/02_agent.sql`](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/long-running-agents-over-mcp/sql/02_agent.sql): the bookings agent.
-3. [`sql/03_run_procs.sql`](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/long-running-agents-over-mcp/sql/03_run_procs.sql): `START_AGENT_RUN`, `FETCH_AGENT_RUN`, and the `SUBMIT_BOOKINGS_QUESTION` wrapper.
-4. [`sql/04_slow_test_agent.sql`](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/long-running-agents-over-mcp/sql/04_slow_test_agent.sql): test only. An agent that must call a 70-second checkpoint twice, so its runs last over two minutes.
-5. [`sql/05_mcp_server.sql`](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/long-running-agents-over-mcp/sql/05_mcp_server.sql): the MCP server with the submit and fetch tools, and the USAGE grant.
+1. [`sql/01_setup.sql`](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/snowflake-mcp/long-running-agents-over-mcp/sql/01_setup.sql): roles, warehouse, database, synthetic Northwind bookings, and a semantic view.
+2. [`sql/02_agent.sql`](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/snowflake-mcp/long-running-agents-over-mcp/sql/02_agent.sql): the bookings agent.
+3. [`sql/03_run_procs.sql`](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/snowflake-mcp/long-running-agents-over-mcp/sql/03_run_procs.sql): `START_AGENT_RUN`, `FETCH_AGENT_RUN`, and the `SUBMIT_BOOKINGS_QUESTION` wrapper.
+4. [`sql/04_slow_test_agent.sql`](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/snowflake-mcp/long-running-agents-over-mcp/sql/04_slow_test_agent.sql): test only. An agent that must call a 70-second checkpoint twice, so its runs last over two minutes.
+5. [`sql/05_mcp_server.sql`](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/snowflake-mcp/long-running-agents-over-mcp/sql/05_mcp_server.sql): the MCP server with the submit and fetch tools, and the USAGE grant.
 6. Run the Verify queries.
 7. Optional: point an MCP client or the sample client at the server.
 
@@ -233,14 +233,14 @@ SHOW GRANTS ON MCP SERVER COOKBOOK_LONG_RUNNING_AGENTS_OVER_MCP.APP.BOOKINGS_ASY
 snow sql -f sql/99_teardown.sql
 ```
 
-[`sql/99_teardown.sql`](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/long-running-agents-over-mcp/sql/99_teardown.sql) drops the database (schema, table, semantic view, agents, procedures, MCP server), the warehouse, and both roles. No account-level setting is changed. If you created a PAT for the sample client, remove it with `ALTER USER <user> REMOVE PROGRAMMATIC ACCESS TOKEN <name>`.
+[`sql/99_teardown.sql`](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/snowflake-mcp/long-running-agents-over-mcp/sql/99_teardown.sql) drops the database (schema, table, semantic view, agents, procedures, MCP server), the warehouse, and both roles. No account-level setting is changed. If you created a PAT for the sample client, remove it with `ALTER USER <user> REMOVE PROGRAMMATIC ACCESS TOKEN <name>`.
 
 ## Run it with a coding agent
 
 Clone the repository first (`git clone https://github.com/Snowflake-Labs/cortex-ai-cookbook`) and run the prompt from its root.
 
 ```text
-Deploy the recipe in site/cortex-ai-cookbook/src/long-running-agents-over-mcp.
+Deploy the recipe in recipes/snowflake-mcp/long-running-agents-over-mcp.
 1. Run SELECT CURRENT_ACCOUNT(), CURRENT_REGION(), CURRENT_ROLE(); and show me
    the result. Stop unless I confirm the account, and stop if the region is not
    on AWS or Azure.

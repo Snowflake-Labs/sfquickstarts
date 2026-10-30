@@ -7,7 +7,7 @@ language: en
 summary: Commit, alias, promote, A/B route, and roll back Cortex Agent versions with runnable SQL and the behaviors observed along the way.
 environments: web
 status: Published
-fork_repo_link: https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/site/cortex-ai-cookbook/src/agent-versioning-and-promotion
+fork_repo_link: https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/recipes/cortex-agents/agent-versioning-and-promotion
 
 # Agent versioning and promotion
 
@@ -29,8 +29,8 @@ call. They call `!PRODUCTION`, and you decide what that means.
 | Regions | Any region with Cortex Agents; cross-region inference if your region lacks the orchestration model |
 | Privileges | ACCOUNTADMIN for sql/01_setup.sql and sql/99_teardown.sql; 02 to 07 run as COOKBOOK_AGENT_VERSIONING_AND_PROMOTION_ADMIN |
 | Last verified | 2026-10-04 |
-| Code | [Recipe folder on GitHub](https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/site/cortex-ai-cookbook/src/agent-versioning-and-promotion) · [Teardown script](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/agent-versioning-and-promotion/sql/99_teardown.sql) |
-| Problems | [Open an issue](https://github.com/Snowflake-Labs/cortex-ai-cookbook/issues/new?template=recipe-problem.yml&title=%5Bagent-versioning-and-promotion%5D%20&recipe=site%2Fcortex-ai-cookbook%2Fsrc%2Fagent-versioning-and-promotion) |
+| Code | [Recipe folder on GitHub](https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/recipes/cortex-agents/agent-versioning-and-promotion) · [Teardown script](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/cortex-agents/agent-versioning-and-promotion/sql/99_teardown.sql) |
+| Problems | [Open an issue](https://github.com/Snowflake-Labs/cortex-ai-cookbook/issues/new?template=recipe-problem.yml&title=%5Bagent-versioning-and-promotion%5D%20&recipe=recipes%2Fcortex-agents%2Fagent-versioning-and-promotion) |
 
 ## When to use this
 
@@ -266,7 +266,7 @@ Clone the repository first (`git clone https://github.com/Snowflake-Labs/cortex-
 
 ```text
 Install or enable the bundled agent-studio skill if it is not already available.
-Then, in the recipe folder site/cortex-ai-cookbook/src/agent-versioning-and-promotion:
+Then, in the recipe folder recipes/cortex-agents/agent-versioning-and-promotion:
 1. Confirm the target account with SELECT CURRENT_ACCOUNT(), CURRENT_ROLE(),
    and show me the result before creating anything.
 2. Run sql/01_setup.sql through sql/07_import_version_from_stage.sql in order,

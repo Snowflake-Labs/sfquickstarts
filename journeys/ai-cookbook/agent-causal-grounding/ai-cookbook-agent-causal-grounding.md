@@ -7,7 +7,7 @@ language: en
 summary: A Cortex Agent whose every number comes from a persisted causal estimator, and which declines to answer for cohorts where no honest estimate exists.
 environments: web
 status: Published
-fork_repo_link: https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/site/cortex-ai-cookbook/src/agent-causal-grounding
+fork_repo_link: https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/recipes/cortex-agents/agent-causal-grounding
 
 # Causally grounded Cortex Agent that refuses when the data cannot answer
 
@@ -33,8 +33,8 @@ Snowpark Container Services.
 | Regions | Any region with Cortex Agents; warehouse Python 3.11 with the Anaconda channel and the Snowflake PyPI artifact repository |
 | Privileges | One build role with CREATE DATABASE and CREATE WAREHOUSE on the account plus SNOWFLAKE.CORTEX_USER runs every script, teardown included; the optional sql/10_agent_user_role.sql also switches to ACCOUNTADMIN for CREATE ROLE and the SNOWFLAKE.CORTEX_AGENT_USER grant |
 | Last verified | 2026-10-04 |
-| Code | [Recipe folder on GitHub](https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/site/cortex-ai-cookbook/src/agent-causal-grounding) · [Teardown script](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/agent-causal-grounding/sql/99_teardown.sql) |
-| Problems | [Open an issue](https://github.com/Snowflake-Labs/cortex-ai-cookbook/issues/new?template=recipe-problem.yml&title=%5Bagent-causal-grounding%5D%20&recipe=site%2Fcortex-ai-cookbook%2Fsrc%2Fagent-causal-grounding) |
+| Code | [Recipe folder on GitHub](https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/recipes/cortex-agents/agent-causal-grounding) · [Teardown script](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/cortex-agents/agent-causal-grounding/sql/99_teardown.sql) |
+| Problems | [Open an issue](https://github.com/Snowflake-Labs/cortex-ai-cookbook/issues/new?template=recipe-problem.yml&title=%5Bagent-causal-grounding%5D%20&recipe=recipes%2Fcortex-agents%2Fagent-causal-grounding) |
 
 ## When to use this
 
@@ -67,7 +67,7 @@ When not to use it:
   Analyst over a semantic view.
 - The outcome is a rare one-shot binary flag at modest scale. Per-unit effects are
   not statistically recoverable; see the power hazard in
-  [docs/design.md](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/agent-causal-grounding/docs/design.md).
+  [docs/design.md](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/cortex-agents/agent-causal-grounding/docs/design.md).
 - The treatment is multi-arm, dose-response, or the outcome is time-to-event. The
   framework supports a single binary treatment and a fixed-window outcome.
 
@@ -103,7 +103,7 @@ The simulation exists so correctness is checkable, which is impossible on real d
 because real data has no answer key.
 
 Two runtime constraints shape the architecture (full detail in
-[docs/runtime-and-packages.md](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/agent-causal-grounding/docs/runtime-and-packages.md)):
+[docs/runtime-and-packages.md](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/cortex-agents/agent-causal-grounding/docs/runtime-and-packages.md)):
 
 - **Warehouse Python is aarch64.** `econml` has no aarch64 wheel on PyPI, so it must
   come from the Snowflake Anaconda channel.
@@ -208,7 +208,7 @@ Every use case supplies five objects in its `DATA` schema, as tables or views:
 Domain names live in `usecase.yaml` and nowhere else. Nothing under `framework/`
 references a domain column, which is why `usecases/subscription_churn` runs all three
 notebooks with no Python changes: switch `active_usecase` in
-[config.yaml](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/agent-causal-grounding/config.yaml) and run its two SQL files.
+[config.yaml](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/cortex-agents/agent-causal-grounding/config.yaml) and run its two SQL files.
 
 Each use case gets its own database (`COOKBOOK_AGENT_CAUSAL_GROUNDING` for payer,
 `COOKBOOK_AGENT_CAUSAL_GROUNDING_CHURN` for churn), set once in the `SET` block of its
@@ -254,7 +254,7 @@ CALL COOKBOOK_AGENT_CAUSAL_GROUNDING.AGENT.CHECK_IDENTIFICATION('{"COMORBIDITY_C
 
 A tool that refuses is only useful if the orchestrator honours it, and a capable
 model handed a refusal plus a population-level estimate will helpfully offer the
-population number as an approximation. So [agent/02_agent.sql](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/agent-causal-grounding/agent/02_agent.sql)
+population number as an approximation. So [agent/02_agent.sql](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/cortex-agents/agent-causal-grounding/agent/02_agent.sql)
 forbids it by name:
 
 ```yaml
@@ -275,7 +275,7 @@ The agent is created with `CREATE OR REPLACE AGENT ... COPY GRANTS` and
 
 ### Refutation, in its own environment
 
-`REFUTE_ESTIMATE` ([agent/03_refute.sql](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/agent-causal-grounding/agent/03_refute.sql)) runs three attacks:
+`REFUTE_ESTIMATE` ([agent/03_refute.sql](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/cortex-agents/agent-causal-grounding/agent/03_refute.sql)) runs three attacks:
 **placebo treatment** (replace treatment with a permuted copy; a real effect must
 collapse), **random common cause** (add an irrelevant covariate; a stable estimate
 barely moves), and **data subset** (re-estimate on random 80% subsets). It cannot
@@ -314,7 +314,7 @@ raising `EquityGateFailure` rather than handing back a violating allocation.
 The tool procedures are `EXECUTE AS OWNER`. That is deliberate: the tools are the
 only sanctioned path from a question to a number, so a user should be able to ask the
 agent without being able to run the raw comparison that gets the sign wrong.
-[sql/10_agent_user_role.sql](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/agent-causal-grounding/sql/10_agent_user_role.sql) creates
+[sql/10_agent_user_role.sql](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/cortex-agents/agent-causal-grounding/sql/10_agent_user_role.sql) creates
 `COOKBOOK_AGENT_CAUSAL_GROUNDING_USER` with USAGE on the warehouse, database, `AGENT`
 schema, the six procedures, and the agent, and nothing on `DATA` or `MODELS`. ACCOUNTADMIN
 creates the role and then hands its ownership to the build role, so teardown, run as
@@ -322,16 +322,16 @@ the build role, can drop it. The trade-off is in Gotchas.
 
 ### Pointing it at your own data
 
-Start at [docs/adding-a-use-case.md](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/agent-causal-grounding/docs/adding-a-use-case.md). Write a
+Start at [docs/adding-a-use-case.md](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/cortex-agents/agent-causal-grounding/docs/adding-a-use-case.md). Write a
 `usecase.yaml`, then map your existing tables to the five canonical objects with
-[usecases/_template/03_bring_your_own_data.sql](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/agent-causal-grounding/usecases/_template/03_bring_your_own_data.sql).
+[usecases/_template/03_bring_your_own_data.sql](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/cortex-agents/agent-causal-grounding/usecases/_template/03_bring_your_own_data.sql).
 They are created as **views**, so there is no data movement and your existing
 governance policies keep applying. Then drop the `TRUTH` schema. The notebooks grade
 every estimator against that answer key, so before you run them on real data, remove
 `include_truth=True` and the cells that read `TRUE_ITE`, `TRUE_ATE` or `TRUE_ATT` (the
 planted-truth and leaderboard cells in 01 and 02, and the cells priced against planted
 truth in 03); with `TRUTH` gone those cells fail. Nothing under `framework/` changes.
-[docs/design.md](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/agent-causal-grounding/docs/design.md) lists which half of this folder is synthetic
+[docs/design.md](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/cortex-agents/agent-causal-grounding/docs/design.md) lists which half of this folder is synthetic
 scaffolding you can delete.
 
 ### Tests
@@ -438,7 +438,7 @@ the warehouse and the optional role.
 Clone the repository first (`git clone https://github.com/Snowflake-Labs/cortex-ai-cookbook`) and run the prompt from its root.
 
 ```text
-In site/cortex-ai-cookbook/src/agent-causal-grounding of the cortex-ai-cookbook repo, run
+In recipes/cortex-agents/agent-causal-grounding of the cortex-ai-cookbook repo, run
 the causal grounding recipe end to end on my default Snowflake connection.
 Install or enable the bundled machine-learning and agent-studio skills first, and use
 them for the ML and agent sub-tasks they cover.

@@ -7,7 +7,7 @@ language: en
 summary: Serve many tenants from one Cortex Agent: the app server names the end user in an immutable session attribute, and policies derive the tenant from an entitlement.
 environments: web
 status: Published
-fork_repo_link: https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/site/cortex-ai-cookbook/src/multi-tenant-agents
+fork_repo_link: https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/recipes/cortex-agents/multi-tenant-agents
 
 # Multi-tenant agents with session attributes and fail-closed policies
 
@@ -25,8 +25,8 @@ Serve every tenant from one Cortex Agent, one semantic view, and one Snowflake s
 | Regions | Any region with Cortex Agents and claude-sonnet-4-6 (directly or through cross-region inference) |
 | Privileges | ACCOUNTADMIN for 01_setup.sql and 99_teardown.sql only; everything else runs as COOKBOOK_MULTI_TENANT_AGENTS_ADMIN |
 | Last verified | 2026-10-04 |
-| Code | [Recipe folder on GitHub](https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/site/cortex-ai-cookbook/src/multi-tenant-agents) · [Teardown script](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/multi-tenant-agents/sql/99_teardown.sql) |
-| Problems | [Open an issue](https://github.com/Snowflake-Labs/cortex-ai-cookbook/issues/new?template=recipe-problem.yml&title=%5Bmulti-tenant-agents%5D%20&recipe=site%2Fcortex-ai-cookbook%2Fsrc%2Fmulti-tenant-agents) |
+| Code | [Recipe folder on GitHub](https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/recipes/cortex-agents/multi-tenant-agents) · [Teardown script](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/cortex-agents/multi-tenant-agents/sql/99_teardown.sql) |
+| Problems | [Open an issue](https://github.com/Snowflake-Labs/cortex-ai-cookbook/issues/new?template=recipe-problem.yml&title=%5Bmulti-tenant-agents%5D%20&recipe=recipes%2Fcortex-agents%2Fmulti-tenant-agents) |
 
 ## When to use this
 
@@ -196,7 +196,7 @@ Run `sql/99_teardown.sql` as `ACCOUNTADMIN`. It drops the database (agent, seman
 Clone the repository first (`git clone https://github.com/Snowflake-Labs/cortex-ai-cookbook`) and run the prompt from its root.
 
 ```text
-Run the recipe in site/cortex-ai-cookbook/src/multi-tenant-agents.
+Run the recipe in recipes/cortex-agents/multi-tenant-agents.
 1. Run SELECT CURRENT_ACCOUNT(), CURRENT_REGION(), CURRENT_ROLE(),
    CURRENT_WAREHOUSE(); show me the result and wait for my go-ahead.
 2. Show me sql/01_setup.sql and run it as ACCOUNTADMIN only after I confirm:

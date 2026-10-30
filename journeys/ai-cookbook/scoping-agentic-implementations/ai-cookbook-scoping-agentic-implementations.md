@@ -7,7 +7,7 @@ language: en
 summary: A workshop method for turning a broad agent idea into personas, a question taxonomy, a registered evaluation dataset, and a phased delivery plan.
 environments: web
 status: Published
-fork_repo_link: https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/site/cortex-ai-cookbook/src/scoping-agentic-implementations
+fork_repo_link: https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/recipes/cortex-agents/scoping-agentic-implementations
 
 # Scoping agentic implementations: from "talk to your data" to a testable agent spec
 
@@ -25,8 +25,8 @@ Most agent projects stall on scope, not technology. "Talk to your data" is not a
 | Regions | Any region with Cortex AI functions and Cortex Agent evaluations; claude-sonnet-4-6 directly or through cross-region inference |
 | Privileges | ACCOUNTADMIN for sql/01_setup.sql and sql/99_teardown.sql; the lab runs as COOKBOOK_SCOPING_AGENTIC_IMPLEMENTATIONS_ROLE. 04 needs MONITOR on your agent and READ UNREDACTED AI OBSERVABILITY EVENTS TABLE, granted by an account administrator |
 | Last verified | 2026-10-04 |
-| Code | [Recipe folder on GitHub](https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/site/cortex-ai-cookbook/src/scoping-agentic-implementations) · [Teardown script](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/scoping-agentic-implementations/sql/99_teardown.sql) |
-| Problems | [Open an issue](https://github.com/Snowflake-Labs/cortex-ai-cookbook/issues/new?template=recipe-problem.yml&title=%5Bscoping-agentic-implementations%5D%20&recipe=site%2Fcortex-ai-cookbook%2Fsrc%2Fscoping-agentic-implementations) |
+| Code | [Recipe folder on GitHub](https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/recipes/cortex-agents/scoping-agentic-implementations) · [Teardown script](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/cortex-agents/scoping-agentic-implementations/sql/99_teardown.sql) |
+| Problems | [Open an issue](https://github.com/Snowflake-Labs/cortex-ai-cookbook/issues/new?template=recipe-problem.yml&title=%5Bscoping-agentic-implementations%5D%20&recipe=recipes%2Fcortex-agents%2Fscoping-agentic-implementations) |
 
 ## When to use this
 
@@ -58,7 +58,7 @@ Open the workshop with the architecture, before anyone picks a persona. It separ
 
 ![Cortex Agents reference architecture](https://raw.githubusercontent.com/Snowflake-Labs/sfquickstarts/master/journeys/ai-cookbook/scoping-agentic-implementations/assets/cortex-agents-reference-architecture.png)
 
-Source: [diagrams/cortex-agents-reference-architecture.svg](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/scoping-agentic-implementations/diagrams/cortex-agents-reference-architecture.svg) (1860 x 1270). The PNG is a 2x render.
+Source: [diagrams/cortex-agents-reference-architecture.svg](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/cortex-agents/scoping-agentic-implementations/diagrams/cortex-agents-reference-architecture.svg) (1860 x 1270). The PNG is a 2x render.
 
 The diagram is hub and spoke, with the agent object at the center. Solid arrows into the agent are enforced controls, dashed arrows are telemetry the agent emits, and orange arrows leave Snowflake.
 
@@ -158,7 +158,7 @@ Push back on vague questions ("How is business?") by asking what the person woul
 
 ### Activity 3: Expand the taxonomy with AI_COMPLETE
 
-[sql/02_question_taxonomy.sql](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/scoping-agentic-implementations/sql/02_question_taxonomy.sql) stores the seeds in `SEED_QUESTIONS`, then makes one `AI_COMPLETE` call per category and one per Phase 1 lookup or aggregation question. A JSON schema keeps every response parseable and constrains `risk` to three values:
+[sql/02_question_taxonomy.sql](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/cortex-agents/scoping-agentic-implementations/sql/02_question_taxonomy.sql) stores the seeds in `SEED_QUESTIONS`, then makes one `AI_COMPLETE` call per category and one per Phase 1 lookup or aggregation question. A JSON schema keeps every response parseable and constrains `risk` to three values:
 
 ```sql
 AI_COMPLETE(
@@ -180,7 +180,7 @@ The prompt includes the category's existing examples, so generated questions sta
 
 ### Activity 4: Build and register the evaluation dataset
 
-A Cortex Agent evaluation dataset has two columns: `INPUT_QUERY` (VARCHAR) and `GROUND_TRUTH` (VARIANT). Answer correctness reads the `ground_truth_output` key; other keys are ignored by the system metrics but visible to custom metrics, so [sql/03_eval_dataset.sql](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/scoping-agentic-implementations/sql/03_eval_dataset.sql) also stores `category`, `expected_tool`, and `needs_review`.
+A Cortex Agent evaluation dataset has two columns: `INPUT_QUERY` (VARCHAR) and `GROUND_TRUTH` (VARIANT). Answer correctness reads the `ground_truth_output` key; other keys are ignored by the system metrics but visible to custom metrics, so [sql/03_eval_dataset.sql](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/cortex-agents/scoping-agentic-implementations/sql/03_eval_dataset.sql) also stores `category`, `expected_tool`, and `needs_review`.
 
 Where the answer is a known number, the script computes it from the data, so ground truth cannot drift from the table:
 
@@ -207,7 +207,7 @@ CALL SYSTEM$CREATE_EVALUATION_DATASET(
   OBJECT_CONSTRUCT('query_text', 'INPUT_QUERY', 'expected_tools', 'GROUND_TRUTH'));
 ```
 
-The config template [config/eval_config.yaml](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/scoping-agentic-implementations/config/eval_config.yaml) references that dataset, pins a committed agent version, and pins metric versions to `v3`. The stage that holds it uses a CSV file format with `FIELD_DELIMITER = NONE`, which evaluations require. Once your agent exists, start a baseline from the `LAB` schema (evaluations run in the session's schema):
+The config template [config/eval_config.yaml](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/cortex-agents/scoping-agentic-implementations/config/eval_config.yaml) references that dataset, pins a committed agent version, and pins metric versions to `v3`. The stage that holds it uses a CSV file format with `FIELD_DELIMITER = NONE`, which evaluations require. Once your agent exists, start a baseline from the `LAB` schema (evaluations run in the session's schema):
 
 ```sql
 USE SCHEMA COOKBOOK_SCOPING_AGENTIC_IMPLEMENTATIONS.LAB;
@@ -306,7 +306,7 @@ A phased plan keeps Phase 1 small:
 
 ### Post-launch: compare real questions with the taxonomy
 
-[sql/04_observability.sql](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/scoping-agentic-implementations/sql/04_observability.sql) does three things for a deployed agent:
+[sql/04_observability.sql](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/cortex-agents/scoping-agentic-implementations/sql/04_observability.sql) does three things for a deployed agent:
 
 1. Summarizes requests and credits by user and surface from `SNOWFLAKE.ACCOUNT_USAGE.CORTEX_AGENT_USAGE_HISTORY` (`USER_NAME`, `TOKEN_CREDITS`, `TOKENS`, `METADATA:interaction_interface`). Rows can take up to about an hour to appear.
 2. Reads the questions users asked from the agent's monitoring events. Each turn has one `record_root` span whose `ai.observability.record_root.input` attribute is the user's message; evaluation runs write the same spans with a run name, so the script keeps only spans without one:
@@ -371,7 +371,7 @@ Run `sql/99_teardown.sql` as ACCOUNTADMIN. It drops the lab database (tables, st
 Clone the repository first (`git clone https://github.com/Snowflake-Labs/cortex-ai-cookbook`) and run the prompt from its root.
 
 ```text
-Run the scoping-agentic-implementations lab in site/cortex-ai-cookbook/src/scoping-agentic-implementations.
+Run the scoping-agentic-implementations lab in recipes/cortex-agents/scoping-agentic-implementations.
 1. Install or enable the bundled agent-studio and cortex-ai-function-studio skills,
    and the check-agent-access skill from Snowflake-Labs/coco-skills. Use
    cortex-ai-function-studio if the AI_COMPLETE or AI_CLASSIFY calls need tuning,

@@ -7,7 +7,7 @@ language: en
 summary: dbt builds the tables and semantic view, the agent ships as a versioned spec from a stage, and an evaluation gate in GitHub Actions blocks promotion.
 environments: web
 status: Published
-fork_repo_link: https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/site/cortex-ai-cookbook/src/agent-ci-cd-with-dbt
+fork_repo_link: https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/recipes/cortex-agents/agent-ci-cd-with-dbt
 
 # Agent CI/CD with dbt: per-PR builds, versioned deploys, and an evaluation gate
 
@@ -25,8 +25,8 @@ A Cortex Agent is only as good as the tables, semantic view, and specification b
 | Regions | Any region with Cortex Agents, dbt Projects on Snowflake, and the claude-sonnet-4-6 model (directly or through cross-region inference) |
 | Privileges | ACCOUNTADMIN for 01_setup.sql, 04_ci_service_user.sql, and 99_teardown.sql; everything else runs as COOKBOOK_AGENT_CI_CD_WITH_DBT_DEPLOYER |
 | Last verified | 2026-10-04 |
-| Code | [Recipe folder on GitHub](https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/site/cortex-ai-cookbook/src/agent-ci-cd-with-dbt) · [Teardown script](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/agent-ci-cd-with-dbt/sql/99_teardown.sql) |
-| Problems | [Open an issue](https://github.com/Snowflake-Labs/cortex-ai-cookbook/issues/new?template=recipe-problem.yml&title=%5Bagent-ci-cd-with-dbt%5D%20&recipe=site%2Fcortex-ai-cookbook%2Fsrc%2Fagent-ci-cd-with-dbt) |
+| Code | [Recipe folder on GitHub](https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/recipes/cortex-agents/agent-ci-cd-with-dbt) · [Teardown script](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/cortex-agents/agent-ci-cd-with-dbt/sql/99_teardown.sql) |
+| Problems | [Open an issue](https://github.com/Snowflake-Labs/cortex-ai-cookbook/issues/new?template=recipe-problem.yml&title=%5Bagent-ci-cd-with-dbt%5D%20&recipe=recipes%2Fcortex-agents%2Fagent-ci-cd-with-dbt) |
 
 ## When to use this
 
@@ -90,7 +90,7 @@ Key concepts:
 
 ### Per-environment schemas from one dbt project
 
-[dbt/macros/generate_schema_name.sql](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/agent-ci-cd-with-dbt/dbt/macros/generate_schema_name.sql) sends every node to the `deploy_schema` var and rejects anything that is not `PROD` or `PR_<number>`, so a bad var cannot create an arbitrary schema:
+[dbt/macros/generate_schema_name.sql](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/cortex-agents/agent-ci-cd-with-dbt/dbt/macros/generate_schema_name.sql) sends every node to the `deploy_schema` var and rejects anything that is not `PROD` or `PR_<number>`, so a bad var cannot create an arbitrary schema:
 
 ```sql
 {%- set schema = var('deploy_schema', target.schema) | string | upper -%}
@@ -110,7 +110,7 @@ snow dbt execute "${ctx[@]}" "RETAIL_DBT_${target}" build --vars "{\"deploy_sche
 
 ### The semantic view as a model
 
-[dbt/macros/semantic_view.sql](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/agent-ci-cd-with-dbt/dbt/macros/semantic_view.sql) is the whole materialization:
+[dbt/macros/semantic_view.sql](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/cortex-agents/agent-ci-cd-with-dbt/dbt/macros/semantic_view.sql) is the whole materialization:
 
 ```sql
 {% call statement('main') -%}
@@ -119,11 +119,11 @@ snow dbt execute "${ctx[@]}" "RETAIL_DBT_${target}" build --vars "{\"deploy_sche
 {%- endcall %}
 ```
 
-The model [retail_analytics.sql](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/agent-ci-cd-with-dbt/dbt/models/semantic/retail_analytics.sql) is the DDL body with `ref()` in `TABLES`, so dbt orders it after the tables it describes. Revenue exists at two grains: `orders.total_revenue` at order grain and `order_lines.product_revenue` at line grain. Keeping them separate prevents product-level questions from fanning out order totals. The `dbt_semantic_view` package offers the same idea with more options; it needs an external access integration because dbt Projects on Snowflake runs `dbt deps` inside Snowflake.
+The model [retail_analytics.sql](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/cortex-agents/agent-ci-cd-with-dbt/dbt/models/semantic/retail_analytics.sql) is the DDL body with `ref()` in `TABLES`, so dbt orders it after the tables it describes. Revenue exists at two grains: `orders.total_revenue` at order grain and `order_lines.product_revenue` at line grain. Keeping them separate prevents product-level questions from fanning out order totals. The `dbt_semantic_view` package offers the same idea with more options; it needs an external access integration because dbt Projects on Snowflake runs `dbt deps` inside Snowflake.
 
 ### Importing the agent as a version
 
-`DEPLOY_AGENT_VERSION` in [sql/02_pipeline_procedures.sql](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/agent-ci-cd-with-dbt/sql/02_pipeline_procedures.sql) runs with caller's rights and validates every input against a pattern before building DDL:
+`DEPLOY_AGENT_VERSION` in [sql/02_pipeline_procedures.sql](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/cortex-agents/agent-ci-cd-with-dbt/sql/02_pipeline_procedures.sql) runs with caller's rights and validates every input against a pattern before building DDL:
 
 ```sql
 IF (agent_count = 0) THEN
@@ -149,7 +149,7 @@ The spec names the orchestration model (`claude-sonnet-4-6`) instead of `auto`, 
 
 ### The evaluation gate
 
-The eval config template [evaluation/eval_config.yaml](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/agent-ci-cd-with-dbt/evaluation/eval_config.yaml) has no `dataset:` block: `03_eval_dataset.sql` registers the dataset once with `SYSTEM$CREATE_EVALUATION_DATASET`, and a `dataset:` block would try to recreate it on every run. Metrics are pinned:
+The eval config template [evaluation/eval_config.yaml](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/cortex-agents/agent-ci-cd-with-dbt/evaluation/eval_config.yaml) has no `dataset:` block: `03_eval_dataset.sql` registers the dataset once with `SYSTEM$CREATE_EVALUATION_DATASET`, and a `dataset:` block would try to recreate it on every run. Metrics are pinned:
 
 ```yaml
 metrics:
@@ -172,7 +172,7 @@ SELECT METRIC_NAME, ROUND(AVG(COALESCE(EVAL_AGG_SCORE, 0)), 3) AS avg_score, ...
 
 It fails closed: a partial run, a missing metric, or a record with no score counts against the gate. Every decision is written to `OPS.EVAL_GATE_RESULTS` before the procedure raises, so a failed check still leaves the numbers behind. Evaluations run in the session's current schema, which is why `deploy.sh` always connects with `--schema OPS`.
 
-The ground truth in [sql/03_eval_dataset.sql](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/agent-ci-cd-with-dbt/sql/03_eval_dataset.sql) states literal values scoped to absolute dates ("between January 1 and December 31, 2024"), plus one out-of-scope question the agent must decline.
+The ground truth in [sql/03_eval_dataset.sql](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/cortex-agents/agent-ci-cd-with-dbt/sql/03_eval_dataset.sql) states literal values scoped to absolute dates ("between January 1 and December 31, 2024"), plus one out-of-scope question the agent must decline.
 
 ### Promotion and rollback
 
@@ -187,7 +187,7 @@ Setting the alias on a new version moves it off the old one. Pinning `DEFAULT_VE
 
 ### GitHub Actions with OIDC
 
-[ci/workflows/agent-pr.yml](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/agent-ci-cd-with-dbt/ci/workflows/agent-pr.yml) and [ci/workflows/agent-main.yml](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/agent-ci-cd-with-dbt/ci/workflows/agent-main.yml) install the CLI with `snowflakedb/snowflake-actions@v3` and exchange GitHub's OIDC token for a Snowflake session:
+[ci/workflows/agent-pr.yml](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/cortex-agents/agent-ci-cd-with-dbt/ci/workflows/agent-pr.yml) and [ci/workflows/agent-main.yml](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/cortex-agents/agent-ci-cd-with-dbt/ci/workflows/agent-main.yml) install the CLI with `snowflakedb/snowflake-actions@v3` and exchange GitHub's OIDC token for a Snowflake session:
 
 ```yaml
 permissions:
@@ -203,7 +203,7 @@ permissions:
       - run: snow connection test -x
 ```
 
-The service user in [sql/04_ci_service_user.sql](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/agent-ci-cd-with-dbt/sql/04_ci_service_user.sql) trusts exactly one subject:
+The service user in [sql/04_ci_service_user.sql](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/cortex-agents/agent-ci-cd-with-dbt/sql/04_ci_service_user.sql) trusts exactly one subject:
 
 ```sql
 CREATE USER IF NOT EXISTS IDENTIFIER($ci_user)
@@ -281,7 +281,7 @@ Close or clean up any open pull requests first (`ci/scripts/cleanup_pr.sh PR_<nu
 Clone the repository first (`git clone https://github.com/Snowflake-Labs/cortex-ai-cookbook`) and run the prompt from its root.
 
 ```text
-Set up the agent-ci-cd-with-dbt recipe in site/cortex-ai-cookbook/src/agent-ci-cd-with-dbt.
+Set up the agent-ci-cd-with-dbt recipe in recipes/cortex-agents/agent-ci-cd-with-dbt.
 1. Install or enable the bundled dbt-projects-on-snowflake and agent-studio skills. Use
    dbt-projects-on-snowflake for the snow dbt deploy and execute steps and agent-studio for
    evaluation runs.

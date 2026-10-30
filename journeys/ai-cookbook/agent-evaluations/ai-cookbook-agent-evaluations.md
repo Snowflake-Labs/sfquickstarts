@@ -7,7 +7,7 @@ language: en
 summary: Run Cortex Agent evaluations with pinned metric versions and a custom judge, compare two committed versions, and promote the winner by alias.
 environments: web
 status: Published
-fork_repo_link: https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/site/cortex-ai-cookbook/src/agent-evaluations
+fork_repo_link: https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/recipes/cortex-agents/agent-evaluations
 
 # Evaluate and promote Cortex Agent versions
 
@@ -30,8 +30,8 @@ are pinned so you know exactly which configuration each score belongs to.
 | Regions | Cross-region inference enabled for the claude-sonnet-4-6 judge and orchestration model |
 | Privileges | ACCOUNTADMIN for sql/01_setup.sql and sql/99_teardown.sql; 02 to 07 run as COOKBOOK_AGENT_EVALUATIONS_ADMIN |
 | Last verified | 2026-10-04 |
-| Code | [Recipe folder on GitHub](https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/site/cortex-ai-cookbook/src/agent-evaluations) · [Teardown script](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/agent-evaluations/sql/99_teardown.sql) |
-| Problems | [Open an issue](https://github.com/Snowflake-Labs/cortex-ai-cookbook/issues/new?template=recipe-problem.yml&title=%5Bagent-evaluations%5D%20&recipe=site%2Fcortex-ai-cookbook%2Fsrc%2Fagent-evaluations) |
+| Code | [Recipe folder on GitHub](https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/recipes/cortex-agents/agent-evaluations) · [Teardown script](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/cortex-agents/agent-evaluations/sql/99_teardown.sql) |
+| Problems | [Open an issue](https://github.com/Snowflake-Labs/cortex-ai-cookbook/issues/new?template=recipe-problem.yml&title=%5Bagent-evaluations%5D%20&recipe=recipes%2Fcortex-agents%2Fagent-evaluations) |
 
 ## When to use this
 
@@ -93,7 +93,7 @@ generally available metrics plus a custom metric for tool routing.
 
 ## Quickstart
 
-From `site/cortex-ai-cookbook/src/agent-evaluations/`:
+From `recipes/cortex-agents/agent-evaluations/`:
 
 1. `snow sql -f sql/01_setup.sql`: role, warehouse, database, 48 rows of
    campaign data, four strategy documents, the semantic view, and the search
@@ -147,9 +147,9 @@ PUT file://config/eval_baseline.yaml  @EVAL_CONFIG AUTO_COMPRESS = FALSE OVERWRI
 PUT file://config/eval_candidate.yaml @EVAL_CONFIG AUTO_COMPRESS = FALSE OVERWRITE = TRUE;
 ```
 
-[config/eval_baseline.yaml](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/agent-evaluations/config/eval_baseline.yaml) includes a `dataset`
+[config/eval_baseline.yaml](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/cortex-agents/agent-evaluations/config/eval_baseline.yaml) includes a `dataset`
 block, so its START creates `CMO_EVAL_DATASET`.
-[config/eval_candidate.yaml](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/agent-evaluations/config/eval_candidate.yaml) leaves it out and
+[config/eval_candidate.yaml](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/cortex-agents/agent-evaluations/config/eval_candidate.yaml) leaves it out and
 references the existing dataset; repeating the block would fail because the
 dataset already exists. The metrics block is identical in both:
 
@@ -311,7 +311,7 @@ Clone the repository first (`git clone https://github.com/Snowflake-Labs/cortex-
 
 ```text
 Install or enable the bundled agent-studio skill if it is not already available.
-Then, from site/cortex-ai-cookbook/src/agent-evaluations:
+Then, from recipes/cortex-agents/agent-evaluations:
 1. Confirm the target account with SELECT CURRENT_ACCOUNT(), CURRENT_ROLE(),
    and show me the result before creating anything.
 2. sql/01_setup.sql runs as ACCOUNTADMIN and grants EXECUTE TASK ON ACCOUNT to

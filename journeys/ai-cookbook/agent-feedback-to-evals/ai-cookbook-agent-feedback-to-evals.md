@@ -7,7 +7,7 @@ language: en
 summary: Mine thumbs-down feedback and user rephrases from agent traces, confirm each with one LLM call, and write a deduplicated eval dataset.
 environments: web
 status: Published
-fork_repo_link: https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/site/cortex-ai-cookbook/src/agent-feedback-to-evals
+fork_repo_link: https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/recipes/ai-observability/agent-feedback-to-evals
 
 # Turn agent feedback and rephrased questions into an evaluation dataset
 
@@ -25,8 +25,8 @@ Real users tell you where an agent falls short in two ways: they click thumbs do
 | Regions | Any region with Cortex Agents and AI_COMPLETE, AI_SIMILARITY, and AI_EMBED for the chosen models |
 | Privileges | ACCOUNTADMIN for 01_setup.sql and 02_grant_unredacted.sql; everything else runs as a COOKBOOK_* role. A programmatic access token for the optional feedback notebook |
 | Last verified | 2026-10-04 |
-| Code | [Recipe folder on GitHub](https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/site/cortex-ai-cookbook/src/agent-feedback-to-evals) · [Teardown script](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/agent-feedback-to-evals/sql/99_teardown.sql) |
-| Problems | [Open an issue](https://github.com/Snowflake-Labs/cortex-ai-cookbook/issues/new?template=recipe-problem.yml&title=%5Bagent-feedback-to-evals%5D%20&recipe=site%2Fcortex-ai-cookbook%2Fsrc%2Fagent-feedback-to-evals) |
+| Code | [Recipe folder on GitHub](https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/recipes/ai-observability/agent-feedback-to-evals) · [Teardown script](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/ai-observability/agent-feedback-to-evals/sql/99_teardown.sql) |
+| Problems | [Open an issue](https://github.com/Snowflake-Labs/cortex-ai-cookbook/issues/new?template=recipe-problem.yml&title=%5Bagent-feedback-to-evals%5D%20&recipe=recipes%2Fai-observability%2Fagent-feedback-to-evals) |
 
 ## When to use this
 
@@ -174,7 +174,7 @@ Clone the repository first (`git clone https://github.com/Snowflake-Labs/cortex-
 ```text
 Install or enable the bundled agent-studio and cortex-ai-function-studio skills if they are not
 already available; use agent-studio for evaluation follow-ups and cortex-ai-function-studio for
-AI function cost or model questions. Then, from site/cortex-ai-cookbook/src/agent-feedback-to-evals:
+AI function cost or model questions. Then, from recipes/ai-observability/agent-feedback-to-evals:
 1. Run SELECT CURRENT_ACCOUNT(), CURRENT_REGION(), CURRENT_ROLE(); and show me the result.
    Stop if it is not the account I expect.
 2. Run sql/01_setup.sql with snow sql -f (it switches to ACCOUNTADMIN).

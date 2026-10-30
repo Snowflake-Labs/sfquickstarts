@@ -7,7 +7,7 @@ language: en
 summary: Grade semantic view descriptions on preciseness, conciseness, non-circularity, and correctness, lint them in SQL, and apply fixes with CREATE OR ALTER or the YAML procedure.
 environments: web
 status: Published
-fork_repo_link: https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/site/cortex-ai-cookbook/src/description-quality
+fork_repo_link: https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/recipes/semantic-views/description-quality
 
 # Semantic view description quality: a rubric, a linter, and how to apply fixes
 
@@ -29,8 +29,8 @@ the two ways to write the fixes back without losing grants.
 | Regions | Any region with semantic views; the optional model grader needs AI_COMPLETE and the chosen model |
 | Privileges | ACCOUNTADMIN only in 01_example_setup.sql (the example role, warehouse, and database) and 99_teardown.sql; to lint your own view, any role with a privilege on it |
 | Last verified | 2026-10-04 |
-| Code | [Recipe folder on GitHub](https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/site/cortex-ai-cookbook/src/description-quality) · [Teardown script](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/description-quality/sql/99_teardown.sql) |
-| Problems | [Open an issue](https://github.com/Snowflake-Labs/cortex-ai-cookbook/issues/new?template=recipe-problem.yml&title=%5Bdescription-quality%5D%20&recipe=site%2Fcortex-ai-cookbook%2Fsrc%2Fdescription-quality) |
+| Code | [Recipe folder on GitHub](https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/recipes/semantic-views/description-quality) · [Teardown script](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/semantic-views/description-quality/sql/99_teardown.sql) |
+| Problems | [Open an issue](https://github.com/Snowflake-Labs/cortex-ai-cookbook/issues/new?template=recipe-problem.yml&title=%5Bdescription-quality%5D%20&recipe=recipes%2Fsemantic-views%2Fdescription-quality) |
 
 ## When to use this
 
@@ -107,12 +107,12 @@ one gets a deliberate keep-or-drop decision.
 
 ## Quickstart
 
-1. [sql/01_example_setup.sql](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/description-quality/sql/01_example_setup.sql): a 40-row orders table and a view with weak descriptions.
-2. [sql/02_lint_descriptions.sql](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/description-quality/sql/02_lint_descriptions.sql): Part 1 heuristic flags, Part 2 model grades and rewrites.
-3. [sql/03_apply_descriptions.sql](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/description-quality/sql/03_apply_descriptions.sql): apply fixes with `CREATE OR ALTER`, then validate the
+1. [sql/01_example_setup.sql](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/semantic-views/description-quality/sql/01_example_setup.sql): a 40-row orders table and a view with weak descriptions.
+2. [sql/02_lint_descriptions.sql](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/semantic-views/description-quality/sql/02_lint_descriptions.sql): Part 1 heuristic flags, Part 2 model grades and rewrites.
+3. [sql/03_apply_descriptions.sql](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/semantic-views/description-quality/sql/03_apply_descriptions.sql): apply fixes with `CREATE OR ALTER`, then validate the
    YAML route with `verify_only = TRUE`.
 4. Re-run Part 1 of `02`.
-5. [sql/99_teardown.sql](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/description-quality/sql/99_teardown.sql).
+5. [sql/99_teardown.sql](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/semantic-views/description-quality/sql/99_teardown.sql).
 
 ## Walkthrough
 
@@ -213,7 +213,7 @@ Clone the repository first (`git clone https://github.com/Snowflake-Labs/cortex-
 ```text
 Install or enable the bundled agent-studio skill and the semantic-view-patterns skill from Snowflake-Labs/coco-skills.
 
-Use site/cortex-ai-cookbook/src/description-quality to review the descriptions in my semantic view <DB>.<SCHEMA>.<VIEW>.
+Use recipes/semantic-views/description-quality to review the descriptions in my semantic view <DB>.<SCHEMA>.<VIEW>.
 1. Confirm the account and role with SELECT CURRENT_ACCOUNT(), CURRENT_ROLE() and show me before continuing.
 2. If I have no view to review, use the example instead: show me sql/01_example_setup.sql and ask before running it,
    because it runs as ACCOUNTADMIN to create a role, a warehouse, and a database. Then use

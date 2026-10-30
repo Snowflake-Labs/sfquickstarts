@@ -7,7 +7,7 @@ language: en
 summary: Route an app through Cortex AI Gateway with its own identity: both API formats, a model allowlist, traces, per-user cost, and a blocking quota.
 environments: web
 status: Published
-fork_repo_link: https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/site/cortex-ai-cookbook/src/gateway-governance-quickstart
+fork_repo_link: https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/recipes/cortex-ai-gateway/gateway-governance-quickstart
 
 # Cortex AI Gateway governance quickstart
 
@@ -25,8 +25,8 @@ Put one application behind Cortex AI Gateway with its own Snowflake identity, th
 | Regions | AWS commercial regions only (preview), excluding Asia Pacific (New Zealand), Asia Pacific (Malaysia), and Europe (Spain) |
 | Privileges | ACCOUNTADMIN for sql/01, 02, 03, 05, 06, 07 and 99 (setup, network policy, the gateway spec, the token, the optional budget, and teardown); sql/04 runs as the recipe's quota admin role, and the client runs as a service user |
 | Last verified | 2026-10-04 |
-| Code | [Recipe folder on GitHub](https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/site/cortex-ai-cookbook/src/gateway-governance-quickstart) · [Teardown script](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/gateway-governance-quickstart/sql/99_teardown.sql) |
-| Problems | [Open an issue](https://github.com/Snowflake-Labs/cortex-ai-cookbook/issues/new?template=recipe-problem.yml&title=%5Bgateway-governance-quickstart%5D%20&recipe=site%2Fcortex-ai-cookbook%2Fsrc%2Fgateway-governance-quickstart) |
+| Code | [Recipe folder on GitHub](https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/recipes/cortex-ai-gateway/gateway-governance-quickstart) · [Teardown script](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/cortex-ai-gateway/gateway-governance-quickstart/sql/99_teardown.sql) |
+| Problems | [Open an issue](https://github.com/Snowflake-Labs/cortex-ai-cookbook/issues/new?template=recipe-problem.yml&title=%5Bgateway-governance-quickstart%5D%20&recipe=recipes%2Fcortex-ai-gateway%2Fgateway-governance-quickstart) |
 
 ## When to use this
 
@@ -222,7 +222,7 @@ Teardown does not remove the service user's spans from `AGENT_TRACE_TABLE` or it
 Clone the repository first (`git clone https://github.com/Snowflake-Labs/cortex-ai-cookbook`) and run the prompt from its root.
 
 ```text
-Run the recipe in site/cortex-ai-cookbook/src/gateway-governance-quickstart against my current
+Run the recipe in recipes/cortex-ai-gateway/gateway-governance-quickstart against my current
 Snowflake connection. Enable the bundled cost-intelligence skill and use it for any follow-up
 cost questions; this recipe does not repeat what that skill covers.
 

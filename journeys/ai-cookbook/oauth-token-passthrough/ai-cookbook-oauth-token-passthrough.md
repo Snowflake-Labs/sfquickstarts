@@ -7,7 +7,7 @@ language: en
 summary: Relay each signed-in user's Entra ID token to a Cortex Agent so the agent runs as that person, with per-user results from a row access policy on CURRENT_USER().
 environments: web
 status: Published
-fork_repo_link: https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/site/cortex-ai-cookbook/src/oauth-token-passthrough
+fork_repo_link: https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/recipes/cortex-agents/oauth-token-passthrough
 
 # OAuth token passthrough to a Cortex Agent
 
@@ -25,8 +25,8 @@ Let a bot, orchestrator, or web backend call a Cortex Agent with the signed-in u
 | Regions | Any region with Cortex Agents and claude-sonnet-4-6 (directly or through cross-region inference) |
 | Privileges | ACCOUNTADMIN for 01, 02 (security integration), and 99; an Entra ID tenant where you can register applications |
 | Last verified | 2026-10-04 |
-| Code | [Recipe folder on GitHub](https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/site/cortex-ai-cookbook/src/oauth-token-passthrough) · [Teardown script](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/oauth-token-passthrough/sql/99_teardown.sql) |
-| Problems | [Open an issue](https://github.com/Snowflake-Labs/cortex-ai-cookbook/issues/new?template=recipe-problem.yml&title=%5Boauth-token-passthrough%5D%20&recipe=site%2Fcortex-ai-cookbook%2Fsrc%2Foauth-token-passthrough) |
+| Code | [Recipe folder on GitHub](https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/recipes/cortex-agents/oauth-token-passthrough) · [Teardown script](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/cortex-agents/oauth-token-passthrough/sql/99_teardown.sql) |
+| Problems | [Open an issue](https://github.com/Snowflake-Labs/cortex-ai-cookbook/issues/new?template=recipe-problem.yml&title=%5Boauth-token-passthrough%5D%20&recipe=recipes%2Fcortex-agents%2Foauth-token-passthrough) |
 
 ## When to use this
 
@@ -199,7 +199,7 @@ Run `sql/99_teardown.sql` as `ACCOUNTADMIN`. It drops the security integration, 
 Clone the repository first (`git clone https://github.com/Snowflake-Labs/cortex-ai-cookbook`) and run the prompt from its root.
 
 ```text
-Run the recipe in site/cortex-ai-cookbook/src/oauth-token-passthrough.
+Run the recipe in recipes/cortex-agents/oauth-token-passthrough.
 1. Install or enable the rbac skill from Snowflake-Labs/coco-skills and use
    it for any role design or role-grant audit this recipe needs.
 2. Run SELECT CURRENT_ACCOUNT(), CURRENT_REGION(), CURRENT_ROLE(),

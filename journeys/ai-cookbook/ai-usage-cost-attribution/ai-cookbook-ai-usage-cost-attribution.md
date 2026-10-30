@@ -7,7 +7,7 @@ language: en
 summary: One reconciled view of Cortex AI credits by surface, user, agent, model, and cost center, plus budgets and per-user quotas.
 environments: web
 status: Published
-fork_repo_link: https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/site/cortex-ai-cookbook/src/ai-usage-cost-attribution
+fork_repo_link: https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/recipes/ai-observability/ai-usage-cost-attribution
 
 # AI usage and cost attribution across agents, CoWork, Cortex Code, and AI functions
 
@@ -25,8 +25,8 @@ Build a small set of views over `SNOWFLAKE.ACCOUNT_USAGE` that answer "who is sp
 | Regions | Any region with Cortex AI usage views in ACCOUNT_USAGE |
 | Privileges | ACCOUNTADMIN for 01_setup.sql, 04_budget_and_quota.sql and 99_teardown.sql; everything else runs as a read-only COOKBOOK_* role |
 | Last verified | 2026-10-04 |
-| Code | [Recipe folder on GitHub](https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/site/cortex-ai-cookbook/src/ai-usage-cost-attribution) · [Teardown script](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/ai-usage-cost-attribution/sql/99_teardown.sql) |
-| Problems | [Open an issue](https://github.com/Snowflake-Labs/cortex-ai-cookbook/issues/new?template=recipe-problem.yml&title=%5Bai-usage-cost-attribution%5D%20&recipe=site%2Fcortex-ai-cookbook%2Fsrc%2Fai-usage-cost-attribution) |
+| Code | [Recipe folder on GitHub](https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/recipes/ai-observability/ai-usage-cost-attribution) · [Teardown script](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/ai-observability/ai-usage-cost-attribution/sql/99_teardown.sql) |
+| Problems | [Open an issue](https://github.com/Snowflake-Labs/cortex-ai-cookbook/issues/new?template=recipe-problem.yml&title=%5Bai-usage-cost-attribution%5D%20&recipe=recipes%2Fai-observability%2Fai-usage-cost-attribution) |
 
 ## When to use this
 
@@ -191,7 +191,7 @@ Clone the repository first (`git clone https://github.com/Snowflake-Labs/cortex-
 ```text
 Enable the bundled cost-intelligence skill and use it for any follow-up cost questions; this
 recipe does not repeat what that skill covers. Then, from
-site/cortex-ai-cookbook/src/ai-usage-cost-attribution:
+recipes/ai-observability/ai-usage-cost-attribution:
 1. Run SELECT CURRENT_ACCOUNT(), CURRENT_REGION(), CURRENT_ROLE(); and show me the result.
    Stop if it is not the account I expect.
 2. Run sql/01_setup.sql (it switches to ACCOUNTADMIN to create a role and grant the

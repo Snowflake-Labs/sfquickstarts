@@ -7,7 +7,7 @@ language: en
 summary: An agent double-counts a table that holds daily and monthly rows. Diagnose it from wrong answers, fix the semantic view with a GRAIN enum, rules, and verified queries, re-test.
 environments: web
 status: Published
-fork_repo_link: https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/site/cortex-ai-cookbook/src/mixed-grain-and-verified-queries
+fork_repo_link: https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/recipes/semantic-views/mixed-grain-and-verified-queries
 
 # Mixed-grain tables: diagnose and fix wrong agent answers with a GRAIN dimension and verified queries
 
@@ -29,8 +29,8 @@ the semantic view, not the agent and not the data, until the same agent gets all
 | Regions | Regions where Cortex Agents and Cortex Analyst are available |
 | Privileges | ACCOUNTADMIN for the account statements in 01_setup.sql and for teardown; everything else runs as COOKBOOK_MIXED_GRAIN_AND_VERIFIED_QUERIES_ROLE |
 | Last verified | 2026-10-04 |
-| Code | [Recipe folder on GitHub](https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/site/cortex-ai-cookbook/src/mixed-grain-and-verified-queries) · [Teardown script](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/mixed-grain-and-verified-queries/sql/99_teardown.sql) |
-| Problems | [Open an issue](https://github.com/Snowflake-Labs/cortex-ai-cookbook/issues/new?template=recipe-problem.yml&title=%5Bmixed-grain-and-verified-queries%5D%20&recipe=site%2Fcortex-ai-cookbook%2Fsrc%2Fmixed-grain-and-verified-queries) |
+| Code | [Recipe folder on GitHub](https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/recipes/semantic-views/mixed-grain-and-verified-queries) · [Teardown script](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/semantic-views/mixed-grain-and-verified-queries/sql/99_teardown.sql) |
+| Problems | [Open an issue](https://github.com/Snowflake-Labs/cortex-ai-cookbook/issues/new?template=recipe-problem.yml&title=%5Bmixed-grain-and-verified-queries%5D%20&recipe=recipes%2Fsemantic-views%2Fmixed-grain-and-verified-queries) |
 
 ## When to use this
 
@@ -78,14 +78,14 @@ When not to use it:
 
 Run in order. Each script sets its own role, warehouse, and database, so separate `snow sql -f` calls work:
 
-1. [sql/01_setup.sql](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/mixed-grain-and-verified-queries/sql/01_setup.sql): roles, warehouse, database, the mixed-grain table, and the test questions.
-2. [sql/02_semantic_view_before.sql](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/mixed-grain-and-verified-queries/sql/02_semantic_view_before.sql): the first-draft semantic view and an analyst grant.
-3. [sql/03_agent_and_test_harness.sql](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/mixed-grain-and-verified-queries/sql/03_agent_and_test_harness.sql): the agent and `RUN_AGENT_TESTS`.
-4. [sql/04_test_before.sql](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/mixed-grain-and-verified-queries/sql/04_test_before.sql): score the agent (a few minutes).
-5. [sql/05_diagnose.sql](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/mixed-grain-and-verified-queries/sql/05_diagnose.sql): find the cause.
-6. [sql/06_fix_semantic_view.sql](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/mixed-grain-and-verified-queries/sql/06_fix_semantic_view.sql): apply the fix with `CREATE OR ALTER`.
-7. [sql/07_test_after.sql](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/mixed-grain-and-verified-queries/sql/07_test_after.sql): re-score the same agent and compare.
-8. [sql/99_teardown.sql](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/mixed-grain-and-verified-queries/sql/99_teardown.sql).
+1. [sql/01_setup.sql](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/semantic-views/mixed-grain-and-verified-queries/sql/01_setup.sql): roles, warehouse, database, the mixed-grain table, and the test questions.
+2. [sql/02_semantic_view_before.sql](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/semantic-views/mixed-grain-and-verified-queries/sql/02_semantic_view_before.sql): the first-draft semantic view and an analyst grant.
+3. [sql/03_agent_and_test_harness.sql](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/semantic-views/mixed-grain-and-verified-queries/sql/03_agent_and_test_harness.sql): the agent and `RUN_AGENT_TESTS`.
+4. [sql/04_test_before.sql](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/semantic-views/mixed-grain-and-verified-queries/sql/04_test_before.sql): score the agent (a few minutes).
+5. [sql/05_diagnose.sql](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/semantic-views/mixed-grain-and-verified-queries/sql/05_diagnose.sql): find the cause.
+6. [sql/06_fix_semantic_view.sql](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/semantic-views/mixed-grain-and-verified-queries/sql/06_fix_semantic_view.sql): apply the fix with `CREATE OR ALTER`.
+7. [sql/07_test_after.sql](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/semantic-views/mixed-grain-and-verified-queries/sql/07_test_after.sql): re-score the same agent and compare.
+8. [sql/99_teardown.sql](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/semantic-views/mixed-grain-and-verified-queries/sql/99_teardown.sql).
 
 ## Walkthrough
 
@@ -226,7 +226,7 @@ Clone the repository first (`git clone https://github.com/Snowflake-Labs/cortex-
 ```text
 Install or enable the semantic-view-patterns skill from Snowflake-Labs/coco-skills, and the bundled agent-studio skill.
 
-Run the recipe in site/cortex-ai-cookbook/src/mixed-grain-and-verified-queries on my current Snowflake connection.
+Run the recipe in recipes/semantic-views/mixed-grain-and-verified-queries on my current Snowflake connection.
 1. Confirm the account and role with SELECT CURRENT_ACCOUNT(), CURRENT_ROLE() and show me before continuing.
 2. Show me the ACCOUNTADMIN statements at the top of sql/01_setup.sql (two roles, a warehouse, a database, and
    their grants) and ask before running them. Then run sql/01 through sql/04 in order. Report the before score and

@@ -7,7 +7,7 @@ language: en
 summary: External LangChain agents reason through Cortex AI Gateway, act through a Snowflake MCP server, and are analyzed from gateway traces and per-user cost.
 environments: web
 status: Published
-fork_repo_link: https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/site/cortex-ai-cookbook/src/langchain-mcp-agent-tracing
+fork_repo_link: https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/recipes/cortex-ai-gateway/langchain-mcp-agent-tracing
 
 # LangChain agents on Cortex AI Gateway with MCP tools and traces
 
@@ -25,8 +25,8 @@ Run LangChain agents outside Snowflake that do their model reasoning through Cor
 | Regions | AWS commercial regions only (preview), excluding Asia Pacific (New Zealand), Asia Pacific (Malaysia), and Europe (Spain) |
 | Privileges | ACCOUNTADMIN for sql/01, 02, 03 and 99 (setup, network policy, the token, and teardown); the agent runs as a service user and the analyzer as a role with MONITOR and no gateway USAGE of its own |
 | Last verified | 2026-10-04 |
-| Code | [Recipe folder on GitHub](https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/site/cortex-ai-cookbook/src/langchain-mcp-agent-tracing) · [Teardown script](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/langchain-mcp-agent-tracing/sql/99_teardown.sql) |
-| Problems | [Open an issue](https://github.com/Snowflake-Labs/cortex-ai-cookbook/issues/new?template=recipe-problem.yml&title=%5Blangchain-mcp-agent-tracing%5D%20&recipe=site%2Fcortex-ai-cookbook%2Fsrc%2Flangchain-mcp-agent-tracing) |
+| Code | [Recipe folder on GitHub](https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/recipes/cortex-ai-gateway/langchain-mcp-agent-tracing) · [Teardown script](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/cortex-ai-gateway/langchain-mcp-agent-tracing/sql/99_teardown.sql) |
+| Problems | [Open an issue](https://github.com/Snowflake-Labs/cortex-ai-cookbook/issues/new?template=recipe-problem.yml&title=%5Blangchain-mcp-agent-tracing%5D%20&recipe=recipes%2Fcortex-ai-gateway%2Flangchain-mcp-agent-tracing) |
 
 ## When to use this
 
@@ -197,7 +197,7 @@ Run `sql/99_teardown.sql` as `ACCOUNTADMIN`. It removes the network policy from 
 Clone the repository first (`git clone https://github.com/Snowflake-Labs/cortex-ai-cookbook`) and run the prompt from its root.
 
 ```text
-Run the recipe in site/cortex-ai-cookbook/src/langchain-mcp-agent-tracing against my current Snowflake
+Run the recipe in recipes/cortex-ai-gateway/langchain-mcp-agent-tracing against my current Snowflake
 connection. Enable the bundled cost-intelligence skill and use it for follow-up cost questions. If
 you will extend the semantic view, first install the semantic-view-patterns skill from
 github.com/Snowflake-Labs/coco-skills and use it for that work.

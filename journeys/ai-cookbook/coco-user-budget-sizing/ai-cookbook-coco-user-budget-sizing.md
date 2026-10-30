@@ -7,7 +7,7 @@ language: en
 summary: Tiered per-user CoCo quotas, daily limits, and alert-only team budgets, starting from conservative defaults and sized from your own ACCOUNT_USAGE.
 environments: web
 status: Published
-fork_repo_link: https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/site/cortex-ai-cookbook/src/coco-user-budget-sizing
+fork_repo_link: https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/recipes/ai-observability/coco-user-budget-sizing
 
 # Size Cortex Code per-user limits from real usage
 
@@ -25,8 +25,8 @@ Give every Cortex Code (CoCo) user room to work, stop runaway spend before it hi
 | Regions | Any region with Cortex Code and SNOWFLAKE_COCO_USAGE_HISTORY |
 | Privileges | ACCOUNTADMIN for 01_setup.sql, the optional 05_account_backstop.sql (account parameters), and 99_teardown.sql; 02, 03, and 04 run as the COOKBOOK_* role |
 | Last verified | 2026-10-13 |
-| Code | [Recipe folder on GitHub](https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/site/cortex-ai-cookbook/src/coco-user-budget-sizing) · [Teardown script](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/coco-user-budget-sizing/sql/99_teardown.sql) |
-| Problems | [Open an issue](https://github.com/Snowflake-Labs/cortex-ai-cookbook/issues/new?template=recipe-problem.yml&title=%5Bcoco-user-budget-sizing%5D%20&recipe=site%2Fcortex-ai-cookbook%2Fsrc%2Fcoco-user-budget-sizing) |
+| Code | [Recipe folder on GitHub](https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/recipes/ai-observability/coco-user-budget-sizing) · [Teardown script](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/ai-observability/coco-user-budget-sizing/sql/99_teardown.sql) |
+| Problems | [Open an issue](https://github.com/Snowflake-Labs/cortex-ai-cookbook/issues/new?template=recipe-problem.yml&title=%5Bcoco-user-budget-sizing%5D%20&recipe=recipes%2Fai-observability%2Fcoco-user-budget-sizing) |
 
 ## When to use this
 
@@ -202,7 +202,7 @@ Clone the repository first (`git clone https://github.com/Snowflake-Labs/cortex-
 
 ```text
 Help me size and set per-user Cortex Code limits using the recipe in
-site/cortex-ai-cookbook/src/coco-user-budget-sizing.
+recipes/ai-observability/coco-user-budget-sizing.
 1. Run SELECT CURRENT_ACCOUNT(), CURRENT_REGION(), CURRENT_ROLE(), CURRENT_WAREHOUSE();
    and confirm the target with me before changing anything.
 2. Use the cost-intelligence skill to summarize my current Cortex Code spend.

@@ -7,7 +7,7 @@ language: en
 summary: Give an agent embedded in a Streamlit dashboard the page, filters, and persona the user is looking at, by prepending an app-context block to the user message.
 environments: web
 status: Published
-fork_repo_link: https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/site/cortex-ai-cookbook/src/embedded-app-context
+fork_repo_link: https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/recipes/cortex-agents/embedded-app-context
 
 # Embedded app context for a Cortex Agent
 
@@ -25,8 +25,8 @@ Embed a Cortex Agent in a dashboard so that "why is this going up?" means the ch
 | Regions | Any region with Cortex Agents, Streamlit in Snowflake, and claude-sonnet-4-6 (directly or through cross-region inference) |
 | Privileges | ACCOUNTADMIN for 01_setup.sql and 99_teardown.sql only; everything else runs as COOKBOOK_EMBEDDED_APP_CONTEXT_ADMIN |
 | Last verified | 2026-10-04 |
-| Code | [Recipe folder on GitHub](https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/site/cortex-ai-cookbook/src/embedded-app-context) · [Teardown script](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/embedded-app-context/sql/99_teardown.sql) |
-| Problems | [Open an issue](https://github.com/Snowflake-Labs/cortex-ai-cookbook/issues/new?template=recipe-problem.yml&title=%5Bembedded-app-context%5D%20&recipe=site%2Fcortex-ai-cookbook%2Fsrc%2Fembedded-app-context) |
+| Code | [Recipe folder on GitHub](https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/recipes/cortex-agents/embedded-app-context) · [Teardown script](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/cortex-agents/embedded-app-context/sql/99_teardown.sql) |
+| Problems | [Open an issue](https://github.com/Snowflake-Labs/cortex-ai-cookbook/issues/new?template=recipe-problem.yml&title=%5Bembedded-app-context%5D%20&recipe=recipes%2Fcortex-agents%2Fembedded-app-context) |
 
 ## When to use this
 
@@ -176,7 +176,7 @@ Run `sql/99_teardown.sql` as `ACCOUNTADMIN`. It drops the database (Streamlit ap
 Clone the repository first (`git clone https://github.com/Snowflake-Labs/cortex-ai-cookbook`) and run the prompt from its root.
 
 ```text
-Run the recipe in site/cortex-ai-cookbook/src/embedded-app-context.
+Run the recipe in recipes/cortex-agents/embedded-app-context.
 1. Run SELECT CURRENT_ACCOUNT(), CURRENT_REGION(), CURRENT_ROLE(),
    CURRENT_WAREHOUSE(); show me the result and wait for my go-ahead.
 2. Show me sql/01_setup.sql and run it as ACCOUNTADMIN only after I confirm:

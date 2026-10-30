@@ -7,7 +7,7 @@ language: en
 summary: Redact PII in free text with AI_REDACT, cover domain identifiers with AI_COMPLETE structured extraction, and serve redactions from a stream-maintained cache.
 environments: web
 status: Published
-fork_repo_link: https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/site/cortex-ai-cookbook/src/pii-redaction
+fork_repo_link: https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/recipes/cortex-ai-functions/pii-redaction
 
 # PII redaction with AI_REDACT, AI_COMPLETE extraction, and an entity cache
 
@@ -30,8 +30,8 @@ the raw table.
 | Regions | Regions where AI_REDACT and the chosen AI_COMPLETE model are available, or cross-region inference enabled |
 | Privileges | ACCOUNTADMIN for 01_setup.sql account statements and teardown; the recipe runs as COOKBOOK_PII_REDACTION_ROLE |
 | Last verified | 2026-10-04 |
-| Code | [Recipe folder on GitHub](https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/site/cortex-ai-cookbook/src/pii-redaction) · [Teardown script](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/pii-redaction/sql/99_teardown.sql) |
-| Problems | [Open an issue](https://github.com/Snowflake-Labs/cortex-ai-cookbook/issues/new?template=recipe-problem.yml&title=%5Bpii-redaction%5D%20&recipe=site%2Fcortex-ai-cookbook%2Fsrc%2Fpii-redaction) |
+| Code | [Recipe folder on GitHub](https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/recipes/cortex-ai-functions/pii-redaction) · [Teardown script](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/cortex-ai-functions/pii-redaction/sql/99_teardown.sql) |
+| Problems | [Open an issue](https://github.com/Snowflake-Labs/cortex-ai-cookbook/issues/new?template=recipe-problem.yml&title=%5Bpii-redaction%5D%20&recipe=recipes%2Fcortex-ai-functions%2Fpii-redaction) |
 
 ## When to use this
 
@@ -83,16 +83,16 @@ When not to use it:
 
 Run the scripts in order in one session (Snowsight worksheet, or `snow sql -f <file>`):
 
-1. [sql/01_setup.sql](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/pii-redaction/sql/01_setup.sql): role, warehouse, database, 23 synthetic chunks, `EXTRACT_PII`, `REDACT_PII`,
+1. [sql/01_setup.sql](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/cortex-ai-functions/pii-redaction/sql/01_setup.sql): role, warehouse, database, 23 synthetic chunks, `EXTRACT_PII`, `REDACT_PII`,
    `REDACT_SPANS`, and the empty cache.
-2. [sql/02_ai_redact.sql](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/pii-redaction/sql/02_ai_redact.sql): `AI_REDACT` in redact and detect mode, category filters, an allowlist,
+2. [sql/02_ai_redact.sql](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/cortex-ai-functions/pii-redaction/sql/02_ai_redact.sql): `AI_REDACT` in redact and detect mode, category filters, an allowlist,
    token estimates, and error handling.
-3. [sql/03_extract_and_replace.sql](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/pii-redaction/sql/03_extract_and_replace.sql): extraction, replacement, cache population, and the
+3. [sql/03_extract_and_replace.sql](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/cortex-ai-functions/pii-redaction/sql/03_extract_and_replace.sql): extraction, replacement, cache population, and the
    `DOCUMENT_CHUNKS_REDACTED` view.
-4. [sql/04_incremental_cache.sql](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/pii-redaction/sql/04_incremental_cache.sql): stream, refresh procedure, task, and a simulated
+4. [sql/04_incremental_cache.sql](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/cortex-ai-functions/pii-redaction/sql/04_incremental_cache.sql): stream, refresh procedure, task, and a simulated
    insert, update, and delete.
 5. Run the queries in [Verify](#verify).
-6. [sql/99_teardown.sql](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/pii-redaction/sql/99_teardown.sql) when you are done.
+6. [sql/99_teardown.sql](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/cortex-ai-functions/pii-redaction/sql/99_teardown.sql) when you are done.
 
 ## Walkthrough
 
@@ -304,7 +304,7 @@ Clone the repository first (`git clone https://github.com/Snowflake-Labs/cortex-
 Install or enable these bundled Cortex Code skills before you start, and use them for the sub-tasks they cover:
 cortex-ai-function-studio (AI_REDACT, AI_COMPLETE, token estimates) and snowflake-tasks (the refresh task).
 
-Run the recipe in site/cortex-ai-cookbook/src/pii-redaction on my current Snowflake connection.
+Run the recipe in recipes/cortex-ai-functions/pii-redaction on my current Snowflake connection.
 1. Confirm the target with SELECT CURRENT_ACCOUNT(), CURRENT_REGION(), CURRENT_ROLE() and show me before continuing.
 2. sql/01_setup.sql makes account-level changes as ACCOUNTADMIN: it creates a role, a warehouse and a database, and
    grants EXECUTE TASK ON ACCOUNT to the recipe role. Show me those statements and wait for my confirmation.

@@ -7,7 +7,7 @@ language: en
 summary: Mine Cortex Agent traces for guessed, exploratory, and no-data answers, get the right answer from a subject matter expert, ship it into the semantic view, and re-test.
 environments: web
 status: Published
-fork_repo_link: https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/site/cortex-ai-cookbook/src/refinement-loop-from-agent-logs
+fork_repo_link: https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/recipes/semantic-views/refinement-loop-from-agent-logs
 
 # Refine a semantic view from agent logs: triage, SME review, and verified queries
 
@@ -25,8 +25,8 @@ An agent's first week of real questions is the best specification its semantic v
 | Regions | Regions where Cortex Agents and Cortex Analyst are available |
 | Privileges | ACCOUNTADMIN for the account statements in 01, the READ UNREDACTED AI OBSERVABILITY EVENTS TABLE grant in 02, and teardown; everything else runs as COOKBOOK_REFINEMENT_LOOP_FROM_AGENT_LOGS_ROLE |
 | Last verified | 2026-10-04 |
-| Code | [Recipe folder on GitHub](https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/site/cortex-ai-cookbook/src/refinement-loop-from-agent-logs) · [Teardown script](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/refinement-loop-from-agent-logs/sql/99_teardown.sql) |
-| Problems | [Open an issue](https://github.com/Snowflake-Labs/cortex-ai-cookbook/issues/new?template=recipe-problem.yml&title=%5Brefinement-loop-from-agent-logs%5D%20&recipe=site%2Fcortex-ai-cookbook%2Fsrc%2Frefinement-loop-from-agent-logs) |
+| Code | [Recipe folder on GitHub](https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/recipes/semantic-views/refinement-loop-from-agent-logs) · [Teardown script](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/semantic-views/refinement-loop-from-agent-logs/sql/99_teardown.sql) |
+| Problems | [Open an issue](https://github.com/Snowflake-Labs/cortex-ai-cookbook/issues/new?template=recipe-problem.yml&title=%5Brefinement-loop-from-agent-logs%5D%20&recipe=recipes%2Fsemantic-views%2Frefinement-loop-from-agent-logs) |
 
 ## When to use this
 
@@ -64,13 +64,13 @@ When not to use it:
 
 Run in order:
 
-1. [sql/01_example_setup.sql](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/refinement-loop-from-agent-logs/sql/01_example_setup.sql): role, warehouse, database, 120 fictional tickets, the thin first-draft semantic view, the agent, and `CHANGE_LOG`.
-2. [sql/02_grant_unredacted.sql](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/refinement-loop-from-agent-logs/sql/02_grant_unredacted.sql): the account-level privilege that makes conversation text readable. Read the prerequisite above first.
-3. [sql/03_generate_traffic.sql](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/refinement-loop-from-agent-logs/sql/03_generate_traffic.sql): five questions through `DATA_AGENT_RUN`, one statement at a time. Wait about a minute.
-4. [sql/04_triage.sql](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/refinement-loop-from-agent-logs/sql/04_triage.sql): creates `REFRESH_TRIAGE`, builds `TRIAGE`, and prints the bucket counts, the review queue, and the list for the expert.
-5. [sql/05_apply_refinements.sql](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/refinement-loop-from-agent-logs/sql/05_apply_refinements.sql): the expert's answers as a `CREATE OR ALTER SEMANTIC VIEW`, the `CHANGE_LOG` entries, and a YAML round-trip check.
-6. [sql/06_retest.sql](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/refinement-loop-from-agent-logs/sql/06_retest.sql): the same five questions against the refined view, then the before and after comparison. Wait about a minute before its `CALL`.
-7. [sql/99_teardown.sql](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/refinement-loop-from-agent-logs/sql/99_teardown.sql).
+1. [sql/01_example_setup.sql](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/semantic-views/refinement-loop-from-agent-logs/sql/01_example_setup.sql): role, warehouse, database, 120 fictional tickets, the thin first-draft semantic view, the agent, and `CHANGE_LOG`.
+2. [sql/02_grant_unredacted.sql](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/semantic-views/refinement-loop-from-agent-logs/sql/02_grant_unredacted.sql): the account-level privilege that makes conversation text readable. Read the prerequisite above first.
+3. [sql/03_generate_traffic.sql](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/semantic-views/refinement-loop-from-agent-logs/sql/03_generate_traffic.sql): five questions through `DATA_AGENT_RUN`, one statement at a time. Wait about a minute.
+4. [sql/04_triage.sql](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/semantic-views/refinement-loop-from-agent-logs/sql/04_triage.sql): creates `REFRESH_TRIAGE`, builds `TRIAGE`, and prints the bucket counts, the review queue, and the list for the expert.
+5. [sql/05_apply_refinements.sql](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/semantic-views/refinement-loop-from-agent-logs/sql/05_apply_refinements.sql): the expert's answers as a `CREATE OR ALTER SEMANTIC VIEW`, the `CHANGE_LOG` entries, and a YAML round-trip check.
+6. [sql/06_retest.sql](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/semantic-views/refinement-loop-from-agent-logs/sql/06_retest.sql): the same five questions against the refined view, then the before and after comparison. Wait about a minute before its `CALL`.
+7. [sql/99_teardown.sql](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/semantic-views/refinement-loop-from-agent-logs/sql/99_teardown.sql).
 
 ## Walkthrough
 
@@ -242,7 +242,7 @@ Clone the repository first (`git clone https://github.com/Snowflake-Labs/cortex-
 ```text
 Install or enable the semantic-view-patterns skill from Snowflake-Labs/coco-skills, and the bundled agent-studio skill.
 
-Run the recipe in site/cortex-ai-cookbook/src/refinement-loop-from-agent-logs on my current Snowflake connection.
+Run the recipe in recipes/semantic-views/refinement-loop-from-agent-logs on my current Snowflake connection.
 1. Confirm the account and role with SELECT CURRENT_ACCOUNT(), CURRENT_ROLE() and show me before continuing.
 2. Show me the account-level statements at the top of sql/01_example_setup.sql (a role, a warehouse, a database,
    and their grants, run as ACCOUNTADMIN) and ask before running it. Then show me sql/02_grant_unredacted.sql and

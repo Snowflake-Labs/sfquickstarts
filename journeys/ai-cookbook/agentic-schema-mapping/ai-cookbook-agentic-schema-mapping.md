@@ -7,7 +7,7 @@ language: en
 summary: A Cortex Agent profiles messy CSV files, proposes column mappings with AI_COMPLETE, resolves free-text values, and loads approved mappings through allowlisted SQL.
 environments: web
 status: Published
-fork_repo_link: https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/site/cortex-ai-cookbook/src/agentic-schema-mapping
+fork_repo_link: https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/recipes/cortex-ai-functions/agentic-schema-mapping
 
 # Agentic schema mapping: messy CSVs to canonical tables with a Cortex Agent
 
@@ -30,8 +30,8 @@ answer questions from.
 | Regions | Regions where the chosen AI_COMPLETE model and Cortex Agents are available, or cross-region inference enabled |
 | Privileges | ACCOUNTADMIN for the account statements in 01_setup.sql and for teardown; everything else runs as COOKBOOK_AGENTIC_SCHEMA_MAPPING_ROLE |
 | Last verified | 2026-10-04 |
-| Code | [Recipe folder on GitHub](https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/site/cortex-ai-cookbook/src/agentic-schema-mapping) · [Teardown script](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/agentic-schema-mapping/sql/99_teardown.sql) |
-| Problems | [Open an issue](https://github.com/Snowflake-Labs/cortex-ai-cookbook/issues/new?template=recipe-problem.yml&title=%5Bagentic-schema-mapping%5D%20&recipe=site%2Fcortex-ai-cookbook%2Fsrc%2Fagentic-schema-mapping) |
+| Code | [Recipe folder on GitHub](https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/recipes/cortex-ai-functions/agentic-schema-mapping) · [Teardown script](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/cortex-ai-functions/agentic-schema-mapping/sql/99_teardown.sql) |
+| Problems | [Open an issue](https://github.com/Snowflake-Labs/cortex-ai-cookbook/issues/new?template=recipe-problem.yml&title=%5Bagentic-schema-mapping%5D%20&recipe=recipes%2Fcortex-ai-functions%2Fagentic-schema-mapping) |
 
 ## When to use this
 
@@ -79,15 +79,15 @@ When not to use it:
 
 Run in order, in one session (Snowsight worksheet, or `snow sql -f <file>` for each):
 
-1. [sql/01_setup.sql](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/agentic-schema-mapping/sql/01_setup.sql): role, warehouse, database, stage, target tables, allowlists, operational tables.
-2. [sql/02_seed_reference_data.sql](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/agentic-schema-mapping/sql/02_seed_reference_data.sql): canonical values (fictional vendors).
-3. [sql/03_stage_sample_files.sql](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/agentic-schema-mapping/sql/03_stage_sample_files.sql): writes three messy CSV files to the stage.
-4. [sql/04_deploy_tools.sql](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/agentic-schema-mapping/sql/04_deploy_tools.sql): parsers, views, model UDFs, and the six tool procedures.
-5. [sql/05_semantic_view.sql](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/agentic-schema-mapping/sql/05_semantic_view.sql): the `EXPENSE_DATA` semantic view.
-6. [sql/06_agent.sql](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/agentic-schema-mapping/sql/06_agent.sql): the `SCHEMA_MAPPER_AGENT`.
-7. [sql/07_run_and_test.sql](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/agentic-schema-mapping/sql/07_run_and_test.sql): runs the whole pipeline without the agent and prints PASS/FAIL checks.
+1. [sql/01_setup.sql](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/cortex-ai-functions/agentic-schema-mapping/sql/01_setup.sql): role, warehouse, database, stage, target tables, allowlists, operational tables.
+2. [sql/02_seed_reference_data.sql](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/cortex-ai-functions/agentic-schema-mapping/sql/02_seed_reference_data.sql): canonical values (fictional vendors).
+3. [sql/03_stage_sample_files.sql](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/cortex-ai-functions/agentic-schema-mapping/sql/03_stage_sample_files.sql): writes three messy CSV files to the stage.
+4. [sql/04_deploy_tools.sql](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/cortex-ai-functions/agentic-schema-mapping/sql/04_deploy_tools.sql): parsers, views, model UDFs, and the six tool procedures.
+5. [sql/05_semantic_view.sql](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/cortex-ai-functions/agentic-schema-mapping/sql/05_semantic_view.sql): the `EXPENSE_DATA` semantic view.
+6. [sql/06_agent.sql](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/cortex-ai-functions/agentic-schema-mapping/sql/06_agent.sql): the `SCHEMA_MAPPER_AGENT`.
+7. [sql/07_run_and_test.sql](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/cortex-ai-functions/agentic-schema-mapping/sql/07_run_and_test.sql): runs the whole pipeline without the agent and prints PASS/FAIL checks.
 8. Talk to the agent in Snowflake CoWork: "Map invoices_chaotic.csv".
-9. [sql/99_teardown.sql](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/agentic-schema-mapping/sql/99_teardown.sql) when done.
+9. [sql/99_teardown.sql](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/cortex-ai-functions/agentic-schema-mapping/sql/99_teardown.sql) when done.
 
 To map your own file, upload it to `@COOKBOOK_AGENTIC_SCHEMA_MAPPING.INGESTION.UPLOAD_STAGE` (Snowsight, or
 `PUT file:///path/file.csv @... AUTO_COMPRESS = FALSE`) and ask the agent to map it.
@@ -241,7 +241,7 @@ Install or enable these Cortex Code skills before you start, and use them for th
 cortex-ai-function-studio and agent-optimization (bundled), and check-agent-access and semantic-view-patterns
 (install from Snowflake-Labs/coco-skills).
 
-Run the recipe in site/cortex-ai-cookbook/src/agentic-schema-mapping on my current Snowflake connection.
+Run the recipe in recipes/cortex-ai-functions/agentic-schema-mapping on my current Snowflake connection.
 1. Confirm the target with SELECT CURRENT_ACCOUNT(), CURRENT_REGION(), CURRENT_ROLE() and show me before continuing.
 2. sql/01_setup.sql makes account-level changes as ACCOUNTADMIN: it creates a role, a warehouse and a database, and
    grants the role to me and to SYSADMIN. Show me those statements and wait for my confirmation.

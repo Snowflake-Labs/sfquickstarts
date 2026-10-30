@@ -7,7 +7,7 @@ language: en
 summary: One orchestrator agent delegates to specialist agents through caller's-rights DATA_AGENT_RUN bridges, so Snowflake grants decide which specialist each user reaches.
 environments: web
 status: Published
-fork_repo_link: https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/site/cortex-ai-cookbook/src/multi-agent-orchestration
+fork_repo_link: https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/recipes/cortex-agents/multi-agent-orchestration
 
 # Multi-agent orchestration with caller's-rights delegation
 
@@ -25,8 +25,8 @@ Build one front-door agent that delegates each question to a specialist agent (s
 | Regions | Any region with Cortex Agents and claude-sonnet-4-6 (directly or through cross-region inference) |
 | Privileges | ACCOUNTADMIN for 01_setup.sql, the persona key-pair ALTER USER statements in Verify, and 99_teardown.sql; everything else runs as COOKBOOK_MULTI_AGENT_ADMIN |
 | Last verified | 2026-10-04 |
-| Code | [Recipe folder on GitHub](https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/site/cortex-ai-cookbook/src/multi-agent-orchestration) · [Teardown script](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/multi-agent-orchestration/sql/99_teardown.sql) |
-| Problems | [Open an issue](https://github.com/Snowflake-Labs/cortex-ai-cookbook/issues/new?template=recipe-problem.yml&title=%5Bmulti-agent-orchestration%5D%20&recipe=site%2Fcortex-ai-cookbook%2Fsrc%2Fmulti-agent-orchestration) |
+| Code | [Recipe folder on GitHub](https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/recipes/cortex-agents/multi-agent-orchestration) · [Teardown script](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/cortex-agents/multi-agent-orchestration/sql/99_teardown.sql) |
+| Problems | [Open an issue](https://github.com/Snowflake-Labs/cortex-ai-cookbook/issues/new?template=recipe-problem.yml&title=%5Bmulti-agent-orchestration%5D%20&recipe=recipes%2Fcortex-agents%2Fmulti-agent-orchestration) |
 
 ## When to use this
 
@@ -262,7 +262,7 @@ Run `sql/99_teardown.sql` as `ACCOUNTADMIN`. It drops the database (agents, proc
 Clone the repository first (`git clone https://github.com/Snowflake-Labs/cortex-ai-cookbook`) and run the prompt from its root.
 
 ```text
-Run the recipe in site/cortex-ai-cookbook/src/multi-agent-orchestration.
+Run the recipe in recipes/cortex-agents/multi-agent-orchestration.
 1. Install or enable the check-agent-access skill from Snowflake-Labs/coco-skills
    if it is not already available.
 2. Confirm the target with SELECT CURRENT_ACCOUNT(), CURRENT_REGION(), CURRENT_ROLE(),

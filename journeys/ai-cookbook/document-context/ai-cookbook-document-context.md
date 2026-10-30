@@ -7,7 +7,7 @@ language: en
 summary: Let users attach PDFs, Office files, images, and CSVs to a custom agent frontend with a caller's-rights document tool, per-user stage folders, and authenticated middleware.
 environments: web
 status: Published
-fork_repo_link: https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/site/cortex-ai-cookbook/src/document-context
+fork_repo_link: https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/recipes/cortex-agents/document-context
 
 # Attach documents to Cortex Agent conversations
 
@@ -30,8 +30,8 @@ holds no Snowflake credentials: every request runs as the user who sent it.
 | Regions | Any region with Cortex Agents; cross-region inference where AI_PARSE_DOCUMENT or the orchestration model is not native |
 | Privileges | ACCOUNTADMIN for 01_setup.sql and 99_teardown.sql only; objects are owned by COOKBOOK_DOCUMENT_CONTEXT_ADMIN and used through COOKBOOK_DOCUMENT_CONTEXT_USER |
 | Last verified | 2026-10-04 |
-| Code | [Recipe folder on GitHub](https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/site/cortex-ai-cookbook/src/document-context) · [Teardown script](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/document-context/sql/99_teardown.sql) |
-| Problems | [Open an issue](https://github.com/Snowflake-Labs/cortex-ai-cookbook/issues/new?template=recipe-problem.yml&title=%5Bdocument-context%5D%20&recipe=site%2Fcortex-ai-cookbook%2Fsrc%2Fdocument-context) |
+| Code | [Recipe folder on GitHub](https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/recipes/cortex-agents/document-context) · [Teardown script](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/cortex-agents/document-context/sql/99_teardown.sql) |
+| Problems | [Open an issue](https://github.com/Snowflake-Labs/cortex-ai-cookbook/issues/new?template=recipe-problem.yml&title=%5Bdocument-context%5D%20&recipe=recipes%2Fcortex-agents%2Fdocument-context) |
 
 ## When to use this
 
@@ -100,7 +100,7 @@ you need it.
 
 ## Quickstart
 
-From `site/cortex-ai-cookbook/src/document-context/`:
+From `recipes/cortex-agents/document-context/`:
 
 1. `snow sql -f sql/01_setup.sql` (as ACCOUNTADMIN): roles, warehouse, database.
 2. `snow sql -f sql/02_objects.sql`: stage, sample store data, semantic view,
@@ -114,14 +114,14 @@ From `site/cortex-ai-cookbook/src/document-context/`:
    ```
 
 4. `snow sql -f sql/04_ask_agent.sql`: three questions; see Verify.
-5. Optional: run the middleware in [app/](https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/site/cortex-ai-cookbook/src/document-context/app) and call it with your token.
+5. Optional: run the middleware in [app/](https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/recipes/cortex-agents/document-context/app) and call it with your token.
 6. `snow sql -f sql/99_teardown.sql` (as ACCOUNTADMIN).
 
 ## Walkthrough
 
 ### The document tool
 
-The core of [sql/02_objects.sql](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/document-context/sql/02_objects.sql):
+The core of [sql/02_objects.sql](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/cortex-agents/document-context/sql/02_objects.sql):
 
 ```python
 NAME_PATTERN = re.compile(r"[A-Za-z0-9][A-Za-z0-9_-]{0,99}\.[A-Za-z0-9]{1,5}")
@@ -189,7 +189,7 @@ only needed when a file is first introduced.
 
 ### The middleware
 
-[app/backend.py](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/document-context/app/backend.py) (FastAPI) exposes `POST /upload`, `POST /ask`,
+[app/backend.py](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/cortex-agents/document-context/app/backend.py) (FastAPI) exposes `POST /upload`, `POST /ask`,
 `POST /threads`, and `GET /health`:
 
 - Every endpoint except `/health` requires `Authorization: Bearer <token>`. Send
@@ -276,7 +276,7 @@ Clone the repository first (`git clone https://github.com/Snowflake-Labs/cortex-
 ```text
 Install or enable the bundled document-intelligence skill and the check-agent-access
 skill from Snowflake-Labs/coco-skills if they are not already available.
-Then, from site/cortex-ai-cookbook/src/document-context:
+Then, from recipes/cortex-agents/document-context:
 1. Confirm the target with SELECT CURRENT_ACCOUNT(), CURRENT_REGION(), CURRENT_ROLE(),
    CURRENT_WAREHOUSE() and show me the result before creating anything.
 2. sql/01_setup.sql runs as ACCOUNTADMIN and creates account-level roles and a

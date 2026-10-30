@@ -7,7 +7,7 @@ language: en
 summary: Decide how people reach a Cortex Agent, with identity and policies in each lane, then best practices for managed MCP servers and the Agents REST API.
 environments: web
 status: Published
-fork_repo_link: https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/site/cortex-ai-cookbook/src/mcp-or-agent-rest-api
+fork_repo_link: https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/recipes/snowflake-mcp/mcp-or-agent-rest-api
 
 # Snowflake-managed MCP or the Cortex Agents REST API
 
@@ -25,8 +25,8 @@ Both options call the same Cortex Agent object, over the same semantic views and
 | Regions | Any commercial region with Cortex Agents; managed MCP servers are not available in government regions |
 | Privileges | ACCOUNTADMIN to create the recipe roles, warehouse, database, and the OAuth security integration; the rest runs as COOKBOOK_MCP_OR_AGENT_REST_API_ADMIN |
 | Last verified | 2026-10-04 |
-| Code | [Recipe folder on GitHub](https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/site/cortex-ai-cookbook/src/mcp-or-agent-rest-api) · [Teardown script](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/mcp-or-agent-rest-api/sql/99_teardown.sql) |
-| Problems | [Open an issue](https://github.com/Snowflake-Labs/cortex-ai-cookbook/issues/new?template=recipe-problem.yml&title=%5Bmcp-or-agent-rest-api%5D%20&recipe=site%2Fcortex-ai-cookbook%2Fsrc%2Fmcp-or-agent-rest-api) |
+| Code | [Recipe folder on GitHub](https://github.com/Snowflake-Labs/cortex-ai-cookbook/tree/main/recipes/snowflake-mcp/mcp-or-agent-rest-api) · [Teardown script](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/snowflake-mcp/mcp-or-agent-rest-api/sql/99_teardown.sql) |
+| Problems | [Open an issue](https://github.com/Snowflake-Labs/cortex-ai-cookbook/issues/new?template=recipe-problem.yml&title=%5Bmcp-or-agent-rest-api%5D%20&recipe=recipes%2Fsnowflake-mcp%2Fmcp-or-agent-rest-api) |
 
 ## When to use this
 
@@ -88,10 +88,10 @@ These cover the MCP lane example in `sql/`. The REST lane is implemented in [mul
 
 ## Quickstart
 
-1. [`sql/01_setup.sql`](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/mcp-or-agent-rest-api/sql/01_setup.sql): admin and MCP access roles, warehouse, database, synthetic Northwind revenue, a fail-closed row access policy, a semantic view, and one agent.
-2. [`sql/02_mcp_server.sql`](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/mcp-or-agent-rest-api/sql/02_mcp_server.sql): the MCP server and every grant the access role needs. Rerun it after `01_setup.sql` or after any change to the server.
+1. [`sql/01_setup.sql`](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/snowflake-mcp/mcp-or-agent-rest-api/sql/01_setup.sql): admin and MCP access roles, warehouse, database, synthetic Northwind revenue, a fail-closed row access policy, a semantic view, and one agent.
+2. [`sql/02_mcp_server.sql`](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/snowflake-mcp/mcp-or-agent-rest-api/sql/02_mcp_server.sql): the MCP server and every grant the access role needs. Rerun it after `01_setup.sql` or after any change to the server.
 3. Run the Verify queries.
-4. [`sql/03_oauth_integration.sql`](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/mcp-or-agent-rest-api/sql/03_oauth_integration.sql): account-level. Replace the redirect URI with your client's and run it. Then, for each of your own users who will connect, record their current `DEFAULT_ROLE` and `DEFAULT_WAREHOUSE` and apply the template at the end of the script. No script in the recipe changes an existing user's defaults, and teardown does not restore them for you.
+4. [`sql/03_oauth_integration.sql`](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/snowflake-mcp/mcp-or-agent-rest-api/sql/03_oauth_integration.sql): account-level. Replace the redirect URI with your client's and run it. Then, for each of your own users who will connect, record their current `DEFAULT_ROLE` and `DEFAULT_WAREHOUSE` and apply the template at the end of the script. No script in the recipe changes an existing user's defaults, and teardown does not restore them for you.
 5. Register the server URL, client ID, and client secret in your MCP client, sign in, and ask a question.
 
 ## Walkthrough
@@ -331,7 +331,7 @@ Once the OAuth integration exists and a user's defaults are set, the MCP client 
 
 ### Check the stream
 
-[`client/mcp_stream_check.py`](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/mcp-or-agent-rest-api/client/mcp_stream_check.py) makes one `tools/call` the way a spec-compliant client does and timestamps every frame as it arrives. It reports the transport headers, the keep-alive interval, progress notifications, the result event, whether `[DONE]` appeared, the request id (it joins `CORTEX_AGENT_USAGE_HISTORY.REQUEST_ID`), and the longest silence on the wire against your proxy's idle timeout. It uses the Python standard library only. Run it from the same network as the client you are troubleshooting, with an OAuth access token or a programmatic access token restricted to the access role (a PAT signs in only while its user is subject to a network policy):
+[`client/mcp_stream_check.py`](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/snowflake-mcp/mcp-or-agent-rest-api/client/mcp_stream_check.py) makes one `tools/call` the way a spec-compliant client does and timestamps every frame as it arrives. It reports the transport headers, the keep-alive interval, progress notifications, the result event, whether `[DONE]` appeared, the request id (it joins `CORTEX_AGENT_USAGE_HISTORY.REQUEST_ID`), and the longest silence on the wire against your proxy's idle timeout. It uses the Python standard library only. Run it from the same network as the client you are troubleshooting, with an OAuth access token or a programmatic access token restricted to the access role (a PAT signs in only while its user is subject to a network policy):
 
 ```bash
 export SNOWFLAKE_ACCOUNT_URL=https://<account_identifier>.snowflakecomputing.com
@@ -384,14 +384,14 @@ With `--compare-json`, the same call sent with `Accept: application/json` return
 snow sql -f sql/99_teardown.sql
 ```
 
-[`sql/99_teardown.sql`](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/site/cortex-ai-cookbook/src/mcp-or-agent-rest-api/sql/99_teardown.sql) drops the security integration, the database (server, agent, semantic view, tables, policy), the warehouse, and both roles. No script in the recipe changes an existing user's `DEFAULT_ROLE` or `DEFAULT_WAREHOUSE`, so teardown restores none. If you applied the template in `03_oauth_integration.sql` to your own users, restore the values you recorded before you run teardown, because teardown drops the role and warehouse those settings point at.
+[`sql/99_teardown.sql`](https://github.com/Snowflake-Labs/cortex-ai-cookbook/blob/main/recipes/snowflake-mcp/mcp-or-agent-rest-api/sql/99_teardown.sql) drops the security integration, the database (server, agent, semantic view, tables, policy), the warehouse, and both roles. No script in the recipe changes an existing user's `DEFAULT_ROLE` or `DEFAULT_WAREHOUSE`, so teardown restores none. If you applied the template in `03_oauth_integration.sql` to your own users, restore the values you recorded before you run teardown, because teardown drops the role and warehouse those settings point at.
 
 ## Run it with a coding agent
 
 Clone the repository first (`git clone https://github.com/Snowflake-Labs/cortex-ai-cookbook`) and run the prompt from its root.
 
 ```text
-Deploy the example in site/cortex-ai-cookbook/src/mcp-or-agent-rest-api.
+Deploy the example in recipes/snowflake-mcp/mcp-or-agent-rest-api.
 1. Run SELECT CURRENT_ACCOUNT(), CURRENT_REGION(), CURRENT_ROLE(); and show me
    the result. Stop unless I confirm the account.
 2. Install or enable the check-agent-access and rbac skills (coco-skills). Use
