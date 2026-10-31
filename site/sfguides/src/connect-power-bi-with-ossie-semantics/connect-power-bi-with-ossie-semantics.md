@@ -20,7 +20,7 @@ Apache Ossie (incubating), previously Open Semantic Interchange (OSI), is a vend
 
 In Snowflake, the semantic model lives as a Semantic View: governed, queryable with standard SQL, and available to Cortex Analyst and Snowflake Intelligence. In Power BI, the same model becomes a semantic model with DAX measures that analysts can extend. A change made on either side can be carried to the other through Ossie, with a review step so every definition is approved before it is deployed.
 
-This quickstart demonstrates the core workflow on TPC-H sample data: creating a Semantic View in Snowflake, converting it to Power BI through Ossie, adding a measure in Power BI, and bringing that measure back into Snowflake. It then runs the loop a second time to confirm nothing was lost.
+This quickstart demonstrates the core workflow on sample data: creating a Semantic View in Snowflake, converting it to Power BI through Ossie, adding a measure in Power BI, and bringing that measure back into Snowflake.
 
 
 ### Prerequisites
@@ -34,13 +34,12 @@ This quickstart demonstrates the core workflow on TPC-H sample data: creating a 
 - exporting a semantic view to Ossie with `SYSTEM$READ_OSSIE_YAML_FROM_SEMANTIC_VIEW`
 - converting Ossie to and from a Power BI `model.bim` with the `ossie-microsoft` converter
 - merging a Power BI change back into the Ossie model and deploying it with `SYSTEM$CREATE_SEMANTIC_VIEW_FROM_OSSIE_YAML`
-- which kinds of changes survive a round trip, and which don't
 
 ### What You Will Build
-- You will build a sales semantic model that is shared between Snowflake and Power BI. You will create a Semantic View in Snowflake, convert it to a Power BI semantic model, add a measure in Power BI, and deploy that measure back to Snowflake. The end result is one set of business definitions that both platforms use, with Snowflake governing what gets deployed.
+- You will build a sales semantic model that is shared between Snowflake and Power BI. You will create a Semantic View in Snowflake, convert it to a Power BI semantic model, add a measure in Power BI, and deploy that measure back to Snowflake. The end result is one set of business definitions that both platforms use.
 
 ### What You Will Need
-- A free [Snowflake Account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) with access to `SNOWFLAKE_SAMPLE_DATA`
+- A free [Snowflake Account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)
 - Git, Python 3.10+, and [uv](https://docs.astral.sh/uv/getting-started/installation/) installed locally (`pip install uv` works if you don't have it)
 - A text editor, or [Tabular Editor](https://github.com/TabularEditor/TabularEditor) to edit the Power BI model file
 
@@ -64,6 +63,14 @@ The end-to-end workflow will look like this:
 ### Create the sample data
 In this step, you create a database with views over the TPC-H sample data. The model uses three tables: orders, customers, and nations.
 
+The views read `SNOWFLAKE_SAMPLE_DATA`, which Snowflake shares with your account and which doesn't use your storage. If it isn't listed under your databases, create it once as `ACCOUNTADMIN` before continuing:
+
+```sql
+CREATE DATABASE SNOWFLAKE_SAMPLE_DATA FROM SHARE SFC_SAMPLES.SAMPLE_DATA;
+
+GRANT IMPORTED PRIVILEGES ON DATABASE SNOWFLAKE_SAMPLE_DATA TO ROLE PUBLIC;
+```
+
 ```sql
 USE ROLE ACCOUNTADMIN;
 
@@ -83,41 +90,119 @@ FROM SNOWFLAKE_SAMPLE_DATA.TPCH_SF1.NATION;
 ```
 
 ### Create the semantic view
-The semantic view is defined in [tpch_sales_semantic_view.yaml](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/connect-power-bi-with-ossie-semantics/assets/tpch_sales_semantic_view.yaml). It joins orders to customers and customers to nations, and defines two metrics: `total_sales` and `order_count`.
-
-Paste the file contents between the `$$` markers and run:
+The statement below creates the semantic view. It joins orders to customers and customers to nations, and defines three metrics: `total_sales`, `order_count`, and `avg_order_value`. The same definition is available as [tpch_sales_semantic_view.yaml](https://raw.githubusercontent.com/Snowflake-Labs/sfquickstarts/master/site/sfguides/src/connect-power-bi-with-ossie-semantics/assets/tpch_sales_semantic_view.yaml).
 
 ```sql
 CALL SYSTEM$CREATE_SEMANTIC_VIEW_FROM_YAML(
     'OSSIE_DEMO.PUBLIC',
-    $$
-    <paste the contents of tpch_sales_semantic_view.yaml here>
-    $$
+$$
+name: tpch_sales
+description: Order sales by customer segment and nation
+tables:
+- name: orders
+  base_table:
+    database: OSSIE_DEMO
+    schema: PUBLIC
+    table: ORDERS
+  primary_key:
+    columns:
+    - o_orderkey
+  description: One row per customer order
+  dimensions:
+  - name: o_orderkey
+    expr: o_orderkey
+    description: Order identifier
+    data_type: NUMBER(38,0)
+  - name: o_custkey
+    expr: o_custkey
+    description: Customer who placed the order
+    data_type: NUMBER(38,0)
+  - name: o_orderstatus
+    expr: o_orderstatus
+    description: Order status (F = fulfilled, O = open, P = partial)
+    data_type: VARCHAR
+  time_dimensions:
+  - name: o_orderdate
+    expr: o_orderdate
+    description: Date the order was placed
+    data_type: DATE
+  facts:
+  - name: o_totalprice
+    expr: o_totalprice
+    description: Total price of the order
+    data_type: NUMBER(12,2)
+- name: customer
+  base_table:
+    database: OSSIE_DEMO
+    schema: PUBLIC
+    table: CUSTOMER
+  primary_key:
+    columns:
+    - c_custkey
+  description: Customers
+  dimensions:
+  - name: c_custkey
+    expr: c_custkey
+    description: Customer identifier
+    data_type: NUMBER(38,0)
+  - name: c_name
+    expr: c_name
+    description: Customer name
+    data_type: VARCHAR
+  - name: c_nationkey
+    expr: c_nationkey
+    description: Customer nation
+    data_type: NUMBER(38,0)
+  - name: c_mktsegment
+    expr: c_mktsegment
+    description: Market segment
+    data_type: VARCHAR
+- name: nation
+  base_table:
+    database: OSSIE_DEMO
+    schema: PUBLIC
+    table: NATION
+  primary_key:
+    columns:
+    - n_nationkey
+  description: Countries
+  dimensions:
+  - name: n_nationkey
+    expr: n_nationkey
+    description: Nation identifier
+    data_type: NUMBER(38,0)
+  - name: n_name
+    expr: n_name
+    description: Nation name
+    data_type: VARCHAR
+relationships:
+- name: orders_to_customer
+  left_table: orders
+  right_table: customer
+  relationship_columns:
+  - left_column: o_custkey
+    right_column: c_custkey
+- name: customer_to_nation
+  left_table: customer
+  right_table: nation
+  relationship_columns:
+  - left_column: c_nationkey
+    right_column: n_nationkey
+metrics:
+- name: total_sales
+  expr: SUM(orders.o_totalprice)
+  description: Total order value
+- name: order_count
+  expr: COUNT(orders.o_orderkey)
+  description: Number of orders
+- name: avg_order_value
+  expr: AVG(orders.o_totalprice)
+  description: Average value of a single order
+$$
 );
 ```
 
 The view takes its name from the `name` field, so this creates `OSSIE_DEMO.PUBLIC.TPCH_SALES`. Confirm it returns data:
-
-```sql
-SELECT * FROM SEMANTIC_VIEW(
-    OSSIE_DEMO.PUBLIC.TPCH_SALES
-    DIMENSIONS nation.n_name
-    METRICS total_sales, order_count
-) ORDER BY total_sales DESC LIMIT 3;
-```
-
-### Make a change in Snowflake
-In a real environment, the data team owns the semantic view and updates it as the business changes. For the sake of this quickstart, the change is a single new metric for average order value.
-
-In the YAML file, add this entry at the end of the `metrics:` list:
-
-```yaml
-- name: avg_order_value
-  expr: AVG(orders.o_totalprice)
-  description: Average value of a single order
-```
-
-Run the same `CALL SYSTEM$CREATE_SEMANTIC_VIEW_FROM_YAML` statement again with the updated file. It replaces the semantic view. Check the new metric:
 
 ```sql
 SELECT * FROM SEMANTIC_VIEW(
@@ -127,6 +212,10 @@ SELECT * FROM SEMANTIC_VIEW(
 ) ORDER BY c_mktsegment;
 ```
 
+You can also open the view you just created. In Snowsight, select **AI & ML** » **Cortex Analyst** and select `TPCH_SALES`. [Semantic Studio](https://docs.snowflake.com/en/user-guide/views-semantic/semantic-studio) shows the tables, relationships, and metrics, and has a form for adding more of each. **Deploy** writes those edits back to the live view. This quickstart keeps the definition in the statement above so it stays visible and repeatable, and Semantic Studio is where a team would maintain the model day to day.
+
+![](assets/semantic_studio_add_metric.png)
+
 
 <!-- ------------------------ -->
 ## Export to Ossie
@@ -134,21 +223,21 @@ SELECT * FROM SEMANTIC_VIEW(
 In this section, the Semantic View is exported as an Ossie file, which is the format the Power BI converter reads.
 
 ### Install the Power BI converter
-Clone the Apache Ossie repository and install the Microsoft converter. Then download the two helper scripts for this quickstart into the same working folder.
+Clone the Apache Ossie converters repository and install the Microsoft converter. Then download the two helper scripts for this quickstart into the same working folder.
 
 ```bash
 mkdir -p ~/ossie-demo && cd ~/ossie-demo
-git clone https://github.com/apache/ossie.git
+git clone --recurse-submodules https://github.com/apache/ossie-converters.git
 
-curl -O https://raw.githubusercontent.com/Snowflake-Labs/sfquickstarts/master/site/sfguides/src/connect-power-bi-with-ossie-semantics/assets/unwrap_snowflake_export.py
-curl -O https://raw.githubusercontent.com/Snowflake-Labs/sfquickstarts/master/site/sfguides/src/connect-power-bi-with-ossie-semantics/assets/merge_from_powerbi.py
+curl -fLO https://raw.githubusercontent.com/Snowflake-Labs/sfquickstarts/master/site/sfguides/src/connect-power-bi-with-ossie-semantics/assets/unwrap_snowflake_export.py
+curl -fLO https://raw.githubusercontent.com/Snowflake-Labs/sfquickstarts/master/site/sfguides/src/connect-power-bi-with-ossie-semantics/assets/merge_from_powerbi.py
 
-cd ossie/converters/microsoft
+cd ossie-converters/microsoft
 uv sync
 uv run ossie-microsoft --help
 ```
 
-Run the remaining commands in this quickstart from `~/ossie-demo/ossie/converters/microsoft`. The working files live in `~/ossie-demo`.
+Run the remaining commands in this quickstart from `~/ossie-demo/ossie-converters/microsoft`. The working files live in `~/ossie-demo`.
 
 ### Export the semantic view
 In Snowflake, export the semantic view as Ossie YAML:
@@ -157,7 +246,9 @@ In Snowflake, export the semantic view as Ossie YAML:
 SELECT SYSTEM$READ_OSSIE_YAML_FROM_SEMANTIC_VIEW('OSSIE_DEMO.PUBLIC.TPCH_SALES');
 ```
 
-Copy the result and save it as `~/ossie-demo/tpch_sales_export.yaml`.
+The function returns the whole model as a single text value, so the result is one cell. Click that cell and copy its value, then paste it into a new file and save it as `~/ossie-demo/tpch_sales_export.yaml`. A pasted export looks like this:
+
+![](assets/ossie_export_yaml.png)
 
 The export contains the three datasets with full `OSSIE_DEMO.PUBLIC.<TABLE>` sources, the relationships, the `O_ORDERDATE` time dimension, and all three metrics as `SNOWFLAKE` SQL expressions. Names are uppercase because Snowflake normalizes unquoted identifiers.
 
@@ -226,8 +317,6 @@ Open `~/ossie-demo/model.bim` in Tabular Editor or a text editor. Find the `CUST
 
 Save the file.
 
-Choose a measure the converter can translate back from SQL, like this one. On the next export from Snowflake, a measure with a filter, such as `CALCULATE(..., 'ORDERS'[O_ORDERSTATUS] = "F")`, comes back to Power BI as `BLANK()`, because Snowflake stores only the SQL.
-
 
 <!-- ------------------------ -->
 ## Bring the Change Back to Snowflake
@@ -270,7 +359,6 @@ diff ~/ossie-demo/tpch_sales.ossie.yaml ~/ossie-demo/tpch_sales.merged.yaml
 ```
 
 ### Add the Snowflake SQL
-This is the review step. The converter never rewrites DAX as SQL, so a person writes the SQL equivalent and approves the definition before it reaches Snowflake.
 
 In `tpch_sales.merged.yaml`, add a `SNOWFLAKE` dialect to `SALES_PER_CUSTOMER`:
 
@@ -298,14 +386,196 @@ uv run python ~/ossie-demo/merge_from_powerbi.py \
 It reports `no measure changes` and exits cleanly, so the file is ready to deploy.
 
 ### Deploy to Snowflake
-Paste the contents of `tpch_sales.merged.yaml` between the `$$` markers and run:
+Run this statement. It contains the merged model from the previous step, with the new `SALES_PER_CUSTOMER` metric and its Snowflake SQL at the end. If your `tpch_sales.merged.yaml` differs, use its contents between the `$$` markers instead.
 
 ```sql
 CALL SYSTEM$CREATE_SEMANTIC_VIEW_FROM_OSSIE_YAML(
     'OSSIE_DEMO.PUBLIC',
-    $$
-    <paste the contents of tpch_sales.merged.yaml here>
-    $$
+$$
+version: 0.1.1
+name: TPCH_SALES
+description: Order sales by customer segment and nation
+datasets:
+- name: CUSTOMER
+  source: OSSIE_DEMO.PUBLIC.CUSTOMER
+  primary_key:
+  - C_CUSTKEY
+  description: Customers
+  fields:
+  - name: C_CUSTKEY
+    expression:
+      dialects:
+      - dialect: SNOWFLAKE
+        expression: c_custkey
+    dimension: {}
+    description: Customer identifier
+    custom_extensions:
+    - vendor_name: SNOWFLAKE
+      data: '{"access_modifier":"public_access"}'
+  - name: C_MKTSEGMENT
+    expression:
+      dialects:
+      - dialect: SNOWFLAKE
+        expression: c_mktsegment
+    dimension: {}
+    description: Market segment
+    custom_extensions:
+    - vendor_name: SNOWFLAKE
+      data: '{"access_modifier":"public_access"}'
+  - name: C_NAME
+    expression:
+      dialects:
+      - dialect: SNOWFLAKE
+        expression: c_name
+    dimension: {}
+    description: Customer name
+    custom_extensions:
+    - vendor_name: SNOWFLAKE
+      data: '{"access_modifier":"public_access"}'
+  - name: C_NATIONKEY
+    expression:
+      dialects:
+      - dialect: SNOWFLAKE
+        expression: c_nationkey
+    dimension: {}
+    description: Customer nation
+    custom_extensions:
+    - vendor_name: SNOWFLAKE
+      data: '{"access_modifier":"public_access"}'
+- name: NATION
+  source: OSSIE_DEMO.PUBLIC.NATION
+  primary_key:
+  - N_NATIONKEY
+  description: Countries
+  fields:
+  - name: N_NAME
+    expression:
+      dialects:
+      - dialect: SNOWFLAKE
+        expression: n_name
+    dimension: {}
+    description: Nation name
+    custom_extensions:
+    - vendor_name: SNOWFLAKE
+      data: '{"access_modifier":"public_access"}'
+  - name: N_NATIONKEY
+    expression:
+      dialects:
+      - dialect: SNOWFLAKE
+        expression: n_nationkey
+    dimension: {}
+    description: Nation identifier
+    custom_extensions:
+    - vendor_name: SNOWFLAKE
+      data: '{"access_modifier":"public_access"}'
+- name: ORDERS
+  source: OSSIE_DEMO.PUBLIC.ORDERS
+  primary_key:
+  - O_ORDERKEY
+  description: One row per customer order
+  fields:
+  - name: O_CUSTKEY
+    expression:
+      dialects:
+      - dialect: SNOWFLAKE
+        expression: o_custkey
+    dimension: {}
+    description: Customer who placed the order
+    custom_extensions:
+    - vendor_name: SNOWFLAKE
+      data: '{"access_modifier":"public_access"}'
+  - name: O_ORDERKEY
+    expression:
+      dialects:
+      - dialect: SNOWFLAKE
+        expression: o_orderkey
+    dimension: {}
+    description: Order identifier
+    custom_extensions:
+    - vendor_name: SNOWFLAKE
+      data: '{"access_modifier":"public_access"}'
+  - name: O_ORDERSTATUS
+    expression:
+      dialects:
+      - dialect: SNOWFLAKE
+        expression: o_orderstatus
+    dimension: {}
+    description: Order status (F = fulfilled, O = open, P = partial)
+    custom_extensions:
+    - vendor_name: SNOWFLAKE
+      data: '{"access_modifier":"public_access"}'
+  - name: O_ORDERDATE
+    expression:
+      dialects:
+      - dialect: SNOWFLAKE
+        expression: o_orderdate
+    dimension:
+      is_time: true
+    description: Date the order was placed
+    custom_extensions:
+    - vendor_name: SNOWFLAKE
+      data: '{"access_modifier":"public_access"}'
+  - name: O_TOTALPRICE
+    expression:
+      dialects:
+      - dialect: SNOWFLAKE
+        expression: o_totalprice
+    description: Total price of the order
+    custom_extensions:
+    - vendor_name: SNOWFLAKE
+      data: '{"access_modifier":"public_access"}'
+relationships:
+- name: CUSTOMER_TO_NATION
+  from: CUSTOMER
+  to: NATION
+  from_columns:
+  - C_NATIONKEY
+  to_columns:
+  - N_NATIONKEY
+- name: ORDERS_TO_CUSTOMER
+  from: ORDERS
+  to: CUSTOMER
+  from_columns:
+  - O_CUSTKEY
+  to_columns:
+  - C_CUSTKEY
+metrics:
+- name: AVG_ORDER_VALUE
+  expression:
+    dialects:
+    - dialect: SNOWFLAKE
+      expression: AVG(orders.o_totalprice)
+  description: Average value of a single order
+  custom_extensions:
+  - vendor_name: SNOWFLAKE
+    data: '{"access_modifier":"public_access"}'
+- name: ORDER_COUNT
+  expression:
+    dialects:
+    - dialect: SNOWFLAKE
+      expression: COUNT(orders.o_orderkey)
+  description: Number of orders
+  custom_extensions:
+  - vendor_name: SNOWFLAKE
+    data: '{"access_modifier":"public_access"}'
+- name: TOTAL_SALES
+  expression:
+    dialects:
+    - dialect: SNOWFLAKE
+      expression: SUM(orders.o_totalprice)
+  description: Total order value
+  custom_extensions:
+  - vendor_name: SNOWFLAKE
+    data: '{"access_modifier":"public_access"}'
+- name: SALES_PER_CUSTOMER
+  expression:
+    dialects:
+    - dialect: SNOWFLAKE
+      expression: SUM(orders.o_totalprice) / COUNT(DISTINCT orders.o_custkey)
+    - dialect: DAX
+      expression: DIVIDE(SUM('ORDERS'[O_TOTALPRICE]), DISTINCTCOUNT('ORDERS'[O_CUSTKEY]))
+  description: Average total order value per customer
+$$
 );
 ```
 
@@ -336,35 +606,9 @@ ORDER BY 1;
 
 
 <!-- ------------------------ -->
-## Run the Loop Again
-
-A round trip is only useful if the next cycle works too. In this step, you export from Snowflake again and convert to Power BI to confirm the new measure carries over.
-
-Run the export query from earlier and save the result as `~/ossie-demo/tpch_sales_export_2.yaml`. Then:
-
-```bash
-uv run python ~/ossie-demo/unwrap_snowflake_export.py \
-    ~/ossie-demo/tpch_sales_export_2.yaml \
-    ~/ossie-demo/tpch_sales_2.ossie.yaml
-
-uv run ossie-microsoft export \
-    -i ~/ossie-demo/tpch_sales_2.ossie.yaml \
-    -o ~/ossie-demo/model_2.bim
-```
-
-Open `model_2.bim` and find `SALES_PER_CUSTOMER`. The measure that started in Power BI is back, rebuilt from the Snowflake SQL:
-
-```
-DIVIDE(SUM('ORDERS'[O_TOTALPRICE]), DISTINCTCOUNTNOBLANK('ORDERS'[O_CUSTKEY]))
-```
-
-The converter uses `DISTINCTCOUNTNOBLANK` to match SQL's `COUNT(DISTINCT ...)`, which ignores nulls. Every order has a customer, so the result is the same as the analyst's original `DISTINCTCOUNT`.
-
-
-<!-- ------------------------ -->
 ## Take This to Production
 
-The loop in this quickstart treats Snowflake as the hub. That works when every measure is a simple aggregate the converter can rebuild. In a real environment, store the Ossie model in git as the single source of truth instead, and follow these practices:
+The loop in this quickstart treats Snowflake as the hub. That works when every measure is one the converter can rebuild, but in many environments changes that do not convert will need to be maintained for the respective semantic layer. For those environments, store the Ossie model in git as the single source of truth, and follow these practices:
 
 - Merge from both sides. Changes from Snowflake merge in their SQL and keep the DAX already in git. Changes from Power BI merge in their DAX and keep the SQL and Snowflake-specific settings. `merge_from_powerbi.py` covers the Power BI side for metrics, and the Snowflake side is the same idea in reverse.
 - Sync before you deploy. `SYSTEM$CREATE_SEMANTIC_VIEW_FROM_OSSIE_YAML` replaces the whole semantic view, so pull any edits made directly in Snowflake into git first.
@@ -375,7 +619,7 @@ The loop in this quickstart treats Snowflake as the hub. That works when every m
 These held true when this quickstart was written. Apache Ossie is incubating, so check the converter and Snowflake documentation for changes.
 
 - Snowflake exports and accepts Ossie version `0.1.1`. The Power BI converter writes `0.2.0.dev0`, which is why the import can't be deployed directly.
-- Measures with filters or other logic outside simple aggregates don't survive a second trip through Snowflake. Keep them in git with both expressions.
+- Measures with filters or other logic outside simple aggregates come back as BLANK() the next time the model is exported from Snowflake. Keep them in git with both expressions.
 - Synonyms aren't restored when a semantic view is created from Ossie YAML.
 - Column data types aren't included in the Snowflake export, so Power BI columns come through untyped.
 - Snowflake's export adds a duplicate `SNOWFLAKE` custom extension to each field on every round trip. It's harmless, but the file grows.
@@ -385,19 +629,18 @@ These held true when this quickstart was written. Apache Ossie is incubating, so
 <!-- ------------------------ -->
 ## Conclusion and Resources
 
-Congratulations! You've successfully moved a semantic model from Snowflake to Power BI with Apache Ossie, added a measure in Power BI, and deployed it back to Snowflake after review. The measure survived a second round trip, resulting in one set of business definitions shared by both platforms. The merge step keeps each platform's details intact, and the review step makes sure every formula is approved before it reaches the other side. This is the foundation for a shared semantic layer between Snowflake and Power BI!
+Congratulations! You've successfully moved a semantic model from Snowflake to Power BI with Apache Ossie, added a measure in Power BI, and deployed it back to Snowflake after review, esulting in one set of business definitions shared by both platforms. The merge step keeps each platform's details intact, and the review step makes sure every formula is approved before it reaches the other side. This is the foundation for a shared semantic layer between Snowflake and Power BI!
 
 ### What You Learned
 - creating a Snowflake Semantic View from YAML
 - exporting a semantic view to Ossie with `SYSTEM$READ_OSSIE_YAML_FROM_SEMANTIC_VIEW`
 - converting Ossie to and from a Power BI `model.bim` with the `ossie-microsoft` converter
 - merging a Power BI change back into the Ossie model and deploying it with `SYSTEM$CREATE_SEMANTIC_VIEW_FROM_OSSIE_YAML`
-- which kinds of changes survive a round trip, and which don't
 
 ### Resources
 - [Apache Ossie (incubating)](https://ossie.apache.org/)
 - [Apache Ossie Core Specification](https://github.com/apache/ossie/blob/main/core-spec/spec.md)
-- [Apache Ossie Microsoft converter](https://github.com/apache/ossie/tree/main/converters/microsoft)
+- [Apache Ossie Microsoft converter](https://github.com/apache/ossie-converters/tree/main/microsoft)
 - [SYSTEM$READ_OSSIE_YAML_FROM_SEMANTIC_VIEW](https://docs.snowflake.com/en/sql-reference/functions/system_read_ossie_yaml_from_semantic_view)
 - [SYSTEM$CREATE_SEMANTIC_VIEW_FROM_OSSIE_YAML](https://docs.snowflake.com/en/sql-reference/stored-procedures/system_create_semantic_view_from_ossie_yaml)
 - [Snowflake Semantic Views](https://docs.snowflake.com/en/user-guide/views-semantic/overview)

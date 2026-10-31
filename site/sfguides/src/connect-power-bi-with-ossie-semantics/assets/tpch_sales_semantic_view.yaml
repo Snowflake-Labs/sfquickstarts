@@ -97,3 +97,6 @@ metrics:
 - name: order_count
   expr: COUNT(orders.o_orderkey)
   description: Number of orders
+- name: avg_order_value
+  expr: AVG(orders.o_totalprice)
+  description: Average value of a single order
