@@ -45,16 +45,7 @@ This quickstart demonstrates the core workflow on sample data: creating a Semant
 
 The end-to-end workflow will look like this:
 
-```
- Snowflake Semantic View
-   |  SYSTEM$READ_OSSIE_YAML_FROM_SEMANTIC_VIEW
-   v
- Ossie YAML  --- ossie-microsoft export --->  Power BI model.bim
-   ^                                               |
-   |  SYSTEM$CREATE_SEMANTIC_VIEW_FROM_OSSIE_YAML  |  edit a measure
-   |                                               v
- Merged Ossie YAML  <--- merge + review ---  ossie-microsoft import
-```
+![](assets/OssieDiagram.png)
 
 
 <!-- ------------------------ -->
