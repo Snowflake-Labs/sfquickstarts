@@ -280,9 +280,10 @@ Now that we have updated and validated our dbt project, let's deploy it so we ca
 3. Under Select location, select database `tasty_bytes_dbt_db` and schema `public`
 4. Under Select or create dbt project, select Create dbt project
 5. Under Enter Name, enter `tasty_bytes`
-6. (Optional) Set a Default Target, choose a dbt Version, and select an External Access Integration if your project runs `dbt deps`
-7. Scroll down and keep Auto Compile and Default Writeback set to their default values (on)
-8. Deploy!
+6. (Optional) Set a Default Target and choose a dbt Version
+7. (Optional) Under External Access Integration, select `DBT_ACCESS_INTEGRATION`, the integration you created earlier. This is only needed if your project runs `dbt deps`
+8. Scroll down and leave Auto Compile and Default Writeback set to true (their defaults)
+9. Deploy!
 
 After you deploy, the Connect menu shows the name of your dbt project object, with options to redeploy, disconnect, or view the project.
 
