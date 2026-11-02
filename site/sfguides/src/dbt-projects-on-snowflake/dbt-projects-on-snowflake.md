@@ -412,7 +412,7 @@ EXECUTE ALERT tasty_bytes_dbt_db.public.dbt_alert;
 
 #### Run history across projects
 
-To see how runs are going across your projects, go to <a href="https://app.snowflake.com/_deeplink/#/compute/history/dbt?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_content=dbt-projects-on-snowflake&utm_cta=developer-guides-deeplink" class="_deeplink">Transformation > dbt Projects</a> and select the Run History tab. Filter by Database `TASTY_BYTES_DBT_DB` to focus on this lab. It summarizes runs across your projects, showing each project's last command, last run status, when it last ran, and how many previous runs succeeded or failed.
+To see how runs are going across your projects, go to <a href="https://app.snowflake.com/_deeplink/#/compute/history/dbt?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_content=dbt-projects-on-snowflake&utm_cta=developer-guides-deeplink" class="_deeplink">Transformation > dbt Projects</a> and select the Run History tab. It summarizes runs across your projects, showing each project's last command, last run status, when it last ran, and how many previous runs succeeded or failed. Filter by Database `TASTY_BYTES_DBT_DB` to focus on this lab.
 
 ![dbt-projects-run-history](assets/dbt-projects-run-history.png)
 
