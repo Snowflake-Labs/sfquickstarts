@@ -140,11 +140,11 @@ EXECUTE CODE BUNDLE SAM_DEMO.AI.SAM_BUILD_BUNDLE
 
 1. Navigate to **AI & ML > Snowflake CoWork**
 2. Select any agent
-3. Start asking questions. The repository's [`https://github.com/Snowflake-Labs/sfguide-agentic-ai-for-asset-management/blob/main/demo_scripts/`](demo_scripts/) folder has a step-by-step script for each demo scenario.
+3. Start asking questions. The repository's [`demo_scripts/`](https://github.com/Snowflake-Labs/sfguide-agentic-ai-for-asset-management/blob/main/demo_scripts/) folder has a step-by-step script for each demo scenario.
 
-### Clean-Up
+## Clean Up
 
-Run the [`https://github.com/Snowflake-Labs/sfguide-agentic-ai-for-asset-management/blob/main/scripts/teardown.sql`](scripts/teardown.sql) to remove all the objects that is created by this setup.
+Run the [`scripts/teardown.sql`](https://github.com/Snowflake-Labs/sfguide-agentic-ai-for-asset-management/blob/main/scripts/teardown.sql) to remove all the objects that is created by this setup.
 
 
 ## Business Impact
