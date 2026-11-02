@@ -306,13 +306,21 @@ Navigate to <a href="https://app.snowflake.com/_deeplink/#/data/databases/TASTY_
 
 ![project-details](assets/dbt_project_details.png)
 
+To browse what's in the deployed project, click the View Overview dropdown and select Models. The pane lists every model with its folder path, such as `/models/marts` and `/models/staging`. Use the same dropdown to view Tests, Snapshots, Seeds, Sources, and Macros.
+
+![project-models](assets/dbt-project-models.png)
+
 #### Create Scheduled dbt Tasks
 
 Let's create tasks to regularly run and test our dbt project. 
 
 1. Navigate to the Project Details tab
-2. Click Create Schedule from the Schedules dropdown
-3. Enter a name, schedule, and profile, then click create
+2. Open the Schedules dropdown and click + Create new
+3. Under Task name, enter `tasty_bytes_hourly_run`
+4. Keep Role set to `ACCOUNTADMIN` and select warehouse `TASTY_BYTES_DBT_WH`
+5. Keep Trigger set to Schedule, and set Frequency to Hourly
+6. Set Operation to Run and keep Profile set to Project default
+7. Click Create
 
 You can also schedule from your workspace: select the calendar icon next to the dbt project menu to see existing schedules, and then select + Create new.
 
@@ -388,28 +396,40 @@ THEN
 EXECUTE ALERT tasty_bytes_dbt_db.public.dbt_alert;
 ```
 
-You can view the status or running tasks by going to <a href="https://app.snowflake.com/_deeplink/#/compute/history/tasks?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_content=dbt-projects-on-snowflake&utm_cta=developer-guides-deeplink" class="_deeplink">Transformation > Task History</a>.
+To see the results of your scheduled runs, open the project in Catalog and select the Run History tab. It charts runs over time by status and lists each run's command, status, start time, dbt version, and writeback setting. Use the Command and Run status filters to narrow the list. You can also view the status of running tasks in <a href="https://app.snowflake.com/_deeplink/#/compute/history/tasks?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_content=dbt-projects-on-snowflake&utm_cta=developer-guides-deeplink" class="_deeplink">Transformation > Task History</a>.
 
-![tasks](assets/tasks.png)
+![run-history](assets/run-history.png)
 
 ### Monitor dbt Projects
 
-You can get an overview of dbt project status from the dbt Projects activity in Snowsight. Navigate to <a href="https://app.snowflake.com/_deeplink/#/compute/history/dbt?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_content=dbt-projects-on-snowflake&utm_cta=developer-guides-deeplink" class="_deeplink">Transformation > dbt Projects</a> to view overall status of dbt Projects and quickly jump to the deployed projects.
+You can get an overview of dbt project status from the dbt Projects activity in Snowsight. Navigate to <a href="https://app.snowflake.com/_deeplink/#/compute/history/dbt?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_content=dbt-projects-on-snowflake&utm_cta=developer-guides-deeplink" class="_deeplink">Transformation > dbt Projects</a> to view overall status of dbt Projects and quickly jump to the deployed projects. The All Projects tab lists every dbt project object with its location, dbt version, and owner; filter by Location `TASTY_BYTES_DBT_DB` to find `TASTY_BYTES`. The Run History tab shows runs across all of your projects.
 
 ![dbt-projects](assets/dbt-projects.png)
 
+### Query History
 
-### Tracing
+Each dbt run is a single `EXECUTE DBT PROJECT` query, so you can inspect any individual run in Query History. From the project's Run History tab, select a run to open its query details.
+
+The Query details tab shows the SQL text that ran, followed by a dbt Run table listing every model with its start time, duration, and status. Sort by Duration to find the slowest models. The Details pane on the right shows the run's warehouse, duration, and the task that triggered it, in this case `tasty_bytes_hourly_run`.
+
+![query-history-1](assets/query-history-1.png)
+
+Scroll down to see the dbt Output, the full dbt log for the run. Select Download Build Artifacts to get the run's artifacts, such as `manifest.json`, for local debugging.
+
+![query-history-2](assets/query-history-2.png)
+
+
+### Query Telemetry
 
 dbt projects in Snowflake integrate with [Tracing and Logging](https://docs.snowflake.com/en/developer-guide/logging-tracing/logging-tracing-overview), allowing you to easily monitor and debug dbt projects. Tracing follows the OpenTelemetry standard and allows you to keep logs within a single platform. 
 
-To view tracing, go to <a href="https://app.snowflake.com/_deeplink/#/compute/history/telemetry?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_content=dbt-projects-on-snowflake&utm_cta=developer-guides-deeplink" class="_deeplink">Monitoring > Traces & Logs</a>. Click on the most recent one which should be our failed dbt test. 
+To view the trace for a run, select the Query telemetry tab on the same query. Each span shows how long it took, from the task graph and task that triggered the run, down to each dbt model and the individual SQL statements it ran. Expand a model to see where its time went, and use the Span Type filter or the legend to focus on a specific type. The Event Table at the top shows your account's active event table.
 
-![tracing](assets/tracing-details.png)
+![query-telemetry](assets/query-telemetry.png)
 
 ### Cost Monitoring
 
-Snowflake makes it easy to monitor usage across your account. To view consumption, go to Admin > Cost Management > Consumption Tab. Depending on your setup, you can create a dedicated warehouse to run dbt jobs to allow easy monitoring. 
+Snowflake makes it easy to monitor usage across your account. To view consumption, go to Admin > Cost Management > Consumption Tab. Depending on your setup, you can create a dedicated warehouse to run dbt jobs to allow easy monitoring. Filter by Service Type Warehouse and select `TASTY_BYTES_DBT_WH` to see the credits your dbt runs used and the queries behind them. 
 
 Additionally, you are able to build [resource monitors](https://docs.snowflake.com/en/user-guide/resource-monitors) and alerts based on warehouse consumption. 
 
