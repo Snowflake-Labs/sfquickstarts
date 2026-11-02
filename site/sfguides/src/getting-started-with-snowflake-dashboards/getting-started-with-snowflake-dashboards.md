@@ -4,7 +4,7 @@ categories: snowflake-site:taxonomy/solution-center/certification/quickstart, sn
 language: en
 summary: Load a synthetic revenue dataset with one SQL file, open a pre-made Snowflake Dashboards file, and explore filters, drilldown, and chart actions in a few minutes.
 environments: web
-status: Draft
+status: Published
 feedback link: https://github.com/Snowflake-Labs/sfquickstarts/issues
 fork repo link: https://github.com/Snowflake-Labs/getting-started-with-snowflake-dashboards
 
