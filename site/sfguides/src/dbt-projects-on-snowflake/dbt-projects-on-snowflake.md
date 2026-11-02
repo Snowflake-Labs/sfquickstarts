@@ -298,9 +298,15 @@ Workspaces are fully git backed. To view changes and commit, click changes from 
 ![git-changes](assets/git-changes.png)
 
 
-## Orchestration and Monitoring
+## Manage dbt Projects
 
-### Orchestrate with Tasks
+### Find your dbt project
+
+Every dbt project object in your account is listed under <a href="https://app.snowflake.com/_deeplink/#/compute/history/dbt?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_content=dbt-projects-on-snowflake&utm_cta=developer-guides-deeplink" class="_deeplink">Transformation > dbt Projects</a>. The All Projects tab is an inventory of each project with its location, dbt version, and owner. Filter by Location `TASTY_BYTES_DBT_DB` to find the `TASTY_BYTES` project you just deployed.
+
+![dbt-projects](assets/dbt-projects.png)
+
+### View project details
 
 Navigate to <a href="https://app.snowflake.com/_deeplink/#/data/databases/TASTY_BYTES_DBT_DB/schemas/PUBLIC?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_content=dbt-projects-on-snowflake&utm_cta=developer-guides-deeplink" class="_deeplink">Catalog > Database Explorer > TASTY_BYTES_DBT_DB > PUBLIC</a> > dbt Projects > TASTY_BYTES to view the project details. You can also select View project from the Connect menu in your workspace. From the Run History tab, you can view all runs associated with the project. To run the project once without a schedule, select Execute, choose an operation and profile, and then select Run.
 
@@ -309,6 +315,12 @@ Navigate to <a href="https://app.snowflake.com/_deeplink/#/data/databases/TASTY_
 To browse what's in the deployed project, click the View Overview dropdown and select Models. The pane lists every model with its folder path, such as `/models/marts` and `/models/staging`. Use the same dropdown to view Tests, Snapshots, Seeds, Sources, and Macros.
 
 ![project-models](assets/dbt-project-models.png)
+
+## Orchestration and Monitoring
+
+### Orchestrate with Tasks
+
+Now that the project is deployed, you can schedule it with tasks, either from the project details page or with SQL.
 
 #### Create Scheduled dbt Tasks
 
@@ -396,15 +408,19 @@ THEN
 EXECUTE ALERT tasty_bytes_dbt_db.public.dbt_alert;
 ```
 
-To see the results of your scheduled runs, open the project in Catalog and select the Run History tab. It charts runs over time by status and lists each run's command, status, start time, dbt version, and writeback setting. Use the Command and Run status filters to narrow the list. You can also view the status of running tasks in <a href="https://app.snowflake.com/_deeplink/#/compute/history/tasks?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_content=dbt-projects-on-snowflake&utm_cta=developer-guides-deeplink" class="_deeplink">Transformation > Task History</a>.
-
-![run-history](assets/run-history.png)
-
 ### Monitor dbt Projects
 
-You can get an overview of dbt project status from the dbt Projects activity in Snowsight. Navigate to <a href="https://app.snowflake.com/_deeplink/#/compute/history/dbt?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_content=dbt-projects-on-snowflake&utm_cta=developer-guides-deeplink" class="_deeplink">Transformation > dbt Projects</a> to view overall status of dbt Projects and quickly jump to the deployed projects. The All Projects tab lists every dbt project object with its location, dbt version, and owner; filter by Location `TASTY_BYTES_DBT_DB` to find `TASTY_BYTES`. The Run History tab shows runs across all of your projects.
+#### Run history across projects
 
-![dbt-projects](assets/dbt-projects.png)
+To see how runs are going across your projects, go to <a href="https://app.snowflake.com/_deeplink/#/compute/history/dbt?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_content=dbt-projects-on-snowflake&utm_cta=developer-guides-deeplink" class="_deeplink">Transformation > dbt Projects</a> and select the Run History tab. Filter by Database `TASTY_BYTES_DBT_DB` to focus on this lab. It summarizes runs across your projects, showing each project's last command, last run status, when it last ran, and how many previous runs succeeded or failed.
+
+![dbt-projects-run-history](assets/dbt-projects-run-history.png)
+
+#### Run history for a project
+
+To see every run of a single project, open `TASTY_BYTES` in Catalog and select the Run History tab. It charts runs over time by status and lists each run's command, status, start time, dbt version, and writeback setting. Use the Command and Run status filters to narrow the list. You can also view the status of running tasks in <a href="https://app.snowflake.com/_deeplink/#/compute/history/tasks?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_content=dbt-projects-on-snowflake&utm_cta=developer-guides-deeplink" class="_deeplink">Transformation > Task History</a>.
+
+![run-history](assets/run-history.png)
 
 ### Query History
 
