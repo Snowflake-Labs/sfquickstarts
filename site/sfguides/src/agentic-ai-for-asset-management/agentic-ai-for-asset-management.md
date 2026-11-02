@@ -1,7 +1,7 @@
 id: agentic-ai-for-asset-management
 language: en
 summary: Cortex-powered asset management agents in Snowflake CoWork
-categories: snowflake-site:taxonomy/industry/financial-services, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/snowflake-feature/ingestion/conversational-assistants, snowflake-site:taxonomy/snowflake-feature/unstructured-data-analysis, snowflake-site:taxonomy/snowflake-feature/cortex-analyst, snowflake-site:taxonomy/snowflake-feature/cortex-search, snowflake-site:taxonomy/snowflake-feature/snowflake-intelligence, snowflake-site:taxonomy/snowflake-feature/marketplace-and-integrations, snowflake-site:taxonomy/snowflake-feature/snowpark
+categories: snowflake-site:taxonomy/industry/financial-services, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/snowflake-feature/ingestion/conversational-assistants, snowflake-site:taxonomy/snowflake-feature/unstructured-data-analysis, snowflake-site:taxonomy/snowflake-feature/cortex-agent, snowflake-site:taxonomy/snowflake-feature/cortex-analyst, snowflake-site:taxonomy/snowflake-feature/cortex-search, snowflake-site:taxonomy/snowflake-feature/snowflake-cowork, snowflake-site:taxonomy/snowflake-feature/marketplace-and-integrations, snowflake-site:taxonomy/snowflake-feature/snowpark
 environments: web
 status: Published
 authors: Mats Stellwall, Dureti Shemsi
@@ -112,7 +112,7 @@ The Private Credit Copilot calls the credit risk model directly through a what-i
 
 ### Step 2: Run Setup (45-60 minutes)
 
-1. Open [`https://github.com/Snowflake-Labs/sfguide-agentic-ai-for-asset-management/blob/main/scripts/setup.sql`](scripts/setup.sql) in the workspace.
+1. Open [`scripts/setup.sql`](https://github.com/Snowflake-Labs/sfguide-agentic-ai-for-asset-management/blob/main/scripts/setup.sql) in the workspace.
 2. Set `$ws_name` in Section 0, at the top of the script, to the name of the workspace you created in Step 1. Run `SHOW WORKSPACES IN ACCOUNT` if you need to check the name. This is the only value you need to edit.
 3. Execute the whole script as `ACCOUNTADMIN`.
 
@@ -140,11 +140,11 @@ EXECUTE CODE BUNDLE SAM_DEMO.AI.SAM_BUILD_BUNDLE
 
 1. Navigate to **AI & ML > Snowflake CoWork**
 2. Select any agent
-3. Start asking questions. The repository's [`demo_scripts/`](https://github.com/Snowflake-Labs/sfguide-agentic-ai-for-asset-management/blob/main/demo_scripts/) folder has a step-by-step script for each demo scenario.
+3. Start asking questions. The repository's [`demo_scripts/`](https://github.com/Snowflake-Labs/sfguide-agentic-ai-for-asset-management/tree/main/docs/demo_scripts/) folder has a step-by-step script for each demo scenario.
 
 ## Clean Up
 
-Run the [`scripts/teardown.sql`](https://github.com/Snowflake-Labs/sfguide-agentic-ai-for-asset-management/blob/main/scripts/teardown.sql) to remove all the objects that is created by this setup.
+Run the [`scripts/teardown.sql`](https://github.com/Snowflake-Labs/sfguide-agentic-ai-for-asset-management/blob/main/scripts/teardown.sql) to remove all the objects that are created by this setup.
 
 
 ## Business Impact
