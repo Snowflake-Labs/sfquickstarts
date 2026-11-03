@@ -18,7 +18,7 @@ In this Quickstart you migrate a SAS `PROC HPFOREST` PD model to **XGBoost on Sn
 
 ![Solution architecture](assets/solution-architecture.png)
 
-The complete notebook is in the companion GitHub repository: **[Snowflake-Labs/sfguide-credit-risk-pd-model-snowflake-ml](https://github.com/Snowflake-Labs/sfguide-credit-risk-pd-model-snowflake-ml)**. Each step below shows the notebook code with an explanation, so you can follow along cell by cell.
+The complete notebook is in the companion GitHub repository: **[Snowflake-Labs/sfguide-credit-risk-pd-model-snowflake-ml](https://github.com/sfc-gh-gghanakota/sfquickstarts/blob/sfguide-credit-risk-pd-model-snowflake-ml/site/sfguides/src/credit-risk-pd-model-snowflake-ml/assets/credit_risk_probability_of_default_model.ipynb)**. Each step below shows the notebook code with an explanation, so you can follow along cell by cell.
 
 ### What You Will Learn
 - How to convert a SAS `PROC HPFOREST` PD model to Python with Cortex Code, and map its hyperparameters to `XGBClassifier`
