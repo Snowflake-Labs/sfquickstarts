@@ -33,6 +33,7 @@ Each pipeline is also a DCM project. Before anything changes in your account, yo
 ### What You'll Need
 - The ACCOUNTADMIN role, or an admin who can run the role and grants block in the next step. Creating the warehouse, compute pool, and database requires ACCOUNTADMIN.
 - Access to Workspaces in Snowsight
+- The [companion repo](https://github.com/Snowflake-Labs/sfguide-getting-started-with-pipeline-builder), which you clone into a workspace in the next step. It's public, so you don't need a GitHub account.
 
 ### What You'll Build
 - A Tasty Bytes daily sales pipeline: a task graph that cleans raw food truck orders, then builds a daily sales table per truck, on a 6:00 AM schedule
@@ -45,112 +46,55 @@ RAW.ORDERS ──> clean_orders_task (notebook) ──> STAGING.ORDERS_CLEAN
 ```
 
 <!-- ------------------------ -->
-## Setup: Role & Grants
+## Setup
 
-Before we begin, we'll create a dedicated role for this Quickstart, plus the warehouse, compute pool, and database it uses. If you don't have ACCOUNTADMIN access in your Snowflake account, send the SQL block below to your Snowflake admin. They can review and run it to provision everything on your behalf.
+In this step, you clone the companion repo into a workspace, then run its setup script to create the role, warehouse, compute pool, database, and sample data this Quickstart uses. If you don't have ACCOUNTADMIN access, send the two SQL steps below to your Snowflake admin to run on your behalf.
 
-The guide role owns the database, so it can create the schemas, tables, tasks, task graphs, Code Bundles, and DCM project the pipeline needs. Notebooks in Pipeline Builder run on a compute pool, so the role also gets usage on a small pool.
+### Create the Git API integration
 
-Replace `<your_username>` with your Snowflake user name, then run the block in a SQL file in Workspaces or in a Snowsight worksheet.
+Workspaces connect to GitHub through an API integration. As ACCOUNTADMIN, run this in a SQL file in Workspaces or in a Snowsight worksheet:
 
 ```sql
--- Run as ACCOUNTADMIN
 USE ROLE ACCOUNTADMIN;
 
--- 1. Create the role for this Quickstart
-CREATE ROLE IF NOT EXISTS TASTY_PIPELINE_QS_ROLE;
-
--- 2. Grant the role to the user who will run the Quickstart
-GRANT ROLE TASTY_PIPELINE_QS_ROLE TO USER <your_username>;
-
--- 3. Warehouse privileges
-CREATE WAREHOUSE IF NOT EXISTS TASTY_PIPELINE_QS_WH
-  WAREHOUSE_SIZE = 'XSMALL'
-  AUTO_SUSPEND = 60
-  AUTO_RESUME = TRUE
-  INITIALLY_SUSPENDED = TRUE;
-GRANT USAGE, OPERATE ON WAREHOUSE TASTY_PIPELINE_QS_WH TO ROLE TASTY_PIPELINE_QS_ROLE;
-
--- 4. Database & schema privileges
--- The role owns the database, which covers CREATE SCHEMA, CREATE TABLE,
--- CREATE TASK, CREATE CODE BUNDLE, and CREATE DCM PROJECT.
-CREATE DATABASE IF NOT EXISTS TASTY_PIPELINE_QS_DB;
-GRANT OWNERSHIP ON DATABASE TASTY_PIPELINE_QS_DB TO ROLE TASTY_PIPELINE_QS_ROLE COPY CURRENT GRANTS;
-
--- 5. Integration privileges
--- N/A for this guide
-
--- 6. Future grants
--- N/A for this guide
-
--- 7. Stage privileges
--- N/A for this guide
-
--- 8. Guide-specific grants
--- Compute pool for notebook tasks
-CREATE COMPUTE POOL IF NOT EXISTS TASTY_PIPELINE_QS_POOL
-  MIN_NODES = 1
-  MAX_NODES = 1
-  INSTANCE_FAMILY = CPU_X64_XS
-  AUTO_RESUME = TRUE
-  AUTO_SUSPEND_SECS = 300
-  INITIALLY_SUSPENDED = TRUE;
-GRANT USAGE, MONITOR ON COMPUTE POOL TASTY_PIPELINE_QS_POOL TO ROLE TASTY_PIPELINE_QS_ROLE;
-
--- Run tasks and task graphs
-GRANT EXECUTE TASK ON ACCOUNT TO ROLE TASTY_PIPELINE_QS_ROLE;
-
--- 9. Switch into the role for the rest of the Quickstart
-USE ROLE TASTY_PIPELINE_QS_ROLE;
+CREATE API INTEGRATION IF NOT EXISTS TASTY_PIPELINE_QS_GIT_INT
+  API_PROVIDER = git_https_api
+  API_ALLOWED_PREFIXES = ('https://github.com/Snowflake-Labs')
+  ENABLED = TRUE;
 ```
 
-> **Note:** If you don't have ACCOUNTADMIN access, send the SQL block above to your Snowflake admin to run on your behalf. Once the role is granted, run `USE ROLE TASTY_PIPELINE_QS_ROLE;` and continue with the Quickstart.
+### Get the companion repo
 
-### Create the schemas and sample data
+1. In Snowsight, select **Projects** » **Workspaces**.
+2. In the **Workspaces** menu, select **From Git repository**.
+3. For **Repository URL**, enter `https://github.com/Snowflake-Labs/sfguide-getting-started-with-pipeline-builder`.
+4. For **API Integration**, select `TASTY_PIPELINE_QS_GIT_INT`.
+5. Select **Public repository**.
+6. Select **Create**.
 
-Next, as the guide role, create the schemas for each layer of the pipeline and seed about 5,000 Tasty Bytes orders. The seed data deliberately includes some duplicate orders and some invalid rows, so the cleaning notebook has real work to do.
+The workspace opens with **setup.sql**, **cleanup.sql**, **01_clean_orders.ipynb**, and **02_daily_sales.ipynb**.
 
-```sql
-USE ROLE TASTY_PIPELINE_QS_ROLE;
-USE WAREHOUSE TASTY_PIPELINE_QS_WH;
+> **Important:** The repo gets fixes over time, so pull the latest changes now, before you start. Once you move the notebooks into your pipeline's folder later in this Quickstart, your workspace has local changes, and pulling again can conflict with them.
 
-CREATE SCHEMA IF NOT EXISTS TASTY_PIPELINE_QS_DB.RAW;
-CREATE SCHEMA IF NOT EXISTS TASTY_PIPELINE_QS_DB.STAGING;
-CREATE SCHEMA IF NOT EXISTS TASTY_PIPELINE_QS_DB.ANALYTICS;
-CREATE SCHEMA IF NOT EXISTS TASTY_PIPELINE_QS_DB.PIPELINE;
+### Run the setup script
 
--- About 5,000 orders across 20 trucks in 5 cities over the last 30 days
-CREATE OR REPLACE TABLE TASTY_PIPELINE_QS_DB.RAW.ORDERS AS
-SELECT
-  SEQ4() + 1 AS order_id,
-  UNIFORM(1, 20, RANDOM()) AS truck_id,
-  DECODE(UNIFORM(1, 5, RANDOM()),
-    1, 'Seattle', 2, 'Boston', 3, 'Denver', 4, 'Austin', 'San Mateo') AS city,
-  DATEADD('minute', -UNIFORM(0, 43200, RANDOM()), CURRENT_TIMESTAMP()) AS order_ts,
-  ROUND(UNIFORM(500, 6000, RANDOM()) / 100, 2) AS order_total
-FROM TABLE(GENERATOR(ROWCOUNT => 5000));
+Open **setup.sql**, replace `<your_username>` with your Snowflake user name, and run the whole file as ACCOUNTADMIN.
 
--- Duplicate 200 orders
-INSERT INTO TASTY_PIPELINE_QS_DB.RAW.ORDERS
-SELECT * FROM TASTY_PIPELINE_QS_DB.RAW.ORDERS SAMPLE (200 ROWS);
+Here's what the script does:
 
--- Add 50 invalid orders with no timestamp and a negative total
-INSERT INTO TASTY_PIPELINE_QS_DB.RAW.ORDERS
-SELECT 900000 + SEQ4(), 1, 'Seattle', NULL, -1
-FROM TABLE(GENERATOR(ROWCOUNT => 50));
-
-SELECT COUNT(*) AS raw_rows FROM TASTY_PIPELINE_QS_DB.RAW.ORDERS;
-```
-
-Here's what the code does:
-
+- Creates the `TASTY_PIPELINE_QS_ROLE` role and grants it to you and to `SYSADMIN`
+- Creates the `TASTY_PIPELINE_QS_WH` warehouse and the `TASTY_PIPELINE_QS_POOL` compute pool. Notebooks in Pipeline Builder run on a compute pool.
+- Creates the `TASTY_PIPELINE_QS_DB` database and makes the guide role its owner, so the role can create the schemas, tables, tasks, task graphs, Code Bundles, and DCM project the pipeline needs
+- Grants the guide role usage on the Git API integration and `EXECUTE TASK` on the account
 - Creates a RAW, STAGING, ANALYTICS, and PIPELINE schema. The PIPELINE schema holds the pipeline's tasks, task graph, Code Bundle, and DCM project.
-- Generates 5,000 random orders with a truck, city, timestamp, and order total
-- Adds 200 duplicate orders and 50 invalid orders for the pipeline to clean up
+- Seeds about 5,000 Tasty Bytes orders, plus 200 duplicate orders and 50 invalid orders for the pipeline to clean up
+- Creates a `RUN_LOG` table that the optional Advanced modules write to
 
-You should see `raw_rows` = `5250`.
+The last statement returns `raw_rows` = `5250`.
 
-> **Important:** Pipeline Builder deploys with the role that's active in your Snowsight session. Before you continue, switch your Snowsight role to **TASTY_PIPELINE_QS_ROLE** from the user menu in the lower left.
+### Switch to the guide role
+
+> **Important:** Pipeline Builder sets a pipeline's owner role from the role in your Snowsight user menu when you create the pipeline, and every deployment runs as that role. Before you continue, select your name in the lower-left corner, select **Switch role**, and select **TASTY_PIPELINE_QS_ROLE**. If you create the pipeline as ACCOUNTADMIN, your deployments and runs fail with privilege errors. See Troubleshooting.
 
 <!-- ------------------------ -->
 ## Create the Pipeline
@@ -175,35 +119,13 @@ When you add your first task, Pipeline Builder also creates **pipeline.yml**, wh
 
 ![Pipeline_builder_quickstart project folder](assets/project-folder.png)
 
-### Add two notebooks
+Open **manifest.yml** and confirm that the target's `project_owner` is `TASTY_PIPELINE_QS_ROLE`. If it shows another role, such as `ACCOUNTADMIN`, see Troubleshooting before you continue.
 
-Now add the two notebooks your teammate has been running by hand. Create them in the **Pipeline_builder_quickstart** folder, not in **sources/** or **out/**. Pipeline Builder can't turn files in those two folders into tasks.
+### Move the notebooks into the pipeline
 
-In the file explorer, create a notebook named **01_clean_orders.ipynb** in the **Pipeline_builder_quickstart** folder. Select **+ SQL** to add a single SQL cell that removes duplicate and invalid orders and writes the result to a staging table:
+Now add the two notebooks your teammate has been running by hand. They came with the companion repo, at the root of your workspace. Pipeline Builder can only turn files inside the pipeline's project folder into tasks, so move them there first.
 
-```sql
-CREATE OR REPLACE TABLE TASTY_PIPELINE_QS_DB.STAGING.ORDERS_CLEAN AS
-SELECT DISTINCT order_id, truck_id, city, order_ts, order_total
-FROM TASTY_PIPELINE_QS_DB.RAW.ORDERS
-WHERE order_ts IS NOT NULL
-  AND order_total > 0;
-```
-
-![Notebook with a single SQL cell](assets/notebook-sql-cell.png)
-
-Then create a second notebook named **02_daily_sales.ipynb** in the same folder, with a single SQL cell that builds the table analysts read every morning:
-
-```sql
-CREATE OR REPLACE TABLE TASTY_PIPELINE_QS_DB.ANALYTICS.DAILY_TRUCK_SALES AS
-SELECT
-    DATE(order_ts)   AS sales_date,
-    truck_id,
-    city,
-    COUNT(*)         AS orders,
-    SUM(order_total) AS revenue
-FROM TASTY_PIPELINE_QS_DB.STAGING.ORDERS_CLEAN
-GROUP BY ALL;
-```
+In the file explorer, drag **01_clean_orders.ipynb** and **02_daily_sales.ipynb** into the **Pipeline_builder_quickstart** folder. Drop them at the root of the folder, not in **sources/** or **out/**. Pipeline Builder can't turn files in those two folders into tasks.
 
 Here's what the notebooks do:
 
@@ -211,7 +133,9 @@ Here's what the notebooks do:
 - **02_daily_sales.ipynb** aggregates the clean orders into one row per day, truck, and city in `ANALYTICS.DAILY_TRUCK_SALES`
 - Both use fully qualified table names, because a notebook that runs as a task doesn't have a current database or schema
 
-> **Note:** You can run each cell interactively first to check it works. Running it now also creates the tables early, which is fine: the pipeline replaces them on every run.
+![Notebook with a single SQL cell](assets/notebook-sql-cell.png)
+
+> **Note:** You can open each notebook and run its cell to check it works. Running it now also creates the tables early, which is fine: the pipeline replaces them on every run.
 
 <!-- ------------------------ -->
 ## Turn Notebooks into Tasks
@@ -250,9 +174,9 @@ In its drawer, confirm that **Name** is `TASTY_PIPELINE_QS_DB.PIPELINE.daily_sal
 
 Then select the **clean_orders_task** card and check its **Warehouse** again. Connecting the tasks can clear it. If it's empty, set it to `TASTY_PIPELINE_QS_WH`.
 
-![Two connected tasks on the canvas](assets/two-tasks-connected.png)
-
 You now have two connected cards on the canvas. You can also connect cards by dragging from the outgoing connector on the right of one card to the incoming connector on the left of another.
+
+![Two connected tasks on the canvas](assets/two-tasks-connected.png)
 
 <!-- ------------------------ -->
 ## Schedule the Task Graph
@@ -279,8 +203,9 @@ You can open the same settings from any task: select the task, select the **Grap
 Nothing you've built exists in your account yet. A pipeline doesn't run until you deploy it, and deploying starts with a plan that shows exactly what will change.
 
 1. Select **Deploy** in the upper-right corner of the canvas. If you don't see it, collapse the workspace's bottom pane.
-2. In the **Review planned changes** dialog, review the list. This first deployment creates the Code Bundle, the **clean_orders_task** and **daily_sales_task** tasks, and the **TASTY_DAILY_SALES_GRAPH** task graph. It also lists an **ALTER** on **TASTY_PIPELINE_QS_ROLE**.
-![Review planned changes dialog](assets/review-planned-changes.png)
+2. In the **Review planned changes** dialog, review the list. This first deployment creates the Code Bundle, the **clean_orders_task** and **daily_sales_task** tasks, and the **TASTY_DAILY_SALES_GRAPH** task graph. It also lists an **ALTER** on **TASTY_PIPELINE_QS_ROLE**. Confirm that this row names `TASTY_PIPELINE_QS_ROLE`. If it names `ACCOUNTADMIN`, the pipeline was created with the wrong role. Cancel and see Troubleshooting.
+
+   ![Review planned changes dialog](assets/review-planned-changes.png)
 
 3. Select **Deploy**.
 
@@ -295,11 +220,12 @@ The graph is deployed but suspended. Let's run it once now instead of waiting fo
 
 1. Select **Deployed Project**. The DCM project opens in Snowsight on the **Objects** tab, which lists the tasks, task graph, and Code Bundle the project manages.
 
-![Deployed project objects](assets/deployed-project-objects.png)
+   ![Deployed project objects](assets/deployed-project-objects.png)
+
 2. Select **TASTY_DAILY_SALES_GRAPH** to open its details page.
 3. Select the **Graph** tab, and then select the **Run Task Graph** (play) icon in the toolbar above the graph.
 
-![Run Task Graph icon on the Graph tab](assets/run-task-graph.png)
+   ![Run Task Graph icon on the Graph tab](assets/run-task-graph.png)
 
 4. To watch the run while it's in progress, open a task's details page (for example, select **clean_orders_task** on the **Objects** tab of the DCM project) and select its **Run History** tab. The task graph's **Overview** tab shows the run once it finishes.
 
@@ -360,7 +286,7 @@ LIMIT 5;
 ```
 
 5. If you used **Create**, connect **daily_sales_task** to the new card.
-6. Select **Deploy**. The plan shows **TOP_TRUCKS_TASK** as a task to create and an **ALTER** on **TASTY_PIPELINE_QS_ROLE**. Select **Deploy**.
+6. Select **Deploy**. The plan shows **TOP_TRUCKS_TASK** as a task to create and an **ALTER** on **TASTY_PIPELINE_QS_ROLE**. Confirm the **ALTER** row still names `TASTY_PIPELINE_QS_ROLE`, and then select **Deploy**.
 
 ![Plan for adding a task](assets/plan-add-task.png)
 
@@ -417,15 +343,7 @@ Before you start, make sure you're back on the **Pipeline_builder_quickstart** c
 
 For every task you add in these modules, set **Warehouse** to `TASTY_PIPELINE_QS_WH` under **Execution** on the task's **General** tab, as you did for the first two tasks.
 
-First, create a small log table that several modules write to:
-
-```sql
-CREATE TABLE IF NOT EXISTS TASTY_PIPELINE_QS_DB.ANALYTICS.RUN_LOG (
-  logged_at TIMESTAMP_LTZ DEFAULT CURRENT_TIMESTAMP(),
-  source    STRING,
-  message   STRING
-);
-```
+Several modules write to `TASTY_PIPELINE_QS_DB.ANALYTICS.RUN_LOG`, a small log table that **setup.sql** already created. It has three columns: `logged_at`, `source`, and `message`.
 
 ### A1: Branch on a Return Value
 
@@ -564,7 +482,8 @@ FROM TASTY_PIPELINE_QS_DB.ANALYTICS.DAILY_TRUCK_SALES;
 4. Open the task graph settings: select **Objects** on the canvas toolbar, select **Task graphs**, and then select **TASTY_DAILY_SALES_GRAPH**. You can also select any task in the graph, select its **Graph** tab, and then select **Edit graph settings**.
 5. Under **Task graph settings**, for **Finalizer task**, select **RUN_SUMMARY**.
 
-![Finalizer task setting](assets/finalizer-setting.png)
+   ![Finalizer task setting](assets/finalizer-setting.png)
+
 6. Deploy, and then run the task graph.
 
 When the run finishes, check `RUN_LOG`:
@@ -580,45 +499,32 @@ The last row is from `RUN_SUMMARY`, written after every other task in the graph 
 ![Task graph with a finalizer](assets/finalizer-graph.png)
 
 <!-- ------------------------ -->
+## Troubleshooting
+
+Most problems in this Quickstart come from creating the pipeline with a role other than `TASTY_PIPELINE_QS_ROLE`. The pipeline's owner role is set when you create it, so switching your Snowsight role afterward doesn't change which role deploys.
+
+| Error or symptom | Cause | Fix |
+| --- | --- | --- |
+| Creating the pipeline fails with "ACCOUNTADMIN must have CREATE DCM PROJECT on SCHEMA TASTY_PIPELINE_QS_DB.PIPELINE." | Your Snowsight role was ACCOUNTADMIN when you created the pipeline | Switch your Snowsight role to **TASTY_PIPELINE_QS_ROLE**, and create the pipeline again |
+| Deployment fails on `CREATE NOTEBOOK PROJECT` or `CREATE TASK`, and the error names ACCOUNTADMIN | The pipeline's `project_owner` in **manifest.yml** is `ACCOUNTADMIN` | Change the target's owner to `TASTY_PIPELINE_QS_ROLE`: open the DCM project controls in the bottom pane, open the target menu, and select the pencil icon. Or delete the pipeline folder and create it again as the guide role. |
+| **Review planned changes** shows an **ALTER** on **ACCOUNTADMIN** | Same as above | Same as above |
+| Running the graph fails with "Cannot execute task, USAGE privilege on the task's schema and database must be granted to owner role." | The tasks are owned by a role, such as ACCOUNTADMIN, that has no usage on the guide database | Fix the owner role as above and redeploy, so the guide role owns the tasks |
+| You can't select `TASTY_PIPELINE_QS_GIT_INT` when you create the workspace | Your Snowsight role has no usage on the integration | Create the workspace as ACCOUNTADMIN, or run **setup.sql** first and switch to the guide role |
+
+<!-- ------------------------ -->
 ## Clean Up
 
-Let's remove everything this Quickstart created. Start with the DCM project, because it knows every object it manages.
+Let's remove everything this Quickstart created. **cleanup.sql** in the companion repo does it in order. Start with the DCM project, because it knows every object it manages.
 
-As the guide role, purge the project. `PURGE` runs a deployment with no definitions, so it drops every task, task graph, and Code Bundle the project manages, and records the purge in the project's deployment history. Purge doesn't drop the project object itself, so drop it next.
-
-```sql
-USE ROLE TASTY_PIPELINE_QS_ROLE;
-
-EXECUTE DCM PROJECT TASTY_PIPELINE_QS_DB.PIPELINE.PIPELINE_BUILDER_QUICKSTART PURGE AS "quickstart cleanup";
-DROP DCM PROJECT IF EXISTS TASTY_PIPELINE_QS_DB.PIPELINE.PIPELINE_BUILDER_QUICKSTART;
-```
-
-If you deployed the CoCo pipeline, purge and drop it the same way:
-
-```sql
-EXECUTE DCM PROJECT TASTY_PIPELINE_QS_DB.PIPELINE.TASTY_MENU_POPULARITY PURGE AS "quickstart cleanup";
-DROP DCM PROJECT IF EXISTS TASTY_PIPELINE_QS_DB.PIPELINE.TASTY_MENU_POPULARITY;
-```
+1. Open **cleanup.sql**. If you deployed the CoCo pipeline, uncomment its two lines.
+2. Run the first part as the guide role. `PURGE` runs a deployment with no definitions, so it drops every task, task graph, and Code Bundle the project manages, and records the purge in the project's deployment history. Purge doesn't drop the project object itself, so the script drops it next.
+3. Run the second part as ACCOUNTADMIN. It drops the database, compute pool, warehouse, Git API integration, and role. Dropping the database also removes the sample data and the tables your notebooks created, which the DCM project didn't manage.
 
 > **Important:** Purge before you drop. Dropping a DCM project without purging it first leaves its tasks and task graphs in your account as unmanaged objects.
 
 > **Note:** If your DCM project names differ, check them with `SHOW DCM PROJECTS IN SCHEMA TASTY_PIPELINE_QS_DB.PIPELINE;`.
 
-Then, as ACCOUNTADMIN, drop the database, compute pool, warehouse, and role. Dropping the database also removes the sample data and the tables your notebooks created, which the DCM project didn't manage.
-
-```sql
-USE ROLE ACCOUNTADMIN;
-
-DROP DATABASE IF EXISTS TASTY_PIPELINE_QS_DB;
-ALTER COMPUTE POOL IF EXISTS TASTY_PIPELINE_QS_POOL STOP ALL;
-DROP COMPUTE POOL IF EXISTS TASTY_PIPELINE_QS_POOL;
-DROP WAREHOUSE IF EXISTS TASTY_PIPELINE_QS_WH;
-
--- Drop the role created for this Quickstart
-DROP ROLE IF EXISTS TASTY_PIPELINE_QS_ROLE;
-```
-
-Finally, in your workspace, delete the **Pipeline_builder_quickstart** and **tasty_menu_popularity** folders.
+Finally, delete the workspace you created from the companion repo.
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
@@ -634,6 +540,7 @@ Tasty Bytes' daily sales table no longer depends on someone remembering to run t
 - How to purge a DCM project to clean up everything it manages
 
 ### Resources
+- [Companion repo](https://github.com/Snowflake-Labs/sfguide-getting-started-with-pipeline-builder)
 - [Pipeline Builder](https://docs.snowflake.com/en/user-guide/pipeline-builder/pipeline-builder-overview)
 - [Build and configure pipelines with Pipeline Builder](https://docs.snowflake.com/en/user-guide/pipeline-builder/pipeline-builder-build)
 - [Run tasks conditionally](https://docs.snowflake.com/en/user-guide/pipeline-builder/pipeline-builder-conditions)
