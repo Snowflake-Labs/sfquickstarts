@@ -1,7 +1,7 @@
 /*==============================================================================
-  Credit Risk PD Model — SAS PROC HPFOREST
+  Credit Risk PD Model — SAS PROC GRADBOOST
   
-  Purpose: Train a Probability of Default model using Random Forest
+  Purpose: Train a Probability of Default model using Gradient Boosting
            on loan-level behavioral and macroeconomic features.
   
   Target:  DEFAULT_FLAG (1 = 90+ DPD, 0 = Current/30/60 DPD)
@@ -79,18 +79,19 @@ data &OUT_LIB..PD_TRAIN &OUT_LIB..PD_TEST;
 run;
 
 /* -----------------------------------------------------------------
-   Step 3: Train PROC HPFOREST — Random Forest PD Model
+   Step 3: Train PROC GRADBOOST — Gradient Boosting PD Model
    ----------------------------------------------------------------- */
 
-proc hpforest data=&OUT_LIB..PD_TRAIN
-    maxtrees=200
-    vars_to_try=5
+proc gradboost data=&OUT_LIB..PD_TRAIN
+    ntrees=200
+    learningrate=0.1
     maxdepth=6
-    leafsize=20
+    vars_to_try=5
+    minleafsize=20
     seed=42;
 
     /* Target variable */
-    target DEFAULT_FLAG / level=binary;
+    target DEFAULT_FLAG / level=nominal;
 
     /* Behavioral features (interval = continuous) */
     input VANTAGE_SCORE_3
@@ -109,8 +110,8 @@ proc hpforest data=&OUT_LIB..PD_TRAIN
           CPI_INDEX
           / level=interval;
 
-    /* Save model for scoring */
-    save file="/models/pd_hpforest_model.bin";
+    /* Save model as an analytic store for scoring */
+    savestate rstore=&OUT_LIB..PD_GRADBOOST_STORE;
 
     /* Output variable importance */
     ods output VariableImportance = &OUT_LIB..PD_IMPORTANCE;
@@ -121,10 +122,11 @@ run;
    Step 4: Score Test Set
    ----------------------------------------------------------------- */
 
-proc hp4score data=&OUT_LIB..PD_TEST;
-    id TRADE_ID ARCHIVE_DATE DEFAULT_FLAG;
-    score file="/models/pd_hpforest_model.bin"
-          out=&OUT_LIB..PD_SCORED;
+proc astore;
+    score data=&OUT_LIB..PD_TEST
+          rstore=&OUT_LIB..PD_GRADBOOST_STORE
+          out=&OUT_LIB..PD_SCORED
+          copyvars=(TRADE_ID ARCHIVE_DATE DEFAULT_FLAG);
 run;
 
 /* -----------------------------------------------------------------
@@ -155,17 +157,17 @@ run;
 /* 
    NOTE: In the SAS environment, model metrics are manually recorded
    in an Excel tracker. There is no native experiment tracking, model
-   registry, or automated monitoring. The model binary (.bin) is stored
-   on a shared filesystem with version-named directories.
+   registry, or automated monitoring. The analytic store (model binary) is
+   kept in version-named locations on shared storage.
    
    This entire workflow — from feature generation through monitoring —
    is replaced by Snowflake ML's integrated platform:
    
-   SAS PROC HPFOREST  →  XGBClassifier on Snowflake
+   SAS PROC GRADBOOST →  XGBClassifier on Snowflake
    SAS macros          →  Feature Store (Feature Views + Dynamic Tables)
    Manual freezes      →  Versioned Datasets
    Excel tracking      →  Experiment Tracking
-   .bin files          →  Model Registry (versions, aliases, RBAC)
+   Analytic stores     →  Model Registry (versions, aliases, RBAC)
    Quarterly reports   →  Model Monitors (continuous drift detection)
    Cron scripts        →  Task DAGs
 */
