@@ -1,17 +1,17 @@
 """
 Credit Risk PD Model — Python/XGBoost on Snowflake
-Converted from SAS PROC HPFOREST by Cortex Code (CoCo)
+Converted from SAS PROC GRADBOOST by Cortex Code (CoCo)
 
-SAS Source:  sas_pd_model.sas (PROC HPFOREST, maxtrees=200, maxdepth=6)
+SAS Source:  sas_pd_model.sas (PROC GRADBOOST, ntrees=200, maxdepth=6)
 Python Target: XGBClassifier with Snowflake ML platform integration
 
 Conversion mapping:
-    PROC HPFOREST (maxtrees=200, maxdepth=6)  →  XGBClassifier(n_estimators=200, max_depth=6)
+    PROC GRADBOOST (ntrees=200, maxdepth=6)   →  XGBClassifier(n_estimators=200, max_depth=6)
     PROC SQL joins + SAS macros                →  Feature Store (Feature Views + Dynamic Tables)
     Manual dataset freezes                     →  fs.generate_dataset() — versioned, immutable
     ODS OUTPUT + Excel tracker                 →  Experiment Tracking (log_params, log_metrics)
-    .bin file on shared filesystem             →  Model Registry (versions, aliases, RBAC)
-    PROC HP4SCORE                              →  model.run() on warehouse compute
+    Analytic store on shared storage           →  Model Registry (versions, aliases, RBAC)
+    PROC ASTORE                                →  model.run() on warehouse compute
 """
 
 from snowflake.snowpark.context import get_active_session
@@ -95,7 +95,7 @@ dataset = fs.generate_dataset(
 
 # ---------------------------------------------------------------
 # Step 3: Train XGBoost
-# Replaces: PROC HPFOREST maxtrees=200 maxdepth=6 vars_to_try=5
+# Replaces: PROC GRADBOOST ntrees=200 learningrate=0.1 maxdepth=6 vars_to_try=5
 # ---------------------------------------------------------------
 
 train_pdf = dataset.read.to_snowpark_dataframe().to_pandas()
@@ -114,16 +114,17 @@ X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.2, random_state=42, stratify=y
 )
 
-# XGBoost hyperparameters mapped from SAS PROC HPFOREST:
-#   maxtrees=200  →  n_estimators=200
-#   maxdepth=6    →  max_depth=6
-#   vars_to_try=5 →  colsample_bytree ≈ 5/11 features
-#   leafsize=20   →  min_child_weight (approx)
+# XGBoost hyperparameters mapped from SAS PROC GRADBOOST:
+#   ntrees=200        →  n_estimators=200
+#   learningrate=0.1  →  learning_rate=0.1
+#   maxdepth=6        →  max_depth=6
+#   vars_to_try=5     →  colsample_bynode = 5/11 (features tried per split)
+#   minleafsize=20    →  min_child_weight (approx)
 model = XGBClassifier(
     n_estimators=200,
     max_depth=6,
     learning_rate=0.1,
-    colsample_bytree=5 / len(FEATURE_COLS),
+    colsample_bynode=5 / len(FEATURE_COLS),
     min_child_weight=20,
     objective="binary:logistic",
     eval_metric="auc",
@@ -148,7 +149,7 @@ print(f"KS:   {ks_stat:.4f}")
 
 # ---------------------------------------------------------------
 # Step 5: Register in Model Registry
-# Replaces: save file="/models/pd_hpforest_model.bin" + filesystem
+# Replaces: savestate rstore=PD_GRADBOOST_STORE + shared storage
 # ---------------------------------------------------------------
 
 reg = Registry(session=session, database_name="CREDIT_RISK_ML", schema_name="PD_MODEL")
@@ -158,14 +159,14 @@ mv = reg.log_model(
     model_name="PD_XGB_MODEL",
     version_name="V1",
     sample_input_data=X_test.head(5),
-    comment="PD model — XGBoost migrated from SAS PROC HPFOREST",
+    comment="PD model — XGBoost migrated from SAS PROC GRADBOOST",
     metrics={"auc": auc, "gini": gini, "ks": ks_stat}
 )
 mv.set_alias("champion")
 
 # ---------------------------------------------------------------
 # Step 6: Batch Scoring
-# Replaces: PROC HP4SCORE
+# Replaces: PROC ASTORE
 # ---------------------------------------------------------------
 
 champion = reg.get_model("PD_XGB_MODEL").default
