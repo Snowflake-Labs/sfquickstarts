@@ -57,7 +57,7 @@ The complete notebook is in the companion GitHub repository: **[Snowflake-Labs/s
 The notebook reads `ANALYTIC_DATASET_DEMOSAMPLE.DATASET.ANALYTICSSAMPLE_LATEST` and `FRED_FEDERAL_RESERVE_ECONOMIC_DATA_SERIES_OBSERVATIONS.FRED.FRED_SERIES_OBSERVATIONS_VW`. If you choose different database names, update those references.
 
 ### Import the notebook
-1. Download `credit_risk_probability_of_default_model.ipynb` from the [GitHub repository](https://github.com/Snowflake-Labs/sfguide-credit-risk-pd-model-snowflake-ml).
+1. Download `credit_risk_probability_of_default_model.ipynb` from the [GitHub repository](https://github.com/sfc-gh-gghanakota/sfquickstarts/blob/sfguide-credit-risk-pd-model-snowflake-ml/site/sfguides/src/credit-risk-pd-model-snowflake-ml/assets/credit_risk_probability_of_default_model.ipynb).
 2. In Snowsight, go to **Projects > Notebooks**, choose **Import .ipynb file**, and select the downloaded notebook.
 3. Make sure these packages are available to the notebook: `snowflake-ml-python`, `xgboost`, `scikit-learn`, `scipy`, `matplotlib`, `altair`.
 
