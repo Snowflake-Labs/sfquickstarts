@@ -48,28 +48,21 @@ RAW.ORDERS ──> clean_orders_task (notebook) ──> STAGING.ORDERS_CLEAN
 <!-- ------------------------ -->
 ## Setup
 
-In this step, you clone the companion repo into a workspace, then run its setup script to create the role, warehouse, compute pool, database, and sample data this Quickstart uses. If you don't have ACCOUNTADMIN access, send the two SQL steps below to your Snowflake admin to run on your behalf.
+In this step, you clone the companion repo into a workspace, then run its setup script to create the role, warehouse, compute pool, database, and sample data this Quickstart uses. Do this step as ACCOUNTADMIN: make sure ACCOUNTADMIN is selected in your Snowsight user menu in the lower-left corner.
 
-### Create the Git API integration
-
-Workspaces connect to GitHub through an API integration. As ACCOUNTADMIN, run this in a SQL file in Workspaces or in a Snowsight worksheet:
-
-```sql
-USE ROLE ACCOUNTADMIN;
-
-CREATE API INTEGRATION IF NOT EXISTS TASTY_PIPELINE_QS_GIT_INT
-  API_PROVIDER = git_https_api
-  API_ALLOWED_PREFIXES = ('https://github.com/Snowflake-Labs')
-  ENABLED = TRUE;
-```
+> **Note:** If you don't have ACCOUNTADMIN access, ask your Snowflake admin to create an API integration named `TASTY_PIPELINE_QS_GIT_INT` that allows `https://github.com/Snowflake-Labs`, grant your role `USAGE` on it, and run [setup.sql](https://github.com/Snowflake-Labs/sfguide-getting-started-with-pipeline-builder/blob/main/setup.sql) with your user name. Then clone the repo with the steps below and skip to Switch to the guide role.
 
 ### Get the companion repo
 
 1. In Snowsight, select **Projects** » **Workspaces**.
 2. In the **Workspaces** menu, select **From Git repository**.
 3. For **Repository URL**, enter `https://github.com/Snowflake-Labs/sfguide-getting-started-with-pipeline-builder`.
-4. For **API Integration**, select `TASTY_PIPELINE_QS_GIT_INT`.
-5. Select **Public repository**.
+4. Next to **API integration**, select **+ API Integration**, and fill in the **Create API Integration** dialog:
+   - For **Name**, enter `TASTY_PIPELINE_QS_GIT_INT`. Use this exact name, so **cleanup.sql** can drop it at the end.
+   - For **Allowed prefixes**, enter `https://github.com/Snowflake-Labs`.
+   - For **Allowed authentication secrets**, select **None**. The repo is public, so it doesn't need a secret.
+   - Leave **Enable OAuth authentication** cleared, and select **Create**.
+5. Back in the **Create workspace from Git repository** dialog, select **Public repository**.
 6. Select **Create**.
 
 The workspace opens with **setup.sql**, **cleanup.sql**, **01_clean_orders.ipynb**, and **02_daily_sales.ipynb**.
@@ -85,7 +78,7 @@ Here's what the script does:
 - Creates the `TASTY_PIPELINE_QS_ROLE` role and grants it to you and to `SYSADMIN`
 - Creates the `TASTY_PIPELINE_QS_WH` warehouse and the `TASTY_PIPELINE_QS_POOL` compute pool. Notebooks in Pipeline Builder run on a compute pool.
 - Creates the `TASTY_PIPELINE_QS_DB` database and makes the guide role its owner, so the role can create the schemas, tables, tasks, task graphs, Code Bundles, and DCM project the pipeline needs
-- Grants the guide role usage on the Git API integration and `EXECUTE TASK` on the account
+- Grants the guide role `EXECUTE TASK` on the account
 - Creates a RAW, STAGING, ANALYTICS, and PIPELINE schema. The PIPELINE schema holds the pipeline's tasks, task graph, Code Bundle, and DCM project.
 - Seeds about 5,000 Tasty Bytes orders, plus 200 duplicate orders and 50 invalid orders for the pipeline to clean up
 - Creates a `RUN_LOG` table that the optional Advanced modules write to
@@ -509,7 +502,7 @@ Most problems in this Quickstart come from creating the pipeline with a role oth
 | Deployment fails on `CREATE NOTEBOOK PROJECT` or `CREATE TASK`, and the error names ACCOUNTADMIN | The pipeline's `project_owner` in **manifest.yml** is `ACCOUNTADMIN` | Change the target's owner to `TASTY_PIPELINE_QS_ROLE`: open the DCM project controls in the bottom pane, open the target menu, and select the pencil icon. Or delete the pipeline folder and create it again as the guide role. |
 | **Review planned changes** shows an **ALTER** on **ACCOUNTADMIN** | Same as above | Same as above |
 | Running the graph fails with "Cannot execute task, USAGE privilege on the task's schema and database must be granted to owner role." | The tasks are owned by a role, such as ACCOUNTADMIN, that has no usage on the guide database | Fix the owner role as above and redeploy, so the guide role owns the tasks |
-| You can't select `TASTY_PIPELINE_QS_GIT_INT` when you create the workspace | Your Snowsight role has no usage on the integration | Create the workspace as ACCOUNTADMIN, or run **setup.sql** first and switch to the guide role |
+| Creating the API integration in the **Create API Integration** dialog fails | Your Snowsight role can't create integrations | Switch your Snowsight role to ACCOUNTADMIN, or ask your admin to create the integration for you |
 
 <!-- ------------------------ -->
 ## Clean Up
