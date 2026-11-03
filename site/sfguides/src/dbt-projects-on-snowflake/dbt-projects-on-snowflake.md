@@ -31,69 +31,49 @@ In this lab, we will go through everything you need to know to get started with 
 ### What You’ll Build 
 - A dbt Project running within your Snowflake account
 
-## Setup
-
-We will be using Tasty Bytes data in this lab. Run the script [here](https://github.com/Snowflake-Labs/getting-started-with-dbt-on-snowflake/blob/main/tasty_bytes_dbt_demo/setup/tasty_bytes_setup.sql) to build the objects and data required for this lab. 
-* Run in <a href="https://app.snowflake.com/_deeplink/worksheets?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_content=dbt-projects-on-snowflake&utm_cta=developer-guides-deeplink" class="_deeplink">Worksheets</a>
-* Run as a new SQL file in <a href="https://app.snowflake.com/_deeplink/#/workspaces?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_content=dbt-projects-on-snowflake&utm_cta=developer-guides-deeplink" class="_deeplink">Workspaces</a>
-
 ## Introduction to Workspaces
 
-We will start with your personal Workspace. Workspaces provides a developer environment where you can  edit, test, and deploy your dbt projects, all within Snowflake. The personal workspace is your own area where you can create and edit files. 
+Workspaces provides a developer environment where you can edit, test, and deploy your dbt projects, all within Snowflake. Your personal workspace is your own area where you can create and edit files. 
 
 Navigate to <a href="https://app.snowflake.com/_deeplink/#/workspaces?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_content=dbt-projects-on-snowflake&utm_cta=developer-guides-deeplink" class="_deeplink">Projects > Workspaces</a> to get started.
 
-### Explore the Data
-Let's explore the data we will be using in this lab. 
+## Setup
 
-1. Create a new sql file in your Workspace and name it `data_profile.sql`.
-2. Copy and paste the code below into the new file
-3. Run the following queries just like you would in worksheets. 
+### Create an API integration for GitHub
 
-``` sql 
-USE WAREHOUSE tasty_bytes_dbt_wh;
-USE ROLE accountadmin; 
+Snowflake needs an API integration to create a workspace from a GitHub repository. In your personal workspace, create a new SQL file, then run the following command:
 
--- What tables exist?
-SHOW TABLES IN SCHEMA tasty_bytes_dbt_db.raw;
+```sql
+USE ROLE accountadmin;
 
--- What is the scale of data? 
-SELECT COUNT(*) FROM tasty_bytes_dbt_db.raw.order_header;
-
--- Understand a query that might be used in a mart -- in this case sales grouped by customer
-SELECT 
-    cl.customer_id,
-    cl.city,
-    cl.country,
-    cl.first_name,
-    cl.last_name,
-    cl.phone_number,
-    cl.e_mail,
-    SUM(oh.order_total) AS total_sales,
-    ARRAY_AGG(DISTINCT oh.location_id) AS visited_location_ids_array
-FROM tasty_bytes_dbt_db.raw.customer_loyalty cl
-JOIN tasty_bytes_dbt_db.raw.order_header oh
-ON cl.customer_id = oh.customer_id
-GROUP BY cl.customer_id, cl.city, cl.country, cl.first_name,
-cl.last_name, cl.phone_number, cl.e_mail;
+CREATE OR REPLACE API INTEGRATION tb_dbt_git_api_integration
+  API_PROVIDER = git_https_api
+  API_ALLOWED_PREFIXES = ('https://github.com/Snowflake-Labs')
+  ENABLED = TRUE;
 ```
 
-![data-profile](assets/data-profile.png)
+### Create a workspace from GitHub
 
-### Create dbt Project from GitHub
+Let's now clone the example dbt project we will use in the rest of this lab. 
 
-Let's now clone an example dbt project we will use in the rest of this lab. 
-
-1. Click the <a href="https://app.snowflake.com/_deeplink/#/workspaces?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_content=dbt-projects-on-snowflake&utm_cta=developer-guides-deeplink" class="_deeplink">Workspace</a> dropdown > Create Workspace From Git Repository
+1. Select the + button next to Workspaces and Databases, and then select Git workspace.
 2. In the popup, enter the following fields:
     1. Repository URL: `https://github.com/Snowflake-Labs/getting-started-with-dbt-on-snowflake.git`
-    2. Workspace Name: `Example-dbt-Project`
-    3. API Integration: `GIT_INTEGRATION`. Note: the [API Integration](https://docs.snowflake.com/en/developer-guide/git/git-setting-up#label-integrating-git-repository-api-integration) has already been configured for you. 
+    2. Workspace name: `tasty_bytes`
+    3. API Integration: `TB_DBT_GIT_API_INTEGRATION`
     4. Select Public Repository. Note: Private repos can be authenticated with personal access tokens and GitHub users can authenticate with [OAuth](https://docs.snowflake.com/en/developer-guide/git/git-setting-up#configure-for-authenticating-with-oauth).
 3. Click Create!
 
 ![create-dbt-project](assets/create-workspace-git.png)
 ![create-dbt-project 2](assets/create-workspace-git-2.png)
+
+### Run the setup script
+
+The repository includes a setup script, `tasty_bytes_dbt_demo/setup/tasty_bytes_setup.sql`, that creates the warehouse, database, schemas, and Tasty Bytes source data for this lab.
+
+1. In your new workspace, open `tasty_bytes_dbt_demo/setup/tasty_bytes_setup.sql`.
+2. Comment out STEP 4 (the GitHub secret and API integration). You already created the API integration, and this lab uses a public repository, so you don't need a secret.
+3. Run all of the uncommented commands.
 
 
 <!-- ------------------------ -->
@@ -142,23 +122,33 @@ order by 1, 2, 3, 4
 
 ![new-model](assets/new-model.png)
 
-### Configure profiles.yml
+### Configure dbt_projects_profiles.yml
 
-Each dbt project folder in your Snowflake workspace must contain a profiles.yml file that specifies a target warehouse, database, schema, and role in Snowflake for the project. The type must be set to snowflake. 
+Each dbt project folder in your Snowflake workspace must contain a `dbt_projects_profiles.yml` or `profiles.yml` file that specifies a target warehouse, database, schema, and role in Snowflake for the project. The type must be set to snowflake. 
 
 dbt requires an account and user, but these can be left empty because the dbt project runs in Snowflake under the current account and user context.
 
-When you run dbt commands, your workspace reads profiles.yml. When you have at least one valid target specified in profiles.yml, the selections for the targets defined in that project and the dbt commands available to run are available in the workspace menu bar.
+This project uses [`dbt_projects_profiles.yml`](https://docs.snowflake.com/en/user-guide/data-engineering/dbt-projects-on-snowflake-best-practices#label-dbt-projects-profiles-file). It works the same way as `profiles.yml` but is specifically for dbt Projects on Snowflake. Standard dbt doesn't recognize `dbt_projects_profiles.yml`. The local dbt CLI reads only `profiles.yml`, so adding `dbt_projects_profiles.yml` never disrupts anyone's existing local dbt workflow, including a personal `~/.dbt/profiles.yml`. If both files are present, Snowflake uses `dbt_projects_profiles.yml`.
 
-We will keep the values in profiles.yml unchanged.
+When you run dbt commands, your workspace reads `dbt_projects_profiles.yml` if it's present. Otherwise, it reads `profiles.yml`. When you have at least one valid target specified in the file, the selections for the targets defined in that project and the dbt commands available to run are available in the workspace menu bar.
+
+We will keep the values in `dbt_projects_profiles.yml` unchanged.
 
 ![profiles](assets/profiles.png)
 
 ### dbt compile
 
-We will now run `dbt compile`. From the dropdown, click compile and run it. 
+We will now run `dbt compile`. From the command list, select Compile, and then select the execute button. To set additional flags or an external access integration before you run a command, select the down arrow next to the execute button.
 
 ![dbt-compile](assets/dbt-compile.png)
+
+Select Advanced in that window to see more options for the run:
+
+- **Version:** Choose which dbt version runs the command, for example `dbt 1.12.3`.
+- **Override Environment Variables:** Replace individual environment variables for this run only.
+- **Defer to Production:** Resolve models you haven't built in development to their existing production versions, so you can run part of your project without rebuilding everything upstream.
+
+![dbt-compile-advanced](assets/dbt-compile-advanced.png)
 
 #### View Compiled SQL
 
@@ -166,7 +156,9 @@ Once you have compiled the project, you can view the compiled SQL by clicking th
 
 #### View the DAG
 
-You can also view the DAG to see how models interact with one another. Click DAG from the top toolbar to open the DAG.
+You can also view the DAG to see how models interact with one another. In the panel below the editor, select the DAG tab to open the DAG.
+
+![view-dag](assets/view-dag.png)
 
 ### dbt run
 
@@ -176,7 +168,7 @@ Let's now run the project to pull data through our pipeline. From the dbt toolba
 
 Note: dbt deps requires an [External Access Integration](https://docs.snowflake.com/en/developer-guide/external-network-access/creating-using-external-network-access) which is not supported in Snowflake trial accounts.
 
-First we need to create the External Access Integration to download the dbt_utils package we will use for testing. Run the following in a new SQL worksheet or workspace. 
+First we need to create the External Access Integration to download the dbt_utils package we will use for testing. Run the following in a new SQL file in your workspace. 
 
 ```sql
 USE ROLE accountadmin;
@@ -206,8 +198,8 @@ Now we'll run `dbt deps` to pull in the dbt_utils package. The dbt_utils package
 From the dbt toolbar, you get dropdowns for the project, target, and command. Clicking the play button will run the relevant command. You can also click the down arrow to override the arguments. 
 
 1. From the toolbar, select dev and deps. 
-2. Click the dropdown arrow and enter `dbt_access_integration`. This [external access integration](https://docs.snowflake.com/en/sql-reference/sql/create-external-access-integration) has already been configured for you. 
-3. Click the Deps button.
+2. Click the dropdown arrow, and under External Access Integration, select `DBT_ACCESS_INTEGRATION`, the [external access integration](https://docs.snowflake.com/en/sql-reference/sql/create-external-access-integration) you created above. 
+3. Click Execute.
 
 ![dbt-deps](assets/dbt-deps.png)
 
@@ -283,13 +275,21 @@ COMMENT = 'Semantic view for order analytics'
 
 Now that we have updated and validated our dbt project, let's deploy it so we can build automation. Deploying a dbt project creates a Snowflake object and allows us to create tasks based on the object. 
 
-1. Click Deploy in the top right of workspaces
+1. On the right side of the workspace editor, select Connect > Deploy dbt project
 2. Ensure your role is `accountadmin`
-3. Select database `tasty_bytes_dbt_db` and schema `raw`
-4. Name it `dbt_project`
-5. Deploy!
+3. Under Select location, select database `tasty_bytes_dbt_db` and schema `public`
+4. Under Select or create dbt project, select Create dbt project
+5. Under Enter Name, enter `tasty_bytes`
+6. (Optional) Set a Default Target and choose a dbt Version
+7. (Optional) Under External Access Integration, select `DBT_ACCESS_INTEGRATION`, the integration you created earlier. This is only needed if your project runs `dbt deps`
 
 ![deploy-dbt](assets/deploy-dbt.png)
+
+8. Scroll down and leave Auto Compile and Default Writeback set to true (their defaults)
+
+![deploy-dbt-2](assets/deploy-dbt-2.png)
+
+9. Select Deploy. After you deploy, the Connect menu shows the name of your dbt project object, with options to redeploy, disconnect, or view the project.
 
 ### View git
 
@@ -298,21 +298,43 @@ Workspaces are fully git backed. To view changes and commit, click changes from 
 ![git-changes](assets/git-changes.png)
 
 
+## Manage dbt Projects
+
+### Find your dbt project
+
+Every dbt project object in your account is listed under <a href="https://app.snowflake.com/_deeplink/#/compute/history/dbt?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_content=dbt-projects-on-snowflake&utm_cta=developer-guides-deeplink" class="_deeplink">Transformation > dbt Projects</a>. The All Projects tab is an inventory of each project with its location, dbt version, and owner. Filter by Location `TASTY_BYTES_DBT_DB` to find the `TASTY_BYTES` project you just deployed.
+
+![dbt-projects](assets/dbt-projects.png)
+
+### View project details
+
+Navigate to <a href="https://app.snowflake.com/_deeplink/#/data/databases/TASTY_BYTES_DBT_DB/schemas/PUBLIC?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_content=dbt-projects-on-snowflake&utm_cta=developer-guides-deeplink" class="_deeplink">Catalog > Database Explorer > TASTY_BYTES_DBT_DB > PUBLIC</a> > dbt Projects > TASTY_BYTES to view the project details. You can also select View project from the Connect menu in your workspace. From the Run History tab, you can view all runs associated with the project. To run the project once without a schedule, select Execute, choose an operation and profile, and then select Run.
+
+![project-details](assets/dbt_project_details.png)
+
+To browse what's in the deployed project, click the View Overview dropdown and select Models. The pane lists every model with its folder path, such as `/models/marts` and `/models/staging`. Use the same dropdown to view Tests, Snapshots, Seeds, Sources, and Macros.
+
+![project-models](assets/dbt-project-models.png)
+
 ## Orchestration and Monitoring
 
 ### Orchestrate with Tasks
 
-Navigate to <a href="https://app.snowflake.com/_deeplink/#/data/databases/TASTY_BYTES_DBT_DB/schemas/RAW?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_content=dbt-projects-on-snowflake&utm_cta=developer-guides-deeplink" class="_deeplink">Catalog > Database Explorer > TASTY_BYTES_DBT_DB > RAW</a> > dbt Projects > DBT_PROJECT to view the project details. From the Run History tab, you can view all runs associated with the project.
-
-![project-details](assets/dbt_project_details.png)
+Now that the project is deployed, you can schedule it with tasks, either from the project details page or with SQL.
 
 #### Create Scheduled dbt Tasks
 
 Let's create tasks to regularly run and test our dbt project. 
 
 1. Navigate to the Project Details tab
-2. Click Create Schedule from the Schedules dropdown
-3. Enter a name, schedule, and profile, then click create
+2. Open the Schedules dropdown and click + Create new
+3. Under Task name, enter `tasty_bytes_hourly_run`
+4. Keep Role set to `ACCOUNTADMIN` and select warehouse `TASTY_BYTES_DBT_WH`
+5. Keep Trigger set to Schedule, and set Frequency to Hourly
+6. Set Operation to Run and keep Profile set to Project default
+7. Click Create
+
+You can also schedule from your workspace: select the calendar icon next to the dbt project menu to see existing schedules, and then select + Create new.
 
 
 ![create-schedule](assets/dbt-create-schedule.png)
@@ -329,24 +351,24 @@ Note: This script assumes you have added dbt tests.
 USE WAREHOUSE tasty_bytes_dbt_wh;
 USE ROLE accountadmin;
 
-CREATE OR REPLACE TASK tasty_bytes_dbt_db.raw.dbt_run_task
+CREATE OR REPLACE TASK tasty_bytes_dbt_db.public.dbt_run_task
 	WAREHOUSE=TASTY_BYTES_DBT_WH
 	SCHEDULE='60 MINUTES'
-	AS EXECUTE DBT PROJECT "TASTY_BYTES_DBT_DB"."RAW"."DBT_PROJECT" args='run --target dev';
+	AS EXECUTE DBT PROJECT "TASTY_BYTES_DBT_DB"."PUBLIC"."TASTY_BYTES" args='run --target dev';
 
 
-CREATE OR REPLACE TASK tasty_bytes_dbt_db.raw.dbt_test_task
+CREATE OR REPLACE TASK tasty_bytes_dbt_db.public.dbt_test_task
 	WAREHOUSE=TASTY_BYTES_DBT_WH
-	AFTER tasty_bytes_dbt_db.raw.dbt_run_task
-	AS EXECUTE DBT PROJECT "TASTY_BYTES_DBT_DB"."RAW"."DBT_PROJECT" args='test --target dev';
+	AFTER tasty_bytes_dbt_db.public.dbt_run_task
+	AS EXECUTE DBT PROJECT "TASTY_BYTES_DBT_DB"."PUBLIC"."TASTY_BYTES" args='test --target dev';
 
 -- Run the tasks once
-ALTER TASK tasty_bytes_dbt_db.raw.dbt_test_task RESUME;
-EXECUTE TASK tasty_bytes_dbt_db.raw.dbt_run_task;
+ALTER TASK tasty_bytes_dbt_db.public.dbt_test_task RESUME;
+EXECUTE TASK tasty_bytes_dbt_db.public.dbt_run_task;
 
 -- Optionally create alerts from the task
 -- NOTE: you must validate your email and replace it at the bottom of the alert
-create or replace alert tasty_bytes_dbt_db.raw.dbt_alert
+create or replace alert tasty_bytes_dbt_db.public.dbt_alert
 --- no warehouse selected to run serverless
 schedule='60 MINUTES'          
 if (exists (
@@ -383,31 +405,47 @@ THEN
 ;
 
 -- Execute once
-EXECUTE ALERT tasty_bytes_dbt_db.raw.dbt_alert;
+EXECUTE ALERT tasty_bytes_dbt_db.public.dbt_alert;
 ```
-
-You can view the status or running tasks by going to <a href="https://app.snowflake.com/_deeplink/#/compute/history/tasks?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_content=dbt-projects-on-snowflake&utm_cta=developer-guides-deeplink" class="_deeplink">Transformation > Task History</a>.
-
-![tasks](assets/tasks.png)
 
 ### Monitor dbt Projects
 
-You can get an overview of dbt project status from the dbt Projects activity in Snowsight. Navigate to <a href="https://app.snowflake.com/_deeplink/#/compute/history/dbt?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_content=dbt-projects-on-snowflake&utm_cta=developer-guides-deeplink" class="_deeplink">Transformation > dbt Projects</a> to view overall status of dbt Projects and quickly jump to the deployed projects.
+#### Run history across projects
 
-![dbt-projects](assets/dbt-projects.png)
+To see how runs are going across your projects, go to <a href="https://app.snowflake.com/_deeplink/#/compute/history/dbt?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_content=dbt-projects-on-snowflake&utm_cta=developer-guides-deeplink" class="_deeplink">Transformation > dbt Projects</a> and select the Run History tab. It summarizes runs across your projects, showing each project's last command, last run status, when it last ran, and how many previous runs succeeded or failed. Filter by Database `TASTY_BYTES_DBT_DB` to focus on this lab.
+
+![dbt-projects-run-history](assets/dbt-projects-run-history.png)
+
+#### Run history for a project
+
+To see every run of a single project, open `TASTY_BYTES` in Catalog and select the Run History tab. It charts runs over time by status and lists each run's command, status, start time, dbt version, and writeback setting. Use the Command and Run status filters to narrow the list. You can also view the status of running tasks in <a href="https://app.snowflake.com/_deeplink/#/compute/history/tasks?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_content=dbt-projects-on-snowflake&utm_cta=developer-guides-deeplink" class="_deeplink">Transformation > Task History</a>.
+
+![run-history](assets/run-history.png)
+
+### Query History
+
+Each dbt run is a single `EXECUTE DBT PROJECT` query, so you can inspect any individual run in Query History. From the project's Run History tab, select a run to open its query details.
+
+The Query details tab shows the SQL text that ran, followed by a dbt Run table listing every model with its start time, duration, and status. Sort by Duration to find the slowest models. The Details pane on the right shows the run's warehouse, duration, and the task that triggered it, in this case `tasty_bytes_hourly_run`.
+
+![query-history-1](assets/query-history-1.png)
+
+Scroll down to see the dbt Output, the full dbt log for the run. Select Download Build Artifacts to get the run's artifacts, such as `manifest.json`, for local debugging.
+
+![query-history-2](assets/query-history-2.png)
 
 
-### Tracing
+### Query Telemetry
 
 dbt projects in Snowflake integrate with [Tracing and Logging](https://docs.snowflake.com/en/developer-guide/logging-tracing/logging-tracing-overview), allowing you to easily monitor and debug dbt projects. Tracing follows the OpenTelemetry standard and allows you to keep logs within a single platform. 
 
-To view tracing, go to <a href="https://app.snowflake.com/_deeplink/#/compute/history/telemetry?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_content=dbt-projects-on-snowflake&utm_cta=developer-guides-deeplink" class="_deeplink">Monitoring > Traces & Logs</a>. Click on the most recent one which should be our failed dbt test. 
+To view the trace for a run, select the Query telemetry tab on the same query. Each span shows how long it took, from the task graph and task that triggered the run, down to each dbt model and the individual SQL statements it ran. Expand a model to see where its time went, and use the Span Type filter or the legend to focus on a specific type. The Event Table at the top shows your account's active event table.
 
-![tracing](assets/tracing-details.png)
+![query-telemetry](assets/query-telemetry.png)
 
 ### Cost Monitoring
 
-Snowflake makes it easy to monitor usage across your account. To view consumption, go to Admin > Cost Management > Consumption Tab. Depending on your setup, you can create a dedicated warehouse to run dbt jobs to allow easy monitoring. 
+Snowflake makes it easy to monitor usage across your account. To view consumption, go to Admin > Cost Management > Consumption Tab. Depending on your setup, you can create a dedicated warehouse to run dbt jobs to allow easy monitoring. Filter by Service Type Warehouse and select `TASTY_BYTES_DBT_WH` to see the credits your dbt runs used and the queries behind them. 
 
 Additionally, you are able to build [resource monitors](https://docs.snowflake.com/en/user-guide/resource-monitors) and alerts based on warehouse consumption. 
 
