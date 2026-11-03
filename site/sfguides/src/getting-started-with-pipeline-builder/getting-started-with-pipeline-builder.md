@@ -1,4 +1,4 @@
-author: Mike Kovner
+author: Mike Kovner, Gilberto Hernandez, Snowflake CoCo
 id: getting-started-with-pipeline-builder
 language: en
 summary: Use Pipeline Builder in Snowflake Workspaces to turn two Tasty Bytes notebooks into a scheduled, deployed task graph without writing CREATE TASK SQL.
