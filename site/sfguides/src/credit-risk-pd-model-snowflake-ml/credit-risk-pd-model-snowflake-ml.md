@@ -1,6 +1,6 @@
 author: Gayatri Ghanakota
 id: credit-risk-pd-model-snowflake-ml
-summary: Build, govern, and automate a credit risk Probability of Default (PD) model on Snowflake ML, migrated from SAS PROC HPFOREST, with Feature Store, Experiment Tracking, Model Registry, SHAP explainability, Model Monitors, champion/challenger review, and Task DAGs.
+summary: Build, govern, and automate a credit risk Probability of Default (PD) model on Snowflake ML, migrated from SAS PROC GRADBOOST, with Feature Store, Experiment Tracking, Model Registry, SHAP explainability, Model Monitors, champion/challenger review, and Task DAGs.
 categories: getting-started, data-science-&-ml, financial-services
 environments: web
 status: Draft
@@ -14,14 +14,14 @@ tags: Getting Started, Machine Learning, Snowflake ML, Feature Store, Model Regi
 
 Banks have built Probability of Default (PD), Loss Given Default (LGD) and Exposure at Default (EAD) models in SAS for decades. The models work, but the infrastructure around them (data extracts to SAS Grid, macro-generated datasets, cron-driven batch jobs, spreadsheet model inventories and email sign-offs) makes reproducibility, lineage and monitoring expensive to prove to regulators.
 
-In this Quickstart you migrate a SAS `PROC HPFOREST` PD model to **XGBoost on Snowflake ML** and run the whole model lifecycle in one governed platform: features, training data, experiments, registry, explainability, batch scoring, scenario-weighted Expected Credit Loss (ECL) scoring, monitoring, human-in-the-loop promotion and scheduled pipelines.
+In this Quickstart you migrate a SAS `PROC GRADBOOST` PD model to **XGBoost on Snowflake ML** and run the whole model lifecycle in one governed platform: features, training data, experiments, registry, explainability, batch scoring, scenario-weighted Expected Credit Loss (ECL) scoring, monitoring, human-in-the-loop promotion and scheduled pipelines.
 
 ![Solution architecture](assets/solution-architecture.png)
 
 The complete notebook is in the companion GitHub repository: **[Snowflake-Labs/sfguide-credit-risk-pd-model-snowflake-ml](https://github.com/sfc-gh-gghanakota/sfquickstarts/blob/sfguide-credit-risk-pd-model-snowflake-ml/site/sfguides/src/credit-risk-pd-model-snowflake-ml/assets/credit_risk_probability_of_default_model.ipynb)**. Each step below shows the notebook code with an explanation, so you can follow along cell by cell.
 
 ### What You Will Learn
-- How to convert a SAS `PROC HPFOREST` PD model to Python with CoCo, and map its hyperparameters to `XGBClassifier`
+- How to convert a SAS `PROC GRADBOOST` PD model to Python with CoCo, and map its hyperparameters to `XGBClassifier`
 - How to build Feature Views (backed by Dynamic Tables) for behavioral, macroeconomic and forward-looking scenario features
 - How to generate immutable, point-in-time training Datasets
 - How to log runs with Experiment Tracking and register models on Snowflake Model Registry
@@ -70,21 +70,22 @@ The starting point is a SAS PD model, `sas_pd_model.sas`. It follows a pattern f
 1. `PROC SQL` joins Equifax loan data to FRED macro indicators, with `%let` macro variables for libraries and the observation window.
 2. A `DATA` step imputes missing values with 0.
 3. `PROC SURVEYSELECT` makes an 80/20 split.
-4. `PROC HPFOREST` trains a random forest.
-5. `PROC HP4SCORE` scores the test set.
+4. `PROC GRADBOOST` trains a gradient boosting model.
+5. `PROC ASTORE` scores the test set from the saved analytic store.
 6. `PROC LOGISTIC` computes AUC, and the metrics go into an Excel tracker by hand.
 
-The core of the model is the `PROC HPFOREST` step:
+The core of the model is the `PROC GRADBOOST` step. Because it is gradient boosting, like XGBoost, its options map closely onto `XGBClassifier`:
 
 ```sas
-proc hpforest data=&OUT_LIB..PD_TRAIN
-    maxtrees=200
-    vars_to_try=5
+proc gradboost data=&OUT_LIB..PD_TRAIN
+    ntrees=200
+    learningrate=0.1
     maxdepth=6
-    leafsize=20
+    vars_to_try=5
+    minleafsize=20
     seed=42;
 
-    target DEFAULT_FLAG / level=binary;
+    target DEFAULT_FLAG / level=nominal;
 
     input VANTAGE_SCORE_3 NUMBER_OF_ACCOUNTS NUMBER_ACCOUNTS_PAST_DUE
           NUMBER_ACCOUNTS_MAJOR_DEROGATORY HIGH_UTIL_ACCTS
@@ -92,7 +93,7 @@ proc hpforest data=&OUT_LIB..PD_TRAIN
           / level=interval;
     input UNEMPLOYMENT_RATE FED_FUNDS_RATE CPI_INDEX / level=interval;
 
-    save file="/models/pd_hpforest_model.bin";
+    savestate rstore=&OUT_LIB..PD_GRADBOOST_STORE;
     ods output VariableImportance = &OUT_LIB..PD_IMPORTANCE;
     ods output FitStatistics      = &OUT_LIB..PD_FITSTATS;
 run;
@@ -104,7 +105,7 @@ run;
 ```text
 Convert @sas_pd_model.sas into a Python script, python_pd_model.py, that runs on Snowflake.
 
-- Replace PROC HPFOREST with xgboost.XGBClassifier. Map every HPFOREST option to its closest
+- Replace PROC GRADBOOST with xgboost.XGBClassifier. Map every GRADBOOST option to its closest
   XGBoost hyperparameter and explain each mapping in a comment.
 - Replace the %let macros and PROC SQL join with Snowflake Feature Store Feature Views
   (one for the Equifax behavioral features, one for the FRED macro features), keyed on TRADE_ID
@@ -113,24 +114,25 @@ Convert @sas_pd_model.sas into a Python script, python_pd_model.py, that runs on
   fs.generate_dataset, then a stratified 80/20 split with seed 42.
 - Keep the DATA step behavior: impute missing numeric values with 0.
 - Replace PROC LOGISTIC ROC with AUC, Gini and KS computed in Python.
-- Replace the saved .bin file with Snowflake Model Registry registration and a "champion" alias.
-- Replace PROC HP4SCORE with model.run() batch scoring on a warehouse.
+- Replace the saved analytic store with Snowflake Model Registry registration and a "champion" alias.
+- Replace PROC ASTORE with model.run() batch scoring on a warehouse.
 Use the Snowpark session from get_active_session(); data is in CREDIT_RISK_ML.PD_MODEL.
 ```
 
 CoCo reads the SAS file and returns a complete Python script. The generated `python_pd_model.py` (in the repository) maps the SAS hyperparameters like this:
 
 ```python
-# XGBoost hyperparameters mapped from SAS PROC HPFOREST:
-#   maxtrees=200  →  n_estimators=200
-#   maxdepth=6    →  max_depth=6
-#   vars_to_try=5 →  colsample_bytree ≈ 5/11 features
-#   leafsize=20   →  min_child_weight (approx)
+# XGBoost hyperparameters mapped from SAS PROC GRADBOOST:
+#   ntrees=200        →  n_estimators=200
+#   learningrate=0.1  →  learning_rate=0.1
+#   maxdepth=6        →  max_depth=6
+#   vars_to_try=5     →  colsample_bynode = 5/11 (features tried per split)
+#   minleafsize=20    →  min_child_weight (approx)
 model = XGBClassifier(
     n_estimators=200,
     max_depth=6,
     learning_rate=0.1,
-    colsample_bytree=5 / len(FEATURE_COLS),
+    colsample_bynode=5 / len(FEATURE_COLS),
     min_child_weight=20,
     objective="binary:logistic",
     eval_metric="auc",
@@ -146,14 +148,14 @@ The rest of the SAS workflow is mapped to Snowflake ML:
 | `%let` macros + `PROC SQL` join | Feature Store Feature Views (`LOAN_BEHAVIORAL_FEATURES`, `LOAN_MACRO_FEATURES`) |
 | `DATA` step imputation | `.fillna(0)` |
 | `PROC SURVEYSELECT` + manual freeze | `fs.generate_dataset()` + stratified `train_test_split` |
-| `PROC HPFOREST` | `XGBClassifier` |
+| `PROC GRADBOOST` | `XGBClassifier` |
 | `PROC LOGISTIC` ROC / `ODS OUTPUT` | `roc_auc_score`, Gini, KS (logged with Experiment Tracking in the notebook) |
-| `save file=".../pd_hpforest_model.bin"` | `Registry.log_model()` + `champion` alias |
-| `PROC HP4SCORE` | `model_version.run()` |
+| `savestate rstore=PD_GRADBOOST_STORE` | `Registry.log_model()` + `champion` alias |
+| `PROC ASTORE` | `model_version.run()` |
 
 ### Review and refine
 Treat the converted script as a draft for validation, not a finished model. Check it the way a model validator would:
-- **Hyperparameter mapping.** HPFOREST is a random forest and XGBoost is gradient boosting, so some options only approximate each other. `leafsize` (minimum observations per leaf) and `min_child_weight` (minimum hessian per child) are not identical. Ask CoCo to explain any mapping you're unsure of.
+- **Hyperparameter mapping.** GRADBOOST and XGBoost are both gradient boosting, so most options map directly. Check the ones that only approximate each other: `minleafsize` (minimum observations per leaf) vs `min_child_weight` (minimum hessian per child), and any GRADBOOST defaults you didn't set, such as regularization and subsampling. Ask CoCo to explain any mapping you're unsure of.
 - **Data logic.** Confirm the default definition (`STATUS_CATEGORY >= 4`, 90+ days past due), the observation window, the join on observation month, and the missing-value handling all match the SAS source.
 - **Equivalence.** Compare discrimination (Gini, KS) and calibration (Brier, predicted vs observed default rate) against the SAS model on the same test population.
 - **Iterate in the chat.** Refine edge cases in follow-up prompts, for example "add Brier score and log all metrics with Snowflake Experiment Tracking" or "train a tuned challenger with a lower learning rate".
@@ -619,14 +621,15 @@ ds_df.show(5)
 <!-- ------------------------ -->
 ## Train the Model with Experiment Tracking
 
-The PD model is an `XGBClassifier`, the Python equivalent of the SAS `PROC HPFOREST` model (`sas_pd_model.sas`). It was converted with **CoCo**. The hyperparameters map directly from the SAS source:
+The PD model is an `XGBClassifier`, the Python equivalent of the SAS `PROC GRADBOOST` model (`sas_pd_model.sas`). It was converted with **CoCo**. The hyperparameters map directly from the SAS source:
 
-| SAS PROC HPFOREST | XGBClassifier | Value |
+| SAS PROC GRADBOOST | XGBClassifier | Value |
 |---|---|---|
-| `maxtrees=200` | `n_estimators` | 200 |
+| `ntrees=200` | `n_estimators` | 200 |
+| `learningrate=0.1` | `learning_rate` | 0.1 |
 | `maxdepth=6` | `max_depth` | 6 |
-| `vars_to_try=5` | `colsample_bytree` | 5/11 (~0.45) |
-| `leafsize=20` | `min_child_weight` | 20 |
+| `vars_to_try=5` | `colsample_bynode` | 5/11 (~0.45), per split |
+| `minleafsize=20` | `min_child_weight` | 20 (approximate) |
 | `seed=42` | `random_state` | 42 |
 
 Load the Dataset and create a stratified 80/20 split over the 11 features (8 behavioral, 3 macro):
@@ -666,7 +669,7 @@ Train two candidates and log both to the `PD_MODEL_DEVELOPMENT` experiment: the 
 This replaces the Word or Excel tracker in which modelers record what they tried.
 
 ```python
-# Train XGBoost — converted from SAS PROC HPFOREST (see sas_pd_model.sas) — with Experiment Tracking
+# Train XGBoost — converted from SAS PROC GRADBOOST (see sas_pd_model.sas) — with Experiment Tracking
 # Every run (params, dataset version, Gini/KS/Brier) is logged to the PD_MODEL_DEVELOPMENT experiment
 from scipy.stats import ks_2samp
 from sklearn.metrics import brier_score_loss
@@ -684,15 +687,16 @@ def pd_metrics(y_true, p):
 
 
 # Champion candidate — hyperparameters mapped 1:1 from SAS:
-#   maxtrees=200  →  n_estimators=200
-#   maxdepth=6    →  max_depth=6
-#   vars_to_try=5 →  colsample_bytree ≈ 5/11 features
-#   leafsize=20   →  min_child_weight=20
+#   ntrees=200        →  n_estimators=200
+#   learningrate=0.1  →  learning_rate=0.1
+#   maxdepth=6        →  max_depth=6
+#   vars_to_try=5     →  colsample_bynode = 5/11 (features tried per split)
+#   minleafsize=20    →  min_child_weight=20
 params = {
     "n_estimators": 200,
     "max_depth": 6,
     "learning_rate": 0.1,
-    "colsample_bytree": 5 / len(FEATURE_COLS),
+    "colsample_bynode": 5 / len(FEATURE_COLS),
     "min_child_weight": 20,
     "objective": "binary:logistic",
     "eval_metric": "auc",
@@ -841,7 +845,7 @@ for version_name, alias, mdl, mtr, desc in [
         model_name="PD_XGB_MODEL",
         version_name=version_name,
         sample_input_data=sample_input,
-        comment=f"{alias.upper()} — PD model, XGBoost migrated from SAS PROC HPFOREST ({desc})",
+        comment=f"{alias.upper()} — PD model, XGBoost migrated from SAS PROC GRADBOOST ({desc})",
         metrics=mtr,
         target_platforms=["WAREHOUSE"],  # warehouse target + sample input enables the explain function
     )
@@ -2056,7 +2060,7 @@ else:
 <!-- ------------------------ -->
 ## Conclusion and Resources
 
-You migrated a SAS `PROC HPFOREST` PD model to XGBoost on Snowflake ML and ran its full lifecycle in one governed platform. Data never left Snowflake, every model is traceable to the exact data that trained it, and promotion requires an audited human decision.
+You migrated a SAS `PROC GRADBOOST` PD model to XGBoost on Snowflake ML and ran its full lifecycle in one governed platform. Data never left Snowflake, every model is traceable to the exact data that trained it, and promotion requires an audited human decision.
 
 | Snowflake ML capability | What it replaces in a SAS stack |
 |---|---|
