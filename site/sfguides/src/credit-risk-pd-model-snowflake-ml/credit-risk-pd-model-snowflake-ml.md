@@ -7,7 +7,7 @@ status: Draft
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Machine Learning, Snowflake ML, Feature Store, Model Registry, Financial Services, Credit Risk
 
-# Productionizing Credit Risk Models on Snowflake ML: From SAS to an End-to-End PD Pipeline
+# From SAS to Snowflake: Productionizing Credit Risk Models on a Modern ML Platform
 
 <!-- ------------------------ -->
 ## Overview
