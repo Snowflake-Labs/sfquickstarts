@@ -5,7 +5,7 @@ summary: Replicate HubSpot data to Snowflake, build a customer segment in SQL an
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-author: TODO Author Full Name
+author: Oleksandr Khirnyi
 
 
 # HubSpot to Snowflake and Back: ELT and Reverse ETL with Skyvia
