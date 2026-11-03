@@ -140,7 +140,7 @@ Here's what the notebooks do:
 <!-- ------------------------ -->
 ## Turn Notebooks into Tasks
 
-This is where Pipeline Builder starts saving you work. Instead of publishing your notebooks or uploading files to a stage, you drag them onto the canvas.
+This is where Pipeline Builder starts saving you work. You drag your notebooks onto the canvas, without publishing them or uploading files to a stage.
 
 If the canvas isn't open, go back to it: select the **Pipeline Builder** tab for **Pipeline_builder_quickstart** at the top of the editor, or, in the file explorer, hover over the **Pipeline_builder_quickstart** folder and select the **Open pipeline builder** icon. Keep the file explorer visible next to the canvas, then drag **01_clean_orders.ipynb** from the file explorer and drop it anywhere on the canvas.
 
@@ -216,7 +216,7 @@ This plan-then-deploy loop comes from DCM. The project files describe the object
 <!-- ------------------------ -->
 ## Run and Monitor
 
-The graph is deployed but suspended. Let's run it once now instead of waiting for 6:00 AM.
+The graph is deployed but suspended. Let's run it once now, ahead of its 6:00 AM schedule.
 
 1. Select **Deployed Project**. The DCM project opens in Snowsight on the **Objects** tab, which lists the tasks, task graph, and Code Bundle the project manages.
 
@@ -328,7 +328,7 @@ and schedule the graph every Monday at 7:00 AM America/Los_Angeles, suspended.
 
 5. Select **Generate**.
 
-CoCo writes the tasks, the connection between them, and the task graph settings to the new project's definition file, so you can review its work on the canvas before anything is deployed. Select each card to check its SQL. To check the schedule, select **Objects** on the canvas toolbar, select **Task graphs**, and then select the graph CoCo created. If it looks right, select **Deploy** to plan and deploy it, just like the first pipeline.
+CoCo writes the tasks, the connection between them, and the task graph settings to the new project's definition file, so you can review its work on the canvas before anything is deployed. Select each card to check its SQL. To check the schedule, select **Objects** on the canvas toolbar, select **Task graphs**, and then select the graph CoCo created. If it looks right, select **Deploy** to plan and deploy it the same way as the first pipeline.
 
 To change an existing pipeline with CoCo, open the CoCo chat in your workspace and use the `/pipeline-builder` skill. For example, ask it to add a task to **Pipeline_builder_quickstart**.
 
@@ -347,7 +347,7 @@ Several modules write to `TASTY_PIPELINE_QS_DB.ANALYTICS.RUN_LOG`, a small log t
 
 ### A1: Branch on a Return Value
 
-Tasty Bytes wants to reprocess everything when order volume is high, and take a lighter path otherwise. You'll build three tasks: one that decides, and one for each branch. To keep the focus on branching, each branch task just writes a row to `RUN_LOG`. In a real pipeline, that's where the full or incremental logic would go.
+Tasty Bytes wants to reprocess everything when order volume is high, and take a lighter path otherwise. You'll build three tasks: one that decides, and one for each branch. To keep the focus on branching, each branch task writes a row to `RUN_LOG`. In a real pipeline, that's where the full or incremental logic would go.
 
 ```console
 clean_orders_task ──> CHECK_VOLUME ──> FULL_PATH
@@ -423,7 +423,7 @@ SYSTEM$GET_PREDECESSOR_RETURN_VALUE('CHECK_VOLUME') = 'INCREMENTAL'
 
 ![Branching condition on INCREMENTAL_PATH](assets/branching-incremental.png)
 
-> **Note:** `SYSTEM$GET_PREDECESSOR_RETURN_VALUE` takes the name of a predecessor task without its database and schema, which is why the condition uses `'CHECK_VOLUME'` rather than the fully qualified name. The name is case-sensitive.
+> **Note:** `SYSTEM$GET_PREDECESSOR_RETURN_VALUE` takes the name of a predecessor task without its database and schema, so the condition uses `'CHECK_VOLUME'`. The name is case-sensitive.
 
 #### Step 4: Deploy and run
 
