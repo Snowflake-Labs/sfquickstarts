@@ -481,7 +481,7 @@ plt.show()
 <!-- ------------------------ -->
 ## Build the Feature Store
 
-In SAS, features usually live in macro-generated datasets refreshed on bespoke schedules. Here they become managed **Feature Views**: you declare the transformation once, and Snowflake handles refresh, versioning and point-in-time correct retrieval.
+In SAS, features usually live in macro-generated datasets refreshed on custom schedules. Here they become managed **Feature Views**: you declare the transformation once, and Snowflake handles refresh, versioning and point-in-time correct retrieval.
 
 Create the Feature Store in the project schema and register the `LOAN` entity, keyed on `TRADE_ID`:
 
