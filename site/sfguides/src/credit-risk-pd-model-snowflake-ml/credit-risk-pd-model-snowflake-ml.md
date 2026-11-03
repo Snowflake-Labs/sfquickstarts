@@ -60,6 +60,7 @@ The notebook reads `ANALYTIC_DATASET_DEMOSAMPLE.DATASET.ANALYTICSSAMPLE_LATEST` 
 1. Download `credit_risk_probability_of_default_model.ipynb` from the [GitHub repository](https://github.com/sfc-gh-gghanakota/sfquickstarts/blob/sfguide-credit-risk-pd-model-snowflake-ml/site/sfguides/src/credit-risk-pd-model-snowflake-ml/assets/credit_risk_probability_of_default_model.ipynb).
 2. In Snowsight, go to **Projects > Notebooks**, choose **Import .ipynb file**, and select the downloaded notebook.
 3. Make sure these packages are available to the notebook: `snowflake-ml-python`, `xgboost`, `scikit-learn`, `scipy`, `matplotlib`, `altair`.
+4. Upload `python_pd_model.py` from the repository to the same notebook, next to the `.ipynb` file. The notebook and the training pipeline import the model from it (see the next step).
 
 The repository also contains `sas_pd_model.sas` (the original SAS model) and `python_pd_model.py` (the Python conversion produced with CoCo). The next step shows how that conversion is done.
 
@@ -119,7 +120,7 @@ Convert @sas_pd_model.sas into a Python script, python_pd_model.py, that runs on
 Use the Snowpark session from get_active_session(); data is in CREDIT_RISK_ML.PD_MODEL.
 ```
 
-CoCo reads the SAS file and returns a complete Python script. The generated `python_pd_model.py` (in the repository) maps the SAS hyperparameters like this:
+CoCo reads the SAS file and returns `python_pd_model.py` (in the repository). Ask it to structure the result as a reusable module, not just a one-off script: the feature lists, the SAS-mapped hyperparameters, and a small function for each SAS step. The notebook and the training pipeline then import the same code, so the converted model is the one that is actually trained in production:
 
 ```python
 # XGBoost hyperparameters mapped from SAS PROC GRADBOOST:
@@ -128,17 +129,42 @@ CoCo reads the SAS file and returns a complete Python script. The generated `pyt
 #   maxdepth=6        →  max_depth=6
 #   vars_to_try=5     →  colsample_bynode = 5/11 (features tried per split)
 #   minleafsize=20    →  min_child_weight (approx)
-model = XGBClassifier(
-    n_estimators=200,
-    max_depth=6,
-    learning_rate=0.1,
-    colsample_bynode=5 / len(FEATURE_COLS),
-    min_child_weight=20,
-    objective="binary:logistic",
-    eval_metric="auc",
-    random_state=42,
-)
-model.fit(X_train, y_train)
+#   seed=42           →  random_state=42
+SAS_MAPPED_PARAMS = {
+    "n_estimators": 200,
+    "max_depth": 6,
+    "learning_rate": 0.1,
+    "colsample_bynode": 5 / len(FEATURE_COLS),
+    "min_child_weight": 20,
+    "objective": "binary:logistic",
+    "eval_metric": "auc",
+    "random_state": 42,
+}
+
+
+def prepare_features(pdf):
+    """Feature matrix and label from a pandas frame. Replaces the SAS DATA step (missing → 0)."""
+    return pdf[FEATURE_COLS].fillna(0), pdf[TARGET_COL]
+
+
+def split_train_test(X, y):
+    """Stratified 80/20 split with seed 42. Replaces PROC SURVEYSELECT samprate=0.8 seed=42."""
+    return train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
+
+
+def train_pd_model(X, y, params=None):
+    """Fit the PD model. Replaces PROC GRADBOOST."""
+    return XGBClassifier(**(params or SAS_MAPPED_PARAMS)).fit(X, y)
+```
+
+The module also defines `BEHAVIORAL_COLS`, `MACRO_COLS`, `FEATURE_COLS`, `TARGET_COL`, `CHALLENGER_PARAMS` and `pd_metrics()` (AUC, Gini, KS and Brier, replacing `PROC LOGISTIC`). Running the file directly (`main(session)`) still performs the converted SAS workflow end to end.
+
+To get this shape, add a line like this to the prompt:
+
+```text
+Structure python_pd_model.py as an importable module: constants for the feature lists and the
+SAS-mapped hyperparameters, one function per SAS step (prepare, split, train, evaluate), and the
+end-to-end workflow in main(session) under if __name__ == "__main__".
 ```
 
 The rest of the SAS workflow is mapped to Snowflake ML:
@@ -160,7 +186,7 @@ Treat the converted script as a draft for validation, not a finished model. Chec
 - **Equivalence.** Compare discrimination (Gini, KS) and calibration (Brier, predicted vs observed default rate) against the SAS model on the same test population.
 - **Iterate in the chat.** Refine edge cases in follow-up prompts, for example "add Brier score and log all metrics with Snowflake Experiment Tracking" or "train a tuned challenger with a lower learning rate".
 
-The notebook in this guide is that converted script after this kind of iteration. It adds Experiment Tracking, a challenger model, SHAP explainability, monitoring and orchestration. The remaining steps walk through it cell by cell.
+The notebook in this guide imports this module and builds the rest of the lifecycle around it: Experiment Tracking, a challenger model, SHAP explainability, monitoring and orchestration. The remaining steps walk through it cell by cell.
 
 <!-- ------------------------ -->
 ## Set Up the Environment
@@ -330,6 +356,8 @@ plt.tight_layout()
 plt.show()
 ```
 
+![Class balance and default rate by product category](assets/class-balance-default-rate-by-product.png)
+
 Default rate by VantageScore band. Default risk should fall steadily as the score rises, which is the classic monotonicity check:
 
 ```python
@@ -355,6 +383,8 @@ fig.legend(loc="upper right")
 plt.tight_layout()
 plt.show()
 ```
+
+![Default rate by VantageScore band](assets/default-rate-by-vantage-score.png)
 
 Behavioral feature means for defaulters relative to non-defaulters:
 
@@ -382,6 +412,8 @@ plt.tight_layout()
 plt.show()
 ```
 
+![Behavioral features: defaulters vs non-defaulters](assets/behavioral-features.png)
+
 Macro trends against the portfolio default rate over time:
 
 ```python
@@ -408,6 +440,8 @@ plt.suptitle("FRED Macro Indicators and Portfolio Default Rate (Monthly)")
 plt.tight_layout()
 plt.show()
 ```
+
+![FRED macro indicators and portfolio default rate](assets/macro-trends-vs-default-rate.png)
 
 A correlation matrix on a 20K-row sample, taken in Snowflake before collecting:
 
@@ -441,6 +475,8 @@ ax.set_title("Feature Correlation Matrix (incl. DEFAULT_FLAG)")
 plt.tight_layout()
 plt.show()
 ```
+
+![Feature correlation matrix](assets/correlation-heatmap.png)
 
 <!-- ------------------------ -->
 ## Build the Feature Store
@@ -527,7 +563,7 @@ print(f"Registered: {macro_fv.name} v{macro_fv.version}")
 # Macro Scenario Feature View — forward-looking scenarios for IFRS 9 / CECL scenario-weighted ECL
 # Illustrative shocks applied to the latest FRED observation; in production these come from the
 # economics team, regulator-prescribed scenarios (CCAR/DFAST, PRA ACS) or a Marketplace provider.
-MACRO_COLS = ["UNEMPLOYMENT_RATE", "FED_FUNDS_RATE", "CPI_INDEX"]
+from python_pd_model import MACRO_COLS  # shared with the training module
 
 session.sql("""
     CREATE OR REPLACE TABLE CREDIT_RISK_ML.PD_MODEL.MACRO_SCENARIOS CHANGE_TRACKING = TRUE AS
@@ -632,36 +668,25 @@ The PD model is an `XGBClassifier`, the Python equivalent of the SAS `PROC GRADB
 | `minleafsize=20` | `min_child_weight` | 20 (approximate) |
 | `seed=42` | `random_state` | 42 |
 
-Load the Dataset and create a stratified 80/20 split over the 11 features (8 behavioral, 3 macro):
+Import the model definition from `python_pd_model.py`, then load the Dataset and create the stratified 80/20 split over the 11 features (8 behavioral, 3 macro) with the module's `prepare_features` and `split_train_test`:
 
 ```python
+# The model definition lives in python_pd_model.py (converted from SAS by Cortex Code).
+# The notebook and the training pipeline both import it, so they train exactly the same model.
 import numpy as np
-from xgboost import XGBClassifier
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import roc_auc_score
+from python_pd_model import (FEATURE_COLS, TARGET_COL, SAS_MAPPED_PARAMS, CHALLENGER_PARAMS,
+                             prepare_features, split_train_test, train_pd_model, pd_metrics)
 
 # Load dataset to pandas
 train_pdf = ds_df.to_pandas()
 
-FEATURE_COLS = [
-    "VANTAGE_SCORE_3", "NUMBER_OF_ACCOUNTS", "NUMBER_ACCOUNTS_PAST_DUE",
-    "NUMBER_ACCOUNTS_MAJOR_DEROGATORY", "HIGH_UTIL_ACCTS",
-    "AGE_OLDEST_ACCOUNT", "TOTAL_PAST_DUE_AMOUNT", "BALANCE",
-    "UNEMPLOYMENT_RATE", "FED_FUNDS_RATE", "CPI_INDEX"
-]
-TARGET_COL = "DEFAULT_FLAG"
-
-X = train_pdf[FEATURE_COLS].fillna(0)
-y = train_pdf[TARGET_COL]
-
-X_train, X_test, y_train, y_test = train_test_split(
-    X, y, test_size=0.2, random_state=42, stratify=y
-)
+X, y = prepare_features(train_pdf)                           # SAS DATA step: missing -> 0
+X_train, X_test, y_train, y_test = split_train_test(X, y)    # SAS PROC SURVEYSELECT: 80/20, seed 42
 print(f"Train: {X_train.shape[0]:,} rows | Test: {X_test.shape[0]:,} rows")
 print(f"Default rate — Train: {y_train.mean():.3f} | Test: {y_test.mean():.3f}")
 ```
 
-Train two candidates and log both to the `PD_MODEL_DEVELOPMENT` experiment: the SAS-mapped baseline (the future **champion**) and a tuned configuration (the **challenger**). Each run records its hyperparameters, the exact Dataset version it consumed, and the standard credit risk metrics:
+Train two candidates with the module's `train_pd_model` and log both to the `PD_MODEL_DEVELOPMENT` experiment: the SAS-mapped baseline, `SAS_MAPPED_PARAMS` (the future **champion**), and a tuned configuration, `CHALLENGER_PARAMS` (the **challenger**). Each run records its hyperparameters, the exact Dataset version it consumed, and the standard credit risk metrics:
 - **Gini** (2 × AUC − 1): discrimination
 - **KS**: the maximum separation between the score distributions of defaulters and non-defaulters
 - **Brier score**: calibration
@@ -671,47 +696,21 @@ This replaces the Word or Excel tracker in which modelers record what they tried
 ```python
 # Train XGBoost — converted from SAS PROC GRADBOOST (see sas_pd_model.sas) — with Experiment Tracking
 # Every run (params, dataset version, Gini/KS/Brier) is logged to the PD_MODEL_DEVELOPMENT experiment
-from scipy.stats import ks_2samp
-from sklearn.metrics import brier_score_loss
 from snowflake.ml.experiment import ExperimentTracking
 
 exp = ExperimentTracking(session=session, database_name="CREDIT_RISK_ML", schema_name="PD_MODEL")
 exp.set_experiment("PD_MODEL_DEVELOPMENT")
 
-
-def pd_metrics(y_true, p):
-    a = roc_auc_score(y_true, p)
-    return {"auc": float(a), "gini": float(2 * a - 1),
-            "ks": float(ks_2samp(p[y_true == 0], p[y_true == 1]).statistic),
-            "brier": float(brier_score_loss(y_true, p))}
-
-
-# Champion candidate — hyperparameters mapped 1:1 from SAS:
-#   ntrees=200        →  n_estimators=200
-#   learningrate=0.1  →  learning_rate=0.1
-#   maxdepth=6        →  max_depth=6
-#   vars_to_try=5     →  colsample_bynode = 5/11 (features tried per split)
-#   minleafsize=20    →  min_child_weight=20
-params = {
-    "n_estimators": 200,
-    "max_depth": 6,
-    "learning_rate": 0.1,
-    "colsample_bynode": 5 / len(FEATURE_COLS),
-    "min_child_weight": 20,
-    "objective": "binary:logistic",
-    "eval_metric": "auc",
-    "random_state": 42,
-}
-
-# Challenger candidate — slower learning rate, more trees, row subsampling
-CHALLENGER_PARAMS = {**params, "n_estimators": 400, "learning_rate": 0.05, "max_depth": 5, "subsample": 0.8}
+# Champion candidate: hyperparameters mapped from SAS PROC GRADBOOST (see SAS_MAPPED_PARAMS in python_pd_model.py)
+params = SAS_MAPPED_PARAMS
+# Challenger candidate: CHALLENGER_PARAMS (slower learning rate, more trees, row subsampling)
 
 runs = {}
 for run_name, run_params in [("sas_mapped_baseline", params), ("challenger_lr005_d5", CHALLENGER_PARAMS)]:
     with exp.start_run(run_name):
         exp.log_params({**run_params, "dataset": dataset.fully_qualified_name,
                         "dataset_version": dataset.selected_version.name})
-        clf = XGBClassifier(**run_params).fit(X_train, y_train)
+        clf = train_pd_model(X_train, y_train, run_params)
         run_metrics = pd_metrics(y_test.values, clf.predict_proba(X_test)[:, 1])
         exp.log_metrics(run_metrics)
     runs[run_name] = (clf, run_metrics)
@@ -742,6 +741,8 @@ ax.set_title("PD Model — XGBoost Feature Importance")
 plt.tight_layout()
 plt.show()
 ```
+
+![XGBoost feature importance](assets/xgboost-feature-importance.png)
 
 You can compare the runs in Snowsight under **AI & ML > Experiments > PD_MODEL_DEVELOPMENT**.
 
@@ -881,6 +882,8 @@ print(shap_df.abs().mean().sort_values(ascending=False).round(4).to_string())
 alt.renderers.enable("mimetype")
 plot_violin(shap_df=shap_df, feature_df=feature_df)
 ```
+
+![SHAP values per feature](assets/shap-explainability.png)
 
 Then explain a single prediction. This is the input to an adverse action notice ("why was this applicant declined?"):
 
@@ -1125,7 +1128,7 @@ Reviewer (MODEL_REVIEWER), outside the DAG, once per candidate:
 ```
 
 ### Pipeline stored procedures
-This cell defines and registers the pipeline steps:
+This cell uploads `python_pd_model.py` to the `ML_ARTIFACTS` stage and registers each pipeline step as a stored procedure with that file as an import. `SP_TRAIN_CANDIDATES` trains with the module's `prepare_features`, `split_train_test`, `train_pd_model` and hyperparameters, and every step computes metrics with its `pd_metrics`. The monthly retraining therefore runs the same converted code as the notebook. To change the model, edit `python_pd_model.py` and re-run this cell. The pipeline steps are:
 
 | Procedure | What it does |
 |---|---|
@@ -1147,6 +1150,7 @@ It also creates `PROMOTION_LOG`, the model risk review queue and audit trail.
 # Candidates carry CHAMPION_CANDIDATE / CHALLENGER_CANDIDATE aliases until reviewed; only an approval
 # moves the CHAMPION / CHALLENGER alias that weekly scoring uses.
 from snowflake.snowpark import Session
+import python_pd_model as pdm
 
 DB, SCHEMA, WH = "CREDIT_RISK_ML", "PD_MODEL", "CREDIT_RISK_WH"
 MODEL_NAME = "PD_XGB_MODEL"
@@ -1154,6 +1158,10 @@ SP_PACKAGES = ["snowflake-ml-python", "xgboost", "scikit-learn", "scipy", "panda
 ROLES = ["CHAMPION", "CHALLENGER"]
 
 session.sql(f"CREATE STAGE IF NOT EXISTS {DB}.{SCHEMA}.ML_ARTIFACTS").collect()
+# Ship the model module to the stage; every pipeline procedure imports it from there
+MODEL_MODULE = f"@{DB}.{SCHEMA}.ML_ARTIFACTS/code/python_pd_model.py"
+session.file.put("python_pd_model.py", f"@{DB}.{SCHEMA}.ML_ARTIFACTS/code",
+                 auto_compress=False, overwrite=True)
 # PROMOTION_LOG is the model-risk review queue and audit trail, one row per candidate:
 #   TARGET_ROLE        = role the candidate would take if approved (CHAMPION / CHALLENGER)
 #   CHALLENGER_VERSION = the candidate version under review (column name kept for compatibility)
@@ -1262,16 +1270,6 @@ def _upsert_monitor(session, role, version_name):
     """).collect()
 
 
-def _pd_metrics(y, p):
-    from sklearn.metrics import roc_auc_score, brier_score_loss
-    from scipy.stats import ks_2samp
-    auc = roc_auc_score(y, p)
-    # Cast to native float: numpy float32 values are not JSON-serializable (log_metrics / log_model)
-    return {"auc": float(auc), "gini": float(2 * auc - 1),
-            "ks": float(ks_2samp(p[y == 0], p[y == 1]).statistic),
-            "brier": float(brier_score_loss(y, p))}
-
-
 def sp_refresh_features(session: Session) -> str:
     from snowflake.ml.feature_store import FeatureStore
     fs = FeatureStore(session, DB, SCHEMA, WH)
@@ -1298,8 +1296,6 @@ def sp_generate_dataset(session: Session) -> str:
 def sp_train_candidates(session: Session) -> str:
     """Retrain both models on the latest Dataset and register them as candidates awaiting review."""
     import datetime
-    from xgboost import XGBClassifier
-    from sklearn.model_selection import train_test_split
     from snowflake.ml.dataset import load_dataset
     from snowflake.ml.experiment import ExperimentTracking
     from snowflake.ml.registry import Registry
@@ -1307,20 +1303,20 @@ def sp_train_candidates(session: Session) -> str:
     ds_version = _latest_dataset_version(session)
     sdf = load_dataset(session, f"{DB}.{SCHEMA}.PD_TRAINING_DS", ds_version).read.to_snowpark_dataframe()
     pdf = sdf.to_pandas()
-    X, y = pdf[FEATURE_COLS].fillna(0), pdf[TARGET_COL]
-    X_tr, X_te, y_tr, y_te = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
+    X, y = pdm.prepare_features(pdf)
+    X_tr, X_te, y_tr, y_te = pdm.split_train_test(X, y)
 
     reg = Registry(session=session, database_name=DB, schema_name=SCHEMA)
     m = reg.get_model(MODEL_NAME)
 
     # Champion candidate keeps the production champion's hyperparameters; challenger uses the challenger config
     champion = _version_by_alias(m, "champion")
-    champion_params, params_source = params, "SAS-mapped baseline (no champion found)"
+    champion_params, params_source = pdm.SAS_MAPPED_PARAMS, "SAS-mapped baseline (no champion found)"
     if champion is not None:
         champion_params = {k: v for k, v in champion.load(force=True).get_params().items() if v is not None}
         params_source = f"hyperparameters of champion {champion.version_name}"
     candidates = [("CHAMPION", champion_params, params_source),
-                  ("CHALLENGER", CHALLENGER_PARAMS, "challenger configuration")]
+                  ("CHALLENGER", pdm.CHALLENGER_PARAMS, "challenger configuration")]
 
     exp = ExperimentTracking(session=session, database_name=DB, schema_name=SCHEMA)
     exp.set_experiment("PD_MODEL_DEVELOPMENT")
@@ -1330,12 +1326,12 @@ def sp_train_candidates(session: Session) -> str:
         version_name = f"V_{stamp}_{role[:5]}"          # e.g. V_20261101_0200_CHAMP / _CHALL
         with exp.start_run(f"retrain_{role.lower()}_{stamp}"):
             exp.log_params({**run_params, "dataset_version": ds_version, "target_role": role})
-            model = XGBClassifier(**run_params).fit(X_tr, y_tr)
-            metrics = _pd_metrics(y_te.values, model.predict_proba(X_te)[:, 1])
+            model = pdm.train_pd_model(X_tr, y_tr, run_params)
+            metrics = pdm.pd_metrics(y_te.values, model.predict_proba(X_te)[:, 1])
             exp.log_metrics(metrics)
         reg.log_model(
             model=model, model_name=MODEL_NAME, version_name=version_name,
-            sample_input_data=sdf.select(FEATURE_COLS).limit(5),  # Snowpark input -> lineage to the Dataset
+            sample_input_data=sdf.select(pdm.FEATURE_COLS).limit(5),  # Snowpark input -> lineage to the Dataset
             metrics=metrics, target_platforms=["WAREHOUSE"],
             comment=f"{role} CANDIDATE — pending review | {source}, dataset {ds_version}",
         )
@@ -1376,7 +1372,7 @@ def sp_validation_gate(session: Session) -> str:
 
     def metrics_for(table):
         pdf = session.table(f"{DB}.{SCHEMA}.{table}").select("DEFAULT_FLAG", '"output_feature_1"').to_pandas()
-        return _pd_metrics(pdf["DEFAULT_FLAG"].values, pdf["output_feature_1"].values)
+        return pdm.pd_metrics(pdf["DEFAULT_FLAG"].values, pdf["output_feature_1"].values)
 
     bench = metrics_for("PD_SCORES_CHAMPION")
     champion_version = _version_by_alias(m, "champion").version_name
@@ -1541,7 +1537,7 @@ for fn in [sp_refresh_features, sp_generate_dataset, sp_train_candidates,
            sp_score_candidates, sp_validation_gate, sp_notify_reviewer, sp_apply_review]:
     session.sproc.register(
         fn, name=f"{DB}.{SCHEMA}.{fn.__name__.upper()}",
-        packages=SP_PACKAGES, is_permanent=True, replace=True,
+        packages=SP_PACKAGES, imports=[MODEL_MODULE], is_permanent=True, replace=True,
         stage_location=f"@{DB}.{SCHEMA}.ML_ARTIFACTS",
     )
     print(f"Registered procedure {fn.__name__.upper()}")
@@ -1795,11 +1791,10 @@ def sp_weekly_scenario_ecl(session: Session) -> str:
     # Tie this ECL run to the portfolio scoring run that just completed
     run_ts = session.table(f"{DB}.{SCHEMA}.PD_PORTFOLIO_SCORES").select(max_("SCORE_TS")).collect()[0][0]
 
-    behavioral_cols = [c for c in FEATURE_COLS if c not in MACRO_COLS]
     scenarios = fs.read_feature_view(fs.get_feature_view("MACRO_SCENARIO_FEATURES", "V1"))
     scenario_input = (_scoring_features(session, fs, limit=None)
-                      .select("TRADE_ID", *behavioral_cols).cross_join(scenarios)
-                      .select("TRADE_ID", "SCENARIO_ID", "SCENARIO_WEIGHT", *FEATURE_COLS))
+                      .select("TRADE_ID", *pdm.BEHAVIORAL_COLS).cross_join(scenarios)
+                      .select("TRADE_ID", "SCENARIO_ID", "SCENARIO_WEIGHT", *pdm.FEATURE_COLS))
 
     results = []
     for role, mv in _weekly_models(session):
@@ -1954,7 +1949,7 @@ def sp_weekly_scoring_notify(session: Session) -> str:
 for fn in [sp_weekly_batch_score, sp_weekly_scenario_ecl, sp_weekly_scoring_notify]:
     session.sproc.register(
         fn, name=f"{DB}.{SCHEMA}.{fn.__name__.upper()}",
-        packages=SP_PACKAGES, is_permanent=True, replace=True,
+        packages=SP_PACKAGES, imports=[MODEL_MODULE], is_permanent=True, replace=True,
         stage_location=f"@{DB}.{SCHEMA}.ML_ARTIFACTS",
         # Owner's-rights procedures cannot create temporary tables; the scenario step uses one
         execute_as="caller" if fn is sp_weekly_scenario_ecl else "owner",
