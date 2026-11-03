@@ -14,14 +14,14 @@ tags: Getting Started, Machine Learning, Snowflake ML, Feature Store, Model Regi
 
 Banks have built Probability of Default (PD), Loss Given Default (LGD) and Exposure at Default (EAD) models in SAS for decades. The models work, but the infrastructure around them (data extracts to SAS Grid, macro-generated datasets, cron-driven batch jobs, spreadsheet model inventories and email sign-offs) makes reproducibility, lineage and monitoring expensive to prove to regulators.
 
-In this Quickstart you migrate a SAS `PROC HPFOREST` PD model to **XGBoost on Snowflake ML** and run the whole model lifecycle in one governed platform: features, training data, experiments, registry, explainability, batch scoring, scenario-weighted Expected Credit Loss (ECL), monitoring, human-in-the-loop promotion and scheduled pipelines.
+In this Quickstart you migrate a SAS `PROC HPFOREST` PD model to **XGBoost on Snowflake ML** and run the whole model lifecycle in one governed platform: features, training data, experiments, registry, explainability, batch scoring, scenario-weighted Expected Credit Loss (ECL) scoring, monitoring, human-in-the-loop promotion and scheduled pipelines.
 
 ![Solution architecture](assets/solution-architecture.png)
 
 The complete notebook is in the companion GitHub repository: **[Snowflake-Labs/sfguide-credit-risk-pd-model-snowflake-ml](https://github.com/sfc-gh-gghanakota/sfquickstarts/blob/sfguide-credit-risk-pd-model-snowflake-ml/site/sfguides/src/credit-risk-pd-model-snowflake-ml/assets/credit_risk_probability_of_default_model.ipynb)**. Each step below shows the notebook code with an explanation, so you can follow along cell by cell.
 
 ### What You Will Learn
-- How to convert a SAS `PROC HPFOREST` PD model to Python with Cortex Code, and map its hyperparameters to `XGBClassifier`
+- How to convert a SAS `PROC HPFOREST` PD model to Python with CoCo, and map its hyperparameters to `XGBClassifier`
 - How to build Feature Views (backed by Dynamic Tables) for behavioral, macroeconomic and forward-looking scenario features
 - How to generate immutable, point-in-time correct training Datasets
 - How to log runs with Experiment Tracking and register models with `champion` / `challenger` aliases
