@@ -275,6 +275,14 @@ COMMENT = 'Semantic view for order analytics'
 
 Now that we have updated and validated our dbt project, let's deploy it so we can build automation. Deploying a dbt project creates a Snowflake object and allows us to create tasks based on the object. 
 
+The setup script turned on logging and tracing for the `dev` and `prod` schemas. You'll deploy the project and its tasks into the `public` schema, so turn on the same levels there first. Otherwise, the Query telemetry view later in this guide won't show any spans for your runs.
+
+```sql
+ALTER SCHEMA tasty_bytes_dbt_db.public SET LOG_LEVEL = 'INFO';
+ALTER SCHEMA tasty_bytes_dbt_db.public SET TRACE_LEVEL = 'ALWAYS';
+ALTER SCHEMA tasty_bytes_dbt_db.public SET METRIC_LEVEL = 'ALL';
+```
+
 1. On the right side of the workspace editor, select Connect > Deploy dbt project
 2. Ensure your role is `accountadmin`
 3. Under Select location, select database `tasty_bytes_dbt_db` and schema `public`
