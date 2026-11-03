@@ -1,0 +1,20 @@
+# Dependencies for the two jobs that parse frontmatter: validate, and publish.
+#
+# Every deploy job is standard-library only, so nothing is ever installed
+# alongside the write-scoped token that posts pull request comments. PyYAML is
+# needed where frontmatter is read, and lib/md.py exists to do that with
+# safe_load rather than gray-matter, which evaluates a ---js block as code.
+#
+# publish-to-aem.yml installs this next to production AEM credentials, which is
+# the one exception. It is unavoidable: parse_markdown.py silently falls back to
+# a hand-rolled YAML parser when PyYAML is absent, and publishing
+# differently-parsed content is the worse outcome. The hashes below are what
+# make it acceptable.
+#
+# Hashes are required at install time, so a compromised index cannot substitute
+# a different artifact. Both the manylinux x86_64 cp312 wheel (what ubuntu-latest
+# resolves to) and the sdist are listed so the pin still installs if the runner
+# image changes.
+pyyaml==6.0.2 \
+    --hash=sha256:80bab7bfc629882493af4aa31a4cfa43a4c57c83813253626916b8c7ada83476 \
+    --hash=sha256:d584d9ec91ad65861cc08d42e834324ef890a082e591037abe114850ff7bbc3e

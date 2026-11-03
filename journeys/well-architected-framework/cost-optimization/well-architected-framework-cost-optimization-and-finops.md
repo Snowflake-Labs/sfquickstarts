@@ -63,7 +63,7 @@ Cost Optimization:
   - **Measure business value KPIs baseline:** Once metrics to quantify
     business value are identified and trade-offs between cost,
     performance, and reliability are established, you need to document a
-    “baseline measurement” in order to track progress again.
+    “baseline measurement” in order to track progress against it.
     Furthermore, you should establish a regular cadence for refreshing
     this measurement to ensure value realization is in line with
     expectations and business goals.
@@ -167,8 +167,6 @@ continuously justified, optimized, and communicated in business terms.
 This elevates the conversation with leadership from cost oversight to
 value realization and ensures that Snowflake is understood as a platform
 for growth, innovation, and competitive advantage.
-
-#### 
 
 #### Consider cost as a design constraint
 
@@ -283,13 +281,28 @@ transparently display it to the appropriate stakeholders to take action.
 
 #### Recommendations
 
-Implementing a robust FinOps visibility framework in Snowflake,
-supported by cross-functional collaboration, enables each business
-function to access timely and relevant usage and cost data. This
-empowers them to understand the business impact of their consumption and
-take prompt action when anomalies arise. To meet this vision, consider
-the following recommendations based on industry best practices and
-Snowflake's capabilities:
+Effective cost management begins with visibility, and organizations
+should approach implementation in alignment with their current maturity
+and operational needs. Snowflake provides built-in consumption
+visibility through the Cost Management section of the account's
+Administrative area, offering out-of-the-box charts and summaries for
+compute, storage, and AI credit consumption. For many organizations,
+this native experience is the appropriate starting point — requiring no
+additional infrastructure and delivering immediate insight into platform
+spend. As consumption grows and reporting requirements become more
+granular, organizations can mature into a custom data foundation that
+enables attribution, historical trending, and cross-functional cost
+governance at a level of precision the native tooling may not provide.
+Organizations that prefer not to build and maintain this layer
+internally may alternatively leverage third-party FinOps and
+observability platforms that provide equivalent capability out-of-the-box.
+
+Deciding on a custom implementation of a FinOps visibility framework in
+Snowflake enables each business function to access timely and relevant
+usage and cost data. This empowers them to understand the business
+impact of their consumption and take prompt action when anomalies arise.
+To meet this vision, consider the following recommendations based on
+industry best practices and Snowflake's capabilities:
 
 #### Understand Snowflake’s resource billing models
 
@@ -318,9 +331,15 @@ parameters. High-level categories are below.
   minimum.</span>
 
 - **Storage:** Costs are based on the average monthly compressed data
-  volume stored, including active data, Time Travel (data retention),
-  and Fail-safe (disaster recovery) data. The price per terabyte (TB)
-  varies by cloud provider and region.
+  volume stored across all storage types. This includes standard
+  Snowflake-managed tables (active data, Time Travel for data retention,
+  and Fail-safe for disaster recovery), Snowflake Stages, Hybrid Tables,
+  and SPCS Block Storage. With open file formats like Snowflake-managed
+  Iceberg, storage costs are not charged but rather only serverless
+  charges on Table Optimization for file system management. The price
+  per TB or GB varies by cloud provider and region and can be reviewed
+  in Table 3 of the
+  [<u>Credit Consumption Table</u>](/legal-files/CreditConsumptionTable.pdf).
 
 - **Serverless features:** Snowflake Serverless features use resources
   managed by Snowflake, not the user, which automatically scale to meet
@@ -338,11 +357,12 @@ parameters. High-level categories are below.
 
 - **AI features:** Snowflake additionally offers artificial intelligence
   features that run on Snowflake-managed compute resources, including
-  Cortex AISQL functions (e.g. COMPLETE, CLASSIFY, etc.), Cortex
-  Analyst, Cortex Search, Fine Tuning, and Document AI. The usage of
-  these features, often with tokens, are converted to credits to unify
-  with the rest of Snowflake’s billing model. Details are listed in the
-  Credit Consumption Document.
+  Cortex AI SQL functions (e.g. AI_COMPLETE, AI_CLASSIFY, etc.), Cortex
+  Agents, Cortex Search, Fine Tuning, and Cortex Code (Snowflake
+  CoWork, CLI / in Snowsight / Desktop). The usage of these features,
+  often with tokens, are converted to credits to unify with the rest of
+  Snowflake's billing model. Details are listed in the Credit
+  Consumption Document.
 
 - **Data transfer:** Data transfer is the process of moving data into
   (ingress) and out of (egress) Snowflake. This generally happens via
@@ -368,7 +388,7 @@ parameters. High-level categories are below.
 Implementing robust and organizationally consistent tagging and labeling
 strategies across all resources (e.g. storage objects, warehouses,
 accounts, queries) is crucial to accurately allocate costs to specific
-teams, products, or initiatives and linking actions to outcomes.
+teams, products, or initiatives and to link actions to outcomes.
 
 **Tagging in Snowflake**
 
@@ -477,12 +497,11 @@ within the platform.
 
 **Showback**
 
-If cost accountability models have not been implemented previously,
-consider a showback model. This involves transparently reporting
-Snowflake costs to different departments or projects to raise awareness
-of their costs. By showing each team their monthly consumption (broken
-down by warehouse usage, query costs, and storage, etc.), it encourages
-a cost-conscious culture. This initial step helps teams understand the
+Consider a showback model to transparently report Snowflake costs to
+different departments or projects to raise awareness of their costs. By
+showing each team their monthly consumption (broken down by category
+like warehouse usage, serverless costs, and storage, etc.), it
+encourages a cost-conscious culture. This initial step helps teams understand the
 financial impact of their actions without the immediate pressure of
 budget cuts. Tools like Snowflake's built-in [<u>Cost Management
 UI</u>](https://docs.snowflake.com/en/user-guide/cost-exploring-overall#overview-of-account-level-costs)
@@ -492,10 +511,10 @@ be used to provide these reports.
 
 **Chargeback**
 
-For more financially mature organizations, a chargeback model can be
-very effective for managing costs. This system directly bills
-departments for their Snowflake usage. This creates a powerful financial
-incentive for teams to optimize their workloads. To make this transition
+For some organizations, developing a custom chargeback data model can
+be very effective for managing costs. This system calculates and
+directly bills departments for their Snowflake usage and creates a
+powerful financial incentive for teams to optimize their workloads. To make this transition
 smooth and fair, you need to define clear rules for cost allocation. By
 implementing chargeback, you turn each department into a financial
 stakeholder, encouraging them to right-size their warehouses, suspend
@@ -547,7 +566,7 @@ contains two key schemas for this purpose:
 
 | Description | Key Metrics | Primary Data Sources |
 |---|---|---|
-| Understand the cost of query execution, warehouse consumption, and overall compute health. These are often the most dynamic and largest portion of your spend. | - Credits used: total credits by warehouse<br>- Query performance: execution time, bytes scanned, compilation time, parameterized query hash<br>- Warehouse health: % idle time, queueing, spilling, concurrency | - `ACCOUNT_USAGE.WAREHOUSE_METERING_HISTORY` (hourly warehouse credit usage)<br>- `ACCOUNT_USAGE.QUERY_HISTORY` (detailed query metrics and associated warehouses) |
+| Understand the cost of query execution, warehouse consumption, and overall compute health. These are often the most dynamic and largest portion of your spend. | - Credits used: total credits by warehouse<br>- Per query compute cost<br>- Query performance: execution time, bytes scanned, compilation time, parameterized query hash<br>- Warehouse health: % idle time, queueing, spilling, concurrency | - `ACCOUNT_USAGE.WAREHOUSE_METERING_HISTORY` (hourly warehouse credit usage)<br>- `ACCOUNT_USAGE.QUERY_HISTORY` (detailed query metrics and associated warehouses)<br>- `ACCOUNT_USAGE.QUERY_ATTRIBUTION_HISTORY` (compute cost per query without idle time) |
 
 **Storage metrics**
 
@@ -559,7 +578,7 @@ contains two key schemas for this purpose:
 
 | Description | Key Metrics | Primary Data Sources |
 |---|---|---|
-| Track credit consumption by Snowflake‑managed services and AI features. | - Credits used by service<br>- Cost per credit‑consuming events | - `ACCOUNT_USAGE.<Serverless Feature>_HISTORY`<br>- `ORGANIZATION_USAGE.METERING_DAILY_HISTORY`<br>- AI views such as `CORTEX_FUNCTIONS_USAGE_HISTORY`, `CORTEX_ANALYST_USAGE_HISTORY`, `DOCUMENT_AI_USAGE_HISTORY` |
+| Track credit consumption by Snowflake‑managed services and AI features. | - Credits used by service<br>- Cost per credit‑consuming events | - `ACCOUNT_USAGE.<Serverless Feature>_HISTORY`<br>- `ORGANIZATION_USAGE.METERING_DAILY_HISTORY`<br>- AI views such as `CORTEX_AI_FUNCTIONS_USAGE_HISTORY`, `CORTEX_AGENT_USAGE_HISTORY`, `CORTEX_CODE_CLI_USAGE_HISTORY` |
 
 **Data transfer**
 
@@ -577,8 +596,8 @@ contains two key schemas for this purpose:
 
 **Normalize consumption with unit economic metrics**
 
-For organizations to achieve comprehensive financial visibility, it is
-recommended best practice to move beyond tracking aggregate spend and
+For organizations to achieve comprehensive financial visibility, the
+recommended practice is to move beyond tracking aggregate spend and
 implement Unit Economics Metrics. Unit economics provides a powerful
 methodology for normalizing cloud consumption by tying platform costs to
 specific business or operational drivers. This per-unit approach helps
@@ -612,6 +631,8 @@ Some common examples include:
 - **Cost per user:** Measures the average cost to support each active
   user on the platform. This helps in understanding the cost
   implications of user growth and identifying expensive usage patterns.
+  It may be helpful to separate human users from service accounts and
+  develop a metric of active user count to use in this metric.
 
 ![Efficiency Metrics](assets/image3.png)
 >
@@ -637,7 +658,7 @@ business value are we getting for our cloud spend?" Examples include:
   project-based accounting and helps assess the financial viability of
   new features or services.
 
-- **"Bring Your Own Metric":** Custom define unit economic metrics that
+- **"Bring Your Own Metric":** Define custom unit economic metrics that
   are unique to your organization's business model. Examples could
   include Cost per Transaction, Cost per Shipment, or Cost per Ad
   Impression. Creating these tailored metrics ensures the most accurate
@@ -665,14 +686,14 @@ approach can be used to track meaningful cost metrics.
   credit consumption by object types, and cost insights to optimize the
   platform.
 
-- **Creating custom dashboards or Streamlit apps for different
-  stakeholder groups:** Snowsight facilitates the creation of custom
-  dashboards using ACCOUNT_USAGE and ORGANIZATION_USAGE views. Custom
-  charts in the Dashboards feature and Streamlit apps can both be easily
-  shared. Combined with cost allocation and tagging, this allows for
-  tailored views for finance managers (aggregated spend), engineering
-  managers (warehouse utilization), or data analysts (query
-  performance).
+- **Creating custom visuals for different stakeholder groups:**
+  Snowsight facilitates the creation of custom dashboards with Notebooks
+  and Streamlit applications using Snowflake account telemetry views
+  located in the schemas ACCOUNT_USAGE and ORGANIZATION_USAGE in the
+  Snowflake database of every account. Custom charts combined with cost
+  allocation and tagging allow for tailored views for finance managers
+  (aggregated spend), engineering managers (compute utilization), or
+  data analysts (query performance).
 
 - **Integrating with third-party BI tools for advanced analytics:**
   Connecting to Snowflake from tools like Tableau, Power BI, Looker, or
@@ -681,44 +702,45 @@ approach can be used to track meaningful cost metrics.
   (FinOps platforms) offer easier setup and more out-of-the-box
   Snowflake cost optimization insights.
 
-- **Leverage Cortex Code (In Preview):** This AI Assistant capability 
-allows users to query cost and usage data in ACCOUNT_USAGE views using 
-natural language natively in the Snowsight UI.
+- **Leverage Cortex Code:** This AI Coding Assistant capability allows
+  users to query cost and usage data in ACCOUNT_USAGE views using
+  natural language natively in the Snowsight UI, REST API, CLI, or CoCo
+  Desktop and create a point-in-time or ongoing application to monitor
+  and investigate usage.
 
 #### Investigate anomalous consumption activity
 
 Cost Anomaly Detection is a critical component of visibility that
 leverages machine learning to continuously monitor credit consumption
 against historical spending patterns, automatically flagging significant
-deviations from the established baseline. This proactive monitoring is
-essential for preventing budget overruns and identifying inefficiencies,
-shifting the organization from a reactive to a proactive cost management
-posture to mitigate financial risk. As a best practice, you should
-initially review anomaly detection on the entire account to gain a broad
-view, then dive deeper into a more granular review for individual
-high-spend warehouses. [This
-approach](https://docs.snowflake.com/en/user-guide/cost-anomalies)
-allows for more targeted analysis and assigns clear ownership for
-investigating any flagged anomalies. There are several methods for
+deviations from the established baseline. This proactive monitoring
+prevents budget overruns and identifies inefficiencies, helping your
+organization shift from reactive to proactive cost management. To foster
+a culture of cost awareness and accountability, ensure every detected
+anomaly has an assigned owner and configure email notifications in the
+UI for rapid investigation. We recommend starting with an account-level
+view, then drilling down into individual high-spend warehouses. This
+layered approach enables more targeted analysis and ensures clear
+ownership for all flagged anomalies. There are several methods for
 anomaly detection supported by Snowflake:
 
 **Cost Anomalies in Snowsight**
 
 Snowsight, Snowflake's primary web interface, offers a dedicated Cost
-Management UI that allows users to visually identify and analyze the
-details of any detected cost anomaly. The importance of this intuitive
-visual interface lies in its ability to make complex cost data
-accessible to a wide range of stakeholders, enabling rapid root cause
-analysis by correlating a cost spike with specific query history or user
-activity. One of the tabs in this UI is the Cost Anomaly Detection tab,
-which enables you to view cost anomalies at the organization or account
-level and explore the top warehouses or accounts driving this change. To
-foster a culture of cost awareness and accountability, it is a best
-practice to ensure there is an owner for an anomaly detected in the
-account and set up a [<u>notification (via
-email)</u>](https://docs.snowflake.com/en/user-guide/cost-anomalies-ui#configure-notifications-with-sf-web-interface)
-in the UI itself to ensure that cost anomalies are quickly and
-accurately investigated.
+Management UI that allows administrative users to visually identify and
+analyze with Cortex the details of any detected cost anomaly. The
+importance of this intuitive visual interface lies in its ability to
+make complex cost data accessible to a wide range of stakeholders,
+enabling rapid root cause analysis by correlating a cost spike with
+specific query history or user activity. One of the tabs in this UI is
+the Cost Anomaly Detection tab, which enables you to view cost anomalies
+at the organization or account level and explore the top warehouses or
+accounts driving this change. Within this tab, the Snap and Ask feature
+allows you to select a specific period in the consumption chart,
+enabling you to use "Add to Chat" or "Explain" quick actions to begin
+AI-based cost investigations via Cortex Code. This leverages Snowflake's
+Cost-Intelligence skill which can also do helpful actions like creating
+and editing budgets, investigating spend, and optimizing warehouses.
 
 **Programmatic Cost Anomaly Detection**
 
@@ -734,7 +756,7 @@ A key best practice is to utilize this programmatic access to build
 custom reports and dashboards that align with specific financial
 reporting needs and to create advanced, automated alerting mechanisms
 that pipe anomaly data into established operational channels, such as
-Slack or PagerDuty.
+Teams, Slack, or PagerDuty.
 
 **Custom Anomaly Detection & Notification**
 
@@ -763,7 +785,7 @@ move organizations beyond cost reporting by establishing the necessary
 automated guardrails and governance policies to manage and secure
 Snowflake consumption proactively. This framework enforces financial
 governance by transforming cost visibility into tangible action,
-utilizing features like budgets and resource monitors to prevent
+utilizing features like budgets, quotas, and resource monitors to prevent
 uncontrolled growth and ensure consumption aligns strictly with
 organizational financial policies. Control is foundational for
 maximizing the value of the platform by ensuring disciplined and
@@ -772,7 +794,7 @@ cost-effective resource utilization.
 #### Recommendations
 
 Implementing a comprehensive control framework, supported by features
-such as Resource Monitors, Budgets, and Tagging Policies, empowers
+such as Resource Monitors, Budgets, Quotas, and Tagging Policies, empowers
 organizations to enforce financial accountability and maintain budget
 predictability. By adopting these controls, teams can actively manage
 spend, quickly and automatically mitigate cost inefficiencies, and
@@ -788,11 +810,12 @@ To effectively manage and [<u>control Snowflake
 spend</u>](https://docs.snowflake.com/en/user-guide/cost-controlling),
 it is essential to establish and enforce cost guardrails. Implementing a
 [<u>budgeting
-system</u>](https://docs.snowflake.com/en/user-guide/budgets) is a key
-FinOps practice that promotes cost accountability and optimizes resource
-usage by providing teams with visibility into their consumption and the
-ability to set alerts and automated actions. Budgeting helps to prevent
-unexpected cost overruns and encourages a cost-conscious culture.
+system</u>](https://docs.snowflake.com/en/user-guide/budgets) and
+per-user quota limits are key FinOps practices that promote cost
+accountability and optimize resource usage by providing teams with
+visibility into their consumption and the ability to set alerts and
+automated actions. Budgets and Quotas help to prevent unexpected cost
+overruns and encourage a cost-conscious culture.
 
 **Set budgets permissions**
 
@@ -811,10 +834,10 @@ to departments, environments, or projects.
 
 Categorizing costs is fundamental for granular budget management. You
 can establish budgets based on the
-[<u>account</u>](https://docs.snowflake.com/en/user-guide/budgets/account-budget)
-or create [<u>custom
+[<u>account</u>](https://docs.snowflake.com/en/user-guide/budgets/account-budget),
+built-in categories, or create [<u>custom
 categories</u>](https://docs.snowflake.com/en/user-guide/budgets/custom-budget)
-using Object Tags. Custom tags, such as those for a data product or cost
+using Object or User Tags. Custom tags, such as those for a data product or cost
 center, are critical for accurately apportioning costs across different
 departments, lines of business, or specific projects. This granular
 approach provides a detailed breakdown of where spending occurs,
@@ -823,21 +846,32 @@ resource allocation. Implementing robust tagging policies and naming
 conventions ensures consistency and facilitates the interpretation of
 cost data. Because budgets are soft limit objects, objects can be part
 of more than one budget if different perspectives need to be tracked for
-cost (e.g., cost center & workload level budgeting).
+cost (e.g., cost center & workload level budgeting). Consider the use and
+flexibility of custom actions that automatically call a stored procedure
+when a spending threshold is reached. With custom actions, you can
+programmatically provide automated remediations or any number of custom
+operations to provide you the flexibility to meet your needs.
+
+**Govern runaway consumption**
+
+To prevent runaway spend by individual users, per-user quotas allow for
+daily and monthly limits with built-in notification and blocking actions
+to ensure that administrative teams have a guardrail against rogue and
+unintentional spend. It can also be configured to notify users who are
+nearing spending limits so they can adjust their behavior or request a
+limit increase pending a business need.
 
 **Implement a notification strategy**
 
-Effective budget management relies on timely communication. Setting up
+Effective spend management relies on timely communication. Setting up
 alerting through emails or webhooks to collaboration tools like Slack
 and Microsoft Teams provides proactive
 [<u>notification</u>](https://docs.snowflake.com/en/user-guide/budgets/notifications)
 to key stakeholders when spending approaches or exceeds a defined
 threshold. These alerts provide teams with an opportunity to review and
-adjust their usage before it leads to significant cost overruns. This
-capability positions organizations for security success by mitigating
-potential threats through comprehensive monitoring and detection.
+adjust their usage before it leads to significant cost overruns.
 
-Notifications are not limited to just budgets; [<u>Snowflake
+Notifications are not limited to just budgets and quotas; [<u>Snowflake
 alerts</u>](https://docs.snowflake.com/en/user-guide/alerts) can also be
 configured to systematically notify administrators of unusual or costly
 patterns, such as those listed in the Control and Optimize sections of
@@ -952,9 +986,8 @@ usage and prevent excessive costs.
   all assigned warehouses at 100% usage, to cap spending. It is also
   considered best practice to ensure there is a consistent action tied
   to the resource monitors based on your organization’s ways of working.
-  For example, it is worth considering that set resource monitors
-  perform actions like notify to specific admin(s) within your
-  organization.
+  For example, it is worth ensuring that each resource monitor notifies
+  the specific admin(s) responsible for it.
 
 - **Reduce Runaway Queries:** Runaway or hung queries can lead to
   significant cost overruns. Managing long-running queries is especially
@@ -1032,7 +1065,7 @@ key to keeping these costs in check.
   consists of the data in a table that can be actively queried against
   at the current point of time (i.e., without using Time-Travel
   commands)**.** To control active storage costs, you can create a
-  [<u>Storage Lifecyle
+  [<u>Storage Lifecycle
   Policy</u>](https://docs.snowflake.com/LIMITEDACCESS/storage-lifecycle-policy/storage-lifecycle-policies)
   to automatically archive or delete data based on an expiration policy
   you create.
@@ -1108,6 +1141,17 @@ configured to not only send emails, but also send
 to a cloud message queue or other webhooks (such as Microsoft Teams,
 Slack, or PagerDuty). This then gives you the ability to trigger other
 actions for remediation.
+
+**AI Cost Controls**
+
+With per-user quotas, you can confidently roll out AI workloads to
+large groups of users across your organization while tracking and
+preventing runaway spend by individuals. You can establish monthly or
+daily limits on each individual user's spend for the largest AI
+capabilities and choose to enforce access blocks once these limits are
+exceeded. To avoid surprises, proactive notifications can be configured
+to alert both users and administrators as they approach the quota before
+any access blocks are applied.
 
 #### Govern resource creation and administration
 
@@ -1222,7 +1266,8 @@ design should incorporate the principles below:
 
 - Utilize [<u>Query Acceleration
   Services</u>](https://docs.snowflake.com/en/user-guide/query-acceleration-service)
-  to help with infrequent, large data scans
+  to help with infrequent, large data scans (enabled by default on new
+  Gen2 warehouses)
 
 - For memory-intensive workloads, use a warehouse type of Snowpark
   Optimized or higher memory resource constraint configurations as
@@ -1259,6 +1304,77 @@ Some examples of this include:
 - Processing large data sets for AI workloads using memory-optimized
   warehouses
 
+- For real-time dashboards, data-powered APIs, and high-concurrency
+  user-facing applications that require sub-second, predictable query
+  latency, consider an [<u>Interactive
+  Warehouse</u>](https://docs.snowflake.com/en/sql-reference/sql/create-interactive-warehouse)
+
+**Warehouse Generations**
+
+Snowflake offers two generations of standard virtual warehouses — Gen1
+and Gen2 warehouses. Generation 2 (Gen2) is the recommended default for
+all new warehouses and should be the target configuration for existing
+warehouses across all workload types.
+
+Why Gen2 matters for cost optimization:
+
+- Built on faster underlying hardware with intelligent software
+  optimizations, including enhanced analytics, delete, update, merge, and
+  table scan operations. The majority of queries complete faster, meaning
+  more work is done in less credit consumption.
+
+- Query Acceleration Service (QAS) is enabled by default on new Gen2
+  warehouses (scale factor 2), providing automatic burst compute for
+  large scan operations without requiring separate configuration.
+
+- Snowflake Optima is active by default for Gen2, providing automatic
+  workload optimization at no additional cost.
+
+**Adaptive Warehouses**
+
+Adaptive Warehouses represent the next evolution of compute management
+in Snowflake. Rather than requiring teams to select warehouse sizes,
+configure multi-cluster settings, tune QAS scale factors, and manage
+auto-suspend policies, Adaptive Warehouses handle these automatically
+using workload-aware resource allocation. Budgets and Resource Monitors
+work with Adaptive Warehouses in the same way as standard warehouses.
+For per-query cost monitoring, use
+[<u>QUERY_METERING_HISTORY</u>](https://docs.snowflake.com/en/sql-reference/account-usage/query_metering_history)
+for adaptive compute query credit attribution.
+
+Key characteristics:
+
+- **Query-based billing:** Charges are calculated per query based on
+  actual compute and software resources consumed. You are not charged for
+  warehouse idle time.
+
+- **No manual sizing:** Snowflake dynamically determines the appropriate
+  compute for each query. The MAX_QUERY_PERFORMANCE_LEVEL property
+  (default: XLARGE) sets an upper bound on per-query performance;
+  QUERY_THROUGHPUT_MULTIPLIER (default: 2) controls how much concurrent
+  work the warehouse can run.
+
+- **No multi-cluster configuration:** Query routing and concurrency are
+  managed automatically.
+
+- **QAS and auto-suspend settings are not present:** These capabilities
+  are absorbed into the adaptive compute engine.
+
+- **Snowflake Optima is active:** All Optima capabilities (Indexing,
+  Metadata, Planning) are available on Adaptive Warehouses.
+
+> **Note:** Adaptive Warehouses are available in a growing set of
+> regions. For details, see
+> [Region availability](https://docs.snowflake.com/en/user-guide/warehouses-adaptive#region-availability).
+
+**AI-Assisted Configuration**
+
+Use the warehouse Cortex Code skill for guidance on Gen2 and Adaptive
+Warehouse configuration, including how to set
+MAX_QUERY_PERFORMANCE_LEVEL and QUERY_THROUGHPUT_MULTIPLIER for your
+workload profile, and to compare credit-per-hour rates across warehouse
+types and regions.
+
 **Warehouse sizing**
 
 Mapping the workload to the [<u>right warehouse
@@ -1281,11 +1397,20 @@ Recommendations for choosing the right-sized warehouse include:
   monitor.
 
 - Utilize Snowflake's extensive telemetry data, such as
-  [<u>QUERY_HISTORY</u>](https://docs.snowflake.com/en/sql-reference/account-usage/query_history)
-  and
+  [<u>QUERY_HISTORY</u>](https://docs.snowflake.com/en/sql-reference/account-usage/query_history),
   [<u>WAREHOUSE_METERING_HISTORY</u>](https://docs.snowflake.com/en/sql-reference/account-usage/warehouse_metering_history),
+  and
+  [<u>QUERY_ATTRIBUTION_HISTORY</u>](https://docs.snowflake.com/en/sql-reference/account-usage/query_attribution_history),
   to validate that the warehouse size is impacting the metrics you care
   about in the direction you intend.
+
+**AI-Assisted Investigation:**
+
+- Use the workload-performance-analysis Cortex Code skill to analyze
+  warehouse performance across your account. It surfaces spill rates,
+  pruning efficiency, QAS eligibility, and cache hit rates — the core
+  signals for right-sizing decisions — without needing to author
+  ACCOUNT_USAGE queries manually.
 
 **Optimal warehouse settings**
 
@@ -1293,7 +1418,7 @@ While Snowflake strives for minimal knobs and self-managed tuning, there
 are situations where selecting the right settings for warehouses can
 help with optimal cost and/or performance. Some of the key [<u>warehouse
 settings</u>](https://docs.snowflake.com/en/sql-reference/sql/create-warehouse)
-include
+include:
 
 - Auto suspend
 
@@ -1329,7 +1454,7 @@ To achieve significant operational efficiency and predictable costs,
 prioritize the use of serverless and managed services. These services
 eliminate the need to manage underlying compute infrastructure, allowing
 your organization to pay for results rather than resource provisioning
-and scaling. Evaluate the following servterless features to reduce costs
+and scaling. Evaluate the following serverless features to reduce costs
 and enhance performance in your environment.
 
 **Storage optimization**
@@ -1339,7 +1464,7 @@ Snowflake offers several serverless features that automatically
 tables</u>](https://docs.snowflake.com/en/user-guide/performance-query-storage),
 reducing the need for manual intervention while improving query
 performance. The following features ensure your data is efficiently
-organized, allowing for faster and more cost-effective qeuerying without
+organized, allowing for faster and more cost-effective querying without
 the burden of user management.
 
 **Automatic Clustering** is a background process in Snowflake that
@@ -1649,11 +1774,11 @@ consumption. Organizations can identify performance bottlenecks and
 understand the cost impact of specific SQL patterns by using Snowflake
 features and adhering to SQL code best practices. This enables
 development teams to create more efficient and cost-effective code by
-highlighting poor performing queries. Refer to the Performance
+highlighting poorly performing queries. Refer to the Performance
 Optimization Pillar of the Snowflake Well-Architected Framework for
 details on how to do this.
 
-**Utilize query history & insights for highlevel monitoring**
+**Utilize query history & insights for high-level monitoring**
 
 For broader visibility across all workloads, the Snowsight UI and the
 ACCOUNT_USAGE schema are indispensable.
@@ -1672,7 +1797,7 @@ ACCOUNT_USAGE schema are indispensable.
 - The [<u>Query
   History</u>](https://docs.snowflake.com/en/user-guide/ui-snowsight-activity)
   page in Snowsight provides a high-level, filterable view of past and
-  currently running queries. It allows for you to drill into the Query
+  currently running queries. It allows you to drill into the Query
   Profile for individual query statistics and investigation, even while
   the query is running.
 
@@ -1820,7 +1945,7 @@ general guidance on when to use each.
     data, maximize parallelism during the load, and then do an atomic
     swap/rename to minimize downtime. Ensure that you carefully manage
     object dependencies, constraints, and statistical metadata refresh
-    after reloads to ensure proper performance once data is loaded
+    after reloads to ensure proper performance once data is loaded.
 
 - **Incremental loads:** Incremental loads are best when datasets are
   large and a full reload is too costly, slow, or would create
@@ -1834,8 +1959,8 @@ general guidance on when to use each.
     correctly apply CDC deltas using staging tables, Streams, and merge
     operations. Ideally, you use Stream objects on source tables to
     track changes efficiently if utilizing Streams or Tasks, and use
-    Tasks to automate processing. Dynamic tables are also an option;
-    please see below. Additionally, for batch files: organize files by
+    Tasks to automate processing. Dynamic tables are also an option.
+    Additionally, for batch files: organize files by
     partitioned paths and use file loading patterns that enable max
     parallelism (see COPY INTO guidance below).
 
@@ -1843,63 +1968,7 @@ general guidance on when to use each.
     warehouses</u>](https://docs.snowflake.com/en/user-guide/warehouses-gen2)
     that incorporate software improvements for data manipulation.
 
-A great example of truncate & load versus incremental can be seen in
-refresh strategies for [<u>Dynamic Tables
-(DTs)</u>](https://docs.snowflake.com/en/user-guide/dynamic-tables-about).
-They are also a cost-effective and low-maintenance way to maintain data
-pipelines. Dynamic tables provide a powerful, automated way to build
-continuous data transformation pipelines with SQL, eliminating the need
-for manual task orchestration that was historically architected with
-streams & tasks in Snowflake. [<u>Streams &
-tasks</u>](https://docs.snowflake.com/en/user-guide/data-pipelines-intro)
-still have their uses, but general guidance and ease of use see more
-Snowflake users leaning towards DTs for automated data pipelines since
-the pipeline definitions are defined in one object or in a chain of
-objects.
 
-The [<u>key concepts of dynamic
-tables</u>](https://docs.snowflake.com/en/user-guide/dynamic-tables-refresh)
-are defined in our documentation. However, best practices and
-determining when to use DTs versus other methods of pipeline tooling in
-Snowflake still warrant discussion, and are compared in Snowflake’s
-[<u>documentation</u>](https://docs.snowflake.com/en/user-guide/dynamic-tables-comparison).
-
-In addition to Snowflake’s published [<u>best
-practices</u>](https://docs.snowflake.com/en/user-guide/dynamic-table-performance-guide),
-consider the following
-
-- **Default to AUTO refresh**: Override only as needed for predictable
-  SLAs.
-
-- **Keep incremental refresh-friendly queries simple:** Avoid complex
-  nested joins, CTEs, and limit the number of outer joins per DT. The
-  introduction of complexity for incremental refresh may result in
-  longer times for execution, which in turn could force Snowflake in
-  AUTO to perform a full refresh rather than incremental.
-
-- **Incremental refresh is optimal** when less than 5% of the rows
-  change between refresh cycles, and source tables are well clustered by
-  relevant keys.
-
-- **For very complex/large transformations:** Chain multiple DTs for
-  better incrementalization, rather than building one massive DT.
-
-- **Monitor actual lag and refresh metrics** to adjust lag or warehouse
-  sizing as cost and response time needs evolve.
-
-- **Prefer a dedicated warehouse for DT refresh** during pipeline
-  development and cost analysis to isolate consumption, then consider
-  sharing for production.
-
-- **Use transient DTs** for high-throughput, non-critical staging steps
-  to keep storage costs down.
-
-- **Avoid non-deterministic functions in incremental DTs** (e.g.,
-  random, volatile UDFs, queries depending on CURRENT_USER).
-
-More information on dynamic tables versus streams & tasks versus
-materialized views can be found in the Snowflake documentation
-[<u>here</u>](https://docs.snowflake.com/en/user-guide/dynamic-tables-comparison#comparison-between-streams-and-tasks-and-dynamic-tables).
 
 **Table pruning optimization**
 
@@ -1940,6 +2009,43 @@ performance and cost of queries within Snowflake. Review the compute
 optimization section for more information into the tuning of the
 warehouse and its effect on cost and performance.
 
+#### AI workload optimization
+
+Cortex AI features introduce a distinct cost dimension that requires its
+own optimization approach. Unlike warehouse compute, which is billed per
+second of runtime, AI features are billed based on token consumption,
+with costs that vary significantly by model, workload pattern, and how
+prompts and results are structured. The recommendations below address
+the primary levers for controlling AI feature spend.
+
+- **Model selection / right-sizing:** Use the smallest model that meets
+  your accuracy requirements for each task. Before committing to a model
+  for production, test candidates systematically — comparing cost,
+  latency, and quality on a representative sample of your actual inputs.
+  AI Function Studio automates this benchmarking for SQL-based AI
+  Functions; for agent and REST API workloads, run structured
+  evaluations using Cortex Agent Evaluations or by analyzing token
+  consumption in
+  [<u>CORTEX_AI_FUNCTIONS_USAGE_HISTORY</u>](https://docs.snowflake.com/en/sql-reference/account-usage/cortex_ai_functions_usage_history).
+
+- **Prompt caching:** Repeated prompt prefixes are now cached,
+  significantly reducing token consumption for templated or batch AI
+  workloads. Structure prompts so that repeated contents (i.e. system
+  instructions, large documents, or conversation history) appear at the
+  beginning of the prompt.
+
+- **Batching AI function calls:** Sending requests in batches via async
+  patterns rather than row-by-row reduces per-call overhead.
+
+- **Cortex Agent / CoWork cost patterns:** Agent runs that loop
+  excessively due to poorly scoped queries or that call custom tools
+  (stored procedures or functions) that return unnecessarily large
+  payloads drive high token costs. Best practices include scoping
+  prompts tightly, pre-filtering and aggregating within custom tools to
+  minimize the payload the orchestration model receives, and using
+  Cortex Search for efficient retrieval of unstructured data to reduce
+  context window size.
+
 #### Improve continually
 
 Optimization is a continuous process that ensures all workloads not only
@@ -1962,6 +2068,21 @@ investigate these findings through the Cost Management UI, Cost Anomaly
 detection, Query History, or custom dashboards with Account Usage Views
 to pinpoint the root cause. Then, using the recommendations in the
 Optimize Pillar, make improvements to the workload or object.
+
+AI-assisted investigation tools can significantly reduce the time
+required for this step:
+
+- Cortex Code (CoCo) allows users to query ACCOUNT_USAGE views using
+  natural language directly within Snowsight — useful for ad-hoc
+  investigation of cost spikes, warehouse utilization questions, and
+  query performance patterns without writing SQL against complex views.
+
+- The workload-performance-analysis Cortex Code skill provides a
+  structured workflow for analyzing warehouse performance across your
+  account: spill rates, partition pruning efficiency, QAS eligibility,
+  cache hit rates, and slow query diagnosis. Use this as the entry point
+  when a warehouse or workload has been flagged for investigation before
+  diving into individual query profiles.
 
 **Step 2: Estimate & test**
 
@@ -1999,8 +2120,9 @@ improved report generation time by Y minutes, allowing business users to
 make faster decisions." This helps to both demonstrate the value of your
 optimization efforts to stakeholders and business value to the company.
 Finally, course-correct as needed depending on the results of the
-monitoring
+monitoring.
 
 This continual improvement framework is the culmination of all subtopics
 within the Cost Optimization Pillar and provides a consistent way for
 you to grow healthily on Snowflake.
+

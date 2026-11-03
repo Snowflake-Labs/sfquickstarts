@@ -25,7 +25,15 @@ Usage (from setup.py):
 _BULK_GRANT_BODY = '''\
 import re
 
-_SAFE_ID = re.compile(r'[;\\n\\r]')  # blocks only truly dangerous chars
+_SAFE_ID = re.compile(r'[;\\x00-\\x1f]')  # control chars and statement separators
+
+# This SP runs as ACCOUNTADMIN: only these Cortex database roles may be granted.
+_ALLOWED_DB_ROLES = {
+    'SNOWFLAKE.CORTEX_USER',
+    'SNOWFLAKE.COPILOT_USER',
+    'SNOWFLAKE.CORTEX_ANALYST_USER',
+    'SNOWFLAKE.CORTEX_AGENT_USER',
+}
 
 def _qid(s):
     # Safely double-quote a Snowflake identifier; escapes embedded " as ""
@@ -34,18 +42,24 @@ def _qid(s):
 def handler(session, users_json, db_roles_json):
     out = {'success': 0, 'failed': 0, 'errors': []}
     users = list(users_json) if users_json else []
-    roles = list(db_roles_json) if db_roles_json else []
+    roles = []
+    for role in (list(db_roles_json) if db_roles_json else []):
+        role = str(role).strip().upper()
+        if role in _ALLOWED_DB_ROLES:
+            roles.append(role)
+        else:
+            out['errors'].append(f'Rejected database role (not allowed): {role}')
+            out['failed'] += 1
 
     for user in users:
         user = str(user).strip()
-        if not user or _SAFE_ID.search(user):
+        if not user or len(user) > 255 or _SAFE_ID.search(user):
             out['errors'].append(f'Skipped invalid username: {user}')
             out['failed'] += 1
             continue
         for role in roles:
-            role = str(role).strip()
             try:
-                session.sql(f\'GRANT DATABASE ROLE {role} TO USER "{user}"\').collect()
+                session.sql(f'GRANT DATABASE ROLE {role} TO USER {_qid(user)}').collect()
                 out['success'] += 1
             except Exception as e:
                 out['errors'].append(f'{user}/{role}: {str(e)[:120]}')
@@ -119,57 +133,92 @@ def _build_sp_ddl(db: str, schema: str, sp_name: str,
 
 
 # ---------------------------------------------------------------------------
-# SP body: grant Cortex model application roles to a list of users
-# CORTEX_MODELS_ALLOWLIST cannot be set per-user — use RBAC instead:
-#   GRANT APPLICATION ROLE SNOWFLAKE."CORTEX-MODEL-ROLE-{MODEL}" TO USER "username"
+# SP body: grant Cortex model application roles to a list of targets
+# Uses try-role-first pattern: tries GRANT TO ROLE first, falls back to USER.
+# This allows the same SP to handle both "Apply to Role" and "Apply to Members".
 #
-# Accepts: USERS_JSON VARIANT — array of usernames
+# Accepts: TARGETS_JSON VARIANT — array of role names or usernames
 #          MODEL_LIST VARCHAR  — comma-separated model names (e.g. "claude-sonnet-4-6,claude-opus-4-6")
 # Returns: VARIANT {success: N, failed: M, errors: [...]}
 # ---------------------------------------------------------------------------
 _ENFORCE_MODEL_BODY = '''\
 import re
 
-_SAFE_ID = re.compile(r'[;\\n\\r]')
+_SAFE_ID = re.compile(r'[;\\n\\r\\x00]')
 
 def _qid(s):
     return '"' + str(s).replace('"', '""') + '"'
 
-def handler(session, users_json, model_list):
+def handler(session, targets_json, model_list):
     out = {'success': 0, 'failed': 0, 'errors': []}
-    users  = list(users_json) if users_json else []
-    models = [m.strip() for m in str(model_list).split(',') if m.strip()] if model_list else []
+    targets = list(targets_json) if targets_json else []
+    models  = [m.strip() for m in str(model_list).split(',') if m.strip()] if model_list else []
 
     if not models:
         return {'success': 0, 'failed': 0, 'errors': ['No models specified']}
 
-    # Ensure model objects exist in SNOWFLAKE.MODELS
-    try:
-        session.sql('CALL SNOWFLAKE.MODELS.CORTEX_BASE_MODELS_REFRESH()').collect()
-    except Exception as e:
-        out['errors'].append(f'Model refresh warning (non-fatal): {str(e)[:100]}')
-
-    for user in users:
-        user = str(user).strip()
-        if not user or _SAFE_ID.search(user):
-            out['errors'].append(f'Skipped invalid username: {user}')
+    for target in targets:
+        target = str(target).strip()
+        if not target or _SAFE_ID.search(target):
+            out['errors'].append(f'Skipped invalid target: {target}')
             out['failed'] += 1
             continue
+
+        # Detect target type on first model (try ROLE first, fall back to USER)
+        grant_to = None
+
         for model in models:
             if _SAFE_ID.search(model):
                 out['errors'].append(f'Skipped invalid model: {model}')
                 out['failed'] += 1
                 continue
             app_role = 'CORTEX-MODEL-ROLE-' + model.upper()
-            try:
-                session.sql(
-                    'GRANT APPLICATION ROLE SNOWFLAKE.' + _qid(app_role) +
-                    ' TO USER ' + _qid(user)
-                ).collect()
-                out['success'] += 1
-            except Exception as e:
-                out['errors'].append(f'{user}/{model}: {str(e)[:120]}')
-                out['failed'] += 1
+            sql_base = 'GRANT APPLICATION ROLE SNOWFLAKE.' + _qid(app_role)
+
+            if grant_to is not None:
+                try:
+                    session.sql(sql_base + ' TO ' + grant_to + ' ' + _qid(target)).collect()
+                    out['success'] += 1
+                except Exception as e:
+                    err = str(e).lower()
+                    if 'already granted' in err:
+                        out['success'] += 1
+                    elif 'application role' in err and 'does not exist' in err:
+                        out['errors'].append(f'{target}/{model}: Application role does not exist (model not available in this account)')
+                        out['failed'] += 1
+                    else:
+                        out['errors'].append(f'{target}/{model}: {str(e)}')
+                        out['failed'] += 1
+            else:
+                # First attempt: try ROLE
+                try:
+                    session.sql(sql_base + ' TO ROLE ' + _qid(target)).collect()
+                    grant_to = 'ROLE'
+                    out['success'] += 1
+                except Exception as e:
+                    err = str(e).lower()
+                    if 'application role' in err and 'does not exist' in err:
+                        # The MODEL app role doesn't exist — skip, don't fall back to USER
+                        out['errors'].append(f'{target}/{model}: Application role does not exist (model not available in this account)')
+                        out['failed'] += 1
+                        grant_to = 'ROLE'
+                    elif 'does not exist' in err or 'invalid' in err:
+                        # The TARGET role doesn't exist — try as USER
+                        try:
+                            session.sql(sql_base + ' TO USER ' + _qid(target)).collect()
+                            grant_to = 'USER'
+                            out['success'] += 1
+                        except Exception as e2:
+                            out['errors'].append(f'{target}/{model}: {str(e2)}')
+                            out['failed'] += 1
+                            grant_to = 'USER'
+                    elif 'already granted' in err:
+                        grant_to = 'ROLE'
+                        out['success'] += 1
+                    else:
+                        out['errors'].append(f'{target}/{model}: {str(e)}')
+                        out['failed'] += 1
+                        grant_to = 'ROLE'
 
     return out
 '''
@@ -198,7 +247,7 @@ def get_bulk_sp_ddl(db: str, schema: str) -> list:
         _build_sp_ddl(
             db, schema,
             "SP_CC_ENFORCE_MODEL_ACCESS",
-            "USERS_JSON VARIANT, MODEL_LIST VARCHAR",
+            "TARGETS_JSON VARIANT, MODEL_LIST VARCHAR",
             _ENFORCE_MODEL_BODY,
         ),
     ]
@@ -402,7 +451,7 @@ def handler(session, requester, cohort_role, surface, amount,
               AND USER_NAME != \'{safe_requester}\'
         """).collect()
         members = [r[0] for r in members_rows
-                   if r[0] and _SAFE_ID.match(str(r[0]))]
+                   if r[0] and not _SAFE_ID.search(str(r[0]))]
 
         if not members:
             # Fallback: SHOW GRANTS OF ROLE (for accounts without resolved cohort table)
@@ -500,10 +549,13 @@ def handler(session, requester, cohort_role, surface, amount,
             if limit <= 0:   # unlimited (-1) or blocked (0) — skip as donor
                 continue
             unique_dates = len(user_dates.get(m, set()))
-            if unique_dates < _MIN_HISTORY_DAYS:
-                continue    # cold-start guard
             used      = today_usage.get(m, 0.0)
-            predicted = _predict_remaining(user_hour_data, m, current_hour)
+            # If user has enough history, predict remaining usage for today
+            # Otherwise treat as inactive — full limit available (no prediction)
+            if unique_dates >= _MIN_HISTORY_DAYS:
+                predicted = _predict_remaining(user_hour_data, m, current_hour)
+            else:
+                predicted = 0.0  # inactive/new user — no predicted future usage
             raw_surplus  = limit - used - predicted
             safe_surplus = max(raw_surplus - limit * buffer, 0.0)
             transferable = round(min(safe_surplus, limit * max_cap_pct), 2)
@@ -669,7 +721,7 @@ def handler(session, lookback_hours):
         watermark = str(wm_df.iloc[0, 0])
         new_df = session.sql(f"""
             SELECT DATE_TRUNC('day',e.TIMESTAMP)::DATE AS EVENT_DATE,
-                   e.TIMESTAMP::TIMESTAMP_NTZ AS EVENT_TS,
+                   e.TIMESTAMP AS EVENT_TS,
                    e.RESOURCE_ATTRIBUTES['snow.user.name']::STRING AS USER_NAME,
                    e.RESOURCE_ATTRIBUTES['snow.session.role.primary.name']::STRING AS ROLE_NAME,
                    e.RECORD_ATTRIBUTES['snow.ai.observability.agent.planning.model']::STRING AS MODEL,
@@ -685,7 +737,11 @@ def handler(session, lookback_hours):
                    e.RECORD_ATTRIBUTES['snow.ai.observability.agent.planning.token_count.cache_write_input']::INT AS CACHE_WRITE_TOKENS,
                    e.RECORD_ATTRIBUTES['snow.ai.observability.agent.planning.step_number']::INT AS STEP_NUMBER,
                    e.RECORD_ATTRIBUTES['snow.ai.observability.agent.planning.tool_selection.name']::STRING AS TOOLS_RAW,
-                   e.TRACE['trace_id']::STRING AS SESSION_ID,
+                     COALESCE(
+                         run.RECORD_ATTRIBUTES['snow.ai.observability.agent.coding_agent.session_id']::STRING,
+                         e.TRACE['trace_id']::STRING,
+                         e.RECORD_ATTRIBUTES['snow.ai.observability.agent.planning.request_id']::STRING
+                     ) AS SESSION_ID,
                    run.RECORD_ATTRIBUTES['snow.ai.observability.agent.response']::STRING AS RESPONSE,
                    COALESCE(run.RECORD_ATTRIBUTES['snow.ai.observability.agent.coding_agent.private_mode']::BOOLEAN, FALSE) AS PRIVATE_MODE,
                    -- origin_application is always populated with exactly 3 known values
@@ -714,12 +770,13 @@ def handler(session, lookback_hours):
                    )) AS ENTRYPOINT
             FROM SNOWFLAKE.LOCAL.AI_OBSERVABILITY_EVENTS e
             LEFT JOIN SNOWFLAKE.LOCAL.AI_OBSERVABILITY_EVENTS run
-                ON  run.RECORD_ATTRIBUTES['snow.ai.observability.agent.request_id']::STRING
-                  = e.RECORD_ATTRIBUTES['snow.ai.observability.agent.planning.request_id']::STRING
+                ON  run.TRACE['trace_id']::STRING = e.TRACE['trace_id']::STRING
                 AND run.RECORD:name::STRING = 'CodingAgentRun'
                 AND run.RECORD_TYPE = 'SPAN'
             WHERE e.RECORD_TYPE='SPAN' AND e.RECORD:name::STRING='CodingAgent.Step-0'
               AND e.TIMESTAMP > '{watermark}' AND e.RESOURCE_ATTRIBUTES['snow.user.name'] IS NOT NULL
+              AND e.TIMESTAMP >= DATEADD('day', -400, CURRENT_TIMESTAMP())
+              AND e.TIMESTAMP <= DATEADD('day', 1, CURRENT_TIMESTAMP())
             ORDER BY e.TIMESTAMP
         """).to_pandas()
         if not new_df.empty:
@@ -730,15 +787,16 @@ def handler(session, lookback_hours):
             db_part, schema_part = DB_SCHEMA.split('.', 1)
             clean = new_df.copy()
             # Normalise date/timestamp types for Snowflake
-            try:
-                clean['EVENT_DATE'] = _pd.to_datetime(clean['EVENT_DATE']).dt.date
-                clean['EVENT_TS']   = _pd.to_datetime(clean['EVENT_TS'])
-            except Exception:
-                pass
+            # write_pandas serializes Timestamps as epoch nanos which Snowflake
+            # interprets as seconds → year 761M. Convert to string to avoid this.
+            clean['EVENT_TS'] = _pd.to_datetime(clean['EVENT_TS'], errors='coerce')
+            clean = clean.dropna(subset=['EVENT_TS'])
+            clean['EVENT_TS'] = clean['EVENT_TS'].dt.strftime('%Y-%m-%d %H:%M:%S')
+            clean['EVENT_DATE'] = _pd.to_datetime(clean['EVENT_DATE'], errors='coerce').dt.strftime('%Y-%m-%d')
             # Cap lengths and fill nulls
-            clean['PROMPT']             = clean['PROMPT'].fillna('').str[:4000]
+            clean['PROMPT']             = clean['PROMPT'].fillna('').str[:16000]
             clean['TOOLS_RAW']          = clean['TOOLS_RAW'].fillna('').str[:500]
-            clean['RESPONSE']           = clean['RESPONSE'].fillna('').str[:8000]
+            clean['RESPONSE']           = clean['RESPONSE'].fillna('').str[:16000]
             clean['SESSION_ID']         = clean['SESSION_ID'].fillna('').str[:255]
             clean['REQUEST_ID']         = clean['REQUEST_ID'].fillna('').str[:255]
             clean['USER_NAME']          = clean['USER_NAME'].fillna('').str[:255]
@@ -810,7 +868,7 @@ def handler(session, lookback_hours):
                     r.RULE_ID, r.RULE_NAME, r.RISK_LEVEL, r.CATEGORY,
                     e.USER_NAME, COALESCE(e.SESSION_ID, ''),
                     SHA2(e.{field}, 256),
-                    LEFT(e.{field}, 300),
+                    LEFT(e.{field}, 2000),
                     'KEYWORD', 1.0, '{content_type}'
                 FROM {DB_SCHEMA}.CC_PROMPT_EVENTS e
                 CROSS JOIN {DB_SCHEMA}.CC_POLICY_RULES r
@@ -869,7 +927,9 @@ def handler(session, lookback_hours):
                                 'CATEGORY':       str(rule['CATEGORY'])[:50],
                                 'CONTENT_TYPE':   'PROMPT',
                                 'VIOLATION_DATE': (r['VIOLATION_DATE'] if isinstance(r['VIOLATION_DATE'], _rdate)
-                                                   else _rdt.strptime(str(r['VIOLATION_DATE'])[:10], '%Y-%m-%d').date()),
+                                                   else (lambda v: _rdt.strptime(str(v)[:10], '%Y-%m-%d').date()
+                                                         if str(v)[:4].isdigit() else _rdate.today()
+                                                         )(r['VIOLATION_DATE'])),
                             } for _, r in deep_df.iterrows()])
                             vdb, vsc = DB_SCHEMA.split('.', 1)
                             session.write_pandas(vdf, 'CC_PROMPT_VIOLATIONS',
@@ -940,7 +1000,7 @@ def handler(session, lookback_hours):
                     for _,inst in idf.iterrows():
                         violations.append({'rule_id':int(rule['RULE_ID']),'rule_name':str(rule['RULE_NAME']),
                             'user_name':str(inst['USER_NAME']),'session_id':str(inst['SESSION_ID'] or ''),
-                            'prompt_hash':ph,'prompt_preview':str(inst['TXT'] or '')[:200],
+                            'prompt_hash':ph,'prompt_preview':str(inst['TXT'] or '')[:2000],
                             'match_type':'SEMANTIC','match_score':1.0,'risk_level':str(rule['RISK_LEVEL']),
                             'category':str(rule['CATEGORY']),'violation_date':str(inst['USAGE_DATE']),
                             'content_type':content_type}); svc+=1
@@ -1028,7 +1088,6 @@ def handler(session, lookback_hours):
                   OR LOWER(PROMPT) ILIKE '%cortex_memory_drop%'
                   OR LOWER(PROMPT) ILIKE '%cortex_memory_recall%'
                   OR LOWER(PROMPT) ILIKE '%cortex_memory_list%'
-                  OR PROMPT ILIKE '%<system-reminder>%'
               )
         """).collect()
     except Exception as e:
@@ -1187,7 +1246,7 @@ def handler(session, mode):
                     WHERE DETECTED_AT >= DATEADD('minute', -{window}, CURRENT_TIMESTAMP())
                 """).collect()[0][0]
                 if int(r or 0) >= threshold:
-                    fired.append({'name': rule_name, 'type': alert_type,
+                    fired.append({'name': rule_name, 'type': alert_type, 'window': window,
                         'msg': f'{r} prompt insights in the last {window} minutes (threshold: {threshold})'})
 
             elif alert_type == 'HIGH_RISK_VIOLATION':
@@ -1197,7 +1256,7 @@ def handler(session, mode):
                       AND RISK_LEVEL = 'HIGH'
                 """).collect()[0][0]
                 if int(r or 0) >= threshold:
-                    fired.append({'name': rule_name, 'type': alert_type,
+                    fired.append({'name': rule_name, 'type': alert_type, 'window': window,
                         'msg': f'{r} HIGH Severity insights in the last {window} minutes (threshold: {threshold})'})
 
             elif alert_type == 'CREDIT_SPIKE':
@@ -1215,7 +1274,7 @@ def handler(session, mode):
                 today_cr = float(row[0] or 0); avg7 = float(row[1] or 0)
                 if avg7 > 0 and today_cr > avg7 * (1 + threshold / 100):
                     pct = round((today_cr / avg7 - 1) * 100)
-                    fired.append({'name': rule_name, 'type': alert_type,
+                    fired.append({'name': rule_name, 'type': alert_type, 'window': window,
                         'msg': f'Today credits {today_cr:.1f} is {pct}% above 7-day avg {avg7:.1f} (threshold: {threshold}%)'})
 
             elif alert_type == 'NEW_UNCAT_MODEL':
@@ -1227,7 +1286,7 @@ def handler(session, mode):
                       AND MODEL_NAME NOT IN (SELECT MODEL_NAME FROM {DB_SCHEMA}.CC_MODEL_CONFIG)
                 """).collect()[0][0]
                 if int(r or 0) >= threshold:
-                    fired.append({'name': rule_name, 'type': alert_type,
+                    fired.append({'name': rule_name, 'type': alert_type, 'window': window,
                         'msg': f'{r} new uncategorised model(s) detected in the last 24 hours — assign tiers in Model Access'})
 
         except Exception as e:
@@ -1258,8 +1317,8 @@ def handler(session, mode):
     except Exception:
         pass
 
-    def _email_html(name, atype, msg, account, timestamp):
-        """Build a clean HTML email body — all attributes use double quotes, safe for SQL embedding."""
+    def _email_html(name, atype, msg, account, timestamp, violations=None):
+        """Build a clean HTML email body with violation details when available."""
         _colors = {
             'HIGH_RISK_VIOLATION': ('#fef2f2', '#dc2626', 'HIGH RISK INSIGHT'),
             'VIOLATION_SPIKE':     ('#fff7ed', '#ea580c', 'INSIGHT SPIKE'),
@@ -1267,11 +1326,47 @@ def handler(session, mode):
             'NEW_UNCAT_MODEL':     ('#eff6ff', '#2563eb', 'NEW MODEL DETECTED'),
         }
         bg, fg, label = _colors.get(atype, ('#f1f5f9', '#475569', atype))
+
+        # Build violation rows HTML
+        violation_html = ''
+        if violations:
+            rows_html = ''
+            for v in violations[:5]:
+                user    = str(v.get('user', '')).replace('<','&#60;').replace('>','&#62;')
+                rule    = str(v.get('rule', '')).replace('<','&#60;').replace('>','&#62;')
+                risk    = str(v.get('risk', '')).replace('<','&#60;').replace('>','&#62;')
+                ctype   = str(v.get('content_type', 'PROMPT')).replace('<','&#60;').replace('>','&#62;')
+                preview = str(v.get('preview', '')).replace('<','&#60;').replace('>','&#62;').replace("'", "&#39;")[:300]
+                risk_color = '#dc2626' if risk == 'HIGH' else '#ea580c' if risk == 'MEDIUM' else '#16a34a'
+                rows_html += (
+                    f'<tr style="border-bottom:1px solid #f1f5f9">'
+                    f'<td style="padding:8px 10px;font-size:12px;color:#374151;font-weight:600">{user}</td>'
+                    f'<td style="padding:8px 10px;font-size:12px;color:{risk_color};font-weight:600">{risk}</td>'
+                    f'<td style="padding:8px 10px;font-size:12px;color:#6b7280">{rule}</td>'
+                    f'<td style="padding:8px 10px;font-size:12px;color:#6b7280">{ctype}</td>'
+                    f'<td style="padding:8px 10px;font-size:11px;color:#374151;font-family:monospace">{preview}</td>'
+                    f'</tr>'
+                )
+            violation_html = (
+                '<tr><td style="padding:0 28px 20px">'
+                '<p style="margin:0 0 8px;font-size:12px;font-weight:600;color:#374151">Top Violations:</p>'
+                '<table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;font-size:12px">'
+                '<tr style="background:#f8fafc">'
+                '<th style="padding:6px 10px;text-align:left;color:#6b7280;font-weight:600;font-size:11px">USER</th>'
+                '<th style="padding:6px 10px;text-align:left;color:#6b7280;font-weight:600;font-size:11px">RISK</th>'
+                '<th style="padding:6px 10px;text-align:left;color:#6b7280;font-weight:600;font-size:11px">RULE</th>'
+                '<th style="padding:6px 10px;text-align:left;color:#6b7280;font-weight:600;font-size:11px">SOURCE</th>'
+                '<th style="padding:6px 10px;text-align:left;color:#6b7280;font-weight:600;font-size:11px">PROMPT PREVIEW</th>'
+                '</tr>'
+                + rows_html +
+                '</table></td></tr>'
+            )
+
         return (
             '<!DOCTYPE html><html><body style="margin:0;padding:0;background:#f1f5f9;font-family:Arial,sans-serif">'
             '<table width="100%" cellpadding="0" cellspacing="0"><tr>'
             '<td align="center" style="padding:32px 16px">'
-            '<table width="560" cellpadding="0" cellspacing="0" '
+            '<table width="640" cellpadding="0" cellspacing="0" '
             'style="background:#ffffff;border-radius:8px;box-shadow:0 1px 4px rgba(0,0,0,0.1)">'
             '<tr><td style="background:#0f172a;padding:22px 28px;border-radius:8px 8px 0 0">'
             '<span style="color:#7dd3fc;font-size:18px;font-weight:700">CoCo Control Hub</span>'
@@ -1289,6 +1384,7 @@ def handler(session, mode):
             f'padding:14px 16px;border-radius:0 6px 6px 0">'
             f'<p style="margin:0;color:#374151;font-size:14px;line-height:1.6">{msg}</p>'
             '</div></td></tr>'
+            + violation_html +
             '<tr><td style="padding:0 28px 24px">'
             '<table width="100%" cellpadding="0" cellspacing="0"><tr>'
             '<td width="50%" style="padding-right:8px">'
@@ -1307,8 +1403,8 @@ def handler(session, mode):
             '<tr><td style="background:#f8fafc;padding:14px 28px;border-top:1px solid #e2e8f0;'
             'border-radius:0 0 8px 8px">'
             '<p style="margin:0;color:#94a3b8;font-size:11px">'
-            'Sent by <strong style="color:#64748b">CoCo Control Hub</strong> &nbsp;&middot;&nbsp; '
-            'Manage alerts at <em>Alerts &rarr; Notification Config</em>'
+            'Sent by <strong style="color:#64748b">CoCo Control Hub</strong> &#160;&#183;&#160; '
+            'View full details at <em>Alerts &#8594; Alert History</em> and <em>Prompt Insights</em>'
             '</p></td></tr>'
             '</table></td></tr></table>'
             '</body></html>'
@@ -1319,10 +1415,32 @@ def handler(session, mode):
             safe_msg  = str(alert['msg']).replace("'", "''")
             safe_name = str(alert['name']).replace("'", "''")
             safe_type = str(alert['type']).replace("'", "''")
+
+            # Fetch top violations to include in email for security/violation alerts
+            violations = []
+            if alert['type'] in ('HIGH_RISK_VIOLATION', 'VIOLATION_SPIKE'):
+                try:
+                    win = int(alert.get('window', 60))
+                    vrows = session.sql(f"""
+                        SELECT USER_NAME, RULE_NAME, RISK_LEVEL, CONTENT_TYPE,
+                               LEFT(PROMPT_PREVIEW, 300) AS PROMPT_PREVIEW
+                        FROM {DB_SCHEMA}.CC_PROMPT_VIOLATIONS
+                        WHERE DETECTED_AT >= DATEADD('minute', -{win}, CURRENT_TIMESTAMP())
+                          AND RISK_LEVEL IN ('HIGH','MEDIUM')
+                        ORDER BY CASE RISK_LEVEL WHEN 'HIGH' THEN 1 ELSE 2 END, DETECTED_AT DESC
+                        LIMIT 5
+                    """).collect()
+                    violations = [{{
+                        'user': r[0], 'rule': r[1], 'risk': r[2],
+                        'content_type': r[3], 'preview': r[4] or ''
+                    }} for r in vrows]
+                except Exception:
+                    pass
+
             if email_recipients:
                 html_body = _email_html(
                     str(alert['name']), str(alert['type']),
-                    str(alert['msg']), acct, ts
+                    str(alert['msg']), acct, ts, violations
                 ).replace("'", "''")
                 session.sql(f"""
                     CALL SYSTEM$SEND_EMAIL(
@@ -1483,6 +1601,421 @@ def handler(session, batch_size, eval_model):
     return (
         f"CREATE OR REPLACE PROCEDURE {db}.{schema}.SP_CC_EVALUATE_RESPONSES("
         f"BATCH_SIZE NUMBER DEFAULT 200, EVAL_MODEL VARCHAR DEFAULT 'claude-sonnet-4-5')\n"
+        f"RETURNS VARIANT\n"
+        f"LANGUAGE PYTHON\n"
+        f"RUNTIME_VERSION = '3.11'\n"
+        f"PACKAGES = ('snowflake-snowpark-python')\n"
+        f"HANDLER = 'handler'\n"
+        f"EXECUTE AS OWNER\n"
+        f"AS $${body}\n$$"
+    )
+
+
+def get_refresh_budget_usage_sp_ddl(db: str, schema: str) -> str:
+    """Return CREATE OR REPLACE PROCEDURE DDL for SP_CC_REFRESH_BUDGET_USAGE.
+
+    No ACCOUNT_USAGE view exists for budget data. Iterates active budgets
+    from CC_AI_BUDGETS, calls budget!GET_SPENDING_HISTORY() via EXECUTE IMMEDIATE,
+    and MERGEs results into CC_AI_BUDGET_USAGE.
+    Control note: read-only on budget objects — never modifies spending limits.
+    """
+    DS = f"{db}.{schema}"
+    body = f'''
+def handler(session):
+    import datetime
+    refreshed = 0
+    errors = []
+    try:
+        budgets = session.sql("""
+            SELECT BUDGET_NAME, FQ_BUDGET_NAME
+            FROM {DS}.CC_AI_BUDGETS WHERE IS_ACTIVE = TRUE
+        """).collect()
+    except Exception as e:
+        return {{"status": "ERROR", "message": str(e)[:200]}}
+
+    end_ts   = datetime.datetime.utcnow()
+    start_ts = end_ts - datetime.timedelta(days=32)
+    start_str = start_ts.strftime("%Y-%m-%d %H:%M:%S")
+    end_str   = end_ts.strftime("%Y-%m-%d %H:%M:%S")
+
+    for row in budgets:
+        budget_name = str(row["BUDGET_NAME"])
+        fq_name     = str(row["FQ_BUDGET_NAME"])
+        try:
+            hist_sql = (
+                "CALL " + fq_name + "!GET_SPENDING_HISTORY("
+                "TIME_LOWER_BOUND=>'" + start_str + "'::TIMESTAMP_NTZ,"
+                "TIME_UPPER_BOUND=>'" + end_str + "'::TIMESTAMP_NTZ)"
+            )
+            hist_rows = session.sql(hist_sql).collect()
+            for h in hist_rows:
+                try:
+                    rd = h.asDict()
+                    mdate   = rd.get("MEASUREMENT_DATE") or h[0]
+                    svc     = str(rd.get("SERVICE_TYPE")   or h[1] or "UNKNOWN").replace("'","''")
+                    credits = float(rd.get("CREDITS_SPENT") or h[2] or 0)
+                    safe_bn = budget_name.replace("'","''")
+                    session.sql(f"""
+                        MERGE INTO {DS}.CC_AI_BUDGET_USAGE t
+                        USING (SELECT '{{safe_bn}}'::VARCHAR AS BN,
+                                      '{{mdate}}'::DATE AS MD,
+                                      '{{svc}}'::VARCHAR AS ST) s
+                        ON t.BUDGET_NAME=s.BN AND t.MEASUREMENT_DATE=s.MD AND t.SERVICE_TYPE=s.ST
+                        WHEN MATCHED THEN UPDATE SET
+                            CREDITS_SPENT={{credits}}, REFRESHED_AT=CURRENT_TIMESTAMP()
+                        WHEN NOT MATCHED THEN INSERT
+                            (BUDGET_NAME,MEASUREMENT_DATE,SERVICE_TYPE,CREDITS_SPENT,REFRESHED_AT)
+                        VALUES (s.BN,s.MD,s.ST,{{credits}},CURRENT_TIMESTAMP())
+                    """.format(safe_bn=safe_bn, mdate=mdate, svc=svc, credits=credits)).collect()
+                except Exception as re:
+                    errors.append(f"Row {{budget_name}}: {{str(re)[:80]}}")
+            refreshed += 1
+        except Exception as be:
+            errors.append(f"Budget {{budget_name}}: {{str(be)[:100]}}")
+
+    return {{"status": "OK", "budgets_refreshed": refreshed, "errors": errors[:10]}}
+'''
+    return (
+        f"CREATE OR REPLACE PROCEDURE {db}.{schema}.SP_CC_REFRESH_BUDGET_USAGE()\n"
+        f"RETURNS VARIANT\n"
+        f"LANGUAGE PYTHON\n"
+        f"RUNTIME_VERSION = '3.11'\n"
+        f"PACKAGES = ('snowflake-snowpark-python')\n"
+        f"HANDLER = 'handler'\n"
+        f"EXECUTE AS OWNER\n"
+        f"AS $${body}\n$$"
+    )
+
+
+def get_manage_quota_sp_ddl(db: str, schema: str) -> str:
+    """Return CREATE OR REPLACE PROCEDURE DDL for SP_CC_MANAGE_QUOTA.
+
+    Wraps Snowflake SNOWFLAKE.CORE.QUOTA object operations (GA Aug 2026).
+    Actions: CREATE, TAG_USERS, GET_CONFIG, GET_ACTIVE_BLOCKS,
+             GET_ENFORCEMENT_HISTORY, SET_LIMIT, DELETE.
+    Runs EXECUTE AS OWNER so CC_SP_OWNER_ROLE (which holds SNOWFLAKE.QUOTA_CREATOR)
+    can create quota objects and tag users via ALTER USER SET TAG.
+    """
+    DS = f"{db}.{schema}"
+    body = f'''
+def handler(session, action, quota_name, params):
+    """Manage SNOWFLAKE.CORE.QUOTA objects for CoCo Hub per-user enforcement.
+
+    Parameters
+    ----------
+    action      : str   CREATE | TAG_USERS | GET_CONFIG | GET_ACTIVE_BLOCKS |
+                        GET_ENFORCEMENT_HISTORY | SET_LIMIT | DELETE
+    quota_name  : str   Short name (e.g. CC_QUOTA_ENGINEERING)
+    params      : dict  Action-specific arguments
+    """
+    import json, datetime
+    DS = "{DS}"
+    fq = f"{{DS}}.{{quota_name}}"
+    actor = str(session.sql("SELECT CURRENT_USER()").collect()[0][0])
+    tbl_q = f"{{DS}}.CC_NATIVE_QUOTAS"
+    tag_fq = f"{{DS}}.CC_COHORT_TAG"
+
+    def _safe(v):
+        return str(v or "").replace("'", "''")
+
+    if action == "CREATE":
+        monthly_limit    = int(params.get("monthly_limit", 100))
+        daily_limit      = params.get("daily_limit")          # None = not set
+        domains          = params.get("domains", ["CORTEX CODE"])
+        block_enforce    = bool(params.get("block_enforcement", True))
+        notify_80        = bool(params.get("notify_80", True))
+        notify_100       = bool(params.get("notify_100", True))
+        cohort_role      = params.get("cohort_role")           # None = all users
+        quota_label      = str(params.get("quota_label", quota_name))
+
+        errors = []
+        try:
+            session.sql(f"CREATE OR REPLACE SNOWFLAKE.CORE.QUOTA {{fq}}()").collect()
+        except Exception as e:
+            return {{"ok": False, "error": f"CREATE QUOTA failed: {{str(e)[:300]}}"}}
+
+        for domain in domains:
+            try:
+                session.sql(f"CALL {{fq}}!ADD_SHARED_RESOURCE({{repr(domain)}})").collect()
+            except Exception as e:
+                errors.append(f"ADD_SHARED_RESOURCE({{domain}}): {{str(e)[:120]}}")
+
+        try:
+            session.sql(f"CALL {{fq}}!SET_PER_USER_LIMIT({{monthly_limit}})").collect()
+        except Exception as e:
+            errors.append(f"SET_PER_USER_LIMIT monthly: {{str(e)[:120]}}")
+
+        if daily_limit and int(daily_limit) > 0:
+            try:
+                session.sql(f"CALL {{fq}}!SET_PER_USER_LIMIT({{int(daily_limit)}}, \'DAILY\')").collect()
+            except Exception as e:
+                errors.append(f"SET_PER_USER_LIMIT daily: {{str(e)[:120]}}")
+
+        if block_enforce:
+            try:
+                # GA: second arg TRUE sends end-user email notification when blocked
+                session.sql(f"CALL {{fq}}!SET_BLOCK_ENFORCEMENT_ENABLED(TRUE, TRUE)").collect()
+            except Exception as e:
+                errors.append(f"SET_BLOCK_ENFORCEMENT_ENABLED: {{str(e)[:120]}}")
+
+        if notify_80:
+            try:
+                # GA: 4th arg specifies MONTHLY or DAILY threshold scope
+                session.sql(f"CALL {{fq}}!ADD_NOTIFICATION_THRESHOLD(80, \'PROJECTED\', TRUE, \'MONTHLY\')").collect()
+            except Exception as e:
+                errors.append(f"ADD_NOTIFICATION_THRESHOLD(80): {{str(e)[:120]}}")
+
+        if notify_100:
+            try:
+                session.sql(f"CALL {{fq}}!ADD_NOTIFICATION_THRESHOLD(100, \'ACTUAL\', TRUE, \'MONTHLY\')").collect()
+            except Exception as e:
+                errors.append(f"ADD_NOTIFICATION_THRESHOLD(100): {{str(e)[:120]}}")
+
+        # Cohort scoping: tag resolved cohort members + scope quota to that tag
+        tagged = 0
+        if cohort_role:
+            tag_result = _tag_cohort_users(session, cohort_role, tag_fq, actor)
+            tagged = tag_result.get("tagged", 0)
+            errors.extend(tag_result.get("errors", []))
+            try:
+                session.sql(f"""
+                    CALL {{fq}}!SET_USER_TAGS(
+                        ARRAY_CONSTRUCT(
+                            ARRAY_CONSTRUCT(
+                                (SELECT SYSTEM$REFERENCE(\'TAG\', \'{{tag_fq}}\', \'SESSION\', \'APPLYBUDGET\')),
+                                \'{{_safe(cohort_role)}}\'
+                            )
+                        ),
+                        \'UNION\'
+                    )
+                """).collect()
+            except Exception as e:
+                errors.append(f"SET_USER_TAGS: {{str(e)[:120]}}")
+
+        # Track in CC_NATIVE_QUOTAS
+        safe_label  = _safe(quota_label)
+        safe_cohort = _safe(cohort_role) if cohort_role else ""
+        cohort_val  = ("'" + safe_cohort + "'") if cohort_role else "NULL"
+        dl_val      = str(int(daily_limit)) if daily_limit and int(daily_limit) > 0 else "NULL"
+        dom_json    = json.dumps(domains)
+        try:
+            session.sql(f"""
+                MERGE INTO {{tbl_q}} t
+                USING (SELECT \'{{_safe(quota_name)}}\' AS QN) s ON t.QUOTA_NAME = s.QN
+                WHEN MATCHED THEN UPDATE SET
+                    QUOTA_LABEL = \'{{safe_label}}\', COHORT_ROLE = {{cohort_val}},
+                    MONTHLY_LIMIT = {{monthly_limit}}, DAILY_LIMIT = {{dl_val}},
+                    DOMAINS = PARSE_JSON(\'{{dom_json}}\'), BLOCK_ENFORCEMENT = {{str(block_enforce).upper()}},
+                    NOTIFY_80_PCT = {{str(notify_80).upper()}}, NOTIFY_100_PCT = {{str(notify_100).upper()}},
+                    TAGGED_USERS = {{tagged}}, LAST_SYNCED_AT = CURRENT_TIMESTAMP(),
+                    IS_ACTIVE = TRUE, UPDATED_BY = \'{{_safe(actor)}}\', UPDATED_AT = CURRENT_TIMESTAMP()
+                WHEN NOT MATCHED THEN INSERT
+                    (QUOTA_NAME, QUOTA_LABEL, COHORT_ROLE, MONTHLY_LIMIT, DAILY_LIMIT,
+                     DOMAINS, BLOCK_ENFORCEMENT, NOTIFY_80_PCT, NOTIFY_100_PCT,
+                     TAGGED_USERS, LAST_SYNCED_AT, IS_ACTIVE, CREATED_BY, UPDATED_BY)
+                VALUES (\'{{_safe(quota_name)}}\', \'{{safe_label}}\', {{cohort_val}},
+                        {{monthly_limit}}, {{dl_val}}, PARSE_JSON(\'{{dom_json}}\'),
+                        {{str(block_enforce).upper()}}, {{str(notify_80).upper()}}, {{str(notify_100).upper()}},
+                        {{tagged}}, CURRENT_TIMESTAMP(), TRUE, \'{{_safe(actor)}}\', \'{{_safe(actor)}}\')
+            """).collect()
+        except Exception as e:
+            errors.append(f"CC_NATIVE_QUOTAS upsert: {{str(e)[:120]}}")
+
+        return {{"ok": True, "quota_name": quota_name, "tagged_users": tagged, "errors": errors}}
+
+    elif action == "TAG_USERS":
+        cohort_role = params.get("cohort_role")
+        if not cohort_role:
+            return {{"ok": False, "error": "cohort_role required for TAG_USERS"}}
+        result = _tag_cohort_users(session, cohort_role, tag_fq, actor)
+        tagged = result.get("tagged", 0)
+        # Update CC_NATIVE_QUOTAS
+        try:
+            session.sql(f"""
+                UPDATE {{tbl_q}}
+                SET TAGGED_USERS = {{tagged}}, LAST_SYNCED_AT = CURRENT_TIMESTAMP(),
+                    UPDATED_BY = \'{{_safe(actor)}}\', UPDATED_AT = CURRENT_TIMESTAMP()
+                WHERE QUOTA_NAME = \'{{_safe(quota_name)}}\'
+            """).collect()
+        except Exception:
+            pass
+        return result
+
+    elif action == "GET_CONFIG":
+        try:
+            r = session.sql(f"CALL {{fq}}!GET_CONFIG()").collect()
+            if not r:
+                return {{"ok": True, "config": {{}}}}
+            row = r[0]
+            # Convert the row to a dict using field names if available
+            try:
+                cfg = {{k: str(v) for k, v in zip(row._fields, row)}}
+            except Exception:
+                cfg = {{str(i): str(row[i]) for i in range(len(row))}}
+            return {{"ok": True, "config": cfg}}
+        except Exception as e:
+            return {{"ok": False, "error": str(e)[:300]}}
+
+    elif action == "GET_ACTIVE_BLOCKS":
+        try:
+            # GA: GET_ACTIVE_BLOCKS() replaced by GET_ACTIVE_BLOCKS_V2()
+            r = session.sql(f"CALL {{fq}}!GET_ACTIVE_BLOCKS_V2()").collect()
+            return {{"ok": True, "blocks": [dict(row.asDict()) for row in r]}}
+        except Exception as e:
+            return {{"ok": False, "error": str(e)[:300]}}
+
+    elif action == "GET_ENFORCEMENT_HISTORY":
+        start = str(params.get("start", "2025-01-01"))
+        end   = str(params.get("end",   datetime.date.today().isoformat()))
+        try:
+            r = session.sql(f"CALL {{fq}}!GET_ENFORCEMENT_HISTORY(\'{{start}}\', \'{{end}}\')").collect()
+            return {{"ok": True, "history": [dict(row.asDict()) for row in r]}}
+        except Exception as e:
+            return {{"ok": False, "error": str(e)[:300]}}
+
+    elif action == "GET_USERS":
+        try:
+            r = session.sql(f"CALL {{fq}}!GET_USERS()").collect()
+            return {{"ok": True, "users": [dict(row.asDict()) for row in r]}}
+        except Exception as e:
+            return {{"ok": False, "error": str(e)[:300]}}
+
+    elif action == "SET_LIMIT":
+        monthly_limit = int(params.get("monthly_limit", 100))
+        daily_limit   = params.get("daily_limit")
+        errors = []
+        try:
+            session.sql(f"CALL {{fq}}!SET_PER_USER_LIMIT({{monthly_limit}})").collect()
+        except Exception as e:
+            errors.append(f"monthly: {{str(e)[:120]}}")
+        if daily_limit and int(daily_limit) > 0:
+            try:
+                session.sql(f"CALL {{fq}}!SET_PER_USER_LIMIT({{int(daily_limit)}}, \'DAILY\')").collect()
+            except Exception as e:
+                errors.append(f"daily: {{str(e)[:120]}}")
+        # Update tracking table
+        dl_val = str(int(daily_limit)) if daily_limit and int(daily_limit) > 0 else "NULL"
+        try:
+            session.sql(f"""
+                UPDATE {{tbl_q}}
+                SET MONTHLY_LIMIT = {{monthly_limit}}, DAILY_LIMIT = {{dl_val}},
+                    UPDATED_BY = \'{{_safe(actor)}}\', UPDATED_AT = CURRENT_TIMESTAMP()
+                WHERE QUOTA_NAME = \'{{_safe(quota_name)}}\'
+            """).collect()
+        except Exception:
+            pass
+        return {{"ok": len(errors) == 0, "errors": errors}}
+
+    elif action == "DELETE":
+        errors = []
+        # Untag users (set their CC_COHORT_TAG to NULL if set by us)
+        cohort_role = params.get("cohort_role")
+        if cohort_role:
+            try:
+                # Candidates: the members CREATE tagged, plus anyone ACCOUNT_USAGE shows tagged
+                # (that view lags up to ~2h, so it is only a supplement).
+                cands = {{str(r[0]) for r in session.sql(f"""
+                    SELECT DISTINCT USER_NAME FROM {{DS}}.CC_USER_COHORT_RESOLVED
+                    WHERE UPPER(COHORT_ROLE) = UPPER(\'{{_safe(cohort_role)}}\') AND USER_NAME IS NOT NULL
+                """).collect() if r[0]}}
+                try:
+                    for g in session.sql(f\'SHOW GRANTS OF ROLE "{{_safe(cohort_role)}}"\').collect():
+                        if str(g["granted_to"]).upper() == "USER":
+                            cands.add(str(g["grantee_name"]))
+                except Exception:
+                    pass
+                try:
+                    tag_db, tag_schema, tag_name = tag_fq.split(".")
+                    for r in session.sql(f"""
+                        SELECT OBJECT_NAME FROM SNOWFLAKE.ACCOUNT_USAGE.TAG_REFERENCES
+                        WHERE DOMAIN = \'USER\' AND OBJECT_DELETED IS NULL
+                          AND TAG_DATABASE = \'{{tag_db}}\' AND TAG_SCHEMA = \'{{tag_schema}}\'
+                          AND TAG_NAME = \'{{tag_name}}\' AND TAG_VALUE = \'{{_safe(cohort_role)}}\'
+                    """).collect():
+                        cands.add(str(r[0]))
+                except Exception:
+                    pass
+                for user in cands:
+                    u = user.replace("'", "''")
+                    try:
+                        val = session.sql(
+                            f"SELECT SYSTEM$GET_TAG(\'{{tag_fq}}\', \'{{u}}\', \'USER\')").collect()[0][0]
+                        # Only untag users carrying THIS cohort's value
+                        if val is not None and str(val).upper() == str(cohort_role).upper():
+                            uid = user.replace('"', '""')
+                            session.sql(f\'ALTER USER "{{uid}}" UNSET TAG {{tag_fq}}\').collect()
+                    except Exception as e:
+                        errors.append(f"untag {{user}}: {{str(e)[:100]}}")
+            except Exception as e:
+                errors.append(f"untag: {{str(e)[:120]}}")
+        try:
+            session.sql(f"DROP SNOWFLAKE.CORE.QUOTA IF EXISTS {{fq}}").collect()
+        except Exception as e:
+            errors.append(f"DROP QUOTA: {{str(e)[:120]}}")
+        try:
+            session.sql(f"""
+                UPDATE {{tbl_q}} SET IS_ACTIVE = FALSE,
+                    UPDATED_BY = \'{{_safe(actor)}}\', UPDATED_AT = CURRENT_TIMESTAMP()
+                WHERE QUOTA_NAME = \'{{_safe(quota_name)}}\'
+            """).collect()
+        except Exception:
+            pass
+        return {{"ok": len(errors) == 0, "errors": errors}}
+
+    return {{"ok": False, "error": f"Unknown action: {{action}}"}}
+
+
+def _tag_cohort_users(session, cohort_role, tag_fq, actor):
+    """Tag all resolved members of a CoCo cohort role with CC_COHORT_TAG.
+
+    Resolution priority:
+    1. CC_USER_COHORT_RESOLVED (CoCo Hub's own resolved table — most reliable, no latency)
+    2. SHOW GRANTS OF ROLE — direct role members only (no inheritance depth)
+    """
+    DS = "{DS}"
+    tagged, errors = 0, []
+    users = []
+
+    # Primary: use CoCo Hub's own resolved cohort table (no ACCOUNT_USAGE latency)
+    try:
+        rows = session.sql(f"""
+            SELECT DISTINCT USER_NAME
+            FROM {{DS}}.CC_USER_COHORT_RESOLVED
+            WHERE UPPER(COHORT_ROLE) = UPPER(\'{{cohort_role}}\')
+              AND USER_NAME IS NOT NULL
+        """).collect()
+        users = [str(r[0]) for r in rows if r[0]]
+    except Exception:
+        pass
+
+    if not users:
+        # Fallback: SHOW GRANTS OF ROLE — filter to USER grantees only
+        try:
+            rows = session.sql(f'SHOW GRANTS OF ROLE "{{cohort_role}}"').collect()
+            for row in rows:
+                try:
+                    if str(row["granted_to"]).upper() == "USER":   # SHOW columns are lowercase
+                        u = str(row["grantee_name"])
+                        if u:
+                            users.append(u)
+                except Exception:
+                    pass
+        except Exception as e:
+            return {{"tagged": 0, "errors": [f"Could not resolve cohort members: {{str(e)[:120]}}"]}}
+
+    for user in users:
+        try:
+            safe_u = user.replace('"', '""')
+            session.sql(f"ALTER USER \\"{{safe_u}}\\" SET TAG {{tag_fq}} = \'{{cohort_role.upper()}}\'").collect()
+            tagged += 1
+        except Exception as e:
+            errors.append(f"tag {{user}}: {{str(e)[:80]}}")
+
+    return {{"tagged": tagged, "errors": errors}}
+'''
+    return (
+        f"CREATE OR REPLACE PROCEDURE {db}.{schema}.SP_CC_MANAGE_QUOTA"
+        f"(ACTION VARCHAR, QUOTA_NAME VARCHAR, PARAMS VARIANT DEFAULT NULL)\n"
         f"RETURNS VARIANT\n"
         f"LANGUAGE PYTHON\n"
         f"RUNTIME_VERSION = '3.11'\n"

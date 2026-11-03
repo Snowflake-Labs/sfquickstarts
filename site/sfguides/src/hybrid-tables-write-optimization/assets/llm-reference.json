@@ -4,18 +4,40 @@
   "version": "1.0.0",
   "last_updated": "2026-06-16",
   "author": "Adam Timm",
-  "description": "Optimize write performance for Hybrid Tables: plan cache mechanics, bound variables, stored procedure overhead, COPY INTO behavior, and DML anti-patterns.",
+  "description": "Optimize write performance for Hybrid Tables: plan cache mechanics, bound variables, standard stored procedure overhead, inline stored procedures for multi-statement units, COPY INTO behavior, and DML anti-patterns.",
   "plan_cache_mechanics": {
     "how_it_works": "Snowflake computes query_parameterized_hash by replacing literals in predicates with parameters, then hashing canonicalized SQL text. Same hash = plan reuse.",
     "what_shares_same_hash": ["Literal value differences in comparison operators (=, !=, >=, <=)", "Whitespace differences", "Comment differences", "Case-insensitive identifier differences"],
     "what_breaks_hash": ["Schema qualification difference (db.schema.table vs table)", "Different column order in VALUES", "Different function calls (CURRENT_TIMESTAMP vs literal timestamp)"],
     "where_visible": ["QUERY_HISTORY (ACCOUNT_USAGE)", "AGGREGATE_QUERY_HISTORY (ACCOUNT_USAGE)", "INFORMATION_SCHEMA.QUERY_HISTORY() table function"]
   },
-  "performance_hierarchy": [
-    "1. Direct DML with AUTOCOMMIT=TRUE (lowest overhead, plan cache optimal)",
-    "2. Multi-statement transaction (BEGIN/COMMIT) — slight overhead, useful for batching",
-    "3. Stored procedure — highest overhead, use only when procedural logic required"
-  ],
+  "performance_hierarchy": {
+    "scope": "Applies to single-statement DML. For a unit of work that must execute several statements atomically, see inline_stored_procedures.",
+    "ranking": [
+      "1. Direct DML with AUTOCOMMIT=TRUE (lowest overhead, plan cache optimal)",
+      "2. Multi-statement transaction (BEGIN/COMMIT) — slight overhead, useful for batching",
+      "3. Standard stored procedure — highest overhead, use only when procedural logic required"
+    ]
+  },
+  "inline_stored_procedures": {
+    "status": "Public Preview",
+    "purpose": "Execute a multi-statement unit of work atomically against hybrid tables with less per-statement overhead than a standard stored procedure.",
+    "mechanism": "The procedure body is compiled as a single unit and pushed down to the query processing layer, so the statements do not make individual round trips through the standard procedure execution path.",
+    "syntax": "CREATE OR REPLACE INLINE PROCEDURE proc_name(arg TYPE) RETURNS TYPE LANGUAGE SQL AS $$ BEGIN ATOMIC ... END $$;",
+    "hybrid_tables_only": true,
+    "constraints": [
+      "Statements may reference hybrid tables only",
+      "No explicit BEGIN, COMMIT, or ROLLBACK inside the body; the body is already atomic",
+      "Cannot be invoked from inside an open transaction; must be called with autocommit enabled",
+      "No dynamic context functions such as CURRENT_TIMESTAMP, CURRENT_DATE, CURRENT_TIME, SYSDATE, SYSTIMESTAMP, GETDATE, LOCALTIME, or LOCALTIMESTAMP (error 090277); pass the value in as an argument instead",
+      "Compiled at CALL time rather than CREATE time, so CREATE can succeed while the first CALL fails on an unsupported construct",
+      "An EXCEPTION handler that returns makes the CALL succeed, so statements that already ran are committed rather than rolled back; leave errors unhandled when all-or-nothing behavior is required",
+      "Compilation errors are raised before execution and cannot be caught by an EXCEPTION handler",
+      "An uncaught statement error propagates the failing statement's own error code"
+    ],
+    "when_to_use": "Prefer it over a multi-statement transaction or a standard stored procedure when several dependent DML statements against hybrid tables must succeed or fail together. Benchmark your own workload rather than assuming a margin.",
+    "when_not_to_use": "For a plain single-statement write, direct parameterized DML remains the lowest-overhead option. Wrapping a single statement is still worthwhile for abstraction or an access-control boundary, since the body executes as one unit and avoids the per-statement overhead a standard stored procedure would add."
+  },
   "copy_into_behavior": {
     "supported": true,
     "on_error": "Only ABORT_STATEMENT supported (not SKIP_FILE or CONTINUE)",
@@ -33,12 +55,16 @@
   "diagnostic_checklist": [
     "compilation_time > 50% of total_elapsed_time → plan cache not warming (check hash cardinality)",
     "Multiple parameterized hashes for same logical operation → schema qualification inconsistency",
-    "CALL latency >> child INSERT latency → SP overhead, consider removing SP wrapper",
+    "CALL latency >> child INSERT latency → standard stored procedure overhead; consider removing the wrapper, or an inline procedure if the statements must be atomic",
     "hybrid_table_requests_throttled_count > 0 → too many concurrent requests hitting row store"
   ],
   "recommended_batch_size": "500-1000 rows per batch call (profile your specific row width)",
   "related_guides": [
     {"title": "Connecting Applications to Hybrid Tables", "url": "https://www.snowflake.com/en/developers/guides/hybrid-tables-application-connectors/"},
     {"title": "Analytics Patterns for Hybrid Tables", "url": "https://www.snowflake.com/en/developers/guides/hybrid-tables-analytics-patterns/"}
+  ],
+  "related_documentation": [
+    {"title": "Inline Stored Procedures for Hybrid Tables", "url": "https://docs.snowflake.com/en/user-guide/hybrid-tables-inline-stored-procedures"},
+    {"title": "Operational Query Performance for Hybrid Tables", "url": "https://docs.snowflake.com/en/user-guide/hybrid-tables-operational-query-performance"}
   ]
 }

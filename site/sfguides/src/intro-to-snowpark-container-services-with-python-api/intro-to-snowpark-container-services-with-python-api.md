@@ -13,6 +13,8 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 Through this quickstart guide, you will explore [Snowpark Container Services](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview), which are now in Public Preview on AWS. You will explore Snowpark Container Services using [Python API](https://docs.snowflake.com/en/developer-guide/snowflake-python-api/snowflake-python-overview), which is now in Public Preview. You will learn the basic mechanics of working with Snowpark Container Services using Python API and build several introductory services. **Please note: this quickstart assumes some existing knowledge and familiarity with containerization (e.g. Docker) , basic familiarity with container orchestration. and basic familiartity with Python**
 
+**Choose your approach:** This guide uses Snowflake Python APIs. Prefer SQL commands and the Snowflake CLI? Follow [Intro to Snowpark Container Services](https://www.snowflake.com/en/developers/guides/intro-to-snowpark-container-services/) to build the same example services using SQL and CLI commands.
+
 ### What is Snowpark Container Services?
 
 ![Snowpark Container Service](./assets/containers.png)
@@ -55,8 +57,6 @@ You can simply download the repo as a .zip if you don't have Git installed local
 - A hosted Jupyter Notebook service running inside of Snowpark Container Services with a basic notebook
 - A Python REST API to perform basic temperature conversions
 - A Snowflake Service Function that leverages the REST API
-
-<!-- ![e2e_ml_workflow](assets/snowpark-ml-e2e.png) -->
 
 <!-- ------------------------ -->
 ## Set up the Snowflake environment

@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 260" font-family="Arial, sans-serif">
+
+  <!-- Background -->
+  <rect width="900" height="260" fill="#f8f9fa" rx="12"/>
+
+  <!-- Title -->
+  <text x="450" y="32" text-anchor="middle" font-size="15" font-weight="bold" fill="#29B5E8">LTV Prediction Pipeline — What You Built</text>
+
+  <!-- Step boxes -->
+  <!-- 1: Synthetic Data -->
+  <rect x="30" y="60" width="120" height="70" rx="8" fill="#29B5E8" opacity="0.15" stroke="#29B5E8" stroke-width="1.5"/>
+  <text x="90" y="88" text-anchor="middle" font-size="11" font-weight="bold" fill="#1a7fa8">Generate</text>
+  <text x="90" y="103" text-anchor="middle" font-size="11" font-weight="bold" fill="#1a7fa8">Synthetic Data</text>
+  <text x="90" y="120" text-anchor="middle" font-size="10" fill="#555">ML_LTV_TRANSACTIONS</text>
+
+  <!-- Arrow 1→2 -->
+  <line x1="150" y1="95" x2="178" y2="95" stroke="#29B5E8" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- 2: EDA -->
+  <rect x="178" y="60" width="120" height="70" rx="8" fill="#29B5E8" opacity="0.15" stroke="#29B5E8" stroke-width="1.5"/>
+  <text x="238" y="91" text-anchor="middle" font-size="11" font-weight="bold" fill="#1a7fa8">Explore the Data</text>
+  <text x="238" y="106" text-anchor="middle" font-size="11" font-weight="bold" fill="#1a7fa8">(EDA)</text>
+  <text x="238" y="121" text-anchor="middle" font-size="10" fill="#555">Feature Engineering</text>
+
+  <!-- Arrow 2→3 -->
+  <line x1="298" y1="95" x2="326" y2="95" stroke="#29B5E8" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- 3: Feature Engineering + Train -->
+  <rect x="326" y="60" width="120" height="70" rx="8" fill="#29B5E8" opacity="0.15" stroke="#29B5E8" stroke-width="1.5"/>
+  <text x="386" y="91" text-anchor="middle" font-size="11" font-weight="bold" fill="#1a7fa8">Train Model</text>
+  <text x="386" y="109" text-anchor="middle" font-size="10" fill="#555">XGBoost /</text>
+  <text x="386" y="122" text-anchor="middle" font-size="10" fill="#555">Random Forest</text>
+
+  <!-- Arrow 3→4 -->
+  <line x1="446" y1="95" x2="474" y2="95" stroke="#29B5E8" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- 4: Model Registry -->
+  <rect x="474" y="60" width="120" height="70" rx="8" fill="#29B5E8" opacity="0.15" stroke="#29B5E8" stroke-width="1.5"/>
+  <text x="534" y="88" text-anchor="middle" font-size="11" font-weight="bold" fill="#1a7fa8">Model Registry</text>
+  <text x="534" y="103" text-anchor="middle" font-size="11" font-weight="bold" fill="#1a7fa8"></text>
+  <text x="534" y="113" text-anchor="middle" font-size="10" fill="#555">Log Model + Metrics</text>
+  <text x="534" y="126" text-anchor="middle" font-size="10" fill="#555">Version Control</text>
+
+  <!-- Arrow 4→5 -->
+  <line x1="594" y1="95" x2="622" y2="95" stroke="#29B5E8" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- 5: Batch Inference -->
+  <rect x="622" y="60" width="120" height="70" rx="8" fill="#29B5E8" opacity="0.15" stroke="#29B5E8" stroke-width="1.5"/>
+  <text x="682" y="88" text-anchor="middle" font-size="11" font-weight="bold" fill="#1a7fa8">Batch Inference</text>
+  <text x="682" y="103" text-anchor="middle" font-size="11" font-weight="bold" fill="#1a7fa8"></text>
+  <text x="682" y="113" text-anchor="middle" font-size="10" fill="#555">Warehouse Compute</text>
+  <text x="682" y="126" text-anchor="middle" font-size="10" fill="#555">LTV Predictions</text>
+
+  <!-- Arrow 4→6 (SPCS branch, dashed) -->
+  <line x1="534" y1="130" x2="534" y2="165" stroke="#aaa" stroke-width="1.5" stroke-dasharray="5,3"/>
+  <line x1="534" y1="165" x2="790" y2="165" stroke="#aaa" stroke-width="1.5" stroke-dasharray="5,3"/>
+  <line x1="790" y1="165" x2="790" y2="183" stroke="#aaa" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arrowGray)"/>
+
+  <!-- 6: SPCS (optional) -->
+  <rect x="730" y="183" width="140" height="55" rx="8" fill="#f0f0f0" stroke="#aaa" stroke-width="1.5" stroke-dasharray="5,3"/>
+  <text x="800" y="205" text-anchor="middle" font-size="11" font-weight="bold" fill="#888">SPCS (Optional)</text>
+  <text x="800" y="220" text-anchor="middle" font-size="10" fill="#999">Real-Time REST API</text>
+  <text x="800" y="233" text-anchor="middle" font-size="10" fill="#999">Appendix B</text>
+
+  <!-- Cortex Code label -->
+  <rect x="30" y="175" width="680" height="30" rx="6" fill="none" stroke="#29B5E8" stroke-width="1" stroke-dasharray="4,3"/>
+  <text x="370" y="195" text-anchor="middle" font-size="11" fill="#29B5E8">⚡ Powered by Cortex Code — natural language prompts drive every step</text>
+
+  <!-- Arrowhead marker -->
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#29B5E8"/>
+    </marker>
+    <marker id="arrowGray" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#aaa"/>
+    </marker>
+  </defs>
+</svg>

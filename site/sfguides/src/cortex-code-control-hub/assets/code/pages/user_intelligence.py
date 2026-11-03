@@ -19,7 +19,7 @@ from config import (
     TABLE_USAGE_DAILY, TABLE_CREDIT_CONFIG,
     escape_sql_literal, fq_table, get_current_user,
 )
-from utils import get_app_setting, get_session
+from utils import get_app_setting, get_session, get_user_rolling24h_usage
 
 _BG = "#0e1117"
 _P  = "#7dd3fc"
@@ -222,7 +222,7 @@ def _load_prompt_search(_session, username: str, days: int, keyword: str):
               AND EVENT_DATE >= DATEADD('day', -{days}, CURRENT_DATE())
               AND (PROMPT ILIKE '%{safe_k}%' OR RESPONSE ILIKE '%{safe_k}%')
             ORDER BY EVENT_TS DESC
-            LIMIT 100
+            LIMIT 2000
         """).to_pandas()
         if not df.empty:
             df.columns = [c.upper() for c in df.columns]
@@ -237,7 +237,7 @@ def render(session):
     st.header("User Intelligence",
               help="Complete profile for any Cortex Code user — credits, LLM behaviour, "
                    "token economics, responsible AI assessment, and full prompt search.")
-    st.caption("Search for a user to load their full profile. All data from CC_PROMPT_EVENTS and CC_PROMPT_VIOLATIONS.")
+    st.caption("Search for a user to load their full profile. Credits tab: CC_USAGE_DAILY_SUMMARY (billing). Prompts/behavior tabs: CC_PROMPT_EVENTS (observability events). The two sources will differ — billing is higher because it includes requests that don't emit observability events.")
 
     # ── Search bar ────────────────────────────────────────────────────────────
     col_search, col_days = st.columns([3, 1])
@@ -312,8 +312,8 @@ def render(session):
               help="Distinct conversation threads (SESSION_ID).")
     k3.metric("Avg Steps/Session",f"{s.get('AVG_STEPS',0):.1f}",
               help="Average agent reasoning steps per session. Higher = more complex multi-step tasks.")
-    k4.metric("Cache Hit Rate",   f"{cache_hit_rate:.1f}%",
-              help="Tokens served from prompt cache vs fresh input. Higher = more efficient caching.")
+    k4.metric("Cache Hit Rate *(approx)*",   f"{cache_hit_rate:.1f}%",
+              help="cache_read ÷ (cache_read + cache_write). Approximate — field semantics in AI_OBSERVABILITY_EVENTS may vary by account. Use as a directional signal.")
     k5.metric("Insights",       f"{viol_count}",
               help="Distinct rules triggered in the selected period.")
     k6.metric("Success Rate",     f"{s.get('SUCCESS_RATE',0):.1f}%",
@@ -417,6 +417,31 @@ def render(session):
                     .configure_view(strokeWidth=0).configure(background=_BG))
             st.altair_chart(ch_c, use_container_width=True)
 
+        # Rolling 24h — live from billing views, matches limit enforcement window
+        st.divider()
+        st.markdown("#### Rolling 24-Hour Usage")
+        st.caption(
+            "Credits in the **last 24 hours** from live billing views — "
+            "matches the window Snowflake enforces for daily limits. "
+            "⚠️ Up to 24h source latency. "
+            "Control: read-only display, does not affect limits."
+        )
+
+        @st.cache_data(ttl=300, show_spinner=False)
+        def _r24(_session, _user):
+            return get_user_rolling24h_usage(_session, _user)
+
+        r24 = _r24(session, username)
+        r_total = sum(r24.values())
+        rc1, rc2, rc3, rc4 = st.columns(4)
+        rc1.metric("Total (24h)", f"{r_total:.3f} cr",
+                   help="Sum across all surfaces in rolling 24h window.")
+        for i, surface in enumerate(["CLI", "SNOWSIGHT", "DESKTOP"]):
+            [rc2, rc3, rc4][i].metric(
+                f"{surface} (24h)", f"{r24.get(surface, 0.0):.3f} cr",
+                help=f"Rolling 24h usage for {surface}"
+            )
+
     # ── TOKEN ECONOMICS ────────────────────────────────────────────────────────
     with tab_tokens:
         st.caption("Detailed token breakdown per LLM. Cache Hit Rate shows what % of "
@@ -424,7 +449,7 @@ def render(session):
 
         if not models_df.empty:
             models_df["CACHE_HIT_PCT"] = (
-                models_df["CACHE_READ"] / (models_df["INPUT_TOKENS"] + models_df["CACHE_READ"]).replace(0, pd.NA) * 100
+                models_df["CACHE_READ"] / (models_df["INPUT_TOKENS"] + models_df["CACHE_READ"]).replace(0, float("nan")) * 100
             ).round(1).fillna(0)
             tm1, tm2 = st.columns(2)
             with tm1:

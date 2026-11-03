@@ -35,18 +35,33 @@ _COST_CSS = """
 
 _COST_QUERY = """
 SELECT
-    obs.TIMESTAMP,
-    obs.RESOURCE_ATTRIBUTES['snow.user.name']::STRING                                       AS USER_NAME,
-    obs.RECORD_ATTRIBUTES['snow.ai.observability.agent.planning.model']::STRING             AS MODEL,
-    obs.RECORD_ATTRIBUTES['snow.ai.observability.agent.planning.request_id']::STRING        AS REQUEST_ID,
-    obs.TRACE['trace_id']::STRING                                                            AS SESSION_ID,
+    agent.TIMESTAMP,
+    agent.RESOURCE_ATTRIBUTES['snow.user.name']::STRING                                        AS USER_NAME,
+    COALESCE(
+        step0.RECORD_ATTRIBUTES['snow.ai.observability.agent.planning.model']::STRING,
+        run.RECORD_ATTRIBUTES['snow.ai.observability.agent.coding_agent.origin_application']::STRING,
+        'Unknown'
+    )                                                                                            AS MODEL,
+    agent.RECORD_ATTRIBUTES['request_id']::STRING                                               AS REQUEST_ID,
+    COALESCE(
+        run.RECORD_ATTRIBUTES['snow.ai.observability.agent.coding_agent.session_id']::STRING,
+        agent.TRACE['trace_id']::STRING
+    )                                                                                            AS SESSION_ID,
     TRIM(REGEXP_REPLACE(
-        obs.RECORD_ATTRIBUTES['snow.ai.observability.agent.planning.query']::STRING,
+        step0.RECORD_ATTRIBUTES['snow.ai.observability.agent.planning.query']::STRING,
         '<system-reminder>[\\\\s\\\\S]*?</system-reminder>\\\\s*', '', 1, 0, 's'
-    ))                                                                                        AS CLEAN_PROMPT,
+    ))                                                                                           AS CLEAN_PROMPT,
     usage.TOKEN_CREDITS,
     usage.SURFACE
-FROM SNOWFLAKE.LOCAL.AI_OBSERVABILITY_EVENTS obs
+FROM SNOWFLAKE.LOCAL.AI_OBSERVABILITY_EVENTS agent
+LEFT JOIN SNOWFLAKE.LOCAL.AI_OBSERVABILITY_EVENTS run
+       ON run.TRACE['trace_id']::STRING  = agent.TRACE['trace_id']::STRING
+      AND run.RECORD_TYPE                = 'SPAN'
+      AND run.RECORD:name::STRING        = 'CodingAgentRun'
+LEFT JOIN SNOWFLAKE.LOCAL.AI_OBSERVABILITY_EVENTS step0
+       ON step0.TRACE['trace_id']::STRING = agent.TRACE['trace_id']::STRING
+      AND step0.RECORD_TYPE               = 'SPAN'
+      AND step0.RECORD:name::STRING       = 'CodingAgent.Step-0'
 JOIN (
     SELECT REQUEST_ID, TOKEN_CREDITS, 'CLI' AS SURFACE
     FROM SNOWFLAKE.ACCOUNT_USAGE.CORTEX_CODE_CLI_USAGE_HISTORY
@@ -55,12 +70,14 @@ JOIN (
     SELECT REQUEST_ID, TOKEN_CREDITS, 'SNOWSIGHT' AS SURFACE
     FROM SNOWFLAKE.ACCOUNT_USAGE.CORTEX_CODE_SNOWSIGHT_USAGE_HISTORY
     WHERE USAGE_TIME >= DATEADD('day', -{days}, CURRENT_TIMESTAMP())
-) usage
-    ON obs.RECORD_ATTRIBUTES['snow.ai.observability.agent.planning.request_id']::STRING
-       = usage.REQUEST_ID
-WHERE obs.RECORD_TYPE = 'SPAN'
-  AND obs.RECORD:name::STRING = 'CodingAgent.Step-0'
-  AND obs.TIMESTAMP >= DATEADD('day', -{days}, CURRENT_TIMESTAMP())
+    UNION ALL
+    SELECT REQUEST_ID, TOKEN_CREDITS, 'DESKTOP' AS SURFACE
+    FROM SNOWFLAKE.ACCOUNT_USAGE.CORTEX_CODE_DESKTOP_USAGE_HISTORY
+    WHERE USAGE_TIME >= DATEADD('day', -{days}, CURRENT_TIMESTAMP())
+) usage ON agent.RECORD_ATTRIBUTES['request_id']::STRING = usage.REQUEST_ID
+WHERE agent.RECORD_TYPE  = 'SPAN'
+  AND agent.RECORD:name::STRING = 'Agent'
+  AND agent.TIMESTAMP   >= DATEADD('day', -{days}, CURRENT_TIMESTAMP())
 {user_filter}
 ORDER BY TOKEN_CREDITS DESC
 LIMIT 2000
@@ -70,7 +87,7 @@ LIMIT 2000
 @st.cache_data(ttl=1800, show_spinner=False)
 def _load_cost_data(_session, days: int, user_filter: str, usd_per_credit: float = 3.0):
     uf = (
-        f"AND obs.RESOURCE_ATTRIBUTES['snow.user.name']::STRING = '{escape_sql_literal(user_filter)}'"
+        f"AND agent.RESOURCE_ATTRIBUTES['snow.user.name']::STRING = '{escape_sql_literal(user_filter)}'"
         if user_filter else ""
     )
     try:
@@ -185,13 +202,14 @@ def render(session):
         )
         st.altair_chart(cohort_chart, use_container_width=True)
         st.dataframe(coh_df, use_container_width=True, hide_index=True,
-                     column_config={
-                         "COHORT":           st.column_config.TextColumn("Cohort"),
-                         "USERS":            st.column_config.NumberColumn("Users"),
-                         "CREDITS_USED":     st.column_config.NumberColumn("Credits Used", format="%.4f"),
-                         "COHORT_CLI_LIMIT": st.column_config.NumberColumn("CLI Limit/day"),
-                         "COHORT_SS_LIMIT":  st.column_config.NumberColumn("Snowsight Limit/day"),
-                     })
+                         column_config={
+                             "COHORT":           st.column_config.TextColumn("Cohort"),
+                             "USERS":            st.column_config.NumberColumn("Users"),
+                             "CREDITS_USED":     st.column_config.NumberColumn("Credits Used", format="%.4f"),
+                             "COHORT_CLI_LIMIT": st.column_config.NumberColumn("CLI Limit/day"),
+                             "COHORT_SS_LIMIT":  st.column_config.NumberColumn("Snowsight Limit/day"),
+                             "COHORT_DT_LIMIT":  st.column_config.NumberColumn("Desktop Limit/day"),
+                         })
     else:
         st.info("No cohort usage data for this period.")
 
@@ -199,6 +217,17 @@ def render(session):
 
     # ── Per-prompt cost (ACCOUNT_USAGE JOIN — on demand) ──────────────────────
     _sec("Per-Prompt Cost Attribution (ACCOUNT_USAGE — 45min–2hr latency)")
+
+    st.info(
+        "**Understanding the two credit totals on this page:**\n\n"
+        "• **Cohort Credit Consumption** (above) reads from `CC_USAGE_DAILY_SUMMARY` — the same source as "
+        "the Usage Trends page. Both show the same total billing credits.\n\n"
+        "• **Per-Prompt Cost Attribution** (below) joins billing records to `Agent` observability spans on "
+        "`REQUEST_ID`. This covers all Cortex Code requests that emitted an `Agent` span — the vast majority "
+        "of requests. A small gap vs Cohort total is possible for requests with no observability coverage. "
+        "Session cost is grouped by the real terminal `session_id` from `CodingAgentRun` spans.",
+        icon="ℹ️",
+    )
 
     cost_key = f"cost_prompt_{active_days}_{active_filter}"
 
@@ -278,8 +307,15 @@ def render(session):
 
             st.divider()
 
-            # Session rollup
-            _sec("Session Cost Rollup")
+            # Per-session cost rollup — groups by real terminal session ID
+            _sec("Session Cost Breakdown (Terminal Session)")
+            st.caption(
+                "Each row = one **terminal session** (login→logout) grouped by "
+                "`CodingAgentRun.session_id` from Snowflake AI Observability. "
+                "Multiple user messages within the same Cortex Code session share the same Session ID. "
+                "**Prompts** = total LLM requests in that session. "
+                "Falls back to trace_id (per-message) when no CodingAgentRun span is available."
+            )
             sess = (cdf.groupby(["SESSION_ID","USER_NAME"])
                        .agg(PROMPTS=("REQUEST_ID","count"),
                             TOTAL_CREDITS=("TOKEN_CREDITS","sum"),
@@ -292,7 +328,9 @@ def render(session):
             sess["HIGH_COST"] = sess["TOTAL_CREDITS"] > threshold
             st.dataframe(sess, use_container_width=True, hide_index=True,
                          column_config={
-                             "SESSION_ID":    st.column_config.TextColumn("Session ID", width="medium"),
+                             "SESSION_ID":    st.column_config.TextColumn("Session ID", width="large"),
+                             "USER_NAME":     st.column_config.TextColumn("User"),
+                             "PROMPTS":       st.column_config.NumberColumn("Requests"),
                              "TOTAL_CREDITS": st.column_config.NumberColumn("Credits", format="%.5f"),
                              "EST_USD":       st.column_config.NumberColumn("Est. USD", format="$%.4f"),
                              "HIGH_COST":     st.column_config.CheckboxColumn("Top 10%?"),

@@ -19,6 +19,8 @@ from config import (
     PAGE_ACCESS_MGMT,
     PAGE_ALERTS,
     PAGE_AUDIT_LOG,
+    PAGE_BUDGET_FORECAST,
+    PAGE_NATIVE_QUOTAS,
     PAGE_COST_ATTRIBUTION,
     PAGE_CREDIT_CONFIG,
     PAGE_CREDIT_REQUESTS,
@@ -80,6 +82,8 @@ def main():
             PAGE_POLICY_RULES:     "🛡️",
             PAGE_ALERTS:           "🔔",
             PAGE_MODEL_INTEL:      "🧬",
+            PAGE_BUDGET_FORECAST:  "📈",
+            PAGE_NATIVE_QUOTAS:    "⚡",
         }
 
         options = [f"{page_icons.get(p, '•')} {p}" for p in available_pages]
@@ -197,6 +201,12 @@ def main():
         render(session)
     elif page_name == PAGE_MODEL_INTEL and is_admin:
         from pages.model_intelligence import render
+        render(session)
+    elif page_name == PAGE_BUDGET_FORECAST and is_admin:
+        from pages.budget_forecast import render
+        render(session)
+    elif page_name == PAGE_NATIVE_QUOTAS and is_admin:
+        from pages.user_quotas import render
         render(session)
     else:
         st.error("⛔ Access denied. This page requires admin privileges.")

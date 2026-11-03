@@ -72,21 +72,24 @@ CREATE TABLE SAMPLE_CUSTOMER AS
 
 > 
 >**In This Step:** 
->We will create an ALTR account and connect it to Snowflake, all from within your browser. ALTR is a SaaS solution that integrates directly with Snowflake — no installation required on your premises. The process starts in Snowflake's Partner Connect portal.
+>We will create an ALTR account and connect it to Snowflake, all from within your browser. ALTR is a SaaS solution that integrates directly with Snowflake — no installation required on your premises. The process starts in the Snowflake Marketplace.
 >
 
 > 
 > **NOTE:** If you already have an ALTR account and want to use it instead of creating a new one, skip to Step 4 ***ALTR Setup for existing accounts*** 
 >
 
-### Connect to ALTR via Partner Connect
+### Connect to ALTR via Snowflake Marketplace
 
-- Log in to your Snowflake instance and navigate to **Data Products → Partner Connect**. If you need help finding it, see: [Connecting with a Snowflake Partner](https://docs.snowflake.com/en/user-guide/ecosystem-partner-connect#connecting-with-a-snowflake-partner).
-- Type "ALTR" in the search bar and click on the ALTR card
-- Review the objects that will be created in your Snowflake account (`PC_ALTR_DB`, `PC_ALTR_WH`, `PC_ALTR_USER`, `PC_ALTR_ROLE`) and click **Connect**
-- When you see the confirmation below, click **Activate** — this takes you to the ALTR portal to finish setup
+- Log in to your Snowflake instance and switch your role to **ACCOUNTADMIN**
+- Open the [ALTR listing in Snowflake Marketplace](https://app.snowflake.com/marketplace/listing/GZSTZ4652VTDT/altr-altr-data-security-and-posture-management) directly, or navigate there via **Data Products → Marketplace** and search for "ALTR"
 
-![ALTR Account Created](assets/partner_account_created.png)
+![Snowflake Marketplace - ALTR](assets/partner_account_created.png)
+
+- Click **Get Started** on the listing
+- Review the information and objects that will be created in your Snowflake account (`PC_ALTR_DB`, `PC_ALTR_WH (X-Small)`, `PC_ALTR_USER`, `PC_ALTR_ROLE`) and click **Connect to ALTR** — this takes you to the ALTR portal to finish setup
+
+![Connect to ALTR](assets/marketplace_connect.png)
 
 ### Set your ALTR Password
 ![ALTR Setup Screen](assets/altr_setup_set_pw.png)
@@ -137,7 +140,7 @@ CALL "PC_ALTR_DB"."PUBLIC"."SETUP_ALTR_SERVICE_ACCOUNT"(FALSE);
 ### Connect ALTR to the Sample Database
 
 > 
-> **NOTE**: Free tier ALTR accounts are limited to a single connected database. Disconnect your existing database before connecting this one, or use the database you already have connected (column names may differ from this guide).
+> **NOTE**: Free tier ALTR accounts are limited to 3 connected databases. If you are already at that limit, disconnect an existing database before connecting this one, or use a database you already have connected (column names may differ from this guide).
 >
 
 - [Log in to your ALTR portal](https://altrnet.live.altr.com/api/auth/organization_login?uiredirect=true)
@@ -147,7 +150,8 @@ CALL "PC_ALTR_DB"."PUBLIC"."SETUP_ALTR_SERVICE_ACCOUNT"(FALSE);
   - **Service User:** `PC_ALTR_USER`
   - **Database Name:** `ALTR_GETTING_STARTED_DB`
 - Click **Next**, then **Connect Data Source**
->
+
+![Connect Data Source](assets/connect_datasource.png)
 
 <!-- ------------------------ -->
 ## Run Data Classification

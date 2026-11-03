@@ -4,10 +4,10 @@ entities:
     type: streamlit
     identifier:
       name: CORTEX_CODE_CREDIT_MANAGER
-      database: YOUR_DB
-      schema: YOUR_SCHEMA
+      database: MY_DATABASE       # TODO: replace with your database, e.g. MY_DB
+      schema: MY_SCHEMA           # TODO: replace with your schema, e.g. APPS
     title: "CoCo Control Hub"
-    query_warehouse: YOUR_WAREHOUSE
+    query_warehouse: MY_WAREHOUSE # TODO: replace with your warehouse, e.g. COMPUTE_WH
     main_file: streamlit_app.py
     artifacts:
       - config.py
@@ -19,6 +19,7 @@ entities:
       - sp_definitions.py
       - prerequisites.sql
       - environment.yml
+      - pyproject.toml
       - pages/__init__.py
       - pages/home.py
       - pages/access_management.py
@@ -37,4 +38,5 @@ entities:
       - pages/policy_rules.py
       - pages/alerts.py
       - pages/model_intelligence.py
+      - pages/user_quotas.py
     stage: CORTEX_CODE_CREDIT_MANAGER_STAGE

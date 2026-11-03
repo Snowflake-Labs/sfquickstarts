@@ -4,7 +4,7 @@ categories: snowflake-site:taxonomy/solution-center/certification/quickstart, sn
 language: en
 summary: Build an intelligent sales assistant using Snowflake Cortex Agents with Cortex Code CLI, combining Cortex Search and Analyst for both structured and unstructured data.
 environments: web
-status: Published 
+status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 open in snowflake link: https://app.snowflake.com/templates?template=get_started_with_cortex_agents&utm_source=build&utm_medium=templates&utm_campaign=guides&utm_content=nov25
 

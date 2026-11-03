@@ -1,10 +1,10 @@
 id: agentic-ai-for-asset-management
 language: en
-summary: Cortex-powered asset management agents in Snowflake Intelligence
+summary: Cortex-powered asset management agents in Snowflake CoWork
 categories: snowflake-site:taxonomy/industry/financial-services, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/analytics, snowflake-site:taxonomy/snowflake-feature/ingestion/conversational-assistants, snowflake-site:taxonomy/snowflake-feature/unstructured-data-analysis, snowflake-site:taxonomy/snowflake-feature/cortex-analyst, snowflake-site:taxonomy/snowflake-feature/cortex-search, snowflake-site:taxonomy/snowflake-feature/snowflake-intelligence, snowflake-site:taxonomy/snowflake-feature/marketplace-and-integrations, snowflake-site:taxonomy/snowflake-feature/snowpark
 environments: web
 status: Published
-authors: Mats Stellwall, Constantin Stanca, Dureti Shemsi
+authors: Mats Stellwall, Dureti Shemsi
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 fork repo link: https://github.com/Snowflake-Labs/sfguide-agentic-ai-for-asset-management
 
@@ -12,97 +12,134 @@ fork repo link: https://github.com/Snowflake-Labs/sfguide-agentic-ai-for-asset-m
 
 ## Overview
 
-This solution provides a comprehensive Cortex-powered system for asset management, featuring multiple specialized Cortex agents that serve different roles across front, middle, and back office functions. It demonstrates how financial firms can transform their investment workflows by integrating structured portfolio data with unstructured research documents—all powered by Snowflake Intelligence.
+This solution builds a complete AI-powered asset management platform inside Snowflake, featuring specialised Cortex Agents that serve different roles across front, middle, and back office functions. It demonstrates how financial firms can transform investment workflows by integrating structured portfolio data with unstructured research documents — all powered by Snowflake CoWork.
 
-The solution creates a fictional asset management firm called **Simulated Asset Management (SAM)** with real securities data from SEC filings, synthetic broker research, earnings transcripts, policy documents, and portfolio holdings across multiple investment strategies.
+The solution creates a fictional firm called **Simulated Asset Management (SAM)** with:
+- Real securities data from SEC filings via **Snowflake Public Data (Free)**
+- 11 investment strategies across equity, multi-asset, ESG, and alternatives
+- Synthetic broker research, earnings transcripts, policy documents, and client data
+- 8 specialised Cortex Agents with 36+ runtime skills
+- 3 ML workflow notebooks (market regime, factor models, credit risk)
 
-## Key Features
+## Prerequisites
 
-**Multi-Agent Architecture**: Nine specialized Cortex agents serve different business roles—from Portfolio Managers to Compliance Officers to Executives. Each agent has role-specific tools, instructions, and access to relevant data sources.
+- A Snowflake account with Cortex AI enabled
+- **Snowflake Public Data (Free)** Marketplace listing installed (auto-installed by setup script)
+- ACCOUNTADMIN role access (for initial setup only — runtime uses a dedicated SAM_DEMO_ROLE)
 
-**Intelligent Document Search**: Use natural language to search through broker research reports, earnings transcripts, press releases, NGO reports, policy documents, and more. Powered by Snowflake's Cortex Search, analysts can find key insights across thousands of documents in seconds.
+## Architecture
 
-**Conversational Portfolio Analysis**: Analyze portfolio holdings, risk exposures, factor scores, and ESG metrics using simple conversational queries. The system leverages Cortex Analyst to translate natural language into SQL, providing instant, data-driven answers.
+The solution runs entirely within Snowflake using native AI features — no external infrastructure, APIs, or data movement required.
 
-**Real SEC Filing Integration**: The solution integrates real SEC filing data from the Snowflake Marketplace, including 10-K, 10-Q, and 8-K filings with full-text search capabilities across risk factors, MD&A sections, and financial disclosures.
+**Data Foundation**: A dimensional model with 48+ tables — dimensions (securities, issuers, portfolios, benchmarks, clients) and facts (positions, transactions, prices, ESG scores, attribution). Real securities sourced from 14,000+ instruments via Snowflake Public Data.
 
-**Professional Report Generation**: Agents can generate branded PDF reports for investment committees, client presentations, compliance documentation, and executive briefings—complete with proper formatting and regulatory disclaimers.
+**Document Corpus**: Synthetic documents (broker research, press releases, NGO reports, policy documents, regulatory texts) generated via a template hydration engine. Real SEC filings (10-K, 10-Q) and earnings transcripts loaded from the marketplace share.
 
-**Multi-Tool Orchestration**: Each agent intelligently combines multiple tools in a single conversation. A Portfolio Manager can verify a market event, calculate portfolio exposure, check policy thresholds, and generate a committee memo—all from one comprehensive question.
+**Cortex Search Services**: 16 search services indexing documents by type with filterable attributes (ticker, company, document type, jurisdiction, severity). Enables semantic search across thousands of documents.
 
-## How It Works
+**Cortex Analyst Semantic Views**: 10+ semantic views defining relationships and metrics across portfolio, market, attribution, research, and operational data. Translates natural language into SQL for instant analytical answers.
 
-This solution leverages Snowflake's native AI features to create a seamless, end-to-end workflow without the need for external tools or data movement.
+**Cortex Agents**: 8 agents with role-specific instructions, tool access, and orchestration skills. Each agent intelligently combines Cortex Analyst, Cortex Search, and stored procedure tools to answer complex multi-source questions.
 
-![Snowflake Native AI Workflow](assets/how_it_works.png)
+**Snowflake CoWork**: The conversational interface where users interact with agents via natural language. Agents orchestrate tools, produce visualisations, and generate PDF reports — all within a chat experience.
 
-**Data Foundation**: The solution creates a complete dimensional data model with dimension tables (securities, issuers, portfolios, benchmarks) and fact tables (positions, transactions, stock prices, ESG scores). Real securities are sourced from SEC filings via the Snowflake Marketplace.
+**ML Workflows**: 3 notebook-based ML demonstrations using Snowflake Feature Store, Model Registry, and Cortex ML functions for market regime detection, factor model training, and credit risk scoring.
 
-**Document Generation**: Synthetic documents (broker research, press releases, NGO reports, policy documents) are generated using a template hydration engine that fills placeholders with contextually appropriate content, creating realistic research materials.
-
-**Cortex Search Services**: Documents are chunked and indexed into Cortex Search services, enabling semantic search across different document types. Each service has specific searchable attributes (ticker, company name, severity level, etc.) for precise filtering.
-
-**Cortex Analyst Semantic Views**: Semantic views define the relationships and metrics within portfolio and market data, making it easy for the AI to understand and respond to analytical questions about holdings, performance, risk, and more.
-
-**Cortex Agents**: Nine Cortex Agents are created with role-specific instructions, tool access, and business context. Each agent can intelligently route queries to the appropriate combination of Cortex Analyst and Cortex Search tools.
-
-**Snowflake Intelligence**: The conversational interface where users interact with Cortex Agents. Users can ask natural language questions, and the agents orchestrate the appropriate tools to provide comprehensive answers, all within a chat-based experience.
-
-**PDF Generation**: A custom stored procedure enables agents to generate professional branded PDF reports, stored in Snowflake stages with presigned URLs for easy access.
-
-## Business Impact
-
-This solution helps financial firms transition from fragmented, manual workflows to an integrated, AI-driven process:
-
-**Faster Insights**: Portfolio managers get answers to complex multi-source questions in seconds instead of hours. Event-driven risk assessments that previously required multiple analysts can be completed in a single conversation.
-
-**Increased Efficiency**: Reduces time spent searching across systems, compiling reports, and waiting for data teams to build dashboards. Every question gets an immediate, comprehensive answer.
-
-**Better Risk Management**: Compliance officers can monitor concentration limits, ESG controversies, and mandate breaches in real-time. Automated policy checking ensures issues are identified before they become problems.
-
-**Enhanced Client Service**: Client relationship managers can prepare quarterly presentations, respond to RFPs, and answer client questions with instant access to performance data, philosophy documents, and regulatory disclosures.
-
-**Informed Decision Making**: Executives get firm-wide visibility across all strategies, client flows, and competitive intelligence—with the ability to run M&A simulations and generate board-ready briefings on demand.
-
-**Simplified Operations**: Eliminates the need for external infrastructure, data movement, or custom application development. Everything runs natively within Snowflake.
-
-## Use Cases and Applications
-
-This solution serves as a comprehensive blueprint for AI-powered asset management:
-
-**Portfolio Management**: Analyze holdings, assess concentration risk, evaluate event impacts, and generate investment committee memos with multi-tool orchestration.
-
-**Investment Research**: Synthesize insights from broker research, earnings transcripts, and SEC filings to build comprehensive investment theses and generate formal research reports.
-
-**ESG & Sustainability**: Monitor NGO reports for controversies, track engagement history, verify policy compliance, and prepare ESG committee documentation.
-
-**Compliance & Risk**: Run daily concentration checks, verify mandate compliance, track breach remediation, and generate regulatory reports with full audit trails.
-
-**Client Relations**: Prepare quarterly client presentations, generate customized reports, and respond to client inquiries with instant access to performance and philosophy content.
-
-**Operations**: Monitor settlement failures, reconciliation breaks, NAV calculations, and corporate actions with a unified operational dashboard.
-
-**Executive Decision Support**: Access firm-wide KPIs, analyze competitor intelligence, run M&A simulations, and generate board briefings with comprehensive data coverage.
-
-## Agents Included
+## Agents
 
 | Agent | Role | Key Capabilities |
 |-------|------|------------------|
-| **Portfolio Copilot** | Portfolio Manager | Holdings analysis, event impact, supply chain exposure, investment memos |
-| **Research Copilot** | Research Analyst | Multi-source research synthesis, investment reports, PDF generation |
-| **ESG Guardian** | ESG Officer | Controversy monitoring, engagement tracking, policy compliance |
-| **Compliance Advisor** | Compliance Officer | Concentration limits, mandate monitoring, breach detection |
-| **Sales Advisor** | Client Relations | Client reporting, philosophy integration, regulatory disclosures |
-| **Quant Analyst** | Quantitative Analyst | Factor screening, fundamental validation, statistical analysis |
-| **Middle Office Copilot** | Operations Manager | Settlement, reconciliation, NAV, corporate actions |
-| **Executive Copilot** | C-Suite Executive | Firm KPIs, competitor intel, M&A simulation |
-| **Thematic Macro Advisor** | Thematic PM | Theme positioning, macro events, cross-portfolio analysis |
+| **Portfolio Copilot** | Portfolio Manager | Holdings analysis, multi-level attribution, stress testing, supply chain exposure, Monte Carlo simulation, portfolio construction and optimisation, historical backtesting, investment memos |
+| **Research Copilot** | Research Analyst | Multi-source synthesis (SEC + transcripts + broker research), investment memo generation, PDF reports |
+| **Risk & Compliance Copilot** | ESG / Compliance Officer | Controversy monitoring, mandate compliance, concentration limits, engagement tracking, regulatory disclosure |
+| **Sales Advisor** | Client Relations | Quarterly letters, RFP response preparation, client meeting prep, performance narratives, regulatory disclosures |
+| **Operations Copilot** | Middle Office | Settlement monitoring, reconciliation, NAV calculation, corporate actions |
+| **Executive Copilot** | C-Suite | Firm KPIs, client analytics, competitor intelligence, M&A simulation, board briefings |
+| **Private Equity Copilot** | PE Deal Team | Deal pipeline screening, due diligence search, expert network insights, value creation tracking |
+| **Private Credit Copilot** | Credit Analyst | Credit portfolio monitoring, covenant tracking, rate sensitivity, deal pipeline, ML credit scoring |
+
+## ML Notebooks
+
+| Notebook | Technique | Output |
+|----------|-----------|--------|
+| **Market Regime Detection** | XGBoost classification on macro indicators | RISK_ON / TRANSITIONAL / RISK_OFF regime labels |
+| **Factor Model Workflow** | Multi-factor model with SHAP explanations | Factor loadings, IC scores, Fama-French decomposition |
+| **Credit Risk Scoring** | Gradient boosted PD model | Probability of default scores per borrower |
+
+## Key Features
+
+**Skill-Driven Workflows**: 36 runtime skills provide structured multi-step guidance for complex tasks (investment memos, RFP responses, client letters, attribution reports). Skills include verification checkpoints and cross-references.
+
+**Multi-Tool Orchestration**: A single question can trigger 5+ tools — verify a market event, calculate portfolio exposure, check policy thresholds, search research documents, and generate a committee memo.
+
+**Custom Analytical Tools**: Agents have access to purpose-built stored procedures that execute complex quantitative workflows:
+
+| Tool | Agent(s) | Capability |
+|------|----------|------------|
+| **Historical Stress Backtest** | Portfolio Copilot | Replay portfolio against historical crises (GFC, COVID, 2022 rates) |
+| **Monte Carlo Simulation** | Portfolio Copilot | 10,000-path simulation with block bootstrap for VaR and drawdown analysis |
+| **Scenario Sensitivity** | Portfolio Copilot | What-if shock analysis (rate moves, vol spikes, growth shocks) |
+| **Counterfactual Attribution** | Portfolio Copilot | "What if we had held different weights?" alternative history analysis |
+| **Portfolio Optimizer** | Portfolio Copilot | Max Sharpe, min variance, risk parity, and efficient frontier construction |
+| **M&A Simulation** | Executive Copilot | Model AUM impact, revenue synergies, and integration scenarios |
+| **PDF Report Generator** | All agents | Branded PDF reports with presigned download URLs |
+| **Data Origin** | All agents | Explain data lineage for any semantic field (source table, transformation, refresh) |
+
+**Portfolio Construction and Backtesting**: The Portfolio Copilot can construct model portfolios, optimise allocations (max Sharpe, min variance, risk parity), run full historical backtests with custom weights, and validate with Monte Carlo simulation — enabling a complete "build, test, validate" workflow in conversation.
+
+**Real Data Integration**: SEC financials, stock prices, institutional holdings (13F), insider trading, dividends, and economic indicators — all from Snowflake Public Data (Free).
+
+**Performance Attribution**: Full Brinson-Fachler decomposition (sector, country, industry), factor attribution, currency effects, and linked multi-period analysis.
+
+**Proactive Insights**: AI-generated morning briefings and signal extraction with urgency scoring — surfaced to agents for context-aware responses.
+
+## Setup
+
+### Step 1: Create Git Workspace
+
+1. Navigate to **Projects > Workspaces**
+2. Click **+** then **From Git repository**
+3. Repository URL: `https://github.com/Snowflake-Labs/sfguide-agentic-ai-for-asset-management.git`
+4. Authentication: Public repository (no auth needed)
+5. Name the workspace (e.g., "SAM Demo")
+
+### Step 2: Run Infrastructure Setup (2 minutes)
+
+Open [`scripts/setup.sql`](scripts/setup.sql) in the workspace and execute it. This creates:
+- `SAM_DEMO` database with all schemas
+- `SAM_DEMO_ROLE` with required privileges (including task execution)
+- `SAM_DEMO_EXECUTION_WH` and `SAM_DEMO_CORTEX_WH` warehouses
+- Marketplace data share (Snowflake Public Data - Free)
+- Cortex AI enablement and Snowflake CoWork
+
+### Step 3: Run Data and AI Build (15-20 minutes)
+
+1. Open `python/workspace_main.py` in the workspace
+2. Connect a **notebook service** when prompted:
+   - Python version: 3.11+
+   - Compute pool: any available pool
+   - Artifact repositories (optional): SNOWFLAKE.SNOWPARK.PYPI_SHARED_REPOSITORY
+3. Open the Terminal and run:
+   `pip install -r "$PWD/requirements.txt"`
+4. Restart the kernel
+5. Click **Run**
+
+The build creates all tables, documents, search services, semantic views, agents, skills, tools, signals, and evaluation datasets.
+
+## Business Impact
+
+**Faster Insights**: Multi-dimensional risk assessments completed in minutes instead of days. Event-driven analysis that previously required multiple analysts happens in a single conversation.
+
+**Reduced Manual Effort**: Eliminates time spent searching across systems, compiling reports, and waiting for data teams. Every question gets an immediate, comprehensive answer.
+
+**Better Risk Management**: Real-time monitoring of concentration limits, ESG controversies, and mandate breaches with automated policy checking.
+
+**Enhanced Client Service**: Instant access to performance data, philosophy documents, and regulatory disclosures for quarterly presentations, RFP responses, and client inquiries.
+
+**Informed Decisions**: Executives get firm-wide visibility with the ability to run M&A simulations, stress tests, and scenario analyses on demand.
 
 ## Get Started
 
-Ready to transform your asset management workflows? This solution includes everything you need to get up and running quickly.
-
 **[GitHub Repository →](https://github.com/Snowflake-Labs/sfguide-agentic-ai-for-asset-management)**
 
-The repository contains complete setup scripts, sample data, semantic model definitions, and step-by-step instructions for configuring Snowflake Intelligence with Cortex Agents.
-
+The repository contains setup scripts, sample data, semantic model definitions, agent skills, ML notebooks, and step-by-step instructions for deploying the complete solution.

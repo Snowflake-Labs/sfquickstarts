@@ -117,9 +117,28 @@ docker push \
 <account>.registry.snowflakecomputing.com/<database>/<schema>/prefect_repo/prefect-worker:latest
 ```
 
+### Store the Prefect API Key as a Snowflake Secret
+
+Avoid placing credentials inline in the service spec. Store the Prefect API key as a Snowflake secret and reference it directly.
+
+```sql
+CREATE SECRET prefect_api_key
+  TYPE = GENERIC_STRING
+  SECRET_STRING = '<your-prefect-api-key>';
+```
+
+Update the External Access Integration to allow the secret to be used:
+
+```sql
+CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION prefect_eai
+  ALLOWED_NETWORK_RULES = (prefect_cloud_rule)
+  ALLOWED_AUTHENTICATION_SECRETS = (prefect_api_key)
+  ENABLED = TRUE;
+```
+
 ### Deploy the Worker as a Service
 
-Create an SPCS service that runs the Prefect worker.
+Create an SPCS service that runs the Prefect worker. Reference the secret directly in the spec rather than passing the key as a plaintext environment variable.
 
 ```sql
 CREATE SERVICE prefect_worker
@@ -132,7 +151,9 @@ spec:
     image: <account>.registry.snowflakecomputing.com/<database>/<schema>/prefect_repo/prefect-worker:latest
     env:
       PREFECT_API_URL: "https://api.prefect.cloud/api/accounts/<account-id>/workspaces/<workspace-id>"
-      PREFECT_API_KEY: "<prefect-api-key>"
+    secrets:
+    - snowflakeSecret: prefect_api_key
+      envVarName: PREFECT_API_KEY
   endpoints:
   - name: worker
     port: 8080
@@ -142,6 +163,28 @@ $$;
 After deployment, the worker registers with Prefect Cloud and begins polling for work. From Prefect's perspective, it behaves like any other worker. The difference is that execution now occurs entirely within Snowflake's managed container environment.
 
 At this point, Snowpark Container Services has effectively become a managed execution layer for Prefect workflows.
+
+### Updating the Service
+
+When you need to update the worker — for example, after pushing a new image — use `ALTER SERVICE` rather than `CREATE OR REPLACE SERVICE`. Replacing a service drops and recreates it, which generates a new ingress URL and causes a hard restart. `ALTER SERVICE` updates the spec in place and triggers a rolling restart while preserving the ingress URL.
+
+```sql
+ALTER SERVICE prefect_worker
+  FROM SPECIFICATION $$
+spec:
+  containers:
+  - name: worker
+    image: <account>.registry.snowflakecomputing.com/<database>/<schema>/prefect_repo/prefect-worker:latest
+    env:
+      PREFECT_API_URL: "https://api.prefect.cloud/api/accounts/<account-id>/workspaces/<workspace-id>"
+    secrets:
+    - snowflakeSecret: prefect_api_key
+      envVarName: PREFECT_API_KEY
+  endpoints:
+  - name: worker
+    port: 8080
+$$;
+```
 
 <!-- ------------------------ -->
 ## Executing a Workflow

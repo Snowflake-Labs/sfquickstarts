@@ -20,6 +20,7 @@ from utils import (
     get_usage_summary_metrics,
     get_user_param,
     get_user_today_usage,
+    get_user_rolling24h_usage,
 )
 
 
@@ -74,9 +75,9 @@ def render(session):
         col1, col2 = st.columns(2)
         with col1:
             st.markdown(_card("Access Management",
-                "Grant CORTEX_USER + COPILOT_USER to users, roles, or by user tag. View role inheritance."), unsafe_allow_html=True)
+                "Grant CORTEX_USER or CORTEX_AGENT_USER (plus transitional COPILOT_USER) to users, roles, patterns, or by user tag. View role inheritance."), unsafe_allow_html=True)
             st.markdown(_card("Credit Configuration",
-                "Set daily limits at account, cohort, or user level. Temporary overrides with auto-revert. Native AI Budgets (Preview) for agent-level hard enforcement."), unsafe_allow_html=True)
+                "Set daily limits at account, cohort, or user level. Temporary overrides with auto-revert. Native AI Budgets (Preview) for agent-level spend tracking."), unsafe_allow_html=True)
             st.markdown(_card("Credit Requests",
                 "Self-service with rate limiting & EWMA-based intelligent donor selection."), unsafe_allow_html=True)
             st.markdown(_card("Model Access",
@@ -217,6 +218,44 @@ def render(session):
 **Model tiers:** TIER_1 = Opus (complex tasks), TIER_2 = Sonnet (daily coding), TIER_3 = fast completions.
         """)
 
+    # --- Rolling 24-Hour Usage (matches Snowflake's enforcement window) ---
+    st.divider()
+    st.markdown("#### Rolling 24-Hour Usage")
+    st.caption(
+        "Credits consumed in the **last 24 hours** — this is the window Snowflake uses to "
+        "enforce your daily limit. Different from 'Today' above (which resets at midnight UTC). "
+        "⚠️ Source data has up to 24h latency — use as a directional signal."
+    )
+
+    @st.cache_data(ttl=300, show_spinner=False)
+    def _rolling24h(_session, _user):
+        return get_user_rolling24h_usage(_session, _user)
+
+    r24 = _rolling24h(session, username)
+    r_total = sum(r24.values())
+    r_cols = st.columns(len(SURFACES) + 1)
+    for i, surface in enumerate(SURFACES):
+        param = SURFACE_PARAMS[surface]
+        try:
+            val, level = get_user_param(session, username, param)
+        except Exception:
+            val, level = None, "N/A"
+        used_r = r24.get(surface, 0.0)
+        limit_display = val if val and val != "-1" else "No limit"
+        with r_cols[i]:
+            st.metric(
+                f"{surface} (24h)", f"{used_r:.2f} cr",
+                help=f"Rolling 24h. Limit: {limit_display} (source: {level})"
+            )
+            if val and val != "-1" and float(val) > 0:
+                pct_r = min(used_r / float(val) * 100, 100)
+                st.progress(pct_r / 100)
+    with r_cols[-1]:
+        st.metric("Total (24h)", f"{r_total:.2f} cr",
+                  help="Sum across all surfaces in the rolling 24-hour window.")
+
+
+
     # ── System Health Pulse ─────────────────────────────────────────────────────
     st.divider()
     _sec("System Health")
@@ -233,7 +272,7 @@ def render(session):
             pass
         try:
             tbl_pv = fq_table(_session, TABLE_PROMPT_VIOLATIONS)
-            r = _session.sql(f"SELECT COUNT(*) FROM {tbl_pv} WHERE VIOLATION_DATE >= CURRENT_DATE()-1").collect()
+            r = _session.sql(f"SELECT COUNT(*) FROM {tbl_pv} WHERE VIOLATION_DATE >= CURRENT_DATE()").collect()
             counts["violations_24h"] = int(r[0][0]) if r else 0
         except Exception:
             pass
@@ -258,8 +297,8 @@ def render(session):
     h1, h2, h3, h4 = st.columns(4)
     h1.metric("Alerts (24h)", hc["alerts_24h"],
               help="Alert rules that fired in the last 24 hours. Go to Alerts page for details.")
-    h2.metric("Prompt Insights (24h)", hc["violations_24h"],
-              help="Responsible AI policy prompt insights detected in the last 24 hours. Go to Prompt Insights for details.")
+    h2.metric("Prompt Insights (Today)", hc["violations_24h"],
+              help="Responsible AI policy violations detected today (calendar day, UTC). VIOLATION_DATE is a date field — for full history go to Prompt Insights.")
     h3.metric("Active Rules", hc["active_rules"],
               help="Policy rules currently enabled for responsible AI classification.")
     _gr = hc["guardrails"]

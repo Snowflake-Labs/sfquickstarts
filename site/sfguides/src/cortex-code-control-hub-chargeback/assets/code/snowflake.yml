@@ -1,0 +1,48 @@
+definition_version: 2
+entities:
+  cortex_code_credit_manager:
+    type: streamlit
+    identifier:
+      name: CORTEX_CODE_CREDIT_MANAGER
+      database: MY_DATABASE   # TODO: set to your target database (or ask Cortex Code to set it)
+      schema: MY_SCHEMA       # TODO: set to your target schema
+    title: "CoCo Control Hub & Chargeback"
+    query_warehouse: MY_WAREHOUSE   # TODO: set to your warehouse
+    main_file: streamlit_app.py
+    artifacts:
+      - streamlit_app.py
+      - config.py
+      - config.yaml
+      - .streamlit/config.toml
+      - audit.py
+      - utils.py
+      - tagging.py
+      - intelligence.py
+      - sp_definitions.py
+      - prerequisites.sql
+      - chargeback_tier1.sql
+      - environment.yml
+      - app_pages/__init__.py
+      - app_pages/home.py
+      - app_pages/access_management.py
+      - app_pages/credit_config.py
+      - app_pages/usage_trends.py
+      - app_pages/budget_forecast.py
+      - app_pages/model_access.py
+      - app_pages/credit_requests.py
+      - app_pages/settings.py
+      - app_pages/audit_logs.py
+      - app_pages/setup.py
+      - app_pages/observability.py
+      - app_pages/cost_attribution.py
+      - app_pages/prompt_analysis.py
+      - app_pages/user_intelligence.py
+      - app_pages/policy_rules.py
+      - app_pages/alerts.py
+      - app_pages/model_intelligence.py
+      - app_pages/chargeback.py
+      - app_pages/warehouse_activity.py
+      - app_pages/attribution.py
+      - app_pages/model_bakeoff.py
+      - app_pages/user_quotas.py
+    stage: CORTEX_CODE_CREDIT_MANAGER_STAGE

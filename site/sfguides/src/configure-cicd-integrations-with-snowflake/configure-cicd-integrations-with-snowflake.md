@@ -18,7 +18,7 @@ In this Quickstart, we'll walk through configuring three of those integrations:
 
 - **GitHub Actions** — using the [snowflakedb/snowflake-actions](https://github.com/snowflakedb/snowflake-actions) GitHub Action
 - **GitLab CI/CD** — using the [Snowflake CI/CD Component](https://gitlab.com/snowflakedbutils/snowflake-cicd-component) from the GitLab CI/CD Catalog
-- **Azure DevOps** — using the [ConfigureSnowflakeCLI@0](https://github.com/snowflakedb/snowflake-ado-extension) Azure Pipelines task
+- **Azure DevOps** — using the [ConfigureSnowflakeCLI@1](https://github.com/snowflakedb/snowflake-ado-extension) Azure Pipelines task
 
 All three integrations support workload identity federation (WIF) with OpenID Connect (OIDC), which means your pipelines can authenticate to Snowflake with short-lived tokens instead of long-lived secrets. We'll focus on OIDC as the recommended approach and cover key-pair and password alternatives briefly.
 
@@ -534,7 +534,7 @@ pool:
   vmImage: ubuntu-latest
 
 steps:
-  - task: ConfigureSnowflakeCLI@0
+  - task: ConfigureSnowflakeCLI@1
     inputs:
       configFilePath: './config.toml'
       cliVersion: 'latest'
@@ -546,17 +546,22 @@ steps:
       snow --version
       snow connection test
     displayName: Verify Snowflake connection
+    env:
+      SNOWFLAKE_TOKEN: $(SNOWFLAKE_TOKEN)
 
   - script: |
-      snow dcm deploy --target PROD -x
+      snow dcm deploy --target PROD
     displayName: Deploy to Snowflake
+    env:
+      SNOWFLAKE_TOKEN: $(SNOWFLAKE_TOKEN)
 ```
 
 Here's what the code does:
 
-- Uses `ConfigureSnowflakeCLI@0` to install the Snowflake CLI and configure OIDC authentication through the Azure service connection
+- Uses `ConfigureSnowflakeCLI@1` to install the Snowflake CLI and configure OIDC authentication through the Azure service connection
 - Copies **config.toml** to **~/.snowflake/config.toml** with secure permissions (`0600` on Linux/macOS)
-- Runs `snow connection test` to verify the connection, then `snow dcm deploy` to deploy changes
+- Maps `SNOWFLAKE_TOKEN` on every later `script:` step. The task stores the OIDC token as a pipeline secret, and Azure Pipelines does not inject secrets automatically
+- Runs `snow connection test` against the copied config, then `snow dcm deploy` (no `-x`, so the CLI keeps `config.toml`)
 
 > **Note:** The `connectedServiceName` must match the service connection name you created in Azure DevOps. This is the same value used in the federated credential's subject identifier.
 
@@ -584,7 +589,7 @@ Then configure the pipeline:
 
 ```yaml
 steps:
-  - task: ConfigureSnowflakeCLI@0
+  - task: ConfigureSnowflakeCLI@1
     inputs:
       configFilePath: './config.toml'
       cliVersion: 'latest'
@@ -609,7 +614,7 @@ Password authentication is supported but not recommended for production CI/CD:
 
 ```yaml
 steps:
-  - task: ConfigureSnowflakeCLI@0
+  - task: ConfigureSnowflakeCLI@1
     inputs:
       configFilePath: './config.toml'
       cliVersion: 'latest'
@@ -685,7 +690,11 @@ Common GitLab subject issues:
       tr '_-' '/+' | base64 -d 2>/dev/null | \
       python3 -m json.tool
   displayName: 'Debug: inspect OIDC token claims'
+  env:
+    SNOWFLAKE_TOKEN: $(SNOWFLAKE_TOKEN)
 ```
+
+The task stores `SNOWFLAKE_TOKEN` as a pipeline secret. A later debug step that does not map `env: SNOWFLAKE_TOKEN: $(SNOWFLAKE_TOKEN)` will see an empty token.
 
 ### CLI Version Not Found
 
@@ -698,7 +707,7 @@ Common GitLab subject issues:
 
 ### `pipx` Not Found (Azure DevOps)
 
-**Symptom:** The `ConfigureSnowflakeCLI@0` task fails with an error about `pipx` or `PIPX_BIN_DIR`.
+**Symptom:** The `ConfigureSnowflakeCLI@1` task fails with an error about `pipx` or `PIPX_BIN_DIR`.
 
 **Resolution:** The `ubuntu-latest` agent image includes `pipx` by default. If you're using a custom agent image, install `pipx` before the task:
 
@@ -727,7 +736,7 @@ Congratulations! You've configured Snowflake CI/CD integrations that authenticat
 - How to create a Snowflake service user with OIDC workload identity for GitHub Actions, GitLab CI/CD, and Azure DevOps
 - How to configure a GitHub Actions workflow using `snowflakedb/snowflake-actions`
 - How to configure a GitLab CI/CD pipeline using the Snowflake CI/CD Component
-- How to set up an Azure Entra ID App Registration with a federated credential and configure an Azure Pipeline using `ConfigureSnowflakeCLI@0`
+- How to set up an Azure Entra ID App Registration with a federated credential and configure an Azure Pipeline using `ConfigureSnowflakeCLI@1`
 - How to troubleshoot common OIDC token and claim mismatch issues
 - Alternative authentication methods (key-pair and password) when OIDC is not available
 

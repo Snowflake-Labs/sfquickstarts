@@ -1,4 +1,4 @@
-author: James Cha-Earley, Mubashir Masood, Daniel Silva
+author: James Cha-Earley
 id: getting-started-with-cortex-agents-with-coco
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/snowflake-feature/ingestion/conversational-assistants, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions
 language: en
@@ -8,7 +8,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 
-# Getting Started with Cortex Agents
+# Getting Started with Cortex Agents with Snowflake CoCo CLI
 
 ## Overview
 

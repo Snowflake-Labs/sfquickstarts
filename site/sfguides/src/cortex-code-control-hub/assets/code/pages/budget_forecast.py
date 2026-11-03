@@ -102,7 +102,7 @@ def render(session):
     last_date = daily_totals["USAGE_DATE"].max()
     forecast_dates = pd.date_range(last_date + pd.Timedelta(days=1), periods=30, freq="D")
     forecast_day_nums = range(len(daily_totals), len(daily_totals) + 30)
-    forecast_values = [slope * d + intercept for d in forecast_day_nums]
+    forecast_values = [max(0.0, slope * d + intercept) for d in forecast_day_nums]
 
     # Combine historical + forecast
     hist_df = daily_totals[["USAGE_DATE", "TOTAL_CREDITS"]].copy()
@@ -145,7 +145,7 @@ def render(session):
     for period, days_ahead in [("Next 7 Days", 7), ("Next 30 Days", 30), ("Next Quarter", 90)]:
         # Use trend-adjusted projection
         future_day_nums = range(len(daily_totals), len(daily_totals) + days_ahead)
-        projected = sum(slope * d + intercept for d in future_day_nums)
+        projected = sum(max(0.0, slope * d + intercept) for d in future_day_nums)
         # Also show flat projection for comparison
         flat = avg_daily * days_ahead
         projections.append({

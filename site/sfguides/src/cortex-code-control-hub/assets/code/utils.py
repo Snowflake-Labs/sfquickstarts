@@ -5,7 +5,9 @@ Snowflake helpers, cached data access, pre-aggregated table queries.
 All read queries go through here. Write operations go through SPs or audit.py.
 """
 
+import fnmatch
 import json
+import re
 from datetime import date, datetime, timedelta
 from typing import Any, Dict, List, Optional, Tuple
 
@@ -14,6 +16,8 @@ import streamlit as st
 
 from config import (
     CONFIG_CACHE_TTL,
+    SP_GET_USER_PARAM,
+    SP_LIST_USERS,
     SURFACE_PARAMS,
     SURFACE_USAGE_VIEWS,
     TABLE_APP_CONFIG,
@@ -39,15 +43,35 @@ def get_session():
 
 @st.cache_data(ttl=USER_LIST_CACHE_TTL)
 def list_users(_session) -> pd.DataFrame:
-    sql = """
-        SELECT NAME, LOGIN_NAME, DISPLAY_NAME, EMAIL, DEFAULT_ROLE,
-               DISABLED, CREATED_ON, LAST_SUCCESS_LOGIN
-        FROM SNOWFLAKE.ACCOUNT_USAGE.USERS
-        WHERE DELETED_ON IS NULL
-        ORDER BY NAME
+    """
+    User list for the User Override dropdown. Returns a DataFrame with a NAME column.
+
+    Primary: SP_CC_LIST_USERS (EXECUTE AS OWNER) — wraps SHOW USERS, which is a
+    metadata query and avoids ACCOUNT_USAGE latency on large accounts. The SP is
+    required rather than calling SHOW USERS directly: per Snowflake BCR 975 the
+    output is filtered to users the ACTIVE role can see, so the app role would
+    otherwise get only its own username.
+
+    Fallback: ACCOUNT_USAGE.USERS — keeps the page working if the SP has not been
+    deployed yet (e.g. app redeployed before the setup SQL was run).
     """
     try:
-        return _session.sql(sql).to_pandas()
+        fq = fq_sp(_session, SP_LIST_USERS)
+        df = _session.sql(f"CALL {fq}()").to_pandas()
+        if not df.empty:
+            df.columns = [c.strip('"').upper() for c in df.columns]
+            if "NAME" in df.columns:
+                return df
+    except Exception:
+        pass
+    try:
+        return _session.sql("""
+            SELECT NAME, LOGIN_NAME, DISPLAY_NAME, EMAIL, DEFAULT_ROLE,
+                   DISABLED, CREATED_ON, LAST_SUCCESS_LOGIN
+            FROM SNOWFLAKE.ACCOUNT_USAGE.USERS
+            WHERE DELETED_ON IS NULL
+            ORDER BY NAME
+        """).to_pandas()
     except Exception:
         return pd.DataFrame()
 
@@ -55,52 +79,68 @@ def list_users(_session) -> pd.DataFrame:
 @st.cache_data(ttl=USER_LIST_CACHE_TTL)
 def list_roles(_session) -> List[str]:
     try:
-        df = _session.sql("""
-            SELECT NAME FROM SNOWFLAKE.ACCOUNT_USAGE.ROLES
-            WHERE DELETED_ON IS NULL
-            ORDER BY NAME
-        """).to_pandas()
+        df = _session.sql("SHOW ROLES").to_pandas()
         if not df.empty:
             df.columns = [c.strip('"').upper() for c in df.columns]
-            return df["NAME"].dropna().tolist()
+            col = "NAME" if "NAME" in df.columns else df.columns[1]
+            return sorted(df[col].dropna().tolist())
         return []
     except Exception:
-        # Fallback to SHOW ROLES if ACCOUNT_USAGE not accessible
-        try:
-            df = _session.sql("SHOW ROLES").to_pandas()
-            if not df.empty:
-                df.columns = [c.strip('"').upper() for c in df.columns]
-                col = "NAME" if "NAME" in df.columns else df.columns[1]
-                return sorted(df[col].dropna().tolist())
-            return []
-        except Exception:
-            return []
+        return []
 
 
-@st.cache_data(ttl=USER_LIST_CACHE_TTL)
+_ROLE_UUID   = re.compile(r"^[0-9a-fA-F]{8}-", re.IGNORECASE)
+_ROLE_SVC    = re.compile(r"^(SVC_|MANAGED_|SYSTEM\$|APP_|SNOWFLAKE)", re.IGNORECASE)
+_SKIP_EXPAND = {"ACCOUNTADMIN", "SYSADMIN", "SECURITYADMIN", "ORGADMIN", "PUBLIC"}
+_MAX_ROLES   = 500
+
+
 def get_role_members(_session, role_name: str) -> List[str]:
-    safe_role = sanitize_identifier(role_name)
-    try:
-        df = _session.sql(f'SHOW GRANTS OF ROLE "{safe_role}"').to_pandas()
-        if df.empty:
-            return []
-        df.columns = [c.strip('"').upper() for c in df.columns]
-        if "GRANTED_TO" in df.columns and "GRANTEE_NAME" in df.columns:
-            user_grants = df[df["GRANTED_TO"].str.upper() == "USER"]
-            names = user_grants["GRANTEE_NAME"].dropna().unique().tolist()
-            # Filter out UUID-style managed accounts (OAuth, Cortex Code sessions,
-            # SPCS, etc.) and known service account prefixes.
-            # These appear in GRANTS but not in SHOW USERS — they're not humans.
-            import re
-            _UUID = re.compile(r"^[0-9a-fA-F]{8}-", re.IGNORECASE)
-            _SVC  = re.compile(r"^(SVC_|MANAGED_|SYSTEM\$|APP_|SNOWFLAKE)", re.IGNORECASE)
-            names = [n for n in names if n and not _UUID.match(n) and not _SVC.match(n)]
-            return sorted(names)
-        return []
-    except Exception:
-        return []
+    """
+    Returns all human users who have role_name in their effective role set,
+    including users who inherit it through intermediate roles (full BFS).
+    Excludes service accounts, managed users, and UUID-style sessions.
+    God-roles (ACCOUNTADMIN etc.) have their direct user grants collected
+    but their child roles are not expanded further.
+    """
+    visited: set = set()
+    queue:   list = [role_name.upper()]
+    users:   set  = set()
+
+    while queue and len(visited) < _MAX_ROLES:
+        role = queue.pop(0)
+        if role in visited:
+            continue
+        visited.add(role)
+        # Strip any surrounding quotes from the role name before re-quoting
+        clean_role = role.strip('"').strip("'")
+        safe_role  = clean_role.replace('"', '""')
+        try:
+            df = _session.sql(f'SHOW GRANTS OF ROLE "{safe_role}"').to_pandas()
+            if df.empty:
+                continue
+            df.columns = [c.strip('"').upper() for c in df.columns]
+            if "GRANTED_TO" not in df.columns or "GRANTEE_NAME" not in df.columns:
+                continue
+            for _, row in df.iterrows():
+                gt   = str(row["GRANTED_TO"]).upper()
+                name = str(row["GRANTEE_NAME"]).upper()
+                if not name or name == "NAN":
+                    continue
+                if gt == "USER":
+                    if not _ROLE_UUID.match(name) and not _ROLE_SVC.match(name):
+                        users.add(name)
+                elif gt == "ROLE" and name not in visited:
+                    if role not in _SKIP_EXPAND:
+                        # Strip quotes from child role name before queuing
+                        queue.append(name.strip('"').strip("'"))
+        except Exception:
+            continue
+
+    return sorted(users)
 
 
+@st.cache_data(ttl=300, show_spinner=False)
 def get_account_param(_session, param_name: str) -> Optional[str]:
     try:
         safe_param = escape_sql_literal(param_name)
@@ -117,11 +157,35 @@ def get_account_param(_session, param_name: str) -> Optional[str]:
 
 
 def get_user_param(_session, username: str, param_name: str) -> Tuple[Optional[str], str]:
-    safe_user = sanitize_identifier(username)
+    """
+    Read a user's Cortex Code credit-limit parameter. Returns (value, level).
+
+    Primary: SP_CC_GET_USER_PARAM (EXECUTE AS OWNER). Required because
+    SHOW PARAMETERS ... IN USER needs MONITOR on the target user, which the
+    Streamlit app role does not have — calling it directly fails with
+    "Insufficient privileges to operate on user 'X'" for every user except
+    the viewer's own account.
+
+    Fallback: direct SHOW PARAMETERS — keeps working if the SP has not been
+    deployed yet, and for roles that do hold the privilege.
+    """
+    safe_user = escape_sql_literal(username)
     safe_param = escape_sql_literal(param_name)
     try:
+        fq = fq_sp(_session, SP_GET_USER_PARAM)
+        rows = _session.sql(f"CALL {fq}('{safe_user}', '{safe_param}')").collect()
+        if rows:
+            result = str(rows[0][0])
+            if not result.startswith("ERROR"):
+                parts = result.split("|", 1)
+                val = parts[0] if parts[0] != "NULL" else None
+                return val, parts[1] if len(parts) > 1 else "DEFAULT"
+    except Exception:
+        pass
+    safe_id = sanitize_identifier(username)
+    try:
         df = _session.sql(
-            f'SHOW PARAMETERS LIKE \'{safe_param}\' IN USER "{safe_user}"'
+            f'SHOW PARAMETERS LIKE \'{safe_param}\' IN USER "{safe_id}"'
         ).to_pandas()
         if not df.empty:
             df.columns = [c.strip('"').upper() for c in df.columns]
@@ -200,35 +264,26 @@ def save_tier_config(_session, tiers: dict, actor: str) -> bool:
 
 def get_model_tier_assignments(_session) -> dict:
     """
-    Load model→tier assignments from CC_MODEL_CONFIG.
-    Falls back to KNOWN_MODELS from config.py if table is empty.
+    Load model→tier assignments: KNOWN_MODELS defaults from config.py, overlaid by
+    rows saved in CC_MODEL_CONFIG (a saved row wins for its model; others keep defaults).
     Returns: {model_name: [tier1, tier2, ...], ...}
     """
     from config import KNOWN_MODELS, TABLE_MODEL_CONFIG, fq_table
+    result = {k: list(v["category"]) if isinstance(v["category"], list) else [v["category"]]
+              for k, v in KNOWN_MODELS.items()}
     tbl = fq_table(_session, TABLE_MODEL_CONFIG)
     try:
         df = _session.sql(
             f"SELECT MODEL_NAME, CATEGORY FROM {tbl} WHERE MODEL_NAME IS NOT NULL"
         ).to_pandas()
-        if not df.empty:
-            df.columns = [c.strip('"').upper() for c in df.columns]
-            result = {}
-            for _, row in df.iterrows():
-                name = row["MODEL_NAME"]
-                cat = row["CATEGORY"]
-                # CATEGORY may be stored as comma-separated or as a single tier
-                if cat and "," in str(cat):
-                    result[name] = [t.strip() for t in str(cat).split(",")]
-                elif cat:
-                    result[name] = [str(cat).strip()]
-                else:
-                    result[name] = []
-            return result
+        df.columns = [c.strip('"').upper() for c in df.columns]
+        for _, row in df.iterrows():
+            cat = row["CATEGORY"]
+            # CATEGORY is stored comma-separated; empty means "no tier"
+            result[row["MODEL_NAME"]] = [t.strip() for t in str(cat).split(",") if t.strip()] if cat else []
     except Exception:
         pass
-    # Fallback: config defaults
-    return {k: (v["category"] if isinstance(v["category"], list) else [v["category"]])
-            for k, v in KNOWN_MODELS.items()}
+    return result
 
 
 def save_model_tier_assignment(_session, model_name: str, tiers: list, actor: str) -> bool:
@@ -238,6 +293,7 @@ def save_model_tier_assignment(_session, model_name: str, tiers: list, actor: st
     """
     from config import TABLE_MODEL_CONFIG, fq_table, escape_sql_literal
     tbl = fq_table(_session, TABLE_MODEL_CONFIG)
+
     safe_model = escape_sql_literal(model_name)
     safe_tier = escape_sql_literal(",".join(tiers))
     safe_actor = escape_sql_literal(actor)
@@ -467,6 +523,35 @@ def get_user_today_usage(_session, username: str) -> Dict[str, float]:
     return result
 
 
+def get_user_rolling24h_usage(_session, username: str) -> Dict[str, float]:
+    """
+    Returns actual credits consumed by the user in the last rolling 24 hours,
+    queried live from SNOWFLAKE.ACCOUNT_USAGE billing views.
+
+    This matches the window Snowflake uses for *_DAILY_EST_CREDIT_LIMIT_PER_USER
+    enforcement — NOT a calendar-day reset. Up to 24h data latency from source.
+
+    Control note: READ-ONLY. Does not touch ALTER USER or any limit parameters.
+    """
+    from config import SURFACES, SURFACE_USAGE_VIEWS
+    result = {s: 0.0 for s in SURFACES}
+    safe_user = escape_sql_literal(username)
+    for surface, view in SURFACE_USAGE_VIEWS.items():
+        try:
+            rows = _session.sql(f"""
+                SELECT ROUND(SUM(h.TOKEN_CREDITS), 4) AS CR
+                FROM {view} h
+                JOIN SNOWFLAKE.ACCOUNT_USAGE.USERS u ON h.USER_ID = u.USER_ID
+                WHERE h.USAGE_TIME >= DATEADD('hour', -24, CURRENT_TIMESTAMP())
+                  AND UPPER(u.NAME) = UPPER('{safe_user}')
+            """).collect()
+            if rows and rows[0][0] is not None:
+                result[surface] = float(rows[0][0])
+        except Exception:
+            pass
+    return result
+
+
 def call_sp(_session, sp_name: str, *args) -> Tuple[bool, str]:
     fq = fq_sp(_session, sp_name)
     arg_list = ", ".join([f"'{escape_sql_literal(str(a))}'" for a in args])
@@ -566,3 +651,47 @@ def search_users(_session, query: str, limit: int = 50) -> List[str]:
     except Exception:
         pass
     return []
+
+
+# --- Pattern matching (* = any characters, ? = one character, case-insensitive) ---
+
+# Never auto-selected by a role pattern: a bare "*" would otherwise reach PUBLIC
+# (every user) and the admin roles. They can still be picked from the role list.
+PROTECTED_ROLES = {"ACCOUNTADMIN", "ORGADMIN", "GLOBALORGADMIN", "SECURITYADMIN",
+                   "SYSADMIN", "USERADMIN", "PUBLIC"}
+PATTERN_HELP = "Use * for any characters and ? for one character. Case-insensitive."
+MAX_PATTERN_MULTISELECT = 200
+
+
+def match_pattern(names, pattern):
+    """Names matching a */? wildcard pattern. Empty pattern matches nothing."""
+    p = (pattern or "").strip().upper()
+    if not p:
+        return []
+    p = p.replace("[", "[[]")   # fnmatch treats [...] as a class; keep it literal
+    return [n for n in names if fnmatch.fnmatchcase(str(n).upper(), p)]
+
+
+def match_roles(roles, pattern):
+    """Role matches with protected roles removed. Returns (matches, excluded)."""
+    hits = match_pattern(roles, pattern)
+    return ([r for r in hits if r.upper() not in PROTECTED_ROLES],
+            [r for r in hits if r.upper() in PROTECTED_ROLES])
+
+
+def pick_matches(label, matches, key, pattern, excluded=()):
+    """Preview pattern matches, all pre-selected so the admin can untick any.
+    Above MAX_PATTERN_MULTISELECT, show a table and require a review checkbox instead."""
+    if excluded:
+        st.caption(f"Not auto-selected: {', '.join(excluded)}. Pick them from the list if intended.")
+    if not matches:
+        st.info(f"No {label.lower()} match `{pattern}`.")
+        return []
+    key = f"{key}_{pattern.strip().upper()}"   # new pattern -> fresh selection
+    if len(matches) > MAX_PATTERN_MULTISELECT:
+        st.dataframe(pd.DataFrame({label: matches}), height=240, hide_index=True)
+        if st.checkbox(f"I've reviewed all {len(matches)} matching {label.lower()}", key=f"{key}_ok"):
+            return list(matches)
+        return []
+    return st.multiselect(f"{len(matches)} matching {label.lower()} — untick to exclude",
+                          matches, default=matches, key=key)

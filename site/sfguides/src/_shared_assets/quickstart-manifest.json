@@ -6490,6 +6490,39 @@
       "url": "https://www.snowflake.com/en/developers/guides/hybrid-tables-secondary-index-design/",
       "summary": "Learn how to design, create, and validate secondary indexes for Hybrid Tables to achieve low-latency point lookups and efficient range scans in your OLTP workloads.",
       "lastUpdatedAt": "2026-06-16"
+    },
+    {
+      "title": "Analytics Patterns for Hybrid Tables",
+      "categories": [
+        "snowflake-site:taxonomy/solution-center/certification/quickstart",
+        "snowflake-site:taxonomy/product/data-engineering"
+      ],
+      "contentType": "quickstart",
+      "url": "https://www.snowflake.com/en/developers/guides/hybrid-tables-analytics-patterns/",
+      "summary": "Learn how to run analytics on Hybrid Table data using Task-based snapshots, Dynamic Tables, Materialized Views, and precomputed KPI serving patterns.",
+      "lastUpdatedAt": "2026-06-16"
+    },
+    {
+      "title": "Streaming and Change Detection Patterns for Hybrid Tables",
+      "categories": [
+        "snowflake-site:taxonomy/solution-center/certification/quickstart",
+        "snowflake-site:taxonomy/product/data-engineering"
+      ],
+      "contentType": "quickstart",
+      "url": "https://www.snowflake.com/en/developers/guides/hybrid-tables-streaming-patterns/",
+      "summary": "Learn streaming and change detection patterns for Hybrid Tables — real-time ingest with deduplication, watermark-based CDC, and outbound event notifications.",
+      "lastUpdatedAt": "2026-06-16"
+    },
+    {
+      "title": "Data Management and Operations Patterns for Hybrid Tables",
+      "categories": [
+        "snowflake-site:taxonomy/solution-center/certification/quickstart",
+        "snowflake-site:taxonomy/product/data-engineering"
+      ],
+      "contentType": "quickstart",
+      "url": "https://www.snowflake.com/en/developers/guides/hybrid-tables-operations-patterns/",
+      "summary": "Learn data management and operations patterns for Hybrid Tables — fan-in aggregation, hot/cold data tiering, and alert-based monitoring.",
+      "lastUpdatedAt": "2026-06-16"
     }
   ]
 }

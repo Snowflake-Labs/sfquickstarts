@@ -9,7 +9,7 @@ import streamlit as st
 import pandas as pd
 import altair as alt
 
-from config import DATE_PRESETS, TABLE_USAGE_HOURLY, fq_table, get_tz_offset
+from config import DATE_PRESETS, TABLE_USAGE_DAILY, TABLE_USAGE_HOURLY, TABLE_CREDIT_CONFIG, TABLE_USER_COHORT_RESOLVED, fq_table, get_tz_offset
 from utils import (
     get_daily_trend,
     get_daily_usage,
@@ -58,11 +58,33 @@ def render(session):
 
     # --- KPI row ---
     m = get_usage_summary_metrics(session, days, cohort_filter)
-    c1, c2, c3, c4 = st.columns(4)
+
+    # MTD: sum from CC_USAGE_DAILY_SUMMARY for current calendar month
+    @st.cache_data(ttl=300, show_spinner=False)
+    def _mtd(_session, _cohort):
+        tbl = fq_table(_session, TABLE_USAGE_DAILY)
+        cohort_clause = f"AND COHORT_ROLE = '{_cohort}'" if _cohort else ""
+        try:
+            rows = _session.sql(f"""
+                SELECT ROUND(SUM(TOTAL_CREDITS), 2) AS MTD_CREDITS
+                FROM {tbl}
+                WHERE USAGE_DATE >= DATE_TRUNC('month', CURRENT_DATE())
+                {cohort_clause}
+            """).collect()
+            return float(rows[0][0] or 0) if rows else 0.0
+        except Exception:
+            return 0.0
+
+    mtd_credits = _mtd(session, cohort_filter)
+
+    c1, c2, c3, c4, c5 = st.columns(5)
     c1.metric("Total Credits", f"{m['total_credits']:,.1f}", help="Sum of all credits consumed in this period.")
     c2.metric("Active Users", f"{m['active_users']}", help="Distinct users with at least 1 request.")
     c3.metric("Avg Credits/User", f"{m['avg_per_user']:.1f}", help="Total credits ÷ active users.")
     c4.metric("Total Requests", f"{m['total_requests']:,}", help="Number of LLM API calls.")
+    c5.metric("MTD Credits", f"{mtd_credits:,.1f}",
+              help="Month-to-date credit spend (current calendar month, all surfaces). "
+                   "Compares against monthly budgets set in Credit Configuration.")
 
     st.divider()
 
@@ -124,7 +146,6 @@ def render(session):
     if not scatter_df.empty and "CREDITS" in scatter_df.columns and "REQUESTS" in scatter_df.columns:
         # Add cohort info if available
         try:
-            from config import TABLE_USER_COHORT_RESOLVED, fq_table
             cohort_tbl = fq_table(session, TABLE_USER_COHORT_RESOLVED)
             cohort_df = session.sql(f"SELECT USER_NAME, COHORT_ROLE FROM {cohort_tbl}").to_pandas()
             if not cohort_df.empty:
@@ -160,7 +181,7 @@ def render(session):
         )
 
     # Use 30 days so heatmap has enough data — the heatmap aggregates by DOW+hour
-    # Note: longer lookbacks provide richer pattern data.
+    # so more days = richer pattern.  7-day window is too narrow for small accounts with few users.
     HM_DAYS = 30
 
     hm_cohort = None
@@ -220,7 +241,9 @@ def render(session):
         hdf["LOCAL_DATETIME"] = (hdf["USAGE_DATE_DT"]
                                   + pd.to_timedelta(hdf["USAGE_HOUR"], unit="h")
                                   + pd.to_timedelta(tz_offset, unit="h"))
-        hdf["DOW"] = hdf["LOCAL_DATETIME"].dt.strftime("%a")
+        hdf["DOW"] = hdf["LOCAL_DATETIME"].dt.weekday.map(
+            {0: "Mon", 1: "Tue", 2: "Wed", 3: "Thu", 4: "Fri", 5: "Sat", 6: "Sun"}
+        )
 
         hm_metric  = st.radio("Show", ["Credits", "Requests"], horizontal=True, key="heatmap_metric",
                                help="Credits: cost intensity. Requests: activity volume.")
@@ -292,7 +315,7 @@ def _render_intelligence(session, days, cohort_filter):
     if not spikes.empty:
         st.markdown("**🔴 Detected Spikes** (usage > 2σ above user's average)")
         spike_display = spikes[["USAGE_DATE", "USER_NAME", "TOTAL_CREDITS", "AVG_DAILY"]].copy()
-        spike_display["USAGE_DATE"] = spike_display["USAGE_DATE"].dt.strftime("%Y-%m-%d")
+        spike_display["USAGE_DATE"] = spike_display["USAGE_DATE"].dt.date.astype(str)
         spike_display = spike_display.rename(columns={
             "USAGE_DATE": "Date", "USER_NAME": "User",
             "TOTAL_CREDITS": "Credits (that day)", "AVG_DAILY": "User's Avg Daily"
@@ -393,7 +416,7 @@ def _render_intelligence(session, days, cohort_filter):
             fk1, fk2, fk3, fk4 = st.columns(4)
             fk1.metric("Avg Daily", f"{avg_daily:,.1f} cr", help="Mean daily credits over the historical basis.")
             fk2.metric("Projected 30d (flat)", f"{avg_daily * 30:,.0f} cr", help="Avg × 30 days.")
-            fk3.metric("Projected 30d (trend)", f"{sum(slope * (days_in_data + i) + intercept for i in range(30)):,.0f} cr",
+            fk3.metric("Projected 30d (trend)", f"{sum(max(0.0, slope * (days_in_data + i) + intercept) for i in range(30)):,.0f} cr",
                        help="Linear regression projection for next 30 days.")
             trend_dir = "📈 Trending up" if slope > 0.5 else ("📉 Trending down" if slope < -0.5 else "➡️ Stable")
             fk4.metric("Trend", trend_dir, help=f"Slope: {slope:.2f} credits/day.")

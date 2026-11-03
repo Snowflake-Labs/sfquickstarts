@@ -1,0 +1,209 @@
+{
+  "generator": "tests/test_decimal_parity.py",
+  "context_precision": 28,
+  "rounding_note": "all monetary quantization uses ROUND_HALF_UP explicitly",
+  "input_note": "all inputs are strings; never construct Decimal from float",
+  "cases": [
+    {
+      "id": "identity:0.1",
+      "op": "identity",
+      "inputs": {
+        "value": "0.1"
+      },
+      "expected": "0.1"
+    },
+    {
+      "id": "identity:0.07",
+      "op": "identity",
+      "inputs": {
+        "value": "0.07"
+      },
+      "expected": "0.07"
+    },
+    {
+      "id": "identity:0.0775",
+      "op": "identity",
+      "inputs": {
+        "value": "0.0775"
+      },
+      "expected": "0.0775"
+    },
+    {
+      "id": "identity:0.0850",
+      "op": "identity",
+      "inputs": {
+        "value": "0.0850"
+      },
+      "expected": "0.0850"
+    },
+    {
+      "id": "identity:0.1200",
+      "op": "identity",
+      "inputs": {
+        "value": "0.1200"
+      },
+      "expected": "0.1200"
+    },
+    {
+      "id": "identity:0.25",
+      "op": "identity",
+      "inputs": {
+        "value": "0.25"
+      },
+      "expected": "0.25"
+    },
+    {
+      "id": "identity:1234567.89",
+      "op": "identity",
+      "inputs": {
+        "value": "1234567.89"
+      },
+      "expected": "1234567.89"
+    },
+    {
+      "id": "identity:40000000.00",
+      "op": "identity",
+      "inputs": {
+        "value": "40000000.00"
+      },
+      "expected": "40000000.00"
+    },
+    {
+      "id": "identity:0.005",
+      "op": "identity",
+      "inputs": {
+        "value": "0.005"
+      },
+      "expected": "0.005"
+    },
+    {
+      "id": "identity:2.675",
+      "op": "identity",
+      "inputs": {
+        "value": "2.675"
+      },
+      "expected": "2.675"
+    },
+    {
+      "id": "identity:1.005",
+      "op": "identity",
+      "inputs": {
+        "value": "1.005"
+      },
+      "expected": "1.005"
+    },
+    {
+      "id": "div:0.0775/12",
+      "op": "divide",
+      "inputs": {
+        "a": "0.0775",
+        "b": "12"
+      },
+      "expected": "0.006458333333333333333333333333"
+    },
+    {
+      "id": "div:100/3",
+      "op": "divide",
+      "inputs": {
+        "a": "100",
+        "b": "3"
+      },
+      "expected": "33.33333333333333333333333333"
+    },
+    {
+      "id": "div:1/7",
+      "op": "divide",
+      "inputs": {
+        "a": "1",
+        "b": "7"
+      },
+      "expected": "0.1428571428571428571428571429"
+    },
+    {
+      "id": "div:40000000/12",
+      "op": "divide",
+      "inputs": {
+        "a": "40000000",
+        "b": "12"
+      },
+      "expected": "3333333.333333333333333333333"
+    },
+    {
+      "id": "quantize_half_up:1234.565->0.01",
+      "op": "quantize_half_up",
+      "inputs": {
+        "value": "1234.565",
+        "exponent": "0.01"
+      },
+      "expected": "1234.57"
+    },
+    {
+      "id": "quantize_half_up:2.5->1",
+      "op": "quantize_half_up",
+      "inputs": {
+        "value": "2.5",
+        "exponent": "1"
+      },
+      "expected": "3"
+    },
+    {
+      "id": "quantize_half_up:0.125->0.01",
+      "op": "quantize_half_up",
+      "inputs": {
+        "value": "0.125",
+        "exponent": "0.01"
+      },
+      "expected": "0.13"
+    },
+    {
+      "id": "compound_hurdle:1m",
+      "op": "compound_hurdle",
+      "inputs": {
+        "hwm": "127.35",
+        "annual_rate": "0.05",
+        "months": 1
+      },
+      "expected": "127.8806250000000000000000000"
+    },
+    {
+      "id": "compound_hurdle:12m",
+      "op": "compound_hurdle",
+      "inputs": {
+        "hwm": "127.35",
+        "annual_rate": "0.05",
+        "months": 12
+      },
+      "expected": "133.8654676952387217216506905"
+    },
+    {
+      "id": "compound_hurdle:60m",
+      "op": "compound_hurdle",
+      "inputs": {
+        "hwm": "127.35",
+        "annual_rate": "0.05",
+        "months": 60
+      },
+      "expected": "163.4357277074223703222035276"
+    },
+    {
+      "id": "terminal_value:1000000/0.03/0.12",
+      "op": "terminal_value",
+      "inputs": {
+        "fcf": "1000000",
+        "terminal_growth": "0.03",
+        "wacc": "0.12"
+      },
+      "expected": "11444444.44444444444444444444"
+    },
+    {
+      "id": "terminal_value:2500000.50/0.025/0.095",
+      "op": "terminal_value",
+      "inputs": {
+        "fcf": "2500000.50",
+        "terminal_growth": "0.025",
+        "wacc": "0.095"
+      },
+      "expected": "36607150.17857142857142857143"
+    }
+  ]
+}
