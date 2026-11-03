@@ -61,10 +61,10 @@ The notebook reads `ANALYTIC_DATASET_DEMOSAMPLE.DATASET.ANALYTICSSAMPLE_LATEST` 
 2. In Snowsight, go to **Projects > Notebooks**, choose **Import .ipynb file**, and select the downloaded notebook.
 3. Make sure these packages are available to the notebook: `snowflake-ml-python`, `xgboost`, `scikit-learn`, `scipy`, `matplotlib`, `altair`.
 
-The repository also contains `sas_pd_model.sas` (the original SAS model) and `python_pd_model.py` (the Python conversion produced with Cortex Code). The next step shows how that conversion is done.
+The repository also contains `sas_pd_model.sas` (the original SAS model) and `python_pd_model.py` (the Python conversion produced with CoCo). The next step shows how that conversion is done.
 
 <!-- ------------------------ -->
-## Convert the SAS Model to Python with Cortex Code
+## Convert the SAS Model to Python with CoCo
 
 The starting point is a SAS PD model, `sas_pd_model.sas`. It follows a pattern found in many banks:
 1. `PROC SQL` joins Equifax loan data to FRED macro indicators, with `%let` macro variables for libraries and the observation window.
@@ -98,8 +98,8 @@ proc hpforest data=&OUT_LIB..PD_TRAIN
 run;
 ```
 
-### Prompt Cortex Code
-**Cortex Code (CoCo)** is Snowflake's AI coding assistant. It's available in Snowsight and as a desktop app. Open the repository folder in CoCo (or attach `sas_pd_model.sas` to the chat) and ask for the conversion in plain language. Name the target frameworks and the Snowflake features you want each SAS construct to become:
+### Prompt CoCo
+**CoCo (CoCo)** is Snowflake's AI coding assistant. It's available in Snowsight and as a desktop app. Open the repository folder in CoCo (or attach `sas_pd_model.sas` to the chat) and ask for the conversion in plain language. Name the target frameworks and the Snowflake features you want each SAS construct to become:
 
 ```text
 Convert @sas_pd_model.sas into a Python script, python_pd_model.py, that runs on Snowflake.
@@ -619,7 +619,7 @@ ds_df.show(5)
 <!-- ------------------------ -->
 ## Train the Model with Experiment Tracking
 
-The PD model is an `XGBClassifier`, the Python equivalent of the SAS `PROC HPFOREST` model (`sas_pd_model.sas`). It was converted with **Cortex Code**. The hyperparameters map directly from the SAS source:
+The PD model is an `XGBClassifier`, the Python equivalent of the SAS `PROC HPFOREST` model (`sas_pd_model.sas`). It was converted with **CoCo**. The hyperparameters map directly from the SAS source:
 
 | SAS PROC HPFOREST | XGBClassifier | Value |
 |---|---|---|
@@ -2070,7 +2070,7 @@ You migrated a SAS `PROC HPFOREST` PD model to XGBoost on Snowflake ML and ran i
 | Task DAGs with `MODEL_REVIEWER` approval | Cron + shell scripts and email sign-off chains |
 
 ### What You Learned
-- Mapping SAS model code and hyperparameters to XGBoost with Cortex Code
+- Mapping SAS model code and hyperparameters to XGBoost with CoCo
 - Building point-in-time correct features and immutable training Datasets
 - Tracking experiments and governing models with registry aliases, SHAP and lineage
 - Scoring offline champion/challenger and computing scenario-weighted ECL
