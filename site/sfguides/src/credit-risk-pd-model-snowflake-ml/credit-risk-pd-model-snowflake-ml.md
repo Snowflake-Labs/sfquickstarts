@@ -23,8 +23,8 @@ The complete notebook is in the companion GitHub repository: **[Snowflake-Labs/s
 ### What You Will Learn
 - How to convert a SAS `PROC HPFOREST` PD model to Python with CoCo, and map its hyperparameters to `XGBClassifier`
 - How to build Feature Views (backed by Dynamic Tables) for behavioral, macroeconomic and forward-looking scenario features
-- How to generate immutable, point-in-time correct training Datasets
-- How to log runs with Experiment Tracking and register models with `champion` / `challenger` aliases
+- How to generate immutable, point-in-time training Datasets
+- How to log runs with Experiment Tracking and register models on Snowflake Model Registry
 - How to explain predictions with the Model Registry's built-in SHAP `explain` function and trace ML Lineage
 - How to batch score with `run()` and compute probability-weighted ECL across macro scenarios
 - How to attach Model Monitors for drift and performance
@@ -34,7 +34,7 @@ The complete notebook is in the companion GitHub repository: **[Snowflake-Labs/s
 - A Feature Store with three Feature Views: `LOAN_BEHAVIORAL_FEATURES`, `LOAN_MACRO_FEATURES` and `MACRO_SCENARIO_FEATURES`
 - A versioned training Dataset, `PD_TRAINING_DS`
 - A registered model, `PD_XGB_MODEL`, with champion and challenger versions, SHAP explainability and lineage
-- Model Monitors for the champion and challenger
+- Model Monitors for the champion and challenger models
 - A monthly **training pipeline** Task DAG that retrains both models, scores them against production, gates them, and emails a reviewer for approval
 - A weekly **scoring pipeline** Task DAG that scores the portfolio with the approved models, computes scenario-weighted ECL, keeps history, and emails a summary
 
