@@ -54,15 +54,21 @@ In this step, you clone the companion repo into a workspace, then run its setup 
 
 ### Get the companion repo
 
-1. In Snowsight, select **Projects** » **Workspaces**.
-2. In the **Workspaces** menu, select **From Git repository**.
+1. In Snowsight, click **Workspaces**.
+2. In the workspaces UI, click **Create new Git workspace**.
 3. For **Repository URL**, enter `https://github.com/Snowflake-Labs/sfguide-getting-started-with-pipeline-builder`.
 4. Next to **API integration**, select **+ API Integration**, and fill in the **Create API Integration** dialog:
    - For **Name**, enter `TASTY_PIPELINE_QS_GIT_INT`. Use this exact name, so **cleanup.sql** can drop it at the end.
    - For **Allowed prefixes**, enter `https://github.com/Snowflake-Labs`.
    - For **Allowed authentication secrets**, select **None**. The repo is public, so it doesn't need a secret.
    - Leave **Enable OAuth authentication** cleared, and select **Create**.
-5. Back in the **Create workspace from Git repository** dialog, select **Public repository**.
+
+   ![Create API Integration dialog](assets/create-api-integration.png)
+
+5. Back in the **Create workspace from Git repository** dialog, select **Public repository**. You can't push changes back to the repo with public authentication, and this Quickstart doesn't need to. Leave **Workspace name** as it fills in from the URL.
+
+   ![Create workspace from Git repository dialog](assets/create-workspace-from-git.png)
+
 6. Select **Create**.
 
 The workspace opens with **setup.sql**, **cleanup.sql**, **01_clean_orders.ipynb**, and **02_daily_sales.ipynb**.
@@ -87,19 +93,25 @@ The last statement returns `raw_rows` = `5250`.
 
 ### Switch to the guide role
 
-> **Important:** Pipeline Builder sets a pipeline's owner role from the role in your Snowsight user menu when you create the pipeline, and every deployment runs as that role. Before you continue, select your name in the lower-left corner, select **Switch role**, and select **TASTY_PIPELINE_QS_ROLE**. If you create the pipeline as ACCOUNTADMIN, your deployments and runs fail with privilege errors. See Troubleshooting.
+You create the pipeline in the next step, and it has to be created with the guide role. If you create it as ACCOUNTADMIN, deployments and runs fail with privilege errors.
+
+1. In the lower-left corner of Snowsight, select your name.
+2. Select **Switch role**.
+3. Select **TASTY_PIPELINE_QS_ROLE**.
+4. Confirm that your name in the lower-left corner now shows **TASTY_PIPELINE_QS_ROLE**.
+
+Changing the role selector inside a SQL file doesn't count. Pipeline Builder uses the role in your user menu.
 
 <!-- ------------------------ -->
 ## Create the Pipeline
 
 A Pipeline Builder pipeline lives in a project folder in your workspace. Let's create one.
 
-1. In Snowsight, select **Projects** > **Workspaces**, and open your workspace.
+1. In Snowsight, open your workspace.
 2. In the file explorer, select **Add new**, and then select **Pipeline Builder**.
-3. In the **Create Pipeline Builder** dialog, enter `Pipeline_builder_quickstart` for the **Name**.
-4. For **Project location**, keep **New folder (Pipeline_builder_quickstart)**, so the pipeline gets its own folder in the workspace.
-5. For **Database and schema**, select `TASTY_PIPELINE_QS_DB.PIPELINE`. This is where the pipeline's DCM project object is created.
-6. Select **Create**.
+3. In the **Create Pipeline Builder** dialog, enter `Pipeline_builder_quickstart` for the **Name**. Pipeline Builder creates a folder with this name for the pipeline.
+4. Select **Select database and schema**, and select `TASTY_PIPELINE_QS_DB.PIPELINE`. This is where the pipeline's DCM project object is created.
+5. Select **Create**.
 
 ![Create Pipeline Builder dialog](assets/create-pipeline-dialog.png)
 
@@ -110,9 +122,9 @@ Pipeline Builder creates a **Pipeline_builder_quickstart** project folder and op
 
 When you add your first task, Pipeline Builder also creates **pipeline.yml**, which holds the tasks, task graphs, and Code Bundles you build on the canvas. You won't edit these files in this Quickstart. Pipeline Builder writes to them for you.
 
-![Pipeline_builder_quickstart project folder](assets/project-folder.png)
-
 Open **manifest.yml** and confirm that the target's `project_owner` is `TASTY_PIPELINE_QS_ROLE`. If it shows another role, such as `ACCOUNTADMIN`, see Troubleshooting before you continue.
+
+![Pipeline_builder_quickstart project folder](assets/project-folder.png)
 
 ### Move the notebooks into the pipeline
 
@@ -126,9 +138,9 @@ Here's what the notebooks do:
 - **02_daily_sales.ipynb** aggregates the clean orders into one row per day, truck, and city in `ANALYTICS.DAILY_TRUCK_SALES`
 - Both use fully qualified table names, because a notebook that runs as a task doesn't have a current database or schema
 
-![Notebook with a single SQL cell](assets/notebook-sql-cell.png)
-
 > **Note:** You can open each notebook and run its cell to check it works. Running it now also creates the tables early, which is fine: the pipeline replaces them on every run.
+
+![Notebook with a single SQL cell](assets/notebook-sql-cell.png)
 
 <!-- ------------------------ -->
 ## Turn Notebooks into Tasks
@@ -143,19 +155,19 @@ In the drawer, on the **General** tab:
 
 1. Confirm that **Name** is `TASTY_PIPELINE_QS_DB.PIPELINE.clean_orders_task`. Pipeline Builder names the task after the file and the project's database and schema. Names in Pipeline Builder are always fully qualified.
 2. Confirm that **Entrypoint** points at **01_clean_orders.ipynb**.
-3. Under **Execution**, for **Warehouse**, select `TASTY_PIPELINE_QS_WH`.
+3. Under **Execution**, for **Warehouse**, set to `TASTY_PIPELINE_QS_WH`.
 
 ![Task drawer for clean_orders_task](assets/first-task-drawer.png)
 
 On the **Specification** tab:
 
-1. For **Compute pool**, select `TASTY_PIPELINE_QS_POOL`.
-2. For **Query warehouse**, select `TASTY_PIPELINE_QS_WH`. This warehouse runs the SQL that the notebook issues.
+1. For **Compute pool**, set to `TASTY_PIPELINE_QS_POOL`.
+2. For **Query warehouse**, set to `TASTY_PIPELINE_QS_WH`. This warehouse runs the SQL that the notebook issues.
 3. Leave **Runtime version** at its default.
 
-![Specification tab](assets/specification-tab.png)
-
 > **Note:** If a field shows an error with a **Fix** action, the value is close to an existing object, for example a name with the wrong case. Select **Fix** to correct it.
+
+![Specification tab](assets/specification-tab.png)
 
 ### Add the second task
 
@@ -181,14 +193,14 @@ Pipeline Builder also moved any values the tasks share, such as the warehouse, i
 1. Select **Objects** on the canvas toolbar, and then select **Task graphs**.
 2. Select the task graph that Pipeline Builder created.
 3. Under **Task graph object**, set **Name** to `TASTY_PIPELINE_QS_DB.PIPELINE.TASTY_DAILY_SALES_GRAPH`.
-4. Under **Task graph settings**, for **Schedule**, select **Cron**. Enter `0 6 * * *`, and select your time zone. The graph will run every day at 6:00 AM.
+4. Under **Task graph settings**, for **Schedule**, select **Cron**. Enter `0 6 * * *`, and select your time zone (e.g., `0 6 * * * UTC`).
 5. For **Desired state**, leave **Suspended**. You'll run the graph manually for now, so it doesn't start running on a schedule and using credits before you're ready.
 6. Under **Task defaults**, confirm that **Warehouse** is `TASTY_PIPELINE_QS_WH`. Any task in the graph that doesn't set its own warehouse uses this one.
 7. Under **Tasks in this graph**, confirm both tasks are listed, with **clean_orders_task** marked **Root**.
 
-![Task graph settings](assets/task-graph-settings.png)
-
 You can open the same settings from any task: select the task, select the **Graph** tab, and then select **Edit graph settings**.
+
+![Task graph settings](assets/task-graph-settings.png)
 
 <!-- ------------------------ -->
 ## Plan and Deploy
@@ -262,9 +274,9 @@ Select **Deploy** again without changing anything. Pipeline Builder shows "No ch
 
 ### Add a task
 
-Analysts have asked for a daily leaderboard of the top five trucks. Let's add a SQL task after **daily_sales_task** that rebuilds it on every run.
+Analysts have asked for a daily leaderboard of the top five trucks. Let's add a SQL task after **daily_sales_task** that rebuilds it on every run. A SQL task is also how you run stored procedures or any other Snowflake object from a pipeline.
 
-1. Hover over the **daily_sales_task** card and select **+** on its outgoing connector, or select **Create** on the canvas toolbar and then select **SQL**.
+1. Hover over the **daily_sales_task** card, select **+** on its outgoing connector, and then select **SQL**. Pipeline Builder adds a new card that runs after **daily_sales_task**.
 2. Set **Name** to `TASTY_PIPELINE_QS_DB.PIPELINE.top_trucks_task`.
 3. Under **Execution**, set **Warehouse** to `TASTY_PIPELINE_QS_WH`.
 4. In the **Source** editor, enter:
@@ -278,12 +290,9 @@ ORDER BY revenue DESC
 LIMIT 5;
 ```
 
-5. If you used **Create**, connect **daily_sales_task** to the new card.
-6. Select **Deploy**. The plan shows **TOP_TRUCKS_TASK** as a task to create and an **ALTER** on **TASTY_PIPELINE_QS_ROLE**. Confirm the **ALTER** row still names `TASTY_PIPELINE_QS_ROLE`, and then select **Deploy**.
+5. Select **Deploy**. The plan shows **TOP_TRUCKS_TASK** as a task to create and an **ALTER** on **TASTY_PIPELINE_QS_ROLE**. Confirm the **ALTER** row still names `TASTY_PIPELINE_QS_ROLE`, and then select **Deploy**.
 
-![Plan for adding a task](assets/plan-add-task.png)
-
-A SQL task is also how you run stored procedures or any other Snowflake object from a pipeline.
+   ![Plan for adding a task](assets/plan-add-task.png)
 
 ### Delete a task
 
@@ -291,9 +300,9 @@ Now suppose the analysts change their minds. On the **top_trucks_task** card, se
 
 This time, the plan shows **top_trucks_task** as a task to drop. Deleting a card removes it from the project files, and the next deployment drops the task from your account. You never write a `DROP TASK`.
 
-![Plan for deleting a task](assets/plan-drop-task.png)
-
 > **Note:** The deployment drops the task, but not the `TOP_TRUCKS` table the task created if it ran. DCM manages the objects defined in the project, such as tasks, task graphs, and Code Bundles. Tables that your code creates at run time aren't part of the project.
+
+![Plan for deleting a task](assets/plan-drop-task.png)
 
 ### Turn on the schedule (optional)
 
@@ -414,9 +423,9 @@ VALUES ('INCREMENTAL_PATH', 'Incremental branch ran');
 SYSTEM$GET_PREDECESSOR_RETURN_VALUE('CHECK_VOLUME') = 'INCREMENTAL'
 ```
 
-![Branching condition on INCREMENTAL_PATH](assets/branching-incremental.png)
-
 > **Note:** `SYSTEM$GET_PREDECESSOR_RETURN_VALUE` takes the name of a predecessor task without its database and schema, so the condition uses `'CHECK_VOLUME'`. The name is case-sensitive.
+
+![Branching condition on INCREMENTAL_PATH](assets/branching-incremental.png)
 
 #### Step 4: Deploy and run
 
@@ -452,9 +461,9 @@ VALUES ('ON_FAILURE', 'A pipeline step failed');
 
 4. Deploy and run the graph.
 
-![Plan for the failure handler](assets/plan-failure-handler.png)
-
 **FORCE_FAIL** fails, and **ON_FAILURE** runs and writes to `RUN_LOG`. In production, the handler could call a stored procedure that sends an alert. When you're done, delete both cards and deploy.
+
+![Plan for the failure handler](assets/plan-failure-handler.png)
 
 ### A3: Add a Finalizer
 
