@@ -1685,6 +1685,10 @@ ALTER TASK CREDIT_RISK_ML.PD_MODEL.PD_MODEL_TRAIN_PIPELINE_GENERATE_DATASET RESU
 EXECUTE TASK CREDIT_RISK_ML.PD_MODEL.PD_MODEL_TRAIN_PIPELINE;
 ```
 
+You can follow the run in Snowsight under **Monitoring > Task History**, or open the root task and select the **Graph** tab to see each step's status:
+
+![Training pipeline Task DAG run](assets/train-pipeline-task-dag-run.png)
+
 ### Review the candidates
 When the run finishes, the reviewer receives one email. It has a section for each candidate with its metrics against the production champion, the gate's recommendation, and ready-to-run commands:
 
@@ -2003,6 +2007,10 @@ ALTER TASK CREDIT_RISK_ML.PD_MODEL.PD_MODEL_SCORING_PIPELINE_SCENARIO_ECL RESUME
 ALTER TASK CREDIT_RISK_ML.PD_MODEL.PD_MODEL_SCORING_PIPELINE_BATCH_SCORE RESUME;
 EXECUTE TASK CREDIT_RISK_ML.PD_MODEL.PD_MODEL_SCORING_PIPELINE;
 ```
+
+A completed weekly run looks like this in the task graph:
+
+![Scoring pipeline Task DAG run](assets/score-pipeline-task-dag-run.png)
 
 Each run ends with a summary email. It shows the champion's weighted ECL and change since the previous week, the per-scenario breakdown, and the challenger comparison:
 
