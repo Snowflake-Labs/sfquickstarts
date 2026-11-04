@@ -927,18 +927,10 @@ else:
 
 ### Scenario-weighted Expected Credit Loss
 ECL = PD × LGD × EAD, weighted across macro scenarios:
-1. Each loan's historical macro values are replaced with each scenario's values, giving loans × 4 rows.
-2. The champion scores every row.
-3. ECL is aggregated per scenario, then probability-weighted.
-
-The cell also writes a loan-level probability-weighted PD to `PD_SCORES_WEIGHTED`.
-
-> aside negative
-> This guide models **PD only**. LGD is a flat illustrative 0.45 and `BALANCE` stands in for EAD. A production IFRS 9 implementation would add LGD and EAD models, staging (12-month vs lifetime PD) and discounting.
+Scenario-conditioned scoring: score each loan once per macro scenario, then probability-weight
+LGD is a flat illustrative assumption and BALANCE is used as the EAD proxy — this guide models PD only
 
 ```python
-# Scenario-conditioned scoring: score each loan once per macro scenario, then probability-weight
-# LGD is a flat illustrative assumption and BALANCE is used as the EAD proxy — this notebook models PD only
 LGD_ASSUMPTION = 0.45
 
 scenarios_df = fs.read_feature_view(scenario_fv)
