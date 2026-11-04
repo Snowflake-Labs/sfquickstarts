@@ -475,7 +475,7 @@ macro_fv = fs.register_feature_view(feature_view=macro_fv, version="V1")
 print(f"Registered: {macro_fv.name} v{macro_fv.version}")
 ```
 
-**Macro Scenario Feature View.** IFRS 9 and CECL require forward-looking, scenario-weighted loss estimates. This view holds four illustrative scenarios (baseline, upside, downside and severe downside), each a shock applied to the latest FRED observation with a probability weight. In production these would come from your economics team, regulator-prescribed scenarios (CCAR/DFAST, PRA ACS) or a Marketplace provider. The view is keyed by `SCENARIO_ID` rather than by loan, because each loan is scored once per scenario at scoring time.
+**Macro Scenario Feature View.** IFRS 9 and CECL require forward-looking, scenario-weighted loss estimates. This view holds four illustrative scenarios (baseline, upside, downside and severe downside), each a shock applied to the latest FRED observation with a probability weight. In production these would come from your economics team, regulator-prescribed scenarios or a Marketplace provider. The view is keyed by `SCENARIO_ID` rather than by loan, because each loan is scored once per scenario at scoring time.
 
 | Scenario | Weight | Unemployment shift | Fed funds shift | CPI factor |
 |---|---|---|---|---|
@@ -487,7 +487,7 @@ print(f"Registered: {macro_fv.name} v{macro_fv.version}")
 ```python
 # Macro Scenario Feature View — forward-looking scenarios for IFRS 9 / CECL scenario-weighted ECL
 # Illustrative shocks applied to the latest FRED observation; in production these come from the
-# economics team, regulator-prescribed scenarios (CCAR/DFAST, PRA ACS) or a Marketplace provider.
+# economics team, regulator-prescribed scenarios or a Marketplace provider.
 from python_pd_model import MACRO_COLS  # shared with the training module
 
 session.sql("""
