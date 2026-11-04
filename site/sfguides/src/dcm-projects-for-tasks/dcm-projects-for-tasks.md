@@ -180,6 +180,9 @@ DEFINE DATABASE DCM_DEMO_4{{env_suffix}}
     LOG_EVENT_LEVEL = INFO
     COMMENT = 'DCM Projects for Tasks quickstart: task graph and its tables';
 
+DEFINE SCHEMA DCM_DEMO_4{{env_suffix}}.PUBLIC
+    COMMENT = 'Default schema, declared so DCM manages it';
+
 DEFINE SCHEMA DCM_DEMO_4{{env_suffix}}.PIPELINE
     COMMENT = 'Tables, member tasks, the task graph and its alert';
 ```
