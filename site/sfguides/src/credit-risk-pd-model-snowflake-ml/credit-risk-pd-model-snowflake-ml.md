@@ -263,7 +263,7 @@ explore_fred.show()
 <!-- ------------------------ -->
 ## Prepare the Data
 
-Feature Views are backed by Dynamic Tables, which cannot be created directly on views in a shared Marketplace database. So first materialize the data into the project schema.
+Managed Feature Views are backed by Dynamic Tables, which can only read a shared Marketplace view if the provider has enabled change tracking on its underlying tables. Consumers can't enable change tracking on shared objects. To avoid depending on the provider, first materialize the data into the project schema with change tracking enabled.
 
 `LOAN_DATA` keeps the loan key, observation date, the derived `DEFAULT_FLAG` and the behavioral attributes. `CHANGE_TRACKING = TRUE` keeps the downstream Dynamic Tables refreshable after the table is re-created.
 
