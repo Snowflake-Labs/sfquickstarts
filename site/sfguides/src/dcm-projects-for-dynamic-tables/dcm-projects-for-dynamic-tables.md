@@ -47,7 +47,7 @@ You'll deploy a food truck analytics pipeline with a DCM Project, then evolve a 
 - [Cortex AI functions](https://docs.snowflake.com/en/user-guide/snowflake-cortex/aisql) available in your account's region. Calling them needs the USE AI FUNCTIONS account privilege and the SNOWFLAKE.CORTEX_USER database role, which every role gets through PUBLIC by default. If your administrator has revoked them from PUBLIC, grant both to DCM_DEVELOPER.
 
 ### What You'll Build
-- A deployed food truck analytics pipeline, all defined as code: a database with a database role, three landing tables, three dynamic tables, three views, a SQL function, a stage and an ingestion task, three data quality expectations, a warehouse, and a READ role with its grants
+- A deployed food truck analytics pipeline, all defined as code: a database with a database role, three landing tables, three dynamic tables, three views, a SQL function, a stage and an ingestion task, three data quality expectations, a refresh-failure alert, a warehouse, and a READ role with its grants
 - An evolved dynamic table with an AI-classified column and a frozen region, deployed through a second plan and deploy, that recomputes only its active rows
 
 <!-- ------------------------ -->
@@ -127,15 +127,29 @@ GRANT MANAGE GRANTS    ON ACCOUNT TO ROLE DCM_DEVELOPER;
 GRANT EXECUTE TASK         ON ACCOUNT TO ROLE DCM_DEVELOPER;
 GRANT EXECUTE MANAGED TASK ON ACCOUNT TO ROLE DCM_DEVELOPER;
 
+-- Run alerts the owner owns; serverless alerts additionally need EXECUTE MANAGED ALERT.
+GRANT EXECUTE ALERT         ON ACCOUNT TO ROLE DCM_DEVELOPER;
+GRANT EXECUTE MANAGED ALERT ON ACCOUNT TO ROLE DCM_DEVELOPER;
+
 -- Attach data quality expectations (EXECUTE DATA METRIC FUNCTION), read their
 -- results (VIEWER application role), and configure data quality notifications
 -- on a database (MANAGE DATA QUALITY).
 GRANT EXECUTE DATA METRIC FUNCTION ON ACCOUNT TO ROLE DCM_DEVELOPER;
 GRANT APPLICATION ROLE SNOWFLAKE.DATA_QUALITY_MONITORING_VIEWER TO ROLE DCM_DEVELOPER;
 GRANT MANAGE DATA QUALITY ON ACCOUNT TO ROLE DCM_DEVELOPER;
+
+-- Read the event table. The DT_REFRESH_FAILURE alert template reads it;
+-- without this application role the alert's condition fails with
+-- "Schema 'SNOWFLAKE.TELEMETRY' does not exist or not authorized".
+GRANT APPLICATION ROLE SNOWFLAKE.EVENTS_VIEWER TO ROLE DCM_DEVELOPER;
+
+-- This guide only: set LOG_EVENT_LEVEL on the project's database, which is what
+-- makes the dynamic tables log their refresh failures for the alert. Without it
+-- the first plan fails with "must have MODIFY LOG EVENT LEVEL granted on ACCOUNT".
+GRANT MODIFY LOG EVENT LEVEL ON ACCOUNT TO ROLE DCM_DEVELOPER;
 ```
 
-The rest of the section (alerts, integrations, masking policies, network and authentication policies) is there for the other guides in the series.
+The rest of the section (integrations, masking policies, network and authentication policies) is there for the other guides in the series.
 
 **4. Series container.** The DCM Project object needs a database and schema that the project itself does not manage. Every guide in this series keeps its project object in DCM_DEMO.PROJECTS:
 
@@ -232,17 +246,21 @@ The sources/definitions/ directory contains the SQL that defines your infrastruc
 
 | File | What it defines |
 |---|---|
-| raw.sql | The database, the RAW schema and three landing tables: MENU, CUSTOMER and ORDERS |
+| raw.sql | The database (with LOG_EVENT_LEVEL = ERROR), the RAW schema and three landing tables: MENU, CUSTOMER and ORDERS |
 | ingest.sql | A stage with a directory table, and a task that loads order CSV files from it on a daily schedule. The task is deployed suspended, so it does not resume the warehouse every morning; this guide loads its data with scripts instead |
 | analytics.sql | The ANALYTICS schema, three dynamic tables, and a SQL function, CALCULATE_PROFIT_MARGIN, used by TRUCK_PERFORMANCE |
 | serve.sql | The SERVE schema and three views for dashboards |
 | access.sql | The warehouse, a database role, a READ account role and its grants |
 | expectations.sql | Three data quality expectations: on a table, a dynamic table and a view |
+| alerts.sql | DT_REFRESH_FAILURE, an alert built from a Snowflake alert template |
+
+DT_REFRESH_FAILURE watches every dynamic table in DCM_DEMO_3_DEV and posts an in-app notification in Snowsight when a refresh fails. It reads the refresh failure events that LOG_EVENT_LEVEL = ERROR on the database writes to the event table. An alert built from a template cannot be declared STARTED, so DCM deploys it suspended and scripts/02_post_deploy.sql resumes it.
 
 Here's how raw.sql defines the database and the ORDERS table:
 
 ```sql
 DEFINE DATABASE DCM_DEMO_3{{env_suffix}}
+    LOG_EVENT_LEVEL = ERROR
     COMMENT = 'This is a Quickstart Demo for DCM Projects with Dynamic Tables';
 
 DEFINE TABLE DCM_DEMO_3{{env_suffix}}.RAW.ORDERS (
@@ -320,18 +338,18 @@ CREATE DCM PROJECT IF NOT EXISTS DCM_DEMO.PROJECTS.DCM_DT_PROJECT_DEV
     COMMENT = 'for testing DCM Projects Quickstarts';
 ```
 
-Since none of the defined objects exist yet, the plan shows **21 entities: 20 to create and 1 to alter**:
+Since none of the defined objects exist yet, the plan shows **22 entities: 21 to create and 1 to alter**:
 
 | Operation | Entities |
 |---|---|
 | CREATE | 1 database (DCM_DEMO_3_DEV) and 1 database role (ADMIN_DEV) |
 | CREATE | 4 schemas: RAW, ANALYTICS, SERVE, and the PUBLIC schema every new database gets |
 | CREATE | 3 tables, 3 dynamic tables, 3 views and 1 function |
-| CREATE | 1 stage, 1 task, 1 warehouse and 1 role (DCM_DEMO_3_DEV_READ) |
+| CREATE | 1 stage, 1 task, 1 alert, 1 warehouse and 1 role (DCM_DEMO_3_DEV_READ) |
 | ALTER | the owner role DCM_DEVELOPER, which receives ownership of everything above |
 
 ![Plan results showing planned changes](assets/plan_results.png)
-Screenshot placeholder: the first Plan result, header reading 21 entities (20 CREATE, 1 ALTER).
+Screenshot placeholder: the first Plan result, header reading 22 entities (21 CREATE, 1 ALTER).
 
 The plan also wrote an out folder next to sources. It holds the rendered definitions, with every {{env_suffix}} replaced by _DEV; open one next to its source to see what the plan actually ran.
 
@@ -350,7 +368,7 @@ Screenshot placeholder: the Deploy dialog with the alias initial-pipeline entere
 snow dcm deploy --target DCM_DEV --role DCM_DEVELOPER --alias initial-pipeline
 ```
 
-The deploy reports **21 entities (20 created, 1 altered, 0 dropped)**. Refresh the database explorer on the left of Snowsight to see DCM_DEMO_3_DEV and everything inside it.
+The deploy reports **22 entities (21 created, 1 altered, 0 dropped)**. Refresh the database explorer on the left of Snowsight to see DCM_DEMO_3_DEV and everything inside it.
 
 <!-- ------------------------ -->
 ## Insert Sample Data
@@ -477,7 +495,7 @@ Now push the definition change through a second plan and deploy.
 snow dcm plan --target DCM_DEV --role DCM_DEVELOPER --save-output
 ```
 
-This plan looks different from the first one. Instead of 20 CREATEs, it shows **1 entity: an ALTER** of ENRICHED_ORDER_DETAILS, with three changes: FROZEN_WHERE set, the query changed, and the column DIET_CLASSIFICATION added as VARCHAR. DCM alters the existing dynamic table instead of replacing it. That matters: a replaced dynamic table starts over with an initial refresh, and the frozen region predicate is ignored during initialization, so every row would be computed and classified again.
+This plan looks different from the first one. Instead of 21 CREATEs, it shows **1 entity: an ALTER** of ENRICHED_ORDER_DETAILS, with three changes: FROZEN_WHERE set, the query changed, and the column DIET_CLASSIFICATION added as VARCHAR. DCM alters the existing dynamic table instead of replacing it. That matters: a replaced dynamic table starts over with an initial refresh, and the frozen region predicate is ignored during initialization, so every row would be computed and classified again.
 
 ![Plan results showing the ALTER operation for the modified dynamic table](assets/plan_redeployment.png)
 Screenshot placeholder: the second Plan result, 1 entity (1 ALTER) on ENRICHED_ORDER_DETAILS, expanded to show the added DIET_CLASSIFICATION column, the frozen region and the query diff.
@@ -573,7 +591,7 @@ Before tearing anything down, know that there is a gentler option. DROP DCM PROJ
 
 When you are finished, open scripts/04_cleanup.sql in a Snowsight worksheet and run it as DCM_DEVELOPER. It is irreversible. In order, it:
 
-1. **Purge the project.** `PURGE` drops every entity the project manages (the database and everything in it, the warehouse and the READ role), revokes the project's grants and removes the expectation attachments, with all of their data.
+1. **Purge the project.** `PURGE` drops every entity the project manages (the database and everything in it, including the alert, the warehouse and the READ role), revokes the project's grants and removes the expectation attachments, with all of their data.
 2. **Drop the project object**, which `PURGE` leaves behind.
 3. **Objects created outside the project.** There are none in this guide; everything was deployed by the project.
 4. **Series-shared objects, left commented.** DCM_DEMO.PROJECTS, DCM_DEMO and DCM_DEVELOPER are used by every guide in this series, so their DROP statements are commented out, after a USE ROLE ACCOUNTADMIN line, because ACCOUNTADMIN owns the container. A SHOW DCM PROJECTS line shows what the schema still holds before you decide.
@@ -593,7 +611,7 @@ If `PURGE` ever fails, the script's comments show how to suspend the task and th
 
 In this guide, you learned how to:
 
-- **Define a data pipeline as code** with a DCM Project: database, schemas, tables, dynamic tables, views, a task, a role and grants in SQL definition files
+- **Define a data pipeline as code** with a DCM Project: database, schemas, tables, dynamic tables, views, a task, an alert, a role and grants in SQL definition files
 - **Deploy and manage** the pipeline through the DCM plan and deploy cycle, in Snowsight Workspaces or the Snowflake CLI
 - **Evolve a dynamic table's schema** by editing one definition and redeploying, with the plan showing a single ALTER
 - **Call `AI_CLASSIFY`** inside a dynamic table to enrich rows as they refresh
