@@ -68,10 +68,11 @@ DCM_Projects_Tasks/ is the DCM Project itself. scripts/ holds numbered SQL files
 | File | When to run |
 |---|---|
 | scripts/01_pre_deploy.sql | Once, before the first plan |
-| scripts/02_post_deploy.sql | After the first successful deploy |
-| scripts/03_force_failure.sql | After 02_post_deploy.sql, to make the alert fire |
-| scripts/04_verify_change.sql | After the second deploy (with the new branch) |
-| scripts/05_cleanup.sql | When you are finished |
+| scripts/02_guide_setup.sql | Once, after 01_pre_deploy.sql and before the first plan |
+| scripts/03_post_deploy.sql | After the first successful deploy |
+| scripts/04_force_failure.sql | After 03_post_deploy.sql, to make the alert fire |
+| scripts/05_verify_change.sql | After the second deploy (with the new branch) |
+| scripts/06_cleanup.sql | When you are finished |
 
 Every operational step in this guide is given twice: once for Snowsight, and once for the [Snowflake CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli/installation/installation) if you would rather drive the project from a terminal against your own copy of the repository.
 
@@ -85,11 +86,25 @@ cd snowflake-dcm-projects/Quickstarts/dcm-projects-for-tasks
 <!-- ------------------------ -->
 ## Set Up Roles and Permissions
 
-Open scripts/01_pre_deploy.sql in a worksheet and run it from top to bottom as ACCOUNTADMIN. It has seven sections, and the script switches roles itself.
+Run the first script. **In Snowsight:** open scripts/01_pre_deploy.sql in a worksheet and run it from top to bottom. **With the Snowflake CLI:**
 
-**1. Role.** It creates the DCM_DEVELOPER role, which owns the project and everything it deploys, and grants it to you and to SYSADMIN.
+```bash
+snow sql -f scripts/01_pre_deploy.sql
+```
+
+The script is the same in every guide of this series. It runs as ACCOUNTADMIN and is safe to run again: if you already ran it for another guide, running it now changes nothing. It has six numbered sections.
+
+**1. Role.** It creates the DCM_DEVELOPER role and grants it to you and to SYSADMIN. Every guide in this series uses this role as the project owner.
 
 **2. Inherited grants opt-in.** It turns on inherited grants for the account.
+
+**3. Account-level privileges.** A project cannot grant account-level privileges to its own owner, so they all happen here, before the first plan. DCM_DEVELOPER gets the privileges that the guides in this series need together, one grant per line, each with a comment naming the guide or feature that uses it. Some are checked at plan time, so a missing one fails the first plan rather than the deploy.
+
+**4. Series container.** It creates the DCM_DEMO database and the DCM_DEMO.PROJECTS schema that holds the project objects of the series, and grants DCM_DEVELOPER USAGE on both and CREATE DCM PROJECT on the schema. A project cannot define the database or schema it lives in.
+
+**5. Project object (alternative path only).** Commented out. The first plan creates the project object for you; the SQL is there if the prompt does not appear, or if you prefer to create it yourself.
+
+**6. Values for the manifest.** The last query returns your account identifier and user name.
 
 **Inherited grants.** An inherited grant covers current *and* future objects of a type inside a container. GRANT ON ALL snapshots what exists right now; GRANT ON FUTURE covers only what comes later. An inherited grant covers both, as one grant rather than one per object, which is why it is the recommended pattern in DCM Projects. It is a one-time opt-in per account ([release note](https://docs.snowflake.com/en/release-notes/2026/other/2026-09-10-inherited-grants-ga)), which the setup script turns on:
 
@@ -101,15 +116,15 @@ An inherited grant cannot be combined with WITH GRANT OPTION, `CASCADE` or `REST
 
 This guide doesn't use inherited grants itself; the opt-in is there so the same role works for every guide in the series.
 
-**3. Account-level privileges.** A project can't grant account-level privileges to its own owner, so they all happen here, before the first plan. The script grants the same set of privileges in every guide of the DCM series, so you can run the guides in any order; each grant carries a comment saying what it buys. This guide relies on these:
+Of the grants in section 3, this guide relies on these:
 
 - CREATE DATABASE and CREATE WAREHOUSE, because the project defines a database and a warehouse.
 - EXECUTE TASK, which lets the owner run the task graph. The members run on the project's warehouse, so EXECUTE MANAGED TASK isn't needed here.
 - EXECUTE ALERT, which lets the owner run the alert. The alert runs on the same warehouse as the tasks, so EXECUTE MANAGED ALERT isn't needed here either.
-- CREATE INTEGRATION, for the email integration in section 5.
+- CREATE INTEGRATION, for the email integration that 02_guide_setup.sql creates.
 - MONITOR EXECUTION, for reading task history.
 
-Two grants at the end of the section are specific to this guide, because the alert reads task events:
+Two more are there because the alert reads task events:
 
 ```sql
 GRANT APPLICATION ROLE SNOWFLAKE.EVENTS_VIEWER TO ROLE DCM_DEVELOPER;
@@ -118,9 +133,17 @@ GRANT MODIFY LOG EVENT LEVEL ON ACCOUNT TO ROLE DCM_DEVELOPER;
 
 SNOWFLAKE.EVENTS_VIEWER is an application role, so it is granted with GRANT APPLICATION ROLE; without it the alert's condition can't read the event table. MODIFY LOG EVENT LEVEL lets the role set LOG_EVENT_LEVEL on the project's database, which is what makes the tasks log their run status. Without it the first plan fails with "must have MODIFY LOG EVENT LEVEL granted on ACCOUNT".
 
-**4. Series container.** It creates the DCM_DEMO database and its PROJECTS schema, which hold the project object of every guide in the series. A project can't define the database or schema it lives in, so they are created here.
+Paste ACCOUNT_IDENTIFIER into DCM_Projects_Tasks/manifest.yml as the value of account_identifier on line 11, replacing MYORG-MY_DEV_ACCOUNT.
 
-**5. Objects the project cannot own.** The email integration. A DCM project can't define notification integrations, so the script creates the one the alert sends to:
+### Create the Email Integration
+
+Run the second script, still before the first plan. **In Snowsight:** open scripts/02_guide_setup.sql in a worksheet and run it. **With the Snowflake CLI:**
+
+```bash
+snow sql -f scripts/02_guide_setup.sql
+```
+
+A DCM project can't define notification integrations, so the script creates the one the alert sends to:
 
 ```sql
 CREATE NOTIFICATION INTEGRATION IF NOT EXISTS DCM_DEMO_4_EMAIL_INT
@@ -129,19 +152,11 @@ CREATE NOTIFICATION INTEGRATION IF NOT EXISTS DCM_DEMO_4_EMAIL_INT
     COMMENT = 'Email integration for the DCM Projects for Tasks alert';
 ```
 
-The script switches to DCM_DEVELOPER for this section, so the role owns the integration, and ownership covers the USAGE the alert needs when it sends. The name carries this guide's DCM_DEMO_4 prefix, so it doesn't collide with an integration from another guide or an earlier version of this one.
+It runs as DCM_DEVELOPER, so the role owns the integration, and ownership covers the USAGE the alert needs when it sends. The name carries this guide's DCM_DEMO_4 prefix, so it doesn't collide with an integration from another guide or an earlier version of this one. Plan checks the reference, so the integration has to exist before the first plan. The script is safe to run again.
 
-**6. Project object (alternative path only).** Commented out. The first plan creates it for you.
+On line 27 of DCM_Projects_Tasks/manifest.yml, set alert_email to the verified email address of your Snowflake user.
 
-**7. Values for the manifest.** The last query returns your account identifier and user name. Paste ACCOUNT_IDENTIFIER into DCM_Projects_Tasks/manifest.yml as the value of account_identifier on line 11, replacing MYORG-MY_DEV_ACCOUNT. On line 27, set alert_email to the verified email address of your Snowflake user.
-
-After this script, nothing in the guide needs more than DCM_DEVELOPER. The guide was verified with secondary roles turned off, so DCM_DEVELOPER didn't borrow privileges from ACCOUNTADMIN or any other role granted to the user. You don't need to turn yours off.
-
-**With the Snowflake CLI:**
-
-```bash
-snow sql -f scripts/01_pre_deploy.sql
-```
+After these two scripts, nothing in the guide needs more than DCM_DEVELOPER. The guide was verified with secondary roles turned off, so DCM_DEVELOPER didn't borrow privileges from ACCOUNTADMIN or any other role granted to the user. You don't need to turn yours off.
 
 <!-- ------------------------ -->
 ## Explore the Project Files
@@ -259,7 +274,7 @@ DEFINE ALERT DCM_DEMO_4{{env_suffix}}.PIPELINE.TASK_ERROR_RATE
 TEMPLATE_PARAMS fills in the template:
 
 - **ERROR_RATE_THRESHOLD, SCOPE_ACTIVE and SCOPE_DATABASE** make it fire when more than 10% of the task status events in this project's database are failures. The template counts the events from the alert's last successful scheduled run, or from one hour back if it has none, up to a minute before the current run. 0.1 is sized from a measured run of this demo; a real pipeline uses a higher threshold, and the template default is 0.15.
-- **NOTIFICATION_MODE and EMAIL_NOTIFICATION_INTEGRATION** send the notification by email through the integration from 01_pre_deploy.sql.
+- **NOTIFICATION_MODE and EMAIL_NOTIFICATION_INTEGRATION** send the notification by email through the integration from 02_guide_setup.sql.
 - **notification_config.email_config.toAddress** is the recipient, your alert_email from the manifest. Recipients aren't a template variable, and both the integration variable and toAddress are needed: with the integration only in notification_config, the alert emails the user who created it instead; with no toAddress, the send fails with "No recipients specified".
 
 The alert runs on the same warehouse as the tasks, so the whole guide uses one compute model. Two more things make it work. The alert counts only tasks owned by roles that its own owner holds, which is the case here because DCM_DEVELOPER owns both. And an alert from a template can't be declared STARTED: the keyword is a syntax error after FROM TEMPLATE. DCM therefore deploys the alert suspended, and you resume it right after the first deploy.
@@ -267,7 +282,7 @@ The alert runs on the same warehouse as the tasks, so the whole guide uses one c
 <!-- ------------------------ -->
 ## Plan and Deploy
 
-With the account identifier and your email in the manifest and the pre-deploy script run, you're ready to plan.
+With the account identifier and your email in the manifest and both setup scripts run, you're ready to plan.
 
 ### Create the Project and Plan
 
@@ -321,7 +336,7 @@ Screenshot placeholder: the database explorer after the first deployment, with D
 <!-- ------------------------ -->
 ## Run the Graph and Inspect It
 
-Open scripts/02_post_deploy.sql in a worksheet and run the whole script. It takes about two minutes, because it waits for the graph run to finish before it reads the history.
+Open scripts/03_post_deploy.sql in a worksheet and run the whole script. It takes about two minutes, because it waits for the graph run to finish before it reads the history.
 
 The tables below show the values in a simplified form: predecessors without the JSON brackets, task_parameters as a name and a value, NULL for a NULL value and '' for an empty string. Your worksheet shows the raw values.
 
@@ -378,13 +393,13 @@ DAILY_WEATHER_SUMMARY now has six rows, one per day and ZIP code. Two of those r
 **With the Snowflake CLI:**
 
 ```bash
-snow sql -f scripts/02_post_deploy.sql
+snow sql -f scripts/03_post_deploy.sql
 ```
 
 <!-- ------------------------ -->
 ## Watch the Alert Fire
 
-A pipeline that only ever succeeds doesn't test its alert. Open scripts/03_force_failure.sql and run the whole script. It takes about four minutes, most of it waiting.
+A pipeline that only ever succeeds doesn't test its alert. Open scripts/04_force_failure.sql and run the whole script. It takes about four minutes, most of it waiting.
 
 Section 1 sends the graph a sensor glitch: a reading with an average temperature of one billion degrees, for a ZIP code, 99999, that no other reading uses. DAILY_WEATHER_SUMMARY stores AVG_TEMP_IN_F as NUMBER(10,1), which can't hold that value.
 
@@ -422,13 +437,13 @@ The alert has no successful scheduled run yet, so it looks at the last hour, the
 
 ![Alert history showing TASK_ERROR_RATE as TRIGGERED](assets/alert_history.png)
 
-Screenshot placeholder: the 03_force_failure.sql worksheet result for the ALERT_HISTORY query, with TASK_ERROR_RATE in state TRIGGERED.
+Screenshot placeholder: the 04_force_failure.sql worksheet result for the ALERT_HISTORY query, with TASK_ERROR_RATE in state TRIGGERED.
 
 Check your inbox for the email from Snowflake about TASK_ERROR_RATE.
 
 ![Alert email in the inbox](assets/alert_email.png)
 
-Screenshot placeholder: the TASK_ERROR_RATE alert email as received at alert_email, opened, right after running 03_force_failure.sql.
+Screenshot placeholder: the TASK_ERROR_RATE alert email as received at alert_email, opened, right after running 04_force_failure.sql.
 
 If the alert history shows CONDITION_FAILED or ACTION_FAILED instead, read SQL_ERROR_MESSAGE. The usual causes are a missing grant from section 3 of 01_pre_deploy.sql, an alert_email that isn't the verified address of a user in the account, or events that hadn't arrived yet; in that case run EXECUTE ALERT again a minute later.
 
@@ -437,7 +452,7 @@ Section 4 removes the broken reading from RAW_WEATHER_DATA, so the next run succ
 **With the Snowflake CLI:**
 
 ```bash
-snow sql -f scripts/03_force_failure.sql
+snow sql -f scripts/04_force_failure.sql
 ```
 
 <!-- ------------------------ -->
@@ -519,7 +534,7 @@ The graph and the alert are started the whole time.
 
 ### Verify the Committed Version
 
-Open scripts/04_verify_change.sql and run the whole script. Like 02_post_deploy.sql, it waits for its graph run, and running it again changes nothing.
+Open scripts/05_verify_change.sql and run the whole script. Like 03_post_deploy.sql, it waits for its graph run, and running it again changes nothing.
 
 SHOW TASK GRAPHS reports the graph as STARTED, has_pending_changes as false, and last_suspended_on as empty: the graph was never suspended during the deployment. Its task_defaults now show the 300000 ms timeout. SHOW ALERTS still reports TASK_ERROR_RATE as started: the redeploy didn't suspend the alert you resumed after the first deploy.
 
@@ -563,7 +578,7 @@ Removing a task works the same way. If you comment the branch out again and rede
 **With the Snowflake CLI:**
 
 ```bash
-snow sql -f scripts/04_verify_change.sql
+snow sql -f scripts/05_verify_change.sql
 ```
 
 <!-- ------------------------ -->
@@ -571,11 +586,11 @@ snow sql -f scripts/04_verify_change.sql
 
 Before tearing anything down, know that there is a gentler option. DROP DCM PROJECT on its own, without a `PURGE` first, removes the project and its deployment history and leaves every entity, grant and attachment in place as an ordinary unmanaged object. To release a single entity, call SYSTEM$UNMANAGE_ENTITY_FROM_DCM_PROJECT with its type and name; to release grants or attachments, pass the rendered statements to SYSTEM$UNMANAGE_FROM_DCM_PROJECT. Then remove the matching statements from your definitions, or the next deploy takes them back.
 
-When you're done, open scripts/05_cleanup.sql and run it as DCM_DEVELOPER. It can't be undone.
+When you're done, open scripts/06_cleanup.sql and run it as DCM_DEVELOPER. It can't be undone.
 
 1. **Purge the project.** `PURGE` drops every entity the project manages: the warehouse, the database with its tables and their data, the task graph and its members, and the alert.
 2. **Drop the project object.** `PURGE` leaves the project object behind, so DROP DCM PROJECT follows.
-3. **Objects created outside the project.** The email integration came from 01_pre_deploy.sql, so `PURGE` doesn't touch it. Only this guide uses it, and DCM_DEVELOPER owns it, so the script drops it.
+3. **Objects created outside the project.** The email integration came from 02_guide_setup.sql, so `PURGE` doesn't touch it. Only this guide uses it, and DCM_DEVELOPER owns it, so the script drops it.
 4. **Series-shared objects, left commented.** The DCM_DEMO database, its PROJECTS schema and the DCM_DEVELOPER role are shared by every guide in the series, so the script leaves them in place, commented out, with the drops running as ACCOUNTADMIN, which owns the container. Check what else is in the shared schema before you drop them:
 
     ```sql
@@ -592,7 +607,7 @@ When you're done, open scripts/05_cleanup.sql and run it as DCM_DEVELOPER. It ca
 **With the Snowflake CLI:**
 
 ```bash
-snow sql -f scripts/05_cleanup.sql
+snow sql -f scripts/06_cleanup.sql
 ```
 
 <!-- ------------------------ -->
