@@ -57,9 +57,10 @@ DCM_Projects_Governance/ is the DCM Project itself. scripts/ holds numbered SQL 
 | File | When to run |
 |---|---|
 | scripts/01_pre_deploy.sql | Once, before the first plan |
-| scripts/02_post_deploy.sql | After the first successful deploy |
-| scripts/03_verify_change.sql | After the second deploy |
-| scripts/04_cleanup.sql | When you are finished |
+| scripts/02_guide_setup.sql | Once, after 01_pre_deploy.sql and before the first plan |
+| scripts/03_post_deploy.sql | After the first successful deploy |
+| scripts/04_verify_change.sql | After the second deploy |
+| scripts/05_cleanup.sql | When you are finished |
 
 Every operational step in this guide is given twice: once for Snowsight, and once for the [Snowflake CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli/installation/installation) if you would rather drive the project from a terminal against your own copy of the repository.
 
@@ -73,23 +74,25 @@ cd snowflake-dcm-projects/Quickstarts/govern-data-with-snowflake-dcm-projects
 <!-- ------------------------ -->
 ## Set Up Roles and Permissions
 
-Open scripts/01_pre_deploy.sql in a Snowsight worksheet and run it as ACCOUNTADMIN, section by section. It has seven sections.
+Run the first script. **In Snowsight:** open scripts/01_pre_deploy.sql in a worksheet and run it from top to bottom. **With the Snowflake CLI:**
 
-**1. Role.** It creates DCM_DEVELOPER and grants it to you and to SYSADMIN.
-
-```sql
-USE ROLE ACCOUNTADMIN;
-
-CREATE ROLE IF NOT EXISTS DCM_DEVELOPER
-    COMMENT = 'Owns and deploys the DCM Projects quickstart projects';
-SET MY_USER = CURRENT_USER();
-GRANT ROLE DCM_DEVELOPER TO USER IDENTIFIER($MY_USER);
-GRANT ROLE DCM_DEVELOPER TO ROLE SYSADMIN;
+```bash
+snow sql -f scripts/01_pre_deploy.sql
 ```
 
-DCM_DEVELOPER owns the project and everything it deploys. Every guide in this series uses the same role.
+The script is the same in every guide of this series. It runs as ACCOUNTADMIN and is safe to run again: if you already ran it for another guide, running it now changes nothing. It has six numbered sections.
+
+**1. Role.** It creates the DCM_DEVELOPER role and grants it to you and to SYSADMIN. Every guide in this series uses this role as the project owner.
 
 **2. Inherited grants opt-in.** It turns on inherited grants for the account.
+
+**3. Account-level privileges.** A project cannot grant account-level privileges to its own owner, so they all happen here, before the first plan. DCM_DEVELOPER gets the privileges that the guides in this series need together, one grant per line, each with a comment naming the guide or feature that uses it. Some are checked at plan time, so a missing one fails the first plan rather than the deploy.
+
+**4. Series container.** It creates the DCM_DEMO database and the DCM_DEMO.PROJECTS schema that holds the project objects of the series, and grants DCM_DEVELOPER USAGE on both and CREATE DCM PROJECT on the schema. A project cannot define the database or schema it lives in.
+
+**5. Project object (alternative path only).** Commented out. The first plan creates the project object for you; the SQL is there if the prompt does not appear, or if you prefer to create it yourself.
+
+**6. Values for the manifest.** The last query returns your account identifier and user name.
 
 **Inherited grants.** An inherited grant covers current *and* future objects of a type inside a container. GRANT ON ALL snapshots what exists right now; GRANT ON FUTURE covers only what comes later. An inherited grant covers both, as one grant rather than one per object, which is why it is the recommended pattern in DCM Projects. It is a one-time opt-in per account ([release note](https://docs.snowflake.com/en/release-notes/2026/other/2026-09-10-inherited-grants-ga)), which the setup script turns on:
 
@@ -97,50 +100,25 @@ DCM_DEVELOPER owns the project and everything it deploys. Every guide in this se
 ALTER ACCOUNT SET FEATURE_RBAC_INHERITED_GRANTS = 'ENABLED';
 ```
 
-An inherited grant cannot be combined with WITH GRANT OPTION, `CASCADE` or `RESTRICT`. This project uses two of them, to let the analyst role read every table and view in the demo database.
+An inherited grant cannot be combined with WITH GRANT OPTION, `CASCADE` or `RESTRICT`.
 
-**3. Account-level privileges.** A project cannot grant account-level privileges to its own owner, so they all happen here, before the first plan. The script grants DCM_DEVELOPER the privileges the guides in this series use, one per line, each with a comment saying what it buys, so one run prepares you for all of them. The last block is specific to this guide:
+This project uses two of them, to let the analyst role read every table and view in the demo database.
 
-```sql
-GRANT APPLY MASKING POLICY ON ACCOUNT TO ROLE DCM_DEVELOPER;
+The governance grants at the end of section 3 are there for this guide. Network policies are account-level objects, so creating one needs CREATE NETWORK POLICY, and setting an authentication policy on a user needs APPLY AUTHENTICATION POLICY. DCM_DEVELOPER owns the tags and policies it deploys and the table they protect, and ownership is enough for DCM to attach them, so the script grants no APPLY TAG or APPLY ROW ACCESS POLICY. APPLY MASKING POLICY is there for one statement: the post-deploy script sets a masking policy on a tag, which needs it at the account level.
 
-GRANT CREATE NETWORK POLICY ON ACCOUNT TO ROLE DCM_DEVELOPER;
-GRANT ATTACH POLICY         ON ACCOUNT TO ROLE DCM_DEVELOPER;
-GRANT APPLICATION ROLE SNOWFLAKE.NETWORK_SECURITY_ADMIN TO ROLE DCM_DEVELOPER;
+Open DCM_Projects_Governance/manifest.yml and paste the account identifier into the account_identifier line of the DCM_DEV target (line 11), which carries the comment "update to your account names".
 
-GRANT APPLY AUTHENTICATION POLICY ON ACCOUNT TO ROLE DCM_DEVELOPER;
+### Create the Demo Service User
+
+Run the second script, still before the first plan. **In Snowsight:** open scripts/02_guide_setup.sql in a worksheet and run it. **With the Snowflake CLI:**
+
+```bash
+snow sql -f scripts/02_guide_setup.sql
 ```
 
-Network policies are account-level objects, so creating one needs CREATE NETWORK POLICY, and setting an authentication policy on a user needs APPLY AUTHENTICATION POLICY. DCM_DEVELOPER owns the tags and policies it deploys and the table they protect, and ownership is enough for DCM to attach them, so the script grants no APPLY TAG or APPLY ROW ACCESS POLICY. APPLY MASKING POLICY is there for one statement: the post-deploy script sets a masking policy on a tag, which needs it at the account level.
-
-**4. Series container.** It creates the shared DCM_DEMO.PROJECTS schema and lets DCM_DEVELOPER create project objects in it.
-
-```sql
-CREATE DATABASE IF NOT EXISTS DCM_DEMO
-    COMMENT = 'Holds the DCM Project objects of the DCM Projects quickstarts';
-CREATE SCHEMA IF NOT EXISTS DCM_DEMO.PROJECTS
-    COMMENT = 'DCM Project objects of the DCM Projects quickstarts';
-GRANT USAGE ON DATABASE DCM_DEMO TO ROLE DCM_DEVELOPER;
-GRANT USAGE ON SCHEMA DCM_DEMO.PROJECTS TO ROLE DCM_DEVELOPER;
-GRANT CREATE DCM PROJECT ON SCHEMA DCM_DEMO.PROJECTS TO ROLE DCM_DEVELOPER;
-```
-
-Every guide in this series keeps its DCM Project object in DCM_DEMO.PROJECTS. The project itself defines a separate database, DCM_DEMO_5_DEV, for the governance demo: a project cannot define the database or schema it lives in.
-
-**5. Objects the project cannot own.** The demo service user. Users are account-level objects outside any DCM Project. The post-deploy script sets the network and authentication policies on this user, and owning the user is what lets DCM_DEVELOPER set its network policy:
-
-```sql
-CREATE USER IF NOT EXISTS DCM_DEMO_5_DEV_SVC
-    TYPE = SERVICE
-    COMMENT = 'Demo service user for the Govern Data with DCM Projects quickstart; target of the demo network and authentication policies';
-GRANT OWNERSHIP ON USER DCM_DEMO_5_DEV_SVC TO ROLE DCM_DEVELOPER COPY CURRENT GRANTS;
-```
+As ACCOUNTADMIN, it creates DCM_DEMO_5_DEV_SVC, a service user, and makes DCM_DEVELOPER its owner. Users are account-level objects outside any DCM Project, and owning the user is what lets DCM_DEVELOPER set its network policy. The post-deploy script sets the demo network and authentication policies on this user. The script is safe to run again.
 
 **Set the demo policies only on this service user.** Don't set them on your own user or on the account: a network policy set at the account level applies to every user and can lock you out.
-
-**6. Project object (alternative path only).** Section 6 is commented out. The first plan creates the DCM Project object for you, so you only need it if you would rather create the object yourself.
-
-**7. Values for the manifest.** The last query returns ACCOUNT_IDENTIFIER and USER_NAME. Open DCM_Projects_Governance/manifest.yml and paste the account identifier into the account_identifier line of the DCM_DEV target (line 11), which carries the comment "update to your account names".
 
 <!-- ------------------------ -->
 ## Explore the Project Files
@@ -215,7 +193,7 @@ A table has at most one row access policy, and the row access policy attachment 
 
 governance.sql also defines a network rule and policy and an authentication policy. DCM creates them, and the post-deploy script sets both on the demo service user, so account-security objects are version-controlled too.
 
-Two kinds of association are still made outside DCM, in 02_post_deploy.sql. DCM owns the tag and policy definitions in both cases:
+Two kinds of association are still made outside DCM, in 03_post_deploy.sql. DCM owns the tag and policy definitions in both cases:
 
 - **Tag-based masking:** setting a masking policy on a tag, with ALTER TAG.
 - **Network and authentication policies on a user or the account:** setting them with ALTER USER or ALTER ACCOUNT.
@@ -269,7 +247,7 @@ After the deployment, open the CUSTOMER table in the catalog and select the **Ac
 <!-- ------------------------ -->
 ## Apply Governance and Load Data
 
-Open scripts/02_post_deploy.sql and run it as DCM_DEVELOPER. It seeds sample PII data, makes the two associations that DCM doesn't make, and grants you the restricted analyst role. The masking and row access policies are already in force: DCM attached them during the deployment.
+Open scripts/03_post_deploy.sql and run it as DCM_DEVELOPER. It seeds sample PII data, makes the two associations that DCM doesn't make, and grants you the restricted analyst role. The masking and row access policies are already in force: DCM attached them during the deployment.
 
 Every USE ROLE in the script is followed by USE WAREHOUSE, selecting the warehouse the project just created. Your user's default warehouse is usually not granted to these roles, so right after USE ROLE no warehouse is active and the first query would fail.
 
@@ -396,7 +374,7 @@ snow dcm deploy --target DCM_DEV --role DCM_DEVELOPER --alias widen-to-uk
 
 ### Verify as the Analyst
 
-Open scripts/03_verify_change.sql and run it. There is nothing to refresh: a row access policy is evaluated when the query runs, so the next query already sees the new body.
+Open scripts/04_verify_change.sql and run it. There is nothing to refresh: a row access policy is evaluated when the query runs, so the next query already sees the new body.
 
 ```sql
 USE ROLE DCM_DEMO_5_DEV_ANALYST;
@@ -412,7 +390,7 @@ SELECT CUSTOMER_ID, FIRST_NAME, EMAIL, COUNTRY FROM DCM_DEMO_5_DEV.RAW.CUSTOMER 
 | 4 | David | *****@example.com | USA |
 
 ![The analyst role now sees USA and UK rows, emails still masked](assets/analyst_uk.png)
-Screenshot placeholder: the analyst query in 03_verify_change.sql after the second deploy, four rows including Chloe (UK) with a masked email.
+Screenshot placeholder: the analyst query in 04_verify_change.sql after the second deploy, four rows including Chloe (UK) with a masked email.
 
 Chloe now appears, and her email is still masked: the row access policy changed, the masking policy did not. The script's last statement, DESCRIBE ROW ACCESS POLICY, shows the deployed body with the new IN list.
 
@@ -421,7 +399,7 @@ Chloe now appears, and her email is still masked: the row access policy changed,
 
 Before tearing anything down, know that there is a gentler option. DROP DCM PROJECT on its own, without a `PURGE` first, removes the project and its deployment history and leaves every entity, grant and attachment in place as an ordinary unmanaged object. To release a single entity, call SYSTEM$UNMANAGE_ENTITY_FROM_DCM_PROJECT with its type and name; to release grants or attachments, pass the rendered statements to SYSTEM$UNMANAGE_FROM_DCM_PROJECT. Then remove the matching statements from your definitions, or the next deploy takes them back.
 
-When you're done, open scripts/04_cleanup.sql and run it as DCM_DEVELOPER. In order, it:
+When you're done, open scripts/05_cleanup.sql and run it as DCM_DEVELOPER. In order, it:
 
 1. **Remove the associations made outside DCM.** The post-deploy script made these with ALTER statements, so `PURGE` doesn't know about them. A network policy can't be dropped while it is set on a user, and `PURGE` fails on a masking policy that is still set on a tag, so they go first.
 
