@@ -237,6 +237,9 @@ wh_roles_and_grants.sql is one loop over the teams in the manifest:
     DEFINE DATABASE DCM_DEMO_2_{{team_name}}{{env_suffix}}
         COMMENT = 'Database owned by the {{team.name}} team';
 
+    DEFINE SCHEMA DCM_DEMO_2_{{team_name}}{{env_suffix}}.PUBLIC
+        COMMENT = 'Default schema, declared so DCM manages it';
+
     DEFINE SCHEMA DCM_DEMO_2_{{team_name}}{{env_suffix}}.PROJECTS
         COMMENT = 'Hosts the DCM projects of the {{team.name}} team';
 
@@ -311,7 +314,7 @@ Screenshot placeholder: the Platform plan result listing 20 CREATE operations an
 | Operation | Entities |
 |---|---|
 | CREATE DATABASE | DCM_DEMO_2_DEV, DCM_DEMO_2_FINANCE_DEV, DCM_DEMO_2_MARKETING_DEV |
-| CREATE SCHEMA | RAW, both PROJECTS schemas, and the PUBLIC schema of each new database |
+| CREATE SCHEMA | RAW, both PROJECTS schemas, and PUBLIC in each of the three databases |
 | CREATE TABLE | ACCOUNT_STG, CUSTOMER_STG, TRADE_STG |
 | CREATE STAGE, FILE_FORMAT, TASK | DCM_SAMPLE_DATA, CSV_FORMAT, LOAD_NEW_DATA |
 | CREATE WAREHOUSE | DCM_DEMO_2_PLATFORM_WH_DEV, DCM_DEMO_2_FINANCE_WH_DEV, DCM_DEMO_2_MARKETING_WH_DEV |
