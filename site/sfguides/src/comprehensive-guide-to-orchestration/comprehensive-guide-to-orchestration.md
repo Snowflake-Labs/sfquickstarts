@@ -31,7 +31,7 @@ Screenshot placeholder: diagram of the four orchestration choices (dynamic table
 - The **task graph object**: what it owns, its three kinds of settings, how membership works, and overlap policy
 - **Versioning**: staged edits, `COMMIT` and `REVERT`, and how in-flight runs behave
 - **Control flow**: advanced branching, finalizers, configuration, return values and runtime information
-- **Operations**: notifications, monitoring, security and cost
+- **Operations**: notifications, alert templates, monitoring, security and cost
 - **Authoring surfaces**: SQL, DCM projects and Pipeline Builder, plus how to migrate an existing root-task graph
 - How to orchestrate **dynamic tables and stored procedures** from a task graph
 
@@ -39,6 +39,7 @@ Screenshot placeholder: diagram of the four orchestration choices (dynamic table
 
 - A Snowflake account and a role that can create a database, a warehouse and tasks
 - The account-level EXECUTE TASK privilege, plus EXECUTE MANAGED TASK if you want serverless tasks
+- For the alert template snippet, the alert privileges listed in that section
 - Familiarity with basic SQL
 
 The snippets are illustrative, not a script to run top to bottom. They assume a scratch schema and a warehouse like the ones below; every object uses a DEMO_ prefix so it's easy to find and drop.
@@ -56,6 +57,8 @@ CREATE WAREHOUSE IF NOT EXISTS DEMO_WH WAREHOUSE_SIZE = 'XSMALL' AUTO_SUSPEND = 
 ```
 
 Later snippets refer to a few small tables (DEMO_RAW_ORDERS, DEMO_ORDERS_CLEAN, DEMO_RUN_LOG), a stream on the raw table, a dynamic table and a stored procedure. Create your own versions if you want to try a snippet.
+
+The whole guide works with three tasks: DEMO_T_EXTRACT, DEMO_T_TRANSFORM and DEMO_T_FINALIZE. When a snippet shows a new idea, it redefines one of them rather than adding another task.
 
 <!-- ------------------------ -->
 ## Choose the Right Primitive
@@ -92,8 +95,10 @@ Serverless tasks bill for the compute they actually use and suit stable workload
 
 On a serverless task, `TARGET_COMPLETION_INTERVAL` sets how soon a run should finish. Snowflake scales resources to meet it, and ignores it once the task is already at its largest size. You can also bound the size with `SERVERLESS_TASK_MIN_STATEMENT_SIZE` and `SERVERLESS_TASK_MAX_STATEMENT_SIZE`.
 
+The snippets in this section are three versions of one standalone task, DEMO_T_EXTRACT, which later becomes the root of a graph.
+
 ```sql
-CREATE OR REPLACE TASK DEMO_NIGHTLY_LOAD
+CREATE OR REPLACE TASK DEMO_T_EXTRACT
   SCHEDULE = 'USING CRON 15 2 * * * UTC'
   TARGET_COMPLETION_INTERVAL = '60 MINUTE'
   SERVERLESS_TASK_MAX_STATEMENT_SIZE = 'LARGE'
@@ -120,12 +125,12 @@ When the condition is `SYSTEM$STREAM_HAS_DATA` and there's no schedule, you have
 A few behaviours to know:
 
 - A serverless triggered task needs `TARGET_COMPLETION_INTERVAL`. A warehouse triggered task names its warehouse instead.
-- Triggered tasks run at most every 30 seconds by default. You can lower that to 10 seconds with the USER_TASK_MINIMUM_TRIGGER_INTERVAL_IN_SECONDS parameter.
+- Triggered tasks run at most every 30 seconds by default. You can lower that to 10 seconds with the `USER_TASK_MINIMUM_TRIGGER_INTERVAL_IN_SECONDS` parameter.
 - If a triggered task hasn't run for 12 hours, Snowflake schedules a health check to stop the stream going stale.
 - You can combine a schedule with a stream condition to check for data on a fixed cadence instead.
 
 ```sql
-CREATE OR REPLACE TASK DEMO_PROCESS_NEW_ORDERS
+CREATE OR REPLACE TASK DEMO_T_EXTRACT
   TARGET_COMPLETION_INTERVAL = '15 MINUTES'
   COMMENT = 'Demo: serverless triggered task'
   WHEN SYSTEM$STREAM_HAS_DATA('DEMO_ORDERS_STREAM')
@@ -147,7 +152,7 @@ Three settings decide what happens when things go wrong:
 A task also accepts any session parameter, such as `TIMEZONE` or `TIMESTAMP_INPUT_FORMAT`, set directly on the task. Account and user parameters aren't supported.
 
 ```sql
-CREATE OR REPLACE TASK DEMO_HOURLY_ROLLUP
+CREATE OR REPLACE TASK DEMO_T_EXTRACT
   WAREHOUSE = DEMO_WH
   SCHEDULE = '60 MINUTE'
   USER_TASK_TIMEOUT_MS = 600000
@@ -290,15 +295,15 @@ ALTER TASK GRAPH DEMO_ORDERS_PIPELINE COMMIT;
 
 `TASK_GRAPH_CHANGES` returns one row per added, removed or changed entity, with the DDL before and after the change. It needs the graph to have been committed at least once. If you change your mind, REVERT instead of COMMIT. Member tasks that were added but never committed are disconnected from the graph, not dropped.
 
-Member edits work the same way. Use CREATE OR ALTER TASK or ALTER TASK on a member and the change is staged with everything else:
+Member edits work the same way. Use CREATE OR ALTER TASK or ALTER TASK on a member and the change is staged with everything else. Here the transform step gets a longer timeout than the graph default:
 
 ```sql
-CREATE OR ALTER TASK DEMO_T_PUBLISH
-  WAREHOUSE = DEMO_WH
-  COMMENT = 'Demo publish step on a dedicated warehouse'
-  AFTER DEMO_T_TRANSFORM
+CREATE OR ALTER TASK DEMO_T_TRANSFORM
+  USER_TASK_TIMEOUT_MS = 1800000
+  COMMENT = 'Demo transform step with a longer timeout'
+  AFTER DEMO_T_EXTRACT
 AS
-  CALL DEMO_PUBLISH_SNAPSHOT();
+  ALTER DYNAMIC TABLE DEMO_ORDERS_DAILY REFRESH;
 ```
 
 ### Staged versus committed, side by side
@@ -316,12 +321,14 @@ The documentation says a task in the graph's committed version can't be dropped 
 **Don't suspend the graph to get around it.** The error suggests suspending, but on a suspended graph both the drop and a CREATE OR REPLACE of the member go through, and the graph's committed version is discarded with them. Remove a member in three steps instead, which works while the graph keeps running: sever it, commit, then drop it.
 
 ```sql
-ALTER TASK DEMO_T_PUBLISH REMOVE AFTER DEMO_T_TRANSFORM;
+ALTER TASK DEMO_T_TRANSFORM REMOVE AFTER DEMO_T_EXTRACT;
 
 ALTER TASK GRAPH DEMO_ORDERS_PIPELINE COMMIT;
 
-DROP TASK DEMO_T_PUBLISH;
+DROP TASK DEMO_T_TRANSFORM;
 ```
+
+The next section adds the transform step back with CREATE OR ALTER TASK and an AFTER clause.
 
 This is also why member edits use CREATE OR ALTER TASK or ALTER TASK rather than CREATE OR REPLACE: altering keeps the task in the graph and stages the change, while replacing it is rejected on a running graph. Every member snippet from here on uses CREATE OR ALTER TASK for that reason.
 
@@ -341,29 +348,33 @@ Advanced branching lets a child run on other outcomes. Call one of two functions
 - `SYSTEM$PREDECESSORS_STATE` tests all of the task's predecessors against a condition such as ALL_SUCCEEDED, ALL_FAILED, ALL_DONE, AT_LEAST_ONE_FAILED or NONE_FAILED_MIN_ONE_SUCCEEDED. You can call it only from a child task.
 - `SYSTEM$TASK_COMPLETION_STATE` returns the state one named task finished in: SUCCEEDED, FAILED, SKIPPED, CANCELLED, or NOT_EXECUTED if it hasn't finished yet. You can call it from a child or the finalizer. Pass the bare, uppercase task name, and branch only on a direct or indirect predecessor if you want a deterministic answer.
 
-A fallback that runs only when the transform failed looks like this:
+The two snippets below are alternative definitions of the transform step, and both still refresh the daily table. As a fallback that runs only when the extract failed, it refreshes from the rows already loaded and records why:
 
 ```sql
-CREATE OR ALTER TASK DEMO_T_FALLBACK
-  COMMENT = 'Demo: runs only when the transform failed'
-  AFTER DEMO_T_TRANSFORM
+CREATE OR ALTER TASK DEMO_T_TRANSFORM
+  COMMENT = 'Demo: refresh from existing rows when the extract failed'
+  AFTER DEMO_T_EXTRACT
   WHEN SYSTEM$PREDECESSORS_STATE('ALL_FAILED')
 AS
+BEGIN
+  ALTER DYNAMIC TABLE DEMO_ORDERS_DAILY REFRESH;
   INSERT INTO DEMO_RUN_LOG
-  VALUES ('DEMO_ORDERS_PIPELINE', 'FALLBACK', 'Transform failed', CURRENT_TIMESTAMP());
+  VALUES ('DEMO_ORDERS_PIPELINE', 'FALLBACK', 'Extract failed; refreshed from existing rows', CURRENT_TIMESTAMP());
+END;
 ```
 
-You can combine the functions with each other and with other `WHEN` expressions, such as a stream check or a predecessor's return value. The task runs only when the whole expression is true:
+This works on the root: in this guide's test run, a child with ALL_FAILED ran when the root task itself failed. In a real graph you would usually keep the normal transform and add a separate fallback task beside it; here the transform is redefined to keep the graph at three tasks.
+
+You can combine the functions with each other and with other `WHEN` expressions, such as a stream check or a predecessor's return value. The task runs only when the whole expression is true. This version refreshes once the extract has finished, whether it succeeded or failed, but only if new orders are waiting:
 
 ```sql
-CREATE OR ALTER TASK DEMO_T_REPORT
-  COMMENT = 'Demo: report after the transform settles, unless extract was skipped'
-  AFTER DEMO_T_TRANSFORM
+CREATE OR ALTER TASK DEMO_T_TRANSFORM
+  COMMENT = 'Demo: refresh after the extract settles, if new orders arrived'
+  AFTER DEMO_T_EXTRACT
   WHEN SYSTEM$PREDECESSORS_STATE('ALL_DONE')
-   AND SYSTEM$TASK_COMPLETION_STATE('DEMO_T_EXTRACT') != 'SKIPPED'
+   AND SYSTEM$STREAM_HAS_DATA('DEMO_ORDERS_STREAM')
 AS
-  INSERT INTO DEMO_RUN_LOG
-  VALUES ('DEMO_ORDERS_PIPELINE', 'REPORTED', NULL, CURRENT_TIMESTAMP());
+  ALTER DYNAMIC TABLE DEMO_ORDERS_DAILY REFRESH;
 ```
 
 Three rules change once any task in a graph uses either function:
@@ -376,9 +387,9 @@ If the root is skipped or cancelled, nothing else runs, with or without branchin
 
 Retries change too. A retry starts from the earliest failed tasks, those with no failed ancestors. Snowflake then re-evaluates successors using the states their predecessors reached across all attempts, so a task that was skipped on the first attempt can run on the retry.
 
-![A graph with a success path and a fallback path that runs only when a step fails](assets/advanced_branching.png)
+![A child task that runs only when its predecessor fails](assets/advanced_branching.png)
 
-Screenshot placeholder: diagram of a transform task with two children, a publish task on ALL_SUCCEEDED and a fallback task on ALL_FAILED, with the fallback highlighted on a failed run.
+Screenshot placeholder: diagram of DEMO_T_EXTRACT and DEMO_T_TRANSFORM, with the transform's WHEN clause set to SYSTEM$PREDECESSORS_STATE('ALL_FAILED'); on a successful run the transform is SKIPPED, on a failed run it runs and is highlighted.
 
 ### The finalizer
 
@@ -441,6 +452,46 @@ ALTER TASK GRAPH DEMO_ORDERS_PIPELINE SET ERROR_INTEGRATION = DEMO_PIPELINE_ALER
 ```
 
 This assumes a notification integration named DEMO_PIPELINE_ALERTS already exists. For anything richer than "tell me when it fails", such as a custom message or a summary of every step, have the finalizer send it.
+
+### Alerts from templates
+
+To watch for patterns across runs rather than single failures, create an alert from a template. An alert template is a ready-made condition and action that Snowflake renders into an alert from a few parameters in TEMPLATE_PARAMS, so you write no monitoring query yourself. Two templates cover tasks:
+
+- TASKS_ERROR_RATE fires when the share of failed task runs in an account, database or schema passes a threshold.
+- TASK_LONG_RUNNING fires when a run of one named task takes more than a multiple (3 by default) of its historical average. It requires TASK_NAME, supports account scope only, and reads ACCOUNT_USAGE.TASK_HISTORY.
+
+SYSTEM$LIST_ALERT_TEMPLATES lists the templates your account offers, and SYSTEM$GET_ALERT_TEMPLATE shows each one's variables, defaults and allowed values.
+
+Before you create one, check three things:
+
+- **Task events must be logged.** The alert reads task events, so set LOG_EVENT_LEVEL on the database, schema or tasks it watches, for example ALTER SCHEMA DEMO_ORCHESTRATION.DEMO SET LOG_EVENT_LEVEL = INFO. LOG_LEVEL in the graph's defaults is a different parameter.
+- **The alert owner role needs privileges.** It needs USAGE on the database and schema, CREATE ALERT on the schema, EXECUTE ALERT on the account, and EXECUTE MANAGED ALERT on the account for a serverless alert (or USAGE on a warehouse). It also needs the application role SNOWFLAKE.EVENTS_VIEWER, granted with GRANT APPLICATION ROLE, and USAGE on the email integration. Create doesn't check that last grant; the send fails later with error 394225.
+- **The alert sees only tasks its owner can see.** It counts only tasks owned by roles that its owner role holds.
+
+Set the email integration in two places: as the EMAIL_NOTIFICATION_INTEGRATION variable and in notification_config, together with the recipients. In this guide's test run, with the integration only in notification_config, the rendered alert had no integration and would have emailed its creator instead of the listed recipients.
+
+```sql
+CREATE OR ALTER ALERT DEMO_TASK_ERROR_RATE_ALERT
+  FROM TEMPLATE TASKS_ERROR_RATE
+  SCHEDULE = '30 MINUTE'
+  COMMENT = 'Demo: email when more than 20 percent of task runs in the demo schema fail'
+  TEMPLATE_PARAMS = '{
+    "template_variables": {
+      "ERROR_RATE_THRESHOLD": 0.2,
+      "SCOPE_ACTIVE": "SCHEMA",
+      "SCOPE_DATABASE": "DEMO_ORCHESTRATION",
+      "SCOPE_SCHEMA": "DEMO",
+      "NOTIFICATION_MODE": "EMAIL",
+      "EMAIL_NOTIFICATION_INTEGRATION": "DEMO_PIPELINE_ALERTS"
+    },
+    "notification_config": {
+      "notification_integration": "DEMO_PIPELINE_ALERTS",
+      "email_config": { "toAddress": ["oncall@example.com"] }
+    }
+  }';
+```
+
+The alert is created suspended; RESUME it to start the schedule. To test it without waiting for the schedule, run EXECUTE ALERT DEMO_TASK_ERROR_RATE_ALERT. Here DEMO_PIPELINE_ALERTS must be an email notification integration. This alert is serverless; add WAREHOUSE = DEMO_WH to run it on the warehouse instead. CREATE OR ALTER re-applies TEMPLATE_PARAMS in full, so any variable you leave out resets to its default.
 
 ### Monitoring
 
@@ -564,6 +615,8 @@ See [Getting Started with Pipeline Builder](https://www.snowflake.com/en/develop
 
 If you already have a graph defined by its root task, you don't rebuild the members. A task graph object sits over tasks that are already connected by `AFTER`, so migrating means moving the graph-level settings off the tasks and onto a new graph object.
 
+Suppose DEMO_T_EXTRACT and DEMO_T_FINALIZE had started life as a root-task graph, with the schedule on the root and FINALIZE on the finalizer. If you tried the earlier snippets, these tasks already belong to DEMO_ORDERS_PIPELINE, so try this in a fresh schema or after dropping that graph.
+
 1. **Suspend the root task.** In a root-task graph, the root must be suspended before you modify any of its tasks.
 2. **Move the graph-level settings off the root.** Unset the root's schedule and any overlap, integration, configuration, retry or suspend settings. A task graph object rejects a root that still carries them.
 3. **Unlink the finalizer.** Unset `FINALIZE` on the finalizer task, because the graph object names its finalizer with `FINALIZER` instead.
@@ -571,21 +624,21 @@ If you already have a graph defined by its root task, you don't rebuild the memb
 5. **Commit and resume** the graph.
 
 ```sql
-ALTER TASK DEMO_LEGACY_ROOT UNSET SCHEDULE, SUSPEND_TASK_AFTER_NUM_FAILURES;
+ALTER TASK DEMO_T_EXTRACT UNSET SCHEDULE, SUSPEND_TASK_AFTER_NUM_FAILURES;
 
-ALTER TASK DEMO_LEGACY_FINALIZER UNSET FINALIZE;
+ALTER TASK DEMO_T_FINALIZE UNSET FINALIZE;
 ```
 
 ```sql
-CREATE TASK GRAPH DEMO_LEGACY_PIPELINE
+CREATE TASK GRAPH DEMO_ORDERS_PIPELINE
   SCHEDULE = '60 MINUTE'
-  ROOTS = ( DEMO_LEGACY_ROOT )
-  FINALIZER = DEMO_LEGACY_FINALIZER
+  ROOTS = ( DEMO_T_EXTRACT )
+  FINALIZER = DEMO_T_FINALIZE
   SUSPEND_TASK_AFTER_NUM_FAILURES = 3
   COMMENT = 'Demo: migrated from a root-task graph'
   TASK_DEFAULTS ( WAREHOUSE = DEMO_WH );
 
-ALTER TASK GRAPH DEMO_LEGACY_PIPELINE COMMIT;
+ALTER TASK GRAPH DEMO_ORDERS_PIPELINE COMMIT;
 ```
 
 After the move, monitor by graph: TASK_HISTORY with the graph id, and COMPLETE_TASK_GRAPHS with the graph name. Filters on the old root task id no longer return the graph's runs.
