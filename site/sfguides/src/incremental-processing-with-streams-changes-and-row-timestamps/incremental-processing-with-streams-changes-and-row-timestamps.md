@@ -17,13 +17,13 @@ Most pipelines don't need to reprocess a whole table every run. They need the ro
 - **The CHANGES clause** is stateless. You ask for the changes between two points in time, and you can ask again for the same window as often as you like.
 - **Row timestamps** stamp every row with the time its last change committed, exposed as the METADATA$ROW_LAST_COMMIT_TIME column. You keep your own watermark and filter on it.
 
-In this guide you build one small order table and load it into a target three times, once with each primitive. Then you change the source (an update, a delete, a new order and a late, backfilled order), run the three loads again and compare the results in one query. Along the way you'll see how a stream behaves when a transaction fails, how streams go stale, why an event-time watermark misses late rows that a commit-time watermark catches, and how to measure latency across a pipeline step.
+In this guide you build one small order table and load it into a target with three primitives plus a naive event-time loader for contrast. Then you change the source (an update, a delete, a new order and a late, backfilled order), run the four loads again and compare the results in one query. Along the way you'll see how a stream behaves when a transaction fails, how streams go stale, why an event-time watermark misses late rows that a commit-time watermark catches, and how to measure latency across a pipeline step.
 
 The core sections need no scheduler. Tasks appear only in the section on triggered tasks; for scheduling and orchestration in general, see the [comprehensive guide to orchestration](/en/developers/guides/comprehensive-guide-to-orchestration/).
 
 ### What You'll Learn
 
-- How standard and append-only streams differ, and how a stream offset advances
+- How standard and append-only change views differ (a stream versus CHANGES with APPEND_ONLY), and how a stream offset advances
 - How to write an exactly-once MERGE that consumes a stream, and what happens to the offset on failure
 - How to read a replayable window of changes with CHANGES, AT, BEFORE and END
 - How to build a commit-time watermark with row timestamps, and why it catches backfilled rows
@@ -34,7 +34,7 @@ The core sections need no scheduler. Tasks appear only in the section on trigger
 
 ### What You'll Build
 
-A source table, DEMO_ORDERS, and four targets loaded from it: one per primitive plus a naive event-time loader for contrast. You'll also build a dbt incremental model and read an Iceberg table incrementally from Spark.
+A source table, DEMO_ORDERS, and one target table that four loaders write into side by side: one loader per primitive plus a naive event-time loader for contrast. You'll also build a dbt incremental model and read an Iceberg table incrementally from Spark.
 
 ### Prerequisites
 
@@ -70,30 +70,34 @@ CREATE OR REPLACE TABLE DEMO_ORDERS (
   COMMENT = 'Source: one row per order, updated in place';
 ```
 
-Next, create four identical targets, one per loading method, and a small state table that the CHANGES and watermark loaders use to remember where they stopped.
+Next, create one target table. Each loader writes its own copy of the orders into it, tagged with the loader's name in the LOADER column, so the results sit side by side. The target has row timestamps too, and a SOURCE_COMMIT_TS column that the latency section uses later. Then create a small state table where each loader records where it stopped and how many rows it saw.
 
 ```sql
-CREATE OR REPLACE TABLE DEMO_ORDERS_BY_STREAM     LIKE DEMO_ORDERS COMMENT = 'Target loaded from a stream';
-CREATE OR REPLACE TABLE DEMO_ORDERS_BY_CHANGES    LIKE DEMO_ORDERS COMMENT = 'Target loaded with CHANGES';
-CREATE OR REPLACE TABLE DEMO_ORDERS_BY_WATERMARK  LIKE DEMO_ORDERS COMMENT = 'Target loaded with a commit-time watermark';
-CREATE OR REPLACE TABLE DEMO_ORDERS_BY_EVENT_TIME LIKE DEMO_ORDERS COMMENT = 'Target loaded with a naive event-time watermark';
+CREATE OR REPLACE TABLE DEMO_ORDERS_TARGET (
+  LOADER           STRING,
+  ORDER_ID         INT,
+  CUSTOMER_ID      INT,
+  STATUS           STRING,
+  AMOUNT           NUMBER(10,2),
+  EVENT_TS         TIMESTAMP_NTZ,
+  SOURCE_COMMIT_TS TIMESTAMP_LTZ
+) ROW_TIMESTAMP = TRUE
+  COMMENT = 'Target: one copy of the orders per loader';
 
-CREATE OR REPLACE TABLE DEMO_LOAD_STATE (LOADER STRING, HIGH_WATER TIMESTAMP_LTZ) COMMENT = 'Where each stateless loader stopped';
+CREATE OR REPLACE TABLE DEMO_LOAD_STATE (LOADER STRING, HIGH_WATER TIMESTAMP_LTZ, ROWS_SEEN INT) COMMENT = 'Where each loader stopped';
 INSERT INTO DEMO_LOAD_STATE VALUES
-  ('CHANGES', CURRENT_TIMESTAMP()),
-  ('WATERMARK', '1970-01-01 00:00:00'::TIMESTAMP_LTZ);
+  ('STREAM', NULL, NULL),
+  ('CHANGES', CURRENT_TIMESTAMP(), NULL),
+  ('WATERMARK', '1970-01-01 00:00:00'::TIMESTAMP_LTZ, NULL);
 SET STATE_ROWS_QUERY = LAST_QUERY_ID();
-
-CREATE OR REPLACE TABLE DEMO_LOAD_LOG (LOADER STRING, ROWS_SEEN INT, LOADED_AT TIMESTAMP_LTZ) COMMENT = 'One row per committed stream load';
 ```
 
-**Note that** the CHANGES loader starts its window at the moment you created the state rows, so it sees every change from here on. The session variable STATE_ROWS_QUERY keeps that statement's query ID for later.
+The CHANGES loader starts its window at the moment you created the state rows, so it sees every change from here on. The session variable STATE_ROWS_QUERY keeps that statement's query ID for later.
 
 Create the stream last, so it starts tracking from this point:
 
 ```sql
-CREATE OR REPLACE STREAM DEMO_ORDERS_STREAM ON TABLE DEMO_ORDERS COMMENT = 'Standard stream feeding DEMO_ORDERS_BY_STREAM';
-CREATE OR REPLACE STREAM DEMO_ORDERS_APPEND_STREAM ON TABLE DEMO_ORDERS APPEND_ONLY = TRUE COMMENT = 'Append-only stream, for comparison';
+CREATE OR REPLACE STREAM DEMO_ORDERS_STREAM ON TABLE DEMO_ORDERS COMMENT = 'Standard stream feeding the STREAM loader';
 ```
 
 Finally, load the first batch of five orders:
@@ -110,14 +114,13 @@ INSERT INTO DEMO_ORDERS VALUES
 
 A stream doesn't hold data. It stores an offset into the source table's change history and returns the rows that changed after it, plus three metadata columns: METADATA$ACTION (INSERT or DELETE), METADATA$ISUPDATE and METADATA$ROW_ID. Querying a stream does not move the offset. The offset advances only when the stream is read inside a DML statement whose transaction commits.
 
-Look at both streams before consuming anything:
+Look at the stream before consuming anything:
 
 ```sql
 SELECT ORDER_ID, STATUS, METADATA$ACTION, METADATA$ISUPDATE FROM DEMO_ORDERS_STREAM ORDER BY ORDER_ID;
-SELECT ORDER_ID, STATUS, METADATA$ACTION FROM DEMO_ORDERS_APPEND_STREAM ORDER BY ORDER_ID;
 ```
 
-Both return the five inserts. The difference shows up once rows are updated or deleted, which you'll do in a later step.
+It returns the five inserts. Updates and deletes show up once you make them, in a later step.
 
 Snowflake has three stream types:
 
@@ -131,23 +134,23 @@ Insert-only streams are rejected on a standard table with the error "Streams of 
 
 ### Consume the stream exactly once
 
-The load below applies the stream to the target with one MERGE and records an audit row, both in one explicit transaction. The filter on the USING clause drops the DELETE half of each update pair, so an update arrives as a single row with METADATA$ISUPDATE set, and a true delete arrives as a DELETE with METADATA$ISUPDATE false.
+The load below applies the stream to the target with one MERGE and records how many rows it saw in DEMO_LOAD_STATE, both in one explicit transaction. The ON clause matches only this loader's rows. The filter on the USING clause drops the DELETE half of each update pair, so an update arrives as a single row with METADATA$ISUPDATE set, and a true delete arrives as a DELETE with METADATA$ISUPDATE false.
 
 ```sql
 BEGIN TRANSACTION;
 
-MERGE INTO DEMO_ORDERS_BY_STREAM T
+MERGE INTO DEMO_ORDERS_TARGET T
 USING (
   SELECT * FROM DEMO_ORDERS_STREAM
   WHERE NOT (METADATA$ACTION = 'DELETE' AND METADATA$ISUPDATE)
 ) S
-ON T.ORDER_ID = S.ORDER_ID
+ON T.LOADER = 'STREAM' AND T.ORDER_ID = S.ORDER_ID
 WHEN MATCHED AND S.METADATA$ACTION = 'DELETE' THEN DELETE
 WHEN MATCHED THEN UPDATE SET T.CUSTOMER_ID = S.CUSTOMER_ID, T.STATUS = S.STATUS, T.AMOUNT = S.AMOUNT, T.EVENT_TS = S.EVENT_TS
 WHEN NOT MATCHED AND S.METADATA$ACTION = 'INSERT' THEN
-  INSERT (ORDER_ID, CUSTOMER_ID, STATUS, AMOUNT, EVENT_TS) VALUES (S.ORDER_ID, S.CUSTOMER_ID, S.STATUS, S.AMOUNT, S.EVENT_TS);
+  INSERT (LOADER, ORDER_ID, CUSTOMER_ID, STATUS, AMOUNT, EVENT_TS) VALUES ('STREAM', S.ORDER_ID, S.CUSTOMER_ID, S.STATUS, S.AMOUNT, S.EVENT_TS);
 
-INSERT INTO DEMO_LOAD_LOG SELECT 'STREAM', COUNT(*), CURRENT_TIMESTAMP() FROM DEMO_ORDERS_STREAM;
+UPDATE DEMO_LOAD_STATE SET ROWS_SEEN = (SELECT COUNT(*) FROM DEMO_ORDERS_STREAM), HIGH_WATER = CURRENT_TIMESTAMP() WHERE LOADER = 'STREAM';
 
 COMMIT;
 ```
@@ -155,11 +158,11 @@ COMMIT;
 Inside the transaction both statements see the same set of stream rows, because streams use repeatable read isolation: every read of the stream in the transaction returns the changes up to the moment the transaction began. When the COMMIT succeeds, the offset moves to that moment, and the next load picks up from there. Check it:
 
 ```sql
-SELECT * FROM DEMO_LOAD_LOG;
+SELECT LOADER, ROWS_SEEN FROM DEMO_LOAD_STATE WHERE LOADER = 'STREAM';
 SELECT COUNT(*) AS PENDING_CHANGES FROM DEMO_ORDERS_STREAM;
 ```
 
-The log shows five rows seen, and the stream is now empty.
+The state row shows five rows seen, and the stream is now empty.
 
 <!-- ------------------------ -->
 ## Load 2: The CHANGES Clause
@@ -182,23 +185,23 @@ Now apply that window and move the boundary forward in one transaction, so the t
 ```sql
 BEGIN TRANSACTION;
 
-MERGE INTO DEMO_ORDERS_BY_CHANGES T
+MERGE INTO DEMO_ORDERS_TARGET T
 USING (
   SELECT * FROM DEMO_ORDERS CHANGES (INFORMATION => DEFAULT) AT (TIMESTAMP => $LOAD_FROM) END (TIMESTAMP => $LOAD_TO)
   WHERE NOT (METADATA$ACTION = 'DELETE' AND METADATA$ISUPDATE)
 ) S
-ON T.ORDER_ID = S.ORDER_ID
+ON T.LOADER = 'CHANGES' AND T.ORDER_ID = S.ORDER_ID
 WHEN MATCHED AND S.METADATA$ACTION = 'DELETE' THEN DELETE
 WHEN MATCHED THEN UPDATE SET T.CUSTOMER_ID = S.CUSTOMER_ID, T.STATUS = S.STATUS, T.AMOUNT = S.AMOUNT, T.EVENT_TS = S.EVENT_TS
 WHEN NOT MATCHED AND S.METADATA$ACTION = 'INSERT' THEN
-  INSERT (ORDER_ID, CUSTOMER_ID, STATUS, AMOUNT, EVENT_TS) VALUES (S.ORDER_ID, S.CUSTOMER_ID, S.STATUS, S.AMOUNT, S.EVENT_TS);
+  INSERT (LOADER, ORDER_ID, CUSTOMER_ID, STATUS, AMOUNT, EVENT_TS) VALUES ('CHANGES', S.ORDER_ID, S.CUSTOMER_ID, S.STATUS, S.AMOUNT, S.EVENT_TS);
 
 UPDATE DEMO_LOAD_STATE SET HIGH_WATER = $LOAD_TO WHERE LOADER = 'CHANGES';
 
 COMMIT;
 ```
 
-Because the MERGE is keyed on ORDER_ID, running it again for the same window leaves the target unchanged. That's what makes a CHANGES load safe to replay.
+Because the MERGE is keyed on LOADER and ORDER_ID, running it again for the same window leaves the target unchanged. That's what makes a CHANGES load safe to replay.
 
 ### Choosing the start and end points
 
@@ -236,15 +239,15 @@ SET WM_TO = (SELECT COALESCE(MAX(METADATA$ROW_LAST_COMMIT_TIME), $WM_FROM) FROM 
 
 BEGIN TRANSACTION;
 
-MERGE INTO DEMO_ORDERS_BY_WATERMARK T
+MERGE INTO DEMO_ORDERS_TARGET T
 USING (
   SELECT ORDER_ID, CUSTOMER_ID, STATUS, AMOUNT, EVENT_TS FROM DEMO_ORDERS
   WHERE METADATA$ROW_LAST_COMMIT_TIME > $WM_FROM AND METADATA$ROW_LAST_COMMIT_TIME <= $WM_TO
 ) S
-ON T.ORDER_ID = S.ORDER_ID
+ON T.LOADER = 'WATERMARK' AND T.ORDER_ID = S.ORDER_ID
 WHEN MATCHED THEN UPDATE SET T.CUSTOMER_ID = S.CUSTOMER_ID, T.STATUS = S.STATUS, T.AMOUNT = S.AMOUNT, T.EVENT_TS = S.EVENT_TS
 WHEN NOT MATCHED THEN
-  INSERT (ORDER_ID, CUSTOMER_ID, STATUS, AMOUNT, EVENT_TS) VALUES (S.ORDER_ID, S.CUSTOMER_ID, S.STATUS, S.AMOUNT, S.EVENT_TS);
+  INSERT (LOADER, ORDER_ID, CUSTOMER_ID, STATUS, AMOUNT, EVENT_TS) VALUES ('WATERMARK', S.ORDER_ID, S.CUSTOMER_ID, S.STATUS, S.AMOUNT, S.EVENT_TS);
 
 UPDATE DEMO_LOAD_STATE SET HIGH_WATER = $WM_TO WHERE LOADER = 'WATERMARK';
 
@@ -256,18 +259,18 @@ This loader reads the table itself, not change metadata, so it has no retention 
 For contrast, here is the loader many pipelines start with: a watermark on the business event time, EVENT_TS.
 
 ```sql
-MERGE INTO DEMO_ORDERS_BY_EVENT_TIME T
+MERGE INTO DEMO_ORDERS_TARGET T
 USING (
   SELECT * FROM DEMO_ORDERS
-  WHERE EVENT_TS > (SELECT COALESCE(MAX(EVENT_TS), '1970-01-01'::TIMESTAMP_NTZ) FROM DEMO_ORDERS_BY_EVENT_TIME)
+  WHERE EVENT_TS > (SELECT COALESCE(MAX(EVENT_TS), '1970-01-01'::TIMESTAMP_NTZ) FROM DEMO_ORDERS_TARGET WHERE LOADER = 'EVENT_TIME')
 ) S
-ON T.ORDER_ID = S.ORDER_ID
+ON T.LOADER = 'EVENT_TIME' AND T.ORDER_ID = S.ORDER_ID
 WHEN MATCHED THEN UPDATE SET T.STATUS = S.STATUS, T.AMOUNT = S.AMOUNT, T.EVENT_TS = S.EVENT_TS
 WHEN NOT MATCHED THEN
-  INSERT (ORDER_ID, CUSTOMER_ID, STATUS, AMOUNT, EVENT_TS) VALUES (S.ORDER_ID, S.CUSTOMER_ID, S.STATUS, S.AMOUNT, S.EVENT_TS);
+  INSERT (LOADER, ORDER_ID, CUSTOMER_ID, STATUS, AMOUNT, EVENT_TS) VALUES ('EVENT_TIME', S.ORDER_ID, S.CUSTOMER_ID, S.STATUS, S.AMOUNT, S.EVENT_TS);
 ```
 
-All four targets now hold the same five orders.
+All four loaders now hold the same five orders in the target.
 
 <!-- ------------------------ -->
 ## Change the Source and Compare
@@ -281,11 +284,11 @@ INSERT INTO DEMO_ORDERS VALUES (6, 105, 'NEW', 60.00, '2026-10-06 14:00:00');
 INSERT INTO DEMO_ORDERS VALUES (7, 102, 'NEW', 99.00, '2026-10-02 18:00:00');
 ```
 
-Before reloading, compare the two streams. The standard stream shows the update as a DELETE and INSERT pair with METADATA$ISUPDATE set, the delete of order 5 and the two inserts. The append-only stream has not been consumed yet, so it still shows the original five inserts plus orders 6 and 7, including order 5, which no longer exists: append-only streams ignore deletes.
+Before reloading, compare the standard and append-only views of the same changes. The stream shows the update as a DELETE and INSERT pair with METADATA$ISUPDATE set, the delete of order 5 and the two inserts. CHANGES with APPEND_ONLY, which returns what an append-only stream would, reads from the start of the CHANGES loader: it shows the original five inserts plus orders 6 and 7, including order 5, which no longer exists, because append-only change data ignores deletes.
 
 ```sql
 SELECT ORDER_ID, STATUS, METADATA$ACTION, METADATA$ISUPDATE FROM DEMO_ORDERS_STREAM ORDER BY ORDER_ID, METADATA$ACTION;
-SELECT ORDER_ID, STATUS, METADATA$ACTION FROM DEMO_ORDERS_APPEND_STREAM ORDER BY ORDER_ID;
+SELECT ORDER_ID, STATUS, METADATA$ACTION FROM DEMO_ORDERS CHANGES (INFORMATION => APPEND_ONLY) AT (STATEMENT => $STATE_ROWS_QUERY) ORDER BY ORDER_ID;
 ```
 
 The standard stream returns:
@@ -298,37 +301,37 @@ The standard stream returns:
 | 6 | NEW | INSERT | FALSE |
 | 7 | NEW | INSERT | FALSE |
 
-The append-only stream returns orders 1 to 7, all as INSERT with status NEW.
+The append-only query returns orders 1 to 7, all as INSERT with status NEW.
 
-Now rerun the three loads exactly as before. The statements are repeated here so you can run the block in one go.
+Now rerun the four loads exactly as before. The statements are repeated here so you can run the block in one go.
 
 ```sql
 -- Stream load
 BEGIN TRANSACTION;
-MERGE INTO DEMO_ORDERS_BY_STREAM T
+MERGE INTO DEMO_ORDERS_TARGET T
 USING (SELECT * FROM DEMO_ORDERS_STREAM WHERE NOT (METADATA$ACTION = 'DELETE' AND METADATA$ISUPDATE)) S
-ON T.ORDER_ID = S.ORDER_ID
+ON T.LOADER = 'STREAM' AND T.ORDER_ID = S.ORDER_ID
 WHEN MATCHED AND S.METADATA$ACTION = 'DELETE' THEN DELETE
 WHEN MATCHED THEN UPDATE SET T.CUSTOMER_ID = S.CUSTOMER_ID, T.STATUS = S.STATUS, T.AMOUNT = S.AMOUNT, T.EVENT_TS = S.EVENT_TS
 WHEN NOT MATCHED AND S.METADATA$ACTION = 'INSERT' THEN
-  INSERT (ORDER_ID, CUSTOMER_ID, STATUS, AMOUNT, EVENT_TS) VALUES (S.ORDER_ID, S.CUSTOMER_ID, S.STATUS, S.AMOUNT, S.EVENT_TS);
-INSERT INTO DEMO_LOAD_LOG SELECT 'STREAM', COUNT(*), CURRENT_TIMESTAMP() FROM DEMO_ORDERS_STREAM;
+  INSERT (LOADER, ORDER_ID, CUSTOMER_ID, STATUS, AMOUNT, EVENT_TS) VALUES ('STREAM', S.ORDER_ID, S.CUSTOMER_ID, S.STATUS, S.AMOUNT, S.EVENT_TS);
+UPDATE DEMO_LOAD_STATE SET ROWS_SEEN = (SELECT COUNT(*) FROM DEMO_ORDERS_STREAM), HIGH_WATER = CURRENT_TIMESTAMP() WHERE LOADER = 'STREAM';
 COMMIT;
 
 -- CHANGES load
 SET LOAD_FROM = (SELECT HIGH_WATER FROM DEMO_LOAD_STATE WHERE LOADER = 'CHANGES');
 SET LOAD_TO = CURRENT_TIMESTAMP();
 BEGIN TRANSACTION;
-MERGE INTO DEMO_ORDERS_BY_CHANGES T
+MERGE INTO DEMO_ORDERS_TARGET T
 USING (
   SELECT * FROM DEMO_ORDERS CHANGES (INFORMATION => DEFAULT) AT (TIMESTAMP => $LOAD_FROM) END (TIMESTAMP => $LOAD_TO)
   WHERE NOT (METADATA$ACTION = 'DELETE' AND METADATA$ISUPDATE)
 ) S
-ON T.ORDER_ID = S.ORDER_ID
+ON T.LOADER = 'CHANGES' AND T.ORDER_ID = S.ORDER_ID
 WHEN MATCHED AND S.METADATA$ACTION = 'DELETE' THEN DELETE
 WHEN MATCHED THEN UPDATE SET T.CUSTOMER_ID = S.CUSTOMER_ID, T.STATUS = S.STATUS, T.AMOUNT = S.AMOUNT, T.EVENT_TS = S.EVENT_TS
 WHEN NOT MATCHED AND S.METADATA$ACTION = 'INSERT' THEN
-  INSERT (ORDER_ID, CUSTOMER_ID, STATUS, AMOUNT, EVENT_TS) VALUES (S.ORDER_ID, S.CUSTOMER_ID, S.STATUS, S.AMOUNT, S.EVENT_TS);
+  INSERT (LOADER, ORDER_ID, CUSTOMER_ID, STATUS, AMOUNT, EVENT_TS) VALUES ('CHANGES', S.ORDER_ID, S.CUSTOMER_ID, S.STATUS, S.AMOUNT, S.EVENT_TS);
 UPDATE DEMO_LOAD_STATE SET HIGH_WATER = $LOAD_TO WHERE LOADER = 'CHANGES';
 COMMIT;
 
@@ -336,49 +339,46 @@ COMMIT;
 SET WM_FROM = (SELECT HIGH_WATER FROM DEMO_LOAD_STATE WHERE LOADER = 'WATERMARK');
 SET WM_TO = (SELECT COALESCE(MAX(METADATA$ROW_LAST_COMMIT_TIME), $WM_FROM) FROM DEMO_ORDERS);
 BEGIN TRANSACTION;
-MERGE INTO DEMO_ORDERS_BY_WATERMARK T
+MERGE INTO DEMO_ORDERS_TARGET T
 USING (
   SELECT ORDER_ID, CUSTOMER_ID, STATUS, AMOUNT, EVENT_TS FROM DEMO_ORDERS
   WHERE METADATA$ROW_LAST_COMMIT_TIME > $WM_FROM AND METADATA$ROW_LAST_COMMIT_TIME <= $WM_TO
 ) S
-ON T.ORDER_ID = S.ORDER_ID
+ON T.LOADER = 'WATERMARK' AND T.ORDER_ID = S.ORDER_ID
 WHEN MATCHED THEN UPDATE SET T.CUSTOMER_ID = S.CUSTOMER_ID, T.STATUS = S.STATUS, T.AMOUNT = S.AMOUNT, T.EVENT_TS = S.EVENT_TS
 WHEN NOT MATCHED THEN
-  INSERT (ORDER_ID, CUSTOMER_ID, STATUS, AMOUNT, EVENT_TS) VALUES (S.ORDER_ID, S.CUSTOMER_ID, S.STATUS, S.AMOUNT, S.EVENT_TS);
+  INSERT (LOADER, ORDER_ID, CUSTOMER_ID, STATUS, AMOUNT, EVENT_TS) VALUES ('WATERMARK', S.ORDER_ID, S.CUSTOMER_ID, S.STATUS, S.AMOUNT, S.EVENT_TS);
 UPDATE DEMO_LOAD_STATE SET HIGH_WATER = $WM_TO WHERE LOADER = 'WATERMARK';
 COMMIT;
 
 -- Naive event-time load
-MERGE INTO DEMO_ORDERS_BY_EVENT_TIME T
+MERGE INTO DEMO_ORDERS_TARGET T
 USING (
   SELECT * FROM DEMO_ORDERS
-  WHERE EVENT_TS > (SELECT COALESCE(MAX(EVENT_TS), '1970-01-01'::TIMESTAMP_NTZ) FROM DEMO_ORDERS_BY_EVENT_TIME)
+  WHERE EVENT_TS > (SELECT COALESCE(MAX(EVENT_TS), '1970-01-01'::TIMESTAMP_NTZ) FROM DEMO_ORDERS_TARGET WHERE LOADER = 'EVENT_TIME')
 ) S
-ON T.ORDER_ID = S.ORDER_ID
+ON T.LOADER = 'EVENT_TIME' AND T.ORDER_ID = S.ORDER_ID
 WHEN MATCHED THEN UPDATE SET T.STATUS = S.STATUS, T.AMOUNT = S.AMOUNT, T.EVENT_TS = S.EVENT_TS
 WHEN NOT MATCHED THEN
-  INSERT (ORDER_ID, CUSTOMER_ID, STATUS, AMOUNT, EVENT_TS) VALUES (S.ORDER_ID, S.CUSTOMER_ID, S.STATUS, S.AMOUNT, S.EVENT_TS);
+  INSERT (LOADER, ORDER_ID, CUSTOMER_ID, STATUS, AMOUNT, EVENT_TS) VALUES ('EVENT_TIME', S.ORDER_ID, S.CUSTOMER_ID, S.STATUS, S.AMOUNT, S.EVENT_TS);
 ```
 
-Now the payoff. One query lines up every order across the source and the four targets:
+Now the payoff. One query lines up every order across the source and the four loaders:
 
 ```sql
 WITH IDS AS (
-  SELECT ORDER_ID FROM DEMO_ORDERS UNION SELECT ORDER_ID FROM DEMO_ORDERS_BY_STREAM
-  UNION SELECT ORDER_ID FROM DEMO_ORDERS_BY_WATERMARK UNION SELECT ORDER_ID FROM DEMO_ORDERS_BY_EVENT_TIME
+  SELECT ORDER_ID FROM DEMO_ORDERS UNION SELECT ORDER_ID FROM DEMO_ORDERS_TARGET
 )
 SELECT I.ORDER_ID,
        O.STATUS AS SOURCE,
-       S.STATUS AS BY_STREAM,
-       C.STATUS AS BY_CHANGES,
-       W.STATUS AS BY_COMMIT_TIME,
-       E.STATUS AS BY_EVENT_TIME
+       MAX(IFF(T.LOADER = 'STREAM', T.STATUS, NULL))     AS BY_STREAM,
+       MAX(IFF(T.LOADER = 'CHANGES', T.STATUS, NULL))    AS BY_CHANGES,
+       MAX(IFF(T.LOADER = 'WATERMARK', T.STATUS, NULL))  AS BY_COMMIT_TIME,
+       MAX(IFF(T.LOADER = 'EVENT_TIME', T.STATUS, NULL)) AS BY_EVENT_TIME
 FROM IDS I
-LEFT JOIN DEMO_ORDERS O               ON O.ORDER_ID = I.ORDER_ID
-LEFT JOIN DEMO_ORDERS_BY_STREAM S     ON S.ORDER_ID = I.ORDER_ID
-LEFT JOIN DEMO_ORDERS_BY_CHANGES C    ON C.ORDER_ID = I.ORDER_ID
-LEFT JOIN DEMO_ORDERS_BY_WATERMARK W  ON W.ORDER_ID = I.ORDER_ID
-LEFT JOIN DEMO_ORDERS_BY_EVENT_TIME E ON E.ORDER_ID = I.ORDER_ID
+LEFT JOIN DEMO_ORDERS O        ON O.ORDER_ID = I.ORDER_ID
+LEFT JOIN DEMO_ORDERS_TARGET T ON T.ORDER_ID = I.ORDER_ID
+GROUP BY I.ORDER_ID, O.STATUS
 ORDER BY I.ORDER_ID;
 ```
 
@@ -392,13 +392,13 @@ ORDER BY I.ORDER_ID;
 | 6 | NEW | NEW | NEW | NEW | NEW |
 | 7 | NEW | NEW | NEW | NEW | NULL |
 
-![Comparison of the four targets](assets/compare_targets.png)
+![Comparison of the four loaders](assets/compare_targets.png)
 
 Screenshot placeholder: the result grid of the comparison query after the second round of loads, with the NULL cells for orders 5 and 7 visible.
 
 Read the result row by row:
 
-- **The stream and CHANGES targets match the source exactly.** Both see updates, deletes and inserts.
+- **The stream and CHANGES loaders match the source exactly.** Both see updates, deletes and inserts.
 - **The commit-time watermark caught the update and the late order 7**, because both committed after the last watermark. It still shows order 5, because a deleted row isn't there to read.
 - **The event-time watermark missed order 7** (its EVENT_TS is older than the highest EVENT_TS already loaded) **and missed the update to order 2** (an update that doesn't touch EVENT_TS doesn't move it past the watermark). It also kept order 5.
 
@@ -415,7 +415,7 @@ Read the result row by row:
 <!-- ------------------------ -->
 ## Exactly-Once Loads and Failure
 
-The stream load above is exactly once because the MERGE, the audit insert and the offset move commit together. It's worth seeing what happens when they don't commit.
+The stream load above is exactly once because the MERGE, the state update and the offset move commit together. It's worth seeing what happens when they don't commit.
 
 Add one order, then start a load and roll it back:
 
@@ -423,11 +423,11 @@ Add one order, then start a load and roll it back:
 INSERT INTO DEMO_ORDERS VALUES (8, 106, 'NEW', 42.00, '2026-10-07 09:00:00');
 
 BEGIN TRANSACTION;
-MERGE INTO DEMO_ORDERS_BY_STREAM T
+MERGE INTO DEMO_ORDERS_TARGET T
 USING (SELECT * FROM DEMO_ORDERS_STREAM WHERE NOT (METADATA$ACTION = 'DELETE' AND METADATA$ISUPDATE)) S
-ON T.ORDER_ID = S.ORDER_ID
+ON T.LOADER = 'STREAM' AND T.ORDER_ID = S.ORDER_ID
 WHEN NOT MATCHED AND S.METADATA$ACTION = 'INSERT' THEN
-  INSERT (ORDER_ID, CUSTOMER_ID, STATUS, AMOUNT, EVENT_TS) VALUES (S.ORDER_ID, S.CUSTOMER_ID, S.STATUS, S.AMOUNT, S.EVENT_TS);
+  INSERT (LOADER, ORDER_ID, CUSTOMER_ID, STATUS, AMOUNT, EVENT_TS) VALUES ('STREAM', S.ORDER_ID, S.CUSTOMER_ID, S.STATUS, S.AMOUNT, S.EVENT_TS);
 ROLLBACK;
 
 SELECT COUNT(*) AS PENDING_CHANGES FROM DEMO_ORDERS_STREAM;
@@ -441,35 +441,35 @@ The trap is a statement that fails inside a transaction that your script then co
 ALTER SESSION SET TRANSACTION_ABORT_ON_ERROR = TRUE;
 
 BEGIN TRANSACTION;
-MERGE INTO DEMO_ORDERS_BY_STREAM T
+MERGE INTO DEMO_ORDERS_TARGET T
 USING (SELECT * FROM DEMO_ORDERS_STREAM WHERE NOT (METADATA$ACTION = 'DELETE' AND METADATA$ISUPDATE)) S
-ON T.ORDER_ID = S.ORDER_ID
+ON T.LOADER = 'STREAM' AND T.ORDER_ID = S.ORDER_ID
 WHEN NOT MATCHED AND S.METADATA$ACTION = 'INSERT' THEN
-  INSERT (ORDER_ID, CUSTOMER_ID, STATUS, AMOUNT, EVENT_TS) VALUES (S.ORDER_ID, S.CUSTOMER_ID, S.STATUS, S.AMOUNT, S.EVENT_TS);
-INSERT INTO DEMO_LOAD_LOG SELECT 'STREAM', 1 / 0, CURRENT_TIMESTAMP();
+  INSERT (LOADER, ORDER_ID, CUSTOMER_ID, STATUS, AMOUNT, EVENT_TS) VALUES ('STREAM', S.ORDER_ID, S.CUSTOMER_ID, S.STATUS, S.AMOUNT, S.EVENT_TS);
+UPDATE DEMO_LOAD_STATE SET ROWS_SEEN = 1 / 0 WHERE LOADER = 'STREAM';
 COMMIT;
 
 SELECT COUNT(*) AS PENDING_CHANGES FROM DEMO_ORDERS_STREAM;
 ALTER SESSION UNSET TRANSACTION_ABORT_ON_ERROR;
 ```
 
-The INSERT fails with a division by zero, on purpose. With the parameter set, the transaction is aborted, the COMMIT fails with "COMMIT failed. Your transaction ... was already aborted.", the MERGE is undone and the stream still holds order 8. In this guide's test runs, the same sequence without the parameter committed the MERGE and emptied the stream even though the audit insert had failed.
+The UPDATE fails with a division by zero, on purpose. With the parameter set, the transaction is aborted, the COMMIT fails with "COMMIT failed. Your transaction ... was already aborted.", the MERGE is undone and the stream still holds order 8. In this guide's test runs, the same sequence without the parameter committed the MERGE and emptied the stream even though the state update had failed.
 
 The next successful run picks up the pending change. Run the normal load once more to apply order 8:
 
 ```sql
 BEGIN TRANSACTION;
-MERGE INTO DEMO_ORDERS_BY_STREAM T
+MERGE INTO DEMO_ORDERS_TARGET T
 USING (SELECT * FROM DEMO_ORDERS_STREAM WHERE NOT (METADATA$ACTION = 'DELETE' AND METADATA$ISUPDATE)) S
-ON T.ORDER_ID = S.ORDER_ID
+ON T.LOADER = 'STREAM' AND T.ORDER_ID = S.ORDER_ID
 WHEN MATCHED AND S.METADATA$ACTION = 'DELETE' THEN DELETE
 WHEN MATCHED THEN UPDATE SET T.CUSTOMER_ID = S.CUSTOMER_ID, T.STATUS = S.STATUS, T.AMOUNT = S.AMOUNT, T.EVENT_TS = S.EVENT_TS
 WHEN NOT MATCHED AND S.METADATA$ACTION = 'INSERT' THEN
-  INSERT (ORDER_ID, CUSTOMER_ID, STATUS, AMOUNT, EVENT_TS) VALUES (S.ORDER_ID, S.CUSTOMER_ID, S.STATUS, S.AMOUNT, S.EVENT_TS);
-INSERT INTO DEMO_LOAD_LOG SELECT 'STREAM', COUNT(*), CURRENT_TIMESTAMP() FROM DEMO_ORDERS_STREAM;
+  INSERT (LOADER, ORDER_ID, CUSTOMER_ID, STATUS, AMOUNT, EVENT_TS) VALUES ('STREAM', S.ORDER_ID, S.CUSTOMER_ID, S.STATUS, S.AMOUNT, S.EVENT_TS);
+UPDATE DEMO_LOAD_STATE SET ROWS_SEEN = (SELECT COUNT(*) FROM DEMO_ORDERS_STREAM), HIGH_WATER = CURRENT_TIMESTAMP() WHERE LOADER = 'STREAM';
 COMMIT;
 
-SELECT ORDER_ID, STATUS FROM DEMO_ORDERS_BY_STREAM WHERE ORDER_ID = 8;
+SELECT ORDER_ID, STATUS FROM DEMO_ORDERS_TARGET WHERE LOADER = 'STREAM' AND ORDER_ID = 8;
 ```
 
 Two more rules keep stream loads exactly once. Give each consumer its own stream, because one consumer's commit moves the offset for everyone reading that stream. And remember that a plain SELECT never advances the offset, even inside a transaction; only DML does.
@@ -496,22 +496,29 @@ SELECT "name", "stale", "stale_after" FROM TABLE(RESULT_SCAN(LAST_QUERY_ID()));
 
 In the test run, STALE_AFTER moved from 14 days after the last consumption to 30 days after it.
 
-To see a stale stream without waiting two weeks, use a scratch table with no retention and no extension. The stream is reported stale straight away:
+To see a stale stream without waiting two weeks, put a stream on a table with no retention and no extension. DEMO_LOAD_STATE works, because nothing in this guide reads its history. The side effect is that the state table keeps no Time Travel from here on, which doesn't matter for this demo. The stream is reported stale straight away:
 
 ```sql
-CREATE OR REPLACE TABLE DEMO_STALE_SRC (ID INT) DATA_RETENTION_TIME_IN_DAYS = 0 MAX_DATA_EXTENSION_TIME_IN_DAYS = 0 COMMENT = 'Scratch table for the staleness demo';
-INSERT INTO DEMO_STALE_SRC VALUES (1), (2);
-CREATE OR REPLACE STREAM DEMO_STALE_STREAM ON TABLE DEMO_STALE_SRC COMMENT = 'Stream that goes stale';
+ALTER TABLE DEMO_LOAD_STATE SET DATA_RETENTION_TIME_IN_DAYS = 0 MAX_DATA_EXTENSION_TIME_IN_DAYS = 0;
+CREATE OR REPLACE STREAM DEMO_STALE_STREAM ON TABLE DEMO_LOAD_STATE COMMENT = 'Stream that goes stale';
 SHOW STREAMS LIKE 'DEMO_STALE_STREAM';
 SELECT "name", "stale", "stale_after" FROM TABLE(RESULT_SCAN(LAST_QUERY_ID()));
 ```
 
-The docs warn that reading a stream after STALE_AFTER can still succeed for a while, but that its results can't be trusted. Don't rely on them. The recovery is to recreate the stream and rebuild the target from the current table state. SHOW_INITIAL_ROWS = TRUE makes the new stream return every current row as an INSERT on its first read, so the same keyed MERGE rebuilds the target:
+The docs warn that reading a stream after STALE_AFTER can still succeed for a while, but that its results can't be trusted. Don't rely on them. The recovery is to recreate the stream and rebuild the target from the current table state. SHOW_INITIAL_ROWS = TRUE makes the new stream return every current row as an INSERT on its first read, so a keyed MERGE from this stream would rebuild a target:
 
 ```sql
-CREATE OR REPLACE STREAM DEMO_STALE_STREAM ON TABLE DEMO_STALE_SRC SHOW_INITIAL_ROWS = TRUE COMMENT = 'Recreated after going stale';
-SELECT ID, METADATA$ACTION FROM DEMO_STALE_STREAM ORDER BY ID;
+CREATE OR REPLACE STREAM DEMO_STALE_STREAM ON TABLE DEMO_LOAD_STATE SHOW_INITIAL_ROWS = TRUE COMMENT = 'Recreated after going stale';
+SELECT LOADER, METADATA$ACTION FROM DEMO_STALE_STREAM ORDER BY LOADER;
 ```
+
+The recreated stream returns all three state rows as inserts:
+
+| LOADER | METADATA$ACTION |
+|:--|:--|
+| CHANGES | INSERT |
+| STREAM | INSERT |
+| WATERMARK | INSERT |
 
 Rows that were deleted from the source while the stream was stale won't appear, so if deletes matter, also remove target rows that no longer exist in the source.
 
@@ -528,71 +535,81 @@ Two limits apply. Row timestamps reflect the last change, not when the row was c
 
 ```sql
 SELECT SYSTEM$SET_ROW_TIMESTAMP_ON_ALL_SUPPORTED_TABLES('schema', 'DEMO_INCREMENTAL_DB.DEMO');
+SELECT LOADER, METADATA$ROW_LAST_COMMIT_TIME FROM DEMO_LOAD_STATE ORDER BY LOADER;
 ```
 
-In the test run, a table that already held a row came back with ROW_TIMESTAMP on, the existing row still had a NULL commit time, and the next row inserted got one. You need the MODIFY privilege on the container. Row timestamps also can't be read through a stream or through CHANGES ("invalid identifier 'METADATA$ROW_LAST_COMMIT_TIME'"), and they aren't supported on Iceberg tables, external tables, hybrid tables or views.
+DEMO_LOAD_STATE already held its rows, so it comes back with ROW_TIMESTAMP on, but every existing row still has a NULL commit time. A row gets one the next time it changes. You need the MODIFY privilege on the container. Row timestamps also can't be read through a stream or through CHANGES ("invalid identifier 'METADATA$ROW_LAST_COMMIT_TIME'"), and they aren't supported on Iceberg tables, external tables, hybrid tables or views.
 
-You can carry the source commit time through a stream by putting a view in between. A view can select the metadata column, and a stream on that view returns it as an ordinary column. Give the target its own row timestamps, and the difference between the two is the latency of the step:
+You can carry the source commit time through a stream by putting a view in between. A view can select the metadata column, and a stream on that view returns it as an ordinary column. The target already has its own row timestamps, so the difference between the two is the latency of the step:
 
 ```sql
 CREATE OR REPLACE VIEW DEMO_ORDERS_WITH_COMMIT_TS COMMENT = 'Exposes the source commit time to a stream' AS
   SELECT ORDER_ID, STATUS, METADATA$ROW_LAST_COMMIT_TIME AS SOURCE_COMMIT_TS FROM DEMO_ORDERS;
 CREATE OR REPLACE STREAM DEMO_ORDERS_LATENCY_STREAM ON VIEW DEMO_ORDERS_WITH_COMMIT_TS COMMENT = 'Stream on a view';
-CREATE OR REPLACE TABLE DEMO_ORDER_LATENCY (ORDER_ID INT, STATUS STRING, SOURCE_COMMIT_TS TIMESTAMP_LTZ) ROW_TIMESTAMP = TRUE COMMENT = 'Latency of the stream-to-table step';
 ```
 
-Now change an order and run the step:
+Now change an order and run the step, writing to the target under a LATENCY loader:
 
 ```sql
 UPDATE DEMO_ORDERS SET STATUS = 'DELIVERED' WHERE ORDER_ID = 2;
 
-INSERT INTO DEMO_ORDER_LATENCY
-  SELECT ORDER_ID, STATUS, SOURCE_COMMIT_TS FROM DEMO_ORDERS_LATENCY_STREAM WHERE METADATA$ACTION = 'INSERT';
+INSERT INTO DEMO_ORDERS_TARGET (LOADER, ORDER_ID, STATUS, SOURCE_COMMIT_TS)
+  SELECT 'LATENCY', ORDER_ID, STATUS, SOURCE_COMMIT_TS FROM DEMO_ORDERS_LATENCY_STREAM WHERE METADATA$ACTION = 'INSERT';
 
 SELECT ORDER_ID, STATUS, SOURCE_COMMIT_TS,
        METADATA$ROW_LAST_COMMIT_TIME AS TARGET_COMMIT_TS,
        TIMESTAMPDIFF(MILLISECOND, SOURCE_COMMIT_TS, METADATA$ROW_LAST_COMMIT_TIME) AS STEP_LATENCY_MS
-FROM DEMO_ORDER_LATENCY;
+FROM DEMO_ORDERS_TARGET
+WHERE LOADER = 'LATENCY';
 ```
 
 | ORDER_ID | STATUS | SOURCE_COMMIT_TS | TARGET_COMMIT_TS | STEP_LATENCY_MS |
 |:--|:--|:--|:--|:--|
-| 2 | DELIVERED | ... | ... | 1081 |
+| 2 | DELIVERED | ... | ... | 1011 |
 
-In this run the latency is the time between the UPDATE and the INSERT, because you ran them by hand. In a scheduled pipeline it's the end-to-end delay of the step. Row timestamps are ordered within one table, and the docs caution against comparing them across tables or other time sources. Treat cross-table differences like this one as a latency measurement, not as a way to order events.
+Your value will differ: two test runs gave 1011 ms and 1156 ms. In this run the latency is the time between the UPDATE and the INSERT, because you ran them by hand. In a scheduled pipeline it's the end-to-end delay of the step. Row timestamps are ordered within one table, and the docs caution against comparing them across tables or other time sources. Treat cross-table differences like this one as a latency measurement, not as a way to order events.
 
 <!-- ------------------------ -->
 ## Triggered Tasks
 
-To run a stream load only when there is something to load, attach it to a triggered task: a WHEN SYSTEM$STREAM_HAS_DATA condition and no schedule. Give the task its own stream so it doesn't compete with the loads above. Omitting WAREHOUSE makes it serverless, and COMMENT has to come before WHEN.
+To run a stream load only when there is something to load, attach it to a triggered task: a WHEN SYSTEM$STREAM_HAS_DATA condition and no schedule. The task needs a stream no other load consumes. The latency step is finished, so the task can take over its stream on the view. Omitting WAREHOUSE makes it serverless, and COMMENT has to come before WHEN.
 
 ```sql
-CREATE OR REPLACE TABLE DEMO_ORDER_AUDIT (ORDER_ID INT, STATUS STRING, SEEN_AT TIMESTAMP_LTZ) COMMENT = 'Written by the triggered task';
-CREATE OR REPLACE STREAM DEMO_ORDERS_TASK_STREAM ON TABLE DEMO_ORDERS APPEND_ONLY = TRUE COMMENT = 'Feeds the triggered task';
 CREATE OR REPLACE TASK DEMO_AUDIT_TASK
   TARGET_COMPLETION_INTERVAL = '1 MINUTE'
   COMMENT = 'Triggered task: runs when the stream has data'
-  WHEN SYSTEM$STREAM_HAS_DATA('DEMO_ORDERS_TASK_STREAM')
+  WHEN SYSTEM$STREAM_HAS_DATA('DEMO_ORDERS_LATENCY_STREAM')
 AS
-  INSERT INTO DEMO_ORDER_AUDIT SELECT ORDER_ID, STATUS, CURRENT_TIMESTAMP() FROM DEMO_ORDERS_TASK_STREAM;
+  INSERT INTO DEMO_ORDERS_TARGET (LOADER, ORDER_ID, STATUS, SOURCE_COMMIT_TS)
+    SELECT 'TASK', ORDER_ID, STATUS, SOURCE_COMMIT_TS FROM DEMO_ORDERS_LATENCY_STREAM WHERE METADATA$ACTION = 'INSERT';
 ALTER TASK DEMO_AUDIT_TASK RESUME;
 INSERT INTO DEMO_ORDERS VALUES (9, 107, 'NEW', 10.00, '2026-10-08 09:00:00');
 ```
 
-Within about a minute, DEMO_ORDER_AUDIT holds order 9; the cleanup step suspends the task. For schedules, run history, task graphs and retries, see the [comprehensive guide to orchestration](/en/developers/guides/comprehensive-guide-to-orchestration/).
+Wait about a minute, then check the task's runs and what it wrote:
+
+```sql
+SELECT NAME, STATE, SCHEDULED_TIME
+FROM TABLE(INFORMATION_SCHEMA.TASK_HISTORY(TASK_NAME => 'DEMO_AUDIT_TASK'))
+WHERE SCHEMA_NAME = CURRENT_SCHEMA()
+ORDER BY SCHEDULED_TIME DESC;
+SELECT ORDER_ID, STATUS FROM DEMO_ORDERS_TARGET WHERE LOADER = 'TASK';
+```
+
+The target holds order 9 under the TASK loader; the cleanup step suspends the task. For schedules, run history, task graphs and retries, see the [comprehensive guide to orchestration](/en/developers/guides/comprehensive-guide-to-orchestration/).
 
 <!-- ------------------------ -->
 ## Streams on Views and Shared Tables
 
-You already built a stream on a view in the latency section. Streams on views follow the view's query, so a filter in the view filters the change rows too. The view can use projections, filters, inner or cross joins and UNION ALL; views with GROUP BY, QUALIFY, DISTINCT, LIMIT or subqueries outside the FROM clause aren't supported. Try one:
+You already built a stream on a view in the latency section. Streams on views follow the view's query, so a filter in the view filters the change rows too. The view can use projections, filters, inner or cross joins and UNION ALL; views with GROUP BY, QUALIFY, DISTINCT, LIMIT or subqueries outside the FROM clause aren't supported. A stream needs change tracking on its view, so you can see the limit by trying to enable it:
 
 ```sql
 CREATE OR REPLACE VIEW DEMO_ORDERS_BY_CUSTOMER COMMENT = 'Aggregating view, cannot be streamed' AS
   SELECT CUSTOMER_ID, COUNT(*) AS ORDERS FROM DEMO_ORDERS GROUP BY CUSTOMER_ID;
-CREATE OR REPLACE STREAM DEMO_ORDERS_BY_CUSTOMER_STREAM ON VIEW DEMO_ORDERS_BY_CUSTOMER COMMENT = 'Fails on purpose';
+ALTER VIEW DEMO_ORDERS_BY_CUSTOMER SET CHANGE_TRACKING = TRUE;
 ```
 
-The CREATE STREAM fails, on purpose, with "Change tracking is not supported on queries with GROUP BY". Change tracking must be enabled on the view and on each underlying table. When the view's owner also owns the tables, creating the stream enables it for you; otherwise the owner runs ALTER VIEW ... SET CHANGE_TRACKING = TRUE.
+The ALTER VIEW fails, on purpose, with "Change tracking is not supported on queries with GROUP BY". CREATE STREAM on the view fails with the same message. Change tracking must be enabled on the view and on each underlying table. When the view's owner also owns the tables, creating the stream enables it for you; otherwise the owner runs ALTER VIEW ... SET CHANGE_TRACKING = TRUE.
 
 Shared tables and views work the same way from the consumer side: a consumer can create a stream on a shared table or a shared secure view, provided the provider has enabled change tracking on the shared tables (or on the tables under a shared view) and set a retention period long enough for the consumer's load cadence. Two differences matter. A consumer's stream doesn't extend the provider's retention period, so it goes stale on the provider's retention schedule. And a consumer can't select METADATA$ROW_LAST_COMMIT_TIME from a shared table, even when the provider enabled row timestamps. A provider who wants to share commit times shares a view that selects the column, like this one:
 
@@ -783,7 +800,7 @@ print("Only what the second snapshot appended:")
     .load(TABLE).orderBy("ORDER_ID").show())
 ```
 
-Run it with the first two VERSION_ID values:
+Run it with the first two VERSION_ID values. Startup may log "ERROR ... The DATABASE is not set for the current session" before the results; it's harmless, because the script uses fully qualified table names.
 
 ```bash
 uv run incremental_read.py <first VERSION_ID> <second VERSION_ID>
@@ -871,7 +888,7 @@ On your machine, delete the demo_incremental dbt folder and the demo-incremental
 <!-- ------------------------ -->
 ## Conclusion and Resources
 
-You loaded the same changing table three ways and saw where each primitive stands:
+You loaded the same changing table with three primitives, plus a naive event-time loader for contrast, and saw where each primitive stands:
 
 - **Streams** give you exactly-once change processing with Snowflake keeping the offset, as long as you consume them in a transaction that aborts on error, and before they go stale.
 - **CHANGES** gives you any window of changes on demand, which makes replay and backfill simple, within Time Travel retention.
