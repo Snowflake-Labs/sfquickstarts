@@ -339,34 +339,6 @@ plt.show()
 
 ![Class balance and default rate by product category](assets/class-balance-default-rate-by-product.png)
 
-Default rate by VantageScore band. Default risk should fall steadily as the score rises, which is the classic monotonicity check:
-
-```python
-# Default rate by VantageScore band — the classic credit risk monotonicity check
-score_pdf = session.sql("""
-    SELECT FLOOR(VANTAGE_SCORE_3 / 50) * 50 AS SCORE_BAND,
-           AVG(DEFAULT_FLAG) AS DEFAULT_RATE,
-           COUNT(*) AS N
-    FROM CREDIT_RISK_ML.PD_MODEL.LOAN_DATA
-    WHERE VANTAGE_SCORE_3 IS NOT NULL
-    GROUP BY SCORE_BAND ORDER BY SCORE_BAND
-""").to_pandas()
-
-fig, ax1 = plt.subplots(figsize=(12, 5))
-ax1.bar(score_pdf["SCORE_BAND"], score_pdf["N"], width=40, color="#CFD8E3", label="Loans")
-ax1.set_xlabel("VantageScore 3.0 band")
-ax1.set_ylabel("Loans")
-ax2 = ax1.twinx()
-ax2.plot(score_pdf["SCORE_BAND"], score_pdf["DEFAULT_RATE"], color="#E8684C", marker="o", label="Default rate")
-ax2.set_ylabel("Default rate")
-ax1.set_title("Default Rate by VantageScore Band")
-fig.legend(loc="upper right")
-plt.tight_layout()
-plt.show()
-```
-
-![Default rate by VantageScore band](assets/default-rate-by-vantage-score.png)
-
 Behavioral feature means for defaulters relative to non-defaulters:
 
 ```python
