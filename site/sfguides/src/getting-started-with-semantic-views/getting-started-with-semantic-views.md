@@ -17,8 +17,6 @@ In this guide, you start with public data from Snowflake Marketplace. You create
 
 **This guide uses SQL for every step.** Snowflake also offers other ways to do most of this work: Semantic View Autopilot and Semantic Studio in Snowsight for semantic views, the Snowsight agent editor for agents, and Cortex Code skills that generate definitions from a prompt. They produce the same objects. This guide mentions them where they apply but doesn't walk through them. SQL definitions are explicit, reviewable in a diff, and easy to put under version control.
 
-> **Validation note:** The SQL in this guide was run end to end in one Snowflake account. Before publication, rerun the lab in a clean learner account.
-
 ### Prerequisites
 
 - Comfort writing SQL, including joins and aggregates.
