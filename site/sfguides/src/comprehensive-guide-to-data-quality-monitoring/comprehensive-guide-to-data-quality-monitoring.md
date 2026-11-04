@@ -27,7 +27,7 @@ Start with *The Example Data*, which creates everything the examples use. Each l
 - Completeness, validity, timeliness, integrity, volume, drift and distribution checks
 - How to scope a check with `FILTER` or compute it per group with `WITHIN GROUP`
 - How to write a custom metric, cover a whole schema, and let Snowflake suggest checks and learn normal ranges
-- How to find the offending rows, get notified, and stop a pipeline
+- How to find the offending rows, get notified natively or through an alert created from a template
 - Where to place checks, how to keep them in code, and what monitoring costs
 
 ### Prerequisites
@@ -36,7 +36,7 @@ Start with *The Example Data*, which creates everything the examples use. Each l
 - A role that can create a database and a warehouse, and that holds:
   - EXECUTE DATA METRIC FUNCTION on the account, to attach and schedule metrics
   - MANAGE DATA QUALITY on the account, for schema-level checks and notifications
-  - EXECUTE TASK and EXECUTE ALERT on the account, for *Stop the Pipeline*
+  - EXECUTE ALERT on the account, for the template alert in *Get Told, Don't Watch*
   - CREATE INTEGRATION on the account, for *Get Told, Don't Watch*
 
   ACCOUNTADMIN holds all of these. See [Access control for data quality](https://docs.snowflake.com/en/user-guide/data-quality-access-control).
@@ -202,7 +202,7 @@ FROM TABLE(SYSTEM$EVALUATE_DATA_QUALITY_EXPECTATIONS('SENSOR_READINGS'));
 |:------------|:-----------------|:-----------------------|------:|:---------------------|
 | NULL_COUNT | MUST_HAVE_TEMPERATURE | VALUE = 0 | 1 | TRUE |
 
-This form returns a result without recording it. SYSTEM$EVALUATE_DATA_QUALITY_EXPECTATIONS_PERSIST_RESULT also writes it to monitoring history, which anything reading DATA_QUALITY_MONITORING_EXPECTATION_STATUS — a dashboard, a notification, a circuit breaker — depends on.
+This form returns a result without recording it. SYSTEM$EVALUATE_DATA_QUALITY_EXPECTATIONS_PERSIST_RESULT also writes it to monitoring history, which anything reading DATA_QUALITY_MONITORING_EXPECTATION_STATUS, such as a dashboard or an alert, depends on. Pass it the fully qualified table name: at the time of writing, with a bare name it returns the same result but records nothing, so an alert reading the status finds no violation.
 
 ### In Snowsight
 
@@ -674,7 +674,7 @@ WHERE TABLE_NAME = 'SENSOR_READINGS'
 ORDER BY MEASUREMENT_TIME DESC;
 ```
 
-This returns rows only once an evaluation has been recorded, by the schedule or by the persisting evaluation shown in *Stop the Pipeline*.
+This returns rows only once an evaluation has been recorded, by the schedule or by the persisting evaluation shown in *Anatomy of a Check*.
 
 In Snowsight, the table's **Data Quality** tab shows the same, and the account-wide monitoring dashboard (preview) rolls it up across databases. **Impacted Assets** on the table's page shows what reads from it.
 
@@ -723,7 +723,7 @@ notification:
 $$;
 ```
 
-Without cooldown_hours, an hourly check against a week-long violation sends 168 identical messages. metadata_included adds the table, metric and measured value. Settings apply **per database**; a single association can opt out — here, the AVG association from *Volume, Drift and Distribution*:
+Without cooldown_hours, an hourly check against a week-long violation sends 168 identical messages. metadata_included adds the table, metric and measured value. Settings apply **per database**, and a single association can opt out. Here it is the AVG association from *Volume, Drift and Distribution*:
 
 ```sql
 ALTER TABLE SENSOR_READINGS
@@ -731,76 +731,73 @@ ALTER TABLE SENSOR_READINGS
     SET DATA_QUALITY_NOTIFICATION = FALSE;
 ```
 
-See [Sending notifications for data quality issues](https://docs.snowflake.com/en/user-guide/data-quality-notifications).
+### An alert from a template
 
-<!-- ------------------------ -->
-## Stop the Pipeline
-
-Notifications have no action hook. To stop a pipeline, use a Snowflake **alert** whose condition reads expectation status and whose action suspends the consumer. A breaker belongs on checks that mean "the data is unusable", not on every check, so this one watches a single expectation — the orphan check from *Integrity and Uniqueness* — and only its **latest** verdict, so a fix clears it. Given a downstream task and the breaker:
+Native notifications are settings on a database, not an object: there is nothing to schedule, scope to one table, pause or audit on its own. When you want those, create a Snowflake **alert** from the DQ_EXPECTATION_VIOLATIONS template. The template supplies the condition, which reads expectation status, and the notification; you choose the scope, the schedule and the destination. Its variables, defaults and allowed values are listed here:
 
 ```sql
-CREATE OR REPLACE TASK PUBLISH_READINGS
+SELECT SYSTEM$GET_ALERT_TEMPLATE('DQ_EXPECTATION_VIOLATIONS');
+```
+
+This alert watches every expectation on SENSOR_READINGS and emails through the integration created above:
+
+```sql
+CREATE OR ALTER ALERT READINGS_EXPECTATION_ALERT
+    FROM TEMPLATE DQ_EXPECTATION_VIOLATIONS
     WAREHOUSE = DQ_EXAMPLES_WH
     SCHEDULE = '60 MINUTE'
-AS
-    SELECT COUNT(*) FROM SENSOR_READINGS;
-
-ALTER TASK PUBLISH_READINGS RESUME;
-
-CREATE OR REPLACE ALERT READINGS_CIRCUIT_BREAKER
-    WAREHOUSE = DQ_EXAMPLES_WH
-    SCHEDULE = '5 MINUTE'
-    IF (EXISTS (
-        SELECT 1
-        FROM TABLE(SNOWFLAKE.LOCAL.DATA_QUALITY_MONITORING_EXPECTATION_STATUS(
-            REF_ENTITY_NAME   => 'DQ_EXAMPLES.PUBLIC.SENSOR_READINGS',
-            REF_ENTITY_DOMAIN => 'TABLE'))
-        WHERE EXPECTATION_NAME = 'NO_ORPHAN_READINGS'
-        QUALIFY ROW_NUMBER() OVER (ORDER BY MEASUREMENT_TIME DESC) = 1
-            AND EXPECTATION_VIOLATED = TRUE
-    ))
-    THEN
-        ALTER TASK PUBLISH_READINGS SUSPEND;
-
-ALTER ALERT READINGS_CIRCUIT_BREAKER RESUME;
+    COMMENT = 'Emails when any expectation on SENSOR_READINGS is violated'
+    TEMPLATE_PARAMS = '{
+      "template_variables": {
+        "SCOPE_ACTIVE": "TABLE",
+        "SCOPE_DATABASE": "DQ_EXAMPLES",
+        "SCOPE_SCHEMA": "PUBLIC",
+        "SCOPE_TABLE": "SENSOR_READINGS",
+        "NOTIFICATION_MODE": "EMAIL",
+        "EMAIL_NOTIFICATION_INTEGRATION": "DQ_EMAIL_INT"
+      },
+      "notification_config": {
+        "notification_integration": "DQ_EMAIL_INT",
+        "email_config": { "toAddress": ["you@example.com"] }
+      }
+    }';
 ```
 
-The condition inherits the expectation already defined rather than adding a threshold of its own. To test it without waiting:
+For email, the integration goes in two places: EMAIL_NOTIFICATION_INTEGRATION, which the alert's action reads, and notification_config, which carries the recipients. EXPECTATION_NAMES narrows the alert to a comma-separated list, and NOTIFICATION_MODE also accepts WEBHOOK and IN_APP. The alert is created suspended. To test it without waiting, first record a verdict, so the expectation status has something recent:
 
 ```sql
--- 1. Record a violation, so there is something to react to
-SELECT * FROM TABLE(SYSTEM$EVALUATE_DATA_QUALITY_EXPECTATIONS_PERSIST_RESULT('SENSOR_READINGS'));
+SELECT * FROM TABLE(SYSTEM$EVALUATE_DATA_QUALITY_EXPECTATIONS_PERSIST_RESULT('DQ_EXAMPLES.PUBLIC.SENSOR_READINGS'));
+```
 
--- 2. Fire the alert immediately, bypassing its schedule
-EXECUTE ALERT READINGS_CIRCUIT_BREAKER;
+The verdict takes a few seconds to reach the status. Then run the alert once:
 
--- 3. Confirm the consumer stopped
-SHOW TASKS LIKE 'PUBLISH_READINGS';
+```sql
+EXECUTE ALERT READINGS_EXPECTATION_ALERT;
+```
 
--- 4. Check the alert's own outcome
-SELECT SCHEDULED_TIME, STATE, SQL_ERROR_CODE, SQL_ERROR_MESSAGE
+A minute later, check the run and the email:
+
+```sql
+SELECT SCHEDULED_TIME, STATE, SQL_ERROR_MESSAGE
 FROM TABLE(INFORMATION_SCHEMA.ALERT_HISTORY(
     SCHEDULED_TIME_RANGE_START => DATEADD('HOUR', -1, CURRENT_TIMESTAMP())))
-WHERE NAME = 'READINGS_CIRCUIT_BREAKER'
+WHERE NAME = 'READINGS_EXPECTATION_ALERT'
 ORDER BY SCHEDULED_TIME DESC;
+
+SELECT CREATED, STATUS, ERROR_MESSAGE
+FROM TABLE(INFORMATION_SCHEMA.NOTIFICATION_HISTORY(
+    START_TIME => DATEADD('HOUR', -1, CURRENT_TIMESTAMP()),
+    INTEGRATION_NAME => 'DQ_EMAIL_INT'))
+ORDER BY CREATED DESC;
 ```
 
-The task's state should read suspended. In the alert history, TRIGGERED means the action ran; ACTION_FAILED means the condition matched but the THEN clause did not. Step 1 needs the persisting form, or the status surface stays empty.
+The alert should read TRIGGERED, because several expectations on SENSOR_READINGS are violated, and the email SUCCESS. The template's condition fires on any violation measured since its last successful run (on the first run, the past hour), whether recorded by the schedule or by the call above. ALTER ALERT READINGS_EXPECTATION_ALERT RESUME starts the hourly schedule.
 
-There is no automatic reset. A human fixes the data, records a fresh verdict, and resumes the task. Here the fix is to register the missing device:
+<!-- TODO: screenshot of the READINGS_EXPECTATION_ALERT email listing the violated expectations on SENSOR_READINGS -->
 
-```sql
-INSERT INTO DEVICES (DEVICE_ID, SITE_ID, MODEL, INSTALLED_ON, LABEL)
-    VALUES ('DEV-9999', 'SITE-01', 'TH-200', '2026-10-01', 'Cold aisle C');
+The alert's owner role needs EXECUTE ALERT on the account, USAGE on the warehouse (or EXECUTE MANAGED ALERT for a serverless alert, which omits WAREHOUSE), USAGE on the email integration, and the SNOWFLAKE.DATA_QUALITY_MONITORING_VIEWER application role to read expectation status. Snowflake publishes templates for anomaly detection (DQ_ANOMALY_DETECTION) and for other products; SYSTEM$LIST_ALERT_TEMPLATES lists them.
 
-SELECT * FROM TABLE(SYSTEM$EVALUATE_DATA_QUALITY_EXPECTATIONS_PERSIST_RESULT('SENSOR_READINGS'));
-
-ALTER TASK PUBLISH_READINGS RESUME;
-```
-
-NO_ORPHAN_READINGS now records 0, so the next alert run finds nothing and leaves the task running.
-
-The pattern is **asynchronous**: a downstream task can run once more before suspension. For a hard gate, the check can run as a pipeline step before the load. The alert's owner role needs EXECUTE ALERT on the account and OPERATE on what it suspends. While it is resumed, the alert wakes its warehouse every five minutes; *Cleanup* shows how to stop it.
+See [Sending notifications for data quality issues](https://docs.snowflake.com/en/user-guide/data-quality-notifications) and [Creating an alert from a template with SQL](https://docs.snowflake.com/en/user-guide/alerts#label-alerts-create-from-template).
 
 <!-- ------------------------ -->
 ## Operating Checks in Production
@@ -829,12 +826,12 @@ SELECT * FROM SNOWFLAKE.ACCOUNT_USAGE.DATA_QUALITY_MONITORING_USAGE_HISTORY
 ORDER BY START_TIME DESC;
 ```
 
-Across an organization, METERING_DAILY_HISTORY carries the same spend with SERVICE_TYPE = 'DATA_QUALITY_MONITORING'. Costs stay low when cadence matches how fast you would act, TRIGGER_ON_CHANGES is used where evaluating on data arrival fits, and schedules are suspended with an empty string rather than UNSET. Alerts and tasks, like the circuit breaker, bill their own warehouse each time they run.
+Across an organization, METERING_DAILY_HISTORY carries the same spend with SERVICE_TYPE = 'DATA_QUALITY_MONITORING'. Costs stay low when cadence matches how fast you would act, TRIGGER_ON_CHANGES is used where evaluating on data arrival fits, and schedules are suspended with an empty string rather than UNSET. Alerts, like the template alert, bill their own warehouse each time they run.
 
 <!-- ------------------------ -->
 ## Cleanup
 
-If you tried the examples, dropping the database removes its tables, their associations, custom metrics, the secret, the task, the alert, and the database's monitoring settings. The warehouse and the notification integrations live at account level and outlive the database:
+If you tried the examples, dropping the database removes its tables, their associations, custom metrics, the secret, the alert, and the database's monitoring settings. The warehouse and the notification integrations live at account level and outlive the database:
 
 ```sql
 DROP DATABASE IF EXISTS DQ_EXAMPLES;
@@ -843,11 +840,10 @@ DROP INTEGRATION IF EXISTS DQ_EMAIL_INT;
 DROP INTEGRATION IF EXISTS DQ_SLACK_INT;
 ```
 
-To keep the objects but stop the billing, suspend everything that runs on a schedule — the alert, the task, and the table and schema schedules:
+To keep the objects but stop the billing, suspend everything that runs on a schedule: the alert and the table and schema schedules.
 
 ```sql
-ALTER ALERT DQ_EXAMPLES.PUBLIC.READINGS_CIRCUIT_BREAKER SUSPEND;
-ALTER TASK DQ_EXAMPLES.PUBLIC.PUBLISH_READINGS SUSPEND;
+ALTER ALERT DQ_EXAMPLES.PUBLIC.READINGS_EXPECTATION_ALERT SUSPEND;
 ALTER TABLE DQ_EXAMPLES.PUBLIC.SENSOR_READINGS SET DATA_METRIC_SCHEDULE = '';
 ALTER TABLE DQ_EXAMPLES.PUBLIC.SENSOR_READINGS_V2 SET DATA_METRIC_SCHEDULE = '';
 ALTER SCHEMA DQ_EXAMPLES.PUBLIC SET DATA_METRIC_SCHEDULE = '';
@@ -876,6 +872,7 @@ Data quality monitoring in Snowflake is a small vocabulary applied with judgment
 - **Scope with FILTER, don't loosen thresholds.**
 - **Assert rules; learn ranges.** Expectations for what is true by definition, anomaly detection for normal ranges.
 - **Notify with a cooldown**, or people will filter the alerts.
+- **Use a template when you need an alert object.** It brings its own scope, schedule and history, without writing the condition yourself.
 - **Keep checks in code**, so a threshold change is reviewable.
 
 ### Resources
