@@ -127,7 +127,7 @@ Open the DCM_Projects_Governance/sources/definitions/ folder:
 
 | File | Contents |
 |:-----|:---------|
-| infrastructure.sql | Warehouse, the DCM_DEMO_5 database, RAW and GOV schemas, a restricted ANALYST role, and its grants |
+| infrastructure.sql | Warehouse, the DCM_DEMO_5 database, PUBLIC, RAW and GOV schemas, a restricted ANALYST role, and its grants |
 | raw.sql | A CUSTOMER table with PII columns (email, phone, city) |
 | governance.sql | Tags, a masking policy, a row access policy, a network rule and policy, an authentication policy, and the statements that attach them |
 
