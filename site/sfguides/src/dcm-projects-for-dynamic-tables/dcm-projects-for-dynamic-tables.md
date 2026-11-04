@@ -87,21 +87,25 @@ cd snowflake-dcm-projects/Quickstarts/dcm-projects-for-dynamic-tables
 <!-- ------------------------ -->
 ## Set Up Roles and Permissions
 
-Open scripts/01_pre_deploy.sql in a Snowsight worksheet and run it as ACCOUNTADMIN. It prepares everything the project cannot create for itself, in seven sections.
+Run the first script. **In Snowsight:** open scripts/01_pre_deploy.sql in a worksheet and run it from top to bottom. **With the Snowflake CLI:**
 
-**1. Role.** The script creates DCM_DEVELOPER, the role that owns the DCM Project and every object it deploys, and grants it to you and to SYSADMIN.
-
-```sql
-USE ROLE ACCOUNTADMIN;
-
-CREATE ROLE IF NOT EXISTS DCM_DEVELOPER
-    COMMENT = 'Owner role for the DCM Projects quickstarts';
-SET MY_USER = CURRENT_USER();
-GRANT ROLE DCM_DEVELOPER TO USER IDENTIFIER($MY_USER);
-GRANT ROLE DCM_DEVELOPER TO ROLE SYSADMIN;
+```bash
+snow sql -f scripts/01_pre_deploy.sql
 ```
 
+The script is the same in every guide of this series. It runs as ACCOUNTADMIN and is safe to run again: if you already ran it for another guide, running it now changes nothing. It has six numbered sections.
+
+**1. Role.** It creates the DCM_DEVELOPER role and grants it to you and to SYSADMIN. Every guide in this series uses this role as the project owner.
+
 **2. Inherited grants opt-in.** It turns on inherited grants for the account.
+
+**3. Account-level privileges.** A project cannot grant account-level privileges to its own owner, so they all happen here, before the first plan. DCM_DEVELOPER gets the privileges that the guides in this series need together, one grant per line, each with a comment naming the guide or feature that uses it. Some are checked at plan time, so a missing one fails the first plan rather than the deploy.
+
+**4. Series container.** It creates the DCM_DEMO database and the DCM_DEMO.PROJECTS schema that holds the project objects of the series, and grants DCM_DEVELOPER USAGE on both and CREATE DCM PROJECT on the schema. A project cannot define the database or schema it lives in.
+
+**5. Project object (alternative path only).** Commented out. The first plan creates the project object for you; the SQL is there if the prompt does not appear, or if you prefer to create it yourself.
+
+**6. Values for the manifest.** The last query returns your account identifier and user name.
 
 **Inherited grants.** An inherited grant covers current *and* future objects of a type inside a container. GRANT ON ALL snapshots what exists right now; GRANT ON FUTURE covers only what comes later. An inherited grant covers both, as one grant rather than one per object, which is why it is the recommended pattern in DCM Projects. It is a one-time opt-in per account ([release note](https://docs.snowflake.com/en/release-notes/2026/other/2026-09-10-inherited-grants-ga)), which the setup script turns on:
 
@@ -113,61 +117,7 @@ An inherited grant cannot be combined with WITH GRANT OPTION, `CASCADE` or `REST
 
 This project's access.sql uses three of them to give the READ role SELECT on every table, dynamic table and view in the database.
 
-**3. Account-level privileges.** A project cannot grant account-level privileges to its own owner, so they all happen here, before the first plan. Every guide in this series shares DCM_DEVELOPER, so the script grants it the series superset, one GRANT per line, each with a comment saying what it buys. The ones this guide relies on:
-
-```sql
--- Create the account-level objects a project manages (databases, warehouses,
--- roles), and grant on objects the owner does not own.
-GRANT CREATE DATABASE  ON ACCOUNT TO ROLE DCM_DEVELOPER;
-GRANT CREATE WAREHOUSE ON ACCOUNT TO ROLE DCM_DEVELOPER;
-GRANT CREATE ROLE      ON ACCOUNT TO ROLE DCM_DEVELOPER;
-GRANT MANAGE GRANTS    ON ACCOUNT TO ROLE DCM_DEVELOPER;
-
--- Run tasks the owner owns; serverless tasks additionally need EXECUTE MANAGED TASK.
-GRANT EXECUTE TASK         ON ACCOUNT TO ROLE DCM_DEVELOPER;
-GRANT EXECUTE MANAGED TASK ON ACCOUNT TO ROLE DCM_DEVELOPER;
-
--- Run alerts the owner owns; serverless alerts additionally need EXECUTE MANAGED ALERT.
-GRANT EXECUTE ALERT         ON ACCOUNT TO ROLE DCM_DEVELOPER;
-GRANT EXECUTE MANAGED ALERT ON ACCOUNT TO ROLE DCM_DEVELOPER;
-
--- Attach data quality expectations (EXECUTE DATA METRIC FUNCTION), read their
--- results (VIEWER application role), and configure data quality notifications
--- on a database (MANAGE DATA QUALITY).
-GRANT EXECUTE DATA METRIC FUNCTION ON ACCOUNT TO ROLE DCM_DEVELOPER;
-GRANT APPLICATION ROLE SNOWFLAKE.DATA_QUALITY_MONITORING_VIEWER TO ROLE DCM_DEVELOPER;
-GRANT MANAGE DATA QUALITY ON ACCOUNT TO ROLE DCM_DEVELOPER;
-
--- Read the event table. The DT_REFRESH_FAILURE alert template reads it;
--- without this application role the alert's condition fails with
--- "Schema 'SNOWFLAKE.TELEMETRY' does not exist or not authorized".
-GRANT APPLICATION ROLE SNOWFLAKE.EVENTS_VIEWER TO ROLE DCM_DEVELOPER;
-
--- This guide only: set LOG_EVENT_LEVEL on the project's database, which is what
--- makes the dynamic tables log their refresh failures for the alert. Without it
--- the first plan fails with "must have MODIFY LOG EVENT LEVEL granted on ACCOUNT".
-GRANT MODIFY LOG EVENT LEVEL ON ACCOUNT TO ROLE DCM_DEVELOPER;
-```
-
-The rest of the section (integrations, masking policies, network and authentication policies) is there for the other guides in the series.
-
-**4. Series container.** The DCM Project object needs a database and schema that the project itself does not manage. Every guide in this series keeps its project object in DCM_DEMO.PROJECTS:
-
-```sql
-CREATE DATABASE IF NOT EXISTS DCM_DEMO
-    COMMENT = 'Container for the DCM Projects quickstarts project objects';
-CREATE SCHEMA IF NOT EXISTS DCM_DEMO.PROJECTS
-    COMMENT = 'DCM Project objects for the DCM Projects quickstarts';
-GRANT USAGE ON DATABASE DCM_DEMO TO ROLE DCM_DEVELOPER;
-GRANT USAGE ON SCHEMA DCM_DEMO.PROJECTS TO ROLE DCM_DEVELOPER;
-GRANT CREATE DCM PROJECT ON SCHEMA DCM_DEMO.PROJECTS TO ROLE DCM_DEVELOPER;
-```
-
-**5. Objects the project cannot own.** None in this guide.
-
-**6. Project object (alternative path only).** This section is commented out. You don't need it: the first Plan offers to create the project object for you. Uncomment it only if you prefer to create the object in SQL.
-
-**7. Values for the manifest.** The last query returns your account identifier. Copy it; you paste it into the manifest before the first plan.
+Copy the account identifier from the last query; you paste it into the manifest before the first plan.
 
 | ACCOUNT_IDENTIFIER | USER_NAME |
 |---|---|
