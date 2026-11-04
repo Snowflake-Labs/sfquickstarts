@@ -339,34 +339,6 @@ plt.show()
 
 ![Class balance and default rate by product category](assets/class-balance-default-rate-by-product.png)
 
-Behavioral feature means for defaulters relative to non-defaulters:
-
-```python
-# Behavioral feature means: defaulters vs non-defaulters (normalized to non-default = 1.0)
-behavioral_cols = [
-    "VANTAGE_SCORE_3", "NUMBER_OF_ACCOUNTS", "NUMBER_ACCOUNTS_PAST_DUE",
-    "NUMBER_ACCOUNTS_MAJOR_DEROGATORY", "HIGH_UTIL_ACCTS",
-    "AGE_OLDEST_ACCOUNT", "TOTAL_PAST_DUE_AMOUNT", "BALANCE"
-]
-avg_exprs = ", ".join(f"AVG({c}) AS {c}" for c in behavioral_cols)
-means_pdf = session.sql(f"""
-    SELECT DEFAULT_FLAG, {avg_exprs}
-    FROM CREDIT_RISK_ML.PD_MODEL.LOAN_DATA GROUP BY DEFAULT_FLAG ORDER BY DEFAULT_FLAG
-""").to_pandas().set_index("DEFAULT_FLAG")
-
-ratio = (means_pdf.loc[1] / means_pdf.loc[0]).sort_values()
-
-fig, ax = plt.subplots(figsize=(10, 5))
-ax.barh(ratio.index, ratio.values, color=["#E8684C" if v > 1 else "#4C9BE8" for v in ratio.values])
-ax.axvline(1.0, color="black", linewidth=1, linestyle="--")
-ax.set_xlabel("Mean (default) / Mean (non-default)")
-ax.set_title("Behavioral Features: Defaulters vs Non-Defaulters")
-plt.tight_layout()
-plt.show()
-```
-
-![Behavioral features: defaulters vs non-defaulters](assets/behavioral-features.png)
-
 Macro trends against the portfolio default rate over time:
 
 ```python
