@@ -213,6 +213,9 @@ DEFINE DATABASE DCM_DEMO_3{{env_suffix}}
     LOG_EVENT_LEVEL = ERROR
     COMMENT = 'This is a Quickstart Demo for DCM Projects with Dynamic Tables';
 
+DEFINE SCHEMA DCM_DEMO_3{{env_suffix}}.PUBLIC
+    COMMENT = 'Default schema, declared so DCM manages it';
+
 DEFINE TABLE DCM_DEMO_3{{env_suffix}}.RAW.ORDERS (
     ORDER_ID NUMBER,
     ORDER_TS TIMESTAMP_NTZ,
@@ -293,7 +296,7 @@ Since none of the defined objects exist yet, the plan shows **22 entities: 21 to
 | Operation | Entities |
 |---|---|
 | CREATE | 1 database (DCM_DEMO_3_DEV) and 1 database role (ADMIN_DEV) |
-| CREATE | 4 schemas: RAW, ANALYTICS, SERVE, and the PUBLIC schema every new database gets |
+| CREATE | 4 schemas: PUBLIC, RAW, ANALYTICS and SERVE |
 | CREATE | 3 tables, 3 dynamic tables, 3 views and 1 function |
 | CREATE | 1 stage, 1 task, 1 alert, 1 warehouse and 1 role (DCM_DEMO_3_DEV_READ) |
 | ALTER | the owner role DCM_DEVELOPER, which receives ownership of everything above |
