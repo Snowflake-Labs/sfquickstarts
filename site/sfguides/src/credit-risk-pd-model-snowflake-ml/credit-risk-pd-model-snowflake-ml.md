@@ -167,25 +167,6 @@ SAS-mapped hyperparameters, one function per SAS step (prepare, split, train, ev
 end-to-end workflow in main(session) under if __name__ == "__main__".
 ```
 
-The rest of the SAS workflow is mapped to Snowflake ML:
-
-| SAS construct | Python on Snowflake |
-|---|---|
-| `%let` macros + `PROC SQL` join | Feature Store Feature Views (`LOAN_BEHAVIORAL_FEATURES`, `LOAN_MACRO_FEATURES`) |
-| `DATA` step imputation | `.fillna(0)` |
-| `PROC SURVEYSELECT` + manual freeze | `fs.generate_dataset()` + stratified `train_test_split` |
-| `PROC GRADBOOST` | `XGBClassifier` |
-| `PROC LOGISTIC` ROC / `ODS OUTPUT` | `roc_auc_score`, Gini, KS (logged with Experiment Tracking in the notebook) |
-| `savestate rstore=PD_GRADBOOST_STORE` | `Registry.log_model()` + `champion` alias |
-| `PROC ASTORE` | `model_version.run()` |
-
-### Review and refine
-Treat the converted script as a draft for validation, not a finished model. Check it the way a model validator would:
-- **Hyperparameter mapping.** GRADBOOST and XGBoost are both gradient boosting, so most options map directly. Check the ones that only approximate each other: `minleafsize` (minimum observations per leaf) vs `min_child_weight` (minimum hessian per child), and any GRADBOOST defaults you didn't set, such as regularization and subsampling. Ask CoCo to explain any mapping you're unsure of.
-- **Data logic.** Confirm the default definition (`STATUS_CATEGORY >= 4`, 90+ days past due), the observation window, the join on observation month, and the missing-value handling all match the SAS source.
-- **Equivalence.** Compare discrimination (Gini, KS) and calibration (Brier, predicted vs observed default rate) against the SAS model on the same test population.
-- **Iterate in the chat.** Refine edge cases in follow-up prompts, for example "add Brier score and log all metrics with Snowflake Experiment Tracking" or "train a tuned challenger with a lower learning rate".
-
 The notebook in this guide imports this module and builds the rest of the lifecycle around it: Experiment Tracking, a challenger model, SHAP explainability, monitoring and orchestration. The remaining steps walk through it cell by cell.
 
 <!-- ------------------------ -->
