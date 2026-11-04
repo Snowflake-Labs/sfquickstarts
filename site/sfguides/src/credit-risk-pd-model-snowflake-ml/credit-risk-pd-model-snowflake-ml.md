@@ -101,7 +101,7 @@ run;
 ```
 
 ### Prompt CoCo
-**CoCo (CoCo)** is Snowflake's AI coding assistant. It's available in Snowsight and as a desktop app. Open the repository folder in CoCo (or attach `sas_pd_model.sas` to the chat) and ask for the conversion in plain language. Name the target frameworks and the Snowflake features you want each SAS construct to become:
+**[CoCo](https://www.snowflake.com/en/product/snowflake-coco/)** is Snowflake's AI coding assistant. It's available in Snowsight and as a desktop app. Open the repository folder in CoCo (or attach `sas_pd_model.sas` to the chat) and ask for the conversion in plain language. Name the target frameworks and the Snowflake features you want each SAS construct to become:
 
 ```text
 Convert @sas_pd_model.sas into a Python script, python_pd_model.py, that runs on Snowflake.
