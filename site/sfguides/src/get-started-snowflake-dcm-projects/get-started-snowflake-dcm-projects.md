@@ -269,12 +269,11 @@ Two things in that summary deserve an explanation.
 
 **Why one alter, on a first deploy?** The altered entity is ROLE DCM_DEVELOPER, acquiring `OWNERSHIP` on each newly created object. The project-owner role has to exist *before* the project can be created (it is what owns the project), so it is never something DCM creates. A first deploy of any DCM Project therefore shows exactly this one alter. It is not drift, and there is nothing to fix.
 
-**Why 16 entities from 12 `DEFINE` statements?** The arithmetic is worth following, because it shows what DCM is actually tracking. The twelve definitions in the non-template files cover one database, two schemas, three tables, one dynamic table, one semantic view, one Streamlit app, one warehouse, one role and one tag. The remaining four come from elsewhere:
+**Why 16 entities from 13 `DEFINE` statements?** The arithmetic is worth following, because it shows what DCM is actually tracking. The thirteen definitions in the non-template files cover one database, three schemas (PUBLIC, RAW and ANALYTICS), three tables, one dynamic table, one semantic view, one Streamlit app, one warehouse, one role and one tag. The remaining three come from elsewhere:
 
 | Source | Entities |
 |---|---|
-| DEFINE statements | 12 |
-| PUBLIC schema, planned with every database | 1 |
+| DEFINE statements | 13 |
 | Jinja loop and macro expanding DEV_TEAM_1 | 2 |
 | ROLE DCM_DEVELOPER gaining ownership | 1 |
 | **Total** | **16** |
@@ -416,7 +415,7 @@ A deployed project is a live inventory of the objects it owns. Ask it:
 SHOW ENTITIES IN DCM PROJECT DCM_DEMO.PROJECTS.DCM_PROJECT_DEV;
 ```
 
-Every entity the project manages appears here, with its type and name. There are 16 rows at this point: the database, four schemas, three tables, the dynamic table, the semantic view, the Streamlit app, the tag, the warehouse and three roles. The PUBLIC schema and DCM_DEVELOPER were in both changesets, but neither is listed, because neither is a managed entity. This is the boundary of the project's authority: an object in this list is reconciled on every deploy, and an object that is not is invisible to DCM even if it sits in the same database.
+Every entity the project manages appears here, with its type and name. There are 17 rows at this point: the database, five schemas, three tables, the dynamic table, the semantic view, the Streamlit app, the tag, the warehouse and three roles. DCM_DEVELOPER was in both changesets but is not listed: it is altered to receive ownership grants, but it is not a managed entity because the project does not create it. This is the boundary of the project's authority: an object in this list is reconciled on every deploy, and an object that is not is invisible to DCM even if it sits in the same database.
 
 That distinction is what makes the next command matter, because it tells you how the inventory got to its current shape:
 
