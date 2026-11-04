@@ -786,7 +786,7 @@ pd_model.show_versions()
 ```
 
 ### SHAP explainability
-Credit decisions must be explainable, under fair lending laws (ECOA, the EU AI Act), SR 11-7 / SS1/23 model risk guidance, and IFRS 9 / CECL audits. The `explain` function runs on the warehouse next to the data, with no external SHAP tooling. Start with global importance:
+Credit decisions must be explainable, for audit purposes. The `explain` function runs on the warehouse next to the data, with no external SHAP tooling. Start with global importance:
 
 ```python
 # SHAP Explainability from the Registry — critical for adverse action notices and SR 11-7 compliance
