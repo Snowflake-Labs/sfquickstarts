@@ -86,27 +86,25 @@ cd snowflake-dcm-projects/Quickstarts/get-started-snowflake-dcm-projects
 <!-- ------------------------ -->
 ## Set Up Roles and Permissions
 
-Run the first script. **In Snowsight:** open scripts/01_pre_deploy.sql in a worksheet and run each section in order. **With the Snowflake CLI:**
+Run the first script. **In Snowsight:** open scripts/01_pre_deploy.sql in a worksheet and run it from top to bottom. **With the Snowflake CLI:**
 
 ```bash
 snow sql -f scripts/01_pre_deploy.sql
 ```
 
-The script runs as ACCOUNTADMIN and has seven numbered sections.
+The script is the same in every guide of this series. It runs as ACCOUNTADMIN and is safe to run again: if you already ran it for another guide, running it now changes nothing. It has six numbered sections.
 
 **1. Role.** It creates the DCM_DEVELOPER role and grants it to you and to SYSADMIN. Every guide in this series uses this role as the project owner.
 
 **2. Inherited grants opt-in.** It turns on inherited grants for the account.
 
-**3. Account-level privileges.** It grants DCM_DEVELOPER the superset of account-level privileges that the guides in this series need, one grant per line, each with a comment saying what capability it buys. A project cannot grant account-level privileges to its own owner, which is why they all happen here, before the first plan.
+**3. Account-level privileges.** A project cannot grant account-level privileges to its own owner, so they all happen here, before the first plan. DCM_DEVELOPER gets the privileges that the guides in this series need together, one grant per line, each with a comment naming the guide or feature that uses it. Some are checked at plan time, so a missing one fails the first plan rather than the deploy.
 
-**4. Series container.** Still as ACCOUNTADMIN, it creates the DCM_DEMO database and the DCM_DEMO.PROJECTS schema that holds the project object, then grants DCM_DEVELOPER USAGE on both and CREATE DCM PROJECT on the schema. A project cannot define the database or schema it lives in, so these exist outside it.
+**4. Series container.** It creates the DCM_DEMO database and the DCM_DEMO.PROJECTS schema that holds the project objects of the series, and grants DCM_DEVELOPER USAGE on both and CREATE DCM PROJECT on the schema. A project cannot define the database or schema it lives in.
 
-**5. Objects the project cannot own.** None in this guide.
+**5. Project object (alternative path only).** Commented out. The first plan creates the project object for you; the SQL is there if the prompt does not appear, or if you prefer to create it yourself.
 
-**6. Project object (alternative path only).** Commented out: the first plan creates it, as the next sections show.
-
-**7. Values for the manifest.** It prints your account identifier and username.
+**6. Values for the manifest.** The last query returns your account identifier and user name.
 
 **Inherited grants.** An inherited grant covers current *and* future objects of a type inside a container. GRANT ON ALL snapshots what exists right now; GRANT ON FUTURE covers only what comes later. An inherited grant covers both, as one grant rather than one per object, which is why it is the recommended pattern in DCM Projects. It is a one-time opt-in per account ([release note](https://docs.snowflake.com/en/release-notes/2026/other/2026-09-10-inherited-grants-ga)), which the setup script turns on:
 
