@@ -78,21 +78,25 @@ cd snowflake-dcm-projects/Quickstarts/build-data-pipelines-with-snowflake-dcm-pr
 <!-- ------------------------ -->
 ## Set Up Roles and Permissions
 
-Open scripts/01_pre_deploy.sql in a Snowsight worksheet and run it as ACCOUNTADMIN. It has seven sections, and switches roles itself where it needs to.
+Run the first script. **In Snowsight:** open scripts/01_pre_deploy.sql in a worksheet and run it from top to bottom. **With the Snowflake CLI:**
 
-**1. Role.** The script creates DCM_DEVELOPER, the role that owns the Platform project, and grants it to you and to SYSADMIN. Every guide in this series shares this role.
-
-```sql
-USE ROLE ACCOUNTADMIN;
-
-CREATE ROLE IF NOT EXISTS DCM_DEVELOPER
-    COMMENT = 'Owns and deploys the DCM Projects quickstart projects';
-SET MY_USER = CURRENT_USER();
-GRANT ROLE DCM_DEVELOPER TO USER IDENTIFIER($MY_USER);
-GRANT ROLE DCM_DEVELOPER TO ROLE SYSADMIN;
+```bash
+snow sql -f scripts/01_pre_deploy.sql
 ```
 
+The script is the same in every guide of this series. It runs as ACCOUNTADMIN and is safe to run again: if you already ran it for another guide, running it now changes nothing. It has six numbered sections.
+
+**1. Role.** It creates the DCM_DEVELOPER role and grants it to you and to SYSADMIN. Every guide in this series uses this role as the project owner.
+
 **2. Inherited grants opt-in.** It turns on inherited grants for the account.
+
+**3. Account-level privileges.** A project cannot grant account-level privileges to its own owner, so they all happen here, before the first plan. DCM_DEVELOPER gets the privileges that the guides in this series need together, one grant per line, each with a comment naming the guide or feature that uses it. Some are checked at plan time, so a missing one fails the first plan rather than the deploy.
+
+**4. Series container.** It creates the DCM_DEMO database and the DCM_DEMO.PROJECTS schema that holds the project objects of the series, and grants DCM_DEVELOPER USAGE on both and CREATE DCM PROJECT on the schema. A project cannot define the database or schema it lives in.
+
+**5. Project object (alternative path only).** Commented out. The first plan creates the project object for you; the SQL is there if the prompt does not appear, or if you prefer to create it yourself.
+
+**6. Values for the manifest.** The last query returns your account identifier and user name.
 
 **Inherited grants.** An inherited grant covers current *and* future objects of a type inside a container. GRANT ON ALL snapshots what exists right now; GRANT ON FUTURE covers only what comes later. An inherited grant covers both, as one grant rather than one per object, which is why it is the recommended pattern in DCM Projects. It is a one-time opt-in per account ([release note](https://docs.snowflake.com/en/release-notes/2026/other/2026-09-10-inherited-grants-ga)), which the setup script turns on:
 
@@ -104,43 +108,9 @@ An inherited grant cannot be combined with WITH GRANT OPTION, `CASCADE` or `REST
 
 The Platform project uses one to let each team read every table in the shared RAW schema, including tables added later.
 
-**3. Account-level privileges.** A project cannot grant account-level privileges to its own owner, so they all happen here, before the first plan. DCM_DEVELOPER gets the superset that every guide in this series uses, and each grant carries a comment saying what it is for. This guide relies on these:
+Two grants in section 3 are there for the Finance team's expectations: EXECUTE DATA METRIC FUNCTION and the SNOWFLAKE.DATA_QUALITY_MONITORING_VIEWER application role. The Platform project passes both on to the Finance role, and a role can only pass on a privilege it holds WITH GRANT OPTION, which is why the script grants EXECUTE DATA METRIC FUNCTION that way. Without it, the first plan fails with "Grant not executed: Insufficient privileges".
 
-```sql
-GRANT CREATE DATABASE  ON ACCOUNT TO ROLE DCM_DEVELOPER;
-GRANT CREATE WAREHOUSE ON ACCOUNT TO ROLE DCM_DEVELOPER;
-GRANT CREATE ROLE      ON ACCOUNT TO ROLE DCM_DEVELOPER;
-GRANT MANAGE GRANTS    ON ACCOUNT TO ROLE DCM_DEVELOPER;
-GRANT EXECUTE TASK     ON ACCOUNT TO ROLE DCM_DEVELOPER;
-
-GRANT EXECUTE DATA METRIC FUNCTION ON ACCOUNT TO ROLE DCM_DEVELOPER WITH GRANT OPTION;
-GRANT APPLICATION ROLE SNOWFLAKE.DATA_QUALITY_MONITORING_VIEWER TO ROLE DCM_DEVELOPER;
-```
-
-The first four let the Platform project create databases, warehouses and team roles, and grant on them. EXECUTE TASK lets DCM_DEVELOPER run the load task by hand. The last two are for the Finance team's expectations: the Platform project passes EXECUTE DATA METRIC FUNCTION on to the Finance role, and a role can only pass on a privilege it holds WITH GRANT OPTION. Without it, the first plan fails with "Grant not executed: Insufficient privileges".
-
-**4. Series container.** The Platform project object lives in DCM_DEMO.PROJECTS, the schema that holds the project objects of every guide in this series. The Pipeline project object will live somewhere else: in a PROJECTS schema inside the Finance team's own database, which the Platform project creates.
-
-```sql
-CREATE DATABASE IF NOT EXISTS DCM_DEMO
-    COMMENT = 'Holds the DCM Project objects of the DCM Projects quickstarts';
-CREATE SCHEMA IF NOT EXISTS DCM_DEMO.PROJECTS
-    COMMENT = 'DCM Project objects of the DCM Projects quickstarts';
-GRANT USAGE ON DATABASE DCM_DEMO TO ROLE DCM_DEVELOPER;
-GRANT USAGE ON SCHEMA DCM_DEMO.PROJECTS TO ROLE DCM_DEVELOPER;
-GRANT CREATE DCM PROJECT ON SCHEMA DCM_DEMO.PROJECTS TO ROLE DCM_DEVELOPER;
-```
-
-**5. Objects the project cannot own.** None in this guide.
-
-**6. Project objects (alternative path only).** This section is commented out. Your first plan creates each project object for you; the SQL is there if the prompt does not appear, or if you prefer to create them yourself.
-
-**7. Values for the manifest.** The last query returns your account identifier:
-
-```sql
-SELECT CURRENT_ORGANIZATION_NAME() || '-' || CURRENT_ACCOUNT_NAME() AS ACCOUNT_IDENTIFIER,
-       CURRENT_USER() AS USER_NAME;
-```
+The Platform project object lives in DCM_DEMO.PROJECTS. The Pipeline project object will live somewhere else: in a PROJECTS schema inside the Finance team's own database, which the Platform project creates.
 
 Paste ACCOUNT_IDENTIFIER into the account_identifier line of the DCM_DEV target, line 11, in both DCM_Platform_Demo/manifest.yml and DCM_Pipeline_Demo/manifest.yml. Both lines carry the comment "# update to your account names".
 
@@ -262,7 +232,6 @@ wh_roles_and_grants.sql is one loop over the teams in the manifest:
     WITH
         WAREHOUSE_SIZE = '{{wh_size}}'
         AUTO_SUSPEND = 60
-        INITIALLY_SUSPENDED = TRUE
         COMMENT = 'Compute for the {{team.name}} team in the DCM Build Data Pipelines Quickstart';
 
     DEFINE DATABASE DCM_DEMO_2_{{team_name}}{{env_suffix}}
