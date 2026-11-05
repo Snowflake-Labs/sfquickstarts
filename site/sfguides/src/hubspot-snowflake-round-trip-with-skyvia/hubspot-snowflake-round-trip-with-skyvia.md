@@ -36,7 +36,7 @@ To keep the example small, the segment uses only HubSpot deals. In a real projec
 ### What You'll Need
 
 - A [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) or a free trial
-- A [Skyvia account](https://app.skyvia.com/register?utm_source=snowflake_quickstart&utm_medium=referral&utm_campaign=snowflake_partnership). New accounts start with a free trial of the Professional plan, which covers everything in this guide.
+- A [Skyvia account](https://skyvia.com/data-integration/integrate-hubspot-snowflake?utm_source=snowflake&utm_medium=referral&utm_campaign=quickstart_guide_hubspot). New accounts start with a free trial of the Professional plan, which covers everything in this guide.
 - A new [free HubSpot account](https://www.hubspot.com/). Don't use your production CRM: the last steps write data to HubSpot contacts.
 - The test data: two CSV files with fictional contacts and deals ([download from GitHub](https://github.com/yevhenii-skyvia/snowflake-test-data))
 
@@ -74,7 +74,7 @@ Create a new HubSpot account even if you already have one. The last steps of thi
 
 ### Create a Skyvia Account
 
-1. Sign up for a [Skyvia account](https://app.skyvia.com/register?utm_source=snowflake_quickstart&utm_medium=referral&utm_campaign=snowflake_partnership).
+1. Sign up for a [Skyvia account](https://skyvia.com/data-integration/integrate-hubspot-snowflake?utm_source=snowflake&utm_medium=referral&utm_campaign=quickstart_guide_hubspot).
 2. Confirm your email address and sign in.
 3. Complete the setup wizard:
    - On the **About You** page, enter your details.
@@ -516,8 +516,8 @@ You've built a round trip between HubSpot and Snowflake. Skyvia replicates HubSp
 You can extend this setup in several ways:
 
 - Add more objects to the replication, such as *Companies*, and build segments for them.
-- Run the replication and the import as one [control flow](https://docs.skyvia.com/data-integration/control-flow/?utm_source=snowflake_quickstart&utm_medium=referral&utm_campaign=snowflake_partnership) so that the import starts right after the replication finishes.
-- Move the segment SQL to a dbt project and run it with [dbt in Skyvia](https://docs.skyvia.com/data-integration/dbt-transformation/?utm_source=snowflake_quickstart&utm_medium=referral&utm_campaign=snowflake_partnership) when your models grow.
+- Run the replication and the import as one [control flow](https://docs.skyvia.com/data-integration/control-flow/?utm_source=snowflake&utm_medium=referral&utm_campaign=quickstart_guide_hubspot) so that the import starts right after the replication finishes.
+- Move the segment SQL to a dbt project and run it with [dbt in Skyvia](https://docs.skyvia.com/data-integration/dbt-transformation/?utm_source=snowflake&utm_medium=referral&utm_campaign=quickstart_guide_hubspot) when your models grow.
 
 ### What You Learned
 
@@ -530,12 +530,12 @@ You can extend this setup in several ways:
 
 ### Related Resources
 
-- [HubSpot and Snowflake Integration with Skyvia](https://skyvia.com/data-integration/integrate-hubspot-snowflake?utm_source=snowflake_quickstart&utm_medium=referral&utm_campaign=snowflake_partnership)
-- [Skyvia Replication](https://docs.skyvia.com/data-integration/replication/?utm_source=snowflake_quickstart&utm_medium=referral&utm_campaign=snowflake_partnership)
-- [Skyvia Import](https://docs.skyvia.com/data-integration/import/?utm_source=snowflake_quickstart&utm_medium=referral&utm_campaign=snowflake_partnership)
-- [Scheduling Integrations in Skyvia](https://docs.skyvia.com/data-integration/scheduling-integrations-for-automatic-execution.html?utm_source=snowflake_quickstart&utm_medium=referral&utm_campaign=snowflake_partnership)
-- [Skyvia HubSpot Connector](https://docs.skyvia.com/connectors/cloud-sources/hubspot_connections.html?utm_source=snowflake_quickstart&utm_medium=referral&utm_campaign=snowflake_partnership)
-- [Skyvia Snowflake Connector](https://docs.skyvia.com/connectors/databases/snowflake_connections.html?utm_source=snowflake_quickstart&utm_medium=referral&utm_campaign=snowflake_partnership)
+- [HubSpot and Snowflake Integration with Skyvia](https://skyvia.com/data-integration/integrate-hubspot-snowflake?utm_source=snowflake&utm_medium=referral&utm_campaign=quickstart_guide_hubspot)
+- [Skyvia Replication](https://docs.skyvia.com/data-integration/replication/?utm_source=snowflake&utm_medium=referral&utm_campaign=quickstart_guide_hubspot)
+- [Skyvia Import](https://docs.skyvia.com/data-integration/import/?utm_source=snowflake&utm_medium=referral&utm_campaign=quickstart_guide_hubspot)
+- [Scheduling Integrations in Skyvia](https://docs.skyvia.com/data-integration/scheduling-integrations-for-automatic-execution.html?utm_source=snowflake&utm_medium=referral&utm_campaign=quickstart_guide_hubspot)
+- [Skyvia HubSpot Connector](https://docs.skyvia.com/connectors/cloud-sources/hubspot_connections.html?utm_source=snowflake&utm_medium=referral&utm_campaign=quickstart_guide_hubspot)
+- [Skyvia Snowflake Connector](https://docs.skyvia.com/connectors/databases/snowflake_connections.html?utm_source=snowflake&utm_medium=referral&utm_campaign=quickstart_guide_hubspot)
 - [Snowflake Programmatic Access Tokens](https://docs.snowflake.com/en/user-guide/programmatic-access-tokens)
 - [Snowflake Network Policies](https://docs.snowflake.com/en/user-guide/network-policies)
 - [HubSpot Properties](https://knowledge.hubspot.com/properties/create-and-edit-properties)
