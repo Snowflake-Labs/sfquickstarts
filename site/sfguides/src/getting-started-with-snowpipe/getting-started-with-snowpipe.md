@@ -49,7 +49,7 @@ To complete this lab, you'll need a Snowflake account. A free Snowflake trial ac
 
 4. Select "AWS – Amazon Web Services" as the cloud provider
 
-5. Select "US West (Oregon)" as the region
+5. Select "US East (Ohio)" as the region
 
 6. Complete the rest of the form and click "Get started"
 
