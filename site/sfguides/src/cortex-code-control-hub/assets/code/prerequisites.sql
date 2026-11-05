@@ -89,6 +89,16 @@ CREATE TABLE IF NOT EXISTS CC_CREDIT_CONFIG (
     PRIMARY KEY (CONFIG_ID)
 );
 
+-- Temporary limits (additive; safe on existing installs). Read by SP_CC_EXPIRE_TEMPORARY_CREDITS.
+--   PREV_*       : the permanent cohort limits in force before a temporary cohort change
+--   MEMBERS_JSON : users a temporary cohort was applied to (reverted on expiry)
+ALTER TABLE CC_CREDIT_CONFIG ADD COLUMN IF NOT EXISTS IS_TEMPORARY BOOLEAN;  -- no DEFAULT: it breaks IF NOT EXISTS re-runs; NULL = permanent
+ALTER TABLE CC_CREDIT_CONFIG ADD COLUMN IF NOT EXISTS EXPIRES_AT TIMESTAMP_LTZ;
+ALTER TABLE CC_CREDIT_CONFIG ADD COLUMN IF NOT EXISTS PREV_CLI_DAILY_LIMIT NUMBER(10,2);
+ALTER TABLE CC_CREDIT_CONFIG ADD COLUMN IF NOT EXISTS PREV_SNOWSIGHT_DAILY_LIMIT NUMBER(10,2);
+ALTER TABLE CC_CREDIT_CONFIG ADD COLUMN IF NOT EXISTS PREV_DESKTOP_DAILY_LIMIT NUMBER(10,2);
+ALTER TABLE CC_CREDIT_CONFIG ADD COLUMN IF NOT EXISTS MEMBERS_JSON VARIANT;
+
 CREATE TABLE IF NOT EXISTS CC_AUDIT_LOG (
     LOG_ID          NUMBER AUTOINCREMENT,
     TIMESTAMP       TIMESTAMP_LTZ  DEFAULT CURRENT_TIMESTAMP(),
@@ -108,7 +118,7 @@ CREATE TABLE IF NOT EXISTS CC_USAGE_DAILY_SUMMARY (
     USAGE_DATE      DATE           NOT NULL,
     USER_NAME       VARCHAR(255)   NOT NULL,
     COHORT_ROLE     VARCHAR(255),
-    SURFACE         VARCHAR(100)    NOT NULL,
+    SURFACE         VARCHAR(100)   NOT NULL,
     MODEL_NAME      VARCHAR(255)   NOT NULL DEFAULT 'UNKNOWN',
     TOTAL_CREDITS   NUMBER(20,6)   DEFAULT 0,
     TOTAL_TOKENS    NUMBER(20,0)   DEFAULT 0,
@@ -125,7 +135,7 @@ CREATE TABLE IF NOT EXISTS CC_USAGE_HOURLY_SUMMARY (
     USAGE_HOUR      NUMBER(2,0)    NOT NULL,
     USER_NAME       VARCHAR(255)   NOT NULL,
     COHORT_ROLE     VARCHAR(255),
-    SURFACE         VARCHAR(100)    NOT NULL,
+    SURFACE         VARCHAR(100)   NOT NULL,
     TOTAL_CREDITS   NUMBER(20,6)   DEFAULT 0,
     QUERY_COUNT     NUMBER(10,0)   DEFAULT 0,
     REFRESHED_AT    TIMESTAMP_LTZ  DEFAULT CURRENT_TIMESTAMP(),
@@ -395,6 +405,137 @@ BEGIN
 END;
 $$;
 
+-- Fast user list for the User Override dropdown.
+-- Runs SHOW USERS (metadata, no ACCOUNT_USAGE latency) as the SP owner.
+-- EXECUTE AS OWNER is required: per Snowflake BCR 975, bare SHOW USERS is
+-- filtered to users the ACTIVE role can see, so an app role calling it
+-- directly would get only its own username. The SP owner holds MANAGE GRANTS
+-- (granted at the top of this file), so it sees every user.
+CREATE OR REPLACE PROCEDURE SP_CC_LIST_USERS()
+RETURNS TABLE(NAME VARCHAR)
+LANGUAGE SQL
+EXECUTE AS OWNER
+AS
+$$
+DECLARE
+    res RESULTSET;
+BEGIN
+    res := (EXECUTE IMMEDIATE 'SHOW USERS');
+    res := (SELECT "name"::VARCHAR AS NAME
+            FROM TABLE(RESULT_SCAN(LAST_QUERY_ID()))
+            ORDER BY 1);
+    RETURN TABLE(res);
+END;
+$$;
+
+-- Read a user's Cortex Code credit-limit parameter as the SP owner.
+-- SHOW PARAMETERS ... IN USER requires MONITOR on the target user (or account-level
+-- privilege), which the Streamlit app role does not have. Running it directly from
+-- the app fails with "Insufficient privileges to operate on user 'X'". This SP runs
+-- with owner's rights, so the app can read any user's limit without elevating the
+-- app role itself.
+-- Returns 'value|level' (e.g. '10|ACCOUNT', '25|USER') or 'NULL|DEFAULT' if unset.
+CREATE OR REPLACE PROCEDURE SP_CC_GET_USER_PARAM(
+    P_USERNAME VARCHAR, P_PARAM VARCHAR
+)
+RETURNS VARCHAR
+LANGUAGE SQL
+EXECUTE AS OWNER
+AS
+$$
+DECLARE
+    v_safe_user VARCHAR;
+    v_val   VARCHAR;
+    v_level VARCHAR;
+    rs RESULTSET;
+BEGIN
+    IF (P_USERNAME IS NULL OR NOT REGEXP_LIKE(P_USERNAME, '^[A-Za-z0-9_$\\-\\.@]+$')) THEN
+        RETURN 'ERROR: Invalid username.';
+    END IF;
+    IF (P_PARAM IS NULL OR NOT REGEXP_LIKE(UPPER(P_PARAM), '^CORTEX_CODE_[A-Z_]+$')) THEN
+        RETURN 'ERROR: Only CORTEX_CODE_* parameters can be read.';
+    END IF;
+    v_safe_user := UPPER(P_USERNAME);
+
+    rs := (EXECUTE IMMEDIATE 'SHOW PARAMETERS LIKE ''' || P_PARAM
+                             || ''' IN USER "' || v_safe_user || '"');
+    LET cur CURSOR FOR rs;
+    FOR row_val IN cur DO
+        v_val   := row_val."value";
+        v_level := row_val."level";
+        RETURN v_val || '|' || v_level;
+    END FOR;
+    RETURN 'NULL|DEFAULT';
+END;
+$$;
+
+-- Role-level grants for the Access page (AI role -> domain role, DB role -> role).
+-- GRANT/REVOKE ROLE needs MANAGE GRANTS (or ownership), which the app role does
+-- not have, so this runs with owner's rights.
+-- Guardrails, because the owner holds MANAGE GRANTS:
+--   * system/admin roles and the SP owner role can never be the granted (source) role
+--   * DATABASE_ROLE grants are limited to the Cortex database roles
+CREATE OR REPLACE PROCEDURE SP_CC_MANAGE_ROLE_GRANT(
+    P_ACTION VARCHAR, P_GRANT_TYPE VARCHAR, P_SOURCE VARCHAR, P_TARGET VARCHAR
+)
+RETURNS VARCHAR
+LANGUAGE SQL
+EXECUTE AS OWNER
+AS
+$$
+DECLARE
+    v_action VARCHAR;
+    v_type   VARCHAR;
+    v_sql    VARCHAR;
+BEGIN
+    v_action := UPPER(TRIM(P_ACTION));
+    v_type   := UPPER(TRIM(P_GRANT_TYPE));
+    IF (v_action NOT IN ('GRANT', 'REVOKE')) THEN
+        RETURN 'ERROR: Action must be GRANT or REVOKE.';
+    END IF;
+    IF (P_TARGET IS NULL OR NOT REGEXP_LIKE(P_TARGET, '^[A-Za-z0-9_$\\-\\.]+$')) THEN
+        RETURN 'ERROR: Invalid target role name.';
+    END IF;
+    -- System roles and the SP owner role are never valid targets. PUBLIC stays allowed
+    -- for Cortex database roles (revoking CORTEX_USER from PUBLIC is the standard restriction).
+    IF (UPPER(P_TARGET) IN ('ACCOUNTADMIN', 'SECURITYADMIN', 'SYSADMIN', 'USERADMIN',
+                            'ORGADMIN', 'GLOBALORGADMIN', UPPER('__SP_OWNER_ROLE__'))
+        OR (UPPER(P_TARGET) = 'PUBLIC' AND v_type = 'ROLE')) THEN
+        RETURN 'ERROR: System or app-owner roles cannot be a grant target from this app.';
+    END IF;
+
+    IF (v_type = 'ROLE') THEN
+        IF (P_SOURCE IS NULL OR NOT REGEXP_LIKE(P_SOURCE, '^[A-Za-z0-9_$\\-\\.]+$')) THEN
+            RETURN 'ERROR: Invalid source role name.';
+        END IF;
+        IF (UPPER(P_SOURCE) IN ('ACCOUNTADMIN', 'SECURITYADMIN', 'SYSADMIN', 'USERADMIN',
+                                'ORGADMIN', 'GLOBALORGADMIN', UPPER('__SP_OWNER_ROLE__'))) THEN
+            RETURN 'ERROR: Granting system or app-owner roles is not allowed from this app.';
+        END IF;
+        IF (UPPER(P_SOURCE) = UPPER(P_TARGET)) THEN
+            RETURN 'ERROR: Source and target role must differ.';
+        END IF;
+        v_sql := v_action || ' ROLE "' || P_SOURCE || '"'
+                 || IFF(v_action = 'GRANT', ' TO', ' FROM') || ' ROLE "' || P_TARGET || '"';
+    ELSEIF (v_type = 'DATABASE_ROLE') THEN
+        IF (UPPER(P_SOURCE) NOT IN ('SNOWFLAKE.CORTEX_USER', 'SNOWFLAKE.COPILOT_USER',
+                                    'SNOWFLAKE.CORTEX_ANALYST_USER', 'SNOWFLAKE.CORTEX_AGENT_USER')) THEN
+            RETURN 'ERROR: Database role not allowed. Allowed: SNOWFLAKE.CORTEX_USER, SNOWFLAKE.CORTEX_AGENT_USER, SNOWFLAKE.COPILOT_USER, SNOWFLAKE.CORTEX_ANALYST_USER';
+        END IF;
+        v_sql := v_action || ' DATABASE ROLE ' || UPPER(P_SOURCE)
+                 || IFF(v_action = 'GRANT', ' TO', ' FROM') || ' ROLE "' || P_TARGET || '"';
+    ELSE
+        RETURN 'ERROR: Grant type must be ROLE or DATABASE_ROLE.';
+    END IF;
+
+    EXECUTE IMMEDIATE v_sql;
+    RETURN 'OK: ' || v_sql;
+EXCEPTION
+    WHEN OTHER THEN
+        RETURN 'ERROR: ' || SQLERRM;
+END;
+$$;
+
 CREATE OR REPLACE PROCEDURE SP_CC_GRANT_CORTEX_ACCESS(
     P_USERNAME VARCHAR, P_DATABASE_ROLE VARCHAR
 )
@@ -411,8 +552,8 @@ BEGIN
     END IF;
     v_safe_user := UPPER(P_USERNAME);
 
-    IF (P_DATABASE_ROLE NOT IN ('SNOWFLAKE.CORTEX_USER', 'SNOWFLAKE.CORTEX_ANALYST_USER')) THEN
-        RETURN 'ERROR: Invalid database role. Allowed: SNOWFLAKE.CORTEX_USER, SNOWFLAKE.CORTEX_ANALYST_USER';
+    IF (P_DATABASE_ROLE NOT IN ('SNOWFLAKE.CORTEX_USER', 'SNOWFLAKE.CORTEX_ANALYST_USER', 'SNOWFLAKE.CORTEX_AGENT_USER')) THEN
+        RETURN 'ERROR: Database role not allowed. Allowed: SNOWFLAKE.CORTEX_USER, SNOWFLAKE.CORTEX_AGENT_USER, SNOWFLAKE.CORTEX_ANALYST_USER';
     END IF;
 
     EXECUTE IMMEDIATE 'GRANT DATABASE ROLE ' || P_DATABASE_ROLE || ' TO USER "' || v_safe_user || '"';
@@ -439,8 +580,8 @@ BEGIN
     END IF;
     v_safe_user := UPPER(P_USERNAME);
 
-    IF (P_DATABASE_ROLE NOT IN ('SNOWFLAKE.CORTEX_USER', 'SNOWFLAKE.CORTEX_ANALYST_USER')) THEN
-        RETURN 'ERROR: Invalid database role.';
+    IF (P_DATABASE_ROLE NOT IN ('SNOWFLAKE.CORTEX_USER', 'SNOWFLAKE.CORTEX_ANALYST_USER', 'SNOWFLAKE.CORTEX_AGENT_USER')) THEN
+        RETURN 'ERROR: Database role not allowed. Allowed: SNOWFLAKE.CORTEX_USER, SNOWFLAKE.CORTEX_AGENT_USER, SNOWFLAKE.CORTEX_ANALYST_USER';
     END IF;
 
     EXECUTE IMMEDIATE 'REVOKE DATABASE ROLE ' || P_DATABASE_ROLE || ' FROM USER "' || v_safe_user || '"';
@@ -507,6 +648,9 @@ $$;
 GRANT USAGE ON PROCEDURE SP_CC_SET_ACCOUNT_CREDIT_LIMIT(VARCHAR, VARCHAR) TO ROLE __APP_ROLE__;
 GRANT USAGE ON PROCEDURE SP_CC_SET_USER_CREDIT_LIMIT(VARCHAR, VARCHAR, VARCHAR) TO ROLE __APP_ROLE__;
 GRANT USAGE ON PROCEDURE SP_CC_UNSET_USER_CREDIT_LIMIT(VARCHAR, VARCHAR) TO ROLE __APP_ROLE__;
+GRANT USAGE ON PROCEDURE SP_CC_LIST_USERS() TO ROLE __APP_ROLE__;
+GRANT USAGE ON PROCEDURE SP_CC_GET_USER_PARAM(VARCHAR, VARCHAR) TO ROLE __APP_ROLE__;
+GRANT USAGE ON PROCEDURE SP_CC_MANAGE_ROLE_GRANT(VARCHAR, VARCHAR, VARCHAR, VARCHAR) TO ROLE __APP_ROLE__;
 GRANT USAGE ON PROCEDURE SP_CC_GRANT_CORTEX_ACCESS(VARCHAR, VARCHAR) TO ROLE __APP_ROLE__;
 GRANT USAGE ON PROCEDURE SP_CC_REVOKE_CORTEX_ACCESS(VARCHAR, VARCHAR) TO ROLE __APP_ROLE__;
 GRANT USAGE ON PROCEDURE SP_CC_REBALANCE_CREDITS(VARCHAR, VARCHAR, VARCHAR, VARCHAR, VARCHAR) TO ROLE __APP_ROLE__;
@@ -1023,39 +1167,53 @@ $$
 DECLARE
     v_enabled VARCHAR;
     v_count NUMBER DEFAULT 0;
+    v_role VARCHAR;
+    v_user VARCHAR;
+    v_cli NUMBER(10,2);
+    v_ss  NUMBER(10,2);
+    v_dt  NUMBER(10,2);
+    rs RESULTSET;
+    c_cohorts CURSOR FOR
+        SELECT ROLE_NAME, CLI_DAILY_LIMIT, SNOWSIGHT_DAILY_LIMIT, DESKTOP_DAILY_LIMIT
+        FROM CC_CREDIT_CONFIG
+        WHERE CONFIG_TYPE = 'COHORT' AND IS_ACTIVE = TRUE
+          AND COALESCE(IS_TEMPORARY, FALSE) = FALSE
+          AND ROLE_NAME NOT LIKE 'TAG:%';
 BEGIN
     SELECT CONFIG_VALUE INTO v_enabled FROM CC_APP_CONFIG WHERE CONFIG_KEY = 'DAILY_RESET_ENABLED';
     IF (v_enabled != 'TRUE') THEN
         RETURN 'SKIP: Daily reset is disabled.';
     END IF;
 
-    FOR cohort IN (
-        SELECT ROLE_NAME, CLI_DAILY_LIMIT, SNOWSIGHT_DAILY_LIMIT, DESKTOP_DAILY_LIMIT
-        FROM CC_CREDIT_CONFIG
-        WHERE CONFIG_TYPE = 'COHORT' AND IS_ACTIVE = TRUE
-    ) DO
-        FOR member IN (
-            SELECT GRANTEE_NAME AS USER_NAME
-            FROM SNOWFLAKE.ACCOUNT_USAGE.GRANTS_TO_USERS
-            WHERE ROLE = cohort.ROLE_NAME AND DELETED_ON IS NULL
-            AND GRANTEE_NAME NOT IN (
-                SELECT USER_NAME FROM CC_CREDIT_CONFIG
-                WHERE CONFIG_TYPE = 'USER_OVERRIDE' AND IS_ACTIVE = TRUE
-            )
-        ) DO
-            EXECUTE IMMEDIATE
-                'ALTER USER "' || member.USER_NAME || '" SET '
-                || 'CORTEX_CODE_CLI_DAILY_EST_CREDIT_LIMIT_PER_USER = '
-                || cohort.CLI_DAILY_LIMIT::VARCHAR;
-            EXECUTE IMMEDIATE
-                'ALTER USER "' || member.USER_NAME || '" SET '
-                || 'CORTEX_CODE_SNOWSIGHT_DAILY_EST_CREDIT_LIMIT_PER_USER = '
-                || cohort.SNOWSIGHT_DAILY_LIMIT::VARCHAR;
-            IF (cohort.DESKTOP_DAILY_LIMIT IS NOT NULL) THEN
-                EXECUTE IMMEDIATE
-                    'ALTER USER "' || member.USER_NAME || '" SET '
-                    || 'CORTEX_CODE_DESKTOP_DAILY_EST_CREDIT_LIMIT_PER_USER = '
-                    || cohort.DESKTOP_DAILY_LIMIT::VARCHAR;
+    -- FOR loops need a declared cursor; the inner query uses bind variables because a
+    -- loop record can't be referenced inside another query.
+    FOR cohort IN c_cohorts DO
+        v_role := cohort.ROLE_NAME;
+        v_cli  := cohort.CLI_DAILY_LIMIT;
+        v_ss   := cohort.SNOWSIGHT_DAILY_LIMIT;
+        v_dt   := cohort.DESKTOP_DAILY_LIMIT;
+        rs := (SELECT GRANTEE_NAME AS USER_NAME
+               FROM SNOWFLAKE.ACCOUNT_USAGE.GRANTS_TO_USERS
+               WHERE ROLE = :v_role AND DELETED_ON IS NULL
+               AND GRANTEE_NAME NOT IN (
+                   SELECT USER_NAME FROM CC_CREDIT_CONFIG
+                   WHERE CONFIG_TYPE = 'USER_OVERRIDE' AND IS_ACTIVE = TRUE
+                     AND USER_NAME IS NOT NULL
+               ));
+        LET c1 CURSOR FOR rs;
+        FOR member IN c1 DO
+            v_user := REPLACE(member.USER_NAME, '"', '""');
+            IF (v_cli IS NOT NULL) THEN
+                EXECUTE IMMEDIATE 'ALTER USER "' || v_user || '" SET '
+                    || 'CORTEX_CODE_CLI_DAILY_EST_CREDIT_LIMIT_PER_USER = ' || v_cli::INTEGER::VARCHAR;
+            END IF;
+            IF (v_ss IS NOT NULL) THEN
+                EXECUTE IMMEDIATE 'ALTER USER "' || v_user || '" SET '
+                    || 'CORTEX_CODE_SNOWSIGHT_DAILY_EST_CREDIT_LIMIT_PER_USER = ' || v_ss::INTEGER::VARCHAR;
+            END IF;
+            IF (v_dt IS NOT NULL) THEN
+                EXECUTE IMMEDIATE 'ALTER USER "' || v_user || '" SET '
+                    || 'CORTEX_CODE_DESKTOP_DAILY_EST_CREDIT_LIMIT_PER_USER = ' || v_dt::INTEGER::VARCHAR;
             END IF;
             v_count := v_count + 1;
         END FOR;
@@ -1076,7 +1234,7 @@ ALTER TASK CC_DAILY_RESET_LIMITS RESUME;
 
 
 -- Budget usage refresh task — runs nightly at 2am UTC
--- Calls SP_CC_REFRESH_BUDGET_USAGE (created by Setup Phase B via sp_definitions.py)
+-- Calls SP_CC_REFRESH_BUDGET_USAGE (created by Setup Phase A/C via sp_definitions.py)
 CREATE TASK IF NOT EXISTS CC_REFRESH_BUDGET_USAGE
     WAREHOUSE = __WH__
     SCHEDULE  = 'USING CRON 0 2 * * * UTC'
@@ -1084,7 +1242,7 @@ CREATE TASK IF NOT EXISTS CC_REFRESH_BUDGET_USAGE
 AS
     CALL SP_CC_REFRESH_BUDGET_USAGE();
 
-ALTER TASK CC_REFRESH_BUDGET_USAGE SUSPEND;  -- starts suspended; Setup page resumes after Phase B
+ALTER TASK CC_REFRESH_BUDGET_USAGE SUSPEND;  -- starts suspended; resume it if you use AI Budgets (Setup Phase A restores it on upgrade)
 
 
 -- ---------------------------------------------------------------------------
@@ -1092,12 +1250,13 @@ ALTER TASK CC_REFRESH_BUDGET_USAGE SUSPEND;  -- starts suspended; Setup page res
 -- ---------------------------------------------------------------------------
 GRANT USAGE ON PROCEDURE SP_CC_REFRESH_USAGE_SUMMARIES() TO ROLE __APP_ROLE__;
 GRANT USAGE ON PROCEDURE SP_CC_DAILY_RESET_LIMITS() TO ROLE __APP_ROLE__;
+GRANT USAGE ON PROCEDURE SP_CC_EXPIRE_TEMPORARY_CREDITS() TO ROLE __APP_ROLE__;
 
 -- ---------------------------------------------------------------------------
 -- 6b. ADDITIONAL OPERATIONAL PROCEDURES
 -- ---------------------------------------------------------------------------
 
--- Expire temporary credit overrides — called nightly by CC_DAILY_RESET_LIMITS
+-- Expire temporary credit limits — called hourly by task CC_EXPIRE_TEMPORARY_CREDITS
 CREATE OR REPLACE PROCEDURE SP_CC_EXPIRE_TEMPORARY_CREDITS()
 RETURNS VARCHAR
 LANGUAGE PYTHON
@@ -1106,6 +1265,7 @@ PACKAGES = ('snowflake-snowpark-python')
 HANDLER = 'handler'
 EXECUTE AS OWNER
 AS $$
+import json
 import re
 _SAFE = re.compile(r'[;\n\r\x00]')
 _PARAM_MAP = {
@@ -1114,74 +1274,138 @@ _PARAM_MAP = {
     'DESKTOP':   'CORTEX_CODE_DESKTOP_DAILY_EST_CREDIT_LIMIT_PER_USER',
 }
 
+def _apply(session, user, limits):
+    # limits: {'CLI': v, ...}; None -> UNSET (falls back to account default)
+    uid = user.replace('"', '""')
+    for surface, param in _PARAM_MAP.items():
+        v = limits.get(surface)
+        if v is None:
+            session.sql(f'ALTER USER "{uid}" UNSET {param}').collect()
+        else:
+            session.sql(f'ALTER USER "{uid}" SET {param} = {int(round(float(v)))}').collect()  # param is integer-only
+
+def _overridden_users(session):
+    rows = session.sql("""
+        SELECT UPPER(USER_NAME) FROM CC_CREDIT_CONFIG
+        WHERE CONFIG_TYPE = 'USER_OVERRIDE' AND IS_ACTIVE = TRUE
+          AND NOT (COALESCE(IS_TEMPORARY, FALSE) AND EXPIRES_AT < CURRENT_TIMESTAMP())
+    """).collect()
+    return {str(r[0]) for r in rows}
+
 def handler(session):
-    reverted = 0
+    reverted_users = 0
+    reverted_cohorts = 0
+    errors = []
     try:
         expired = session.sql("""
-            SELECT USER_NAME FROM CC_CREDIT_CONFIG
+            SELECT CONFIG_ID, CONFIG_TYPE, USER_NAME, ROLE_NAME,
+                   PREV_CLI_DAILY_LIMIT, PREV_SNOWSIGHT_DAILY_LIMIT, PREV_DESKTOP_DAILY_LIMIT,
+                   MEMBERS_JSON
+            FROM CC_CREDIT_CONFIG
             WHERE IS_TEMPORARY = TRUE
               AND EXPIRES_AT IS NOT NULL
               AND EXPIRES_AT < CURRENT_TIMESTAMP()
               AND IS_ACTIVE = TRUE
         """).collect()
-        for row in expired:
-            user = str(row[0])
-            if not user or _SAFE.search(user):
-                continue
-            safe_user    = user.replace("'",  "''")
-            safe_user_id = user.replace('"', '""')
-            try:
-                # ── Look up cohort permanent limit for this user ──────────────
+    except Exception as e:
+        return "ERROR: " + str(e)[:200]
+
+    for row in expired:
+        cfg_id, cfg_type = row[0], str(row[1])
+        try:
+            if cfg_type == 'USER_OVERRIDE':
+                user = str(row[2] or '')
+                if not user or _SAFE.search(user):
+                    continue
+                safe_user = user.replace("'", "''")
+                # Revert to the user's permanent cohort limit, else the account default
                 cohort_rows = session.sql(f"""
-                    SELECT cfg.CLI_DAILY_LIMIT, cfg.SNOWSIGHT_DAILY_LIMIT,
-                           cfg.DESKTOP_DAILY_LIMIT
+                    SELECT cfg.CLI_DAILY_LIMIT, cfg.SNOWSIGHT_DAILY_LIMIT, cfg.DESKTOP_DAILY_LIMIT
                     FROM CC_USER_COHORT_RESOLVED r
                     JOIN CC_CREDIT_CONFIG cfg
                       ON cfg.ROLE_NAME = r.COHORT_ROLE
                      AND cfg.CONFIG_TYPE = 'COHORT'
                      AND cfg.IS_ACTIVE = TRUE
-                     AND (cfg.IS_TEMPORARY = FALSE OR cfg.IS_TEMPORARY IS NULL)
-                    WHERE r.USER_NAME = '{safe_user}'
+                     AND COALESCE(cfg.IS_TEMPORARY, FALSE) = FALSE
+                    WHERE UPPER(r.USER_NAME) = UPPER('{safe_user}')
                     LIMIT 1
                 """).collect()
-
+                if not cohort_rows:
+                    # Not resolved yet: use a permanent role cohort the user is granted directly
+                    roles = [str(g['role']).upper() for g in session.sql(
+                        f'SHOW GRANTS TO USER "{user.replace(chr(34), chr(34) * 2)}"').collect()
+                        if g['granted_on'] == 'ROLE' and g['role']]
+                    if roles:
+                        in_list = ",".join("'" + r.replace("'", "''") + "'" for r in roles)
+                        cohort_rows = session.sql(f"""
+                            SELECT CLI_DAILY_LIMIT, SNOWSIGHT_DAILY_LIMIT, DESKTOP_DAILY_LIMIT
+                            FROM CC_CREDIT_CONFIG
+                            WHERE CONFIG_TYPE = 'COHORT' AND IS_ACTIVE = TRUE
+                              AND COALESCE(IS_TEMPORARY, FALSE) = FALSE
+                              AND UPPER(ROLE_NAME) IN ({in_list})
+                            ORDER BY UPDATED_AT DESC LIMIT 1
+                        """).collect()
                 if cohort_rows:
-                    # Restore to cohort permanent values
                     cr = cohort_rows[0]
-                    limit_map = {
-                        'CLI':       cr[0],
-                        'SNOWSIGHT': cr[1],
-                        'DESKTOP':   cr[2],
-                    }
-                    for surface, param in _PARAM_MAP.items():
-                        limit = limit_map.get(surface)
-                        if limit is not None:
-                            session.sql(
-                                f'ALTER USER "{safe_user_id}" SET {param} = {float(limit)}'
-                            ).collect()
-                        else:
-                            session.sql(
-                                f'ALTER USER "{safe_user_id}" UNSET {param}'
-                            ).collect()
+                    _apply(session, user, {'CLI': cr[0], 'SNOWSIGHT': cr[1], 'DESKTOP': cr[2]})
                 else:
-                    # No cohort found — fall back to UNSET (account default)
-                    for param in _PARAM_MAP.values():
-                        session.sql(
-                            f'ALTER USER "{safe_user_id}" UNSET {param}'
-                        ).collect()
-
+                    _apply(session, user, {})
                 session.sql(
-                    "UPDATE CC_CREDIT_CONFIG SET IS_ACTIVE = FALSE, "
-                    "UPDATED_AT = CURRENT_TIMESTAMP() "
-                    f"WHERE USER_NAME = '{safe_user}' AND IS_TEMPORARY = TRUE"
+                    "UPDATE CC_CREDIT_CONFIG SET IS_ACTIVE = FALSE, UPDATED_AT = CURRENT_TIMESTAMP() "
+                    f"WHERE CONFIG_ID = {int(cfg_id)}"
                 ).collect()
-                reverted += 1
-            except Exception:
-                pass
-    except Exception as e:
-        return "ERROR: " + str(e)[:200]
-    return "OK: Expired " + str(reverted) + " temporary override(s), reverted to cohort or account default"
+                reverted_users += 1
+
+            elif cfg_type == 'COHORT':
+                members = json.loads(row[7]) if row[7] else []
+                prev = {'CLI': row[4], 'SNOWSIGHT': row[5], 'DESKTOP': row[6]}
+                has_prev = any(v is not None for v in prev.values())
+                skip = _overridden_users(session)
+                for user in members:
+                    user = str(user)
+                    if not user or _SAFE.search(user) or user.upper() in skip:
+                        continue
+                    try:
+                        _apply(session, user, prev)
+                        reverted_users += 1
+                    except Exception as e:
+                        errors.append(f'{user}: {str(e)[:100]}')
+                if has_prev:
+                    # Cohort returns to its previous permanent limits
+                    session.sql(f"""
+                        UPDATE CC_CREDIT_CONFIG SET
+                            CLI_DAILY_LIMIT = PREV_CLI_DAILY_LIMIT,
+                            SNOWSIGHT_DAILY_LIMIT = PREV_SNOWSIGHT_DAILY_LIMIT,
+                            DESKTOP_DAILY_LIMIT = PREV_DESKTOP_DAILY_LIMIT,
+                            PREV_CLI_DAILY_LIMIT = NULL, PREV_SNOWSIGHT_DAILY_LIMIT = NULL,
+                            PREV_DESKTOP_DAILY_LIMIT = NULL, MEMBERS_JSON = NULL,
+                            IS_TEMPORARY = FALSE, EXPIRES_AT = NULL,
+                            UPDATED_AT = CURRENT_TIMESTAMP()
+                        WHERE CONFIG_ID = {int(cfg_id)}
+                    """).collect()
+                else:
+                    session.sql(
+                        "UPDATE CC_CREDIT_CONFIG SET IS_ACTIVE = FALSE, UPDATED_AT = CURRENT_TIMESTAMP() "
+                        f"WHERE CONFIG_ID = {int(cfg_id)}"
+                    ).collect()
+                reverted_cohorts += 1
+        except Exception as e:
+            errors.append(f'config {cfg_id}: {str(e)[:150]}')
+
+    msg = (f"OK: Expired {reverted_cohorts} cohort(s); reverted {reverted_users} user limit(s) "
+           "to cohort or account default")
+    if errors:
+        msg += f"; {len(errors)} error(s): " + " | ".join(errors[:5])
+    return msg
 $$;
+
+-- Hourly so temporary limits revert within an hour of their end date
+CREATE OR REPLACE TASK CC_EXPIRE_TEMPORARY_CREDITS
+    WAREHOUSE = __WH__
+    SCHEDULE = 'USING CRON 15 * * * * UTC'
+    COMMENT = 'Reverts expired temporary credit limits (cohorts and user overrides)'
+AS
+    CALL SP_CC_EXPIRE_TEMPORARY_CREDITS();
 
 -- Resolve user-to-cohort mapping — populates CC_USER_COHORT_RESOLVED
 CREATE OR REPLACE PROCEDURE SP_CC_RESOLVE_USER_COHORTS()
@@ -1478,31 +1702,38 @@ GRANT OWNERSHIP ON TABLE CC_USAGE_DAILY_SUMMARY TO ROLE __SP_OWNER_ROLE__ COPY C
 GRANT OWNERSHIP ON TABLE CC_USAGE_HOURLY_SUMMARY TO ROLE __SP_OWNER_ROLE__ COPY CURRENT GRANTS;
 GRANT OWNERSHIP ON TABLE CC_CREDIT_REQUESTS TO ROLE __SP_OWNER_ROLE__ COPY CURRENT GRANTS;
 GRANT OWNERSHIP ON TABLE CC_APP_CONFIG TO ROLE __SP_OWNER_ROLE__ COPY CURRENT GRANTS;
-GRANT OWNERSHIP ON PROCEDURE SP_CC_SET_ACCOUNT_CREDIT_LIMIT(VARCHAR, VARCHAR) TO ROLE __SP_OWNER_ROLE__ COPY CURRENT GRANTS;
-GRANT OWNERSHIP ON PROCEDURE SP_CC_SET_USER_CREDIT_LIMIT(VARCHAR, VARCHAR, VARCHAR) TO ROLE __SP_OWNER_ROLE__ COPY CURRENT GRANTS;
-GRANT OWNERSHIP ON PROCEDURE SP_CC_UNSET_USER_CREDIT_LIMIT(VARCHAR, VARCHAR) TO ROLE __SP_OWNER_ROLE__ COPY CURRENT GRANTS;
+-- The credit-limit SPs stay owned by ACCOUNTADMIN. Snowflake only allows an owner's-rights
+-- SP to ALTER ACCOUNT/USER SET CORTEX_CODE_*_DAILY_EST_CREDIT_LIMIT_PER_USER when ACCOUNTADMIN
+-- owns it; transferring them makes every limit change fail with "Insufficient privileges".
+-- They still reach the CC_ tables through __SP_OWNER_ROLE__ (granted to ACCOUNTADMIN above).
+--   SP_CC_SET_ACCOUNT_CREDIT_LIMIT, SP_CC_SET_USER_CREDIT_LIMIT, SP_CC_UNSET_USER_CREDIT_LIMIT,
+--   SP_CC_REBALANCE_CREDITS, SP_CC_DAILY_RESET_LIMITS, SP_CC_EXPIRE_TEMPORARY_CREDITS,
+--   and (created by Setup from sp_definitions.py) SP_CC_BULK_SET_COHORT_LIMITS, SP_CC_COMPUTE_REBALANCE
+-- Tasks owned by __SP_OWNER_ROLE__ call some of them, so it needs USAGE.
+GRANT USAGE ON PROCEDURE SP_CC_DAILY_RESET_LIMITS() TO ROLE __SP_OWNER_ROLE__;
+GRANT USAGE ON PROCEDURE SP_CC_EXPIRE_TEMPORARY_CREDITS() TO ROLE __SP_OWNER_ROLE__;
+GRANT OWNERSHIP ON PROCEDURE SP_CC_LIST_USERS() TO ROLE __SP_OWNER_ROLE__ COPY CURRENT GRANTS;
+GRANT OWNERSHIP ON PROCEDURE SP_CC_GET_USER_PARAM(VARCHAR, VARCHAR) TO ROLE __SP_OWNER_ROLE__ COPY CURRENT GRANTS;
+GRANT OWNERSHIP ON PROCEDURE SP_CC_MANAGE_ROLE_GRANT(VARCHAR, VARCHAR, VARCHAR, VARCHAR) TO ROLE __SP_OWNER_ROLE__ COPY CURRENT GRANTS;
 GRANT OWNERSHIP ON PROCEDURE SP_CC_GRANT_CORTEX_ACCESS(VARCHAR, VARCHAR) TO ROLE __SP_OWNER_ROLE__ COPY CURRENT GRANTS;
 GRANT OWNERSHIP ON PROCEDURE SP_CC_REVOKE_CORTEX_ACCESS(VARCHAR, VARCHAR) TO ROLE __SP_OWNER_ROLE__ COPY CURRENT GRANTS;
-GRANT OWNERSHIP ON PROCEDURE SP_CC_REBALANCE_CREDITS(VARCHAR, VARCHAR, VARCHAR, VARCHAR, VARCHAR) TO ROLE __SP_OWNER_ROLE__ COPY CURRENT GRANTS;
 GRANT OWNERSHIP ON PROCEDURE SP_CC_REFRESH_USAGE_SUMMARIES() TO ROLE __SP_OWNER_ROLE__ COPY CURRENT GRANTS;
-GRANT OWNERSHIP ON PROCEDURE SP_CC_DAILY_RESET_LIMITS() TO ROLE __SP_OWNER_ROLE__ COPY CURRENT GRANTS;
--- NOTE: Phase C SPs (SP_CC_CLASSIFY_PROMPTS, SP_CC_CHECK_ALERTS, SP_CC_EVALUATE_RESPONSES,
---       SP_CC_REFRESH_BUDGET_USAGE, SP_CC_MANAGE_QUOTA) are created by the Setup page Phase C
---       and transferred to __SP_OWNER_ROLE__ automatically. If deploying prerequisites.sql
---       manually and skipping the Setup page, run these ownership transfers after Phase A:
--- GRANT OWNERSHIP ON PROCEDURE SP_CC_CLASSIFY_PROMPTS(NUMBER)          TO ROLE __SP_OWNER_ROLE__ COPY CURRENT GRANTS;
--- GRANT OWNERSHIP ON PROCEDURE SP_CC_CHECK_ALERTS(VARCHAR)             TO ROLE __SP_OWNER_ROLE__ COPY CURRENT GRANTS;
--- GRANT OWNERSHIP ON PROCEDURE SP_CC_EVALUATE_RESPONSES(NUMBER,VARCHAR) TO ROLE __SP_OWNER_ROLE__ COPY CURRENT GRANTS;
--- GRANT OWNERSHIP ON PROCEDURE SP_CC_REFRESH_BUDGET_USAGE()            TO ROLE __SP_OWNER_ROLE__ COPY CURRENT GRANTS;
--- GRANT OWNERSHIP ON PROCEDURE SP_CC_MANAGE_QUOTA(VARCHAR,VARCHAR,VARIANT) TO ROLE __SP_OWNER_ROLE__ COPY CURRENT GRANTS;
+-- NOTE: The Setup page also creates the SPs defined in sp_definitions.py (bulk, rebalance,
+--       model access, classify, alerts, evaluation, budget refresh, quotas). They stay owned by
+--       the role that ran Setup (ACCOUNTADMIN), and Setup then grants USAGE on every app SP to
+--       __APP_ROLE__ and __SP_OWNER_ROLE__ — the tasks and alerts run as __SP_OWNER_ROLE__ and
+--       need that USAGE. If you deploy without the Setup page, run those grants yourself.
 
 -- Tasks must be suspended before ownership can be transferred
 ALTER TASK CC_REFRESH_USAGE_SUMMARIES SUSPEND;
 ALTER TASK CC_DAILY_RESET_LIMITS SUSPEND;
+ALTER TASK CC_EXPIRE_TEMPORARY_CREDITS SUSPEND;
 GRANT OWNERSHIP ON TASK CC_REFRESH_USAGE_SUMMARIES TO ROLE __SP_OWNER_ROLE__ COPY CURRENT GRANTS;
 GRANT OWNERSHIP ON TASK CC_DAILY_RESET_LIMITS TO ROLE __SP_OWNER_ROLE__ COPY CURRENT GRANTS;
+GRANT OWNERSHIP ON TASK CC_EXPIRE_TEMPORARY_CREDITS TO ROLE __SP_OWNER_ROLE__ COPY CURRENT GRANTS;
 ALTER TASK CC_REFRESH_USAGE_SUMMARIES RESUME;
 ALTER TASK CC_DAILY_RESET_LIMITS RESUME;
+ALTER TASK CC_EXPIRE_TEMPORARY_CREDITS RESUME;
 
 -- ---------------------------------------------------------------------------
 -- 6c. RESPONSIBLE AI GOVERNANCE TABLES (Prompt Analysis + Policy Rules)
@@ -1693,10 +1924,10 @@ ALTER TABLE IF EXISTS CC_PROMPT_EVENTS ADD COLUMN IF NOT EXISTS TRACE_ID VARCHAR
 GRANT OWNERSHIP ON TABLE CC_PROMPT_EVENTS TO ROLE __SP_OWNER_ROLE__ COPY CURRENT GRANTS;
 -- Upgrade: widen PROMPT_PREVIEW for existing installs (was VARCHAR(300))
 ALTER TABLE IF EXISTS CC_PROMPT_VIOLATIONS MODIFY COLUMN PROMPT_PREVIEW VARCHAR(2000);
--- Monthly budget column: app-tracked only, does NOT affect daily limit enforcement
-ALTER TABLE IF EXISTS CC_CREDIT_CONFIG ADD COLUMN IF NOT EXISTS MONTHLY_LIMIT NUMBER(10,2);
 -- Upgrade: widen SURFACE for MODEL: prefix requests (was VARCHAR(20), now VARCHAR(100))
 ALTER TABLE IF EXISTS CC_CREDIT_REQUESTS MODIFY COLUMN SURFACE VARCHAR(100);
+-- Monthly budget column: app-tracked only, does NOT affect daily limit enforcement
+ALTER TABLE IF EXISTS CC_CREDIT_CONFIG ADD COLUMN IF NOT EXISTS MONTHLY_LIMIT NUMBER(10,2);
 -- AI Budget tables for existing deployments (new tables — safe no-op if already exist via CREATE TABLE IF NOT EXISTS)
 -- Re-grant SNOWFLAKE.BUDGET_CREATOR for existing deployments
 GRANT DATABASE ROLE SNOWFLAKE.BUDGET_CREATOR TO ROLE __SP_OWNER_ROLE__;
@@ -1807,11 +2038,11 @@ CREATE TABLE IF NOT EXISTS CC_RESPONSE_QUALITY (
 GRANT OWNERSHIP ON TABLE CC_RESPONSE_QUALITY TO ROLE __SP_OWNER_ROLE__ COPY CURRENT GRANTS;
 
 -- ---------------------------------------------------------------------------
--- 6j. NATIVE PER-USER QUOTAS (Preview)
+-- 6j. NATIVE PER-USER QUOTAS (generally available)
 --     Snowflake SNOWFLAKE.CORE.QUOTA objects for hard monthly/daily enforcement.
 --     Requires SNOWFLAKE.QUOTA_CREATOR database role on the SP owner role.
---     NOTE: SNOWFLAKE.QUOTA_CREATOR is a preview feature — requires Snowflake to enable it.
---           If not yet available in your account, skip these steps and use daily limits only.
+--     If SNOWFLAKE.QUOTA_CREATOR is not available in your account or edition, these
+--     statements fail harmlessly; the rest of the app works with daily limits only.
 -- ---------------------------------------------------------------------------
 
 -- Grant quota creation privileges to SP owner role
@@ -1823,7 +2054,7 @@ GRANT CREATE SNOWFLAKE.CORE.QUOTA ON SCHEMA __DB__.__SCHEMA__ TO ROLE __SP_OWNER
 -- Users in a cohort are tagged with CC_COHORT_TAG = '<cohort_role_name>'
 -- The quota object then scopes to users bearing that tag value.
 CREATE TAG IF NOT EXISTS CC_COHORT_TAG
-    COMMENT = 'CoCo Hub cohort assignment for per-user quota scoping (per-user quotas preview feature)';
+    COMMENT = 'CoCo Hub cohort assignment for per-user quota scoping (per-user quotas)';
 GRANT APPLY ON TAG CC_COHORT_TAG TO ROLE __SP_OWNER_ROLE__;
 GRANT APPLYBUDGET ON TAG CC_COHORT_TAG TO ROLE __SP_OWNER_ROLE__;
 

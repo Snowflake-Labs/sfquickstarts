@@ -360,7 +360,7 @@ def render(session):
 
         with col3:
             eval_model = get_app_setting(session, "EVAL_MODEL", "claude-sonnet-4-5")
-            batch_size = int(get_app_setting(session, "EVAL_BATCH_SIZE", "200"))
+            batch_size = int(get_app_setting(session, "EVAL_BATCH_SIZE", "1000"))
             if st.button("Run Quality Evaluation", key="mi_run_eval",
                          help=f"Scores AI responses using {eval_model}. "
                               f"~{batch_size * 0.00005:.3f} credits for {batch_size} responses."):
@@ -675,7 +675,7 @@ def render(session):
             col_run, _ = st.columns([1, 3])
             with col_run:
                 eval_model_setting = get_app_setting(session, "EVAL_MODEL", "claude-sonnet-4-5")
-                batch = int(get_app_setting(session, "EVAL_BATCH_SIZE", "200"))
+                batch = int(get_app_setting(session, "EVAL_BATCH_SIZE", "1000"))
                 if st.button("Run Quality Evaluation Now", type="primary", key="btn_eval_now",
                              help=f"Calls SP_CC_EVALUATE_RESPONSES({batch}, '{eval_model_setting}'). "
                                   f"Costs ~{batch * 0.00005:.4f} Cortex credits."):
@@ -813,7 +813,7 @@ def render(session):
             st.caption(f"Last evaluated: {last_eval} UTC. "
                        "Scores update when SP_CC_EVALUATE_RESPONSES runs.")
             eval_model_s = get_app_setting(session, "EVAL_MODEL", "claude-sonnet-4-5")
-            batch_s = int(get_app_setting(session, "EVAL_BATCH_SIZE", "200"))
+            batch_s = int(get_app_setting(session, "EVAL_BATCH_SIZE", "1000"))
             if st.button("Run Quality Evaluation", key="btn_eval_quality",
                          help=f"Evaluates up to {batch_s} unevaluated responses. "
                               f"~{batch_s * 0.00005:.4f} credits."):
@@ -845,6 +845,7 @@ def render(session):
 |---|---|---|
 | `PII_RISK` | Prompts containing or requesting personal data — SSN, credit cards, passport, bank account numbers | 🔴 HIGH |
 | `SECURITY` | API keys, passwords, credentials, prompt injection / jailbreak attempts, data exfiltration requests | 🔴 HIGH |
+| `COMPETITOR` | Prompts referencing Snowflake competitors — Databricks, BigQuery, Redshift, Synapse, etc. | 🟡 MEDIUM |
 | `USAGE_ANOMALY` | Sessions with unusually high prompt depth (may indicate automation or runaway agents) | 🟡 MEDIUM |
 | `PERSONAL_USE` | Prompts unrelated to work — entertainment, personal errands, social content | 🟢 LOW |
 
@@ -865,12 +866,14 @@ These categories are set per rule in **Policy Rules → Active Rules**. Custom r
                 _cat_colors = {
                     "PII_RISK":       "#fca5a5",   # red
                     "SECURITY":       "#fcd34d",   # amber
+                    "COMPETITOR":     "#7dd3fc",   # blue
                     "USAGE_ANOMALY":  "#c4b5fd",   # violet
                     "PERSONAL_USE":   "#6ee7b7",   # green
                 }
                 viol_cat["CAT_LABEL"] = viol_cat["CATEGORY"].map({
                     "PII_RISK":      "PII Risk",
                     "SECURITY":      "Security",
+                    "COMPETITOR":    "Competitor",
                     "USAGE_ANOMALY": "Usage Anomaly",
                     "PERSONAL_USE":  "Personal Use",
                     "CUSTOM":        "Custom",
