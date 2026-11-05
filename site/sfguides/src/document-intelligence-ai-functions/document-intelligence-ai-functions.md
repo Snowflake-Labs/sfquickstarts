@@ -45,7 +45,7 @@ This lab has two independent tracks, each in its own notebook:
 - A [Snowflake account](https://signup.snowflake.com/) with access to [Cortex AI Functions](https://docs.snowflake.com/en/user-guide/snowflake-cortex/aisql), AI_PARSE_DOCUMENT in AGENTIC mode, and Cortex Search; confirm approved [cross-region inference](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cross-region-inference) before starting
 - A role with privileges to create a database, schema, internal stages, tables, and a Cortex Search service, plus access to a running warehouse
 - Access to [Snowflake Notebooks in Workspaces](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-in-workspaces/notebooks-in-workspaces-overview), or a SQL worksheet
-- The [mortgage document collection](https://github.com/sfc-gh-hmykula/sfquickstarts-fork/blob/hmykula-ai-functions-doc-intelligence/site/sfguides/src/document-intelligence-ai-functions/assets/mortgage_docs.zip) and the [greenhouse report collection](https://github.com/sfc-gh-hmykula/sfquickstarts-fork/blob/hmykula-ai-functions-doc-intelligence/site/sfguides/src/document-intelligence-ai-functions/assets/greenhouse_report.zip)
+- The [mortgage document collection](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/document-intelligence-ai-functions/assets/mortgage_docs.zip) and the [greenhouse report collection](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/document-intelligence-ai-functions/assets/greenhouse_report.zip)
 
 ### What You'll Build
 - Part A: one result row per mortgage PDF, with its document type, extracted fields, processing status, and review reason
@@ -59,7 +59,7 @@ Duration: 5 minutes
 
 ### Import the Notebooks
 
-1. Download [vhol_document_ai_mortgage.ipynb](https://github.com/sfc-gh-hmykula/sfquickstarts-fork/blob/hmykula-ai-functions-doc-intelligence/site/sfguides/src/document-intelligence-ai-functions/assets/vhol_document_ai_mortgage.ipynb) and [vhol_document_ai_greenhouse_reports.ipynb](https://github.com/sfc-gh-hmykula/sfquickstarts-fork/blob/hmykula-ai-functions-doc-intelligence/site/sfguides/src/document-intelligence-ai-functions/assets/vhol_document_ai_greenhouse_reports.ipynb). For GitHub-hosted notebooks, select **Download raw file**.
+1. Download [vhol_document_ai_mortgage.ipynb](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/document-intelligence-ai-functions/assets/vhol_document_ai_mortgage.ipynb) and [vhol_document_ai_greenhouse_reports.ipynb](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/document-intelligence-ai-functions/assets/vhol_document_ai_greenhouse_reports.ipynb). For GitHub-hosted notebooks, select **Download raw file**.
 2. In Snowsight, go to **Projects > Workspaces**.
 3. Click **+ Add new > Upload files** and select each downloaded `.ipynb` file.
 4. Open a notebook and select an available warehouse and a role with the privileges listed above.
@@ -98,7 +98,7 @@ CREATE STAGE IF NOT EXISTS MORTGAGE_DOCS
 
 ### Upload the Sample PDFs
 
-1. Download and unzip [mortgage_docs.zip](https://github.com/sfc-gh-hmykula/sfquickstarts-fork/blob/hmykula-ai-functions-doc-intelligence/site/sfguides/src/document-intelligence-ai-functions/assets/mortgage_docs.zip). Upload the individual PDFs, not the ZIP archive.
+1. Download and unzip [mortgage_docs.zip](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/document-intelligence-ai-functions/assets/mortgage_docs.zip). Upload the individual PDFs, not the ZIP archive.
 2. In Snowsight, go to **Ingestion > Add Data > Load files into a Stage**.
 3. Select all eleven PDFs and choose **VHOL_DOCUMENT_AI_DB > DOCUMENT_AI > MORTGAGE_DOCS**, then upload them.
 
@@ -383,7 +383,7 @@ CREATE STAGE IF NOT EXISTS GHG_REPORTS
 
 ### Upload the PDFs
 
-1. Download and unzip [greenhouse_report.zip](https://github.com/sfc-gh-hmykula/sfquickstarts-fork/blob/hmykula-ai-functions-doc-intelligence/site/sfguides/src/document-intelligence-ai-functions/assets/greenhouse_report.zip). Upload the individual PDFs, not the ZIP archive.
+1. Download and unzip [greenhouse_report.zip](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/document-intelligence-ai-functions/assets/greenhouse_report.zip). Upload the individual PDFs, not the ZIP archive.
 2. In Snowsight, go to **Ingestion > Add Data > Load files into a Stage** and upload the three PDFs to `GHG_REPORTS`: `GHG-20_en.pdf`, `GHG-21_en.pdf`, and `GHG-22_en.pdf`.
 3. Refresh the directory table and confirm all three files are listed:
 
@@ -696,13 +696,13 @@ Use **AI_CLASSIFY** to select a processing route, **AI_EXTRACT** for selected bu
 
 ### Dataset Sources
 - [Extend-AI / RealDoc-Bench - mortgage document source](https://huggingface.co/datasets/Extend-AI/RealDoc-Bench)
-- [WMO greenhouse gas bulletins - greenhouse report source](https://github.com/sfc-gh-hmykula/sfquickstarts-fork/blob/hmykula-ai-functions-doc-intelligence/site/sfguides/src/document-intelligence-ai-functions/assets/greenhouse_report.zip)
+- [WMO greenhouse gas bulletins - greenhouse report source](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/document-intelligence-ai-functions/assets/greenhouse_report.zip)
 
 ### Related Resources
-- [Mortgage notebook used in Part A](https://github.com/sfc-gh-hmykula/sfquickstarts-fork/blob/hmykula-ai-functions-doc-intelligence/site/sfguides/src/document-intelligence-ai-functions/assets/vhol_document_ai_mortgage.ipynb)
-- [Greenhouse reports notebook used in Part B](https://github.com/sfc-gh-hmykula/sfquickstarts-fork/blob/hmykula-ai-functions-doc-intelligence/site/sfguides/src/document-intelligence-ai-functions/assets/vhol_document_ai_greenhouse_reports.ipynb)
-- [Mortgage document collection](https://github.com/sfc-gh-hmykula/sfquickstarts-fork/blob/hmykula-ai-functions-doc-intelligence/site/sfguides/src/document-intelligence-ai-functions/assets/mortgage_docs.zip)
-- [Greenhouse report collection](https://github.com/sfc-gh-hmykula/sfquickstarts-fork/blob/hmykula-ai-functions-doc-intelligence/site/sfguides/src/document-intelligence-ai-functions/assets/greenhouse_report.zip)
+- [Mortgage notebook used in Part A](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/document-intelligence-ai-functions/assets/vhol_document_ai_mortgage.ipynb)
+- [Greenhouse reports notebook used in Part B](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/document-intelligence-ai-functions/assets/vhol_document_ai_greenhouse_reports.ipynb)
+- [Mortgage document collection](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/document-intelligence-ai-functions/assets/mortgage_docs.zip)
+- [Greenhouse report collection](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/document-intelligence-ai-functions/assets/greenhouse_report.zip)
 - [AI_CLASSIFY](https://docs.snowflake.com/en/sql-reference/functions/ai_classify)
 - [AI_EXTRACT](https://docs.snowflake.com/en/sql-reference/functions/ai_extract)
 - [AI_PARSE_DOCUMENT](https://docs.snowflake.com/en/sql-reference/functions/ai_parse_document)
