@@ -469,3 +469,4 @@ If you want to learn more about dbt Projects on Snowflake, check out the [offici
 - [GitHub Repository: getting-started-with-dbt-on-snowflake](https://github.com/Snowflake-Labs/getting-started-with-dbt-on-snowflake)
 - [dbt Core Documentation](https://docs.getdbt.com/)
 - [Semantic View Blog](https://www.snowflake.com/en/engineering-blog/dbt-semantic-view-package/)
+
