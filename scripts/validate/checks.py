@@ -290,10 +290,29 @@ def _status_errors(text: str) -> list[str]:
     return [f"status '{status}' is not recognised (allowed: {allowed}){fix}"]
 
 
+def guide_markdown(content: Content) -> list[str]:
+    """Return the changed markdown plus each touched quickstart's own guide file.
+
+    A pull request that only changes an image still republishes the whole guide,
+    so its markdown must be checked even though the pull request did not edit it.
+    """
+    seen = {display(path) for path in content.changed_markdown}
+    paths = list(content.changed_markdown)
+    for path in content.downloaded_files:
+        name = display(path)
+        if name in seen or not NON_MARKDOWN_ROOT_RE.match(name):
+            continue
+        if not name.endswith(".md") or Path(name).name.lower() == "readme.md":
+            continue
+        seen.add(name)
+        paths.append(f"pr/{name}")
+    return paths
+
+
 def check_frontmatter(content: Content) -> dict[str, Any] | None:
     """Fail on a bad id, a translation filed as the wrong language, or an unknown status."""
     issues = []
-    for prefixed in content.changed_markdown:
+    for prefixed in guide_markdown(content):
         text = content.text(prefixed)
         if text is None:
             continue
