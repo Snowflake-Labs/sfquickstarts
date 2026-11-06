@@ -2,7 +2,7 @@ author: Yoav Ostrinsky
 id: incremental-processing-with-streams-changes-and-row-timestamps
 language: en
 summary: Process only changed data in Snowflake with streams, the CHANGES clause and row timestamps, and choose the right primitive for each pipeline.
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/transformation
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/transformation, snowflake-site:taxonomy/snowflake-feature/dynamic-tables, snowflake-site:taxonomy/snowflake-feature/serverless-tasks
 environments: web
 status: Draft
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
@@ -392,10 +392,6 @@ ORDER BY I.ORDER_ID;
 | 6 | NEW | NEW | NEW | NEW | NEW |
 | 7 | NEW | NEW | NEW | NEW | NULL |
 
-![Comparison of the four loaders](assets/compare_targets.png)
-
-Screenshot placeholder: the result grid of the comparison query after the second round of loads, with the NULL cells for orders 5 and 7 visible.
-
 Read the result row by row:
 
 - **The stream and CHANGES loaders match the source exactly.** Both see updates, deletes and inserts.
@@ -719,10 +715,6 @@ SELECT ORDER_ID, STATUS, LOADED_AT FROM DEMO_INCREMENTAL_DB.DEMO.ORDERS_BY_COMMI
 | ... | ... | first run |
 
 Only orders 6 and 10 carry the second run's LOADED_AT. Order 10 is another backfilled row, with an EVENT_TS older than every other order, and the commit-time filter picks it up anyway.
-
-![dbt project run output](assets/dbt_execute_output.png)
-
-Screenshot placeholder: the output of the second EXECUTE DBT PROJECT run in Snowsight, showing the incremental model succeeded.
 
 If you change the model's logic later, run it once with ARGS = 'run --full-refresh' so the existing rows are rebuilt with the new logic.
 
