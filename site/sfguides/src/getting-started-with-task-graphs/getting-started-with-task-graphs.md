@@ -1,4 +1,4 @@
-author: Yoav Ostrinsky, Charlie Hammond
+author: Yoav Ostrinsky
 id: getting-started-with-task-graphs
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/transformation
 language: en
@@ -29,8 +29,6 @@ This guide is about building and operating a graph with SQL. For the concepts be
 A task graph called ORDERS_PIPELINE with six member tasks:
 
 ![The ORDERS_PIPELINE task graph](assets/task_graph_overview.png)
-
-Screenshot placeholder (changed): the Snowsight graph view of ORDERS_PIPELINE showing all six tasks, with QUARANTINE_BATCH after PUBLISH_SUMMARIES and the finalizer, captured after the first run in Commit and Run the Graph.
 
 | Task | Role |
 |:-----|:-----|
@@ -68,8 +66,6 @@ In this step, you'll create a Snowsight Workspace linked to the sample task grap
 5. Select **Public repository**.
 
 ![Creating a Workspace from a Git repository](assets/create_workspace.png)
-
-Screenshot placeholder: the Git repository dialog with the companion repository URL filled in, captured during step 3 above.
 
 Once the workspace is created, you'll see the repository files in the file explorer. The scripts/ folder contains numbered SQL files that you'll run at different stages of this guide:
 
@@ -386,8 +382,6 @@ To see the same run in Snowsight, go to **Catalog > Database Explorer**, expand 
 
 ![Task graph run in Snowsight](assets/task_graph_first_run.png)
 
-Screenshot placeholder (changed): the Snowsight graph view of the first run, six tasks, with QUARANTINE_BATCH shown as skipped, captured after 02_build_task_graph.sql finishes.
-
 **CLI alternative:** this runs the whole script, including the wait, and prints every result.
 
 ```bash
@@ -590,13 +584,11 @@ SELECT NAME, STATE, SQL_ERROR_MESSAGE
 
 TRIGGERED in ALERT_HISTORY means the condition was true and the alert ran its action, which sends the in-app notification. One failed task out of 18 task status events is about 5.6 percent, over the 2 percent threshold. If you see CONDITION_FALSE instead, the alert ran before the failure was 60 seconds old. Wait a minute and run the EXECUTE ALERT and the query again: the next run picks up where the last one stopped, so it still counts the failure. Open the notifications in Snowsight to see the message.
 
-![The task error alert notification in Snowsight](assets/task_error_rate_alert.png)
+![The TASK_ERROR_RATE alert execution history in Snowsight, with the latest run triggered](assets/task_error_rate_alert.png)
 
-Screenshot placeholder: the Snowsight in-app notification from TASK_ERROR_RATE, captured right after the ALERT_HISTORY query in 04_force_failure.sql returns TRIGGERED.
+![The in-app notification sent by the TASK_ERROR_RATE alert](assets/task_error_rate_alert_notif.png)
 
 ![The failed run in Snowsight](assets/task_graph_failed_run.png)
-
-Screenshot placeholder (changed): the Snowsight graph view of the bad-batch run, with PUBLISH_SUMMARIES failed and QUARANTINE_BATCH and RECORD_OUTCOME succeeded, captured after the payoff query in 04_force_failure.sql.
 
 ### Park the graph
 
