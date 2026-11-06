@@ -1,4 +1,4 @@
-summary: Monitor Snowflake Postgres with pgInsights
+summary: Monitor Snowflake Postgres with Insights
 id: snowflake-postgres-insights
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/snowflake-feature/postgres
 language: en
@@ -7,19 +7,19 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfquickstarts/issues
 authors: Elizabeth Christensen
 
-# Monitor Snowflake Postgres with pgInsights
+# Monitor Snowflake Postgres with Insights
 <!-- ------------------------ -->
 ## Overview
 
-pgInsights is a built-in Postgres extension for Snowflake Postgres that continuously collects performance and health metrics from your Snowflake Postgres instance. It samples about 34 different Postgres statistics views every 30 seconds and stores the results in queryable tables inside your database. No external agents, collectors, or time-series databases are required.
+Insights is a built-in Postgres extension for Snowflake Postgres that continuously collects performance and health metrics from your Snowflake Postgres instance. It samples about 34 different Postgres statistics views every 30 seconds and stores the results in queryable tables inside your database. No external agents, collectors, or time-series databases are required.
 
-In this guide you will enable pgInsights, explore the Snowsight Insights pages, and query the underlying data with plain SQL. By the end you will know how to use the "metric, interpretation, action" workflow to spot health issues, identify the queries causing them, and take action before they become application incidents.
+In this guide you will enable Insights, explore the Snowsight Insights pages, and query the underlying data with plain SQL. By the end you will know how to use the "metric, interpretation, action" workflow to spot health issues, identify the queries causing them, and take action before they become application incidents.
 
 ### What You'll Need
 - A Snowflake Postgres instance running **Postgres 18.6 or later**. If you don't have one, follow the [Getting Started with Snowflake Postgres](https://quickstarts.snowflake.com/guide/getting-started-with-snowflake-postgres/) quickstart first.
 - `psql` installed locally and connected to your instance
-- An instance that has been refreshed recently. If your instance has been running for a while, run a **Refresh** so it picks up the latest minor version, OS patches, and Snowflake Postgres features (including pgInsights). Check your current version with `SELECT version();`.
-- An existing database with some table activity (queries, inserts, updates) so pgInsights has metrics to collect
+- An instance that has been refreshed recently. If your instance has been running for a while, run a **Refresh** so it picks up the latest minor version, OS patches, and Snowflake Postgres features (including Insights). Check your current version with `SELECT version();`.
+- An existing database with some table activity (queries, inserts, updates) so Insights has metrics to collect
 
 ### Refresh your instance
 
@@ -38,17 +38,17 @@ ALTER POSTGRES INSTANCE my_instance
 Use `DESCRIBE POSTGRES INSTANCE my_instance;` to track progress. The refresh is complete when the instance returns to the `Ready` state. For more detail, see [Snowflake Postgres instance management](https://docs.snowflake.com/en/user-guide/snowflake-postgres/managing-instances).
 
 ### What You'll Learn
-- How to enable and verify pgInsights with two SQL commands
+- How to enable and verify Insights with two SQL commands
 - How to read the Snowsight Insights pages: health gauges, query rankings, wait events, and more
-- How to query pgInsights tables directly with SQL for ad-hoc troubleshooting and automation
+- How to query Insights tables directly with SQL for ad-hoc troubleshooting and automation
 
 
 ### What You'll Build
-- A Snowflake Postgres instance with pgInsights enabled and actively collecting metrics
+- A Snowflake Postgres instance with Insights enabled and actively collecting metrics
 - Hands-on experience with the 8 Insights tabs in Snowsight
 
 <!-- ------------------------ -->
-## Enable pgInsights
+## Enable Insights
 
 Connect to your Snowflake Postgres instance with `psql` and enable the two extensions:
 
@@ -77,7 +77,7 @@ You should see two workers: `insights orchestrator` and `insights scheduler: pos
 
 ### What gets created
 
-All pgInsights objects live in the `insights` schema. Run `\dt insights.*` in psql to see the new tables. The most important ones:
+All Insights objects live in the `insights` schema. Run `\dt insights.*` in psql to see the new tables. The most important ones:
 
 | Table | Purpose |
 |---|---|
@@ -90,14 +90,14 @@ All pgInsights objects live in the `insights` schema. Run `\dt insights.*` in ps
 | `pgi_metric_forecast` | Linear-regression projections, up to 180 days out |
 | `pgi_collection` | What is being collected, how often, and whether it is enabled |
 
-For the complete table and metric reference, see the [pgInsights documentation](https://docs.snowflake.com/LIMITEDACCESS/user-guide/snowflake-postgres/postgres-insights).
+For the complete table and metric reference, see the [Insights documentation](https://docs.snowflake.com/LIMITEDACCESS/user-guide/snowflake-postgres/postgres-insights).
 
 <!-- ------------------------ -->
 ## Generate Traffic
 
-pgInsights needs real database activity to have something to show. Run your application's normal workload, replay production queries against a staging copy, or simply run a mix of queries by hand — SELECTs, INSERTs, UPDATEs, and JOINs all contribute useful metrics.
+Insights needs real database activity to have something to show. Run your application's normal workload, replay production queries against a staging copy, or simply run a mix of queries by hand — SELECTs, INSERTs, UPDATEs, and JOINs all contribute useful metrics.
 
-Let the workload run for at least 5 minutes so pgInsights has time to capture multiple snapshots.
+Let the workload run for at least 5 minutes so Insights has time to capture multiple snapshots.
 
 ### Generate fake traffic with Cortex Code
 
@@ -174,7 +174,7 @@ Rather than memorizing every chart, learn this three-step pattern:
 For example: Connection usage gauge is red → Sessions tab shows many idle connections from the same application → action is to enable connection pooling.
 
 <!-- ------------------------ -->
-## Query pgInsights with SQL
+## Query Insights with SQL
 
 Everything you see in the Snowsight Insights pages is backed by the tables in the `insights` schema. You can query them directly for ad-hoc troubleshooting, create Grafana dashboards, or automated alerts.
 
@@ -216,7 +216,7 @@ ORDER  BY sessions DESC;
 
 ### Anomaly detection
 
-pgInsights builds an expected range for each metric at each hour of the week. This query surfaces anything outside the normal range right now:
+Insights builds an expected range for each metric at each hour of the week. This query surfaces anything outside the normal range right now:
 
 ```sql
 SELECT m.col_name, m.metric_name,
@@ -235,7 +235,7 @@ WHERE  m.data_type = 'number'
 ORDER  BY m.col_name, m.metric_name;
 ```
 
-> **Note:** This query only returns results after pgInsights has collected enough history to build baselines — at least a few days of data.
+> **Note:** This query only returns results after Insights has collected enough history to build baselines — at least a few days of data.
 
 ### Capacity forecast
 
@@ -278,7 +278,7 @@ The Database Load chart (Average Active Sessions) samples every 30 seconds. If a
 
 ### Extension not available on older instances
 
-pgInsights requires Postgres 18.6 or later. If the `insights` extension doesn't appear in `pg_available_extensions`, your instance may be on an older Postgres image. Refresh your Postgres instance to get the latest extensions.
+Insights requires Postgres 18.6 or later. If the `insights` extension doesn't appear in `pg_available_extensions`, your instance may be on an older Postgres image. Refresh your Postgres instance to get the latest extensions.
 
 <!-- ------------------------ -->
 ## Clean Up
