@@ -6,7 +6,7 @@ categories: snowflake-site:taxonomy/solution-center/certification/quickstart, sn
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfquickstarts/issues
-fork repo link: https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/evaluate-and-gate-cortex-agents-for-lending/assets/northbank-agent-evals-quickstart
+fork repo link: https://github.com/Snowflake-Labs/sfquickstarts/raw/master/site/sfguides/src/evaluate-and-gate-cortex-agents-for-lending/assets/northbank-agent-evals-quickstart.zip
 
 # Evaluate and Gate a Lending Agent with Cortex Agent Evaluations
 <!-- ------------------------ -->
@@ -73,7 +73,7 @@ Cortex Agent evaluations run a dataset of questions through a specific agent ver
 <!-- ------------------------ -->
 ## Set Up the Environment
 
-Download [northbank-agent-evals-quickstart.zip](https://github.com/Snowflake-Labs/sfquickstarts/raw/master/site/sfguides/src/evaluate-and-gate-cortex-agents-for-lending/assets/northbank-agent-evals-quickstart.zip) and unzip it. It contains the SQL scripts, the evaluation configs, the policy PDFs and the evaluation dataset. You can also [browse the project on GitHub](https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/evaluate-and-gate-cortex-agents-for-lending/assets/northbank-agent-evals-quickstart).
+Download [northbank-agent-evals-quickstart.zip](https://github.com/Snowflake-Labs/sfquickstarts/raw/master/site/sfguides/src/evaluate-and-gate-cortex-agents-for-lending/assets/northbank-agent-evals-quickstart.zip) and unzip it. It contains the SQL scripts, the evaluation configs, the policy PDFs and the evaluation dataset.
 
 Every script runs in a Snowsight SQL worksheet. Open each one, select **Run All** unless a step says otherwise, and run them in order.
 
@@ -395,7 +395,7 @@ Evaluations don't pass session attributes, so an agent relying on row access pol
 Run `sql/99_teardown.sql` to suspend the Tasks and drop the database and warehouse. The evaluation runs and their results are stored with the agent and are removed with it.
 
 <!-- ------------------------ -->
-## Conclusion and Resources
+## Conclusion And Resources
 
 ### What You Learned
 
@@ -423,4 +423,4 @@ Most of the work is in the dataset: expected answers computed independently, tra
 - [Cortex Agents documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents)
 - [Getting Started with Cortex Agent Evaluations](https://www.snowflake.com/en/developers/guides/getting-started-with-cortex-agent-evaluations/)
 - [Best Practices for Evaluating Cortex Agents](https://www.snowflake.com/en/developers/guides/best-practices-for-evaluating-cortex-agents/)
-- [Project files on GitHub](https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/evaluate-and-gate-cortex-agents-for-lending/assets/northbank-agent-evals-quickstart)
+- [Project files (zip)](https://github.com/Snowflake-Labs/sfquickstarts/raw/master/site/sfguides/src/evaluate-and-gate-cortex-agents-for-lending/assets/northbank-agent-evals-quickstart.zip)
