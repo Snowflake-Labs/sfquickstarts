@@ -228,6 +228,14 @@ Send this prompt to CoCo. Compare the output against the expected output in the 
 
 > *"Create a CSV file format named CSV_FF in TASTY_BYTES.PUBLIC with type = 'csv'."*
 
+**What this prompt asks for**
+
+| Part of the prompt | Why it's there |
+|---|---|
+| "Create a CSV file format" | Asks for a reusable parsing definition, not a table or a data load |
+| "named `CSV_FF` in `TASTY_BYTES.PUBLIC`" | Gives the exact name and location. The stage and later loads reference this object. |
+| "type = 'csv'" | Specifies the source file type, so CoCo doesn't have to choose a format |
+
 ![csvfileformat](./assets/csvfileformat.png)
 
 ### STEP 2 — Create the external stage
@@ -238,6 +246,14 @@ Send this prompt to CoCo. Compare the output against the expected output in the 
 
 > *"Create an external stage named S3LOAD in TASTY_BYTES.PUBLIC that points to 's3://sfquickstarts/tastybytes/' and uses the CSV_FF file format."*
 
+**What this prompt asks for**
+
+| Part of the prompt | Why it's there |
+|---|---|
+| "Create an external stage named `S3LOAD` in `TASTY_BYTES.PUBLIC`" | Names the storage pointer that every `COPY INTO` statement will use |
+| "points to 's3://sfquickstarts/tastybytes/'" | Gives the bucket and base path. Each table's load adds its own subfolder to this path. |
+| "uses the `CSV_FF` file format" | Connects the stage to the parsing definition you just created, rather than asking CoCo to invent another one |
+
 ![externalstage](./assets/externalstage.png)
 
 ### STEP 3 — Load the COUNTRY table (the teaching example)
@@ -247,6 +263,16 @@ Send this prompt to CoCo. Compare the output against the expected output in the 
 Send this prompt to CoCo. Compare the output against the expected output in the notebook — if they match, click **Allow** to run it.
 
 > *"Write a COPY INTO statement that loads data from @tasty_bytes.public.s3load/raw_pos/country/ into TASTY_BYTES.RAW_POS.COUNTRY. Use FILE_FORMAT = (FORMAT_NAME = TASTY_BYTES.PUBLIC.CSV_FF ERROR_ON_COLUMN_COUNT_MISMATCH = FALSE) to handle extra columns in the source file."*
+
+**What this prompt asks for**
+
+| Part of the prompt | Why it's there |
+|---|---|
+| "Write a `COPY INTO` statement" | Specifies the bulk-loading operation, rather than creating another empty table |
+| "from `@tasty_bytes.public.s3load/raw_pos/country/`" | Targets the COUNTRY files, not every CSV under the stage |
+| "into `TASTY_BYTES.RAW_POS.COUNTRY`" | Names the existing destination table in the Ingestion layer |
+| "`FORMAT_NAME = TASTY_BYTES.PUBLIC.CSV_FF`" | Reuses the same CSV parsing definition as the stage |
+| "`ERROR_ON_COLUMN_COUNT_MISMATCH = FALSE`" | Explicitly allows the column-count difference described in the prompt. It does not ask CoCo to ignore every kind of loading error. |
 
 You should see about 30 rows loaded successfully. Optionally, copy the SQL into the notebook cell for future reference.
 
@@ -259,6 +285,17 @@ Now we apply the same `COPY INTO` pattern at scale — loading six more tables i
 Send this prompt to CoCo. Compare the output against the expected output in the notebook — if they match, click **Allow** to run it.
 
 > *"Load the remaining Tasty Bytes tables from the S3 stage @tasty_bytes.public.s3load into their corresponding tables in TASTY_BYTES.RAW_POS: FRANCHISE (raw_pos/franchise/), LOCATION (raw_pos/location/), MENU (raw_pos/menu/), TRUCK (raw_pos/truck/), ORDER_HEADER (raw_pos/order_header/), ORDER_DETAIL (raw_pos/order_detail/). First create a dedicated LARGE warehouse named LOAD_WH with AUTO_SUSPEND = 60 and AUTO_RESUME = TRUE, switch to it, run the COPY INTOs using FILE_FORMAT = (FORMAT_NAME = TASTY_BYTES.PUBLIC.CSV_FF ERROR_ON_COLUMN_COUNT_MISMATCH = FALSE), then drop LOAD_WH and switch back to COMPUTE_WH."*
+
+**What this prompt asks for**
+
+| Part of the prompt | Why it's there |
+|---|---|
+| The six table names and their `raw_pos/.../` paths | Pairs each destination with its source folder, so CoCo doesn't have to guess which files belong in which table |
+| "from the S3 stage `@tasty_bytes.public.s3load` … in `TASTY_BYTES.RAW_POS`" | Keeps the loads on the stage you created and in the raw Ingestion layer |
+| "First create a dedicated LARGE warehouse named `LOAD_WH` … switch to it" | Requests separate compute for the larger load and makes the execution order explicit |
+| "`AUTO_SUSPEND = 60` and `AUTO_RESUME = TRUE`" | Specifies the idle-suspension and restart settings for the temporary warehouse |
+| "run the `COPY INTO`s using `FILE_FORMAT = ...`" | Applies the same CSV format and column-count option to all six loads |
+| "then drop `LOAD_WH` and switch back to `COMPUTE_WH`" | Makes cleanup and restoring the notebook's usual warehouse part of the task, not something the reader has to remember later |
 
 CoCo will generate SQL that creates a LARGE warehouse (`LOAD_WH`), runs six `COPY INTO` statements, then drops `LOAD_WH` and restores `COMPUTE_WH`. Optionally, copy the SQL into the notebook cell for future reference.
 
@@ -287,8 +324,25 @@ Send each prompt to CoCo one at a time. Each UDF encapsulates a single unit-conv
 **STEP 1:**
 > *"Create a SQL UDF named FAHRENHEIT_TO_CELSIUS in TASTY_BYTES.ANALYTICS that accepts a NUMBER(35,4) parameter TEMP_F and returns the Celsius equivalent as NUMBER(35,4)."*
 
+**What this prompt asks for**
+
+| Part of the prompt | Why it's there |
+|---|---|
+| "Create a SQL UDF" | Asks for a reusable SQL function that returns a value, not a one-off query |
+| "named `FAHRENHEIT_TO_CELSIUS` in `TASTY_BYTES.ANALYTICS`" | Gives the exact function name and location that the weather transformation will reference |
+| "accepts a `NUMBER(35,4)` parameter `TEMP_F`" | Defines the input name and numeric type, so CoCo doesn't have to choose the function signature |
+| "returns the Celsius equivalent as `NUMBER(35,4)`" | States the conversion's direction and return type. Check the generated expression converts Fahrenheit to Celsius, not the reverse. |
+
 **STEP 2:**
 > *"Create a SQL UDF named INCH_TO_MILLIMETER in TASTY_BYTES.ANALYTICS that accepts a NUMBER(35,4) parameter INCH and returns the millimeter equivalent as NUMBER(35,4)."*
+
+**What this prompt asks for**
+
+| Part of the prompt | Why it's there |
+|---|---|
+| "Create a SQL UDF named `INCH_TO_MILLIMETER` in `TASTY_BYTES.ANALYTICS`" | Creates the second reusable conversion function under the name the weather transformation expects |
+| "accepts a `NUMBER(35,4)` parameter `INCH`" | Defines the input as a numeric measurement in inches |
+| "returns the millimeter equivalent as `NUMBER(35,4)`" | Specifies the output unit and type. Check that the generated function converts inches to millimeters. |
 
 Confirm both appear in `TASTY_BYTES.ANALYTICS` in the object explorer.
 
@@ -381,6 +435,18 @@ A Semantic View describes the tables in **business terms**: dates to group by, s
    > - *Source tables: TASTY_BYTES.HARMONIZED.SALES_HAMBURG_DT and TASTY_BYTES.HARMONIZED.WEATHER_HAMBURG_DT*
    > - *Include daily Hamburg sales, order counts, temperature, precipitation, and wind speed, with clear descriptions*
    > - *Use DATE_VALID_STD as the unique key for WEATHER_HAMBURG_DT. Do not set a unique key on SALES_HAMBURG_DT. Define the relationship as many-to-one from ORDER_DATE to DATE_VALID_STD."*
+
+   **What this prompt asks for**
+
+   | Part of the prompt | Why it's there |
+   |---|---|
+   | "Name: `HAMBURG_INSIGHTS_SV`" and "Location: `TASTY_BYTES.ANALYTICS`" | Names the semantic view and where it belongs. The Cortex Agent will reference this published object. |
+   | "Source tables: `TASTY_BYTES.HARMONIZED.SALES_HAMBURG_DT` and `TASTY_BYTES.HARMONIZED.WEATHER_HAMBURG_DT`" | Points CoCo at the final transformed tables, rather than the raw sales tables or postal-level weather data |
+   | "Include daily Hamburg sales, order counts, temperature, precipitation, and wind speed" | Identifies the sales and weather values analysts need for the investigation |
+   | "with clear descriptions" | Asks CoCo to explain the fields in business terms, so their meaning is part of the model |
+   | "Use `DATE_VALID_STD` as the unique key for `WEATHER_HAMBURG_DT`" | Identifies the weather date as the key on the one side of the relationship |
+   | "Do not set a unique key on `SALES_HAMBURG_DT`" | Makes the intended sales-side configuration explicit, so CoCo doesn't infer a different key setup |
+   | "many-to-one from `ORDER_DATE` to `DATE_VALID_STD`" | Defines which date columns connect sales to weather and the relationship direction. Review both in the draft before publishing. |
 
 5. Allow CoCo to create the Semantic View draft in the Workspace. This creates an editable draft; it does not publish the view yet.
 
