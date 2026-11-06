@@ -131,7 +131,7 @@ Northbank's credit operations and collections teams use an agent with four tools
 ![The agent's four tools in Snowsight](assets/agent-tools.png)
 
 > aside positive
-> The screenshots in this guide come from the original build, so some names differ from the ones the scripts create: agent `LENDING_OPS_COPILOT` instead of `LENDING_OPS_AGENT`, database `LENDING_AGENT_EVAL_DEMO` instead of `NORTHBANK_AGENT_EVALS`, warehouse `COMPUTE_WH`, and run names such as `v3_v3_r1` instead of `v3_r1`.
+> The screenshots in this guide come from the original build, so run names differ from the ones the scripts create: for example `v1_baseline_v3_r1` instead of `v1_r1`, and `v3_v3_r1` instead of `v3_r1`.
 
 Run `sql/04_agent_versions.sql`. It creates the custom tool and three committed versions of the agent, changing one thing at a time:
 
