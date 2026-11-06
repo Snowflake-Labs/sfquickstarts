@@ -112,7 +112,7 @@ The script is the same in every guide of this series. It runs as ACCOUNTADMIN an
 ALTER ACCOUNT SET FEATURE_RBAC_INHERITED_GRANTS = 'ENABLED';
 ```
 
-An inherited grant cannot be combined with WITH GRANT OPTION, `CASCADE` or `RESTRICT`.
+An inherited grant cannot be combined with WITH GRANT OPTION, CASCADE or RESTRICT.
 
 This guide doesn't use inherited grants itself; the opt-in is there so the same role works for every guide in the series.
 
@@ -383,7 +383,7 @@ The insert skips readings that are already there, so running the script again do
 
 Section 5 reads the task history for this graph. The GRAPH_VERSION column tells you which committed version each task ran. **Take note of it**: every task in this run used version 1.
 
-| GRAPH_VERSION | NAME | STATE | RETURN_VALUE |
+| <span style="white-space: nowrap">GRAPH_VERSION</span> | NAME | STATE | RETURN_VALUE |
 |---|---|---|---|
 | 1 | LOAD_WEATHER | SUCCEEDED | 6 rows loaded |
 | 1 | BUILD_DAILY_SUMMARY | SUCCEEDED | NULL |
@@ -408,7 +408,7 @@ Section 1 sends the graph a sensor glitch: a reading with an average temperature
 
 Section 2 runs the graph and waits three minutes: a minute or so for the run, and the rest because task events reach the event table a minute or two after the run ends. The history of that run shows the root task loading the bad row, the summary task failing, and the finalizer still running, as finalizers do:
 
-| GRAPH_VERSION | NAME | STATE | RETURN_VALUE | ERROR_MESSAGE |
+| <span style="white-space: nowrap">GRAPH_VERSION</span> | NAME | STATE | RETURN_VALUE | ERROR_MESSAGE |
 |---|---|---|---|---|
 | 1 | LOAD_WEATHER | SUCCEEDED | 1 rows loaded | NULL |
 | 1 | BUILD_DAILY_SUMMARY | FAILED | NULL | Number out of representable range: type FIXED[SB8](10,1){nullable}, value 1000000000.000000 |
@@ -552,7 +552,7 @@ SHOW COMMITTED TASKS shows version 2, and the new task is part of it. Every memb
 
 Sections 3 and 4 add two more hot days, run the graph again and show every run side by side. The first two runs used version 1 and three tasks, including the run you broke on purpose; the last used version 2, and BUILD_HEAT_WARNINGS ran in it:
 
-| GRAPH_VERSION | NAME | STATE | RETURN_VALUE |
+| <span style="white-space: nowrap">GRAPH_VERSION</span> | NAME | STATE | RETURN_VALUE |
 |---|---|---|---|
 | 1 | LOAD_WEATHER | SUCCEEDED | 6 rows loaded |
 | 1 | BUILD_DAILY_SUMMARY | SUCCEEDED | NULL |
@@ -587,13 +587,13 @@ snow sql -f scripts/05_verify_change.sql
 <!-- ------------------------ -->
 ## Cleanup
 
-Before tearing anything down, know that there is a gentler option. DROP DCM PROJECT on its own, without a `PURGE` first, removes the project and its deployment history and leaves every entity, grant and attachment in place as an ordinary unmanaged object. To release a single entity, call SYSTEM$UNMANAGE_ENTITY_FROM_DCM_PROJECT with its type and name; to release grants or attachments, pass the rendered statements to SYSTEM$UNMANAGE_FROM_DCM_PROJECT. Then remove the matching statements from your definitions, or the next deploy takes them back.
+Before tearing anything down, know that there is a gentler option. DROP DCM PROJECT on its own, without a PURGE first, removes the project and its deployment history and leaves every entity, grant and attachment in place as an ordinary unmanaged object. To release a single entity, call SYSTEM$UNMANAGE_ENTITY_FROM_DCM_PROJECT with its type and name; to release grants or attachments, pass the rendered statements to SYSTEM$UNMANAGE_FROM_DCM_PROJECT. Then remove the matching statements from your definitions, or the next deploy takes them back.
 
 When you're done, open scripts/06_cleanup.sql and run it as DCM_DEVELOPER. It can't be undone.
 
-1. **Purge the project.** `PURGE` drops every entity the project manages: the warehouse, the database with its tables and their data, the task graph and its members, and the alert.
-2. **Drop the project object.** `PURGE` leaves the project object behind, so DROP DCM PROJECT follows.
-3. **Objects created outside the project.** The email integration came from 02_guide_setup.sql, so `PURGE` doesn't touch it. Only this guide uses it, and DCM_DEVELOPER owns it, so the script drops it.
+1. **Purge the project.** PURGE drops every entity the project manages: the warehouse, the database with its tables and their data, the task graph and its members, and the alert.
+2. **Drop the project object.** PURGE leaves the project object behind, so DROP DCM PROJECT follows.
+3. **Objects created outside the project.** The email integration came from 02_guide_setup.sql, so PURGE doesn't touch it. Only this guide uses it, and DCM_DEVELOPER owns it, so the script drops it.
 4. **Series-shared objects, left commented.** The DCM_DEMO database, its PROJECTS schema and the DCM_DEVELOPER role are shared by every guide in the series, so the script leaves them in place, commented out, with the drops running as ACCOUNTADMIN, which owns the container. Check what else is in the shared schema before you drop them:
 
     ```sql
@@ -605,7 +605,7 @@ When you're done, open scripts/06_cleanup.sql and run it as DCM_DEVELOPER. It ca
     ```
 
 5. **Inherited grants, left commented.** The line that turns them off is commented out.
-6. **Verify.** The SHOW statements at the end confirm that the database, the warehouse and the integration are gone. The last one, SHOW DCM PROJECTS IN SCHEMA DCM_DEMO.PROJECTS, still lists the projects of any other guides in this series that you have not cleaned up. If `PURGE` fails, suspend the task graph and the alert first so nothing keeps consuming credits; the script's last comment has both statements.
+6. **Verify.** The SHOW statements at the end confirm that the database, the warehouse and the integration are gone. The last one, SHOW DCM PROJECTS IN SCHEMA DCM_DEMO.PROJECTS, still lists the projects of any other guides in this series that you have not cleaned up. If PURGE fails, suspend the task graph and the alert first so nothing keeps consuming credits; the script's last comment has both statements.
 
 **With the Snowflake CLI:**
 
