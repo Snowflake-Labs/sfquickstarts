@@ -281,6 +281,8 @@ def _status_errors(text: str) -> list[str]:
     status = md.field(text, "status")
     if status is None or status in STATUSES:
         return []
+    if not status:
+        return ["status is empty, so the guide will not publish (use 'Published' or remove it)"]
     key = status.strip().lower()
     hint = STATUS_FIXES.get(key) or next((s for s in STATUSES if s.lower() == key), None)
     allowed = ", ".join(STATUSES)
