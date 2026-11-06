@@ -46,7 +46,7 @@ Every step ends with a check query and the exact numbers you should see, so you 
 
 | Step | What happens | Time |
 |------|--------------|------|
-| 1 | Set up: open the repo and run one script | 5 min |
+| 1 | Set up: open the repo as a workspace and run the setup script | 5 min |
 | 2 | Discover the data: CoCo compares the sources and writes a mapping | 10 min |
 | 3 | Build the pipeline: CoCo plans and builds the Dynamic Tables | 12 min |
 | 4 | The break: an upstream change fails the pipeline, and CoCo fixes it | 5 min |
@@ -142,7 +142,7 @@ Open **`checks.sql`**. You'll run one block from it after each step. Select and 
 
 ### Open CoCo
 
-Select the **CoCo** icon in the lower-right corner of the workspace. You'll use one CoCo conversation for the discovery and pipeline steps, so CoCo can reuse what it learns.
+Select the **CoCo** icon in the lower-right corner of the workspace. You'll use one CoCo conversation for the discovery, pipeline, and break steps, so CoCo can reuse what it learns.
 
 > **Tip:** Type `@` in the CoCo message box to add a table as context, for example `@MERGER_DB.RAW.WEB_ORDERS`.
 
@@ -206,6 +206,8 @@ A Dynamic Table is defined by a `SELECT`. Snowflake keeps it up to date as the s
 Creating core tables is a good time to review before anything runs. In the CoCo message box, select **+**, and then select **Plan mode**. You can also press **Cmd+Shift+P** (macOS) or **Ctrl+Shift+P** (Windows). A **Plan** label appears in the message box.
 
 In Plan mode, CoCo researches the task and proposes a plan instead of making changes. When you confirm the plan, CoCo turns Plan mode off and starts the work.
+
+> **Don't see Plan mode?** Start the prompt below with: *"Make a plan first and wait for my approval before you create anything."*
 
 ### Prompt
 
@@ -274,7 +276,7 @@ Ask CoCo to fix the Dynamic Table rather than editing the SQL yourself, then run
 <!-- ------------------------ -->
 ## The Morning-After Break
 
-It's Wednesday morning. Northbound's POS vendor shipped a "minor" update: the export now calls the dollar column `SALE_AMOUNT_USD` instead of `TOTAL_USD`. The first batch in the new format, Tuesday Sept 29, landed overnight. Then the CEO opens the dashboard.
+It's Wednesday morning. Northbound's POS vendor shipped a "minor" update: the export now calls the dollar column `SALE_AMOUNT_USD` instead of `TOTAL_USD`. The first batch in the new format, Tuesday Sept 29, landed overnight. Then the CEO asks for fresh numbers.
 
 ### Run the break
 
@@ -293,7 +295,7 @@ please query refresh history.
 
 ### Prompt
 
-Don't go looking for the cause yourself. Plan mode turned off when you confirmed the pipeline plan, so CoCo can make the fix directly. In the same CoCo conversation, send:
+Don't go looking for the cause yourself. CoCo needs to make changes here, so Plan mode should be off. It turns off when you confirm a plan; if the **Plan** label is still showing in the message box, select the **x** on it. In the same CoCo conversation, send:
 
 ```
 MERGER_DB.ANALYTICS.DAILY_REVENUE failed to refresh after this morning's POS
@@ -385,15 +387,14 @@ The preview is private. To share the dashboard, deploy it to a *deploy target*: 
 
 To let teammates open it, share the deployed app with their roles or users. See [Create and run a Streamlit app in a workspace](https://docs.snowflake.com/en/developer-guide/streamlit/streamlit-in-workspaces/streamlit-in-workspaces-create-run) for the sharing steps.
 
-Open the deployed app. That's the dashboard the CEO gets on Friday: one revenue number, from two systems that didn't agree on anything.
+To open the deployed app, go to **Projects** » **Streamlit** and select it. That's the dashboard the CEO gets on Friday: one revenue number, from two systems that didn't agree on anything.
 
 <!-- ------------------------ -->
 ## Clean Up
 
 To stop all credit consumption from this guide:
 
-1. In **Projects** » **Workspaces**, delete your lab workspace, and delete the SQL file you created in **My Workspace** for the API integration.
-2. Run:
+1. Open the SQL file you created in **My Workspace** for the API integration, replace its contents with the statements below, and select **Run all**:
 
 ```sql
 USE ROLE ACCOUNTADMIN;
@@ -407,6 +408,8 @@ DROP ROLE IF EXISTS MERGER_ROLE;
 -- The Git API integration you created for this lab
 DROP API INTEGRATION IF EXISTS GITHUB_MERGER_LAB;
 ```
+
+2. In **Projects** » **Workspaces**, delete your lab workspace. Then delete the SQL file in **My Workspace**.
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
