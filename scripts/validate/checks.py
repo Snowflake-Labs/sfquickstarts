@@ -47,6 +47,22 @@ NON_IMAGE_ASSETS_MESSAGE = (
 LANGUAGE_MESSAGE = (
     "Invalid or missing language detected. Allowed: en, es, it, fr, de, ja, ko, pt_br"
 )
+# A quickstart folder ending in one of these is a translation, and must declare the
+# language it is written in. Otherwise it publishes under /en/ beside the original.
+LANGUAGE_SUFFIXES = {
+    "es": "es",
+    "it": "it",
+    "fr": "fr",
+    "de": "de",
+    "ja": "ja",
+    "ko": "ko",
+    "kr": "ko",
+    "ptbr": "pt_br",
+}
+# The publisher activates a page only when status is exactly "Published", so any
+# other spelling silently leaves the guide unpublished.
+STATUSES = ("Published", "Draft", "Hidden", "Archived")
+STATUS_FIXES = {"pubblicato": "Published", "pubblished": "Published", "public": "Published"}
 NON_MARKDOWN_ROOT_RE = re.compile(r"^site/sfguides/src/[^/]+/[^/]+$")
 
 
@@ -242,14 +258,46 @@ def _journey_errors(text: str) -> list[str]:
     return errors
 
 
+def _language_suffix_errors(text: str, prefixed: str) -> list[str]:
+    """A translated quickstart's folder suffix must agree with its declared language."""
+    if not display(prefixed).startswith(QUICKSTART_PREFIX):
+        return []
+    folder = Path(prefixed).parent.name
+    suffix = folder.rsplit("-", 1)[-1] if "-" in folder else ""
+    expected = LANGUAGE_SUFFIXES.get(suffix)
+    if expected is None:
+        return []
+    declared = read_language(text).strip().lower()
+    if declared == expected:
+        return []
+    return [
+        f"folder ends in '-{suffix}', so language must be '{expected}' "
+        f"(found '{declared or 'missing'}')"
+    ]
+
+
+def _status_errors(text: str) -> list[str]:
+    """A declared status must be one the publisher recognises, spelled exactly."""
+    status = md.field(text, "status")
+    if status is None or status in STATUSES:
+        return []
+    key = status.strip().lower()
+    hint = STATUS_FIXES.get(key) or next((s for s in STATUSES if s.lower() == key), None)
+    allowed = ", ".join(STATUSES)
+    fix = f"; did you mean '{hint}'?" if hint else ""
+    return [f"status '{status}' is not recognised (allowed: {allowed}){fix}"]
+
+
 def check_frontmatter(content: Content) -> dict[str, Any] | None:
-    """Fail when a guide's frontmatter id disagrees with its filename or folder."""
+    """Fail on a bad id, a translation filed as the wrong language, or an unknown status."""
     issues = []
     for prefixed in content.changed_markdown:
         text = content.text(prefixed)
         if text is None:
             continue
         errors = _id_errors(md.field(text, "id"), prefixed)
+        errors += _language_suffix_errors(text, prefixed)
+        errors += _status_errors(text)
         if display(prefixed).startswith(JOURNEY_PREFIX):
             errors += _journey_errors(text)
         if errors:
