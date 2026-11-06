@@ -174,8 +174,6 @@ CoCo runs a few exploratory queries, such as sampling rows, flattening the JSON,
 4. **Store IDs:** POS uses register numbers (`101`–`105`), web uses location codes (`DG-SF-01` and so on), and both map to a `STORE_ID` through `STORE_CROSSWALK`.
 5. **Duplicates:** `WEB_ORDERS` has **3,106** documents but only **3,040** distinct `order_id` values. The retried copies share an `order_id` and have a later `LOADED_AT`.
 
-<!-- TODO screenshot: CoCo's discovery summary and mapping table (assets/coco_discovery_mapping.png) -->
-
 If CoCo misses one, ask about it directly, for example: *"Are there duplicate order IDs in WEB_ORDERS? What unit is amount_cents in?"*
 
 ### CHECK 2
@@ -240,8 +238,6 @@ Before you approve, check that the plan:
 - creates `ORDERS_UNIFIED` before `DAILY_REVENUE`
 
 If something is off, tell CoCo in plain language before approving. When the plan looks right, approve it and let CoCo create the tables.
-
-<!-- TODO screenshot: CoCo's plan for the two Dynamic Tables (assets/coco_plan_mode_pipeline.png) -->
 
 > **Note:** Snowflake may set the refresh mode to `FULL` for `ORDERS_UNIFIED` because the query unions two sources and deduplicates with a window function. At a few thousand rows, a full refresh takes seconds, so that's expected and fine.
 
@@ -313,8 +309,6 @@ refreshes again and includes the new batch. Don't change the raw data.
 
 CoCo may use `CREATE OR ALTER DYNAMIC TABLE` or `CREATE OR REPLACE DYNAMIC TABLE` for the fix. Both work here. `CREATE OR ALTER` keeps the existing table, including its grants and refresh history, and updates its definition. `CREATE OR REPLACE` drops and recreates it. Either way, changing the query makes `ORDERS_UNIFIED` reinitialize on its next refresh, which takes seconds at this size.
 
-<!-- TODO screenshot: CoCo diagnosing the failure from refresh history (assets/coco_break_diagnosis.png) -->
-
 > **Tip:** You can see the same story in the UI. Go to **Transformation** » **Dynamic tables**, open `ORDERS_UNIFIED`, and look at the **Refresh History** and **Graph** tabs.
 
 ### CHECK 4
@@ -371,8 +365,6 @@ Select **Run** in the action bar at the top of the file. This starts a private p
 | Stores | 10 |
 
 Change the filters to explore. Saturdays are busier than weekdays, and Daily Grind's web orders skew toward the evening.
-
-<!-- TODO screenshot: the finished dashboard (assets/merger_dashboard.png) -->
 
 If the app shows an error, paste the error into CoCo and ask it to fix the app. If you're stuck, copy the contents of **`solutions/streamlit_app.py`** into your `streamlit_app.py`.
 
