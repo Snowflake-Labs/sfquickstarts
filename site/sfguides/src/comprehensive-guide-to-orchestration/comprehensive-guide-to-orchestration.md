@@ -1,12 +1,12 @@
 author: Yoav Ostrinsky
 id: comprehensive-guide-to-orchestration
 summary: Choose and run the right Snowflake orchestration primitive, from tasks and triggered tasks to versioned task graph objects managed as code.
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart,snowflake-site:taxonomy/product/data-engineering,snowflake-site:taxonomy/snowflake-feature/transformation,snowflake-site:taxonomy/snowflake-feature/dynamic-tables
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart,snowflake-site:taxonomy/product/data-engineering,snowflake-site:taxonomy/snowflake-feature/transformation,snowflake-site:taxonomy/snowflake-feature/serverless-tasks,snowflake-site:taxonomy/snowflake-feature/dynamic-tables
 environments: web
 status: Draft
 language: en
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-tags: Tasks, Task Graphs, Orchestration, Data Engineering, DCM
+tags: Tasks, Task Graphs, Serverless Tasks, Transformation, Orchestration, Data Engineering, DCM
 
 # Comprehensive Guide to Orchestration in Snowflake
 <!-- ------------------------ -->
@@ -16,20 +16,16 @@ Every pipeline needs something that decides what runs, when, and what happens wh
 
 Picking the wrong one is how you end up babysitting schedules at 2am. Picking the right one usually means writing less code.
 
-This guide is the concepts tour. It explains each primitive, when to reach for it, and how the pieces fit together, with one short snippet per idea. The centre of the guide is the **task graph object**: a database object that owns a pipeline's schedule, retry policy and member defaults, and lets you edit a running pipeline and release the change with a single `COMMIT`.
+This guide is the concepts tour. It explains each primitive, when to reach for it, and how the pieces fit together, with one short snippet per idea. The centre of the guide is the **task graph object**: a database object that owns a pipeline's schedule, retry policy and member defaults, and lets you edit a running pipeline and release the change with a single commit.
 
-If you'd rather build one end to end first, the [Getting Started with Task Graphs](https://www.snowflake.com/en/developers/guides/getting-started-with-task-graphs/) guide walks through a working graph, and this guide is where it sends you for the theory.
-
-![Orchestration primitives in Snowflake, from declarative dynamic tables to task graphs](assets/orchestration_overview.png)
-
-Screenshot placeholder: diagram of the four orchestration choices (dynamic tables, standalone and triggered tasks, task graphs, external orchestrators) on a spectrum from declarative to imperative.
+If you'd rather build one end to end first, the [Getting Started with Task Graphs](https://www.snowflake.com/en/developers/guides/getting-started-with-task-graphs/) guide walks through a working graph, and this guide is where it sends you for the theory. To build a graph visually instead, see [Getting Started with Pipeline Builder](https://www.snowflake.com/en/developers/guides/getting-started-with-pipeline-builder/).
 
 ### What You'll Learn
 
-- How to choose between **dynamic tables**, **tasks**, **triggered tasks**, **task graphs** and **external orchestrators**
+- How to choose between **dynamic tables**, **tasks**, **triggered tasks** and **task graphs**
 - Task fundamentals: **serverless vs warehouse** compute, schedules, conditions, retries, timeouts and session parameters
 - The **task graph object**: what it owns, its three kinds of settings, how membership works, and overlap policy
-- **Versioning**: staged edits, `COMMIT` and `REVERT`, and how in-flight runs behave
+- **Versioning**: staged edits, COMMIT and REVERT, and how in-flight runs behave
 - **Control flow**: advanced branching, finalizers, configuration, return values and runtime information
 - **Operations**: notifications, alert templates, monitoring, security and cost
 - **Authoring surfaces**: SQL, DCM projects and Pipeline Builder, plus how to migrate an existing root-task graph
@@ -46,13 +42,9 @@ The snippets are illustrative, not a script to run top to bottom. They assume a 
 
 ```sql
 CREATE DATABASE IF NOT EXISTS DEMO_ORCHESTRATION COMMENT = 'Orchestration guide scratch database';
-```
 
-```sql
 CREATE SCHEMA IF NOT EXISTS DEMO_ORCHESTRATION.DEMO COMMENT = 'Orchestration guide scratch schema';
-```
 
-```sql
 CREATE WAREHOUSE IF NOT EXISTS DEMO_WH WAREHOUSE_SIZE = 'XSMALL' AUTO_SUSPEND = 60 COMMENT = 'Orchestration guide warehouse';
 ```
 
@@ -63,22 +55,19 @@ The whole guide works with three tasks: DEMO_T_EXTRACT, DEMO_T_TRANSFORM and DEM
 <!-- ------------------------ -->
 ## Choose the Right Primitive
 
-Start with the shape of the work, not the tool. Snowflake gives you four ways to decide when something runs:
+Start with the shape of the work, not the tool. Snowflake gives you three ways to decide when something runs:
 
 | Primitive | Reach for it when | Who decides when it runs | Watch out for |
 |:--|:--|:--|:--|
 | Dynamic tables | The logic is a SELECT and what you care about is freshness | Snowflake, from a target lag you declare, in dependency order | Target lag can't go below 60 seconds, and the definition can't call stored procedures or external functions |
 | Standalone or triggered task | One step on a schedule, or one step that should run as soon as a stream has data | The task's schedule or its stream condition | Only one instance runs at a time; chains of steps belong in a graph |
 | Task graph | Several imperative steps in order, with parallel branches, error handling and a cleanup step | The graph's schedule or condition, or an on-demand run | Every member must share an owner and a schema |
-| External orchestrator | Snowflake is one system among many and something else is the control plane | The orchestrator, which runs tasks or refreshes on demand | You own retries and dependency order outside Snowflake |
 
 **Dynamic tables first.** If a step can be written as a query, a dynamic table usually needs less code: Snowflake refreshes a pipeline of them in dependency order, an incremental refresh computes only the rows that changed, and Snowflake can skip refreshing downstream tables whose upstream data hasn't changed. The [Comprehensive Guide to Dynamic Tables](https://www.snowflake.com/en/developers/guides/comprehensive-guide-to-dynamic-tables/) covers them in depth.
 
-**Tasks when it's imperative.** Loops, cursors, multi-statement transactions, writes to several tables at once, calls to external functions and notifications don't fit a SELECT. Those stay on tasks.
+**Tasks for procedures, dbt Projects and Code Bundles.** When a step is a stored procedure, a dbt Project or a Code Bundle, it doesn't fit a SELECT. Run it from a task.
 
 **Task graphs when there's more than one step.** A graph runs steps in dependency order, runs siblings in parallel, and gives the whole pipeline one schedule, one retry policy and one place to change settings.
-
-**External orchestrators when Snowflake isn't in charge.** Any service that can authenticate into your account can start a task with EXECUTE TASK or a whole graph with EXECUTE TASK GRAPH, and a dynamic table created with SCHEDULER = DISABLE refreshes only when your orchestrator asks it to.
 
 You can mix them. A common shape is dynamic tables for the transformations and a task graph around them for loads, exports and notifications, which is the final concept section of this guide.
 
@@ -89,11 +78,11 @@ A task runs one SQL statement, a Snowflake Scripting block, or a call to a store
 
 ### Compute: serverless or warehouse
 
-A task runs either on **serverless compute**, where Snowflake predicts the resources from recent runs and sizes them for you, or on a **user-managed warehouse** you name with `WAREHOUSE`. Leave out the warehouse and the task is serverless.
+A task runs either on **serverless compute**, where Snowflake predicts the resources from recent runs and sizes them for you, or on a **user-managed warehouse** you name with WAREHOUSE. Leave out the warehouse and the task is serverless.
 
 Serverless tasks bill for the compute they actually use and suit stable workloads where keeping to the schedule matters. If a run overruns its interval, Snowflake sizes up. The largest size is the equivalent of an XXLARGE warehouse. Warehouse tasks suit warehouses that are already busy with concurrent work or loads that are hard to predict, and they bill like any warehouse, with a 60-second minimum each time it resumes.
 
-On a serverless task, `TARGET_COMPLETION_INTERVAL` sets how soon a run should finish. Snowflake scales resources to meet it, and ignores it once the task is already at its largest size. You can also bound the size with `SERVERLESS_TASK_MIN_STATEMENT_SIZE` and `SERVERLESS_TASK_MAX_STATEMENT_SIZE`.
+On a serverless task, TARGET_COMPLETION_INTERVAL sets how soon a run should finish. Snowflake scales resources to meet it, and ignores it once the task is already at its largest size. You can also bound the size with SERVERLESS_TASK_MIN_STATEMENT_SIZE and SERVERLESS_TASK_MAX_STATEMENT_SIZE.
 
 The snippets in this section are three versions of one standalone task, DEMO_T_EXTRACT, which later becomes the root of a graph.
 
@@ -118,14 +107,14 @@ A new task is created suspended. RESUME starts its schedule, and EXECUTE TASK ru
 
 ### Conditions and triggered tasks
 
-A `WHEN` clause is a Boolean condition checked before each run. If it's false, the run is skipped.
+A WHEN clause is a Boolean condition checked before each run. If it's false, the run is skipped.
 
-When the condition is `SYSTEM$STREAM_HAS_DATA` and there's no schedule, you have a **triggered task**: it runs when the stream has new data and doesn't use compute until then. Triggered tasks work on streams over tables, views, dynamic tables, Iceberg tables, data shares and directory tables, but not on hybrid tables or streams on external tables.
+When the condition is SYSTEM$STREAM_HAS_DATA and there's no schedule, you have a **triggered task**: it runs when the stream has new data and doesn't use compute until then. Triggered tasks work on streams over tables, views, dynamic tables, Iceberg tables, data shares and directory tables, but not on hybrid tables or streams on external tables.
 
 A few behaviours to know:
 
-- A serverless triggered task needs `TARGET_COMPLETION_INTERVAL`. A warehouse triggered task names its warehouse instead.
-- Triggered tasks run at most every 30 seconds by default. You can lower that to 10 seconds with the `USER_TASK_MINIMUM_TRIGGER_INTERVAL_IN_SECONDS` parameter.
+- A serverless triggered task needs TARGET_COMPLETION_INTERVAL. A warehouse triggered task names its warehouse instead.
+- Triggered tasks run at most every 30 seconds by default. You can lower that to 10 seconds with the USER_TASK_MINIMUM_TRIGGER_INTERVAL_IN_SECONDS parameter.
 - If a triggered task hasn't run for 12 hours, Snowflake schedules a health check to stop the stream going stale.
 - You can combine a schedule with a stream condition to check for data on a fixed cadence instead.
 
@@ -145,11 +134,11 @@ How streams, CHANGES and row timestamps capture what changed is its own topic, c
 
 Three settings decide what happens when things go wrong:
 
-- `TASK_AUTO_RETRY_ATTEMPTS` retries a failed run automatically. It's off by default.
-- `SUSPEND_TASK_AFTER_NUM_FAILURES` suspends the task after that many consecutive failed or timed-out runs, so a broken task stops spending credits. Both parameters can also be set at the account, database or schema level.
-- `USER_TASK_TIMEOUT_MS` caps how long a run can take. If `STATEMENT_TIMEOUT_IN_SECONDS` is also set, the lower non-zero value of the two wins, after converting seconds to milliseconds.
+- TASK_AUTO_RETRY_ATTEMPTS retries a failed run automatically. It's off by default.
+- SUSPEND_TASK_AFTER_NUM_FAILURES suspends the task after that many consecutive failed or timed-out runs, so a broken task stops spending credits. Both parameters can also be set at the account, database or schema level.
+- USER_TASK_TIMEOUT_MS caps how long a run can take. If STATEMENT_TIMEOUT_IN_SECONDS is also set, the lower non-zero value of the two wins, after converting seconds to milliseconds.
 
-A task also accepts any session parameter, such as `TIMEZONE` or `TIMESTAMP_INPUT_FORMAT`, set directly on the task. Account and user parameters aren't supported.
+A task also accepts any session parameter, such as TIMEZONE or TIMESTAMP_INPUT_FORMAT, set directly on the task. Account and user parameters aren't supported.
 
 ```sql
 CREATE OR REPLACE TASK DEMO_T_EXTRACT
@@ -179,8 +168,8 @@ For a long time a graph had no object of its own. Its schedule, overlap policy a
 The task graph object gives the pipeline its own identity. A graph object owns:
 
 - **Graph-level settings**: the schedule, the root, the finalizer, the overlap policy, notification integrations and configuration.
-- **Member defaults** (`TASK_DEFAULTS`): settings such as the warehouse or log level that apply to every member unless the member overrides them.
-- **Membership**: every task reachable from the root through `AFTER` relationships.
+- **Member defaults** (TASK_DEFAULTS): settings such as the warehouse or log level that apply to every member unless the member overrides them.
+- **Membership**: every task reachable from the root through AFTER relationships.
 
 ![Anatomy of a task graph object: graph settings, member defaults, and member tasks linked by AFTER](assets/task_graph_object_anatomy.png)
 
@@ -190,17 +179,17 @@ Screenshot placeholder: diagram of a task graph object box holding SCHEDULE, OVE
 
 | Kind | What it is | Settings |
 |:--|:--|:--|
-| Graph properties | Describe the pipeline as a whole and are set on the graph | SCHEDULE, ROOTS, FINALIZER, OVERLAP_POLICY, ERROR_INTEGRATION, SUCCESS_INTEGRATION, CONFIG, and WHEN (the root may also carry its own) |
-| Graph parameters | Graph-wide behaviour that follows the account, database and schema inheritance chain | TASK_AUTO_RETRY_ATTEMPTS, SUSPEND_TASK_AFTER_NUM_FAILURES |
-| Task defaults | Values that cascade to every member unless the member sets its own | WAREHOUSE, serverless sizing, TARGET_COMPLETION_INTERVAL, EXECUTE AS USER, USER_TASK_TIMEOUT_MS, LOG_LEVEL, TRACE_LEVEL, COMMENT |
+| Graph&nbsp;properties | Describe the pipeline as a whole and are set on the graph | SCHEDULE, ROOTS, FINALIZER, OVERLAP_POLICY, ERROR_INTEGRATION, SUCCESS_INTEGRATION, CONFIG, and WHEN (the root may also carry its own) |
+| Graph&nbsp;parameters | Graph-wide behaviour that follows the account, database and schema inheritance chain | TASK_AUTO_RETRY_ATTEMPTS, SUSPEND_TASK_AFTER_NUM_FAILURES |
+| Task&nbsp;defaults | Values that cascade to every member unless the member sets its own | WAREHOUSE, serverless sizing, TARGET_COMPLETION_INTERVAL, EXECUTE AS USER, USER_TASK_TIMEOUT_MS, LOG_LEVEL, TRACE_LEVEL, COMMENT |
 
-The graph-level settings really are graph-only. Setting the schedule, overlap policy, either integration, the configuration, or the retry and suspend parameters on a member task returns an error, and that includes the root task once it belongs to a graph. Even the finalizer is declared on the graph with `FINALIZER` rather than on the finalizer task.
+The graph-level settings really are graph-only. Setting the schedule, overlap policy, either integration, the configuration, or the retry and suspend parameters on a member task returns an error, and that includes the root task once it belongs to a graph. Even the finalizer is declared on the graph with FINALIZER rather than on the finalizer task.
 
-A `WHEN` condition on the graph decides whether a run starts at all. If the root task has its own condition, both must be true. The graph's condition isn't checked again for the other members, and members can still carry their own `WHEN` clauses, which is how branching works.
+A WHEN condition on the graph decides whether a run starts at all. If the root task has its own condition, both must be true. The graph's condition isn't checked again for the other members, and members can still carry their own WHEN clauses, which is how branching works.
 
 ### Overlap
 
-`OVERLAP_POLICY` on the graph decides whether a new run can start while the previous one is still going:
+OVERLAP_POLICY on the graph decides whether a new run can start while the previous one is still going:
 
 - **NO_OVERLAP** (the default): the next run waits until the whole previous run has finished.
 - **ALLOW_CHILD_OVERLAP**: a new run can start while child tasks of the previous run are still running, but the root never overlaps itself.
@@ -210,11 +199,11 @@ Allow overlap only when overlapping runs can't produce duplicate or incorrect da
 
 ### One root, membership through AFTER
 
-A task graph has **exactly one root**, named in `ROOTS`. Member tasks are ordinary tasks, created with CREATE TASK and connected with `AFTER`. The graph object sits over a set of tasks that are already linked. Add a task with an `AFTER` that reaches the root and it joins the graph; remove its last link and it leaves.
+A task graph has **exactly one root**, named in ROOTS. Member tasks are ordinary tasks, created with CREATE TASK and connected with AFTER. The graph object sits over a set of tasks that are already linked. Add a task with an AFTER that reaches the root and it joins the graph; remove its last link and it leaves.
 
 The task graph documentation sets the limits at 1,000 tasks per graph, and up to 100 parents and 100 children for a single task.
 
-These first CREATE OR REPLACE statements are fine because the graph doesn't exist yet. The members carry no compute settings of their own here. The warehouse, timeout and log level come from the graph's `TASK_DEFAULTS`:
+These first CREATE OR REPLACE statements are fine because the graph doesn't exist yet. The members carry no compute settings of their own here. The warehouse, timeout and log level come from the graph's TASK_DEFAULTS:
 
 ```sql
 CREATE OR REPLACE TASK DEMO_T_EXTRACT
@@ -254,9 +243,9 @@ CREATE OR ALTER TASK GRAPH DEMO_ORDERS_PIPELINE
   );
 ```
 
-**Watch the clause order.** On a task, `COMMENT` goes before `AFTER`; the other way round is a syntax error. On a graph, `TASK_DEFAULTS` goes before `WHEN`.
+**Watch the clause order.** On a task, COMMENT goes before AFTER; the other way round is a syntax error. On a graph, TASK_DEFAULTS goes before WHEN.
 
-CREATE OR ALTER TASK GRAPH is declarative: anything the statement leaves out is unset or reset on an existing graph, so omitting `FINALIZER` removes the finalizer. A later ALTER TASK GRAPH ... SET TASK_DEFAULTS merges into the existing defaults instead of replacing them, and you remove a single default by naming it in UNSET TASK_DEFAULTS.
+CREATE OR ALTER TASK GRAPH is declarative: anything the statement leaves out is unset or reset on an existing graph, so omitting FINALIZER removes the finalizer. A later ALTER TASK GRAPH ... SET TASK_DEFAULTS merges into the existing defaults instead of replacing them, and you remove a single default by naming it in UNSET TASK_DEFAULTS.
 
 <!-- ------------------------ -->
 ## Versioning: Edit, Commit, Revert
@@ -264,10 +253,6 @@ CREATE OR ALTER TASK GRAPH is declarative: anything the statement leaves out is 
 This is the feature that changes how you run pipelines day to day. **You no longer suspend a graph to change it.**
 
 A running graph executes against a **committed version**: a frozen snapshot of the graph's shape and settings, captured when you commit. Once a graph has a committed version, every edit to the graph or its members is **staged**. In-flight and scheduled runs carry on with the committed version until you release the staged changes.
-
-![Staged edits accumulate beside the committed version until COMMIT; in-flight runs finish on the version they started with](assets/task_graph_versioning.png)
-
-Screenshot placeholder: timeline with committed version 1 running, staged edits accumulating, COMMIT creating version 2, a run already in progress finishing on version 1, and the next run starting on version 2.
 
 The lifecycle is five statements:
 
@@ -279,7 +264,7 @@ The lifecycle is five statements:
 | REVERT | Discards staged changes and restores the graph and its members to the committed version. |
 | EXECUTE TASK GRAPH | Runs the committed version once, now, whatever the schedule. |
 
-**A newly created graph doesn't run.** RESUME needs a committed version, so a first deployment is COMMIT followed by RESUME. A graph with neither a schedule nor a `WHEN` condition can't be resumed, but you can still commit it and run it on demand. If you run EXECUTE TASK GRAPH on a graph that has never been committed, Snowflake commits it once and runs that first version.
+**A newly created graph doesn't run.** RESUME needs a committed version, so a first deployment is COMMIT followed by RESUME. A graph with neither a schedule nor a WHEN condition can't be resumed, but you can still commit it and run it on demand. If you run EXECUTE TASK GRAPH on a graph that has never been committed, Snowflake commits it once and runs that first version.
 
 **Staged edits aren't in the next manual run.** EXECUTE TASK GRAPH always runs the committed version, so commit first if you want your edits included.
 
@@ -293,7 +278,7 @@ SELECT * FROM TABLE(INFORMATION_SCHEMA.TASK_GRAPH_CHANGES(TASK_GRAPH_NAME => 'DE
 ALTER TASK GRAPH DEMO_ORDERS_PIPELINE COMMIT;
 ```
 
-`TASK_GRAPH_CHANGES` returns one row per added, removed or changed entity, with the DDL before and after the change. It needs the graph to have been committed at least once. If you change your mind, REVERT instead of COMMIT. Member tasks that were added but never committed are disconnected from the graph, not dropped.
+TASK_GRAPH_CHANGES returns one row per added, removed or changed entity, with the DDL before and after the change. It needs the graph to have been committed at least once. If you change your mind, REVERT instead of COMMIT. Member tasks that were added but never committed are disconnected from the graph, not dropped.
 
 Member edits work the same way. Use CREATE OR ALTER TASK or ALTER TASK on a member and the change is staged with everything else. Here the transform step gets a longer timeout than the graph default:
 
@@ -343,10 +328,10 @@ A graph is more than "run B after A". Members can branch on outcomes, read share
 
 By default a child runs only when **all** its predecessors succeed. If one fails, the child isn't scheduled, never appears in task history, and nothing downstream of it runs.
 
-Advanced branching lets a child run on other outcomes. Call one of two functions in the child's `WHEN` clause:
+Advanced branching lets a child run on other outcomes. Call one of two functions in the child's WHEN clause:
 
-- `SYSTEM$PREDECESSORS_STATE` tests all of the task's predecessors against a condition such as ALL_SUCCEEDED, ALL_FAILED, ALL_DONE, AT_LEAST_ONE_FAILED or NONE_FAILED_MIN_ONE_SUCCEEDED. You can call it only from a child task.
-- `SYSTEM$TASK_COMPLETION_STATE` returns the state one named task finished in: SUCCEEDED, FAILED, SKIPPED, CANCELLED, or NOT_EXECUTED if it hasn't finished yet. You can call it from a child or the finalizer. Pass the bare, uppercase task name, and branch only on a direct or indirect predecessor if you want a deterministic answer.
+- SYSTEM$PREDECESSORS_STATE tests all of the task's predecessors against a condition such as ALL_SUCCEEDED, ALL_FAILED, ALL_DONE, AT_LEAST_ONE_FAILED or NONE_FAILED_MIN_ONE_SUCCEEDED. You can call it only from a child task.
+- SYSTEM$TASK_COMPLETION_STATE returns the state one named task finished in: SUCCEEDED, FAILED, SKIPPED, CANCELLED, or NOT_EXECUTED if it hasn't finished yet. You can call it from a child or the finalizer. Pass the bare, uppercase task name, and branch only on a direct or indirect predecessor if you want a deterministic answer.
 
 The two snippets below are alternative definitions of the transform step, and both still refresh the daily table. As a fallback that runs only when the extract failed, it refreshes from the rows already loaded and records why:
 
@@ -365,7 +350,7 @@ END;
 
 This works on the root: in this guide's test run, a child with ALL_FAILED ran when the root task itself failed. In a real graph you would usually keep the normal transform and add a separate fallback task beside it; here the transform is redefined to keep the graph at three tasks.
 
-You can combine the functions with each other and with other `WHEN` expressions, such as a stream check or a predecessor's return value. The task runs only when the whole expression is true. This version refreshes once the extract has finished, whether it succeeded or failed, but only if new orders are waiting:
+You can combine the functions with each other and with other WHEN expressions, such as a stream check or a predecessor's return value. The task runs only when the whole expression is true. This version refreshes once the extract has finished, whether it succeeded or failed, but only if new orders are waiting:
 
 ```sql
 CREATE OR ALTER TASK DEMO_T_TRANSFORM
@@ -387,19 +372,15 @@ If the root is skipped or cancelled, nothing else runs, with or without branchin
 
 Retries change too. A retry starts from the earliest failed tasks, those with no failed ancestors. Snowflake then re-evaluates successors using the states their predecessors reached across all attempts, so a task that was skipped on the first attempt can run on the retry.
 
-![A child task that runs only when its predecessor fails](assets/advanced_branching.png)
-
-Screenshot placeholder: diagram of DEMO_T_EXTRACT and DEMO_T_TRANSFORM, with the transform's WHEN clause set to SYSTEM$PREDECESSORS_STATE('ALL_FAILED'); on a successful run the transform is SKIPPED, on a failed run it runs and is highlighted.
-
 ### The finalizer
 
-A **finalizer** is one task that runs after every other task in the graph has finished or failed to finish. Use it for cleanup and for recording or announcing the outcome. Declare it on the graph with `FINALIZER`, as in the graph definition above.
+A **finalizer** is one task that runs after every other task in the graph has finished or failed to finish. Use it for cleanup and for recording or announcing the outcome. Declare it on the graph with FINALIZER, as in the graph definition above.
 
-A finalizer can't have children. It's scheduled only when nothing else in the run is running or queued, and it doesn't start if the root was skipped. Because `SYSTEM$TASK_COMPLETION_STATE` works in a finalizer's `WHEN` clause, a finalizer can react to what a specific step did.
+A finalizer can't have children. It's scheduled only when nothing else in the run is running or queued, and it doesn't start if the root was skipped. Because SYSTEM$TASK_COMPLETION_STATE works in a finalizer's WHEN clause, a finalizer can react to what a specific step did.
 
 ### Configuration
 
-`CONFIG` on the graph is a JSON string every member can read with `SYSTEM$GET_TASK_GRAPH_CONFIG`. To change it, set the whole string again; you can't update one key. For a one-off run, EXECUTE TASK GRAPH ... USING CONFIG merges your values over the graph's for that run only and leaves the definition alone:
+CONFIG on the graph is a JSON string every member can read with SYSTEM$GET_TASK_GRAPH_CONFIG. To change it, set the whole string again; you can't update one key. For a one-off run, EXECUTE TASK GRAPH ... USING CONFIG merges your values over the graph's for that run only and leaves the definition alone:
 
 ```sql
 EXECUTE TASK GRAPH DEMO_ORDERS_PIPELINE USING CONFIG = $${"region": "APAC"}$$;
@@ -407,7 +388,7 @@ EXECUTE TASK GRAPH DEMO_ORDERS_PIPELINE USING CONFIG = $${"region": "APAC"}$$;
 
 ### Return values
 
-A task can hand a string to its children with `SYSTEM$SET_RETURN_VALUE`. A child reads it with `SYSTEM$GET_PREDECESSOR_RETURN_VALUE`, naming which predecessor if it has several. Return values also show up in the RETURN_VALUE column of task history, which makes them useful for logging.
+A task can hand a string to its children with SYSTEM$SET_RETURN_VALUE. A child reads it with SYSTEM$GET_PREDECESSOR_RETURN_VALUE, naming which predecessor if it has several. Return values also show up in the RETURN_VALUE column of task history, which makes them useful for logging.
 
 The root below reads its region from the graph configuration, loads that region, and passes the region on:
 
@@ -423,7 +404,7 @@ BEGIN
 END;
 ```
 
-A child can use that value in its body or in its `WHEN` clause:
+A child can use that value in its body or in its WHEN clause:
 
 ```sql
 CREATE OR ALTER TASK DEMO_T_TRANSFORM
@@ -438,14 +419,14 @@ Task names in these functions are case-sensitive, and unquoted names are stored 
 
 ### Runtime information
 
-`SYSTEM$TASK_RUNTIME_INFO` tells a running task about its run: for example the original scheduled time of the graph run, or the name and id of the current graph through CURRENT_TASK_GRAPH_NAME and CURRENT_TASK_GRAPH_ID. The finalizer above uses it to stamp the graph name into the run log.
+SYSTEM$TASK_RUNTIME_INFO tells a running task about its run: for example the original scheduled time of the graph run, or the name and id of the current graph through CURRENT_TASK_GRAPH_NAME and CURRENT_TASK_GRAPH_ID. The finalizer above uses it to stamp the graph name into the run log.
 
 <!-- ------------------------ -->
 ## Operations
 
 ### Notifications
 
-Set `ERROR_INTEGRATION` and `SUCCESS_INTEGRATION` on the graph to send graph-level notifications through a notification integration. The role needs USAGE on each integration. Tasks that use error notifications send one for each failed retry attempt.
+Set ERROR_INTEGRATION and SUCCESS_INTEGRATION on the graph to send graph-level notifications through a notification integration. The role needs USAGE on each integration. Tasks that use error notifications send one for each failed retry attempt.
 
 ```sql
 ALTER TASK GRAPH DEMO_ORDERS_PIPELINE SET ERROR_INTEGRATION = DEMO_PIPELINE_ALERTS;
@@ -539,7 +520,7 @@ Screenshot placeholder: Snowsight graph view of one DEMO_ORDERS_PIPELINE run, sh
 
 The rules that matter for graphs:
 
-- All tasks in a graph must have the same owner and live in the same database and schema. The tasks named in `ROOTS` and `FINALIZER` must be owned by the role that owns the graph.
+- All tasks in a graph must have the same owner and live in the same database and schema. The tasks named in ROOTS and FINALIZER must be owned by the role that owns the graph.
 - Graphs use the CREATE TASK privilege; there's no separate privilege for creating one. Running a graph needs EXECUTE TASK on the account, plus EXECUTE MANAGED TASK if any member is serverless.
 - COMMIT, RESUME, SUSPEND and EXECUTE TASK GRAPH need OPERATE on the graph or ownership of it, not OPERATE on each member. SET and UNSET need ownership.
 - Transferring ownership of a single task removes its links to its parents and children. Transfer every task in the schema at once if you want the links kept.
@@ -557,7 +538,7 @@ This assumes a service user named DEMO_PIPELINE_SVC that has been set up as desc
 Warehouse tasks bill as warehouse time while they run. Serverless tasks bill for the compute they use, scaled by Snowflake from task history. A few habits keep the bill small:
 
 - Schedule no more often than the data needs, and prefer triggered tasks when work arrives unpredictably, since they don't use compute until there's data.
-- Use `SUSPEND_TASK_AFTER_NUM_FAILURES` and retries so a broken pipeline stops spending.
+- Use SUSPEND_TASK_AFTER_NUM_FAILURES and retries so a broken pipeline stops spending.
 - Remember that a graph with advanced branching evaluates every task's condition, at a small cloud services cost per check.
 - Put budgets on serverless spend, and watch it in SERVERLESS_TASK_HISTORY or in the metering views filtered on the SERVERLESS_TASK service type.
 
@@ -604,23 +585,19 @@ Pipeline Builder is a visual designer in Workspaces. You drag notebooks, Python 
 
 It orchestrates; it doesn't build transformations. Dynamic tables and views go in the same DCM project's definition files, and stored procedures run from a SQL task. All tasks in a graph must be in one schema, defined in the same project, owned by one role, and named with fully qualified names.
 
-![Pipeline Builder canvas with notebook, Python and SQL tasks connected into a task graph](assets/pipeline_builder_canvas.png)
-
-Screenshot placeholder: Pipeline Builder canvas in Workspaces showing a small graph of SQL, notebook and Python tasks.
-
 See [Getting Started with Pipeline Builder](https://www.snowflake.com/en/developers/guides/getting-started-with-pipeline-builder/) for a walkthrough.
 
 <!-- ------------------------ -->
 ## Migrate a Root-Task Graph
 
-If you already have a graph defined by its root task, you don't rebuild the members. A task graph object sits over tasks that are already connected by `AFTER`, so migrating means moving the graph-level settings off the tasks and onto a new graph object.
+If you already have a graph defined by its root task, you don't rebuild the members. A task graph object sits over tasks that are already connected by AFTER, so migrating means moving the graph-level settings off the tasks and onto a new graph object.
 
 Suppose DEMO_T_EXTRACT and DEMO_T_FINALIZE had started life as a root-task graph, with the schedule on the root and FINALIZE on the finalizer. If you tried the earlier snippets, these tasks already belong to DEMO_ORDERS_PIPELINE, so try this in a fresh schema or after dropping that graph.
 
 1. **Suspend the root task.** In a root-task graph, the root must be suspended before you modify any of its tasks.
 2. **Move the graph-level settings off the root.** Unset the root's schedule and any overlap, integration, configuration, retry or suspend settings. A task graph object rejects a root that still carries them.
-3. **Unlink the finalizer.** Unset `FINALIZE` on the finalizer task, because the graph object names its finalizer with `FINALIZER` instead.
-4. **Create the graph object** with those settings, the root in `ROOTS`, and the finalizer in `FINALIZER`. Move shared compute and logging into `TASK_DEFAULTS`.
+3. **Unlink the finalizer.** Unset FINALIZE on the finalizer task, because the graph object names its finalizer with FINALIZER instead.
+4. **Create the graph object** with those settings, the root in ROOTS, and the finalizer in FINALIZER. Move shared compute and logging into TASK_DEFAULTS.
 5. **Commit and resume** the graph.
 
 ```sql
@@ -685,7 +662,7 @@ Orchestration in Snowflake comes down to one question: who decides when work run
 
 ### What You Learned
 
-- Chose between dynamic tables, tasks, triggered tasks, task graphs and external orchestrators
+- Chose between dynamic tables, tasks, triggered tasks and task graphs
 - Configured tasks: serverless or warehouse compute, schedules, conditions, retries, timeouts and session parameters
 - Modelled a pipeline as a task graph object with graph properties, graph parameters, task defaults and an overlap policy
 - Changed a running graph with staged edits, inspected them, and released them with COMMIT, or discarded them with REVERT
