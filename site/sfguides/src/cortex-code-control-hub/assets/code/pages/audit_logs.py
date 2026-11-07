@@ -37,9 +37,9 @@ def render(session):
             help="Filter to a specific operation. 'All' shows every action taken by any admin."
         )
     with col_limit:
-        row_limit = st.number_input("Max rows", min_value=10, max_value=500,
-                                    value=AUDIT_PREVIEW_LIMIT, step=10, key="audit_limit",
-                                    help="Maximum records to display. Increase for deeper history searches (up to 500).")
+        row_limit = st.number_input("Max rows", min_value=10, max_value=5000,
+                                    value=AUDIT_PREVIEW_LIMIT, step=50, key="audit_limit",
+                                    help="Maximum records to display. Increase for deeper history searches (up to 5,000).")
 
     days = DATE_PRESETS[period_label]
     action = None if action_filter == "All" else action_filter

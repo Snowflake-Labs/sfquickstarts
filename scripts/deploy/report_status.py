@@ -17,6 +17,8 @@ Environment:
     HEAD_SHA            commit the status is attached to
     RUN_URL             run the status links to
     VALIDATIONS_PASSED  report only; the validate workflow's verdict
+    STAGE_GUIDES        report only; false when the guide count skipped staging
+    GUIDE_COUNT         report only; how many guides the pull request changed
     STAGE_RESULTS       report only; the staging jobs' results, space separated
 """
 
@@ -48,13 +50,18 @@ def verdict() -> tuple[str, str]:
     if (os.environ.get("VALIDATIONS_PASSED") or "").strip() == "false":
         return "failure", "Validation failed; nothing was staged"
 
+    # Deliberately a success: skipping the previews on a bulk change is the intended
+    # behaviour, and a required check that never passes would block the merge.
+    if (os.environ.get("STAGE_GUIDES") or "").strip() == "false":
+        count = (os.environ.get("GUIDE_COUNT") or "").strip() or "too many"
+        return "success", f"Skipped: {count} guides changed, previews are not staged"
+
     results = (os.environ.get("STAGE_RESULTS") or "").split()
     for result, description in BLOCKING_RESULTS.items():
         if result in results:
             return "failure", description
-    if "success" in results:
-        return "success", "Staged to AEM"
-    return "success", "No guide content to stage"
+    staged = "success" in results
+    return "success", "Staged to AEM" if staged else "No guide content to stage"
 
 
 def payload(state: str, description: str) -> gh.Json:

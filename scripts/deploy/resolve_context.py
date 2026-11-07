@@ -35,6 +35,12 @@ RESULTS_FILENAME = "validation-results.json"
 # guide folder to name, so the path is not a journey guide we can stage.
 MIN_JOURNEY_DEPTH = 2
 
+# Staging a guide costs roughly two minutes, nearly all of it waiting on AEM, and
+# the jobs run one at a time. Past this many guides a pull request would hold the
+# author at a preview for longer than the review itself, so it is staged for none
+# of them and reviewed from the diff instead.
+MAX_STAGED_GUIDES = 3
+
 
 class ContextError(RuntimeError):
     """The deploy context could not be established."""
@@ -270,12 +276,19 @@ def emit(resolved: Resolved, work: dict[str, Any]) -> None:
     ]
     relevant = bool(quickstarts or work["sidebar_files"] or work["journey_guides"])
 
+    # Quickstarts and journey guides each cost a staging job, so the limit is on
+    # the two together rather than on either list alone.
+    guide_count = len(quickstarts) + len(work["journey_guides"])
+    stage_guides = guide_count <= MAX_STAGED_GUIDES
+
     gha.set_output("pr_number", resolved.number or 0)
     gha.set_output("head_sha", resolved.head_sha)
     gha.set_output("same_repo", resolved.same_repo)
     gha.set_output("has_relevant_changes", relevant)
     gha.set_output("all_validations_passed", resolved.passed)
     gha.set_output("md_file_count", work["markdown_count"])
+    gha.set_output("guide_count", guide_count)
+    gha.set_output("stage_guides", stage_guides)
     gha.set_output("has_sidebar_changes", bool(work["sidebar_files"]))
     gha.set_output("has_journey_guides", bool(work["journey_guides"]))
     gha.set_json_output("quickstart_names_json", quickstarts)
@@ -290,6 +303,9 @@ def emit(resolved: Resolved, work: dict[str, Any]) -> None:
     print(f"quickstarts:            {[q['name'] for q in quickstarts]}")
     print(f"sidebar files:          {work['sidebar_files']}")
     print(f"journey guides:         {[g['name'] for g in work['journey_guides']]}")
+    print(f"guides to stage:        {guide_count if stage_guides else 0} of {guide_count}")
+    if not stage_guides:
+        print(f"::notice::staging is skipped above {MAX_STAGED_GUIDES} guides")
 
 
 def main() -> int:
