@@ -115,8 +115,7 @@ The data generator is deterministic, and the expected answers depend on it. The 
 | `FORBEARANCE` | 47 |
 | `CUSTOMER_NOTES` | 2,724 |
 
-> aside negative
-> If your counts differ, don't edit the expected answers to match. Re-run `01_synthetic_data.sql` unchanged.
+> **Important:** If your counts differ, don't edit the expected answers to match. Re-run `01_synthetic_data.sql` unchanged.
 
 <!-- ------------------------ -->
 ## Create Three Agent Versions
@@ -130,8 +129,7 @@ Northbank's credit operations and collections teams use an agent with four tools
 
 ![The agent's four tools in Snowsight](assets/agent-tools.png)
 
-> aside positive
-> The screenshots in this guide come from the original build, so run names differ from the ones the scripts create: for example `v1_baseline_v3_r1` instead of `v1_r1`, and `v3_v3_r1` instead of `v3_r1`.
+> **Note:** The screenshots in this guide come from the original build, so run names differ from the ones the scripts create: for example `v1_baseline_v3_r1` instead of `v1_r1`, and `v3_v3_r1` instead of `v3_r1`.
 
 Run `sql/04_agent_versions.sql`. It creates the custom tool and three committed versions of the agent, changing one thing at a time:
 
@@ -150,8 +148,7 @@ ALTER AGENT LENDING_OPS_AGENT COMMIT COMMENT = 'VERSION$2: rich instructions, mo
 
 The script ends with `SHOW VERSIONS`. Note that VERSION$3 is now the default: committing a version moves the default to it. You'll come back to that in the step on pinning.
 
-> aside positive
-> The agent specifications are in `agent_specs/` so you can diff them. Replace the model names with models available in your account, but keep VERSION$1 and VERSION$2 on the same model so only the instructions change.
+> **Note:** The agent specifications are in `agent_specs/` so you can diff them. Replace the model names with models available in your account, but keep VERSION$1 and VERSION$2 on the same model so only the instructions change.
 
 <!-- ------------------------ -->
 ## Build a Dataset with Traps
@@ -354,8 +351,7 @@ In the original build, VERSION$2 failed with "answer_correctness 0.893 < 0.925",
 
 The per-row rule earns its place. In a later rerun of VERSION$3, every average cleared its floor (answer correctness 0.942, tool selection 0.902), yet the gate blocked the run with `consumer_duty_min 0 < 5`. On question 30, a control case, the agent read the neighbour's bereavement as the customer's own and advised against a default notice that policy requires. Answer correctness, consumer duty and policy grounding all scored it 0. Your runs may or may not hit this: that's the variance you just measured.
 
-> aside negative
-> Each scheduled run costs about $10–12 at list price. Resume the Tasks only when you want nightly runs: `ALTER TASK CHECK_AGENT_EVAL_GATE RESUME;` then `ALTER TASK NIGHTLY_AGENT_EVAL RESUME;`.
+> **Important:** Each scheduled run costs about $10–12 at list price. Resume the Tasks only when you want nightly runs: `ALTER TASK CHECK_AGENT_EVAL_GATE RESUME;` then `ALTER TASK NIGHTLY_AGENT_EVAL RESUME;`.
 
 <!-- ------------------------ -->
 ## Understand the Cost
