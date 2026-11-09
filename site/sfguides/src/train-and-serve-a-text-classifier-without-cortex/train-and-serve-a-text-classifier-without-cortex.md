@@ -336,7 +336,7 @@ FROM per_class;
 In our run the test split gave accuracy 0.737 and macro-F1 0.643.
 
 <!-- ------------------------ -->
-## Route the Hard Reviews to an LLM
+## Route Hard Reviews
 
 The idea: the model is confident about most reviews ("polecam!" is easy), and those it can answer on its own for free. Only reviews where its top probability is below a threshold T go to the LLM. The question is which T keeps quality close to "LLM for everything" while saving the most money.
 
