@@ -388,7 +388,7 @@ How it's priced (Snowflake Service Consumption Table):
 - **Judge tokens.** These use the judge model's Cortex Inference rate: 1.50 AI Credits per million input tokens and 7.50 per million output tokens.
 - **Platform Credits.** Only the warehouse that runs the evaluation tasks bills in Platform Credits, at $3.90 for Enterprise on AWS EU Dublin. The quickstart uses an X-Small warehouse, which is smaller than the original Large Gen2.
 
-Capacity contracts lower these prices.
+*PS: Capacity contracts may lower these prices.*
 
 Logical consistency sends the whole trace to its judge, so it takes 73% of judge tokens and 65% of judge spend, about 23 times the cost of answer correctness. Leaving it out of nightly runs and keeping it for release runs takes a run from about $12 to about $6.70. Tool selection adds no judge cost: once you've paid to invoke the agent, it's free to include on every run.
 
