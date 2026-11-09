@@ -52,7 +52,6 @@ If you want to work in Snowsight rather than locally, create a Snowsight Workspa
 5. Select **Public repository**.
 
 ![Creating a Workspace from a Git repository](assets/create_workspace.png)
-Screenshot placeholder: the Create Workspace from Git repository dialog with the snowflake-dcm-projects URL filled in, taken just before clicking Create.
 
 Once the workspace is created you will see the repository files in the file explorer. Navigate to **Quickstarts/build-data-pipelines-with-snowflake-dcm-projects** to find four directories.
 
@@ -114,7 +113,7 @@ Two grants in section 3 are there for the Finance team's expectations: EXECUTE D
 
 The Platform project object lives in DCM_DEMO.PROJECTS. The Pipeline project object will live somewhere else: in a PROJECTS schema inside the Finance team's own database, which the Platform project creates.
 
-Paste ACCOUNT_IDENTIFIER into the account_identifier line of the DCM_DEV target, line 11, in both DCM_Platform_Demo/manifest.yml and DCM_Pipeline_Demo/manifest.yml. Both lines carry the comment "# update to your account names".
+> **Important: update the manifest before the first plan.** Copy ACCOUNT_IDENTIFIER from the last query of scripts/01_pre_deploy.sql into the account_identifier line of the DCM_DEV target in both DCM_Platform_Demo/manifest.yml and DCM_Pipeline_Demo/manifest.yml (line 11, marked "# update to your account names").
 
 <!-- ------------------------ -->
 ## Explore the Platform Project
