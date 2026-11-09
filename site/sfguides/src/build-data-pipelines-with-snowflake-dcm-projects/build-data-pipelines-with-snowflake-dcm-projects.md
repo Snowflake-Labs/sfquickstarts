@@ -94,9 +94,11 @@ The script is the same in every guide of this series. It runs as ACCOUNTADMIN an
 
 **4. Series container.** It creates the DCM_DEMO database and the DCM_DEMO.PROJECTS schema that holds the project objects of the series, and grants DCM_DEVELOPER USAGE on both and CREATE DCM PROJECT on the schema. A project cannot define the database or schema it lives in.
 
-**5. Project object (alternative path only).** Commented out. The first plan creates the project object for you; the SQL is there if the prompt does not appear, or if you prefer to create it yourself.
+**5. Project object.** It creates this guide's DCM Project object, DCM_DEMO.PROJECTS.DCM_PLATFORM_DEV, as DCM_DEVELOPER. This is the only section that differs between the guides of the series.
 
 **6. Values for the manifest.** The last query returns your account identifier and user name.
+
+When the script finishes, refresh your browser so the DCM control panel lists the new project object.
 
 **Inherited grants.** An inherited grant covers current *and* future objects of a type inside a container. GRANT ON ALL snapshots what exists right now; GRANT ON FUTURE covers only what comes later. An inherited grant covers both, as one grant rather than one per object, which is why it is the recommended pattern in DCM Projects. It is a one-time opt-in per account ([release note](https://docs.snowflake.com/en/release-notes/2026/other/2026-09-10-inherited-grants-ga)), which the setup script turns on:
 
@@ -104,7 +106,7 @@ The script is the same in every guide of this series. It runs as ACCOUNTADMIN an
 ALTER ACCOUNT SET FEATURE_RBAC_INHERITED_GRANTS = 'ENABLED';
 ```
 
-An inherited grant cannot be combined with WITH GRANT OPTION, `CASCADE` or `RESTRICT`.
+An inherited grant cannot be combined with WITH GRANT OPTION, CASCADE or RESTRICT.
 
 The Platform project uses one to let each team read every table in the shared RAW schema, including tables added later.
 
@@ -287,23 +289,15 @@ The team role owns everything the team's projects deploy, so it gets what a proj
 
 ### Plan
 
-**In Snowsight:** the DCM control panel is the first tab in the bottom panel of your workspace. Select the project **build-data-pipelines-with-snowflake-dcm-projects/DCM_Platform_Demo** and the **DCM_DEV** target. Until the DCM Project object named in the manifest exists, the status indicator next to **Target** is red. Click the play button to the right of **Plan**. Snowsight asks you to confirm creating the DCM Project object with the name and owner role defined for that target in the manifest; confirm, and the plan runs.
+**In Snowsight:** the DCM control panel is the first tab in the bottom panel of your workspace. Select the project **build-data-pipelines-with-snowflake-dcm-projects/DCM_Platform_Demo**. On the right side of the same bar, select the **DCM_DEV** target and click the play button to the right of **Plan**.
 
 ![DCM control panel with the project and target selected](assets/select_platform_project.png)
-Screenshot placeholder: the DCM control panel with project build-data-pipelines-with-snowflake-dcm-projects/DCM_Platform_Demo and target DCM_DEV selected and the red status indicator, taken just before clicking Plan.
+Screenshot placeholder: the DCM control panel with project build-data-pipelines-with-snowflake-dcm-projects/DCM_Platform_Demo and target DCM_DEV selected, taken just before clicking Plan.
 
-**With the Snowflake CLI:** from inside the DCM_Platform_Demo folder of your clone, create the project object for the target, then plan. Pass the manifest's owner role for that target with --role. The CLI creates the object as the session role, so without it the object can end up owned by ACCOUNTADMIN or DCM_DEVELOPER instead of the manifest owner.
+**With the Snowflake CLI:** from inside the DCM_Platform_Demo folder of your clone, pass the manifest's owner role for the target with --role.
 
 ```bash
-snow dcm create --target DCM_DEV --role DCM_DEVELOPER
 snow dcm plan --target DCM_DEV --role DCM_DEVELOPER --save-output
-```
-
-**With SQL:** if the prompt does not appear, or you prefer to create the object yourself, run this as the project owner role before the first plan.
-
-```sql
-CREATE DCM PROJECT IF NOT EXISTS DCM_DEMO.PROJECTS.DCM_PLATFORM_DEV
-    COMMENT = 'for testing DCM Projects Quickstarts';
 ```
 
 Nothing exists yet, so the plan is almost all CREATEs: 21 entities, 20 to create and 1 to alter.
@@ -376,7 +370,7 @@ VALUES
     (2022, CURRENT_TIMESTAMP(), 'CMPT', 'TMS', 'ACME', 75,  41.30, 4.95, 3.10, 1006);
 ```
 
-The files hold trades from the last week of October 2026. These two trades are stamped with `CURRENT_TIMESTAMP()`, so they are always from today, whenever you run this guide. That difference matters later on.
+The files hold trades from the last week of October 2026. These two trades are stamped with CURRENT_TIMESTAMP(), so they are always from today, whenever you run this guide. That difference matters later on.
 
 ### Verify
 
@@ -547,12 +541,20 @@ A [semantic view](https://docs.snowflake.com/en/user-guide/views-semantic/overvi
 
 ### Plan
 
-**In Snowsight:** the DCM control panel is the first tab in the bottom panel of your workspace. Select the project **build-data-pipelines-with-snowflake-dcm-projects/DCM_Pipeline_Demo** and the **DCM_DEV** target. Until the DCM Project object named in the manifest exists, the status indicator next to **Target** is red. Click the play button to the right of **Plan**. Snowsight asks you to confirm creating the DCM Project object with the name and owner role defined for that target in the manifest; confirm, and the plan runs.
+The Pipeline project object lives in DCM_DEMO_2_FINANCE_DEV.PROJECTS, a schema the platform deploy just created, so 01_pre_deploy.sql couldn't create it. Create it now as the Finance role, which owns this project, then refresh your browser so the DCM control panel lists it:
+
+```sql
+USE ROLE DCM_DEMO_2_FINANCE_DEV_ADMIN;
+CREATE DCM PROJECT IF NOT EXISTS DCM_DEMO_2_FINANCE_DEV.PROJECTS.FINANCE_PIPELINE
+    COMMENT = 'DEV pipeline project of the Build Data Pipelines with Snowflake DCM Projects quickstart';
+```
+
+**In Snowsight:** the DCM control panel is the first tab in the bottom panel of your workspace. Select the project **build-data-pipelines-with-snowflake-dcm-projects/DCM_Pipeline_Demo**. On the right side of the same bar, select the **DCM_DEV** target and click the play button to the right of **Plan**.
 
 ![DCM control panel with the Pipeline project selected](assets/select_pipeline_project.png)
-Screenshot placeholder: the DCM control panel with project build-data-pipelines-with-snowflake-dcm-projects/DCM_Pipeline_Demo and target DCM_DEV selected and the red status indicator, taken just before clicking Plan.
+Screenshot placeholder: the DCM control panel with project build-data-pipelines-with-snowflake-dcm-projects/DCM_Pipeline_Demo and target DCM_DEV selected, taken just before clicking Plan.
 
-**With the Snowflake CLI:** from inside the DCM_Pipeline_Demo folder of your clone, create the project object for the target, then plan. Pass the manifest's owner role for that target with --role. The CLI creates the object as the session role, so without it the object can end up owned by ACCOUNTADMIN or DCM_DEVELOPER instead of the manifest owner.
+**With the Snowflake CLI:** from inside the DCM_Pipeline_Demo folder of your clone, you can create the project object with the CLI instead of the SQL above, then plan:
 
 ```bash
 snow dcm create --target DCM_DEV --role DCM_DEMO_2_FINANCE_DEV_ADMIN
@@ -560,14 +562,6 @@ snow dcm plan --target DCM_DEV --role DCM_DEMO_2_FINANCE_DEV_ADMIN --save-output
 ```
 
 The project_owner in this manifest is the Finance role, not DCM_DEVELOPER, so the **role** option is required on every CLI command for this project. Without it, the create command makes the object as your session role (for example DCM_DEVELOPER) and only prints a role-mismatch warning.
-
-**With SQL:** if the prompt does not appear, or you prefer to create the object yourself, run this as the project owner role before the first plan.
-
-```sql
-USE ROLE DCM_DEMO_2_FINANCE_DEV_ADMIN;
-CREATE DCM PROJECT IF NOT EXISTS DCM_DEMO_2_FINANCE_DEV.PROJECTS.FINANCE_PIPELINE
-    COMMENT = 'for testing DCM Projects Quickstarts';
-```
 
 The plan shows 7 entities, 6 to create and 1 to alter:
 
@@ -827,7 +821,7 @@ snow dcm deploy --target DCM_DEV --role DCM_DEMO_2_FINANCE_DEV_ADMIN --alias fro
 
 ### Verify
 
-Open scripts/04_schema_change.sql and run it. First, as DCM_DEVELOPER, it adds one more trade stamped with `CURRENT_TIMESTAMP()`, so at least one trade is in the active region however long ago you loaded the sample data:
+Open scripts/04_schema_change.sql and run it. First, as DCM_DEVELOPER, it adds one more trade stamped with CURRENT_TIMESTAMP(), so at least one trade is in the active region however long ago you loaded the sample data:
 
 ```sql
 INSERT INTO DCM_DEMO_2_DEV.RAW.TRADE_STG
@@ -860,12 +854,12 @@ The script's last query reads the frozen_where column of SHOW DYNAMIC TABLES, wh
 <!-- ------------------------ -->
 ## Cleanup
 
-Before tearing anything down, know that there is a gentler option. DROP DCM PROJECT on its own, without a `PURGE` first, removes the project and its deployment history and leaves every entity, grant and attachment in place as an ordinary unmanaged object. To release a single entity, call SYSTEM$UNMANAGE_ENTITY_FROM_DCM_PROJECT with its type and name; to release grants or attachments, pass the rendered statements to SYSTEM$UNMANAGE_FROM_DCM_PROJECT. Then remove the matching statements from your definitions, or the next deploy takes them back.
+Before tearing anything down, know that there is a gentler option. DROP DCM PROJECT on its own, without a PURGE first, removes the project and its deployment history and leaves every entity, grant and attachment in place as an ordinary unmanaged object. To release a single entity, call SYSTEM$UNMANAGE_ENTITY_FROM_DCM_PROJECT with its type and name; to release grants or attachments, pass the rendered statements to SYSTEM$UNMANAGE_FROM_DCM_PROJECT. Then remove the matching statements from your definitions, or the next deploy takes them back.
 
 To remove everything this guide created, open scripts/05_cleanup.sql and run it. It is irreversible. In order, it:
 
-1. **Purge the projects.** `PURGE` drops every entity a project manages, revokes its grants and removes its attachments, including the three expectations. Order matters: the Pipeline project goes first, as the Finance role, while the Finance database that hosts it still exists, because the Platform purge drops that database.
-2. **Drop the Pipeline project object**, which `PURGE` leaves behind.
+1. **Purge the projects.** PURGE drops every entity a project manages, revokes its grants and removes its attachments, including the three expectations. Order matters: the Pipeline project goes first, as the Finance role, while the Finance database that hosts it still exists, because the Platform purge drops that database.
+2. **Drop the Pipeline project object**, which PURGE leaves behind.
 3. **Purge the Platform project and drop its project object**, as DCM_DEVELOPER. This drops the raw and team databases, the warehouses and the team roles.
 
     ```sql
@@ -895,7 +889,7 @@ To remove everything this guide created, open scripts/05_cleanup.sql and run it.
     -- ALTER ACCOUNT SET FEATURE_RBAC_INHERITED_GRANTS = 'DISABLED';
     ```
 
-7. **Verify.** SHOW statements for the databases, warehouses and roles whose names start with DCM_DEMO_2 all come back empty. The final SHOW DCM PROJECTS IN SCHEMA DCM_DEMO.PROJECTS no longer lists DCM_PLATFORM_DEV, but it still lists the project objects of any other guide in this series that you deployed. If a `PURGE` ever fails, the script's comments show how to suspend the load task and the three dynamic tables first, so nothing keeps consuming credits while you investigate.
+7. **Verify.** SHOW statements for the databases, warehouses and roles whose names start with DCM_DEMO_2 all come back empty. The final SHOW DCM PROJECTS IN SCHEMA DCM_DEMO.PROJECTS no longer lists DCM_PLATFORM_DEV, but it still lists the project objects of any other guide in this series that you deployed. If a PURGE ever fails, the script's comments show how to suspend the load task and the three dynamic tables first, so nothing keeps consuming credits while you investigate.
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
