@@ -136,6 +136,8 @@ The warehouse in infrastructure.sql runs the queries in the post-deploy and veri
 
 The heart of the demo is governance.sql. DCM manages the **definitions** of every object below, and also attaches the tags, the masking policy and the row access policy.
 
+> Attaching masking and row access policies with ATTACH MASKING POLICY and ATTACH ROW ACCESS POLICY in a DCM project is in Public Preview.
+
 Tags and a masking policy:
 
 ```sql
