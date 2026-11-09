@@ -28,7 +28,7 @@ Kumo turns your relational tables into a graph and trains a graph neural network
 ### What You'll Need
 
 * A [Snowflake account](https://signup.snowflake.com/) with access to a GPU compute pool and Snowflake Notebooks on Container Runtime
-* A role that can create an external access integration (or an administrator who can create one for you)
+* A role with access to the Snowflake PyPI artifact repository (granted to `PUBLIC` by default)
 * Cortex Code (CoCo) Desktop or CLI connected to that account, for the optional Kumo skill
 * The [Snowflake CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli/index) to load the sample data
 * A database and schema you can write to (referred to below as `<DB>.<SCHEMA>`)
@@ -57,16 +57,12 @@ snow sql -f load_sample_data.sql -D "db=<DB>" -D "schema=<SCHEMA>" -D "wh=<WAREH
 
 The script ends with a row count check: 19,820 customers, 504 products, 31,465 orders, and 121,317 order lines.
 
-### Step 2: Allow the notebook to reach PyPI
+### Step 2: Confirm access to the Snowflake PyPI repository
 
-Snowflake provides a built in network rule for PyPI. Create an external access integration that uses it:
+Snowflake provides a built in [PyPI artifact repository](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-in-workspaces/notebooks-in-workspaces-artifact-repositories), `snowflake.snowpark.pypi_shared_repository`, so you do not need an external access integration to install from PyPI. By default the `PUBLIC` role can use it. If your administrator has revoked that default, ask them to grant it to your role:
 
 ```sql
-CREATE EXTERNAL ACCESS INTEGRATION IF NOT EXISTS PYPI_ACCESS_INTEGRATION
-  ALLOWED_NETWORK_RULES = (SNOWFLAKE.EXTERNAL_ACCESS.PYPI_RULE)
-  ENABLED = TRUE;
-
-GRANT USAGE ON INTEGRATION PYPI_ACCESS_INTEGRATION TO ROLE <YOUR_ROLE>;
+GRANT DATABASE ROLE SNOWFLAKE.PYPI_REPOSITORY_USER TO ROLE <YOUR_ROLE>;
 ```
 
 ### Step 3: Install the Kumo skill in CoCo (optional)
@@ -90,7 +86,7 @@ Create a Snowflake Notebook on Container Runtime with these settings:
 
 * **Compute pool:** a GPU pool, for example `GPU_NV_M`
 * **Runtime:** GPU Container Runtime **2.9 (Python 3.12)**
-* **External access:** `PYPI_ACCESS_INTEGRATION`
+* **Artifact Repository:** `snowflake.snowpark.pypi_shared_repository`
 
 Then run:
 
