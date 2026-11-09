@@ -3,7 +3,7 @@ id: comprehensive-guide-to-orchestration
 summary: Choose and run the right Snowflake orchestration primitive, from tasks and triggered tasks to versioned task graph objects managed as code.
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart,snowflake-site:taxonomy/product/data-engineering,snowflake-site:taxonomy/snowflake-feature/transformation,snowflake-site:taxonomy/snowflake-feature/serverless-tasks,snowflake-site:taxonomy/snowflake-feature/dynamic-tables
 environments: web
-status: Draft
+status: Published
 language: en
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Tasks, Task Graphs, Serverless Tasks, Transformation, Orchestration, Data Engineering, DCM
@@ -31,7 +31,11 @@ If you'd rather build one end to end first, the [Getting Started with Task Graph
 - **Authoring surfaces**: SQL, DCM projects and Pipeline Builder, plus how to migrate an existing root-task graph
 - How to orchestrate **dynamic tables and stored procedures** from a task graph
 
-### Prerequisites
+### What You'll Build
+
+This is a concepts guide, so there's no single build. The snippets work on one small pipeline: DEMO_ORDERS_PIPELINE, an hourly task graph with an extract root, a transform child and a finalizer. Along the way you'll schedule it, version it, branch it on conditions and configuration, and wire it to notifications.
+
+### What You'll Need
 
 - A Snowflake account and a role that can create a database, a warehouse and tasks
 - The account-level EXECUTE TASK privilege, plus EXECUTE MANAGED TASK if you want serverless tasks
