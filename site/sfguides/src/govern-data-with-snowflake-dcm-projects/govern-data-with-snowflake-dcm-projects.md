@@ -128,11 +128,9 @@ As ACCOUNTADMIN, it creates DCM_DEMO_5_DEV_SVC, a service user, and makes DCM_DE
 
 Open the DCM_Projects_Governance/sources/definitions/ folder:
 
-| File | Contents |
-|:-----|:---------|
-| <span style="white-space: nowrap">infrastructure.sql</span> | Warehouse, the DCM_DEMO_5 database, PUBLIC, RAW and GOV schemas, a restricted ANALYST role, and its grants |
-| <span style="white-space: nowrap">raw.sql</span> | A CUSTOMER table with PII columns (email, phone, city) |
-| <span style="white-space: nowrap">governance.sql</span> | Tags, a masking policy, a row access policy, a network rule and policy, an authentication policy, and the statements that attach them |
+- **infrastructure.sql**: warehouse, the DCM_DEMO_5 database, PUBLIC, RAW and GOV schemas, a restricted ANALYST role, and its grants
+- **raw.sql**: a CUSTOMER table with PII columns (email, phone, city)
+- **governance.sql**: tags, a masking policy, a row access policy, a network rule and policy, an authentication policy, and the statements that attach them
 
 The warehouse in infrastructure.sql runs the queries in the post-deploy and verify scripts, for both roles. The analyst role needs some warehouse to query at all. Defining one in the project means you don't grant your own warehouse to a demo role, and PURGE removes it with everything else. The scripts select it with USE WAREHOUSE after every USE ROLE.
 
