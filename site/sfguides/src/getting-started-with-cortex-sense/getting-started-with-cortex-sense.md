@@ -51,7 +51,7 @@ All of the demo's data, docs, saved queries, and dashboard are in the public [co
 2. Copy the contents of [`setup.sql`](https://github.com/sfc-gh-JCHAEARLEY/sfguide-getting-started-with-cortex-sense/blob/main/setup.sql) into the worksheet.
 3. Run all of it.
 
-The script starts as `ACCOUNTADMIN`. Its first grant gives the `SNOWFLAKE.CORTEX_SENSE_BUILDER` database role to a new demo role. If your account isn't enrolled in the preview, the script stops there, after creating only the two empty demo roles.
+The script starts as `ACCOUNTADMIN` and grants the `SNOWFLAKE.CORTEX_SENSE_BUILDER` database role to a new demo role. That grant succeeds whether or not your account is enrolled in the preview, so setup can't tell you. Enrollment is checked when you build the context. In an account that isn't enrolled, Snowflake reports that Cortex Context Builder is not enabled for this account.
 
 When it finishes, the last result shows one row per check. Every row should say `PASS`. The script is idempotent, so if something fails, fix the cause and run it again. Don't re-run it after you've built the context, though: it recreates the tables and semantic views the context indexed.
 
@@ -244,10 +244,10 @@ Answers an agent tends to reach from the schema alone:
 | Question | The tempting answer |
 |---|---|
 | Clean claim rate | `submission_count = 1` alone gives **88.0%**, with UnitedHealthcare best at 92.5% |
-| Readmission rate | Unplanned readmissions over all 984 inpatient encounters gives **20.8%**, above the 18% that Juniper Valley Health treats as CMS penalty territory |
+| Readmission rate | Unplanned readmissions over inpatient stays gives **about 20%** (20.8% over all 984 inpatient encounters), above the 18% that Juniper Valley Health treats as CMS penalty territory |
 | BEACON | No answer. The word appears nowhere the analyst can read. |
 | Tailwind rate | No answer, since the program name appears nowhere. An agent that guesses "claims within 24 hours" across all facilities gets **49.7%**. |
-| External release | A generic yes, usually with advice to get a BAA |
+| External release | Generic advice: privacy sign-off, a BAA, and the common HHS small-cell threshold of 11. Applied to readmission counts, that threshold suppresses the wrong facilities, and the Data Governance Council never comes up. |
 
 Your agent's wording and numbers may differ. What you should see is an agent that gets the routine questions right and these ones wrong or unanswered.
 
@@ -326,7 +326,7 @@ The release and BEACON answers both depend on the readmission definition, becaus
 
 The Tailwind question shows that scope can matter more than the formula. The same 24-hour calculation gives 49.7% across all facilities and 78.3% across the ACO facilities the program covers.
 
-A wrong answer to the release question costs the most: without context, the agent says yes to a release the policy doesn't allow as-is.
+A wrong answer to the release question costs the most. In our baseline run, the agent without context recommended suppressing Summit Orthopedic Hospital, which the policy doesn't require, and left Women's and Children's visible, which it does. It also never mentioned the Data Governance Council approval the policy requires.
 
 <!-- ------------------------ -->
 ## Improve the Context
