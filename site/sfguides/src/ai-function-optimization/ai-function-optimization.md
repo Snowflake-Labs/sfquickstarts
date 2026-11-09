@@ -38,7 +38,7 @@ In this guide you will triage customer support tickets into five queues (`BILLIN
 
 ### What You'll Need
 - A [Snowflake account](https://signup.snowflake.com/) in a region where [Cortex AI functions](https://docs.snowflake.com/en/user-guide/snowflake-cortex/aisql) and the models used in this guide (`llama3.1-8b`, `claude-haiku-4-5`, `openai-gpt-5.1`, `claude-opus-4-7`) are available, or with [cross-region inference](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cross-region-inference) enabled
-- A role with privileges to create databases, schemas, and AI functions (this guide uses `ACCOUNTADMIN` for simplicity)
+- A role with privileges to create databases, schemas, and AI functions (this guide uses `ACCOUNTADMIN` for simplicity, but the accompanying notebook .ipynb provides more details on the privileges required)
 - Access to [Snowflake Notebooks in Workspaces](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-in-workspaces/notebooks-in-workspaces-overview)
 
 ### What You'll Build
@@ -62,7 +62,7 @@ Every SQL step below is also a cell in the notebook, so you can either run the n
 ### Create the Database and Schema
 
 ```sql
-USE ROLE ACCOUNTADMIN;
+USE ROLE ACCOUNTADMIN; -- Or your role with db and schema creation privileges
 CREATE DATABASE IF NOT EXISTS VHOL_AI_DB;
 CREATE SCHEMA IF NOT EXISTS VHOL_AI_DB.AI_FUNC;
 USE SCHEMA VHOL_AI_DB.AI_FUNC;
@@ -376,37 +376,48 @@ Once `EVAL_TRIAGE_V2` finishes, collect the scores from all three evaluations in
 EXECUTE IMMEDIATE $$
 DECLARE
   res RESULTSET;
-  c1 CURSOR FOR SELECT column1 AS EXP FROM VALUES ('EVAL_BUILTIN_CLASSIFY'), ('EVAL_TRIAGE_CUSTOM_V1'), ('EVAL_TRIAGE_V2');
   x VARCHAR;
 BEGIN
+  -- 1. Discover every evaluation experiment in the schema
+  SHOW EXPERIMENTS IN SCHEMA VHOL_AI_DB.AI_FUNC;
+  CREATE OR REPLACE TEMPORARY TABLE _eval_exps AS
+    SELECT "name" AS EXPERIMENT FROM TABLE(RESULT_SCAN(LAST_QUERY_ID()))
+    WHERE "type" = 'AI_FUNCTION_EVALUATION';
+
   CREATE OR REPLACE TEMPORARY TABLE EVAL_SCORES (
-    EXPERIMENT VARCHAR, RUN VARCHAR, STATUS VARCHAR, EXACT_MATCH FLOAT, MODEL VARCHAR, PROMPT_OR_QUERY VARCHAR
+    EXPERIMENT VARCHAR, RUN VARCHAR, STATUS VARCHAR, EXACT_MATCH FLOAT, QUERY_TEXT VARCHAR
   );
+
+  -- 2. For each: grab its runs/scores and the query_text from its spec
+  LET c1 CURSOR FOR SELECT EXPERIMENT FROM _eval_exps;
   FOR rec IN c1 DO
-    x := rec.EXP;
+    x := rec.EXPERIMENT;
     EXECUTE IMMEDIATE 'SHOW RUNS IN EXPERIMENT VHOL_AI_DB.AI_FUNC.' || :x;
     INSERT INTO EVAL_SCORES (EXPERIMENT, RUN, STATUS, EXACT_MATCH)
       SELECT :x, "name", PARSE_JSON("metadata"):status::VARCHAR, PARSE_JSON("metadata"):metrics:score:value::FLOAT
       FROM TABLE(RESULT_SCAN(LAST_QUERY_ID()));
+
+    EXECUTE IMMEDIATE 'DESCRIBE EXPERIMENT VHOL_AI_DB.AI_FUNC.' || :x;
+    UPDATE EVAL_SCORES SET QUERY_TEXT = (
+      SELECT TRIM(REGEXP_SUBSTR("spec", 'query_text:\\s*([^\\n]+)', 1, 1, 'e', 1))
+      FROM TABLE(RESULT_SCAN(LAST_QUERY_ID()))
+    ) WHERE EXPERIMENT = :x;
   END FOR;
 
-  LET c2 CURSOR FOR SELECT EXPERIMENT, RUN FROM EVAL_SCORES;
-  FOR rec IN c2 DO
-    BEGIN
-      EXECUTE IMMEDIATE 'SHOW RUN PARAMETERS IN EXPERIMENT VHOL_AI_DB.AI_FUNC.' || rec.EXPERIMENT || ' RUN ' || rec.RUN;
-      CREATE OR REPLACE TEMPORARY TABLE _eval_params AS
-        SELECT * FROM TABLE(RESULT_SCAN(LAST_QUERY_ID()));
-      UPDATE EVAL_SCORES SET
-        MODEL = COALESCE((SELECT "value" FROM _eval_params WHERE "name" = 'model'), 'built-in'),
-        PROMPT_OR_QUERY = COALESCE(
-          (SELECT LEFT("value", 200) FROM _eval_params WHERE "name" = 'function_impl'),
-          (SELECT LEFT("value", 200) FROM _eval_params WHERE "name" = 'query_text'))
-      WHERE EXPERIMENT = rec.EXPERIMENT AND RUN = rec.RUN;
-    EXCEPTION WHEN OTHER THEN NULL;
-    END;
-  END FOR;
-
-  res := (SELECT * FROM EVAL_SCORES ORDER BY EXACT_MATCH DESC NULLS LAST);
+  -- 3. If query_text calls a user AI function, pull model + system prompt from its body;
+  --    otherwise it's a built-in call, so show the query itself
+  res := (
+    SELECT s.EXPERIMENT, s.RUN, s.STATUS, s.EXACT_MATCH,
+      COALESCE(REGEXP_SUBSTR(f.FUNCTION_DEFINITION, 'model\\s*=>\\s*''([^'']+)''', 1, 1, 'e', 1),
+               'built-in (' || REGEXP_SUBSTR(s.QUERY_TEXT, '^[A-Za-z_]+') || ')') AS MODEL,
+      LEFT(COALESCE(REGEXP_SUBSTR(f.FUNCTION_DEFINITION, '''system'',\\s*''content'',\\s*''(([^'']|'''')*)''', 1, 1, 'e', 1),
+                    s.QUERY_TEXT), 200) AS PROMPT_OR_QUERY
+    FROM EVAL_SCORES s
+    LEFT JOIN VHOL_AI_DB.INFORMATION_SCHEMA.FUNCTIONS f
+      ON UPPER(REGEXP_SUBSTR(s.QUERY_TEXT, '^([A-Za-z0-9_.$"]+)\\(', 1, 1, 'e', 1))
+         = f.FUNCTION_CATALOG || '.' || f.FUNCTION_SCHEMA || '.' || f.FUNCTION_NAME
+    ORDER BY s.EXACT_MATCH DESC NULLS LAST
+  );
   RETURN TABLE(res);
 END;
 $$;
