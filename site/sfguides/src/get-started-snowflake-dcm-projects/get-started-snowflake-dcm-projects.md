@@ -417,7 +417,7 @@ That distinction is what makes the next command matter, because it tells you how
 SHOW DEPLOYMENTS IN DCM PROJECT DCM_DEMO.PROJECTS.DCM_PROJECT_DEV;
 ```
 
-| name | alias |
+| NAME | ALIAS |
 |---|---|
 | DEPLOYMENT$3 | no-op-proof |
 | DEPLOYMENT$2 | lag-wh-and-team2 |
@@ -695,7 +695,7 @@ Describing the secret shows everything except the value:
 DESCRIBE SECRET DCM_DEMO_1_DEV.RAW.PARTNER_API_KEY;
 ```
 
-| name | secret_type | owner | comment |
+| NAME | SECRET_TYPE | OWNER | COMMENT |
 |---|---|---|---|
 | PARTNER_API_KEY | GENERIC_STRING | DCM_DEVELOPER | API key for the partner order feed, deployed by build 101 |
 
