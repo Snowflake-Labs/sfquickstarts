@@ -6,6 +6,7 @@ environments: web
 status: published
 feedback link: <https://github.com/Snowflake-Labs/sfquickstarts/issues>
 author: Kamesh Sampath
+tags: Postgres
 
 # Getting Started with PostgreSQL CDC
 <!-- ------------------------ -->

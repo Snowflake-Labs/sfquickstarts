@@ -6,6 +6,7 @@ summary: Deploy pgAdmin to SPCS Connecting to Snowflake Postgres via Private Lin
 environments: web
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+tags: Postgres
 
 # Deploy pgAdmin to SPCS Connecting to Snowflake Postgres via Private Link
 <!-- ------------------------ -->

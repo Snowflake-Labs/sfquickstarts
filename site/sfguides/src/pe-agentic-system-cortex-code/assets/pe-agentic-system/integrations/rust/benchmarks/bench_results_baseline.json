@@ -1,0 +1,73 @@
+{
+  "environment": {
+    "platform": "macOS-26.6.2-arm64-arm-64bit",
+    "python": "3.11.6",
+    "numpy": "2.4.2",
+    "processor": "arm"
+  },
+  "workload": {
+    "base_revenue": 100000000.0,
+    "revenue_volatility": 0.15,
+    "ebitda_margin_mean": 0.25,
+    "ebitda_margin_std": 0.05,
+    "wacc_mean": 0.12,
+    "wacc_std": 0.02,
+    "terminal_growth": 0.03,
+    "years": 5,
+    "simulations": 10000
+  },
+  "repetitions": 5,
+  "tolerance": 0.1,
+  "agreement_passed": true,
+  "results": {
+    "naive_python": {
+      "median_s": 0.05282591700233752,
+      "min_s": 0.05039908299659146,
+      "max_s": 0.05920200000400655,
+      "runs": 5,
+      "summary": {
+        "mean": 162545520.47708845,
+        "median": 153570651.84236652,
+        "std_dev": 45912415.21604438,
+        "percentile_5": 110480801.1339408,
+        "percentile_25": 132687323.2284405,
+        "percentile_75": 181490350.08924925,
+        "percentile_95": 244388812.81932983,
+        "simulations": 10000
+      }
+    },
+    "vectorized_numpy": {
+      "median_s": 0.0014031669998075813,
+      "min_s": 0.0010142499959329143,
+      "max_s": 0.002493084000889212,
+      "runs": 5,
+      "summary": {
+        "mean": 161632467.77191824,
+        "median": 152612890.03790504,
+        "std_dev": 44568233.48162474,
+        "percentile_5": 110894375.68253893,
+        "percentile_25": 131724969.75366133,
+        "percentile_75": 180428291.27710488,
+        "percentile_95": 242130875.6831827,
+        "simulations": 10000
+      }
+    },
+    "rust": {
+      "median_s": 0.0007404170028166845,
+      "min_s": 0.0006954999989829957,
+      "max_s": 0.0014577909969375469,
+      "runs": 5,
+      "summary": {
+        "mean": 161923954.0171946,
+        "median": 152302972.4290236,
+        "paths_clamped": 2,
+        "percentile_25": 132343194.750218,
+        "percentile_5": 110712444.44348845,
+        "percentile_75": 180289623.7491274,
+        "percentile_95": 244376197.40719357,
+        "simulations": 10000,
+        "std_dev": 45287793.06562265
+      }
+    }
+  }
+}

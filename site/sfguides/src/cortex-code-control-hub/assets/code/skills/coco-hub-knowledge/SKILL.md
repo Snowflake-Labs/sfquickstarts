@@ -82,9 +82,9 @@ CC_RESPONSE_QUALITY       ← LLM-as-Judge scores per response
 | **Setup** | Admin | 5-phase install: objects, defaults, SPs, data load, verify |
 | **Settings** | Admin | App config: eval model, credit pricing, alert email, backfill period |
 | **Audit Log** | Admin | All admin actions on this account — action types loaded dynamically from CC_AUDIT_LOG |
-| **Access Management** | Access & Limits | Grant/revoke Cortex Code access by user or role |
-| **Credit Configuration** | Access & Limits | Credit limits at account → cohort → user level. Cohort limits support -1 (unlimited) |
-| **Model Access** | Access & Limits | Tier management (TIER_1/2/3), role-model assignments |
+| **Access Management** | Access & Limits | Grant/revoke Cortex Code access (`CORTEX_USER` or `CORTEX_AGENT_USER`; `COPILOT_USER` transitional per BCR-2445) by user, role, wildcard pattern or user tag |
+| **Credit Configuration** | Access & Limits | Credit limits at account → cohort → user level. Cohort limits support -1 (unlimited). Patterns create one cohort per matched role or tag value. Temporary limits auto-revert (hourly task) |
+| **Model Access** | Access & Limits | Tier management (TIER_1/2/3), role-model assignments (role patterns supported), enforced via `SNOWFLAKE."CORTEX-MODEL-ROLE-*"` application roles — Role Directly or Role Members. No account-wide option (`CORTEX_MODELS_ALLOWLIST` retired by BCR-2378) |
 | **Credit Requests** | Access & Limits | Self-service credit increase requests |
 | **Usage Trends** | Usage & Cost | Credit burn over time, DAU, heatmap, spike detection, forecast |
 | **Budget Forecast** | Usage & Cost | Linear regression projections for 7d/30d/90d. Per-cohort breakdown. Requires ≥7 days of data |
@@ -95,6 +95,7 @@ CC_RESPONSE_QUALITY       ← LLM-as-Judge scores per response
 | **Policy Rules** | Responsible AI | KEYWORD/REGEX/SEMANTIC rule CRUD |
 | **Alerts** | Responsible AI | Alert rules, history, email notifications |
 | **Model Intelligence** | Intelligence | LLM comparison: latency, token economics, LLM-as-Judge, insights, usage share |
+| **User Quotas** | Access & Limits | Native per-user quotas (`SNOWFLAKE.CORE.QUOTA`, GA) — one quota per matched role with patterns |
 
 ### AI Observability Tabs (11 total)
 Activity Trend · Top Users · Model Usage · Tool Calls · Prompt Browser · Sessions · Token Economics · Tool Intelligence · Entrypoints · Quality Scores · Prompt Patterns
@@ -114,7 +115,7 @@ Activity Trend · Top Users · Model Usage · Tool Calls · Prompt Browser · Se
 | `CC_ALERT_CONFIG` | Alert thresholds | Admin UI / seeded |
 | `CC_APP_CONFIG` | All app settings (key-value) | Phase B seed |
 | `CC_MODEL_CONFIG` | Model tier assignments | Phase D3 seed |
-| `CC_CREDIT_CONFIG` | Credit limits per cohort/user | Credit Configuration page |
+| `CC_CREDIT_CONFIG` | Credit limits per cohort/user. Temporary limits: `IS_TEMPORARY`, `EXPIRES_AT`, `PREV_*_DAILY_LIMIT` (restored on expiry), `MEMBERS_JSON` | Credit Configuration page |
 
 ### CC_PROMPT_EVENTS — key columns
 `MODEL`, `PROMPT`, `RESPONSE`, `LATENCY_MS`, `STATUS`, `REQUEST_ID`, `TOTAL_TOKENS`, `INPUT_TOKENS`, `OUTPUT_TOKENS`, `CACHE_READ_TOKENS`, `CACHE_WRITE_TOKENS`, `STEP_NUMBER`, `ENTRYPOINT`, `PRIVATE_MODE`, `PROMPT_CATEGORY`, `PROMPT_COST_CREDITS`
@@ -294,14 +295,9 @@ WHERE PROMPT_CATEGORY IS NOT NULL
   );
 ```
 
-### "Phase C shows 4 SPs but only creates 3 — is something wrong?"
+### "Which SPs does Phase C create?"
 
-No. `SP_CC_REFRESH_USAGE_SUMMARIES` is created by **Phase A** (from `prerequisites.sql`), not Phase C. Phase C creates the 3 SPs defined in `sp_definitions.py`:
-- `SP_CC_CLASSIFY_PROMPTS`
-- `SP_CC_CHECK_ALERTS`
-- `SP_CC_EVALUATE_RESPONSES`
-
-The table in Phase C shows all 4 SPs with a "Created by" column to clarify this.
+Phase C recreates 8 SPs: `SP_CC_CLASSIFY_PROMPTS`, `SP_CC_CHECK_ALERTS`, `SP_CC_EVALUATE_RESPONSES`, `SP_CC_REFRESH_BUDGET_USAGE`, `SP_CC_MANAGE_QUOTA` (from `sp_definitions.py`) and `SP_CC_LIST_USERS`, `SP_CC_GET_USER_PARAM`, `SP_CC_MANAGE_ROLE_GRANT` (from `prerequisites.sql`), then re-applies USAGE grants. `SP_CC_REFRESH_USAGE_SUMMARIES` and the credit-limit SPs are created by **Phase A**. Run both phases with the app owned by ACCOUNTADMIN.
 
 ### "Setup Phase D — should I reload data after SP changes?"
 
@@ -339,14 +335,19 @@ No, that should never happen. If it does it's the JOIN fan-out bug (see above). 
 |---|---|
 | `CC_REFRESH_USAGE_SUMMARIES` | Every 30 min |
 | `CC_CLASSIFY_PROMPTS_TASK` | 2am UTC |
-| `CC_DAILY_RESET_LIMITS` | Midnight UTC (only if credit limits configured) |
-| `CC_ALERT_CHECK` | Every 5 min |
-| `CC_REALTIME_VIOLATION_ALERT` | Every 1 min (stream-based, HIGH severity only) |
+| `CC_DAILY_RESET_LIMITS` | Midnight UTC — re-applies permanent cohort limits |
+| `CC_EXPIRE_TEMPORARY_CREDITS` | Hourly (:15) — reverts expired temporary limits |
+| `CC_REFRESH_BUDGET_USAGE` | 2am UTC (starts suspended) |
+| `CC_ALERT_CHECK` (alert) | Hourly (configurable in Settings; starts suspended) |
+| `CC_REALTIME_VIOLATION_ALERT` (alert) | Hourly (stream-based, HIGH severity only; starts suspended) |
+
+Tasks and alerts run as `CC_SP_OWNER_ROLE`; Setup grants it USAGE on the SPs they call.
 
 ## Roles
 | Role | Purpose |
 |---|---|
-| `CC_SP_OWNER_ROLE` | Owns all SPs. Has MANAGE GRANTS + ALTER USER. Never assumed by humans. |
+| `CC_SP_OWNER_ROLE` | Owns the CC_ tables, tasks, alerts and most SPs. Has MANAGE GRANTS + ALTER USER. Never assumed by humans. |
+| `ACCOUNTADMIN` | Owns the credit-limit SPs (SET/UNSET limits, REBALANCE, DAILY_RESET, EXPIRE_TEMPORARY, BULK_SET_COHORT_LIMITS, COMPUTE_REBALANCE). Snowflake only lets an owner's-rights SP set `CORTEX_CODE_*_DAILY_EST_CREDIT_LIMIT_PER_USER` when ACCOUNTADMIN owns it — never transfer these. |
 | `CC_APP_ROLE` | Streamlit runtime. Can read/write CC_* tables and CALL all SPs. |
 | `CC_ADMIN_ROLE` | Human admins. Has CC_APP_ROLE. Sees all pages. |
 | `CC_USER_ROLE` | End users. Has CC_APP_ROLE. Sees Home + Credit Requests only. |
@@ -362,7 +363,7 @@ Platform-level protection (Snowflake Horizon Catalog, Enterprise Edition) agains
 - **Where shown:** Home page metric card ("AI Guardrails"), AI Observability headline expander (auto-expands when disabled)
 - **Detection:** `SHOW PARAMETERS LIKE 'AI_SETTINGS' IN ACCOUNT` — checks for `enabled: true` in the YAML value
 - **Enable SQL:** `ALTER ACCOUNT SET AI_SETTINGS = $$ guardrails: advanced_prompt_injection: - enabled: true $$;`
-- **Requires:** Enterprise Edition + `CORTEX_ENABLED_CROSS_REGION = 'ANY'`
+- **Requires:** Enterprise Edition + cross-region inference enabled (`CORTEX_ENABLED_CROSS_REGION = 'ANY_REGION'`)
 - **Cost:** Billed per token scanned (see Service Consumption Table)
 - **Setup:** Setup page → Account Prerequisites → Step 6
 
@@ -370,9 +371,9 @@ Platform-level protection (Snowflake Horizon Catalog, Enterprise Edition) agains
 
 ## Native AI Budgets (Snowflake Preview)
 
-Tag-based hard enforcement for Cortex Agent objects. Automates REVOKE USAGE when monthly spend reaches 100% of the configured limit.
+Tag-based budgets for Cortex Agent objects. Budgets track spend and send notifications at thresholds; stopping usage at 100% requires a stored procedure you attach as a custom action (for example one that revokes USAGE).
 
-- **How it differs from CoCo credit management:** CoCo = soft per-user daily limits (governance layer). Native Budgets = hard monthly cap on Cortex Agent objects (enforcement layer).
+- **How it differs from CoCo credit management:** CoCo = per-user daily limits enforced natively by Snowflake, plus cohorts, overrides, requests and audit. Native Budgets = monthly spend tracking on Cortex Agent objects.
 - **Scope:** Cortex Agent objects only — NOT general Cortex Code CLI/Snowsight usage
 - **Enforcement lag:** Up to 8 hours standard, ~2 hours with low-latency option
 - **Where shown:** Credit Configuration page → Native AI Budgets expander; Setup → Account Prerequisites → Step 7
@@ -380,7 +381,7 @@ Tag-based hard enforcement for Cortex Agent objects. Automates REVOKE USAGE when
 
 ---
 
-## Native Per-User Quotas (Preview) — ⚡ Native Quotas page
+## Native Per-User Quotas (generally available) — User Quotas page
 
 Hard per-user monthly/daily credit enforcement using `SNOWFLAKE.CORE.QUOTA` objects. Blocks fire within **minutes** of breach (vs 8 hrs for AI Budgets), auto-release at cycle reset. Covers all of Cortex Code (CLI + Snowsight + Desktop).
 
@@ -435,12 +436,12 @@ Hard per-user monthly/daily credit enforcement using `SNOWFLAKE.CORE.QUOTA` obje
 
 ## Account Prerequisites (Setup Page — 7 Steps)
 
-Before running Phases A–E, admins must run these one-time account-level grants:
+Before running Phases A–E, admins must run these one-time account-level grants. Phases A and C must run with the app owned by ACCOUNTADMIN.
 
-1. **Cross-Region Inference** — `ALTER ACCOUNT SET CORTEX_ENABLED_CROSS_REGION = 'ANY_REGION'` (or `'ANY'` on older accounts)
-2. **AI Observability Access** — `GRANT DATABASE ROLE SNOWFLAKE.AI_OBSERVABILITY_READER TO ROLE CC_SP_OWNER_ROLE` (fallback: `SNOWFLAKE.CORTEX_USER` if role doesn't exist)
+1. **Cross-Region Inference** — `ALTER ACCOUNT SET CORTEX_ENABLED_CROSS_REGION = 'ANY_REGION'` (or region groups such as `'AWS_US'`)
+2. **AI Observability Access** — `GRANT APPLICATION ROLE SNOWFLAKE.AI_OBSERVABILITY_READER TO ROLE CC_SP_OWNER_ROLE` (an application role; there is no fallback)
 3. **ACCOUNT_USAGE Access** — `GRANT IMPORTED PRIVILEGES ON DATABASE SNOWFLAKE TO ROLE CC_SP_OWNER_ROLE`
-4. **Model Access for Users** — `GRANT DATABASE ROLE SNOWFLAKE.CORTEX_USER TO ROLE CC_USER_ROLE`
+4. **Model Access for Users** — `GRANT DATABASE ROLE SNOWFLAKE.CORTEX_USER TO ROLE CC_USER_ROLE` (or `CORTEX_AGENT_USER`)
 5. **Credit Limits** _(optional)_ — per-surface daily parameters: `ALTER ACCOUNT SET CORTEX_CODE_SNOWSIGHT_DAILY_EST_CREDIT_LIMIT_PER_USER = 20` (also CLI, DESKTOP variants). Old `CORTEX_CODE_CREDIT_LIMIT` is deprecated and no longer exists.
 6. **AI Guardrails** _(optional, Enterprise)_ — `ALTER ACCOUNT SET AI_SETTINGS = $$ guardrails: ... $$`
 7. **Native AI Budgets** _(optional, Preview)_ — tag-based budget enforcement
@@ -462,7 +463,7 @@ admin:
     # Add customer's own admin role here
 ```
 
-Never hardcode RCHAND or APPS — those are the developer's personal account values.
+Never hardcode another environment's database or schema names.
 
 
 ---

@@ -1,0 +1,45 @@
+{
+  "environment": {
+    "platform": "macOS-26.6.2-arm64-arm-64bit",
+    "python": "3.11.6",
+    "numpy": "2.4.2"
+  },
+  "book": {
+    "investors": 400,
+    "months": 120,
+    "years": 10
+  },
+  "speed": {
+    "python_decimal": {
+      "median_s": 0.027762458004872315,
+      "min_s": 0.027676541998516768,
+      "runs": 3
+    },
+    "python_float": {
+      "median_s": 0.010294833002262749,
+      "min_s": 0.010110208997502923,
+      "runs": 3
+    },
+    "numpy_vectorized": {
+      "median_s": 0.0026309170061722398,
+      "min_s": 0.0025994170136982575,
+      "runs": 3
+    }
+  },
+  "per_investor_ms": 0.06940614501218079,
+  "payment_divergence": {
+    "vs_float": {
+      "perf_differs": 113,
+      "mgmt_differs": 2,
+      "worst": "-0.03",
+      "aggregate_abs": "1.27"
+    },
+    "vs_numpy": {
+      "perf_differs": 113,
+      "mgmt_differs": 2,
+      "worst": "-0.03",
+      "aggregate_abs": "1.27"
+    }
+  },
+  "total_perf_fee_decimal": "232135786.37"
+}

@@ -24,15 +24,13 @@ The dataset is a Financial Services use case: insurance quote requests collected
 - How the Glue Iceberg REST Catalog (IRC) API enables Snowflake to discover and read tables directly from the Glue Data Catalog
 - How to query Apache Iceberg data in AWS Glue from Snowflake without copying or moving data
 - How to apply [Snowflake Horizon](https://docs.snowflake.com/en/user-guide/snowflake-horizon) governance — RBAC and dynamic data masking — to Iceberg tables
-- How to create a [Semantic View](https://docs.snowflake.com/en/user-guide/views-semantic) on top of Iceberg data for AI-ready analytics
-- How to build a [Cortex Agent](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agent) and query your data lake in natural language
+- How to create a [Semantic View](https://docs.snowflake.com/en/user-guide/views-semantic/overview) on top of Iceberg data for AI-ready analytics
+- How to build a [Cortex Agent](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents) and query your data lake in natural language
 
 ### What You'll Need
-- A Snowflake Enterprise account with `ACCOUNTADMIN` access, deployed in **AWS US West 2 (Oregon)**
+- A Snowflake Enterprise account with `ACCOUNTADMIN` access, on **Amazon Web Services** (any AWS region)
 
-> **Don't have a Snowflake account?** Sign up for a free trial at [signup.snowflake.com/summit2026](https://signup.snowflake.com/summit2026). Select the **AI Data Cloud for Enterprise** option — this trial includes free access to Cortex Code CLI.
-
-> **Important:** When creating your trial account, select **Amazon Web Services** as the cloud provider and **US West (Oregon)** as the region. The lab infrastructure (S3 bucket, Glue catalog, IAM role) is deployed in AWS US West 2 — your Snowflake account must be in the same region to reach it.
+> **Note:** The lab infrastructure (S3 bucket, Glue catalog, IAM role) is deployed in AWS US West 2, but your Snowflake account does not need to be in that region. Accounts in other AWS regions read the Iceberg data cross-region, which adds latency to the first scan of each file and incurs AWS data transfer charges. For the fastest experience, use an account in **US West (Oregon)**.
 
 ### What You'll Build
 - A Snowflake **External Volume** connected to the lab's S3-backed Iceberg dataset
@@ -84,19 +82,23 @@ The `quotes` dataset represents insurance quote requests with the following key 
 | `dateofbirth` | string | Customer date of birth (PII) |
 | `postcodedistrict` | string | Customer postcode district |
 
+**Choose how to run the lab:**
+- **Path A — Snowsight SQL:** use this if you want a step-by-step guide. You run each SQL block yourself in Snowsight — only a browser and a Snowflake account are needed. Continue from [Create Snowflake Objects](#create-snowflake-objects).
+- **Path B — Cortex Code CLI:** use this if you can set up Cortex Code CLI and want it to build the lab for you from a single prompt. Continue from [Build with Cortex Code](#build-with-cortex-code).
+
 ### Running SQL in Snowsight
 
 All SQL in this lab runs in [Snowsight](https://app.snowflake.com), Snowflake's web interface. Here's how to run each block:
 
-1. Log in to [Snowsight](https://app.snowflake.com) and click **Projects → Worksheets** in the left nav
-2. Click **+** (top right) to create a new SQL worksheet
-3. Set your role to `ACCOUNTADMIN` using the role picker in the top-left corner of the worksheet
+1. Log in to [Snowsight](https://app.snowflake.com) and click **Projects → Workspaces** in the left nav
+2. Click **+ Add New → SQL File** to create a new SQL file
+3. Set your role to `ACCOUNTADMIN` using the role selector in the editor
 4. Set your warehouse to `COMPUTE_WH` (or the warehouse available in your account)
 5. Paste a SQL block from the lab into the editor
 6. **Run all statements** in the block: press `Ctrl + Shift + Enter` (Windows/Linux) or `Cmd + Shift + Return` (Mac), or click the **Run All** button
 7. **Run a single statement**: place your cursor inside it and press `Ctrl + Enter` (Windows/Linux) or `Cmd + Return` (Mac)
 
-> **Tip:** Each section in this lab uses a separate SQL block. You can run everything in a single worksheet in order, or create one worksheet per section to keep things organized.
+> **Tip:** Each section in this lab uses a separate SQL block. You can run everything in a single SQL file in order, or create one SQL file per section to keep things organized.
 
 <!-- ------------------------ -->
 ## Build with Cortex Code
@@ -105,17 +107,17 @@ All SQL in this lab runs in [Snowsight](https://app.snowflake.com), Snowflake's 
 
 ### Setup
 
-Install the Snowflake CLI and start a Cortex Code session connected to your trial account:
+Runs on macOS, Linux, WSL, or Windows. Your account needs Cortex Code CLI access — standard trial accounts don't include it ([details](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-cli)).
 
 ```bash
-# Install Snowflake CLI (macOS/Linux)
-pip install snowflake-cli
+# 1. Install Snowflake CLI (other options: https://docs.snowflake.com/en/developer-guide/snowflake-cli/installation/installation)
+brew install snowflake-cli
 
-# Configure a connection to your trial account
-snow connection add
+# 2. Install Cortex Code CLI (Windows PowerShell: irm https://ai.snowflake.com/static/cc-scripts/install.ps1 | iex)
+curl -LsS https://ai.snowflake.com/static/cc-scripts/install.sh | sh
 
-# Start Cortex Code
-cortex code
+# 3. Start Cortex Code — the setup wizard connects you to your account
+cortex
 ```
 
 ### Starter Prompt
@@ -125,7 +127,7 @@ Once inside Cortex Code, paste the following:
 ```
 I want to complete the Summit HOL Lakehouse Analytics lab end to end.
 
-My Snowflake account is on AWS US West 2 (Oregon). I have ACCOUNTADMIN access
+My Snowflake account is on AWS. I have ACCOUNTADMIN access
 and my warehouse is COMPUTE_WH.
 
 The lab has pre-configured AWS infrastructure:
@@ -167,16 +169,16 @@ In this section you will create three Snowflake objects that wire your Snowflake
 
 **How to run:**
 1. Log in to [Snowsight](https://app.snowflake.com)
-2. Go to **Projects → Worksheets** and click **+** to open a new SQL worksheet
+2. Go to **Projects → Workspaces** and click **+ Add New → SQL File**
 3. Set your role to `ACCOUNTADMIN` and your warehouse to `COMPUTE_WH`
-4. Copy each SQL block below, paste it into the worksheet, and click **Run All** (or press `Ctrl + Shift + Enter`)
+4. Copy each SQL block below, paste it into the SQL file, and click **Run All** (or press `Ctrl + Shift + Enter`)
 5. Confirm the status message shows `successfully created` before moving to the next block
 
 ### External Volume
 
 An **External Volume** tells Snowflake where the Iceberg data files live in cloud storage and which IAM role to use to access them. It is the credential layer between Snowflake and S3.
 
-Copy and run in your Snowsight worksheet:
+Copy and run in your Snowsight SQL file:
 
 ```sql
 CREATE OR REPLACE EXTERNAL VOLUME my_iceberg_vol
@@ -197,7 +199,7 @@ CREATE OR REPLACE EXTERNAL VOLUME my_iceberg_vol
 
 A **Catalog Integration** tells Snowflake how to reach the external Iceberg catalog — in this case, the AWS Glue Iceberg REST Catalog (IRC) endpoint. It handles authentication (SigV4) and points to the correct AWS account and region.
 
-Copy and run in your Snowsight worksheet:
+Copy and run in your Snowsight SQL file:
 
 ```sql
 CREATE OR REPLACE CATALOG INTEGRATION my_glue_int
@@ -220,7 +222,7 @@ CREATE OR REPLACE CATALOG INTEGRATION my_glue_int
 
 A **Catalog-Linked Database** connects to the Catalog Integration and automatically discovers every namespace and table registered in the Glue Data Catalog. Snowflake polls the catalog on the interval you specify and keeps its local view in sync — no manual `ALTER ICEBERG TABLE ... REFRESH` needed.
 
-Copy and run in your Snowsight worksheet:
+Copy and run in your Snowsight SQL file:
 
 ```sql
 CREATE OR REPLACE DATABASE my_iceberg_db
@@ -236,7 +238,7 @@ CREATE OR REPLACE DATABASE my_iceberg_db
 
 ### Verify Sync
 
-After creating the database, Snowflake starts discovering tables from the Glue catalog. Run this in your worksheet to check the sync status:
+After creating the database, Snowflake starts discovering tables from the Glue catalog. Run this in your SQL file to check the sync status:
 
 1. Copy and run the statement below
 2. Look for `"failureDetails":[]` and `"executionState":"RUNNING"` or `"SUCCEEDED"` in the output
@@ -253,7 +255,7 @@ SELECT SYSTEM$CATALOG_LINK_STATUS('my_iceberg_db');
 
 With the Catalog-Linked Database created, the `quotes` Iceberg table is available to query like any native Snowflake table. The data is read directly from S3 — nothing is copied into Snowflake storage.
 
-**How to run:** In your Snowsight worksheet, make sure your role is `ACCOUNTADMIN` and your warehouse is active. Copy each query below and run it with `Ctrl + Enter` (or `Cmd + Return` on Mac). You can run all queries in the same worksheet.
+**How to run:** In your Snowsight SQL file, make sure your role is `ACCOUNTADMIN` and your warehouse is active. Copy each query below and run it with `Ctrl + Enter` (or `Cmd + Return` on Mac). You can run all queries in the same SQL file.
 
 > **Important:** AWS Glue uses case-insensitive, lowercase identifiers. Always wrap schema and table names in double quotes when querying a Catalog-Linked Database.
 
@@ -320,7 +322,7 @@ Snowflake Horizon governance policies apply natively to Iceberg tables in a Cata
 
 In this section you will create two roles with different data access levels, then apply dynamic data masking to PII columns in the `quotes` table. Analysts see partially masked data; data engineers see the full values.
 
-**How to run:** Continue in your existing Snowsight worksheet (or open a new one). Each subsection below has its own SQL block — run them in order from top to bottom. The role must be `ACCOUNTADMIN` at the start of each block; the SQL includes `USE ROLE ACCOUNTADMIN` where needed.
+**How to run:** Continue in your existing Snowsight SQL file (or open a new one). Each subsection below has its own SQL block — run them in order from top to bottom. The role must be `ACCOUNTADMIN` at the start of each block; the SQL includes `USE ROLE ACCOUNTADMIN` where needed.
 
 ### Create roles
 
@@ -488,7 +490,7 @@ ALTER VIEW iceberg_lab_db.analytics.quotes_vw
 
 Switch to each role and run the same query to see the difference. You can switch roles two ways:
 - **In the SQL block:** run `USE ROLE lab_analyst;` before the SELECT (as shown below)
-- **In the Snowsight UI:** use the role picker at the top-left of the worksheet
+- **In the Snowsight UI:** use the role selector in the editor
 
 Switch to the analyst role — PII is partially masked:
 
@@ -517,7 +519,7 @@ LIMIT 5;
 
 A **Semantic View** defines the business meaning of your data — dimensions, metrics, and facts — so that Snowflake's AI can understand and answer questions about it in natural language. The semantic view respects masking policies automatically: an analyst querying via natural language sees the same masked values as they would in SQL.
 
-**How to run:** Continue in your Snowsight worksheet with `ACCOUNTADMIN`. Run the blocks below in order.
+**How to run:** Continue in your Snowsight SQL file with `ACCOUNTADMIN`. Run the blocks below in order.
 
 ### View Wrapper
 
@@ -591,7 +593,7 @@ SHOW SEMANTIC DIMENSIONS IN iceberg_lab_db.analytics.quotes_sv;
 
 A **Cortex Agent** wraps the semantic view and exposes it as a natural language interface. Snowflake translates plain English questions into SQL against your Iceberg data — masking policies are enforced automatically based on the querying role.
 
-**How to run:** Run the SQL blocks below in your Snowsight worksheet with `ACCOUNTADMIN`. After creating the agent, open it directly in Snowsight (no SQL needed) to ask questions.
+**How to run:** Run the SQL blocks below in your Snowsight SQL file with `ACCOUNTADMIN`. After creating the agent, open it directly in Snowsight (no SQL needed) to ask questions.
 
 ### Create the agent
 
@@ -621,7 +623,11 @@ FROM SPECIFICATION $$
   ],
   "tool_resources": {
     "Query Insurance Quotes": {
-      "semantic_view": "iceberg_lab_db.analytics.quotes_sv"
+      "semantic_view": "iceberg_lab_db.analytics.quotes_sv",
+      "execution_environment": {
+        "type": "warehouse",
+        "warehouse": "COMPUTE_WH"
+      }
     }
   }
 }
@@ -630,7 +636,7 @@ $$;
 
 ### Snowflake CoWork
 
-To make the agent accessible via [Snowflake CoWork](https://docs.snowflake.com/en/user-guide/snowflake-intelligence), grant the Snowflake service role access to the underlying objects:
+To make the agent accessible via [Snowflake CoWork](https://docs.snowflake.com/en/user-guide/snowflake-cortex/snowflake-cowork), grant the Snowflake service role access to the underlying objects:
 
 ```sql
 USE ROLE ACCOUNTADMIN;
@@ -641,17 +647,17 @@ GRANT SELECT ON VIEW iceberg_lab_db.analytics.quotes_vw TO ROLE SNOWFLAKE;
 GRANT SELECT ON SEMANTIC VIEW iceberg_lab_db.analytics.quotes_sv TO ROLE SNOWFLAKE;
 ```
 
-> **Note:** The `SNOWFLAKE` service role is available in Snowflake Enterprise and Business Critical accounts. Trial accounts do not include this role — if you receive a "Role does not exist" error, skip this step. The agent is still fully accessible via **AI & ML > Agents** in Snowsight.
+> **Note:** The `SNOWFLAKE` service role is available in Snowflake Enterprise and Business Critical accounts. Trial accounts do not include this role — if you receive a "Role does not exist" error, skip this step. The agent is still fully accessible via **AI & ML > Agent Studio** in Snowsight.
 
 ### Ask Questions
 
 To open the agent in Snowsight:
 
-1. In the left nav, click **AI & ML → Agents**
+1. In the left nav, click **AI & ML → Agent Studio**
 2. Find **Insurance Quotes Analyst** in the list and click **Open**
 3. Type a question in the chat input and press Enter
 4. The agent translates your question into SQL against `quotes_sv` and returns the result
-5. To test masking enforcement: change your active role (top-left role picker) to `lab_analyst` or `lab_data_engineer` and ask the same question — PII fields will be masked or unmasked based on your role
+5. To test masking enforcement: switch your active role in Snowsight to `lab_analyst` or `lab_data_engineer` and ask the same question — PII fields will be masked or unmasked based on your role
 
 The agent is also available in Snowflake CoWork (enterprise accounts only).
 
@@ -703,10 +709,10 @@ Documentation:
 - [Catalog-Linked Databases](https://docs.snowflake.com/en/user-guide/tables-iceberg-catalog-linked-database)
 - [Configure a catalog integration for AWS Glue Iceberg REST](https://docs.snowflake.com/en/user-guide/tables-iceberg-configure-catalog-integration-rest-glue)
 - [Dynamic Data Masking](https://docs.snowflake.com/en/user-guide/security-column-ddm-intro)
-- [Semantic Views](https://docs.snowflake.com/en/user-guide/views-semantic)
-- [Cortex Agents](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agent)
+- [Semantic Views](https://docs.snowflake.com/en/user-guide/views-semantic/overview)
+- [Cortex Agents](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents)
 
 Related guides:
-- [Build Data Lakes using Apache Iceberg with Snowflake and AWS Glue](https://quickstarts.snowflake.com/guide/data-lake-using-apache-iceberg-with-snowflake-and-aws-glue) — Go deeper on the full AWS setup: CloudFormation, Lake Formation credential vending, and the complete Glue IRC integration with Cortex Code fast path
-- [Get Started with Snowflake-Managed Iceberg Tables](https://quickstarts.snowflake.com/guide/get-started-snowflake-managed-iceberg-tables) — Create Snowflake-managed Iceberg tables, stream and transform fleet data, query with Snowflake CoWork, and read the same tables from DuckDB and Apache Spark
-- [Iceberg V3 Tables Comprehensive Guide](https://quickstarts.snowflake.com/guide/iceberg-v3-tables-comprehensive-guide) — Build an end-to-end enterprise lakehouse platform using Iceberg V3 tables with streaming, variant data, time-series, geospatial analytics, governance, and AI
+- [Build Data Lakes using Apache Iceberg with Snowflake and AWS Glue](https://www.snowflake.com/en/developers/guides/data-lake-using-apache-iceberg-with-snowflake-and-aws-glue/) — Go deeper on the full AWS setup: CloudFormation, Lake Formation credential vending, and the complete Glue IRC integration with Cortex Code fast path
+- [Get Started with Snowflake-Managed Iceberg Tables](https://www.snowflake.com/en/developers/guides/get-started-snowflake-managed-iceberg-tables/) — Create Snowflake-managed Iceberg tables, stream and transform fleet data, query with Snowflake CoWork, and read the same tables from DuckDB and Apache Spark
+- [Iceberg V3 Tables Comprehensive Guide](https://www.snowflake.com/en/developers/guides/iceberg-v3-tables-comprehensive-guide/) — Build an end-to-end enterprise lakehouse platform using Iceberg V3 tables with streaming, variant data, time-series, geospatial analytics, governance, and AI

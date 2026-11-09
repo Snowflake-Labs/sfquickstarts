@@ -41,6 +41,8 @@ Hybrid tables leverage a row store as the primary data store to provide excellen
 - How to create and use hybrid tables
 - The advantages of hybrid tables over standard tables
 - Hybrid table unique characteristics like Indexes, primary keys, unique and foreign keys
+- How to add, drop, and re-add a named foreign key constraint on a populated hybrid table
+- How to enforce business rules with CHECK constraints, and why they must be declared at create time
 
 ### Prerequisites
 
@@ -442,9 +444,9 @@ The statement should fail and we should receive the following error message:
 "391458 (0A000): Hybrid table 'TRUCK' cannot be truncated as it is involved in active foreign key constraints."
 
 
-### Step 4.4 Delete Foreign Key Constraint
+### Step 4.4 Delete a Record Referenced by a Foreign Key
 
-In this step, we will test that a record referenced by a foreign key constraint cannot be deleted as long as the foreign key reference relationship exists.
+In this step, we will test that a record referenced by a foreign key constraint cannot be deleted as long as the foreign key reference relationship exists. This step deletes records, not the constraint itself; dropping the constraint is covered in Step 4.5.
 
 To test it run the following [DELETE](https://docs.snowflake.com/en/sql-reference/sql/delete) statement:
 
@@ -462,6 +464,151 @@ DELETE FROM ORDER_HEADER WHERE ORDER_ID = $NEW_ORDER_ID;
 DELETE FROM TRUCK WHERE TRUCK_ID = $NEW_TRUCK_ID;
 ```
 Both statements should run successfully.
+
+
+### Step 4.5 Drop and Re-Add a Foreign Key Constraint
+
+So far we have relied on the foreign key we declared inline in the ORDER_HEADER DDL. Because we never gave that constraint a name, Snowflake generated one for us, so before we can drop it we have to find out what it is called.
+
+```sql
+-- Find the system-generated name of the foreign key on ORDER_HEADER
+SELECT CONSTRAINT_NAME, CONSTRAINT_TYPE
+FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS
+WHERE TABLE_SCHEMA = 'DATA'
+  AND TABLE_NAME = 'ORDER_HEADER'
+  AND CONSTRAINT_TYPE = 'FOREIGN KEY';
+```
+
+The name looks like `SYS_CONSTRAINT_a86111af-07ae-40d2-938c-95953c53634c`. The value is different in every account, so use the one your own query returned. Because the generated name contains hyphens, it has to be wrapped in double quotes:
+
+```sql
+-- Drop the system-named foreign key. Substitute YOUR value from the query above.
+ALTER TABLE ORDER_HEADER DROP CONSTRAINT "SYS_CONSTRAINT_a86111af-07ae-40d2-938c-95953c53634c";
+```
+
+> **Note:** You cannot avoid the copy and paste by holding the name in a session variable. `ALTER TABLE ... DROP CONSTRAINT IDENTIFIER($MY_VAR)` fails with "invalid identifier", because a constraint name in this statement is not accepted as an expression. That is the practical argument for naming constraints yourself.
+
+Now re-add the same relationship with a name we choose:
+
+```sql
+ALTER TABLE ORDER_HEADER
+  ADD CONSTRAINT FK_ORDER_HEADER_TRUCK FOREIGN KEY (TRUCK_ID) REFERENCES TRUCK(TRUCK_ID);
+```
+
+Adding a foreign key to a table that already holds data is not finished when the statement returns. Snowflake builds the backing index and validates the existing rows in the background, so check the state before relying on it:
+
+```sql
+SHOW INDEXES IN TABLE ORDER_HEADER;
+```
+
+Look at the `status` column for `FK_ORDER_HEADER_TRUCK`. Immediately after the ALTER it reads `BUILD IN PROGRESS`, and once the existing rows have been validated it becomes `ACTIVE`. Re-run the statement until you see `ACTIVE`. If an existing row had referenced a truck that does not exist, the status would instead read `BUILD VALIDATION FAILURE` and the `status_info` column would explain why. A statement that returns without error does not by itself prove your existing data is clean.
+
+With a name of our own the constraint is now straightforward to manage:
+
+```sql
+-- Drop and re-add by name
+ALTER TABLE ORDER_HEADER DROP CONSTRAINT FK_ORDER_HEADER_TRUCK;
+ALTER TABLE ORDER_HEADER
+  ADD CONSTRAINT FK_ORDER_HEADER_TRUCK FOREIGN KEY (TRUCK_ID) REFERENCES TRUCK(TRUCK_ID);
+```
+
+The named constraint enforces exactly as the original did. Wait for the status to return to `ACTIVE`, then insert an order for a truck that does not exist:
+
+```sql
+SET MAX_ORDER_ID = (SELECT MAX(ORDER_ID) FROM ORDER_HEADER);
+SET NEW_ORDER_ID = ($MAX_ORDER_ID + 1);
+SET NONE_EXIST_TRUCK_ID = -1;
+insert into ORDER_HEADER values ($NEW_ORDER_ID,$NONE_EXIST_TRUCK_ID,6090,0,0,0,'16:00:00','23:00:00','','2022-02-18 21:38:46.000','','USD',17.0000,'','',17.0000,'');
+```
+
+The statement should fail and we should receive the following error message:
+"200009 (22000): Foreign key constraint "FK_ORDER_HEADER_TRUCK" was violated."
+
+
+### Step 4.6 CHECK Constraints
+
+A CHECK constraint enforces a business rule on every row. On hybrid tables it has to be declared when the table is created; it cannot be added to a table that already exists. Try it on ORDER_HEADER:
+
+```sql
+ALTER TABLE ORDER_HEADER ADD CONSTRAINT CHK_AMOUNT_POSITIVE CHECK (ORDER_AMOUNT > 0);
+```
+
+The statement should fail and we should receive the following error message:
+"001186 (42P16): SQL Compilation error: Unsupported table type for CHECK constraint: Hybrid table"
+
+> **Note:** That message is easy to misread. CHECK constraints are supported on hybrid tables, but only in the CREATE statement. It is the ALTER TABLE ... ADD CONSTRAINT path that is unsupported, including with ENABLE NOVALIDATE.
+
+To apply a rule to data you already have, you create a new table that declares the rule and load your rows into it. First find out whether the data actually satisfies the rule you have in mind:
+
+```sql
+-- How many existing rows would violate the rule we intend to enforce?
+SELECT COUNT(*)                        AS total_rows,
+       COUNT_IF(ORDER_AMOUNT <= 0)     AS would_violate_positive,
+       COUNT_IF(ORDER_AMOUNT <= 50)    AS would_violate_over_50
+FROM ORDER_HEADER;
+-- Expected for this dataset: 1000 total rows, 0 violations of "> 0", 924 violations of "> 50"
+```
+
+"Every order amount is positive" is safe to enforce; "every order is over 50" is not. Create the table with the safe rule and load it in a single statement:
+
+```sql
+CREATE OR REPLACE HYBRID TABLE ORDER_HEADER_VALIDATED (
+    ORDER_ID      NUMBER(38,0) NOT NULL,
+    TRUCK_ID      NUMBER(38,0),
+    ORDER_AMOUNT  NUMBER(38,4),
+    ORDER_TOTAL   NUMBER(38,4),
+    ORDER_STATUS  VARCHAR(16777216),
+    PRIMARY KEY (ORDER_ID),
+    CONSTRAINT CHK_AMOUNT_POSITIVE CHECK (ORDER_AMOUNT > 0)
+)
+AS SELECT ORDER_ID, TRUCK_ID, ORDER_AMOUNT, ORDER_TOTAL, ORDER_STATUS FROM ORDER_HEADER;
+
+SELECT COUNT(*) FROM ORDER_HEADER_VALIDATED;
+-- Expected: 1000
+```
+
+The load validates every incoming row against the constraint, so a successful CTAS is also proof that the existing data complies.
+
+A row that satisfies the rule is accepted:
+
+```sql
+SET NEW_ID = (SELECT MAX(ORDER_ID) + 1 FROM ORDER_HEADER_VALIDATED);
+INSERT INTO ORDER_HEADER_VALIDATED VALUES ($NEW_ID, 1, 25.50, 25.50, 'INQUEUE');
+```
+
+A row that violates it is rejected:
+
+```sql
+INSERT INTO ORDER_HEADER_VALIDATED VALUES ($NEW_ID + 1, 1, -5.00, 10.00, 'INQUEUE');
+```
+
+The statement should fail with a message that names both the constraint and the rule:
+"001185 (23514): Operation on table HYBRID_QUICKSTART_DB.DATA.ORDER_HEADER_VALIDATED failed because CHECK constraint CHK_AMOUNT_POSITIVE, which requires that ORDER_AMOUNT > 0, was violated"
+
+One behavior worth knowing: a CHECK constraint does not imply NOT NULL. A NULL is not a violation, because the rule does not evaluate to false.
+
+```sql
+INSERT INTO ORDER_HEADER_VALIDATED VALUES ($NEW_ID + 2, 1, NULL, 10.00, 'INQUEUE');
+```
+
+This statement succeeds. If a column must always hold a value, declare NOT NULL alongside the CHECK.
+
+Finally, see what happens when the existing data does not comply. Our inventory query counted 924 rows at or below 50, so enforcing that rule fails at load time:
+
+```sql
+CREATE OR REPLACE HYBRID TABLE ORDER_HEADER_STRICT (
+    ORDER_ID      NUMBER(38,0) NOT NULL,
+    ORDER_AMOUNT  NUMBER(38,4),
+    PRIMARY KEY (ORDER_ID),
+    CONSTRAINT CHK_AMOUNT_OVER_50 CHECK (ORDER_AMOUNT > 50)
+)
+AS SELECT ORDER_ID, ORDER_AMOUNT FROM ORDER_HEADER;
+```
+
+The statement should fail and we should receive the following error message:
+"001185 (23514): Operation on table HYBRID_QUICKSTART_DB.DATA.ORDER_HEADER_STRICT failed because CHECK constraint CHK_AMOUNT_OVER_50, which requires that ORDER_AMOUNT > 50, was violated"
+
+The failure is atomic. Because the statement is CREATE OR REPLACE, an existing table of that name would be left in place with all of its rows, so a failed attempt never costs you the table you already had. Run the inventory query first, correct the offending rows, then create the table.
 
 ## Row Level Locking
 
