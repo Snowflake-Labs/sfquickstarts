@@ -102,9 +102,11 @@ The script is the same in every guide of this series. It runs as ACCOUNTADMIN an
 
 **4. Series container.** It creates the DCM_DEMO database and the DCM_DEMO.PROJECTS schema that holds the project objects of the series, and grants DCM_DEVELOPER USAGE on both and CREATE DCM PROJECT on the schema. A project cannot define the database or schema it lives in.
 
-**5. Project object (alternative path only).** Commented out. The first plan creates the project object for you; the SQL is there if the prompt does not appear, or if you prefer to create it yourself.
+**5. Project object.** It creates this guide's DCM Project object, DCM_DEMO.PROJECTS.DCM_TASKS_PROJECT_DEV, as DCM_DEVELOPER. This is the only section that differs between the guides of the series.
 
 **6. Values for the manifest.** The last query returns your account identifier and user name.
+
+When the script finishes, refresh your browser so the DCM control panel lists the new project object.
 
 **Inherited grants.** An inherited grant covers current *and* future objects of a type inside a container. GRANT ON ALL snapshots what exists right now; GRANT ON FUTURE covers only what comes later. An inherited grant covers both, as one grant rather than one per object, which is why it is the recommended pattern in DCM Projects. It is a one-time opt-in per account ([release note](https://docs.snowflake.com/en/release-notes/2026/other/2026-09-10-inherited-grants-ga)), which the setup script turns on:
 
@@ -289,23 +291,15 @@ With the account identifier and your email in the manifest and both setup script
 
 ### Create the Project and Plan
 
-**In Snowsight:** the DCM control panel is the first tab in the bottom panel of your workspace. Select the project **dcm-projects-for-tasks/DCM_Projects_Tasks** and the **DCM_DEV** target. Until the DCM Project object named in the manifest exists, the status indicator next to **Target** is red. Click the play button to the right of **Plan**. Snowsight asks you to confirm creating the DCM Project object with the name and owner role defined for that target in the manifest; confirm, and the plan runs.
+**In Snowsight:** the DCM control panel is the first tab in the bottom panel of your workspace. Select the project **dcm-projects-for-tasks/DCM_Projects_Tasks**. On the right side of the same bar, select the **DCM_DEV** target and click the play button to the right of **Plan**.
 
 ![DCM control panel with the project and target selected](assets/select_project.png)
-Screenshot placeholder: the DCM control panel with project dcm-projects-for-tasks/DCM_Projects_Tasks and target DCM_DEV selected and the red status indicator, taken just before clicking Plan.
+Screenshot placeholder: the DCM control panel with project dcm-projects-for-tasks/DCM_Projects_Tasks and target DCM_DEV selected, taken just before clicking Plan.
 
-**With the Snowflake CLI:** create the project object for the target, then plan. Pass the manifest's owner role for that target with --role. The CLI creates the object as the session role, so without it the object can end up owned by ACCOUNTADMIN or DCM_DEVELOPER instead of the manifest owner.
+**With the Snowflake CLI:** pass the manifest's owner role for the target with --role.
 
 ```bash
-snow dcm create --target DCM_DEV --role DCM_DEVELOPER
 snow dcm plan --target DCM_DEV --role DCM_DEVELOPER --save-output
-```
-
-**With SQL:** if the prompt does not appear, or you prefer to create the object yourself, run this as the project owner role before the first plan.
-
-```sql
-CREATE DCM PROJECT IF NOT EXISTS DCM_DEMO.PROJECTS.DCM_TASKS_PROJECT_DEV
-    COMMENT = 'for testing DCM Projects Quickstarts';
 ```
 
 Every object is new, so the changeset is all CREATE: the warehouse, the database with its PIPELINE and PUBLIC schemas, two tables, three tasks, one TASK_GRAPH entry and the alert. It also lists an ALTER on DCM_DEVELOPER that adds the OWNERSHIP grants for the new objects.
