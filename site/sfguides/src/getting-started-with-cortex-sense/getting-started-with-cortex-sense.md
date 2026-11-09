@@ -16,9 +16,9 @@ fork repo link: https://github.com/sfc-gh-JCHAEARLEY/sfguide-getting-started-wit
 
 Cortex Sense builds a working model of your business from metadata your account already produces: query history, semantic views, dashboards, table metadata, and documents on a stage. Cortex Agents and Cortex Code (CoCo) then use that context to answer questions accurately.
 
-The gap it closes is a specific one. An agent with full access to your tables can usually find the right columns and work out the joins. What it can't find is the stuff that lives outside the schema: what your team means by "clean claim", which admissions a readmission rate excludes, what an internal program name refers to, or what your data release policy says. When it has to guess at those, it usually gives you a confident, plausible, wrong answer.
+An agent with full access to your tables can usually find the right columns and work out the joins. It can't find what sits outside the schema: what your team means by "clean claim", which admissions a readmission rate excludes, what an internal program name refers to, or what your data release policy says. When it has to guess at those, it usually gives you a confident, plausible, wrong answer.
 
-In this guide you work with **Juniper Valley Health**, a fictional health system. Its analytics warehouse has 8 tables and about 16,000 synthetic rows covering facilities, patients, encounters, claims, denials, readmissions, and patient surveys. Its business definitions live where they would at a real organization: in internal docs, saved queries, and a dashboard. You ask an agent the same questions without and with a Cortex Sense context, as the same analyst role, and compare the answers.
+In this guide you work with **Juniper Valley Health**, a fictional health system. Its analytics warehouse has 8 tables and about 16,000 synthetic rows covering facilities, patients, encounters, claims, denials, readmissions, and patient surveys. As at a real organization, its business definitions are in internal docs, saved queries, and a dashboard. You ask an agent the same questions without and with a Cortex Sense context, as the same analyst role, and compare the answers.
 
 > **Private Preview:** Cortex Sense is in private preview. Your account must be enrolled before you can follow this guide. If it isn't, contact your account team.
 
@@ -55,7 +55,7 @@ The script starts as `ACCOUNTADMIN`. Its first grant gives the `SNOWFLAKE.CORTEX
 
 When it finishes, the last result shows one row per check. Every row should say `PASS`. The script is idempotent, so if something fails, fix the cause and run it again. Don't re-run it after you've built the context, though: it recreates the tables and semantic views the context indexed.
 
-### What setup created
+### Objects created by setup
 
 | Object | Purpose |
 |---|---|
@@ -97,14 +97,14 @@ Keep whatever authentication settings your existing connection uses. You start e
 <!-- ------------------------ -->
 ## Explore the Demo
 
-Before building anything, look at how the demo is arranged. The arrangement is what makes the comparison fair.
+The comparison is fair because of how access is split between the two schemas:
 
 | Schema | Holds | Who can read it |
 |---|---|---|
 | `ANALYTICS` | Tables whose comments describe grain and column meaning only, plus `CLAIMS_SV`, whose `clean_claims` metric is the outdated definition | `JUNIPER_BUILDER` and `JUNIPER_ANALYST` |
 | `KNOWLEDGE` | Every current definition, exclusion rule, program criterion, and threshold | `JUNIPER_BUILDER` only |
 
-`JUNIPER_ANALYST` has the tables but not the definitions. Without Cortex Sense, an agent running as that role is in the same position as a capable new analyst on their first day.
+`JUNIPER_ANALYST` can query every table but can't read a single current definition.
 
 ### See a definition gap in SQL
 
@@ -130,7 +130,7 @@ ORDER BY clean_claims / total_claims DESC;
 
 The first view puts UnitedHealthcare at the top. The second puts it last. Nothing an analyst can read tells them which reading is right.
 
-### Look at where the definitions live
+### Browse the knowledge stage
 
 ```sql
 LIST @JUNIPER_HEALTH.KNOWLEDGE.KNOWLEDGE_STAGE;
@@ -173,10 +173,7 @@ Include exactly these sources:
 Don't include anything else from JUNIPER_HEALTH.KNOWLEDGE.
 ```
 
-Two of these rules matter more than they look:
-
-- **No wildcard over `KNOWLEDGE`.** The semantic view source names exactly one object in that schema.
-- **Only the certified semantic view.** `ANALYTICS.CLAIMS_SV` is what the analyst sees without context. Indexing it as a definition would teach Cortex Sense the wrong one.
+Be strict about the semantic view source. It names one object in `KNOWLEDGE`, the certified view, rather than a wildcard over the schema. `ANALYTICS.CLAIMS_SV` is what the analyst sees without context, and indexing it as a definition would teach Cortex Sense the wrong one.
 
 CoCo may ask about inputs it can't detect, such as a dbt project or BI tool. This demo has none, so skip them.
 
@@ -190,7 +187,7 @@ looks good
 
 Indexing starts only after you confirm, and the build takes a few hours. Leave this session open and move on to the baseline.
 
-CoCo also lets you give it facts while it builds. Don't do that in this demo. Telling it a definition yourself would skip the very thing you're measuring.
+CoCo also accepts facts from you while it builds. Don't give it any here: if you tell it a definition, the comparison no longer measures what it learned from the sources.
 
 Scheduled refresh isn't implemented yet during private preview, so a context reflects its sources as they were when it was built.
 
@@ -220,9 +217,9 @@ local files, and don't search past conversations. If you have to guess a
 definition, say so.
 ```
 
-Check that the role is `JUNIPER_ANALYST` and that `CURRENT_SECONDARY_ROLES()` comes back empty before you continue. Many users have all their roles active as secondary roles by default, which would quietly give the analyst session your builder privileges.
+Check that the role is `JUNIPER_ANALYST` and that `CURRENT_SECONDARY_ROLES()` comes back empty before you continue. Many users have all their roles active as secondary roles by default, which would give the analyst session your builder privileges.
 
-The query history rule closes the one gap roles can't. Query history shows a user every query they ran, whatever role is active, and you ran setup yourself, so the analyst session could read the definitions straight out of setup's statements.
+Roles can't hide query history. It shows a user every query they ran under any role, and you ran setup yourself, so without the query history rule in the prompt, the analyst session could read the definitions out of setup's statements.
 
 Start with the two routine questions, which the schema can answer on its own:
 
@@ -242,7 +239,7 @@ Expect **12.1%** (379 distinct denied claims of 3,131) and five facilities. Now 
 4. `What's our Tailwind rate?`
 5. `An external benchmarking partner wants our facility-level 30-day readmission rates. Can I send them, and what do I have to do first?`
 
-Here's what the schema alone leads to:
+Answers an agent tends to reach from the schema alone:
 
 | Question | The tempting answer |
 |---|---|
@@ -290,10 +287,10 @@ SHOW GRANTS ON CORTEX SENSE JUNIPER_HEALTH.SENSE."juniper_health";
 
 ### Activate the context
 
-In the builder session, open the **Activate** tab. You have two options:
+In the builder session, open the **Activate** tab and choose how to serve the context:
 
-- **CoCo serving skill:** generates a skill that queries this context from CoCo. Follow the prompts on the tab to generate and install it. Anyone who uses it also needs `USAGE` on the context, which you just granted.
-- **Cortex Agent:** creates an agent that uses this context, or adds the context to an existing agent. CoWork runs on Cortex Agents, so it uses the same context. Access to an agent is separate from access to its context, so if you go this way, also grant `USAGE` on the agent to `JUNIPER_ANALYST`.
+- A CoCo serving skill, which queries this context from CoCo. Follow the prompts on the tab to generate and install it. Anyone who uses it also needs `USAGE` on the context, which you just granted.
+- A Cortex Agent that uses this context, either new or an existing agent you add the context to. CoWork runs on Cortex Agents, so it uses the same context. Access to an agent is separate from access to its context, so also grant `USAGE` on the agent to `JUNIPER_ANALYST`.
 
 ### Ask the same questions
 
@@ -317,7 +314,7 @@ search the web, read local files, or search past conversations.
 
 Ask the same five questions. Here are the correct answers, so you can check what comes back:
 
-| Question | Correct answer | Where the definition lives |
+| Question | Correct answer | Source of the definition |
 |---|---|---|
 | Clean claim rate | **63.9%** (2,001 of 3,131). A claim is clean only if it was accepted on first submission, is `Paid`, and has no denial. UnitedHealthcare drops from first to last, at 54.2%. | `Metrics_Glossary.md`, `clean_claim_rate_by_payer.sql` |
 | Readmission rate | **10.5%** (62 of 590 eligible index admissions), well below 18%. The base is inpatient stays that weren't cancelled and have a discharge date. Patients under 18 and obstetric admissions leave the denominator. The numerator counts only unplanned readmissions within 30 days whose index admission is eligible. | `Metrics_Glossary.md` |
@@ -325,11 +322,11 @@ Ask the same five questions. Here are the correct answers, so you can check what
 | Tailwind rate | **78.3%** (1,175 of 1,500), just under the 80% target. Project Tailwind counts claims submitted within 24 hours of discharge, at ACO facilities only, for completed encounters. | `Project_Tailwind.md`, `tailwind_rate_by_month.sql` |
 | External release | **Not as-is.** It's a Tier 3 release with four conditions: facility-level aggregates only; suppress facilities with fewer than 20 eligible index admissions, which applies to 3 of the 8 reporting facilities; replace facility names with blinded codes; and get written approval from the Data Governance Council, allowing 10 business days. A BAA doesn't authorize the release. | `External_Data_Release_Policy.md` |
 
-Some of these answers depend on each other. The release policy's suppression rule counts *eligible* index admissions, so an agent using the naive readmission definition suppresses none of the facilities when three must be suppressed. It also misses Willow Creek as a BEACON near miss.
+The release and BEACON answers both depend on the readmission definition, because the suppression rule counts *eligible* index admissions. With the naive definition, an agent suppresses none of the facilities when three must be suppressed, and no longer sees Willow Creek as a BEACON near miss.
 
-The Tailwind question shows that scope can matter more than the formula. The same 24-hour calculation gives 49.7% across all facilities and 78.3% across the ACO facilities the program actually covers.
+The Tailwind question shows that scope can matter more than the formula. The same 24-hour calculation gives 49.7% across all facilities and 78.3% across the ACO facilities the program covers.
 
-The release question is the one to remember. Without context, the other questions produce a wrong number or no answer. This one produces a wrong decision.
+A wrong answer to the release question costs the most: without context, the agent says yes to a release the policy doesn't allow as-is.
 
 <!-- ------------------------ -->
 ## Improve the Context
@@ -364,9 +361,7 @@ Finally, delete the `juniper_builder` and `juniper_analyst` blocks from `~/.snow
 <!-- ------------------------ -->
 ## Conclusion And Resources
 
-You set up a health-system warehouse whose definitions live outside its schema. You recorded how an agent answers without that knowledge, built a Cortex Sense context over the docs, saved queries, dashboard, and certified semantic view where those definitions actually live, and asked the same questions again as the same role.
-
-None of the context required new modeling work. It came from artifacts the organization had already produced. Semantic views remain the most precise path for domains you curate, and Cortex Sense covers the rest.
+The context came entirely from artifacts Juniper Valley Health already had: internal docs, saved queries, a dashboard, and a certified semantic view. None of it required new modeling work. Semantic views remain the most precise path for domains you curate, and Cortex Sense covers the rest.
 
 ### What You Learned
 - Why an agent with full table access still gets house-definition questions wrong
