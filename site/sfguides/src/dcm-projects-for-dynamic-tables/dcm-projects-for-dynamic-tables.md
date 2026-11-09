@@ -22,7 +22,7 @@ This guide answers all three by combining three Snowflake features:
 
 - **DCM Projects.** Define your entire pipeline (database, schemas, tables, dynamic tables, views, roles and grants) as code, then plan and deploy changes declaratively.
 - **Frozen regions.** Tell Snowflake which rows in a dynamic table will never change, so a schema change only recomputes the active rows.
-- **Cortex AI functions in dynamic tables.** Call an AI function like `AI_CLASSIFY` directly in a dynamic table's definition, so AI-derived columns are filled in as data flows through your pipeline.
+- **Cortex AI functions in dynamic tables.** Call an AI function like AI_CLASSIFY directly in a dynamic table's definition, so AI-derived columns are filled in as data flows through your pipeline.
 
 You'll deploy a food truck analytics pipeline with a DCM Project, then evolve a dynamic table by adding an **AI-classified column**, and see the frozen region keep historical rows out of the recompute and out of the AI call.
 
@@ -38,7 +38,7 @@ You'll deploy a food truck analytics pipeline with a DCM Project, then evolve a 
 - Why INITIALIZE = ON_SCHEDULE keeps DCM deployments fast
 - How frozen regions work on dynamic tables
 - How to evolve a dynamic table's schema without recomputing frozen history
-- How to call `AI_CLASSIFY` inside a dynamic table, and why a frozen region keeps its cost down
+- How to call AI_CLASSIFY inside a dynamic table, and why a frozen region keeps its cost down
 - How to use METADATA$IS_FROZEN and the refresh history to verify which rows were recomputed
 
 ### What You'll Need
@@ -103,9 +103,11 @@ The script is the same in every guide of this series. It runs as ACCOUNTADMIN an
 
 **4. Series container.** It creates the DCM_DEMO database and the DCM_DEMO.PROJECTS schema that holds the project objects of the series, and grants DCM_DEVELOPER USAGE on both and CREATE DCM PROJECT on the schema. A project cannot define the database or schema it lives in.
 
-**5. Project object (alternative path only).** Commented out. The first plan creates the project object for you; the SQL is there if the prompt does not appear, or if you prefer to create it yourself.
+**5. Project object.** It creates this guide's DCM Project object, DCM_DEMO.PROJECTS.DCM_DT_PROJECT_DEV, as DCM_DEVELOPER. This is the only section that differs between the guides of the series.
 
 **6. Values for the manifest.** The last query returns your account identifier and user name.
+
+When the script finishes, refresh your browser so the DCM control panel lists the new project object.
 
 **Inherited grants.** An inherited grant covers current *and* future objects of a type inside a container. GRANT ON ALL snapshots what exists right now; GRANT ON FUTURE covers only what comes later. An inherited grant covers both, as one grant rather than one per object, which is why it is the recommended pattern in DCM Projects. It is a one-time opt-in per account ([release note](https://docs.snowflake.com/en/release-notes/2026/other/2026-09-10-inherited-grants-ga)), which the setup script turns on:
 
@@ -113,7 +115,7 @@ The script is the same in every guide of this series. It runs as ACCOUNTADMIN an
 ALTER ACCOUNT SET FEATURE_RBAC_INHERITED_GRANTS = 'ENABLED';
 ```
 
-An inherited grant cannot be combined with WITH GRANT OPTION, `CASCADE` or `RESTRICT`.
+An inherited grant cannot be combined with WITH GRANT OPTION, CASCADE or RESTRICT.
 
 This project's access.sql uses three of them to give the READ role SELECT on every table, dynamic table and view in the database.
 
@@ -192,7 +194,7 @@ The DEV configuration sets env_suffix to _DEV while PROD sets it to an empty str
 
 ### Definition Files
 
-The sources/definitions/ directory contains the SQL that defines your infrastructure. Each file uses `DEFINE` statements and Jinja variables like {{env_suffix}}:
+The sources/definitions/ directory contains the SQL that defines your infrastructure. Each file uses DEFINE statements and Jinja variables like {{env_suffix}}:
 
 | File | What it defines |
 |---|---|
@@ -272,23 +274,15 @@ Before deploying, always run a **Plan**. A plan is a dry run that shows exactly 
 
 ### Plan
 
-**In Snowsight:** the DCM control panel is the first tab in the bottom panel of your workspace. Select the project **dcm-projects-for-dynamic-tables/DCM_Projects_DT_Lifecycle** and the **DCM_DEV** target. Until the DCM Project object named in the manifest exists, the status indicator next to **Target** is red. Click the play button to the right of **Plan**. Snowsight asks you to confirm creating the DCM Project object with the name and owner role defined for that target in the manifest; confirm, and the plan runs.
+**In Snowsight:** the DCM control panel is the first tab in the bottom panel of your workspace. Select the project **dcm-projects-for-dynamic-tables/DCM_Projects_DT_Lifecycle**. On the right side of the same bar, select the **DCM_DEV** target and click the play button to the right of **Plan**.
 
 ![DCM control panel with the project and target selected](assets/select_project.png)
-Screenshot placeholder: the DCM control panel with project dcm-projects-for-dynamic-tables/DCM_Projects_DT_Lifecycle and target DCM_DEV selected and the red status indicator, taken just before clicking Plan.
+Screenshot placeholder: the DCM control panel with project dcm-projects-for-dynamic-tables/DCM_Projects_DT_Lifecycle and target DCM_DEV selected, taken just before clicking Plan.
 
-**With the Snowflake CLI:** create the project object for the target, then plan. Pass the manifest's owner role for that target with --role. The CLI creates the object as the session role, so without it the object can end up owned by ACCOUNTADMIN or DCM_DEVELOPER instead of the manifest owner.
+**With the Snowflake CLI:** pass the manifest's owner role for the target with --role.
 
 ```bash
-snow dcm create --target DCM_DEV --role DCM_DEVELOPER
 snow dcm plan --target DCM_DEV --role DCM_DEVELOPER --save-output
-```
-
-**With SQL:** if the prompt does not appear, or you prefer to create the object yourself, run this as the project owner role before the first plan.
-
-```sql
-CREATE DCM PROJECT IF NOT EXISTS DCM_DEMO.PROJECTS.DCM_DT_PROJECT_DEV
-    COMMENT = 'for testing DCM Projects Quickstarts';
 ```
 
 Since none of the defined objects exist yet, the plan shows **22 entities: 21 to create and 1 to alter**:
@@ -385,7 +379,7 @@ Frozen regions were previously called *immutability constraints*. The older IMMU
 Open sources/definitions/analytics.sql in your workspace and change the ENRICHED_ORDER_DETAILS definition in two places:
 
 1. **Add** a FROZEN WHERE clause that freezes orders older than one day.
-2. **Add** a DIET_CLASSIFICATION column, computed by `AI_CLASSIFY`, as the **last column**.
+2. **Add** a DIET_CLASSIFICATION column, computed by AI_CLASSIFY, as the **last column**.
 
 The changed definition:
 
@@ -422,14 +416,14 @@ JOIN DCM_DEMO_3{{env_suffix}}.RAW.CUSTOMER C ON O.CUSTOMER_ID = C.CUSTOMER_ID;
 | Change | Purpose |
 |---|---|
 | FROZEN WHERE (ORDER_TS < CURRENT_TIMESTAMP() - INTERVAL '1 day') | Orders older than one day are frozen: they are not recomputed, and the AI function never runs on them. The predicate names the column without a table alias. |
-| DIET_CLASSIFICATION as the last column | `AI_CLASSIFY` tags each menu item as Healthy or Indulgent. Append it at the end. A column inserted mid-SELECT fails the plan with "Cannot reorder Dynamic Table columns in ALTER", and nothing is deployed. |
+| DIET_CLASSIFICATION as the last column | AI_CLASSIFY tags each menu item as Healthy or Indulgent. Append it at the end. A column inserted mid-SELECT fails the plan with "Cannot reorder Dynamic Table columns in ALTER", and nothing is deployed. |
 
-Cortex AI functions are allowed in a dynamic table's SELECT list, not in WHERE, GROUP BY, HAVING or QUALIFY. [Supported queries for dynamic tables](https://docs.snowflake.com/en/user-guide/dynamic-tables/supported-queries#supported-snowflake-cortex-ai-functions) describes them under incremental refresh. ENRICHED_ORDER_DETAILS runs in full refresh mode (see Refresh and Verify), and `AI_CLASSIFY` works there too.
+Cortex AI functions are allowed in a dynamic table's SELECT list, not in WHERE, GROUP BY, HAVING or QUALIFY. [Supported queries for dynamic tables](https://docs.snowflake.com/en/user-guide/dynamic-tables/supported-queries#supported-snowflake-cortex-ai-functions) describes them under incremental refresh. ENRICHED_ORDER_DETAILS runs in full refresh mode (see Refresh and Verify), and AI_CLASSIFY works there too.
 
-Every sample order is from October 2023, well over a day old, so all 24 rows are frozen. After the redeploy, the verify script inserts two new orders, 1024 and 1025, stamped with `CURRENT_TIMESTAMP()`, so they fall in the active region whenever you run it. On the next refresh, Snowflake will:
+Every sample order is from October 2023, well over a day old, so all 24 rows are frozen. After the redeploy, the verify script inserts two new orders, 1024 and 1025, stamped with CURRENT_TIMESTAMP(), so they fall in the active region whenever you run it. On the next refresh, Snowflake will:
 
-1. **Leave** the frozen rows as they are stored. DIET_CLASSIFICATION stays `NULL` for them, and no AI inference runs on them.
-2. **Compute** only the active rows, orders 1024 and 1025, calling `AI_CLASSIFY` for each.
+1. **Leave** the frozen rows as they are stored. DIET_CLASSIFICATION stays NULL for them, and no AI inference runs on them.
+2. **Compute** only the active rows, orders 1024 and 1025, calling AI_CLASSIFY for each.
 
 You'll see both behaviors side by side after a single refresh.
 
@@ -510,7 +504,7 @@ You should see:
 | 1022 | 2023-10-30 11:00:00 | Pulled Pork Slider | 8.00 | NULL | TRUE |
 | ... | ... | ... | ... | NULL | TRUE |
 
-The two recent orders have a DIET_CLASSIFICATION from `AI_CLASSIFY` and IS_FROZEN = FALSE: they are in the active region. The 24 order lines from October 2023 have DIET_CLASSIFICATION = `NULL` and IS_FROZEN = TRUE: they were stored before the change, and the AI function never ran on them. The labels come from a model, so yours may differ.
+The two recent orders have a DIET_CLASSIFICATION from AI_CLASSIFY and IS_FROZEN = FALSE: they are in the active region. The 24 order lines from October 2023 have DIET_CLASSIFICATION = NULL and IS_FROZEN = TRUE: they were stored before the change, and the AI function never ran on them. The labels come from a model, so yours may differ.
 
 Finally, the script asks the refresh history what each refresh actually did:
 
@@ -531,7 +525,7 @@ ORDER BY REFRESH_START_TIME DESC;
 | (after the second deploy) | FULL | 2 | 0 | 0 |
 | (after the first deploy) | FULL | 24 | 0 | 0 |
 
-The first refresh computed all 24 rows. The refresh after the schema change computed only the 2 active rows, and called `AI_CLASSIFY` only for them. It deleted and copied nothing: the 24 frozen rows stayed exactly as they were stored.
+The first refresh computed all 24 rows. The refresh after the schema change computed only the 2 active rows, and called AI_CLASSIFY only for them. It deleted and copied nothing: the 24 frozen rows stayed exactly as they were stored.
 
 REFRESH_ACTION reads FULL both times because Snowflake set this dynamic table to full refresh mode. SHOW DYNAMIC TABLES gives the reason in refresh_mode_reason: "This dynamic table contains a complex query." A frozen region works in either mode: only the active region is refreshed.
 
@@ -540,12 +534,12 @@ This is a frozen region in action: a schema change was deployed, and Snowflake o
 <!-- ------------------------ -->
 ## Cleanup
 
-Before tearing anything down, know that there is a gentler option. DROP DCM PROJECT on its own, without a `PURGE` first, removes the project and its deployment history and leaves every entity, grant and attachment in place as an ordinary unmanaged object. To release a single entity, call SYSTEM$UNMANAGE_ENTITY_FROM_DCM_PROJECT with its type and name; to release grants or attachments, pass the rendered statements to SYSTEM$UNMANAGE_FROM_DCM_PROJECT. Then remove the matching statements from your definitions, or the next deploy takes them back.
+Before tearing anything down, know that there is a gentler option. DROP DCM PROJECT on its own, without a PURGE first, removes the project and its deployment history and leaves every entity, grant and attachment in place as an ordinary unmanaged object. To release a single entity, call SYSTEM$UNMANAGE_ENTITY_FROM_DCM_PROJECT with its type and name; to release grants or attachments, pass the rendered statements to SYSTEM$UNMANAGE_FROM_DCM_PROJECT. Then remove the matching statements from your definitions, or the next deploy takes them back.
 
 When you are finished, open scripts/04_cleanup.sql in a Snowsight worksheet and run it as DCM_DEVELOPER. It is irreversible. In order, it:
 
-1. **Purge the project.** `PURGE` drops every entity the project manages (the database and everything in it, including the alert, the warehouse and the READ role), revokes the project's grants and removes the expectation attachments, with all of their data.
-2. **Drop the project object**, which `PURGE` leaves behind.
+1. **Purge the project.** PURGE drops every entity the project manages (the database and everything in it, including the alert, the warehouse and the READ role), revokes the project's grants and removes the expectation attachments, with all of their data.
+2. **Drop the project object**, which PURGE leaves behind.
 3. **Objects created outside the project.** There are none in this guide; everything was deployed by the project.
 4. **Series-shared objects, left commented.** DCM_DEMO.PROJECTS, DCM_DEMO and DCM_DEVELOPER are used by every guide in this series, so their DROP statements are commented out, after a USE ROLE ACCOUNTADMIN line, because ACCOUNTADMIN owns the container. A SHOW DCM PROJECTS line shows what the schema still holds before you decide.
 5. **Inherited grants, left commented.** The opt-in is account-wide and the other guides need it; the commented line to turn it off is there if you want it.
@@ -557,7 +551,7 @@ EXECUTE DCM PROJECT DCM_DEMO.PROJECTS.DCM_DT_PROJECT_DEV PURGE;
 DROP DCM PROJECT IF EXISTS DCM_DEMO.PROJECTS.DCM_DT_PROJECT_DEV;
 ```
 
-If `PURGE` ever fails, the script's comments show how to suspend the task and the dynamic table first, so nothing keeps consuming credits while you investigate.
+If PURGE ever fails, the script's comments show how to suspend the task and the dynamic table first, so nothing keeps consuming credits while you investigate.
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
@@ -567,7 +561,7 @@ In this guide, you learned how to:
 - **Define a data pipeline as code** with a DCM Project: database, schemas, tables, dynamic tables, views, a task, an alert, a role and grants in SQL definition files
 - **Deploy and manage** the pipeline through the DCM plan and deploy cycle, in Snowsight Workspaces or the Snowflake CLI
 - **Evolve a dynamic table's schema** by editing one definition and redeploying, with the plan showing a single ALTER
-- **Call `AI_CLASSIFY`** inside a dynamic table to enrich rows as they refresh
+- **Call AI_CLASSIFY** inside a dynamic table to enrich rows as they refresh
 - **Use a frozen region** to keep historical rows out of the recompute, and out of an expensive AI function
 - **Verify the result** with METADATA$IS_FROZEN and the refresh history: 2 rows computed, 24 frozen rows left untouched
 
