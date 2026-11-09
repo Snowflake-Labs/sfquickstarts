@@ -653,7 +653,7 @@ EXECUTE DCM PROJECT DCM_DEMO_2_FINANCE_DEV.PROJECTS.FINANCE_PIPELINE TEST ALL;
 
 TEST ALL evaluates every expectation the project defines and returns one JSON document. Its status is FAILED:
 
-| expectation_name | value | expectation_expression | expectation_violated |
+| EXPECTATION_NAME | VALUE | EXPECTATION_EXPRESSION | EXPECTATION_VIOLATED |
 |---|---|---|---|
 | EVERY_TRADE_HAS_A_CUSTOMER | 1 | value = 0 | true |
 | NO_DUPLICATE_TRADES | 0 | value = 0 | false |
