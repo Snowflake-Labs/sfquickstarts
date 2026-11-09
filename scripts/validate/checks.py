@@ -9,6 +9,7 @@ key to build the pull request comment, so field names here are load-bearing.
 
 from __future__ import annotations
 
+import json
 import re
 from dataclasses import dataclass
 from pathlib import Path
@@ -17,6 +18,7 @@ from typing import Any
 from lib import md, validate
 
 QUICKSTART_PREFIX = "site/sfguides/src/"
+JOURNEY_PREFIX = "journeys/"
 ASSETS_SEGMENT = "/assets/"
 IMAGE_SUFFIXES = (".jpg", ".jpeg", ".png", ".gif", ".svg", ".webp", ".bmp", ".ico")
 
@@ -45,6 +47,22 @@ NON_IMAGE_ASSETS_MESSAGE = (
 LANGUAGE_MESSAGE = (
     "Invalid or missing language detected. Allowed: en, es, it, fr, de, ja, ko, pt_br"
 )
+# A quickstart folder ending in one of these is a translation, and must declare the
+# language it is written in. Otherwise it publishes under /en/ beside the original.
+LANGUAGE_SUFFIXES = {
+    "es": "es",
+    "it": "it",
+    "fr": "fr",
+    "de": "de",
+    "ja": "ja",
+    "ko": "ko",
+    "kr": "ko",
+    "ptbr": "pt_br",
+}
+# The publisher activates a page only when status is exactly "Published", so any
+# other spelling silently leaves the guide unpublished.
+STATUSES = ("Published", "Draft", "Hidden", "Archived")
+STATUS_FIXES = {"pubblicato": "Published", "pubblished": "Published", "public": "Published"}
 NON_MARKDOWN_ROOT_RE = re.compile(r"^site/sfguides/src/[^/]+/[^/]+$")
 
 
@@ -223,21 +241,105 @@ def _id_errors(guide_id: str | None, prefixed: str) -> list[str]:
         errors.append("id must be slugified (lowercase letters/digits, single dashes)")
     if guide_id != stem:
         errors.append(f"id must match filename ('{stem}')")
-    if guide_id != folder:
+    # Journey topic folders are short sidebar slugs, so their ids match the file only.
+    if guide_id != folder and not display(prefixed).startswith(JOURNEY_PREFIX):
         errors.append(f"id must match folder name ('{folder}')")
     return errors
 
 
+def _journey_errors(text: str) -> list[str]:
+    """A journey topic must declare the sidebar it renders with."""
+    errors = []
+    if (md.field(text, "sidebar") or "").strip().lower() != "true":
+        errors.append("journey topics must set 'sidebar: true'")
+    sidebar_json = md.field(text, "sidebar_json")
+    if not sidebar_json or not SLUG_ID_RE.match(sidebar_json):
+        errors.append("journey topics must set 'sidebar_json' to their sidebar file's name")
+    return errors
+
+
+def _language_suffix_errors(text: str, prefixed: str) -> list[str]:
+    """A translated quickstart's folder suffix must agree with its declared language."""
+    if not display(prefixed).startswith(QUICKSTART_PREFIX):
+        return []
+    folder = Path(prefixed).parent.name
+    suffix = folder.rsplit("-", 1)[-1] if "-" in folder else ""
+    expected = LANGUAGE_SUFFIXES.get(suffix)
+    if expected is None:
+        return []
+    declared = read_language(text).strip().lower()
+    if declared == expected:
+        return []
+    return [
+        f"folder ends in '-{suffix}', so language must be '{expected}' "
+        f"(found '{declared or 'missing'}')"
+    ]
+
+
+def _status_errors(text: str) -> list[str]:
+    """A declared status must be one the publisher recognises, spelled exactly."""
+    status = md.field(text, "status")
+    if status is None or status in STATUSES:
+        return []
+    if not status:
+        return ["status is empty, so the guide will not publish (use 'Published' or remove it)"]
+    key = status.strip().lower()
+    hint = STATUS_FIXES.get(key) or next((s for s in STATUSES if s.lower() == key), None)
+    allowed = ", ".join(STATUSES)
+    fix = f"; did you mean '{hint}'?" if hint else ""
+    return [f"status '{status}' is not recognised (allowed: {allowed}){fix}"]
+
+
+def guide_markdown(content: Content) -> list[str]:
+    """Return the changed markdown plus each touched quickstart's own guide file.
+
+    A pull request that only changes an image still republishes the whole guide,
+    so its markdown must be checked even though the pull request did not edit it.
+    """
+    seen = {display(path) for path in content.changed_markdown}
+    paths = list(content.changed_markdown)
+    for path in content.downloaded_files:
+        name = display(path)
+        if name in seen or not NON_MARKDOWN_ROOT_RE.match(name):
+            continue
+        if not name.endswith(".md") or Path(name).name.lower() == "readme.md":
+            continue
+        seen.add(name)
+        paths.append(f"pr/{name}")
+    return paths
+
+
 def check_frontmatter(content: Content) -> dict[str, Any] | None:
-    """Fail when a guide's frontmatter id disagrees with its filename or folder."""
+    """Fail on a bad id, a translation filed as the wrong language, or an unknown status."""
     issues = []
-    for prefixed in content.changed_markdown:
+    for prefixed in guide_markdown(content):
         text = content.text(prefixed)
         if text is None:
             continue
         errors = _id_errors(md.field(text, "id"), prefixed)
+        errors += _language_suffix_errors(text, prefixed)
+        errors += _status_errors(text)
+        if display(prefixed).startswith(JOURNEY_PREFIX):
+            errors += _journey_errors(text)
         if errors:
             issues.append({"file": display(prefixed), "errors": errors})
+
+    return {"issues": issues} if issues else None
+
+
+def check_sidebars(content: Content) -> dict[str, Any] | None:
+    """Fail when a changed journey sidebar file is not valid JSON."""
+    issues = []
+    for path in content.all_changed_files:
+        if not path.startswith(JOURNEY_PREFIX) or not path.endswith(".json"):
+            continue
+        target = content.root / path
+        if target.is_symlink() or not target.is_file():
+            continue
+        try:
+            json.loads(target.read_text(encoding="utf-8"))
+        except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+            issues.append({"file": path, "errors": [str(exc)]})
 
     return {"issues": issues} if issues else None
 

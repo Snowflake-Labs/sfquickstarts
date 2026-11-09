@@ -75,9 +75,9 @@ def render(session):
         col1, col2 = st.columns(2)
         with col1:
             st.markdown(_card("Access Management",
-                "Grant CORTEX_USER + COPILOT_USER to users, roles, or by user tag. View role inheritance."), unsafe_allow_html=True)
+                "Grant CORTEX_USER or CORTEX_AGENT_USER (plus transitional COPILOT_USER) to users, roles, patterns, or by user tag. View role inheritance."), unsafe_allow_html=True)
             st.markdown(_card("Credit Configuration",
-                "Set daily limits at account, cohort, or user level. Temporary overrides with auto-revert. Native AI Budgets (Preview) for agent-level hard enforcement."), unsafe_allow_html=True)
+                "Set daily limits at account, cohort, or user level. Temporary overrides with auto-revert. Native AI Budgets (Preview) for agent-level spend tracking."), unsafe_allow_html=True)
             st.markdown(_card("Credit Requests",
                 "Self-service with rate limiting & EWMA-based intelligent donor selection."), unsafe_allow_html=True)
             st.markdown(_card("Model Access",
