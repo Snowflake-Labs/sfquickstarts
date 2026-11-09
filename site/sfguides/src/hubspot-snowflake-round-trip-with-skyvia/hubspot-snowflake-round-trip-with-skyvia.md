@@ -38,7 +38,7 @@ To keep the example small, the segment uses only HubSpot deals. In a real projec
 - A [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) or a free trial
 - A [Skyvia account](https://skyvia.com/data-integration/integrate-hubspot-snowflake?utm_source=snowflake&utm_medium=referral&utm_campaign=quickstart_guide_hubspot). New accounts start with a free trial of the Professional plan, which covers everything in this guide.
 - A new [free HubSpot account](https://www.hubspot.com/). Don't use your production CRM: the last steps write data to HubSpot contacts.
-- The test data: two CSV files with fictional contacts and deals ([download from GitHub](https://github.com/yevhenii-skyvia/snowflake-test-data))
+- The test data, two CSV files with fictional contacts and deals: [contacts.csv](https://skyvia.com/assets/docs/contacts.csv) and [deals.csv](https://skyvia.com/assets/docs/deals.csv)
 
 ### What You'll Learn
 
@@ -204,8 +204,8 @@ In Skyvia, integrations perform different jobs on data. Import is an integration
 
 Load sample contacts and deals into HubSpot using Skyvia import. The test data consists of two CSV files:
 
-- [contacts.csv](https://raw.githubusercontent.com/yevhenii-skyvia/snowflake-test-data/main/contacts.csv) with 100 fictional contacts
-- [deals.csv](https://raw.githubusercontent.com/yevhenii-skyvia/snowflake-test-data/main/deals.csv) with 100 deals, each linked to a contact by email address
+- [contacts.csv](https://skyvia.com/assets/docs/contacts.csv) with 100 fictional contacts
+- [deals.csv](https://skyvia.com/assets/docs/deals.csv) with 100 deals, each linked to a contact by email address
 
 Download both files before you start. You can also load them with the HubSpot import tool instead of Skyvia.
 
