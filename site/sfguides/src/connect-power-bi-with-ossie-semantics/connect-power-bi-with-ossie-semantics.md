@@ -29,23 +29,23 @@ This quickstart demonstrates the core workflow on sample data: creating a Semant
 - comfort running commands in a terminal
 
 
-### What You Will Learn
+### What You’ll Learn
 - creating a Snowflake Semantic View from YAML
 - exporting a semantic view to Ossie with `SYSTEM$READ_OSSIE_YAML_FROM_SEMANTIC_VIEW`
 - converting Ossie to and from a Power BI `model.bim` with the `ossie-microsoft` converter
 - merging a Power BI change back into the Ossie model and deploying it with `SYSTEM$CREATE_SEMANTIC_VIEW_FROM_OSSIE_YAML`
 
-### What You Will Build
+### What You’ll Build
 - You will build a sales semantic model that is shared between Snowflake and Power BI. You will create a Semantic View in Snowflake, convert it to a Power BI semantic model, add a measure in Power BI, and deploy that measure back to Snowflake. The end result is one set of business definitions that both platforms use.
 
-### What You Will Need
+### What You’ll Need
 - A free [Snowflake Account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)
 - Git, Python 3.10+, and [uv](https://docs.astral.sh/uv/getting-started/installation/) installed locally (`pip install uv` works if you don't have it)
 - A text editor, or [Tabular Editor](https://github.com/TabularEditor/TabularEditor) to edit the Power BI model file
 
 The end-to-end workflow will look like this:
 
-![](assets/OssieDiagram.png)
+![](assets/ossie-diagram.png)
 
 
 <!-- ------------------------ -->
@@ -615,6 +615,22 @@ These held true when this quickstart was written. Apache Ossie is incubating, so
 - Column data types aren't included in the Snowflake export, so Power BI columns come through untyped.
 - Snowflake's export adds a duplicate `SNOWFLAKE` custom extension to each field on every round trip. It's harmless, but the file grows.
 - The Power BI model uses Direct Lake placeholders and isn't connected to data.
+
+
+<!-- ------------------------ -->
+## Clean Up
+
+Drop the database this quickstart created. This removes the three views and the `TPCH_SALES` semantic view:
+
+```sql
+DROP DATABASE IF EXISTS OSSIE_DEMO;
+```
+
+To remove the local files, including the converter clone, delete the working folder:
+
+```bash
+rm -rf ~/ossie-demo
+```
 
 
 <!-- ------------------------ -->
