@@ -1,6 +1,6 @@
 """
-CoCo Control Hub — Native Per-User Quotas (Preview)
-=====================================================
+CoCo Control Hub — Native Per-User Quotas
+=========================================
 Hard monthly/daily credit enforcement via Snowflake SNOWFLAKE.CORE.QUOTA objects.
 Distinct from CoCo's soft daily limits (ALTER USER) — these are Snowflake-native
 blocks that fire within minutes of a user breaching their quota.
@@ -23,7 +23,7 @@ from config import (
     fq_sp,
     get_current_user,
 )
-from utils import get_session, list_roles
+from utils import PATTERN_HELP, get_session, list_roles, match_roles, pick_matches
 
 _BG = "#0e1117"
 _DOCS_URL = "https://docs.snowflake.com/en/user-guide/budgets/per-user-quotas"
@@ -79,16 +79,12 @@ def render(session):
         "Native Per-User Quotas",
         help="Hard monthly/daily credit enforcement via Snowflake's built-in quota objects. "
              "Blocks fire within minutes when a user breaches their limit and auto-release "
-             "at cycle reset. Preview feature — requires SNOWFLAKE.QUOTA_CREATOR on CC_SP_OWNER_ROLE.",
+             "at cycle reset. Requires SNOWFLAKE.QUOTA_CREATOR on CC_SP_OWNER_ROLE.",
     )
-
-    # ── Preview banner ────────────────────────────────────────────────────────
-    st.warning(
-        f"⚗️ **Preview feature** — Per-user quotas use Snowflake's `SNOWFLAKE.CORE.QUOTA` objects "
-        f"which are currently in public preview. Setup Phase A must be re-run to grant "
-        f"`SNOWFLAKE.QUOTA_CREATOR` to `CC_SP_OWNER_ROLE` and create the `CC_COHORT_TAG`. "
-        f"Phase C must be re-run to create `SP_CC_MANAGE_QUOTA`.  "
-        f"[Read the Snowflake docs]({_DOCS_URL})",
+    st.caption(
+        f"Generally available (Aug 2026). Supports AI domains (Cortex Code, AI Function, Cortex Agent, Snowflake Intelligence) "
+        f"and Warehouse compute. AI and Warehouse domains cannot be mixed in the same quota. "
+        f"[Snowflake docs]({_DOCS_URL})"
     )
 
     # ── Prerequisites check ───────────────────────────────────────────────────
@@ -117,22 +113,17 @@ def render(session):
             st.warning("⚠ Could not check CC_COHORT_TAG — re-run Setup Phase A")
 
         try:
-            rows = session.sql("""
-                SELECT GRANTEE_NAME FROM SNOWFLAKE.ACCOUNT_USAGE.GRANTS_TO_ROLES
-                WHERE PRIVILEGE = 'EXECUTE'
-                  AND GRANTED_ON = 'DATABASE ROLE'
-                  AND NAME = 'SNOWFLAKE.QUOTA_CREATOR'
-                  AND GRANTEE_NAME LIKE 'CC_SP_OWNER%'
-                  AND DELETED_ON IS NULL
-                LIMIT 1
-            """).collect()
-            if rows:
-                st.success(f"✓ SNOWFLAKE.QUOTA_CREATOR granted to {rows[0][0]}")
+            from config import ROLE_SP_OWNER
+            grantees = {str(r["grantee_name"]).upper() for r in
+                        session.sql("SHOW GRANTS OF DATABASE ROLE SNOWFLAKE.QUOTA_CREATOR").collect()
+                        if str(r["granted_to"]).upper() == "ROLE"}
+            if ROLE_SP_OWNER.upper() in grantees:
+                st.success(f"✓ SNOWFLAKE.QUOTA_CREATOR granted to {ROLE_SP_OWNER}")
             else:
                 st.warning("⚠ SNOWFLAKE.QUOTA_CREATOR not granted — re-run Setup Phase A or "
-                           "run: `GRANT DATABASE ROLE SNOWFLAKE.QUOTA_CREATOR TO ROLE CC_SP_OWNER_ROLE`")
+                           f"run: `GRANT DATABASE ROLE SNOWFLAKE.QUOTA_CREATOR TO ROLE {ROLE_SP_OWNER}`")
         except Exception:
-            st.info("ℹ Could not verify QUOTA_CREATOR — ACCOUNT_USAGE may have latency")
+            st.info("ℹ Could not verify QUOTA_CREATOR (the app role may not be able to list its grants).")
 
     # ── How it differs from daily limits ─────────────────────────────────────
     with st.expander("How this differs from CoCo's existing daily limits", expanded=False):
@@ -279,12 +270,30 @@ Use **daily limits** for precise per-surface control. Use **native quotas** for 
                 help="Display name. The Snowflake object will be named CC_QUOTA_<UPPER_LABEL>."
             )
         with c2:
-            roles = ["All Users"] + list_roles(session)
-            cohort_sel = st.selectbox(
-                "Cohort scope", roles, key="nq_cohort",
-                help="'All Users' = quota applies to everyone in the account. "
-                     "Selecting a role tags all current members and scopes the quota to that tag."
+            all_roles = list_roles(session)
+            cohort_pattern = st.text_input(
+                "Cohort role pattern (optional)", key="nq_cohort_pattern",
+                placeholder="e.g. ENG_*  — leave blank to pick one scope",
+                help=PATTERN_HELP + " Creates one quota per selected role, named CC_QUOTA_<NAME>_<ROLE>."
             )
+            if not cohort_pattern.strip():
+                cohort_sel = st.selectbox(
+                    "Cohort scope", ["All Users"] + all_roles, key="nq_cohort",
+                    help="'All Users' = quota applies to everyone in the account. "
+                         "Selecting a role tags all current members and scopes the quota to that tag."
+                )
+        pattern_roles = []
+        existing_names = set(quotas_df["QUOTA_NAME"]) if not quotas_df.empty else set()
+        if cohort_pattern.strip():
+            matches, excluded = match_roles(all_roles, cohort_pattern)
+            pattern_roles = pick_matches("Roles", matches, "nq_cohort_pattern_sel",
+                                         cohort_pattern, excluded)
+            if pattern_roles and quota_label.strip():
+                planned = [_quota_name_from_label(f"{quota_label}_{r}") for r in pattern_roles]
+                clashes = [q for q in planned if q in existing_names]
+                st.caption(f"Will create **{len(planned) - len(clashes)}** quota(s), e.g. `{planned[0]}`.")
+                if clashes:
+                    st.warning(f"Already exist and will be skipped: {', '.join(clashes)}")
 
         c3, c4 = st.columns(2)
         with c3:
@@ -331,7 +340,53 @@ Use **daily limits** for precise per-surface control. Use **native quotas** for 
         if not selected_domains:
             st.warning("Select at least one domain.")
 
-        if st.button("Create Quota", type="primary", key="btn_create_quota",
+        # Validate: WAREHOUSE cannot be mixed with AI domains
+        ai_domains = [d for d in selected_domains if d != "WAREHOUSE"]
+        has_warehouse = "WAREHOUSE" in selected_domains
+        if has_warehouse and ai_domains:
+            st.error("⚠ WAREHOUSE cannot be mixed with AI domains in the same quota. Create separate quotas — one for WAREHOUSE compute, one for AI domains.")
+
+        if cohort_pattern.strip():
+            new_count = sum(1 for r in pattern_roles
+                            if _quota_name_from_label(f"{quota_label}_{r}") not in existing_names)
+            if st.button(f"Create {new_count} Quotas", type="primary", key="btn_create_quota",
+                         disabled=(not quota_label.strip() or not selected_domains or not new_count)):
+                created = 0
+                for role in pattern_roles:
+                    qname = _quota_name_from_label(f"{quota_label}_{role}")
+                    if qname in existing_names:
+                        st.info(f"Skipped {qname} — already exists")
+                        continue
+                    params = {
+                        "quota_label":      f"{quota_label.strip()} ({role})",
+                        "monthly_limit":    int(monthly_limit),
+                        "daily_limit":      int(daily_limit_raw) if daily_limit_raw > 0 else None,
+                        "domains":          selected_domains,
+                        "block_enforcement": block_enforce,
+                        "notify_80":        notify_80,
+                        "notify_100":       notify_100,
+                        "cohort_role":      role,
+                    }
+                    with st.spinner(f"Creating quota {qname}…"):
+                        result = _call_sp(session, "CREATE", qname, params)
+                    if result.get("ok"):
+                        created += 1
+                        tagged = result.get("tagged_users", 0)
+                        st.success(f"✓ Quota **{qname}** created — monthly limit {monthly_limit} cr/user, "
+                                   f"{tagged} user(s) tagged")
+                        errs = result.get("errors", [])
+                        if errs:
+                            st.warning(f"{qname}: " + "; ".join(errs[:5]))
+                        log_activity(session, "CREATE_QUOTA",
+                                     details={"quota": qname, "monthly_limit": monthly_limit,
+                                              "cohort": role, "block": block_enforce,
+                                              "tagged": tagged, "pattern": cohort_pattern.strip()})
+                    else:
+                        st.error(f"✗ {qname}: {result.get('error', 'Unknown error')}")
+                if created:
+                    _load_quotas.clear()
+
+        elif st.button("Create Quota", type="primary", key="btn_create_quota",
                      disabled=(not quota_label.strip() or not selected_domains)):
             qname = _quota_name_from_label(quota_label)
             params = {

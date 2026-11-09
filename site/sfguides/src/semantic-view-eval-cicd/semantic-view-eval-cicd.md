@@ -6,7 +6,7 @@ summary: Build a GitHub Actions pipeline that validates, deploys, evaluates, and
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-fork repo link: https://github.com/sfc-gh-cnantasenamat/semantic-view-eval-cicd
+fork repo link: https://github.com/streamlit/semantic-view-eval-cicd
 
 
 # Build an Eval-Gated CI/CD Pipeline for Snowflake Semantic Views
@@ -44,10 +44,10 @@ This tutorial demonstrates gating agent-version promotion in a dedicated demo en
 
 ## Create the Repo
 
-Fork or clone [sfc-gh-cnantasenamat/semantic-view-eval-cicd](https://github.com/sfc-gh-cnantasenamat/semantic-view-eval-cicd) to your GitHub account, then push it to a new public repo. The repo needs at least one commit on a `main` branch before you can connect a git-backed Snowsight Workspace in a later step.
+Fork or clone [streamlit/semantic-view-eval-cicd](https://github.com/streamlit/semantic-view-eval-cicd) to your GitHub account, then push it to a new public repo. The repo needs at least one commit on a `main` branch before you can connect a git-backed Snowsight Workspace in a later step.
 
 ```bash
-git clone https://github.com/sfc-gh-cnantasenamat/semantic-view-eval-cicd.git
+git clone https://github.com/streamlit/semantic-view-eval-cicd.git
 cd semantic-view-eval-cicd
 git remote set-url origin https://github.com/<you>/semantic-view-eval-cicd.git
 git push -u origin main
@@ -376,4 +376,4 @@ Notebooks:
 
 Additional Reading:
 - [Getting Started with Cortex Agent Evaluations](https://www.snowflake.com/en/developers/guides/getting-started-with-cortex-agent-evaluations/)
-- [semantic-view-eval-cicd demo repo](https://github.com/sfc-gh-cnantasenamat/semantic-view-eval-cicd)
+- [semantic-view-eval-cicd demo repo](https://github.com/streamlit/semantic-view-eval-cicd)

@@ -1,0 +1,131 @@
+{
+  "managed_mcp": {
+    "status": "authored_not_deployed",
+    "specification": "managed_mcp.yaml",
+    "proposed_server_name": "FINANCIAL_VERIFICATION_MCP"
+  },
+  "financebench": {
+    "status": "awaiting_authorized_local_snapshot",
+    "automatic_downloads": false,
+    "dataset_revision": null,
+    "snapshot_sha256": null,
+    "sdk_pin": null,
+    "marketplace_access_in_your_account": "not_verified",
+    "rates_listing_candidate": "GZTYZ40XYNE",
+    "rates_export_rights": "not_verified"
+  },
+  "coco_skills": [
+    {
+      "name": "advanced-financial-modeling",
+      "description": "Scope advanced financial models. Use for real options, physics-informed neural models, or financial trajectory optimization and model validation.",
+      "path": "coco_skills/advanced-financial-modeling/SKILL.md",
+      "status": "authored_not_invocation_verified"
+    },
+    {
+      "name": "capital-markets-review",
+      "description": "Review capital-markets operations evidence. Use for trade reconciliation, settlements, corporate actions, stale prices or independent valuation controls.",
+      "path": "coco_skills/capital-markets-review/SKILL.md",
+      "status": "authored_not_invocation_verified"
+    },
+    {
+      "name": "distribution-reconciliation-review",
+      "description": "Review distribution conservation and completeness. Use for missing allocations, shortfalls, over-allocation, duplicate recipients or waterfall result reconciliation.",
+      "path": "coco_skills/distribution-reconciliation-review/SKILL.md",
+      "status": "authored_not_invocation_verified"
+    },
+    {
+      "name": "financial-evaluation-review",
+      "description": "Review financial agent evaluation evidence. Use for managed evaluation results, dataset adequacy, failed cases, tool/skill traces or configuration promotion review.",
+      "path": "coco_skills/financial-evaluation-review/SKILL.md",
+      "status": "authored_not_invocation_verified"
+    },
+    {
+      "name": "hedge-fund-review",
+      "description": "Review hedge-fund investor and reporting controls. Use for fee crystallization, high-water marks, equalization, NAV reconciliation or regulatory preparation.",
+      "path": "coco_skills/hedge-fund-review/SKILL.md",
+      "status": "authored_not_invocation_verified"
+    },
+    {
+      "name": "pe-due-diligence",
+      "description": "Review private-equity disclosure evidence. Use for CIM analysis, diligence synthesis, conflicting claims, or investment committee evidence preparation.",
+      "path": "coco_skills/pe-due-diligence/SKILL.md",
+      "status": "authored_not_invocation_verified"
+    },
+    {
+      "name": "pe-financial-modeling",
+      "description": "Review private-equity financial models. Use for DCF, leveraged buyouts, comparable companies, capitalization tables, or exit distributions.",
+      "path": "coco_skills/pe-financial-modeling/SKILL.md",
+      "status": "authored_not_invocation_verified"
+    },
+    {
+      "name": "pe-portfolio-monitoring",
+      "description": "Review portfolio-company performance against an investment case. Use for operating metrics, KPI variance, portfolio reporting or period-over-period monitoring.",
+      "path": "coco_skills/pe-portfolio-monitoring/SKILL.md",
+      "status": "authored_not_invocation_verified"
+    },
+    {
+      "name": "private-credit-fund-operations",
+      "description": "Review private-credit and fund operations. Use for covenant checks, debt service, cash reconciliation, investor reporting or agreement-specific waterfall controls.",
+      "path": "coco_skills/private-credit-fund-operations/SKILL.md",
+      "status": "authored_not_invocation_verified"
+    },
+    {
+      "name": "quant-model-validation",
+      "description": "Validate quantitative models and benchmark claims. Use for research parity, simulation diagnostics, NumPy/Numba/Rust comparisons, convergence or backtest review.",
+      "path": "coco_skills/quant-model-validation/SKILL.md",
+      "status": "authored_not_invocation_verified"
+    },
+    {
+      "name": "valuation-input-review",
+      "description": "Check valuation extraction contracts with the implemented assurance boundary. Use for missing evidence, malformed extraction, ratio errors or incompatible discount and terminal-growth assumptions.",
+      "path": "coco_skills/valuation-input-review/SKILL.md",
+      "status": "authored_not_invocation_verified"
+    }
+  ],
+  "status": "generated_not_executed",
+  "account_name": "<your account>",
+  "namespace": "<your db>.<your schema>",
+  "warehouse": "<your warehouse>",
+  "role": "<your role>",
+  "skill_sha256": "5d5f00d67109a91404d94c68c271304b29045d05a0e6d5a728024c62bbfdad3d",
+  "agent_version": "VERSION$1",
+  "run_name": "distribution_reconciliation_v1",
+  "expected_direct_dmf_value": 4,
+  "files": {
+    "00_preflight.sql": "4b022f756b3a9bc73865884cf503976f6d3d9a8fb295caf78646b81ab17796cb",
+    "01_setup.sql": "aa803db70168ba2663b689d9e1d65a9b385766e425957bd9c26fa8269f7d4814",
+    "02_checks.sql": "ee4f207ca31257fb228c7d96759f6bb6b318ceff7f2da5ca4c4f5501cfda536e",
+    "03_upload_files.sql": "3802eb525a01a62389211bb6d3f3d85f1c45ed8885d235b28b09ec3595543653",
+    "04_create_agent.sql": "eaa475d4a22af8fe1baccaabc1646bff41d943bb183806e5ecf82a707a5d3c63",
+    "05_start_evaluation_BILLABLE.sql": "4f62f217d4cf08b26e4a57917c387739aec4ac1d7e8dbfe8dd29a79983430072",
+    "06_results.sql": "60e9dc44e2e2279d27acbf792784e5e1ff13c29d528501731aa070c5f6ca32c1",
+    "07_cancel_evaluation.sql": "64e75fc29f97b5b1b5cdbf820e652e7a3ffb95506160d3583b683edcecee5969",
+    "08_create_managed_mcp.sql": "7620644c393dead95bf54c22fc76df34b2bf727c6b78607fa505a65598e0fe78",
+    "09_existing_finview_support.sql": "521a0954e35e9a4fb197ffc2c45ff8c21743c317b48ded3d2a13e2032236e6c9",
+    "agent.yaml": "fb8102768a11c42f0a719f232df6c1bd66bc6b45a2b8a62d618a0369867947c5",
+    "coco_skills/README.md": "939901d10a115b7749644dc3ce7faf39cce13aacf360262b1008362078652545",
+    "coco_skills/advanced-financial-modeling/SKILL.md": "10506290cad20f5301fdf3d44f35a3b989419a4ded066f43f9fa2419bb43edeb",
+    "coco_skills/capital-markets-review/SKILL.md": "262a284cad318461807a780b65a0a5d3c6653c57140a110240e662e8b88a0f9e",
+    "coco_skills/distribution-reconciliation-review/SKILL.md": "1aed51b51f041b7f3aef530865bed079af36b626ed2a1690c67d232ac74e1a27",
+    "coco_skills/financial-evaluation-review/SKILL.md": "d0dc475d1d43cf941745565555f0d6b5191226d74d8946a6b5eaaeed43052578",
+    "coco_skills/hedge-fund-review/SKILL.md": "76b0d90f04c440c4c8e99f51b6c74fb220d95245ff5fd343d8257a4651343391",
+    "coco_skills/pe-due-diligence/SKILL.md": "7c7642f5e36a36a2b5168f2345d1fc7f2b0f93f756030e46449319b4125c0e4f",
+    "coco_skills/pe-financial-modeling/SKILL.md": "2f1db1047a3693894ec1b6d18e4390368cacd49e8134624a4ef369855d8f6acf",
+    "coco_skills/pe-portfolio-monitoring/SKILL.md": "6a3a04b0ff8247ddefeaf63f70e0c804ad8c8865a7f80ce7ee825f2e6ec3c954",
+    "coco_skills/private-credit-fund-operations/SKILL.md": "a6049ae5c0e39b4409ad63393be7b165fbdb26eefb7ff71723a31a82c3b24d48",
+    "coco_skills/quant-model-validation/SKILL.md": "3b9e75804d5304d42efbba726e78f4f150af9ba5908f8d3fb616c6bbdd3d6649",
+    "coco_skills/valuation-input-review/SKILL.md": "cfd83b175092a9392d7426c2ffd9fca3247c622f077654d327ce1b77499568c9",
+    "evaluation.yaml": "a20585b631c6751870ee5c09d096ced75adf9e97c1a7bdb8378e64dd9617d2bd",
+    "managed_mcp.yaml": "d9e36406344e058a29f910aac54a91196a8541c64e5d1d1b3a48fb338d6abcd2",
+    "managed_mcp_readme.md": "f1e53f4060388c65197006f3448b6492f62d49096869609f97f8cc37d234cd77",
+    "skills/waterfall-reconciliation-review/SKILL.md": "5d5f00d67109a91404d94c68c271304b29045d05a0e6d5a728024c62bbfdad3d",
+    "supporting_code/assurance/__init__.py": "cf902bafce4ebbf4b9cb6a9d13227bdebdf9db4bff64b7907c5ede3b63065934",
+    "supporting_code/assurance/contracts.py": "906794f480b83f805d7fe34141c23822293f2f912c01a1ba389beda443068cf6",
+    "supporting_code/examples/__init__.py": "258de013333f2bb6385483bafcf0bce41e801d6fd3569c3cd420293fd8945973",
+    "supporting_code/examples/assurance_boundary_demo.py": "9f97aa7d20bd9c21c2aabbf704e406bf8cb579f2e4175151d63ebfd8f4b0aea2",
+    "supporting_code/examples/coco_skill_demo.py": "2c88c5b476e6d4700286a04f831b3061985485162ff7a35cef2809e7eabbdefb",
+    "supporting_code/examples/live_verification_demo/financebench_experiment.py": "632e4722abdfbbedebe217c3249740ae542818b5fe9d0ffadb2966203cf7fbbd",
+    "supporting_code/examples/live_verification_demo/financebench_retrieval.py": "d394070676ac7ae2fce94440bbb391da8dd4040ff5774be3dbf955ce8a41bd74",
+    "supporting_code/examples/live_verification_demo/managed_mcp_probe.py": "4d1833358cdff306eadad9afa9efbf4ff4e5c734387570515dbcedf75cff1ea5"
+  }
+}
