@@ -345,13 +345,13 @@ ALTER ALERT DCM_DEMO_4_DEV.PIPELINE.TASK_ERROR_RATE RESUME;
 
 SHOW ALERTS then reports it as started, checking every 60 minutes on the project's warehouse:
 
-| name | state | schedule | warehouse |
+| NAME | STATE | SCHEDULE | WAREHOUSE |
 |---|---|---|---|
 | TASK_ERROR_RATE | started | 60 MINUTE | DCM_DEMO_4_WH_DEV |
 
 Section 2 checks the graph. SHOW TASK GRAPHS reports it as STARTED, with has_pending_changes set to false: DCM committed what it deployed. SHOW COMMITTED TASKS lists the three members, each at version 1, all on the warehouse that TASK_DEFAULTS supplied. The version goes up by one with every deployment, so if you deployed more than once, you'll see a higher number here and in the rest of the guide.
 
-| name | version | predecessors | warehouse |
+| NAME | VERSION | PREDECESSORS | WAREHOUSE |
 |---|---|---|---|
 | BUILD_DAILY_SUMMARY | 1 | DCM_DEMO_4_DEV.PIPELINE.LOAD_WEATHER | DCM_DEMO_4_WH_DEV |
 | LOAD_WEATHER | 1 | (none) | DCM_DEMO_4_WH_DEV |
@@ -537,7 +537,7 @@ SHOW TASK GRAPHS reports the graph as STARTED, has_pending_changes as false, and
 
 SHOW COMMITTED TASKS shows version 2, and the new task is part of it. Every member, including the new one, inherited the shorter timeout from TASK_DEFAULTS:
 
-| name | version | predecessors | task_parameters |
+| NAME | VERSION | PREDECESSORS | TASK_PARAMETERS |
 |---|---|---|---|
 | BUILD_DAILY_SUMMARY | 2 | DCM_DEMO_4_DEV.PIPELINE.LOAD_WEATHER | USER_TASK_TIMEOUT_MS 300000 |
 | BUILD_HEAT_WARNINGS | 2 | DCM_DEMO_4_DEV.PIPELINE.LOAD_WEATHER | USER_TASK_TIMEOUT_MS 300000 |
