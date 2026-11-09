@@ -59,7 +59,6 @@ If you want to work in Snowsight rather than locally, create a Snowsight Workspa
 5. Select **Public repository**.
 
 ![Creating a Workspace from a Git repository](assets/create_workspace.png)
-Screenshot placeholder: the Create Workspace from Git repository dialog with the snowflake-dcm-projects URL filled in, taken just before clicking Create.
 
 Once the workspace is created you will see the repository files in the file explorer. Navigate to **Quickstarts/dcm-projects-for-tasks** to find two directories.
 
@@ -135,7 +134,7 @@ GRANT MODIFY LOG EVENT LEVEL ON ACCOUNT TO ROLE DCM_DEVELOPER;
 
 SNOWFLAKE.EVENTS_VIEWER is an application role, so it is granted with GRANT APPLICATION ROLE; without it the alert's condition can't read the event table. MODIFY LOG EVENT LEVEL lets the role set LOG_EVENT_LEVEL on the project's database, which is what makes the tasks log their run status. Without it the first plan fails with "must have MODIFY LOG EVENT LEVEL granted on ACCOUNT".
 
-Paste ACCOUNT_IDENTIFIER into DCM_Projects_Tasks/manifest.yml as the value of account_identifier on line 11, replacing MYORG-MY_DEV_ACCOUNT.
+> **Important: update the manifest before the first plan.** Copy ACCOUNT_IDENTIFIER from the last query of scripts/01_pre_deploy.sql into the account_identifier line of the DCM_DEV target in DCM_Projects_Tasks/manifest.yml (line 11, marked "# update to your account names").
 
 ### Create the Email Integration
 
