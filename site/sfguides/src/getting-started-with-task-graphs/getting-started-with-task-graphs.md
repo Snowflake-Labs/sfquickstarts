@@ -314,7 +314,7 @@ CREATE OR ALTER ALERT DEMO_TASK_GRAPHS.PIPELINE.TASK_ERROR_RATE
 
 A new alert is suspended, and the script leaves it that way. You'll run it on demand in Force a Failure. Resume it with ALTER ALERT ... RESUME if you want it to check every 60 minutes. SHOW ALERTS confirms it:
 
-| name | state | warehouse | schedule |
+| NAME | STATE | WAREHOUSE | SCHEDULE |
 |:-----|:------|:----------|:---------|
 | TASK_ERROR_RATE | suspended | DEMO_TASK_GRAPHS_WH | 60 MINUTE |
 
@@ -427,7 +427,7 @@ To retire a member of a resumed graph, DROP TASK fails too, and its error spells
 
 SHOW TASK GRAPHS now reports the change:
 
-| name | state | has_pending_changes |
+| NAME | STATE | HAS_PENDING_CHANGES |
 |:-----|:------|:--------------------|
 | ORDERS_PIPELINE | STARTED | true |
 
@@ -450,7 +450,7 @@ SHOW COMMITTED TASKS IN GRAPH DEMO_TASK_GRAPHS.PIPELINE.ORDERS_PIPELINE
   ->> SELECT "name", "version", "warehouse" FROM $1 ORDER BY "name";
 ```
 
-| name | version | warehouse |
+| NAME | VERSION | WAREHOUSE |
 |:-----|:--------|:----------|
 | LOAD_ORDERS | 1 | DEMO_TASK_GRAPHS_WH |
 | PUBLISH_SUMMARIES | 1 | DEMO_TASK_GRAPHS_WH |
@@ -598,7 +598,7 @@ Finally, the script suspends the graph so it won't run again on its schedule:
 ALTER TASK GRAPH DEMO_TASK_GRAPHS.PIPELINE.ORDERS_PIPELINE SUSPEND;
 ```
 
-| name | state | has_pending_changes |
+| NAME | STATE | HAS_PENDING_CHANGES |
 |:-----|:------|:--------------------|
 | ORDERS_PIPELINE | SUSPENDED | false |
 
