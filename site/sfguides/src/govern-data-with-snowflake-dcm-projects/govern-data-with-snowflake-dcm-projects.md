@@ -3,9 +3,9 @@ id: govern-data-with-snowflake-dcm-projects
 summary: Learn how to manage Snowflake security and governance objects (tags, masking policies, a row access policy, and network and authentication policies) as code with DCM Projects.
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/product/data-engineering
 environments: web
-status: Draft
+status: Published
 language: en
-feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+feedback link: https://github.com/Snowflake-Labs/sfquickstarts/issues
 fork repo link: https://github.com/Snowflake-Labs/snowflake-dcm-projects
 tags: Getting Started, DCM, Governance, Data Engineering
 
@@ -26,10 +26,12 @@ You'll build a small customer dataset containing PII, define its governance obje
 - How a one-line policy change shows up in the plan as a single ALTER
 - Which policy associations are still made in a post-deploy script
 
+### Prerequisites
+- Familiarity with DCM Projects basics: see [Get Started with Snowflake DCM Projects](https://www.snowflake.com/en/developers/guides/get-started-snowflake-dcm-projects/)
+
 ### What You'll Need
 - A [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) with ACCOUNTADMIN access, for the one-time setup script
 - (Optional) [Snowflake CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli/installation/installation) 3.24 or later, if you prefer a terminal to the Snowsight UI
-- Familiarity with DCM Projects basics: see [Get Started with Snowflake DCM Projects](https://www.snowflake.com/en/developers/guides/get-started-snowflake-dcm-projects/)
 
 ### What You'll Build
 - A customer table with PII, protected by a column masking policy and a row access policy that DCM attaches
@@ -48,7 +50,6 @@ If you want to work in Snowsight rather than locally, create a Snowsight Workspa
 5. Select **Public repository**.
 
 ![Creating a Workspace from a Git repository](assets/create_workspace.png)
-Screenshot placeholder: the Create Workspace from Git repository dialog with the snowflake-dcm-projects URL filled in, taken just before clicking Create.
 
 Once the workspace is created you will see the repository files in the file explorer. Navigate to **Quickstarts/govern-data-with-snowflake-dcm-projects** to find two directories.
 
@@ -90,9 +91,11 @@ The script is the same in every guide of this series. It runs as ACCOUNTADMIN an
 
 **4. Series container.** It creates the DCM_DEMO database and the DCM_DEMO.PROJECTS schema that holds the project objects of the series, and grants DCM_DEVELOPER USAGE on both and CREATE DCM PROJECT on the schema. A project cannot define the database or schema it lives in.
 
-**5. Project object (alternative path only).** Commented out. The first plan creates the project object for you; the SQL is there if the prompt does not appear, or if you prefer to create it yourself.
+**5. Project object.** It creates this guide's DCM Project object, DCM_DEMO.PROJECTS.DCM_GOV_PROJECT_DEV, as DCM_DEVELOPER. This is the only section that differs between the guides of the series.
 
 **6. Values for the manifest.** The last query returns your account identifier and user name.
+
+When the script finishes, refresh your browser so the DCM control panel lists the new project object.
 
 **Inherited grants.** An inherited grant covers current *and* future objects of a type inside a container. GRANT ON ALL snapshots what exists right now; GRANT ON FUTURE covers only what comes later. An inherited grant covers both, as one grant rather than one per object, which is why it is the recommended pattern in DCM Projects. It is a one-time opt-in per account ([release note](https://docs.snowflake.com/en/release-notes/2026/other/2026-09-10-inherited-grants-ga)), which the setup script turns on:
 
@@ -100,7 +103,7 @@ The script is the same in every guide of this series. It runs as ACCOUNTADMIN an
 ALTER ACCOUNT SET FEATURE_RBAC_INHERITED_GRANTS = 'ENABLED';
 ```
 
-An inherited grant cannot be combined with WITH GRANT OPTION, `CASCADE` or `RESTRICT`.
+An inherited grant cannot be combined with WITH GRANT OPTION, CASCADE or RESTRICT.
 
 This project uses two of them, to let the analyst role read every table and view in the demo database.
 
@@ -127,11 +130,11 @@ Open the DCM_Projects_Governance/sources/definitions/ folder:
 
 | File | Contents |
 |:-----|:---------|
-| infrastructure.sql | Warehouse, the DCM_DEMO_5 database, PUBLIC, RAW and GOV schemas, a restricted ANALYST role, and its grants |
-| raw.sql | A CUSTOMER table with PII columns (email, phone, city) |
-| governance.sql | Tags, a masking policy, a row access policy, a network rule and policy, an authentication policy, and the statements that attach them |
+| <span style="white-space: nowrap">infrastructure.sql</span> | Warehouse, the DCM_DEMO_5 database, PUBLIC, RAW and GOV schemas, a restricted ANALYST role, and its grants |
+| <span style="white-space: nowrap">raw.sql</span> | A CUSTOMER table with PII columns (email, phone, city) |
+| <span style="white-space: nowrap">governance.sql</span> | Tags, a masking policy, a row access policy, a network rule and policy, an authentication policy, and the statements that attach them |
 
-The warehouse in infrastructure.sql runs the queries in the post-deploy and verify scripts, for both roles. The analyst role needs some warehouse to query at all. Defining one in the project means you don't grant your own warehouse to a demo role, and `PURGE` removes it with everything else. The scripts select it with USE WAREHOUSE after every USE ROLE.
+The warehouse in infrastructure.sql runs the queries in the post-deploy and verify scripts, for both roles. The analyst role needs some warehouse to query at all. Defining one in the project means you don't grant your own warehouse to a demo role, and PURGE removes it with everything else. The scripts select it with USE WAREHOUSE after every USE ROLE.
 
 The heart of the demo is governance.sql. DCM manages the **definitions** of every object below, and also attaches the tags, the masking policy and the row access policy.
 
@@ -151,7 +154,7 @@ DEFINE MASKING POLICY DCM_DEMO_5{{env_suffix}}.GOV.EMAIL_MASK
     COMMENT = 'Masks the local-part of an email for non-privileged roles';
 ```
 
-Both policies test `CURRENT_ROLE()`, the primary role of the session, so the result depends only on the role you switch to with USE ROLE.
+Both policies test CURRENT_ROLE(), the primary role of the session, so the result depends only on the role you switch to with USE ROLE.
 
 A row access policy for row-level security:
 
@@ -198,41 +201,30 @@ Two kinds of association are still made outside DCM, in 03_post_deploy.sql. DCM 
 - **Tag-based masking:** setting a masking policy on a tag, with ALTER TAG.
 - **Network and authentication policies on a user or the account:** setting them with ALTER USER or ALTER ACCOUNT.
 
-Attaching policies to tags and users in DCM is in development.
-
 <!-- ------------------------ -->
 ## Plan and Deploy
 
-**In Snowsight:** the DCM control panel is the first tab in the bottom panel of your workspace. Select the project **govern-data-with-snowflake-dcm-projects/DCM_Projects_Governance** and the **DCM_DEV** target. Until the DCM Project object named in the manifest exists, the status indicator next to **Target** is red. Click the play button to the right of **Plan**. Snowsight asks you to confirm creating the DCM Project object with the name and owner role defined for that target in the manifest; confirm, and the plan runs.
+**In Snowsight:** the DCM control panel is the first tab in the bottom panel of your workspace. Select the project **govern-data-with-snowflake-dcm-projects/DCM_Projects_Governance**. On the right side of the same bar, select the **DCM_DEV** target and click the play button to the right of **Plan**.
 
-![DCM control panel with the project and target selected](assets/select_project.png)
-Screenshot placeholder: the DCM control panel with project govern-data-with-snowflake-dcm-projects/DCM_Projects_Governance and target DCM_DEV selected and the red status indicator, taken just before clicking Plan.
+![DCM control panel project selector with DCM_Projects_Governance selected](assets/select_project.png)
 
-**With the Snowflake CLI:** create the project object for the target, then plan. Pass the manifest's owner role for that target with --role. The CLI creates the object as the session role, so without it the object can end up owned by ACCOUNTADMIN or DCM_DEVELOPER instead of the manifest owner.
+**With the Snowflake CLI:** pass the manifest's owner role for the target with --role.
 
 ```bash
-snow dcm create --target DCM_DEV --role DCM_DEVELOPER
 snow dcm plan --target DCM_DEV --role DCM_DEVELOPER --save-output
-```
-
-**With SQL:** if the prompt does not appear, or you prefer to create the object yourself, run this as the project owner role before the first plan.
-
-```sql
-CREATE DCM PROJECT IF NOT EXISTS DCM_DEMO.PROJECTS.DCM_GOV_PROJECT_DEV
-    COMMENT = 'for testing DCM Projects Quickstarts';
 ```
 
 The plan lists 15 entities: 14 to create and 1 to alter. The creates are the warehouse, the database and its three schemas (RAW, GOV and PUBLIC), the CUSTOMER table, both tags, the masking and row access policies, the network rule and policy, the authentication policy and the analyst role. The CUSTOMER table's entry includes the row access policy being set, and its EMAIL column the masking policy. The single alter is DCM_DEVELOPER itself, which gains ownership of everything the project creates.
 
 ![Plan results: 15 entities, 14 to create and 1 to alter](assets/plan_results.png)
-Screenshot placeholder: the first plan of DCM_DEV, showing 15 entities (14 to create, 1 to alter, 0 to drop), taken after the first plan finishes.
 
 When the changeset matches what you expected, deploy it.
 
 **In Snowsight:** in the DCM control panel, set the operation to **Deploy** instead of **Plan**, add a deployment alias such as initial, and run it.
 
+![The operation selector in the DCM control panel, with Deploy below Plan](assets/deploy_selector.png)
+
 ![Deploy confirmation dialog](assets/deploy_dialog.png)
-Screenshot placeholder: the Deploy confirmation dialog with the alias initial, for the first deploy of DCM_DEV.
 
 **With the Snowflake CLI:**
 
@@ -293,7 +285,7 @@ GRANT ROLE DCM_DEMO_5_DEV_ANALYST TO USER IDENTIFIER($USER_NAME);
 ```
 
 <!-- ------------------------ -->
-## Prove It: Masking and Row-Level Security by Role
+## Verify Masking by Role
 
 The script ends with the same query run twice. As the privileged DCM_DEVELOPER role, you see every row with clear emails:
 
@@ -311,8 +303,6 @@ SELECT CUSTOMER_ID, FIRST_NAME, EMAIL, COUNTRY FROM DCM_DEMO_5_DEV.RAW.CUSTOMER 
 | 4 | David | david.nguyen@example.com | USA |
 | 5 | Elena | elena.rossi@example.it | Italy |
 
-![DCM_DEVELOPER sees all five rows with clear emails](assets/developer_unmasked.png)
-
 Then as the restricted analyst role:
 
 ```sql
@@ -327,8 +317,6 @@ SELECT CUSTOMER_ID, FIRST_NAME, EMAIL, COUNTRY FROM DCM_DEMO_5_DEV.RAW.CUSTOMER 
 | 2 | Bob | *****@example.com | USA |
 | 4 | David | *****@example.com | USA |
 
-![The analyst role sees only USA rows with masked emails](assets/analyst_masked.png)
-
 The analyst sees **only USA rows**, because the row access policy filtered out the UK and Italy customers, and **masked emails**, because of the masking policy on EMAIL. Both policies, and both attachments, are managed by DCM as code.
 
 <!-- ------------------------ -->
@@ -338,7 +326,7 @@ The analytics team now covers the UK as well as the USA, so the analyst role nee
 
 ### Edit the Row Access Policy
 
-Open DCM_Projects_Governance/sources/definitions/governance.sql and change the analyst line of CUSTOMER_COUNTRY_FILTER (line 91):
+Open DCM_Projects_Governance/sources/definitions/governance.sql and change the analyst line of the CUSTOMER_COUNTRY_FILTER row access policy:
 
 | | Analyst line |
 |:--|:--|
@@ -358,9 +346,6 @@ snow dcm plan --target DCM_DEV --role DCM_DEVELOPER --save-output
 ```
 
 Instead of fourteen creates, the plan now holds a single entity: an ALTER on CUSTOMER_COUNTRY_FILTER that changes its body from COUNTRY = 'USA' to COUNTRY IN ('USA', 'UK'). DCM compared the definition with what is deployed and found exactly one difference.
-
-![Plan results: 1 entity to alter, the row access policy body](assets/plan_redeployment.png)
-Screenshot placeholder: the second plan of DCM_DEV, showing 1 entity (0 to create, 1 to alter, 0 to drop), the ALTER on CUSTOMER_COUNTRY_FILTER with the changed body.
 
 When the changeset matches what you expected, deploy it.
 
@@ -389,19 +374,16 @@ SELECT CUSTOMER_ID, FIRST_NAME, EMAIL, COUNTRY FROM DCM_DEMO_5_DEV.RAW.CUSTOMER 
 | 3 | Chloe | *****@example.co.uk | UK |
 | 4 | David | *****@example.com | USA |
 
-![The analyst role now sees USA and UK rows, emails still masked](assets/analyst_uk.png)
-Screenshot placeholder: the analyst query in 04_verify_change.sql after the second deploy, four rows including Chloe (UK) with a masked email.
-
 Chloe now appears, and her email is still masked: the row access policy changed, the masking policy did not. The script's last statement, DESCRIBE ROW ACCESS POLICY, shows the deployed body with the new IN list.
 
 <!-- ------------------------ -->
-## Cleanup
+## Clean Up
 
-Before tearing anything down, know that there is a gentler option. DROP DCM PROJECT on its own, without a `PURGE` first, removes the project and its deployment history and leaves every entity, grant and attachment in place as an ordinary unmanaged object. To release a single entity, call SYSTEM$UNMANAGE_ENTITY_FROM_DCM_PROJECT with its type and name; to release grants or attachments, pass the rendered statements to SYSTEM$UNMANAGE_FROM_DCM_PROJECT. Then remove the matching statements from your definitions, or the next deploy takes them back.
+Before tearing anything down, know that there is a gentler option. DROP DCM PROJECT on its own, without a PURGE first, removes the project and its deployment history and leaves every entity, grant and attachment in place as an ordinary unmanaged object. To release a single entity, call SYSTEM$UNMANAGE_ENTITY_FROM_DCM_PROJECT with its type and name; to release grants or attachments, pass the rendered statements to SYSTEM$UNMANAGE_FROM_DCM_PROJECT. Then remove the matching statements from your definitions, or the next deploy takes them back.
 
 When you're done, open scripts/05_cleanup.sql and run it as DCM_DEVELOPER. In order, it:
 
-1. **Remove the associations made outside DCM.** The post-deploy script made these with ALTER statements, so `PURGE` doesn't know about them. A network policy can't be dropped while it is set on a user, and `PURGE` fails on a masking policy that is still set on a tag, so they go first.
+1. **Remove the associations made outside DCM.** The post-deploy script made these with ALTER statements, so PURGE doesn't know about them. A network policy can't be dropped while it is set on a user, and PURGE fails on a masking policy that is still set on a tag, so they go first.
 
     ```sql
     ALTER USER IF EXISTS DCM_DEMO_5_DEV_SVC UNSET NETWORK_POLICY;
@@ -409,19 +391,19 @@ When you're done, open scripts/05_cleanup.sql and run it as DCM_DEVELOPER. In or
     ALTER TAG IF EXISTS DCM_DEMO_5_DEV.GOV.PII UNSET MASKING POLICY DCM_DEMO_5_DEV.GOV.EMAIL_MASK;
     ```
 
-2. **Purge the project.** `PURGE` drops every entity the project manages (database, schemas, table, tags, masking and row access policies, network rule and policy, authentication policy, warehouse, the analyst role and all their data), revokes its grants and removes its attachments. It is irreversible and not transactional: if it fails, some objects may already be gone. The known cause in this guide is a masking policy still set on a tag; re-run section 1, then re-run `PURGE`.
+2. **Purge the project.** PURGE drops every entity the project manages (database, schemas, table, tags, masking and row access policies, network rule and policy, authentication policy, warehouse, the analyst role and all their data), revokes its grants and removes its attachments. It is irreversible and not transactional: if it fails, some objects may already be gone. The known cause in this guide is a masking policy still set on a tag; re-run section 1, then re-run PURGE.
 
     ```sql
     EXECUTE DCM PROJECT DCM_DEMO.PROJECTS.DCM_GOV_PROJECT_DEV PURGE;
     ```
 
-3. **Drop the project object**, which `PURGE` leaves behind.
+3. **Drop the project object**, which PURGE leaves behind.
 
     ```sql
     DROP DCM PROJECT IF EXISTS DCM_DEMO.PROJECTS.DCM_GOV_PROJECT_DEV;
     ```
 
-4. **Objects created outside the project.** The demo service user lives outside the project, so `PURGE` does not touch it; the script drops it.
+4. **Objects created outside the project.** The demo service user lives outside the project, so PURGE does not touch it; the script drops it.
 
     ```sql
     DROP USER IF EXISTS DCM_DEMO_5_DEV_SVC;
@@ -443,10 +425,10 @@ When you're done, open scripts/05_cleanup.sql and run it as DCM_DEVELOPER. In or
     -- ALTER ACCOUNT SET FEATURE_RBAC_INHERITED_GRANTS = 'DISABLED';
     ```
 
-7. **Verify.** The script ends with four SHOW statements. The first three, for the database, the warehouse and the service user, come back empty. The project list no longer contains DCM_GOV_PROJECT_DEV, but still lists the projects of any other guide in this series you ran. If `PURGE` fails, there is nothing scheduled to suspend first: this guide defines no tasks, alerts or dynamic tables.
+7. **Verify.** The script ends with four SHOW statements. The first three, for the database, the warehouse and the service user, come back empty. The project list no longer contains DCM_GOV_PROJECT_DEV, but still lists the projects of any other guide in this series you ran. If PURGE fails, there is nothing scheduled to suspend first: this guide defines no tasks, alerts or dynamic tables.
 
 <!-- ------------------------ -->
-## Conclusion and Resources
+## Conclusion And Resources
 
 You managed a full set of Snowflake governance objects as code with DCM Projects, proved that a restricted role is held back by both column masking and row-level security, and changed what that role sees with a one-line edit that the plan reported as a single ALTER.
 
@@ -455,7 +437,7 @@ You managed a full set of Snowflake governance objects as code with DCM Projects
 - Attaching the masking and row access policies with ATTACH MASKING POLICY and ATTACH ROW ACCESS POLICY
 - Changing a policy body in a definition and deploying it as a single ALTER
 - Setting network and authentication policies on a dedicated user instead of the account
-- Which associations still live in a post-deploy script, and how to clean them up before `PURGE`
+- Which associations still live in a post-deploy script, and how to clean them up before PURGE
 
 ### What's Next
 - Write a masking policy for PHONE and attach it with ATTACH MASKING POLICY
