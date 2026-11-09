@@ -109,7 +109,7 @@ This project uses two of them, to let the analyst role read every table and view
 
 The governance grants at the end of section 3 are there for this guide. Network policies are account-level objects, so creating one needs CREATE NETWORK POLICY, and setting an authentication policy on a user needs APPLY AUTHENTICATION POLICY. DCM_DEVELOPER owns the tags and policies it deploys and the table they protect, and ownership is enough for DCM to attach them, so the script grants no APPLY TAG or APPLY ROW ACCESS POLICY. APPLY MASKING POLICY is there for one statement: the post-deploy script sets a masking policy on a tag, which needs it at the account level.
 
-Open DCM_Projects_Governance/manifest.yml and paste the account identifier into the account_identifier line of the DCM_DEV target (line 11), which carries the comment "update to your account names".
+> **Important: update the manifest before the first plan.** Copy ACCOUNT_IDENTIFIER from the last query of scripts/01_pre_deploy.sql into the account_identifier line of the DCM_DEV target in DCM_Projects_Governance/manifest.yml (line 11, marked "# update to your account names").
 
 ### Create the Demo Service User
 
