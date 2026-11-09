@@ -45,7 +45,7 @@ All data in this guide is synthetic.
 
 ### What You'll Need
 
-- A Snowflake account and a role that can create a warehouse and a database. A sandbox account with `ACCOUNTADMIN` is simplest.
+- A Snowflake account and a role that can create a warehouse and a database.
 - Access to Cortex Agents and Cortex AI functions. If a model isn't available in your region, enable [cross-region inference](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cross-region-inference).
 - A budget of about $1 for the first evaluation run and $10–12 for each full run, at list price.
 
