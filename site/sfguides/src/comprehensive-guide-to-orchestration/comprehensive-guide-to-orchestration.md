@@ -171,9 +171,7 @@ The task graph object gives the pipeline its own identity. A graph object owns:
 - **Member defaults** (TASK_DEFAULTS): settings such as the warehouse or log level that apply to every member unless the member overrides them.
 - **Membership**: every task reachable from the root through AFTER relationships.
 
-![Anatomy of a task graph object: graph settings, member defaults, and member tasks linked by AFTER](assets/task_graph_object_anatomy.png)
-
-Screenshot placeholder: diagram of a task graph object box holding SCHEDULE, OVERLAP_POLICY, CONFIG and TASK_DEFAULTS, with a root task, two parallel children, a joining child and a finalizer inside it.
+![A task graph object in Snowsight: a root task, two parallel children, a joining child, a conditional child and a finalizer, all inside one graph](assets/task_graph_object_anatomy.png)
 
 ### Three kinds of settings
 
@@ -510,9 +508,7 @@ ORDER BY SCHEDULED_TIME DESC;
 
 Snowsight also shows tasks and task graphs, including each run's graph with the state of every task. See [View tasks and task graphs in Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight-tasks).
 
-![The Snowsight task graph view of a run, with the state of each member task](assets/snowsight_task_graph_run.png)
-
-Screenshot placeholder: Snowsight graph view of one DEMO_ORDERS_PIPELINE run, showing succeeded, failed and skipped members.
+![The Snowsight graph view of one DEMO_ORDERS_PIPELINE run: the root and finalizer succeeded, one child failed and one child was skipped by its condition](assets/snowsight_task_graph_run.png)
 
 ### Security
 
