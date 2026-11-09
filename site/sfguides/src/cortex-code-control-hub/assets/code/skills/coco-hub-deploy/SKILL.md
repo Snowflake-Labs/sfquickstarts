@@ -74,6 +74,8 @@ Ask the user ALL of these questions before doing anything. Do not proceed until 
    a) ACCOUNTADMIN (simplest — has all required privileges)
    b) Custom role (e.g. PLATFORM_ADMIN, DBA_ROLE)
       → If custom role: what is the role name?
+   Note: whichever role owns the app, it must be owned by ACCOUNTADMIN while Setup
+   Phases A and C run (the credit-limit SPs only work when ACCOUNTADMIN owns them).
 ```
 
 ### Question Set E — App Admin Roles
@@ -88,7 +90,7 @@ Ask the user ALL of these questions before doing anything. Do not proceed until 
    c) A completely custom new role you want to create specifically for CoCo
 
    Note: End users (non-admins) only see Home and Credit Requests.
-   Admins see all 16 pages. You can add multiple roles.
+   Admins see all 18 pages. You can add multiple roles.
 ```
 
 ### Question Set F — Existing Infrastructure
@@ -96,7 +98,7 @@ Ask the user ALL of these questions before doing anything. Do not proceed until 
 ```
 6. Do you already have:
    [ ] A database and schema created (or will the deploy role create them?)
-   [ ] Cross-region inference enabled? (ALTER ACCOUNT SET CORTEX_ENABLED_CROSS_REGION = 'ANY')
+   [ ] Cross-region inference enabled? (ALTER ACCOUNT SET CORTEX_ENABLED_CROSS_REGION = 'ANY_REGION')
    [ ] AI Observability reader granted? (for prompt/token data)
    [ ] ACCOUNT_USAGE access for the SP owner role? (for credit data)
 
@@ -152,7 +154,7 @@ GRANT MANAGE GRANTS ON ACCOUNT TO ROLE MY_DEPLOY_ROLE;
 
 -- 4. Data access (for SP_CC_REFRESH_USAGE_SUMMARIES and SP_CC_CLASSIFY_PROMPTS)
 GRANT IMPORTED PRIVILEGES ON DATABASE SNOWFLAKE TO ROLE MY_DEPLOY_ROLE;
-GRANT DATABASE ROLE SNOWFLAKE.AI_OBSERVABILITY_READER TO ROLE MY_DEPLOY_ROLE;
+GRANT APPLICATION ROLE SNOWFLAKE.AI_OBSERVABILITY_READER TO ROLE MY_DEPLOY_ROLE;
 
 -- 5. SPCS only (skip if Streamlit on Warehouse)
 GRANT USAGE ON COMPUTE POOL MY_COMPUTE_POOL TO ROLE MY_DEPLOY_ROLE;
@@ -164,7 +166,9 @@ GRANT ROLE MY_DEPLOY_ROLE TO USER MY_USERNAME;
 ```
 
 **If your security team won't grant MANAGE GRANTS:**
-Have a DBA run Setup Phase A under ACCOUNTADMIN, then use the custom role for all subsequent operations.
+Have a DBA transfer the app to ACCOUNTADMIN and run Setup Phases A and C, then transfer it back to the custom role for day-to-day use.
+
+**Either way:** Phases A and C (on install and on every upgrade) must run while ACCOUNTADMIN owns the app.
 
 ---
 
@@ -215,6 +219,7 @@ entities:
       - pages/alerts.py
       - pages/model_intelligence.py
       - pages/user_intelligence.py
+      - pages/user_quotas.py
     stage: CORTEX_CODE_CREDIT_MANAGER_STAGE
 ```
 
@@ -239,7 +244,7 @@ admin:
     # - DBA_ROLE
 ```
 
-**Important:** Do NOT put your personal dev account name (e.g. RCHAND, APPS). Leave blank if unsure — the sidebar Deployment Target picker overrides this at runtime.
+**Important:** Do NOT copy sample or developer values. Leave blank if unsure — the sidebar Deployment Target picker overrides this at runtime.
 
 ---
 
@@ -265,10 +270,10 @@ Open the app → **Setup** → expand **"⚡ Account Prerequisites"**. Run each 
 
 | Step | SQL | Required? |
 |---|---|---|
-| 1 | `ALTER ACCOUNT SET CORTEX_ENABLED_CROSS_REGION = 'ANY_REGION';` (or `'ANY'` on older accounts — verify with `SHOW PARAMETERS LIKE 'CORTEX_ENABLED_CROSS_REGION' IN ACCOUNT`) | ✅ Needed for most models |
-| 2 | `GRANT DATABASE ROLE SNOWFLAKE.AI_OBSERVABILITY_READER TO ROLE CC_SP_OWNER_ROLE` (if role doesn't exist: `GRANT DATABASE ROLE SNOWFLAKE.CORTEX_USER TO ROLE CC_SP_OWNER_ROLE`) | ✅ For prompt/token data |
+| 1 | `ALTER ACCOUNT SET CORTEX_ENABLED_CROSS_REGION = 'ANY_REGION';` (or region groups such as `'AWS_US'` — verify with `SHOW PARAMETERS LIKE 'CORTEX_ENABLED_CROSS_REGION' IN ACCOUNT`) | ✅ Needed for most models |
+| 2 | `GRANT APPLICATION ROLE SNOWFLAKE.AI_OBSERVABILITY_READER TO ROLE CC_SP_OWNER_ROLE` (an application role; `CORTEX_USER` is not a substitute) | ✅ For prompt/token data |
 | 3 | `GRANT IMPORTED PRIVILEGES ON DATABASE SNOWFLAKE TO ROLE CC_SP_OWNER_ROLE` | ✅ For credit/usage data |
-| 4 | `GRANT DATABASE ROLE SNOWFLAKE.CORTEX_USER TO ROLE CC_USER_ROLE` + `GRANT USE AI FUNCTIONS ON ACCOUNT TO ROLE CC_USER_ROLE` | ✅ For users to call AI functions |
+| 4 | `GRANT DATABASE ROLE SNOWFLAKE.CORTEX_USER TO ROLE CC_USER_ROLE` (or `CORTEX_AGENT_USER`). `USE AI FUNCTIONS` is granted to PUBLIC by default — grant it only if revoked | ✅ For users to call AI functions |
 | 5 | Per-surface daily limits: `ALTER ACCOUNT SET CORTEX_CODE_SNOWSIGHT_DAILY_EST_CREDIT_LIMIT_PER_USER = 20` (also CLI, DESKTOP). Old `CORTEX_CODE_CREDIT_LIMIT` is **deprecated** and no longer exists. | Optional |
 | 6 | AI Guardrails (Enterprise only) | Optional |
 | 7 | Native AI Budgets (Preview) | Optional |
@@ -279,30 +284,33 @@ Status chips on the page show ✓ green (done) / ⚠ amber (not yet configured).
 
 ## Phase 4 — Run Setup Phases in the App
 
-Open the app → **Setup** sidebar. Run in order:
+Open the app → **Setup** sidebar. **The app must be owned by ACCOUNTADMIN for Phases A and C.** Run in order:
 
 | Phase | Button | What it does |
 |---|---|---|
-| **A** | Run Phase A — Create Objects | Creates all tables, roles, tasks, alerts, stream, email integration, seeds 8 policy rules |
+| **A** | Run Phase A — Create Objects | Creates all tables (incl. temporary-limit columns), roles, 5 tasks, 2 alerts, stream, email integration, core/bulk/rebalance/model-access SPs, seeds 8 policy rules, grants SP USAGE to CC_APP_ROLE and CC_SP_OWNER_ROLE |
 | A | Grant App Roles to Me | Grants CC_ADMIN_ROLE + CC_USER_ROLE to current user |
 | **B** | Run Phase B — Seed Defaults | Populates CC_APP_CONFIG with default settings |
-| **C** | Run Phase C — Create SPs | Creates SP_CC_CLASSIFY_PROMPTS, SP_CC_CHECK_ALERTS, SP_CC_EVALUATE_RESPONSES, SP_CC_REFRESH_BUDGET_USAGE, **SP_CC_MANAGE_QUOTA** (5 total) |
+| **C** | Run Phase C — Create SPs | Creates SP_CC_CLASSIFY_PROMPTS, SP_CC_CHECK_ALERTS, SP_CC_EVALUATE_RESPONSES, SP_CC_REFRESH_BUDGET_USAGE, **SP_CC_MANAGE_QUOTA**, plus SP_CC_LIST_USERS, SP_CC_GET_USER_PARAM, SP_CC_MANAGE_ROLE_GRANT (8 total); re-applies USAGE grants |
 | D1 | Run D1 — Backfill Usage | Backfill credit/usage history (pick 90 days) |
 | D2 | Run D2 — Backfill Prompts | Backfill prompt events, insights, surface detection (pick 90 days, 10–30 min) |
 | D3 | Run D3 — Model Config | Seed model tier config (one-time) |
 | D4 | Run D4 — Quality Eval | Custom Quality (Experimental) — optional, costs credits |
-| **E** | Run Phase E — Verify | Confirm all 70+ objects exist (green chips) |
+| **E** | Run Phase E — Verify | Confirm all objects exist, credit-limit SPs are ACCOUNTADMIN-owned, temporary-limit columns present (green chips) |
 
 ---
 
 ## Phase 5 — Post-Install
 
-### Resume nightly tasks
+### Check scheduled tasks and alerts
+Phase A starts `CC_REFRESH_USAGE_SUMMARIES`, `CC_DAILY_RESET_LIMITS`, `CC_EXPIRE_TEMPORARY_CREDITS` and `CC_CLASSIFY_PROMPTS_TASK`. The budget refresh task and both alerts start suspended.
 ```sql
-ALTER TASK CC_CLASSIFY_PROMPTS_TASK RESUME;
-ALTER TASK CC_REFRESH_USAGE_SUMMARIES RESUME;
--- Only if enforcing credit limits:
--- ALTER TASK CC_DAILY_RESET_LIMITS RESUME;
+SHOW TASKS LIKE 'CC_%' IN SCHEMA <db>.<schema>;
+-- If you use AI Budgets:
+ALTER TASK <db>.<schema>.CC_REFRESH_BUDGET_USAGE RESUME;
+-- After configuring alert email (Alerts page):
+ALTER ALERT <db>.<schema>.CC_ALERT_CHECK RESUME;
+ALTER ALERT <db>.<schema>.CC_REALTIME_VIOLATION_ALERT RESUME;
 ```
 
 > **If tasks self-suspend after Phase A or D1:**  
@@ -336,16 +344,40 @@ If you want to add an existing org role (e.g. PLATFORM_ADMIN) as an app admin la
 
 ---
 
-## Upgrade Path (code update on existing install)
+## Upgrading an Existing Installation (code update on existing install)
+
+This release adds temporary-limit expiry, new security checks on the privileged stored procedures, and keeps the credit-limit stored procedures owned by ACCOUNTADMIN. **Run Phases A and C after updating.**
+
+1. Get the latest code from `assets/code/` and keep your own values in `config.yaml` and `snowflake.yml` (database, schema, warehouse, admin roles).
+2. Redeploy the app: `snow streamlit deploy --replace --connection <your_connection>`
+3. Make sure the app is **owned by ACCOUNTADMIN** — Setup runs as the app owner, and the credit-limit SPs only work when ACCOUNTADMIN owns them:
+   ```sql
+   SHOW STREAMLITS IN SCHEMA <db>.<schema>;   -- check the "owner" column
+   GRANT OWNERSHIP ON STREAMLIT <db>.<schema>.CORTEX_CODE_CREDIT_MANAGER TO ROLE ACCOUNTADMIN COPY CURRENT GRANTS;
+   ```
+4. If not done before, grant AI Observability access (it is an **application** role):
+   `GRANT APPLICATION ROLE SNOWFLAKE.AI_OBSERVABILITY_READER TO ROLE CC_SP_OWNER_ROLE;`
+5. Open the app → **Setup** → run **Phase A**. It is idempotent: it adds the temporary-limit columns to `CC_CREDIT_CONFIG`, creates the hourly `CC_EXPIRE_TEMPORARY_CREDITS` task, recreates the SPs, re-applies USAGE grants, and resumes alerts and the budget refresh task if they were running.
+6. Run **Phase C**.
+7. Run **Phase E**. All checks must be green — including ownership of the credit-limit SPs and the new columns.
+8. Confirm the tasks are running: `SHOW TASKS LIKE 'CC_%' IN SCHEMA <db>.<schema>;`
+
+**Behaviour changes in this release**
+- Model Access no longer offers an account-wide option (`CORTEX_MODELS_ALLOWLIST` is retired by BCR-2378). Use **Role Directly** or **Role Members** (model RBAC).
+- Access grants offer `CORTEX_USER` or `CORTEX_AGENT_USER`; `COPILOT_USER` is transitional (BCR-2445).
+- Temporary limits created before this release have no expiry date recorded and will not auto-revert — re-apply them as Temporary if needed.
+- If the app was owned by a custom role, transfer it to ACCOUNTADMIN for Phases A and C, then transfer it back.
+
+### What to re-run for later code changes
 
 After pulling latest code and running `snow streamlit deploy --replace`:
 
 | What changed | Action needed |
 |---|---|
 | `pages/*.py` only | None — takes effect on reload |
-| `sp_definitions.py` | **Phase C** (recreate SPs) |
+| `sp_definitions.py` | **Phase C** as ACCOUNTADMIN (recreate SPs) |
 | `sp_definitions.py` + new data needed | **Phase C** then **Phase D2** (re-backfill) |
-| `prerequisites.sql` (new tables) | **Phase A** (idempotent — safe to re-run) |
+| `prerequisites.sql` (any change) | **Phase A** as ACCOUNTADMIN (idempotent — safe to re-run) |
 | `config.yaml` admin roles | None — read at runtime |
 
 ### New column migration (existing install)
@@ -375,6 +407,9 @@ Then redeploy + Phase C + Phase D2.
 |---|---|---|
 | `Database 'X' does not exist` | Wrong connection or snowflake.yml | Check connection and database |
 | `Insufficient privileges to MANAGE GRANTS` | Custom role missing MANAGE GRANTS | Grant it or run Phase A as ACCOUNTADMIN |
+| Credit-limit change fails `Insufficient privileges` | Phase A/C ran while the app was owned by a non-ACCOUNTADMIN role | Transfer the app to ACCOUNTADMIN, re-run Phases A and C, check Phase E |
+| Task/alert fails `Unknown user-defined function` | SP USAGE grants lost after SPs were recreated | Re-run Phase A (or C) — both re-apply the grants |
+| Credit-request approval failed | Limit change failed | Request stays PENDING with the error shown; fix the cause and re-approve |
 | `AI_OBSERVABILITY_EVENTS not found` | Missing AI Observability reader | Grant `SNOWFLAKE.AI_OBSERVABILITY_READER` to CC_SP_OWNER_ROLE (Account Prerequisites Step 2) |
 | Phase E SHOW TASKS/ALERTS slow | Still running IN ACCOUNT | Ensure latest code deployed — now scoped to IN SCHEMA |
 | Snowsight sessions show as "Surface Unknown" | Snowflake doesn't populate `entrypoint` for Snowsight | Run Phase C (recreates SP with client_type fallback) + Phase D2 (re-backfill) |
@@ -387,11 +422,11 @@ Then redeploy + Phase C + Phase D2.
 | Custom Quality (Experimental) scores very low (0.2–0.3) | Evaluating planning steps not final responses | Run Phase C (updated SP), truncate CC_RESPONSE_QUALITY, re-run D4 |
 | Alert health shows STARTED but no alerts fire | All rules disabled in Alert Rules tab | Expected — scheduler runs but nothing triggers. Shows info message in latest version. |
 | "Pii Risk" showing in category chart | Old deploy with .str.title() bug | Redeploy — now shows "PII Risk" correctly |
-| Config.yaml has RCHAND/APPS | Developer's personal values were left in | Set database/schema to empty string — uses CURRENT_DATABASE/SCHEMA |
+| Config.yaml has sample/developer database or schema values | Values from another environment were left in | Set database/schema to empty string — uses CURRENT_DATABASE/SCHEMA |
 | COCO_HUB_ADMIN role not found | Hardcoded in old config.yaml | Comment it out — config.yaml admin.roles should only have roles that exist in the account |
 | ⚡ Native Quotas page shows "SP_CC_MANAGE_QUOTA missing" | Phase C not re-run after latest deploy | Run Setup → Phase C. The SP was added in v3.1. |
 | ⚡ Native Quotas — quota created but tagged_users=0 | CC_USER_COHORT_RESOLVED is empty | Run Setup → Phase D → Resolve User Cohorts first. Cohort members must be resolved before quota creation. |
-| ⚡ Native Quotas — SNOWFLAKE.QUOTA_CREATOR grant fails | Feature not available in this account | Contact Snowflake to enable per-user quotas preview. Until then use CoCo's daily limits. |
+| ⚡ Native Quotas — SNOWFLAKE.QUOTA_CREATOR grant fails | Feature not available in this account | Per-user quotas are generally available — check that the `SNOWFLAKE.QUOTA_CREATOR` database role exists in your account and edition. Until then use CoCo's daily limits. |
 | ⚡ Native Quotas — CC_COHORT_TAG not found | Phase A not re-run after latest deploy | Run Setup → Phase A (safe to re-run — uses CREATE TAG IF NOT EXISTS). |
 | `Cannot execute task/alert, USAGE privilege on warehouse required` | Snowflake requires explicit EXECUTE TASK / EXECUTE ALERT even for ACCOUNTADMIN in some accounts | Run before Phase A: `GRANT EXECUTE TASK ON ACCOUNT TO ROLE ACCOUNTADMIN; GRANT EXECUTE ALERT ON ACCOUNT TO ROLE ACCOUNTADMIN;` |
 | `CC_EMAIL_INTEGRATION` creation fails silently | Requires ACCOUNTADMIN — not available to lower roles | Run `CREATE NOTIFICATION INTEGRATION CC_EMAIL_INTEGRATION TYPE=EMAIL ENABLED=TRUE;` manually as ACCOUNTADMIN after Phase A |
@@ -428,8 +463,9 @@ TRUNCATE TABLE <db>.<schema>.CC_RESPONSE_QUALITY;
 - **Do NOT** modify any `.py` files during deployment
 - **Do NOT** modify `prerequisites.sql`
 - **Do NOT** run `prerequisites.sql` directly without substituting placeholders (`__DB__`, `__SCHEMA__`, `__WH__`). Use Setup Phase A or the sed command in the deployment guide.
-- **Do NOT** enable `CC_DAILY_RESET_LIMITS` task unless you plan to enforce credit limits
-- **Do NOT** drop `CC_SP_OWNER_ROLE` — all SPs execute as this role
-- **Do NOT** leave `RCHAND` or `APPS` in config.yaml — use empty strings or your actual values
+- **Do NOT** transfer ownership of the credit-limit SPs away from ACCOUNTADMIN (SET/UNSET credit limit, REBALANCE, DAILY_RESET, EXPIRE_TEMPORARY, BULK_SET_COHORT_LIMITS, COMPUTE_REBALANCE)
+- **Do NOT** run Setup Phases A or C while the app is owned by a role other than ACCOUNTADMIN
+- **Do NOT** drop `CC_SP_OWNER_ROLE` — it owns the tables, tasks and alerts, and most SPs
+- **Do NOT** leave sample values in config.yaml — use empty strings or your actual database and schema
 - **Do NOT** add a role to config.yaml admin.roles that doesn't exist in the account (causes startup error)
 - **Do NOT** use `definition_version: 1` or `"1.1"` in snowflake.yml unless you need template variables — use `2` with the explicit artifacts list shown above

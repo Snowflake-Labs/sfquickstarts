@@ -1,0 +1,296 @@
+version: 0.1.1
+semantic_model:
+- name: tpch_revenue_if
+  description: 'Order-to-cash model over interface views in OSI_GUIDE.TPCH. One governed definition of revenue for
+    dashboards, notebooks and AI agents.
+
+    '
+  ai_context: '"Revenue" always means net_revenue: extended price after line discount, excluding returned lines.
+    Do not use sales_order.total_price for revenue; it is the order header amount including tax. Use gross_revenue
+    only when the user explicitly asks for gross or list revenue.
+
+    '
+  datasets:
+  - name: order_line
+    source: OSI_GUIDE.TPCH.ORDER_LINE
+    primary_key:
+    - order_line_key
+    description: Order lines. Grain is one row per order line; revenue is measured here.
+    fields:
+    - name: order_line_key
+      datatype: String
+      expression:
+        dialects:
+        - dialect: ANSI_SQL
+          expression: ORDER_LINE_KEY
+      description: 'Unique order line identifier: order key and line number combined.'
+      dimension:
+        is_time: false
+    - name: order_key
+      datatype: Integer
+      expression:
+        dialects:
+        - dialect: ANSI_SQL
+          expression: ORDER_KEY
+      description: Order the line belongs to. Several lines share one order.
+      dimension:
+        is_time: false
+    - name: return_flag
+      datatype: String
+      expression:
+        dialects:
+        - dialect: ANSI_SQL
+          expression: RETURN_FLAG
+      description: 'Return status of the line: R = returned, A = accepted, N = not yet known.'
+      dimension:
+        is_time: false
+    - name: ship_date
+      datatype: Date
+      expression:
+        dialects:
+        - dialect: ANSI_SQL
+          expression: SHIP_DATE
+      description: Date the line was shipped. Use order_date, not ship_date, for revenue over time.
+      dimension:
+        is_time: true
+    - name: extended_price
+      datatype: Decimal
+      expression:
+        dialects:
+        - dialect: ANSI_SQL
+          expression: EXTENDED_PRICE
+      description: 'Gross line amount: quantity times unit list price, before discount and tax. Also called list
+        revenue. Not the company definition of revenue.
+
+        '
+    - name: net_amount_kept
+      datatype: Decimal
+      expression:
+        dialects:
+        - dialect: ANSI_SQL
+          expression: CASE WHEN RETURN_FLAG <> 'R' THEN EXTENDED_PRICE * (1 - DISCOUNT) ELSE 0 END
+      description: 'Revenue per order line, the company definition: amount after discount, before tax, zero for
+        returned lines. Also called net sales. Sum it for revenue.
+
+        '
+  - name: sales_order
+    source: OSI_GUIDE.TPCH.SALES_ORDER
+    primary_key:
+    - order_key
+    description: Order headers. One row per order.
+    fields:
+    - name: order_key
+      datatype: Integer
+      expression:
+        dialects:
+        - dialect: ANSI_SQL
+          expression: ORDER_KEY
+      description: Unique order identifier.
+      dimension:
+        is_time: false
+    - name: customer_key
+      datatype: Integer
+      expression:
+        dialects:
+        - dialect: ANSI_SQL
+          expression: CUSTOMER_KEY
+      description: Customer who placed the order.
+      dimension:
+        is_time: false
+    - name: order_date
+      datatype: Date
+      expression:
+        dialects:
+        - dialect: ANSI_SQL
+          expression: ORDER_DATE
+      description: Date the order was placed. Also called the booking date. The default date for revenue over time.
+      dimension:
+        is_time: true
+      ai_context: 'Synonyms: date, booking date'
+    - name: order_year
+      datatype: Integer
+      expression:
+        dialects:
+        - dialect: ANSI_SQL
+          expression: EXTRACT(YEAR FROM ORDER_DATE)
+      description: Calendar year of the order date.
+      dimension:
+        is_time: true
+    - name: order_priority
+      datatype: String
+      expression:
+        dialects:
+        - dialect: ANSI_SQL
+          expression: ORDER_PRIORITY
+      description: Priority assigned to the order, from 1-URGENT to 5-LOW.
+      dimension:
+        is_time: false
+    - name: total_price
+      datatype: Decimal
+      expression:
+        dialects:
+        - dialect: ANSI_SQL
+          expression: TOTAL_PRICE
+      description: 'Order header amount including tax. Not revenue: never use it for revenue or sales questions.
+        Kept for reconciliation only.
+
+        '
+  - name: customer
+    source: OSI_GUIDE.TPCH.CUSTOMER
+    primary_key:
+    - customer_key
+    fields:
+    - name: customer_key
+      datatype: Integer
+      expression:
+        dialects:
+        - dialect: ANSI_SQL
+          expression: CUSTOMER_KEY
+      description: Unique customer identifier.
+      dimension:
+        is_time: false
+    - name: nation_key
+      datatype: Integer
+      expression:
+        dialects:
+        - dialect: ANSI_SQL
+          expression: NATION_KEY
+      description: Nation the customer is located in.
+      dimension:
+        is_time: false
+    - name: market_segment
+      datatype: String
+      expression:
+        dialects:
+        - dialect: ANSI_SQL
+          expression: MARKET_SEGMENT
+      description: Market segment of the customer, also called customer segment.
+      dimension:
+        is_time: false
+      ai_context: 'Synonyms: segment, customer segment'
+    description: Customers. One row per customer.
+  - name: nation
+    source: OSI_GUIDE.TPCH.NATION
+    primary_key:
+    - nation_key
+    fields:
+    - name: nation_key
+      datatype: Integer
+      expression:
+        dialects:
+        - dialect: ANSI_SQL
+          expression: NATION_KEY
+      description: Unique nation identifier.
+      dimension:
+        is_time: false
+    - name: region_key
+      datatype: Integer
+      expression:
+        dialects:
+        - dialect: ANSI_SQL
+          expression: REGION_KEY
+      description: Region the nation belongs to.
+      dimension:
+        is_time: false
+    - name: nation_name
+      datatype: String
+      expression:
+        dialects:
+        - dialect: ANSI_SQL
+          expression: NATION_NAME
+      description: Name of the nation, also called the country of the customer.
+      dimension:
+        is_time: false
+      ai_context: 'Synonyms: country'
+    description: Nations. One row per nation.
+  - name: region
+    source: OSI_GUIDE.TPCH.REGION
+    primary_key:
+    - region_key
+    fields:
+    - name: region_key
+      datatype: Integer
+      expression:
+        dialects:
+        - dialect: ANSI_SQL
+          expression: REGION_KEY
+      description: Unique region identifier.
+      dimension:
+        is_time: false
+    - name: region_name
+      datatype: String
+      expression:
+        dialects:
+        - dialect: ANSI_SQL
+          expression: REGION_NAME
+      description: Name of the world region of the customer, for example ASIA or EUROPE.
+      dimension:
+        is_time: false
+    description: World regions. One row per region.
+  relationships:
+  - name: order_line_to_sales_order
+    from: order_line
+    to: sales_order
+    from_columns:
+    - order_key
+    to_columns:
+    - order_key
+  - name: sales_order_to_customer
+    from: sales_order
+    to: customer
+    from_columns:
+    - customer_key
+    to_columns:
+    - customer_key
+  - name: customer_to_nation
+    from: customer
+    to: nation
+    from_columns:
+    - nation_key
+    to_columns:
+    - nation_key
+  - name: nation_to_region
+    from: nation
+    to: region
+    from_columns:
+    - region_key
+    to_columns:
+    - region_key
+  metrics:
+  - name: net_revenue
+    datatype: Decimal
+    expression:
+      dialects:
+      - dialect: ANSI_SQL
+        expression: SUM(order_line.net_amount_kept)
+    description: 'Revenue, the company definition: extended price after discount, excluding returned lines, before
+      tax. Also called sales or net sales. Use this metric whenever a question asks for revenue or sales.
+
+      '
+    ai_context: 'Synonyms: revenue, sales, net sales'
+  - name: gross_revenue
+    datatype: Decimal
+    expression:
+      dialects:
+      - dialect: ANSI_SQL
+        expression: SUM(order_line.extended_price)
+    description: 'Gross or list-price revenue, before discounts and returns. Use only when a question explicitly
+      asks for gross or list revenue.
+
+      '
+  - name: order_count
+    datatype: Integer
+    expression:
+      dialects:
+      - dialect: ANSI_SQL
+        expression: COUNT(DISTINCT sales_order.order_key)
+    ai_context: 'Synonyms: number of orders'
+    description: Number of orders.
+  - name: average_order_value
+    datatype: Decimal
+    expression:
+      dialects:
+      - dialect: ANSI_SQL
+        expression: SUM(order_line.net_amount_kept) / COUNT(DISTINCT order_line.order_key)
+    description: Average order value (AOV) - net_revenue divided by the number of orders.
+    ai_context: 'Synonyms: AOV'

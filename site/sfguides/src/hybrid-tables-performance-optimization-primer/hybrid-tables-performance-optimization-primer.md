@@ -276,7 +276,9 @@ table while filtering for a particular truck.
 
 ```sql
 -- SELECT A TRUCK THAT HAS ORDER DETAILS
-SET TRUCK_ID = (SELECT ANY_VALUE(TRUCK_ID) FROM ORDER_HEADER);
+-- MIN() SO THE SAME TRUCK IS CHOSEN EVERY TIME,
+-- WHICH LETS US RE-RUN THIS EXACT COMPARISON LATER
+SET TRUCK_ID = (SELECT MIN(TRUCK_ID) FROM ORDER_HEADER);
 
 -- QUERY FOR ALL ORDERS (5000) FOR THIS PARTICULAR TRUCK 
 SELECT *
@@ -295,36 +297,74 @@ interpret the join as a many-to-many join.
 Introducing a `FOREIGN KEY` will serve two important purposes. First, it establishes a relationship between the tables that
 guarantees a one-to-many join for a given `PRIMARY KEY` in the parent table. Second, the relationship will enforce a
 rule that requires data to be consistent such that child table `TRUCK_ID` values must exist in the `TRUCK` primary key.
-Recreate the table with a `FOREIGN KEY`:
+
+You do not need to recreate the table to add the constraint. Add the foreign key to the table you already loaded:
 
 ```sql
--- CREATE ORDER_HEADER WITH A FOREIGN KEY
-CREATE OR REPLACE HYBRID TABLE ORDER_HEADER (
-    ORDER_ID NUMBER(38,0) NOT NULL,
-    TRUCK_ID NUMBER(38,0) NOT NULL,
-    ORDER_TIMESTAMP TIMESTAMP_NTZ NOT NULL,
-    ORDER_TOTAL NUMBER(38,2),
-    ORDER_STATUS VARCHAR(200) DEFAULT 'INQUEUE',
-    PRIMARY KEY (ORDER_ID),
-    CONSTRAINT FK_TRUCK_ID FOREIGN KEY (TRUCK_ID) REFERENCES TRUCK(TRUCK_ID)
-);
--- USE INSERT INTO METHOD BECAUSE THE FOREIGN KEY MUST EXIST TO BE ENFORCED
-INSERT INTO ORDER_HEADER
-SELECT
-    SEQ4(),
-    T.TRUCK_ID,
-    DATEADD('seconds', UNIFORM(-1*60*60*24*365, -1*60*60, RANDOM()), CURRENT_TIMESTAMP()), -- SPREAD RANDOM ORDER IDS OUT
-    UNIFORM(200.0, 25000.0, RANDOM()),
-    ARRAY_CONSTRUCT('DELIVERED', 'INQUEUE', 'LOADING', 'EN-ROUTE')[UNIFORM(0,3, RANDOM())],
-FROM TABLE(GENERATOR(ROWCOUNT => 5000))
-CROSS JOIN (SELECT TRUCK_ID FROM TRUCK SAMPLE (1000 ROWS)) T    -- ASSIGN ORDERS TO EVERY TRUCK = # TRUCKS X # ORDERS PER TRUCK
-;
+-- ADD A FOREIGN KEY TO THE EXISTING, POPULATED TABLE
+ALTER TABLE ORDER_HEADER
+  ADD CONSTRAINT FK_TRUCK_ID FOREIGN KEY (TRUCK_ID) REFERENCES TRUCK(TRUCK_ID);
 ```
 
-Next, find a new `TRUCK_ID` and execute the query to retrieve the order header information.
+This is an online operation. Snowflake builds the index that backs the constraint in the background, and `ORDER_HEADER`
+stays available for `SELECT` and DML while the build runs. Because the build is asynchronous, the `ALTER TABLE`
+statement returns *before* the constraint is fully in place, so a successful `ALTER TABLE` is not proof that the
+constraint is ready. Check the build status before you measure anything:
 
 ```sql
-SET TRUCK_ID = (SELECT ANY_VALUE(TRUCK_ID) FROM ORDER_HEADER);
+-- TRACK THE BACKGROUND BUILD
+SHOW INDEXES IN TABLE ORDER_HEADER;
+```
+
+Look at the `status` column for the `FK_TRUCK_ID` row. `SHOW INDEXES` reports one of five values:
+
+| `status` | Meaning |
+|---|---|
+| `BUILD IN PROGRESS` | The index is being built and is not yet used to retrieve data. This is the expected state immediately after the `ALTER TABLE`. |
+| `ACTIVE` | The index is complete and can be used to retrieve data, if the optimizer chooses it for a given query. For a constraint, the rows already in the table validated successfully. |
+| `BUILD VALIDATION FAILURE` | The index backs a UNIQUE or FOREIGN KEY constraint that you added with `ALTER TABLE`, and rows already in the table violate that constraint. The `status_info` column explains why. |
+| `BUILD FAILURE` | An error occurred during the index build process. Drop and recreate the index. |
+| `SUSPENDED` | The index is still updated by DML, but is not used to retrieve data. |
+
+An index in `SUSPENDED`, `BUILD FAILURE`, or `BUILD IN PROGRESS` can be rebuilt with `DROP INDEX` followed by
+`CREATE INDEX`. `BUILD VALIDATION FAILURE` is the exception: because that index backs a constraint, you drop and
+re-add the constraint with `ALTER TABLE` instead. See the
+[CREATE INDEX documentation](https://docs.snowflake.com/en/sql-reference/sql/create-index) for details.
+
+A `BUILD VALIDATION FAILURE` means the index that backing the constraint could not finish building. It will stay in that
+state until you intervene: it cannot reach `ACTIVE` on its own, and join performance below will not improve at all.
+
+Snowflake does enforce the constraing for new writes, so an INSERT or UPDATE that violates it fails with 
+`200009 (22000): Foreign key constraint "FK_TRUCK_ID" was violated.` What the failed build does not do is fix
+ the rows that were already in the table when you added the constraint, which are the rows that failed validation
+in the first place.
+
+Note that `ALTER TABLE` reported success, so `SHOW INDEXES` is the only place this shows up.
+
+To recover, drop the constraint, correct the offending rows, and add it again. The `TRUCK_ID` values we generated all
+come from `TRUCK`, so this build should reach `ACTIVE`.
+
+**Re-run `SHOW INDEXES IN TABLE ORDER_HEADER;` until `FK_TRUCK_ID` reports `ACTIVE` before you continue.** Expect this
+to take several minutes: on the five million rows of `ORDER_HEADER` created above, the build took roughly eight
+minutes on an XSMALL warehouse, while the `ALTER TABLE` itself returned in about three seconds. Do not skip the
+check: a constraint that is still building is not
+used to retrieve data, so measuring too early shows you the unimproved plan and makes it look as though the foreign key
+did nothing.
+
+Once the status is `ACTIVE`, re-run the **exact same query against the exact same data**. Because we added the
+constraint in place rather than reloading the table, the rows are identical to the earlier run, which makes this a
+genuine before/after comparison.
+
+Note what adding the foreign key actually gave Snowflake. It supplied both the referential relationship, which lets the
+optimizer treat the join as one-to-many, **and** a secondary index on `TRUCK_ID` that backs the constraint. Foreign key
+constraints on hybrid tables build their own underlying index, so the improvement you are about to see comes from both
+of those together, not from the relationship metadata alone.
+
+```sql
+-- SAME ROWS, SAME QUERY AS BEFORE.
+-- SETTING THE VARIABLE AGAIN IS SAFE: MIN() RETURNS THE SAME TRUCK,
+-- SO THIS STILL WORKS IF YOUR SESSION RECONNECTED.
+SET TRUCK_ID = (SELECT MIN(TRUCK_ID) FROM ORDER_HEADER);
 
 SELECT *
 FROM TRUCK T
@@ -338,6 +378,54 @@ Checking the query plan, we can see that the query optimizer is now using the fo
 the order detail information.
 
 ![assets/explore_71.png](assets/explore_71.png)
+
+### Dropping and Re-Adding a Foreign Key
+
+Because adding a constraint is online, the reverse is also true: you can drop a foreign key and add it back without
+recreating the table. This is useful for controlled schema maintenance, such as changing which columns a constraint
+covers or correcting rows that failed validation.
+
+```sql
+-- DROP THE CONSTRAINT
+ALTER TABLE ORDER_HEADER DROP CONSTRAINT FK_TRUCK_ID;
+
+-- THE BACKING INDEX IS REMOVED ALONG WITH THE CONSTRAINT:
+-- FK_TRUCK_ID NO LONGER APPEARS IN THE OUTPUT
+SHOW INDEXES IN TABLE ORDER_HEADER;
+```
+
+Dropping the constraint removes both the referential relationship and the secondary index that backed it. Re-run the
+join query and the plan returns to the many-to-many form from earlier in this section:
+
+```sql
+SET TRUCK_ID = (SELECT MIN(TRUCK_ID) FROM ORDER_HEADER);
+
+SELECT *
+FROM TRUCK T
+INNER JOIN ORDER_HEADER O ON O.TRUCK_ID=T.TRUCK_ID
+WHERE TRUE
+    AND T.TRUCK_ID = $TRUCK_ID
+;
+```
+
+Now add the constraint back:
+
+```sql
+ALTER TABLE ORDER_HEADER
+  ADD CONSTRAINT FK_TRUCK_ID FOREIGN KEY (TRUCK_ID) REFERENCES TRUCK(TRUCK_ID);
+
+SHOW INDEXES IN TABLE ORDER_HEADER;
+```
+
+**As with the first time you added it, re-run `SHOW INDEXES` until `FK_TRUCK_ID` reports `ACTIVE`.** Re-adding a
+constraint revalidates every row currently in the table, so if any orphaned rows were inserted while the constraint was
+absent, the rebuild reports `BUILD VALIDATION FAILURE` instead of `ACTIVE`.
+
+> aside negative
+> While the foreign key is absent, nothing prevents writes that violate it, so orphaned rows can be created. Those rows
+> then cause the rebuild to fail validation when you add the constraint back. Treat drop/re-add as a deliberate
+> maintenance operation on a change-controlled schema, not as a way to work around a constraint violation in an
+> application.
 
 
 Next, consider a query to retrieve a specific order and join in details for the truck for which the order was submitted. 

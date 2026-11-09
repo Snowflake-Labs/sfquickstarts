@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 400" font-family="-apple-system, Segoe UI, Helvetica, Arial, sans-serif">
+  <rect x="0" y="0" width="1000" height="400" rx="16" fill="#ffffff"/>
+  <text x="500" y="44" text-anchor="middle" font-size="23" font-weight="700" fill="#11567f">Data governance: the always-on foundation</text>
+  <text x="500" y="70" text-anchor="middle" font-size="13.5" fill="#5b6b77">Classify, mask, and control data across the medallion lifecycle. This base layer applies to every consumer, human or agent.</text>
+
+  <defs>
+    <marker id="ah" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#9aa7b1"/></marker>
+  </defs>
+
+  <!-- RAW -->
+  <rect x="40" y="110" width="175" height="200" rx="12" fill="#ffffff" stroke="#9bd4ec" stroke-width="2.5"/>
+  <text x="127" y="146" text-anchor="middle" font-size="18" font-weight="700" fill="#0c3f5c">RAW</text>
+  <text x="127" y="178" text-anchor="middle" font-size="12.5" fill="#5b6b77">ungoverned landing</text>
+  <text x="127" y="200" text-anchor="middle" font-size="12.5" fill="#5b6b77">loaded from source</text>
+
+  <!-- BRONZE -->
+  <rect x="245" y="110" width="200" height="200" rx="12" fill="#eef6fb" stroke="#29B5E8" stroke-width="2.5"/>
+  <text x="345" y="146" text-anchor="middle" font-size="18" font-weight="700" fill="#0c3f5c">BRONZE</text>
+  <text x="345" y="178" text-anchor="middle" font-size="12.5" fill="#5b6b77">classification + tags</text>
+  <text x="345" y="200" text-anchor="middle" font-size="12.5" fill="#5b6b77">tag-based masking</text>
+  <text x="345" y="222" text-anchor="middle" font-size="12.5" fill="#5b6b77">tags propagate downstream</text>
+
+  <!-- SILVER -->
+  <rect x="475" y="110" width="260" height="200" rx="12" fill="#eef6fb" stroke="#29B5E8" stroke-width="2.5"/>
+  <text x="605" y="146" text-anchor="middle" font-size="18" font-weight="700" fill="#0c3f5c">SILVER</text>
+  <text x="605" y="174" text-anchor="middle" font-size="12.5" fill="#5b6b77">propagated tags + masking</text>
+  <line x1="490" y1="186" x2="720" y2="186" stroke="#bfe3f3" stroke-width="1"/>
+  <text x="605" y="206" text-anchor="middle" font-size="12.5" font-weight="700" fill="#0c3f5c">Analytics Dynamic Table</text>
+  <text x="605" y="225" text-anchor="middle" font-size="12.5" fill="#5b6b77">aggregation + projection, attached</text>
+  <line x1="490" y1="240" x2="720" y2="240" stroke="#bfe3f3" stroke-width="1"/>
+  <text x="605" y="260" text-anchor="middle" font-size="12.5" font-weight="700" fill="#0c3f5c">Contact activation view</text>
+  <text x="605" y="279" text-anchor="middle" font-size="12.5" fill="#5b6b77">separate consent row access</text>
+  <text x="605" y="296" text-anchor="middle" font-size="11.5" fill="#5b6b77">(CONSENT_ENFORCEMENT tag)</text>
+
+  <!-- GOLD -->
+  <rect x="765" y="110" width="195" height="200" rx="12" fill="#e9f7ee" stroke="#3aa76d" stroke-width="2.5"/>
+  <text x="862" y="146" text-anchor="middle" font-size="18" font-weight="700" fill="#0c3f5c">GOLD</text>
+  <text x="862" y="178" text-anchor="middle" font-size="12.5" fill="#5b6b77">governed semantic view</text>
+  <text x="862" y="200" text-anchor="middle" font-size="12.5" fill="#5b6b77">over analytics</text>
+  <text x="862" y="222" text-anchor="middle" font-size="12.5" fill="#5b6b77">policies apply</text>
+  <text x="862" y="244" text-anchor="middle" font-size="12.5" fill="#5b6b77">at query time</text>
+
+  <g stroke="#9aa7b1" stroke-width="2.5" marker-end="url(#ah)">
+    <line x1="215" y1="210" x2="242" y2="210"/>
+    <line x1="445" y1="210" x2="472" y2="210"/>
+    <line x1="735" y1="210" x2="762" y2="210"/>
+  </g>
+
+  <text x="500" y="352" text-anchor="middle" font-size="13" fill="#5b6b77">Part 1 (01-01 to 01-03). AI capability and context governance build on this base in Parts 2 to 4.</text>
+</svg>
