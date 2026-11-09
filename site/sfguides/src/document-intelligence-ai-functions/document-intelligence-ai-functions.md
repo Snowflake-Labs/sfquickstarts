@@ -33,7 +33,7 @@ This lab has two independent tracks, each in its own notebook:
 - A [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) with access to [Cortex AI Functions](https://docs.snowflake.com/en/user-guide/snowflake-cortex/aisql), AI_PARSE_DOCUMENT in AGENTIC mode, and Cortex Search; confirm approved [cross-region inference](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cross-region-inference) before starting
 - A role with privileges to create a database, schema, internal stages, tables, and a Cortex Search service, plus access to a running warehouse
 - Access to [Snowflake Notebooks in Workspaces](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-in-workspaces/notebooks-in-workspaces-overview), or a SQL worksheet
-- The [mortgage sample PDFs](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/document-intelligence-ai-functions/assets/data/mortgage_reports.zip) (`mortgage_reports.zip`) and [greenhouse_gas_report_2024.pdf](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/document-intelligence-ai-functions/assets/data/greenhouse_gas_report_2024.pdf)
+- The [mortgage sample PDFs](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/document-intelligence-ai-functions/assets/mortgage_reports.zip) (`mortgage_reports.zip`) and [greenhouse_gas_report_2024.pdf](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/document-intelligence-ai-functions/assets/greenhouse_gas_report_2024.pdf)
 
 ### What You'll Build
 - Part A: one result row per mortgage PDF, with its document type, extracted fields, processing status, and review reason
@@ -86,7 +86,7 @@ CREATE STAGE IF NOT EXISTS MORTGAGE_DOCS
 
 ### Upload the Sample PDFs
 
-1. Download [mortgage_reports.zip](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/document-intelligence-ai-functions/assets/data/mortgage_reports.zip) and unzip it. Upload the individual PDFs, not the ZIP archive. For GitHub-hosted files, select **Download raw file**.
+1. Download [mortgage_reports.zip](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/document-intelligence-ai-functions/assets/mortgage_reports.zip) and unzip it. Upload the individual PDFs, not the ZIP archive. For GitHub-hosted files, select **Download raw file**.
 2. In Snowsight, go to **Ingestion > Add Data > Load files into a Stage**.
 3. Select those four PDFs and choose **VHOL_DOCUMENT_AI_DB > DOCUMENT_AI > MORTGAGE_DOCS**, then upload them.
 
@@ -361,7 +361,7 @@ CREATE STAGE IF NOT EXISTS GHG_REPORTS
 
 ### Upload the PDF
 
-1. Download [greenhouse_gas_report_2024.pdf](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/document-intelligence-ai-functions/assets/data/greenhouse_gas_report_2024.pdf). For GitHub-hosted files, select **Download raw file**.
+1. Download [greenhouse_gas_report_2024.pdf](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/document-intelligence-ai-functions/assets/greenhouse_gas_report_2024.pdf). For GitHub-hosted files, select **Download raw file**.
 2. In Snowsight, go to **Ingestion > Add Data > Load files into a Stage** and upload the PDF to `GHG_REPORTS`.
 3. Refresh the directory table and confirm the file is listed:
 
@@ -687,8 +687,8 @@ Use **AI_CLASSIFY** to select a processing route, **AI_EXTRACT** for selected bu
 ### Related Resources
 - [Mortgage notebook used in Part A](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/document-intelligence-ai-functions/assets/vhol_document_ai_mortgage.ipynb)
 - [Greenhouse reports notebook used in Part B](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/document-intelligence-ai-functions/assets/vhol_document_ai_greenhouse_reports.ipynb)
-- [Mortgage sample PDFs](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/document-intelligence-ai-functions/assets/data/mortgage_reports.zip)
-- [Greenhouse gas report](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/document-intelligence-ai-functions/assets/data/greenhouse_gas_report_2024.pdf)
+- [Mortgage sample PDFs](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/document-intelligence-ai-functions/assets/mortgage_reports.zip)
+- [Greenhouse gas report](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/document-intelligence-ai-functions/assets/greenhouse_gas_report_2024.pdf)
 - [AI_CLASSIFY](https://docs.snowflake.com/en/sql-reference/functions/ai_classify)
 - [AI_EXTRACT](https://docs.snowflake.com/en/sql-reference/functions/ai_extract)
 - [AI_PARSE_DOCUMENT](https://docs.snowflake.com/en/sql-reference/functions/ai_parse_document)
