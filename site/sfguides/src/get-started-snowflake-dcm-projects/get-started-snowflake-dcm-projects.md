@@ -62,7 +62,6 @@ If you want to work in Snowsight rather than locally, create a Snowsight Workspa
 5. Select **Public repository**.
 
 ![Creating a Workspace from a Git repository](assets/create_workspace.png)
-Screenshot placeholder: the Create Workspace from Git repository dialog with the snowflake-dcm-projects URL filled in, taken just before clicking Create.
 
 Once the workspace is created you will see the repository files in the file explorer. Navigate to **Quickstarts/get-started-snowflake-dcm-projects** to find two directories.
 
@@ -116,7 +115,7 @@ ALTER ACCOUNT SET FEATURE_RBAC_INHERITED_GRANTS = 'ENABLED';
 
 An inherited grant cannot be combined with WITH GRANT OPTION, CASCADE or RESTRICT.
 
-Copy the account identifier from the last query into account_identifier under the DCM_DEV target in DCM_Projects_Get_Started/manifest.yml (line 11, the line that ends with "# update to your account names"). A mismatched account_identifier is only a warning, not an error, but fixing it keeps the warning out of your output.
+> **Important: update the manifest before the first plan.** Copy ACCOUNT_IDENTIFIER from the last query of scripts/01_pre_deploy.sql into the account_identifier line of the DCM_DEV target in DCM_Projects_Get_Started/manifest.yml (line 11, marked "# update to your account names"). A mismatched account_identifier is only a warning, but fixing it keeps the warning out of your output.
 
 <!-- ------------------------ -->
 ## Anatomy of a DCM Project
