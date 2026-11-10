@@ -325,7 +325,7 @@ SELECT
     chunk_number, 
     chunk_text, 
     combined_chunk_text,
-    snowflake.cortex.embed_text_768('e5-base-v2', combined_chunk_text) as combined_chunk_vector
+    AI_EMBED('e5-base-v2', combined_chunk_text) as combined_chunk_vector
 FROM 
     repair_manuals_chunked;
 
@@ -351,7 +351,7 @@ AS
             v.file_name,
             v.chunk_number,
             v.chunk_text,
-            VECTOR_COSINE_SIMILARITY(v.combined_chunk_vector, snowflake.cortex.embed_text_768('e5-base-v2', prompt)) AS score
+            VECTOR_COSINE_SIMILARITY(v.combined_chunk_vector, AI_EMBED('e5-base-v2', prompt)) AS score
         FROM 
             repair_manuals_chunked_vectors v
         ORDER BY 
@@ -359,7 +359,7 @@ AS
         LIMIT 10
     )
     SELECT 
-        SNOWFLAKE.cortex.COMPLETE('llama3.1-8b', 
+        AI_COMPLETE('llama3.1-8b', 
             CONCAT('Answer this question: ', prompt, '\n\nUsing this repair manual text: ', chunk_text)
         ) AS response,
         file_name,
@@ -494,7 +494,7 @@ SELECT
     equipment_id,
     problem_reported,
     resolution_notes,
-    snowflake.cortex.embed_text_768('e5-base-v2', combined_text) as combined_vector
+    AI_EMBED('e5-base-v2', combined_text) as combined_vector
 FROM repair_logs_formatted;
 
 --Validate
@@ -519,7 +519,7 @@ AS
                 *, 
                 VECTOR_COSINE_SIMILARITY(
                     combined_vector,
-                    snowflake.cortex.embed_text_768('e5-base-v2', prompt)
+                    AI_EMBED('e5-base-v2', prompt)
                 ) AS score
             FROM
                 repair_logs_vectors
@@ -529,7 +529,7 @@ AS
         ),
         combined_notes AS (
             SELECT 
-                SNOWFLAKE.CORTEX.COMPLETE('llama3.1-8b', 
+                AI_COMPLETE('llama3.1-8b', 
                     CONCAT('An equipment technician is dealing with this problem on an AGV: ', 
                     prompt, 
                     '\n\nUsing these previous similar resolution notes, what is the recommended course of action to troubleshoot and repair the AGV?\n\n', 
@@ -588,7 +588,7 @@ AS
                 stacked_results
         )
         SELECT
-            SNOWFLAKE.CORTEX.SUMMARIZE(collapsed_text) AS response
+            AI_SUMMARIZE(collapsed_text) AS response
         FROM
             collapsed_results
     $$;
