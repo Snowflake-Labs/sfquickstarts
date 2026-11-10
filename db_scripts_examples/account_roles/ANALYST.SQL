@@ -1,0 +1,8 @@
+
+---version: 0, author: admin
+CREATE OR REPLACE ROLE ANALYST;
+---rollback: DROP ROLE IF EXISTS ANALYST;
+
+---version: 1, author: admin
+GRANT ROLE ANALYST TO ROLE ACCOUNTADMIN;
+---rollback: REVOKE ROLE ANALYST FROM ROLE ACCOUNTADMIN;

@@ -1,0 +1,52 @@
+name: deploy-db-changes
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'db_scripts/**'
+
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  deploy-snowflake-changes-job:
+    environment: dev
+    runs-on: ubuntu-latest
+    env:
+      PROFILE: ${{ vars.PROFILE }}
+      DLSYNC_VERSION: "3.2.0"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 11
+        uses: actions/setup-java@v4
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+
+      - name: Download DLSync JAR
+        run: |
+          curl --fail --location --silent --show-error \
+            --output "$GITHUB_WORKSPACE/dlsync.jar" \
+            "https://github.com/Snowflake-Labs/dlsync/releases/download/v${DLSYNC_VERSION}/dlsync-${DLSYNC_VERSION}.jar"
+
+      - name: Run DLSync Deploy
+        env:
+          account: ${{ secrets.SNOWFLAKE_ACCOUNT }}
+          user: ${{ secrets.SNOWFLAKE_USERNAME }}
+          password: ${{ secrets.SNOWFLAKE_PASSWORD }}
+          role: ${{ secrets.SNOWFLAKE_ROLE }}
+          warehouse: ${{ secrets.SNOWFLAKE_WAREHOUSE }}
+          db: ${{ vars.SNOWFLAKE_DATABASE }}
+          schema: ${{ vars.SNOWFLAKE_SCHEMA }}
+        run: |
+          java -jar "$GITHUB_WORKSPACE/dlsync.jar" \
+            deploy \
+            --script-root "$GITHUB_WORKSPACE/db_scripts" \
+            --profile "$PROFILE"
