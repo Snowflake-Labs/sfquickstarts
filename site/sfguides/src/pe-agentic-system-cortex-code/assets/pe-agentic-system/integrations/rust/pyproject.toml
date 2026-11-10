@@ -1,0 +1,28 @@
+[build-system]
+requires = ["maturin>=1.5,<2.0"]
+build-backend = "maturin"
+
+[project]
+name = "pe-finance"
+version = "1.0.0"
+description = "Deterministic financial kernels (DCF, LBO, Monte Carlo) for private markets analysis"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+classifiers = [
+    "Programming Language :: Rust",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Topic :: Office/Business :: Financial :: Investment",
+]
+
+# The PyO3 bindings are behind a non-default feature (see Cargo.toml [features]),
+# so the build MUST enable it explicitly. Without this, `maturin build` produces
+# a wheel containing no extension module and `import pe_finance` fails at runtime
+# with no compile-time error.
+#
+# Note: Cargo.toml:57-59 currently also carries a [tool.maturin] table. That is a
+# pyproject.toml section and cargo ignores it. This file is the one maturin reads.
+[tool.maturin]
+features = ["python"]
+module-name = "pe_finance"
+strip = true

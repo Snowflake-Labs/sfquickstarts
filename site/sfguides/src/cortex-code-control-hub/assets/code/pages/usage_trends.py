@@ -181,7 +181,7 @@ def render(session):
         )
 
     # Use 30 days so heatmap has enough data — the heatmap aggregates by DOW+hour
-    # so more days = richer pattern.  7-day window is too narrow in sandbox (only 3 users).
+    # so more days = richer pattern.  7-day window is too narrow for small accounts with few users.
     HM_DAYS = 30
 
     hm_cohort = None

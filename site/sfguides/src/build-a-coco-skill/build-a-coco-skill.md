@@ -282,7 +282,9 @@ The skill you built is a single **SKILL.md** plus one reference file – and for
 
 **References – offload the detail.** You already used this pattern. Keep the instructions in **SKILL.md** and move bulky or frequently-changing detail into a **references/** file that CoCo loads only when it's needed. Your brand guidelines are a perfect example: the workflow rarely changes, but the guidelines do – and Marketing can update **brand-guidelines.md** without ever touching the workflow. Reach for a reference file when content is long, or when someone other than the skill's author owns it.
 
-**Sub-skills – split by branch.** When a single skill starts covering clearly separate jobs, split it. Imagine your `brand-content` skill grew to handle emails, slide decks, and social posts. Instead of one long file, you'd use a small "router" **SKILL.md** that detects which job the user wants, plus a sub-folder for each branch. CoCo loads only the branch that matches the request, so the other two never take up context.
+**Branch references – split by job.** When a single skill starts covering clearly separate jobs, give each job its own reference file. Imagine your `brand-content` skill grew to handle emails, slide decks, and social posts. Instead of one long file, you'd keep **SKILL.md** as a small "router" that detects which job the user wants, and put each job's steps in its own file under **references/**. CoCo loads only the file that matches the request, so the other two never take up context.
+
+If those jobs grow into things people use on their own, with their own triggers, make them separate skills that sit side by side and share them together as a plugin (see **Package Related Skills as a Plugin** above). Avoid nesting one **SKILL.md** inside another skill's folder: one **SKILL.md** per skill follows the open [Agent Skills specification](https://agentskills.io/specification), so your skills stay portable to other agents.
 
 The guiding principle: CoCo shares a limited context window across your whole conversation, so a lean, focused skill is a faster and more reliable skill. Start simple, and only add structure when the skill actually needs it.
 
@@ -299,18 +301,17 @@ brand-content/
 └── references/
     └── brand-guidelines.md
 
-# With sub-skills – one branch loaded at a time
+# With branch references – one job loaded at a time
 brand-content/
 ├── SKILL.md            # router: detects email vs. deck vs. social
-├── email/
-│   └── SKILL.md
-├── slide-deck/
-│   └── SKILL.md
-└── social-post/
-    └── SKILL.md
+└── references/
+    ├── brand-guidelines.md
+    ├── email.md
+    ├── slide-deck.md
+    └── social-post.md
 ```
 
-A quick point of guidance: reach for a reference file when the detail is bulky or owned by someone else, and reach for sub-skills when the skill has clearly separate jobs. 
+A quick point of guidance: reach for a reference file when the detail is bulky or owned by someone else, a branch reference per job when the skill has clearly separate jobs, and separate skills in a plugin when those jobs stand on their own. 
 
 The Skill Development skill can set up either structure for you – just describe what you want. For the structural specifics, see the [Create your own skill](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-desktop/skills#create-your-own-skill) documentation.
 

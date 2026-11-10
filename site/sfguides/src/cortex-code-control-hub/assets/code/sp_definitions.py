@@ -25,7 +25,15 @@ Usage (from setup.py):
 _BULK_GRANT_BODY = '''\
 import re
 
-_SAFE_ID = re.compile(r'[;\\n\\r]')  # blocks only truly dangerous chars
+_SAFE_ID = re.compile(r'[;\\x00-\\x1f]')  # control chars and statement separators
+
+# This SP runs as ACCOUNTADMIN: only these Cortex database roles may be granted.
+_ALLOWED_DB_ROLES = {
+    'SNOWFLAKE.CORTEX_USER',
+    'SNOWFLAKE.COPILOT_USER',
+    'SNOWFLAKE.CORTEX_ANALYST_USER',
+    'SNOWFLAKE.CORTEX_AGENT_USER',
+}
 
 def _qid(s):
     # Safely double-quote a Snowflake identifier; escapes embedded " as ""
@@ -34,18 +42,24 @@ def _qid(s):
 def handler(session, users_json, db_roles_json):
     out = {'success': 0, 'failed': 0, 'errors': []}
     users = list(users_json) if users_json else []
-    roles = list(db_roles_json) if db_roles_json else []
+    roles = []
+    for role in (list(db_roles_json) if db_roles_json else []):
+        role = str(role).strip().upper()
+        if role in _ALLOWED_DB_ROLES:
+            roles.append(role)
+        else:
+            out['errors'].append(f'Rejected database role (not allowed): {role}')
+            out['failed'] += 1
 
     for user in users:
         user = str(user).strip()
-        if not user or _SAFE_ID.search(user):
+        if not user or len(user) > 255 or _SAFE_ID.search(user):
             out['errors'].append(f'Skipped invalid username: {user}')
             out['failed'] += 1
             continue
         for role in roles:
-            role = str(role).strip()
             try:
-                session.sql(f\'GRANT DATABASE ROLE {role} TO USER "{user}"\').collect()
+                session.sql(f'GRANT DATABASE ROLE {role} TO USER {_qid(user)}').collect()
                 out['success'] += 1
             except Exception as e:
                 out['errors'].append(f'{user}/{role}: {str(e)[:120]}')
@@ -1898,20 +1912,40 @@ def handler(session, action, quota_name, params):
         cohort_role = params.get("cohort_role")
         if cohort_role:
             try:
-                rows = session.sql(f"""
-                    SELECT TAG_REFERENCES.OBJECT_NAME AS USER_NAME
-                    FROM TABLE(SNOWFLAKE.ACCOUNT_USAGE.TAG_REFERENCES_ALL_COLUMNS(
-                        SYSTEM$REFERENCE(\'TAG\', \'{{tag_fq}}\', \'SESSION\', \'APPLYBUDGET\')
-                    ))
-                    WHERE SYSTEM$TAG_VALUE(\'{{tag_fq}}\', TAG_REFERENCES.OBJECT_NAME, \'USER\')
-                           = \'{{_safe(cohort_role)}}\'
-                """).collect()
-                for row in rows:
+                # Candidates: the members CREATE tagged, plus anyone ACCOUNT_USAGE shows tagged
+                # (that view lags up to ~2h, so it is only a supplement).
+                cands = {{str(r[0]) for r in session.sql(f"""
+                    SELECT DISTINCT USER_NAME FROM {{DS}}.CC_USER_COHORT_RESOLVED
+                    WHERE UPPER(COHORT_ROLE) = UPPER(\'{{_safe(cohort_role)}}\') AND USER_NAME IS NOT NULL
+                """).collect() if r[0]}}
+                try:
+                    for g in session.sql(f\'SHOW GRANTS OF ROLE "{{_safe(cohort_role)}}"\').collect():
+                        if str(g["granted_to"]).upper() == "USER":
+                            cands.add(str(g["grantee_name"]))
+                except Exception:
+                    pass
+                try:
+                    tag_db, tag_schema, tag_name = tag_fq.split(".")
+                    for r in session.sql(f"""
+                        SELECT OBJECT_NAME FROM SNOWFLAKE.ACCOUNT_USAGE.TAG_REFERENCES
+                        WHERE DOMAIN = \'USER\' AND OBJECT_DELETED IS NULL
+                          AND TAG_DATABASE = \'{{tag_db}}\' AND TAG_SCHEMA = \'{{tag_schema}}\'
+                          AND TAG_NAME = \'{{tag_name}}\' AND TAG_VALUE = \'{{_safe(cohort_role)}}\'
+                    """).collect():
+                        cands.add(str(r[0]))
+                except Exception:
+                    pass
+                for user in cands:
+                    u = user.replace("'", "''")
                     try:
-                        u = str(row[0]).replace("'", "''")
-                        session.sql(f"ALTER USER \\"{{u}}\\" UNSET TAG {{tag_fq}}").collect()
-                    except Exception:
-                        pass
+                        val = session.sql(
+                            f"SELECT SYSTEM$GET_TAG(\'{{tag_fq}}\', \'{{u}}\', \'USER\')").collect()[0][0]
+                        # Only untag users carrying THIS cohort's value
+                        if val is not None and str(val).upper() == str(cohort_role).upper():
+                            uid = user.replace('"', '""')
+                            session.sql(f\'ALTER USER "{{uid}}" UNSET TAG {{tag_fq}}\').collect()
+                    except Exception as e:
+                        errors.append(f"untag {{user}}: {{str(e)[:100]}}")
             except Exception as e:
                 errors.append(f"untag: {{str(e)[:120]}}")
         try:
@@ -1960,8 +1994,8 @@ def _tag_cohort_users(session, cohort_role, tag_fq, actor):
             rows = session.sql(f'SHOW GRANTS OF ROLE "{{cohort_role}}"').collect()
             for row in rows:
                 try:
-                    if str(row["GRANTED_TO"]) == "USER":
-                        u = str(row["GRANTEE_NAME"])
+                    if str(row["granted_to"]).upper() == "USER":   # SHOW columns are lowercase
+                        u = str(row["grantee_name"])
                         if u:
                             users.append(u)
                 except Exception:
