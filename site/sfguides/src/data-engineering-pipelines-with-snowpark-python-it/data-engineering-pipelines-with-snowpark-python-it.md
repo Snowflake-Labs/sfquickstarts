@@ -4,7 +4,7 @@ categories: snowflake-site:taxonomy/solution-center/certification/quickstart, sn
 language: it
 summary: Questa guida fornisce indicazioni dettagliate per creare pipeline di data engineering con Snowpark Python
 environment: web
-status: Pubblished
+status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 # Pipeline di data engineering con Snowpark Python
