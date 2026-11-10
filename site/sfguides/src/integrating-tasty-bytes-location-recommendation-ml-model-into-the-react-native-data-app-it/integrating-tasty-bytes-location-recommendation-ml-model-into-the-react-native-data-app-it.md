@@ -4,7 +4,7 @@ categories: snowflake-site:taxonomy/solution-center/certification/quickstart, sn
 language: it
 summary: Integrare un modello ML per i suggerimenti sulle posizioni di Tasty Bytes in una data application React Native
 environments: web
-status: Pubblicato
+status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 # Integrare un modello ML per i suggerimenti sulle posizioni di Tasty Bytes in una data application React Native
