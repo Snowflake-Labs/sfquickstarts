@@ -55,8 +55,8 @@ Before we start, here is what I need you to know:
    - Whether I want Streamlit on Warehouse or Streamlit on Container (SPCS)
    - Which database and schema to deploy the app into
    - Which warehouse to use
-     > **Warehouse sizing recommendation:** An **X-Small (XS)** warehouse is sufficient for all setup phases and the two overnight scheduled tasks (`CC_CLASSIFY_PROMPTS_TASK`, `CC_REFRESH_USAGE_SUMMARIES`). For the app query warehouse, use **Small (S)** or larger if you have many concurrent users. Set `AUTO_SUSPEND = 300` to avoid constant cold-start delays.
-   - Whether I will use ACCOUNTADMIN or a custom role for deployment
+     > **Warehouse sizing recommendation:** An **X-Small (XS)** warehouse is sufficient for all setup phases and the scheduled tasks (30-minute usage refresh, hourly temporary-limit expiry, daily limit reset, nightly prompt classification and budget refresh). For the app query warehouse, use **Small (S)** or larger if you have many concurrent users. Set `AUTO_SUSPEND = 300` to avoid constant cold-start delays.
+   - Whether I will use ACCOUNTADMIN or a custom role for deployment (note: the app must be **owned by ACCOUNTADMIN** while Setup Phases A and C run, because the credit-limit stored procedures only work when ACCOUNTADMIN owns them)
    - Which roles should have admin access to the app
 
 3. **If I am using a custom role** (not ACCOUNTADMIN), please show me all the SQL grants I need to run first, including:
@@ -64,12 +64,14 @@ Before we start, here is what I need you to know:
    - Streamlit and stage creation
    - Account-level privileges (CREATE INTEGRATION, CREATE TASK, EXECUTE TASK, CREATE ALERT, MANAGE GRANTS)
    - ACCOUNT_USAGE access (IMPORTED PRIVILEGES ON DATABASE SNOWFLAKE)
-   - AI Observability reader (SNOWFLAKE.AI_OBSERVABILITY_READER database role)
+   - AI Observability reader (`GRANT APPLICATION ROLE SNOWFLAKE.AI_OBSERVABILITY_READER TO ROLE CC_SP_OWNER_ROLE` — it is an application role)
    - SPCS compute pool access (if applicable)
 
-4. After deployment, guide me through the 7-step Account Prerequisites (shown in Setup page), then Phases A through E in the correct order.
+4. After deployment, guide me through the 7-step Account Prerequisites (shown in Setup page), then Phases A through E in the correct order, with the app owned by ACCOUNTADMIN for Phases A and C. Phase E must show all checks green, including credit-limit SP ownership.
 
-5. After setup, remind me to resume the nightly tasks and configure email alerts.
+   If the app is **already deployed**, follow the "Upgrading an existing installation" steps in the `coco-hub-deploy` skill instead.
+
+5. After setup, help me confirm the tasks are running (`SHOW TASKS LIKE 'CC_%'`), resume the budget refresh task if I use AI Budgets, and configure and resume the email alerts.
 
 Please start by asking me the deployment questions.
 
@@ -81,7 +83,8 @@ CoCo Control Hub is a governance dashboard for Cortex Code usage in Snowflake. I
 - Credit usage visibility and limits per user, cohort, and surface (CLI/Snowsight/Desktop)
 - AI Observability: prompt patterns, token economics, cache efficiency, latency, surface split
 - **Cortex AI Guardrails** status monitoring (Enterprise — prompt injection + jailbreak protection)
-- **Native AI Budgets** (Preview) — hard enforcement via tag-based Snowflake budgets
+- **Native AI Budgets** (Preview) — tag-based Snowflake budgets for Cortex Agents (notifications; stopping usage needs a custom-action stored procedure)
+- **Native per-user quotas** (generally available) — one quota per matched role
 - Responsible AI: keyword/regex/semantic policy classification with HIGH/MEDIUM/LOW severity
 - Custom Quality Evaluation _(Experimental)_: configurable LLM judge for Answer Relevance, Coherence, Safety
 - User Governance Profiles: per-user full profile with prompt search and governance score

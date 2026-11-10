@@ -198,7 +198,7 @@ Then run the core infrastructure script (this takes ~5 minutes with the default 
 snow sql -f setup.sql -c hol
 ```
 
-This creates the database, schemas, warehouses, tables, Dynamic Tables pipeline, Interactive Tables, Cortex Search Services, Semantic View, seed data (10M orders, 25M order items, 2M customers), and Row Access Policy.
+This creates the database, schemas, warehouses, tables, Dynamic Tables pipeline, Interactive Tables, Cortex Search Services, Semantic View, seed data (10M orders, 26M order items, 2M customers), and Row Access Policy.
 
 > **Using CoCo Desktop?** All "Prompt CoCo" instructions below work identically in both CLI and Desktop — type the same text into the chat input. Anywhere you see `cortex` as a terminal command, use the Desktop's built-in terminal or chat instead.
 
@@ -218,7 +218,7 @@ CoCo queries `INFORMATION_SCHEMA` and shows the database structure: RAW (source 
 
 > *"How many orders, customers, and products do we have?"*
 
-Expected: ~10M orders, ~25M order items, 2M customers, 10 products, ~240 reviews, ~192 support tickets.
+Expected: ~10M orders, ~26M order items, 2M customers, 10 products, ~240 reviews, ~192 support tickets.
 
 > *"What's the date range of our order data?"*
 
@@ -268,8 +268,8 @@ This demonstrates the real-world workflow: monitor, discover gaps, fix coverage.
 > *"Show me the Dynamic Tables pipeline status — names, target lag, last refresh time, and row counts for each tier"*
 
 CoCo displays the 3-tier pipeline:
-- **Tier 1** (1-min lag): `enriched_orders` (10M rows), `enriched_order_items` (25M rows)
-- **Tier 2** (DOWNSTREAM): `fact_orders` (25M rows)
+- **Tier 1** (1-min lag): `enriched_orders` (10M rows), `enriched_order_items` (26M rows)
+- **Tier 2** (DOWNSTREAM): `fact_orders` (26M rows)
 - **Tier 3** (DOWNSTREAM): `daily_business_metrics` (118 rows), `product_performance_metrics` (4 rows)
 
 > **Note:** Row counts shown are for the default `data_scale = '10M'`. If you chose `'50M'` in `setup.sql`, expect ~50M enriched_orders, ~161M order_items, and 365 daily metrics rows.

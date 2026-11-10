@@ -18,12 +18,19 @@ from config import (
     SP_GRANT_CORTEX_ACCESS,
     SP_REVOKE_CORTEX_ACCESS,
     SP_BULK_GRANT_ACCESS,
+    SP_MANAGE_ROLE_GRANT,
     escape_sql_literal,
     get_current_user,
     sanitize_identifier,
     sql_identifier,
 )
-from utils import call_sp, call_bulk_sp, get_role_members, get_session, list_roles, search_users
+from utils import call_sp, call_bulk_sp, get_role_members, get_session, list_roles, list_users, search_users
+from utils import (
+    PATTERN_HELP as _PATTERN_HELP,
+    match_pattern as _match,
+    match_roles as _match_roles,
+    pick_matches as _pick_matches,
+)
 
 _BG = "#0e1117"
 
@@ -36,6 +43,15 @@ def _sec(title):
         'rgba(71,85,105,0.08),transparent);border-radius:0 4px 4px 0">'
         f'<span style="font-size:0.85rem;font-weight:600;color:#94a3b8">{title}</span></div>',
         unsafe_allow_html=True)
+
+
+@st.cache_data(ttl=300, show_spinner=False)
+def _load_cortex_user_grants(_session):
+    """Return DataFrame of SHOW GRANTS OF DATABASE ROLE SNOWFLAKE.CORTEX_USER."""
+    try:
+        return _session.sql("SHOW GRANTS OF DATABASE ROLE SNOWFLAKE.CORTEX_USER").to_pandas()
+    except Exception:
+        return pd.DataFrame()
 
 
 
@@ -65,7 +81,7 @@ def render(session):
 
 
 def _render_grant(session):
-    st.subheader("Grant Cortex Code Access", help="Assign the CORTEX_USER and COPILOT_USER database roles needed to use Cortex Code.")
+    st.subheader("Grant Cortex Code Access", help="Assign CORTEX_USER or CORTEX_AGENT_USER (plus transitional COPILOT_USER) needed to use Cortex Code.")
 
     grant_target = st.radio(
         "Grant to", [
@@ -77,22 +93,24 @@ def _render_grant(session):
         horizontal=True, key="grant_target",
         help=(
             "Individual Users: search by username. "
-            "Account Role: grant CORTEX_USER/COPILOT_USER DB roles to a role. "
+            "Account Role: grant Cortex DB roles (CORTEX_USER or CORTEX_AGENT_USER, plus transitional COPILOT_USER) to a role. "
             "Role → Role: grant a generic AI role to domain roles (enterprise pattern). "
             "By User Tag: find users by tag value."
         )
     )
 
     selected_users = []
-    target_role = None
+    target_roles = []
     source_role = None
     target_roles_r2r = []
 
     if grant_target == "Individual Users":
         mode = st.radio(
-            "Find users by", ["Search", "By Role Membership"], horizontal=True,
+            "Find users by", ["Search", "Pattern", "By Role Membership"], horizontal=True,
             key="access_mode",
-            help="Search: type a username (server-side, works at 50K+ users). By Role: pick a role and see its members."
+            help="Search: type a username (server-side, works at 50K+ users). "
+                 "Pattern: wildcard match on username, no result cap. "
+                 "By Role: pick a role (or role pattern) and see its members."
         )
 
         if mode == "Search":
@@ -115,27 +133,57 @@ def _render_grant(session):
                     st.info("No users found. Try a different search term.")
             else:
                 st.caption("↑ Type to search.")
+        elif mode == "Pattern":
+            pattern = st.text_input(
+                "Username pattern", key="user_pattern",
+                placeholder="e.g. JOHN* or *_ANALYST",
+                help=_PATTERN_HELP + " Service and managed accounts are excluded."
+            )
+            if pattern.strip():
+                with st.spinner("Matching users..."):
+                    users = _filter_human_users(list_users(session))
+                selected_users = _pick_matches("Users", _match(users, pattern),
+                                               "user_pattern_sel", pattern)
         else:
             roles = list_roles(session)
             if roles:
-                chosen_role = st.selectbox("Select role", roles, key="access_role_select",
-                                           help="Shows all user members of this role.")
-                if chosen_role:
-                    members = get_role_members(session, chosen_role)
-                    if members:
-                        st.info(f"**{len(members)}** human members in `{chosen_role}` (managed service accounts filtered out)")
-                        selected_users = st.multiselect(
-                            "Select members", members, default=members,
-                            key="access_role_members",
-                            help="Direct human users of this role. UUID-style managed accounts are excluded. Users who inherit the role via a nested role won't appear here — use 'Account Role' to cover them."
-                        )
+                role_pattern = st.text_input(
+                    "Role pattern (optional)", key="member_role_pattern",
+                    placeholder="e.g. ENG_*  — leave blank to pick one role",
+                    help=_PATTERN_HELP + " Members of every matching role are combined."
+                )
+                if role_pattern.strip():
+                    chosen_roles, excluded = _match_roles(roles, role_pattern)
+                    if excluded:
+                        st.caption(f"Not auto-selected: {', '.join(excluded)}.")
+                    if not chosen_roles:
+                        st.info(f"No roles match `{role_pattern}`.")
                     else:
-                        st.info(f"No human members found in {chosen_role}")
+                        st.caption(f"{len(chosen_roles)} matching role(s): {', '.join(chosen_roles)}")
+                        with st.spinner(f"Resolving members of {len(chosen_roles)} role(s)..."):
+                            members = sorted({m for r in chosen_roles
+                                              for m in get_role_members(session, r)})
+                        selected_users = _pick_matches("Users", members, "access_pattern_members",
+                                                       role_pattern)
+                else:
+                    chosen_role = st.selectbox("Select role", roles, key="access_role_select",
+                                               help="Shows all user members of this role.")
+                    if chosen_role:
+                        members = get_role_members(session, chosen_role)
+                        if members:
+                            st.info(f"**{len(members)}** human members in `{chosen_role}` (managed service accounts filtered out)")
+                            selected_users = st.multiselect(
+                                "Select members", members, default=members,
+                                key="access_role_members",
+                                help="Direct human users of this role. UUID-style managed accounts are excluded. Users who inherit the role via a nested role won't appear here — use 'Account Role' to cover them."
+                            )
+                        else:
+                            st.info(f"No human members found in {chosen_role}")
 
     elif grant_target == "Role → Role (AI role → domain role)":
         st.caption(
             "Enterprise pattern: select a generic AI role (e.g. `CORTEX_ACCESS_ROLE`) that already has "
-            "CORTEX_USER/COPILOT_USER, then grant it to one or more domain roles. "
+            "CORTEX_USER or CORTEX_AGENT_USER (plus transitional COPILOT_USER), then grant it to one or more domain roles. "
             "Runs: `GRANT ROLE <source> TO ROLE <target>`"
         )
         roles = list_roles(session)
@@ -144,13 +192,24 @@ def _render_grant(session):
             with col_src:
                 source_role = st.selectbox(
                     "Source AI role", roles, key="r2r_source_role",
-                    help="The generic AI/access role that already has CORTEX_USER / COPILOT_USER."
+                    help="The generic AI/access role that already has CORTEX_USER or CORTEX_AGENT_USER (plus transitional COPILOT_USER)."
                 )
             with col_tgt:
-                target_roles_r2r = st.multiselect(
-                    "Target domain roles", roles, key="r2r_target_roles",
-                    help="Domain roles that should inherit access from the source AI role."
+                target_pattern = st.text_input(
+                    "Target roles pattern (optional)", key="r2r_target_pattern",
+                    placeholder="e.g. *_ANALYST  — leave blank to pick roles",
+                    help=_PATTERN_HELP
                 )
+                if not target_pattern.strip():
+                    target_roles_r2r = st.multiselect(
+                        "Target domain roles", roles, key="r2r_target_roles",
+                        help="Domain roles that should inherit access from the source AI role."
+                    )
+            if target_pattern.strip():
+                candidates = [r for r in roles if r != source_role]
+                matches, excluded = _match_roles(candidates, target_pattern)
+                target_roles_r2r = _pick_matches("Roles", matches, "r2r_pattern_sel",
+                                                 target_pattern, excluded)
             if source_role and target_roles_r2r:
                 st.caption(
                     f"Will run `GRANT ROLE {source_role} TO ROLE ...` for "
@@ -168,40 +227,54 @@ def _render_grant(session):
             tag_name = st.text_input("Tag Name", value="DEPARTMENT", key="access_tag_name",
                                      help="e.g., DEPARTMENT, COST_CENTER, AI_TIER")
         with col2:
-            tag_value = st.text_input("Tag Value", placeholder="e.g., PLATFORM", key="access_tag_value",
-                                      help="Users with this tag value will be selected.")
+            tag_value = st.text_input("Tag Value", placeholder="e.g., PLATFORM or ENG*", key="access_tag_value",
+                                      help="Users with a matching tag value will be selected. " + _PATTERN_HELP)
         if tag_name and tag_value:
-            tagged_users = _get_users_by_tag(session, tag_name, tag_value)
+            tagged = _get_user_tag_values(session, tag_name)
+            hit_values = set(_match(sorted(tagged), tag_value))
+            tagged_users = sorted({u for v in hit_values for u in tagged[v]})
             if tagged_users:
-                st.info(f"**{len(tagged_users)}** users with `{tag_name}` = `{tag_value}`")
-                selected_users = st.multiselect(
-                    "Select users", tagged_users, default=tagged_users,
-                    key="access_tag_members",
-                    help="All tagged users pre-selected."
-                )
+                st.info(f"**{len(tagged_users)}** users with `{tag_name}` matching `{tag_value}` "
+                        f"(values: {', '.join(sorted(hit_values))})")
+                selected_users = _pick_matches("Users", tagged_users, "access_tag_members", tag_value)
             else:
-                st.warning(f"No users found with tag `{tag_name}` = `{tag_value}`")
+                st.warning(f"No users found with tag `{tag_name}` matching `{tag_value}`")
 
     else:
         # Grant to an account role (enterprise pattern)
         roles = list_roles(session)
         if roles:
-            target_role = st.selectbox(
-                "Select target role", roles, key="grant_role_target",
-                help="All users who have this role (directly or inherited) will get Cortex Code access."
+            role_pattern = st.text_input(
+                "Target roles pattern (optional)", key="grant_role_pattern",
+                placeholder="e.g. ENG_*  — leave blank to pick one role",
+                help=_PATTERN_HELP
             )
-            if target_role:
-                members = get_role_members(session, target_role)
-                st.info(f"Granting to role `{target_role}` affects **{len(members)}** current members (plus future members).")
+            if role_pattern.strip():
+                matches, excluded = _match_roles(roles, role_pattern)
+                target_roles = _pick_matches("Roles", matches, "grant_role_pattern_sel",
+                                             role_pattern, excluded)
+            else:
+                target_role = st.selectbox(
+                    "Select target role", roles, key="grant_role_target",
+                    help="All users who have this role (directly or inherited) will get Cortex Code access."
+                )
+                if target_role:
+                    target_roles = [target_role]
+                    members = get_role_members(session, target_role)
+                    st.info(f"Granting to role `{target_role}` affects **{len(members)}** current members (plus future members).")
 
     # Database roles to grant
     grant_options = st.multiselect(
         "Database roles to grant",
-        ["SNOWFLAKE.COPILOT_USER", "SNOWFLAKE.CORTEX_USER"],
-        default=["SNOWFLAKE.COPILOT_USER", "SNOWFLAKE.CORTEX_USER"],
+        ["SNOWFLAKE.CORTEX_USER", "SNOWFLAKE.CORTEX_AGENT_USER", "SNOWFLAKE.COPILOT_USER"],
+        default=["SNOWFLAKE.CORTEX_USER", "SNOWFLAKE.COPILOT_USER"],
         key="access_grant_roles",
-        help="Both COPILOT_USER and CORTEX_USER are required for Cortex Code. Grant both."
+        help="Cortex Code needs CORTEX_USER or CORTEX_AGENT_USER (least privilege: agent features only). "
+             "COPILOT_USER is transitional: CoCo in Snowsight needs it only until BCR-2445 reaches your "
+             "account, after which granting it has no effect."
     )
+    st.caption("COPILOT_USER is **transitional** (BCR-2445, rolling out from October 2026). "
+               "Keep it until the change reaches your account; it is harmless afterwards.")
 
     # Execute
     if selected_users and grant_options:
@@ -210,11 +283,15 @@ def _render_grant(session):
                      help="Bulk grant via SP — single round-trip regardless of user count."):
             _execute_grants_to_users(session, selected_users, grant_options)
 
-    elif target_role and grant_options:
-        st.caption(f"Will grant **{', '.join(grant_options)}** to role **{target_role}**")
+    elif target_roles and grant_options:
+        if len(target_roles) == 1:
+            st.caption(f"Will grant **{', '.join(grant_options)}** to role **{target_roles[0]}**")
+        else:
+            st.caption(f"Will grant **{', '.join(grant_options)}** to **{len(target_roles)}** roles")
         if st.button("Grant to Role", type="primary", key="btn_grant_role",
                      help="Executes GRANT DATABASE ROLE TO ROLE. All current and future role members get access."):
-            _execute_grants_to_role(session, target_role, grant_options)
+            for role in target_roles:
+                _execute_grants_to_role(session, role, grant_options)
 
 
 def _execute_grants_to_users(session, users, db_roles):
@@ -265,13 +342,24 @@ def _execute_grants_to_users(session, users, db_roles):
                     st.caption(f"... and {len(errors) - 20} more")
 
 
+def _role_grant(session, action, grant_type, source, target):
+    """
+    Run a role-level GRANT/REVOKE via SP_CC_MANAGE_ROLE_GRANT (owner's rights).
+    The app role lacks MANAGE GRANTS, so these must not run directly.
+    Raises on failure so callers keep their existing try/except handling.
+    """
+    ok, msg = call_sp(session, SP_MANAGE_ROLE_GRANT, action, grant_type, source, target)
+    if not ok:
+        raise RuntimeError(msg)
+
+
 def _execute_grants_to_role(session, role_name, db_roles):
     """Grant database roles to an account role (not individual users)."""
     safe_role = sql_identifier(role_name)
     successes, failures = 0, 0
     for db_role in db_roles:
         try:
-            session.sql(f'GRANT DATABASE ROLE {db_role} TO ROLE {safe_role}').collect()
+            _role_grant(session, "GRANT", "DATABASE_ROLE", db_role, role_name)
             successes += 1
             log_activity(session, "GRANT_ACCESS_TO_ROLE", target_role=role_name,
                          details={"database_role": db_role})
@@ -289,7 +377,7 @@ def _execute_role_to_role_grants(session, source_role, target_roles):
     """
     Grant an account role (e.g. AI_ACCESS_ROLE) to one or more domain roles.
     Runs: GRANT ROLE <source> TO ROLE <target>
-    Enterprise pattern: the AI role carries CORTEX_USER/COPILOT_USER and
+    Enterprise pattern: the AI role carries the Cortex DB roles and
     domain roles inherit access without direct DB-role grants.
     """
     safe_src = sql_identifier(source_role)
@@ -297,7 +385,7 @@ def _execute_role_to_role_grants(session, source_role, target_roles):
     for target in target_roles:
         safe_tgt = sql_identifier(target)
         try:
-            session.sql(f'GRANT ROLE {safe_src} TO ROLE {safe_tgt}').collect()
+            _role_grant(session, "GRANT", "ROLE", source_role, target)
             successes += 1
             log_activity(session, "GRANT_ROLE_TO_ROLE",
                          details={"source_role": source_role, "target_role": target})
@@ -320,7 +408,7 @@ def _render_current(session):
 
     try:
         # Get roles that have CORTEX_USER database role
-        df = session.sql("SHOW GRANTS OF DATABASE ROLE SNOWFLAKE.CORTEX_USER").to_pandas()
+        df = _load_cortex_user_grants(session)
         if df.empty:
             st.info("No grants found for SNOWFLAKE.CORTEX_USER.")
             return
@@ -345,18 +433,27 @@ def _render_current(session):
             st.dataframe(display_df, use_container_width=True, hide_index=True)
 
             # Revoke option
-            revoke_targets = st.multiselect(
-                "Select roles to revoke CORTEX_USER from",
-                role_grants["GRANTEE_NAME"].tolist(),
-                key="revoke_select",
-                help="Removing CORTEX_USER from a role removes Cortex Code access for all its members."
+            grantees = role_grants["GRANTEE_NAME"].tolist()
+            revoke_pattern = st.text_input(
+                "Roles pattern (optional)", key="revoke_pattern",
+                placeholder="e.g. TEMP_*  — leave blank to pick roles", help=_PATTERN_HELP
             )
+            if revoke_pattern.strip():
+                matches, excluded = _match_roles(grantees, revoke_pattern)
+                revoke_targets = _pick_matches("Roles", matches, "revoke_pattern_sel",
+                                               revoke_pattern, excluded)
+            else:
+                revoke_targets = st.multiselect(
+                    "Select roles to revoke CORTEX_USER from", grantees,
+                    key="revoke_select",
+                    help="Removing CORTEX_USER from a role removes Cortex Code access for all its members."
+                )
             if revoke_targets and st.button("Revoke Selected", type="secondary", key="btn_revoke",
                                             help="Executes REVOKE DATABASE ROLE from selected roles."):
                 for target in revoke_targets:
                     try:
                         safe_target = sql_identifier(target)
-                        session.sql(f'REVOKE DATABASE ROLE SNOWFLAKE.CORTEX_USER FROM ROLE {safe_target}').collect()
+                        _role_grant(session, "REVOKE", "DATABASE_ROLE", "SNOWFLAKE.CORTEX_USER", target)
                         log_activity(session, "REVOKE_ACCESS", target_role=target,
                                      details={"database_role": "SNOWFLAKE.CORTEX_USER"})
                         st.success(f"✓ Revoked from {target}")
@@ -402,11 +499,21 @@ def _render_current(session):
                             gdf[[role_col]].rename(columns={role_col: "Role with access"}),
                             use_container_width=True, hide_index=True
                         )
-                        revoke_r2r = st.multiselect(
-                            "Select roles to revoke from", role_grantees,
-                            key="r2r_revoke_select",
-                            help=f"Will run: REVOKE ROLE {inspect_src} FROM ROLE <target>"
+                        r2r_revoke_pattern = st.text_input(
+                            "Roles pattern (optional)", key="r2r_revoke_pattern",
+                            placeholder="e.g. *_ANALYST  — leave blank to pick roles",
+                            help=_PATTERN_HELP
                         )
+                        if r2r_revoke_pattern.strip():
+                            matches, excluded = _match_roles(role_grantees, r2r_revoke_pattern)
+                            revoke_r2r = _pick_matches("Roles", matches, "r2r_revoke_pattern_sel",
+                                                       r2r_revoke_pattern, excluded)
+                        else:
+                            revoke_r2r = st.multiselect(
+                                "Select roles to revoke from", role_grantees,
+                                key="r2r_revoke_select",
+                                help=f"Will run: REVOKE ROLE {inspect_src} FROM ROLE <target>"
+                            )
                         if revoke_r2r and st.button(
                             "Revoke Role Grants", type="secondary", key="btn_r2r_revoke",
                             help="Executes REVOKE ROLE <source> FROM ROLE <target>."
@@ -414,9 +521,7 @@ def _render_current(session):
                             for tgt in revoke_r2r:
                                 safe_tgt = sql_identifier(tgt)
                                 try:
-                                    session.sql(
-                                        f'REVOKE ROLE {safe_src} FROM ROLE {safe_tgt}'
-                                    ).collect()
+                                    _role_grant(session, "REVOKE", "ROLE", inspect_src, tgt)
                                     log_activity(
                                         session, "REVOKE_ROLE_FROM_ROLE",
                                         details={"source_role": inspect_src, "target_role": tgt}
@@ -488,24 +593,25 @@ def _render_inheritance(session):
             st.error(f"Error: {e}")
 
 
-def _get_users_by_tag(session, tag_name: str, tag_value: str) -> list:
-    """Get users with a specific tag value from ACCOUNT_USAGE."""
+def _get_user_tag_values(session, tag_name: str) -> dict:
+    """Map each value of a user tag to the users carrying it (ACCOUNT_USAGE)."""
     from config import escape_sql_literal
     safe_tag = escape_sql_literal(tag_name)
-    safe_val = escape_sql_literal(tag_value)
+    result = {}
     try:
         df = session.sql(f"""
-            SELECT DISTINCT OBJECT_NAME AS USER_NAME
+            SELECT DISTINCT OBJECT_NAME AS USER_NAME, TAG_VALUE
             FROM SNOWFLAKE.ACCOUNT_USAGE.TAG_REFERENCES
             WHERE TAG_NAME = '{safe_tag}'
-              AND TAG_VALUE = '{safe_val}'
               AND DOMAIN = 'USER'
               AND OBJECT_DELETED IS NULL
             ORDER BY USER_NAME
         """).to_pandas()
         if not df.empty:
             df.columns = [c.strip('"').upper() for c in df.columns]
-            return df["USER_NAME"].tolist()
+            for user, value in zip(df["USER_NAME"], df["TAG_VALUE"]):
+                if value is not None:
+                    result.setdefault(str(value), []).append(user)
     except Exception:
         pass
-    return []
+    return result
