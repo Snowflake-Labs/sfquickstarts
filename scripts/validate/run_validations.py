@@ -45,7 +45,7 @@ BLOCKING: list[tuple[str, str, Check]] = [
     ("Large files check (>1MB)", "large-files-error.json", checks.check_large_files),
     ("Categories syntax validation", "categories-error.json", checks.check_categories),
     (
-        "Frontmatter validation (id must match file, and folder for quickstarts)",
+        "Frontmatter validation (id, language suffix, status)",
         "frontmatter-error.json",
         checks.check_frontmatter,
     ),
