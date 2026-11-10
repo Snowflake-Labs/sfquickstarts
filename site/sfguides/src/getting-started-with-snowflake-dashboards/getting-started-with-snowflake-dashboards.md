@@ -202,3 +202,4 @@ You loaded a dataset, deployed a dashboard file, traced a $1.09M revenue gap to 
 - [Workspaces](https://docs.snowflake.com/en/user-guide/ui-snowsight/workspaces)
 - [Snowflake semantic views](https://docs.snowflake.com/en/user-guide/views-semantic/overview)
 - [Artifacts in Snowflake CoWork](https://docs.snowflake.com/en/user-guide/snowflake-cortex/snowflake-cowork/artifacts)
+
