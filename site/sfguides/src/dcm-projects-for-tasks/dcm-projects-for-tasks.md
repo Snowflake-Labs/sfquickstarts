@@ -134,7 +134,7 @@ GRANT MODIFY LOG EVENT LEVEL ON ACCOUNT TO ROLE DCM_DEVELOPER;
 
 SNOWFLAKE.EVENTS_VIEWER is an application role, so it is granted with GRANT APPLICATION ROLE; without it the alert's condition can't read the event table. MODIFY LOG EVENT LEVEL lets the role set LOG_EVENT_LEVEL on the project's database, which is what makes the tasks log their run status. Without it the first plan fails with "must have MODIFY LOG EVENT LEVEL granted on ACCOUNT".
 
-> **Important: update the manifest before the first plan.** Copy ACCOUNT_IDENTIFIER from the last query of scripts/01_pre_deploy.sql into the account_identifier line of the DCM_DEV target in DCM_Projects_Tasks/manifest.yml (line 11, marked "# update to your account names").
+> **Important: update the manifest before the first plan.** Copy ACCOUNT_IDENTIFIER from the last query of scripts/01_pre_deploy.sql into the account_identifier line of the DCM_DEV target in DCM_Projects_Tasks/manifest.yml (line 11, marked "# update to your account names"). In the same file, set alert_email (line 27) to your own verified Snowflake user email, or the failed-task alert has nowhere to send.
 
 ### Create the Email Integration
 
@@ -293,8 +293,6 @@ With the account identifier and your email in the manifest and both setup script
 **In Snowsight:** the DCM control panel is the first tab in the bottom panel of your workspace. Select the project **dcm-projects-for-tasks/DCM_Projects_Tasks**. On the right side of the same bar, select the **DCM_DEV** target and click the play button to the right of **Plan**.
 
 ![DCM control panel with the project and target selected](assets/select_project.png)
-Screenshot placeholder: the DCM control panel with project dcm-projects-for-tasks/DCM_Projects_Tasks and target DCM_DEV selected, taken just before clicking Plan.
-
 **With the Snowflake CLI:** pass the manifest's owner role for the target with --role.
 
 ```bash
@@ -305,17 +303,15 @@ Every object is new, so the changeset is all CREATE: the warehouse, the database
 
 ![Plan output with CREATE for the warehouse, database, schemas, tables, tasks, the task graph and the alert](assets/plan_results.png)
 
-Screenshot placeholder: the first Plan result, showing the CREATE ALERT line for TASK_ERROR_RATE, the CREATE TASK_GRAPH line for WEATHER_PIPELINE and the CREATE lines for its three tasks.
-
 ### Deploy
 
 When the changeset matches what you expected, deploy it.
 
 **In Snowsight:** in the DCM control panel, set the operation to **Deploy** instead of **Plan**, add a deployment alias such as first-deploy, and run it.
 
-![Deploy confirmation dialog](assets/deploy_dialog.png)
+![The operation selector in the DCM control panel, with Deploy below Plan](assets/deploy_selector.png)
 
-Screenshot placeholder: the Deploy confirmation dialog with the alias first-deploy filled in.
+![Deploy confirmation dialog](assets/deploy_dialog.png)
 
 **With the Snowflake CLI:**
 
@@ -323,11 +319,6 @@ Screenshot placeholder: the Deploy confirmation dialog with the alias first-depl
 snow dcm deploy --target DCM_DEV --role DCM_DEVELOPER --alias first-deploy
 ```
 
-When the deployment finishes, the database explorer shows the new objects in the PIPELINE schema: the task graph and its three tasks, the two tables and the alert.
-
-![Database explorer showing the PIPELINE schema with its tables, tasks, the task graph and the alert](assets/deployed_objects.png)
-
-Screenshot placeholder: the database explorer after the first deployment, with DCM_DEMO_4_DEV.PIPELINE expanded to show the two tables, three tasks, WEATHER_PIPELINE and TASK_ERROR_RATE.
 
 <!-- ------------------------ -->
 ## Run the Graph and Inspect It
@@ -382,6 +373,10 @@ Section 5 reads the task history for this graph. The GRAPH_VERSION column tells 
 | 1 | BUILD_DAILY_SUMMARY | SUCCEEDED | NULL |
 | 1 | LOG_RUN | SUCCEEDED | 6 raw rows |
 
+In Snowsight, WEATHER_PIPELINE shows the same run as a graph. LOAD_WEATHER feeds BUILD_DAILY_SUMMARY, and LOG_RUN is attached as the finalizer:
+
+![WEATHER_PIPELINE graph with LOAD_WEATHER, BUILD_DAILY_SUMMARY and the LOG_RUN finalizer all Succeeded](assets/task_graph_run.png)
+
 The graph also keeps its hourly schedule, so if the top of the hour passes while you work, a scheduled run appears in the history that finds nothing new and reports 0 rows loaded. The history query leaves out runs like that, so the result stays as shown.
 
 DAILY_WEATHER_SUMMARY now has six rows, one per day and ZIP code. Two of those readings, 85 F and 91 F in ZIP code 10001, will matter in Act 2.
@@ -431,15 +426,9 @@ The alert has no successful scheduled run yet, so it looks at the last hour, the
 |---|---|---|
 | DCM_DEMO_4_EMAIL_INT | SUCCESS | '' |
 
-![Alert history showing TASK_ERROR_RATE as TRIGGERED](assets/alert_history.png)
-
-Screenshot placeholder: the 04_force_failure.sql worksheet result for the ALERT_HISTORY query, with TASK_ERROR_RATE in state TRIGGERED.
-
 Check your inbox for the email from Snowflake about TASK_ERROR_RATE.
 
 ![Alert email in the inbox](assets/alert_email.png)
-
-Screenshot placeholder: the TASK_ERROR_RATE alert email as received at alert_email, opened, right after running 04_force_failure.sql.
 
 If the alert history shows CONDITION_FAILED or ACTION_FAILED instead, read SQL_ERROR_MESSAGE. The usual causes are a missing grant from section 3 of 01_pre_deploy.sql, an alert_email that isn't the verified address of a user in the account, or events that hadn't arrived yet; in that case run EXECUTE ALERT again a minute later.
 
@@ -512,8 +501,6 @@ The Plan also lists an ALTER on DCM_DEVELOPER for the ownership of the two new o
 
 ![Second Plan showing CREATE for the new table and task and ALTER for the task graph](assets/plan_redeployment.png)
 
-Screenshot placeholder: the second Plan result, with the ALTER TASK_GRAPH line expanded to show the TASK_DEFAULTS change, and no ALERT line.
-
 ### Deploy
 
 When the changeset matches what you expected, deploy it.
@@ -557,6 +544,10 @@ Sections 3 and 4 add two more hot days, run the graph again and show every run s
 | 2 | BUILD_DAILY_SUMMARY | SUCCEEDED | NULL |
 | 2 | BUILD_HEAT_WARNINGS | SUCCEEDED | NULL |
 | 2 | LOG_RUN | SUCCEEDED | 8 raw rows |
+
+The graph now shows BUILD_HEAT_WARNINGS as a second branch next to BUILD_DAILY_SUMMARY, both fed by LOAD_WEATHER:
+
+![WEATHER_PIPELINE graph with the new BUILD_HEAT_WARNINGS branch, all tasks Succeeded](assets/task_graph_branch.png)
 
 HEAT_WARNINGS holds four rows. Two of them are the 85 F and 91 F readings from Act 1, which the new branch picked up from data that was already loaded:
 
