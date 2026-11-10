@@ -138,7 +138,7 @@ GRANT CREATE ICEBERG TABLE ON SCHEMA ICEBERG_LAB.PUBLIC TO ROLE <MIGRATION_ROLE>
 
 This lab uses `SNOWFLAKE_MANAGED` so there is no volume to grant. Skip that grant, and leave `baseLocationPrefix` unset.
 
-## Drive the Load from Cortex Code
+## Load with Cortex Code
 
 From an empty project directory:
 
@@ -282,7 +282,29 @@ The table is created without a `PARTITION BY` clause. `columnNamesToPartitionBy`
 
 On this lab the clock is `VARCHAR`, so give the new table a real timestamp column before you partition it. On a v3 `FULL_INGEST` load the clock is already a timestamp, and `PARTITION BY (MONTH(order_ts))` applies directly. Syntax: [CREATE ICEBERG TABLE](https://docs.snowflake.com/en/sql-reference/sql/create-iceberg-table-snowflake).
 
-## Conclusion
+## Clean Up
+
+Dropping the database removes the Iceberg table and the extract stage. The storage integration is account-level, so drop it separately.
+
+```sql
+DROP DATABASE IF EXISTS ICEBERG_LAB;
+DROP STORAGE INTEGRATION IF EXISTS ICEBERG_LAB_EXTRACT;
+-- Only if you created it on the customer-volume path:
+-- DROP EXTERNAL VOLUME IF EXISTS ICEBERG_LAB_VOLUME;
+```
+
+On the SQL Server instance, drop the source table:
+
+```sql
+USE IcebergLab;
+GO
+DROP TABLE IF EXISTS Sales.Orders;
+GO
+```
+
+Then delete the Parquet files the extract wrote under the `<EXTRACT_URL>` prefix from your bucket or container.
+
+## Conclusion And Resources
 
 You loaded a relational SQL Server table into a new Snowflake-managed Iceberg table with AIM. The plugin kept the catalog as `SNOWFLAKE`, the storage mode as `compatible`, and the files as they were written. The timestamp landed as `VARCHAR` because this was `ADD_FILES_COPY`.
 
