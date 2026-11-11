@@ -123,14 +123,12 @@ DCM_Projects_DT_Lifecycle/manifest.yml defines four targets, DCM_DEV, DCM_STAGE,
 
 The sources/definitions/ directory contains the SQL that defines your infrastructure. Each file uses DEFINE statements and Jinja variables like {{env_suffix}}:
 
-| File | What it defines |
-|---|---|
-| <span style="white-space: nowrap">infrastructure.sql</span> | The warehouse that refreshes the dynamic tables, the database (with LOG_EVENT_LEVEL = ERROR) and its PUBLIC schema |
-| <span style="white-space: nowrap">raw.sql</span> | The RAW schema and three landing tables: MENU, CUSTOMER and ORDERS |
-| <span style="white-space: nowrap">analytics.sql</span> | The ANALYTICS schema, three dynamic tables, and a SQL function, CALCULATE_PROFIT_MARGIN, used by TRUCK_PERFORMANCE |
-| <span style="white-space: nowrap">serve.sql</span> | The SERVE schema, three views for dashboards and SALES_ANALYTICS, a semantic view over ENRICHED_ORDER_DETAILS |
-| <span style="white-space: nowrap">expectations.sql</span> | Three data quality expectations: on a table, a dynamic table and a view |
-| <span style="white-space: nowrap">alerts.sql</span> | DT_REFRESH_FAILURE, an alert built from a Snowflake alert template |
+- **infrastructure.sql:** the warehouse that refreshes the dynamic tables, the database (with LOG_EVENT_LEVEL = ERROR) and its PUBLIC schema.
+- **raw.sql:** the RAW schema and three landing tables: MENU, CUSTOMER and ORDERS.
+- **analytics.sql:** the ANALYTICS schema, three dynamic tables, and a SQL function, CALCULATE_PROFIT_MARGIN, used by TRUCK_PERFORMANCE.
+- **serve.sql:** the SERVE schema, three views for dashboards and SALES_ANALYTICS, a semantic view over ENRICHED_ORDER_DETAILS.
+- **expectations.sql:** three data quality expectations: on a table, a dynamic table and a view.
+- **alerts.sql:** DT_REFRESH_FAILURE, an alert built from a Snowflake alert template.
 
 DT_REFRESH_FAILURE watches every dynamic table in DCM_DEMO_3_DEV and posts an in-app notification in Snowsight when a refresh fails. It reads the refresh failure events that LOG_EVENT_LEVEL = ERROR on the database writes to the event table. An alert built from a template cannot be declared STARTED, so DCM deploys it suspended and scripts/02_post_deploy.sql resumes it.
 
@@ -228,7 +226,7 @@ When the changeset matches what you expected, deploy it.
 
 ![The operation selector in the DCM control panel, with Deploy below Plan](assets/deploy_selector.png)
 
-![Deploy dialog for the second deployment](assets/deploy_dialog_2.png)
+![Deploy confirmation dialog with the alias initial-pipeline](assets/deploy_dialog.png)
 
 **With the Snowflake CLI:**
 
@@ -413,7 +411,7 @@ When the changeset matches what you expected, deploy it.
 
 **In Snowsight:** in the DCM control panel, set the operation to **Deploy** instead of **Plan**, add a deployment alias such as add-ai-diet-frozen-region, and run it.
 
-![Deploy confirmation dialog](assets/deploy_dialog.png)
+![Deploy dialog for the second deployment, with the alias add-ai-diet-frozen-region](assets/deploy_dialog_2.png)
 
 **With the Snowflake CLI:**
 
