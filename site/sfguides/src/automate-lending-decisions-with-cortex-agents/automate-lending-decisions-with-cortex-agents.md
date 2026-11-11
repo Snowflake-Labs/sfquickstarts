@@ -666,7 +666,7 @@ DROP WAREHOUSE IF EXISTS LENDING_WH;
 Then remove the integration setup used to read this guide's files from GitHub, and delete the `setup.sql`, `lab.sql` and agent YAML files from your workspace:
 
 ```sql
-DROP API INTEGRATION IF EXISTS LAB_GIT_API;
+DROP API INTEGRATION IF EXISTS LENDING_GUIDE_GIT_API;
 ```
 
 <!-- ------------------------ -->

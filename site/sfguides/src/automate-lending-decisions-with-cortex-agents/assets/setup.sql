@@ -37,7 +37,7 @@ CREATE SCHEMA LENDING.LOANS;
 
    It sits in its own schema so that nothing in LENDING.LOANS looks like a
    thirteenth applicant document when Module 1 lists what is on the stages. */
-CREATE API INTEGRATION IF NOT EXISTS LAB_GIT_API
+CREATE OR REPLACE API INTEGRATION LENDING_GUIDE_GIT_API
     API_PROVIDER = git_https_api
     API_ALLOWED_PREFIXES = ('https://github.com/Snowflake-Labs/')
     ENABLED = TRUE;
@@ -45,7 +45,7 @@ CREATE API INTEGRATION IF NOT EXISTS LAB_GIT_API
 CREATE SCHEMA LENDING.GUIDE_FILES;
 
 CREATE GIT REPOSITORY LENDING.GUIDE_FILES.SFQUICKSTARTS
-    API_INTEGRATION = LAB_GIT_API
+    API_INTEGRATION = LENDING_GUIDE_GIT_API
     ORIGIN = 'https://github.com/Snowflake-Labs/sfquickstarts.git';
 
 USE SCHEMA LENDING.LOANS;
