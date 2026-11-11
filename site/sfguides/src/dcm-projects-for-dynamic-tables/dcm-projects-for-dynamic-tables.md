@@ -20,7 +20,7 @@ Dynamic tables are the backbone of declarative data pipelines in Snowflake. You 
 
 This guide answers all three by combining three Snowflake features:
 
-- **DCM Projects.** Define your entire pipeline (database, schemas, tables, dynamic tables, views, roles and grants) as code, then plan and deploy changes declaratively.
+- **DCM Projects.** Define your entire pipeline (database, schemas, tables, dynamic tables, views, a semantic view and an alert) as code, then plan and deploy changes declaratively.
 - **Frozen regions.** Tell Snowflake which rows in a dynamic table will never change, so a schema change only recomputes the active rows.
 - **Cortex AI functions in dynamic tables.** Call an AI function like AI_CLASSIFY directly in a dynamic table's definition, so AI-derived columns are filled in as data flows through your pipeline.
 
@@ -47,7 +47,7 @@ You'll deploy a food truck analytics pipeline with a DCM Project, then evolve a 
 - [Cortex AI functions](https://docs.snowflake.com/en/user-guide/snowflake-cortex/aisql) available in your account's region. Calling them needs the USE AI FUNCTIONS account privilege and the SNOWFLAKE.CORTEX_USER database role, which every role gets through PUBLIC by default. If your administrator has revoked them from PUBLIC, grant both to DCM_DEVELOPER.
 
 ### What You'll Build
-- A deployed food truck analytics pipeline, all defined as code: a database with a database role, three landing tables, three dynamic tables, three views, a SQL function, a stage and an ingestion task, three data quality expectations, a refresh-failure alert, a warehouse, and a READ role with its grants
+- A deployed food truck analytics pipeline, all defined as code: a database, three landing tables, three dynamic tables, three views, a semantic view, a SQL function, three data quality expectations, a refresh-failure alert and a warehouse
 - An evolved dynamic table with an AI-classified column and a frozen region, deployed through a second plan and deploy, that recomputes only its active rows
 
 <!-- ------------------------ -->
@@ -108,21 +108,7 @@ The script is the same in every guide of this series. It runs as ACCOUNTADMIN an
 
 When the script finishes, refresh your browser so the DCM control panel lists the new project object.
 
-**Inherited grants.** An inherited grant covers current *and* future objects of a type inside a container. GRANT ON ALL snapshots what exists right now; GRANT ON FUTURE covers only what comes later. An inherited grant covers both, as one grant rather than one per object, which is why it is the recommended pattern in DCM Projects. It is a one-time opt-in per account ([release note](https://docs.snowflake.com/en/release-notes/2026/other/2026-09-10-inherited-grants-ga)), which the setup script turns on:
-
-```sql
-ALTER ACCOUNT SET FEATURE_RBAC_INHERITED_GRANTS = 'ENABLED';
-```
-
-An inherited grant cannot be combined with WITH GRANT OPTION, CASCADE or RESTRICT.
-
-This project's access.sql uses three of them to give the READ role SELECT on every table, dynamic table and view in the database.
-
 > **Important: update the manifest before the first plan.** Copy ACCOUNT_IDENTIFIER from the last query of scripts/01_pre_deploy.sql into the account_identifier line of the DCM_DEV target in DCM_Projects_DT_Lifecycle/manifest.yml (line 11, marked "# update to your account names").
-
-| ACCOUNT_IDENTIFIER | USER_NAME |
-|---|---|
-| MYORG-MY_ACCOUNT | YOUR_USER |
 
 <!-- ------------------------ -->
 ## Explore the Project Files
@@ -131,65 +117,7 @@ Navigate into DCM_Projects_DT_Lifecycle/. A DCM Project consists of a **manifest
 
 ### Manifest
 
-Open DCM_Projects_DT_Lifecycle/manifest.yml. It defines:
-
-- **Targets.** Named deployment environments (DEV, STAGE, PROD), each pointing to a Snowflake account and a DCM Project object, with an owner role.
-- **Templating configurations.** Variable values that change per environment, such as the database suffix and the warehouse size.
-
-```yaml
-manifest_version: 2
-
-type: DCM_PROJECT
-
-default_target: DCM_DEV
-
-targets:
-  DCM_DEV:
-    account_identifier: MYORG-MY_DEV_ACCOUNT  # update to your account names
-    project_name: DCM_DEMO.PROJECTS.DCM_DT_PROJECT_DEV
-    project_owner: DCM_DEVELOPER
-    templating_config: DEV
-
-  DCM_STAGE:
-    account_identifier: MYORG-MY_STAGE_ACCOUNT  # update to your account names
-    project_name: DCM_DEMO.PROJECTS.DCM_DT_PROJECT_STG
-    project_owner: DCM_STAGE_DEPLOYER
-    templating_config: STAGE
-
-  DCM_PROD_US:
-    account_identifier: MYORG-MY_ACCOUNT_US  # update to your account names
-    project_name: DCM_DEMO.PROJECTS.DCM_DT_PROJECT_PROD
-    project_owner: DCM_PROD_DEPLOYER
-    templating_config: PROD
-
-  DCM_PROD_EU:
-    account_identifier: MYORG-MY_ACCOUNT_EU  # update to your account names
-    project_name: DCM_DEMO.PROJECTS.DCM_DT_PROJECT_PROD
-    project_owner: DCM_PROD_DEPLOYER
-    templating_config: PROD
-
-templating:
-  defaults:
-    wh_size: "X-SMALL"
-
-  configurations:
-    DEV:
-      env_suffix: "_DEV"
-      project_owner_role: "DCM_DEVELOPER"
-
-    STAGE:
-      env_suffix: "_STG"
-      project_owner_role: "DCM_STAGE_DEPLOYER"
-
-    PROD:
-      env_suffix: ""
-      wh_size: "LARGE"
-      project_owner_role: "DCM_PROD_DEPLOYER"
-```
-
-Replace MYORG-MY_DEV_ACCOUNT on the DCM_DEV line with the ACCOUNT_IDENTIFIER from the setup script. This guide only deploys DCM_DEV; the other targets show how the same definitions promote to other accounts.
-
-The DEV configuration sets env_suffix to _DEV while PROD sets it to an empty string, so the same definition files create DCM_DEMO_3_DEV in development and DCM_DEMO_3 in production. PROD also overrides the default warehouse size. Jinja loops and macros are covered in the [Build Data Pipelines](https://www.snowflake.com/en/developers/guides/build-data-pipelines-with-snowflake-dcm-projects/) guide.
+DCM_Projects_DT_Lifecycle/manifest.yml defines four targets, DCM_DEV, DCM_STAGE, DCM_PROD_US and DCM_PROD_EU, and the templating values for each. DEV appends a _DEV suffix to every object name and uses an X-SMALL warehouse; PROD uses no suffix and a LARGE warehouse. The definition files reference these values as Jinja variables, so the same files create DCM_DEMO_3_DEV in development and DCM_DEMO_3 in production. This guide only deploys DCM_DEV. The [Get Started](https://www.snowflake.com/en/developers/guides/get-started-snowflake-dcm-projects/) guide walks through the manifest in detail.
 
 ### Definition Files
 
@@ -197,40 +125,33 @@ The sources/definitions/ directory contains the SQL that defines your infrastruc
 
 | File | What it defines |
 |---|---|
-| raw.sql | The database (with LOG_EVENT_LEVEL = ERROR), the RAW schema and three landing tables: MENU, CUSTOMER and ORDERS |
-| ingest.sql | A stage with a directory table, and a task that loads order CSV files from it on a daily schedule. The task is deployed suspended, so it does not resume the warehouse every morning; this guide loads its data with scripts instead |
+| infrastructure.sql | The warehouse that refreshes the dynamic tables, the database (with LOG_EVENT_LEVEL = ERROR) and its PUBLIC schema |
+| raw.sql | The RAW schema and three landing tables: MENU, CUSTOMER and ORDERS |
 | analytics.sql | The ANALYTICS schema, three dynamic tables, and a SQL function, CALCULATE_PROFIT_MARGIN, used by TRUCK_PERFORMANCE |
-| serve.sql | The SERVE schema and three views for dashboards |
-| access.sql | The warehouse, a database role, a READ account role and its grants |
+| serve.sql | The SERVE schema, three views for dashboards and SALES_ANALYTICS, a semantic view over ENRICHED_ORDER_DETAILS |
 | expectations.sql | Three data quality expectations: on a table, a dynamic table and a view |
 | alerts.sql | DT_REFRESH_FAILURE, an alert built from a Snowflake alert template |
 
 DT_REFRESH_FAILURE watches every dynamic table in DCM_DEMO_3_DEV and posts an in-app notification in Snowsight when a refresh fails. It reads the refresh failure events that LOG_EVENT_LEVEL = ERROR on the database writes to the event table. An alert built from a template cannot be declared STARTED, so DCM deploys it suspended and scripts/02_post_deploy.sql resumes it.
 
-Here's how raw.sql defines the database and the ORDERS table:
+Here's how infrastructure.sql defines the warehouse and the database:
 
 ```sql
+DEFINE WAREHOUSE DCM_DEMO_3_WH{{env_suffix}}
+WITH
+    WAREHOUSE_SIZE = '{{wh_size}}'
+    AUTO_SUSPEND = 60
+    COMMENT = 'Refreshes the dynamic tables of the DCM Projects for Dynamic Tables quickstart';
+
 DEFINE DATABASE DCM_DEMO_3{{env_suffix}}
     LOG_EVENT_LEVEL = ERROR
     COMMENT = 'This is a Quickstart Demo for DCM Projects with Dynamic Tables';
 
 DEFINE SCHEMA DCM_DEMO_3{{env_suffix}}.PUBLIC
     COMMENT = 'Default schema, declared so DCM manages it';
-
-DEFINE TABLE DCM_DEMO_3{{env_suffix}}.RAW.ORDERS (
-    ORDER_ID NUMBER,
-    ORDER_TS TIMESTAMP_NTZ,
-    CUSTOMER_ID NUMBER,
-    TRUCK_BRAND_NAME VARCHAR,
-    MENU_ITEM_ID NUMBER,
-    QUANTITY NUMBER
-)
-CHANGE_TRACKING = TRUE
-DATA_METRIC_SCHEDULE = 'TRIGGER_ON_CHANGES'
-COMMENT = 'One row per order line, loaded by the ingestion task';
 ```
 
-The {{env_suffix}} variable is replaced at plan time from the target's configuration: _DEV for development, an empty string for production.
+The {{env_suffix}} and {{wh_size}} variables are replaced at plan time from the target's configuration: _DEV and X-SMALL for development, an empty string and LARGE for production.
 
 And here's how analytics.sql defines the dynamic table at the heart of this guide, which joins each order line to its menu item and customer:
 
@@ -284,18 +205,17 @@ Screenshot placeholder: the DCM control panel with project dcm-projects-for-dyna
 snow dcm plan --target DCM_DEV --role DCM_DEVELOPER --save-output
 ```
 
-Since none of the defined objects exist yet, the plan shows **22 entities: 21 to create and 1 to alter**:
+Since none of the defined objects exist yet, the plan shows **19 entities: 18 to create and 1 to alter**:
 
 | Operation | Entities |
 |---|---|
-| CREATE | 1 database (DCM_DEMO_3_DEV) and 1 database role (ADMIN_DEV) |
-| CREATE | 4 schemas: PUBLIC, RAW, ANALYTICS and SERVE |
-| CREATE | 3 tables, 3 dynamic tables, 3 views and 1 function |
-| CREATE | 1 stage, 1 task, 1 alert, 1 warehouse and 1 role (DCM_DEMO_3_DEV_READ) |
+| CREATE | 1 database (DCM_DEMO_3_DEV) and 4 schemas: PUBLIC, RAW, ANALYTICS and SERVE |
+| CREATE | 3 tables, 3 dynamic tables, 3 views, 1 semantic view and 1 function |
+| CREATE | 1 alert and 1 warehouse |
 | ALTER | the owner role DCM_DEVELOPER, which receives ownership of everything above |
 
 ![Plan results showing planned changes](assets/plan_results.png)
-Screenshot placeholder: the first Plan result, header reading 22 entities (21 CREATE, 1 ALTER).
+Screenshot placeholder: the first Plan result, header reading 19 entities (18 CREATE, 1 ALTER).
 
 The plan also wrote an out folder next to sources. It holds the rendered definitions, with every {{env_suffix}} replaced by _DEV; open one next to its source to see what the plan actually ran.
 
@@ -304,6 +224,8 @@ The plan also wrote an out folder next to sources. It holds the rendered definit
 When the changeset matches what you expected, deploy it.
 
 **In Snowsight:** in the DCM control panel, set the operation to **Deploy** instead of **Plan**, add a deployment alias such as initial-pipeline, and run it.
+
+![The operation selector in the DCM control panel, with Deploy below Plan](assets/deploy_selector.png)
 
 ![Deploy confirmation dialog](assets/deploy_dialog.png)
 Screenshot placeholder: the Deploy dialog with the alias initial-pipeline entered, taken before confirming.
@@ -314,7 +236,7 @@ Screenshot placeholder: the Deploy dialog with the alias initial-pipeline entere
 snow dcm deploy --target DCM_DEV --role DCM_DEVELOPER --alias initial-pipeline
 ```
 
-The deploy reports **22 entities (21 created, 1 altered, 0 dropped)**. Refresh the database explorer on the left of Snowsight to see DCM_DEMO_3_DEV and everything inside it.
+The deploy reports **19 entities (18 created, 1 altered, 0 dropped)**. Refresh the database explorer on the left of Snowsight to see DCM_DEMO_3_DEV and everything inside it.
 
 <!-- ------------------------ -->
 ## Insert Sample Data
@@ -375,10 +297,12 @@ Frozen regions were previously called *immutability constraints*. The older IMMU
 
 ### Modify the Definition File
 
-Open sources/definitions/analytics.sql in your workspace and change the ENRICHED_ORDER_DETAILS definition in two places:
+The sources ship with all four edits for this change already written out and commented, marked CHANGE STEP 1 of 4 through 4 of 4. Make all four before you plan.
 
-1. **Add** a FROZEN WHERE clause that freezes orders older than one day.
-2. **Add** a DIET_CLASSIFICATION column, computed by AI_CLASSIFY, as the **last column**.
+Open sources/definitions/analytics.sql in your workspace. Steps 1 and 2 change the ENRICHED_ORDER_DETAILS definition:
+
+1. **Step 1:** uncomment the FROZEN WHERE line, which freezes orders older than one day.
+2. **Step 2:** comment out the O.TRUCK_BRAND_NAME line and uncomment the two lines below it. That adds a comma to TRUCK_BRAND_NAME and a DIET_CLASSIFICATION column, computed by AI_CLASSIFY, as the **last column**.
 
 The changed definition:
 
@@ -426,6 +350,39 @@ Every sample order is from October 2023, well over a day old, so all 24 rows are
 
 You'll see both behaviors side by side after a single refresh.
 
+### Carry the Column to the Serve Layer
+
+A new column in the transformation layer is only useful once the dashboards and the semantic layer can see it. Steps 3 and 4, in sources/definitions/serve.sql, carry DIET_CLASSIFICATION all the way through in the same deploy.
+
+**Step 3:** in V_DASHBOARD_SALES_BY_CATEGORY_CITY, comment out the TOTAL_REVENUE line and uncomment the two lines below it, then swap the GROUP BY the same way. The view becomes:
+
+```sql
+DEFINE VIEW DCM_DEMO_3{{env_suffix}}.SERVE.V_DASHBOARD_SALES_BY_CATEGORY_CITY
+    COMMENT = 'Revenue per menu category and customer city'
+AS
+SELECT
+    ITEM_CATEGORY,
+    CUSTOMER_CITY,
+    SUM(LINE_ITEM_REVENUE) AS TOTAL_REVENUE,
+    DIET_CLASSIFICATION
+FROM DCM_DEMO_3{{env_suffix}}.ANALYTICS.ENRICHED_ORDER_DETAILS
+GROUP BY ITEM_CATEGORY, CUSTOMER_CITY, DIET_CLASSIFICATION;
+```
+
+**Step 4:** in the SALES_ANALYTICS semantic view, comment out the CUSTOMER_CITY COMMENT line and uncomment the four lines below it. That adds a comma after CUSTOMER_CITY and a DIET_CLASSIFICATION dimension:
+
+```sql
+    order_lines.CUSTOMER_CITY AS order_lines.CUSTOMER_CITY
+      WITH SYNONYMS = ('city', 'customer city')
+      COMMENT = 'City of the customer who placed the order',
+    order_lines.DIET_CLASSIFICATION AS order_lines.DIET_CLASSIFICATION
+      WITH SYNONYMS = ('diet', 'healthy or indulgent')
+      COMMENT = 'Healthy or Indulgent, from AI_CLASSIFY; NULL for frozen rows'
+  )
+```
+
+The column goes last in the view for the same reason as in the dynamic table: DCM deploys a view with CREATE OR ALTER, which can append a column but not reorder existing ones. Put it before TOTAL_REVENUE and the plan fails with a compilation error that doesn't name the cause. The semantic view has no such restriction, because its columns are named dimensions and metrics rather than a positional SELECT list.
+
 <!-- ------------------------ -->
 ## Redeploy and Verify
 
@@ -441,10 +398,10 @@ Now push the definition change through a second plan and deploy.
 snow dcm plan --target DCM_DEV --role DCM_DEVELOPER --save-output
 ```
 
-This plan looks different from the first one. Instead of 21 CREATEs, it shows **1 entity: an ALTER** of ENRICHED_ORDER_DETAILS, with three changes: FROZEN_WHERE set, the query changed, and the column DIET_CLASSIFICATION added as VARCHAR. DCM alters the existing dynamic table instead of replacing it. That matters: a replaced dynamic table starts over with an initial refresh, and the frozen region predicate is ignored during initialization, so every row would be computed and classified again.
+This plan looks different from the first one. Instead of 18 CREATEs, it shows **3 entities, all ALTERs**. ENRICHED_ORDER_DETAILS has three changes: FROZEN_WHERE set, the query changed, and the column DIET_CLASSIFICATION added as VARCHAR. V_DASHBOARD_SALES_BY_CATEGORY_CITY and SALES_ANALYTICS each change to carry the new column. All three land in one changeset, so the serve layer never points at a column the dynamic table doesn't have yet. DCM alters the existing dynamic table instead of replacing it. That matters: a replaced dynamic table starts over with an initial refresh, and the frozen region predicate is ignored during initialization, so every row would be computed and classified again.
 
 ![Plan results showing the ALTER operation for the modified dynamic table](assets/plan_redeployment.png)
-Screenshot placeholder: the second Plan result, 1 entity (1 ALTER) on ENRICHED_ORDER_DETAILS, expanded to show the added DIET_CLASSIFICATION column, the frozen region and the query diff.
+Screenshot placeholder: the second Plan result, 3 entities (3 ALTER): ENRICHED_ORDER_DETAILS, V_DASHBOARD_SALES_BY_CATEGORY_CITY and SALES_ANALYTICS, with ENRICHED_ORDER_DETAILS expanded to show the added DIET_CLASSIFICATION column, the frozen region and the query diff.
 
 When the changeset matches what you expected, deploy it.
 
@@ -459,11 +416,11 @@ Screenshot placeholder: the Deploy dialog for the second cycle, with the alias a
 snow dcm deploy --target DCM_DEV --role DCM_DEVELOPER --alias add-ai-diet-frozen-region
 ```
 
-The deploy reports **1 entity (0 created, 1 altered, 0 dropped)**.
+The deploy reports **3 entities (0 created, 3 altered, 0 dropped)**.
 
 ### Refresh and Verify
 
-Open scripts/03_verify_evolution.sql in a Snowsight worksheet and run it. It has four sections.
+Open scripts/03_verify_evolution.sql in a Snowsight worksheet and run it. It has five sections.
 
 First, it inserts the two new orders, stamped with the current time:
 
@@ -528,7 +485,25 @@ The first refresh computed all 24 rows. The refresh after the schema change comp
 
 REFRESH_ACTION reads FULL both times because Snowflake set this dynamic table to full refresh mode. SHOW DYNAMIC TABLES gives the reason in refresh_mode_reason: "This dynamic table contains a complex query." A frozen region works in either mode: only the active region is refreshed.
 
-This is a frozen region in action: a schema change was deployed, and Snowflake only computed the rows that needed it, keeping your AI inference cost confined to the active region.
+Last, it queries the semantic view by the new dimension, to show the column reached the serve layer in the same deploy:
+
+```sql
+SELECT * FROM SEMANTIC_VIEW(
+    DCM_DEMO_3_DEV.SERVE.SALES_ANALYTICS
+    DIMENSIONS order_lines.DIET_CLASSIFICATION
+    METRICS order_lines.TOTAL_REVENUE, order_lines.ORDER_COUNT
+)
+ORDER BY DIET_CLASSIFICATION;
+```
+
+| DIET_CLASSIFICATION | TOTAL_REVENUE | ORDER_COUNT |
+|---|---|---|
+| Indulgent | 46.50 | 2 |
+| NULL | 359.50 | 18 |
+
+The two active orders are classified; the frozen history groups under NULL. The 24 frozen rows are 18 distinct orders, because some orders have more than one line.
+
+This is a frozen region in action: a schema change was deployed through the transformation and serve layers together, and Snowflake only computed the rows that needed it, keeping your AI inference cost confined to the active region.
 
 <!-- ------------------------ -->
 ## Cleanup
@@ -537,12 +512,12 @@ Before tearing anything down, know that there is a gentler option. DROP DCM PROJ
 
 When you are finished, open scripts/04_cleanup.sql in a Snowsight worksheet and run it as DCM_DEVELOPER. It is irreversible. In order, it:
 
-1. **Purge the project.** PURGE drops every entity the project manages (the database and everything in it, including the alert, the warehouse and the READ role), revokes the project's grants and removes the expectation attachments, with all of their data.
+1. **Purge the project.** PURGE drops every entity the project manages (the database and everything in it, including the alert and the warehouse), removes the expectation attachments, with all of their data.
 2. **Drop the project object**, which PURGE leaves behind.
 3. **Objects created outside the project.** There are none in this guide; everything was deployed by the project.
 4. **Series-shared objects, left commented.** DCM_DEMO.PROJECTS, DCM_DEMO and DCM_DEVELOPER are used by every guide in this series, so their DROP statements are commented out, after a USE ROLE ACCOUNTADMIN line, because ACCOUNTADMIN owns the container. A SHOW DCM PROJECTS line shows what the schema still holds before you decide.
 5. **Inherited grants, left commented.** The opt-in is account-wide and the other guides need it; the commented line to turn it off is there if you want it.
-6. **Verify.** SHOW statements confirm the database, warehouse and READ role are gone. The last one, SHOW DCM PROJECTS IN SCHEMA DCM_DEMO.PROJECTS, still lists the projects of any other guides in this series that you have not cleaned up.
+6. **Verify.** SHOW statements confirm the database and warehouse are gone. The last one, SHOW DCM PROJECTS IN SCHEMA DCM_DEMO.PROJECTS, still lists the projects of any other guides in this series that you have not cleaned up.
 
 ```sql
 EXECUTE DCM PROJECT DCM_DEMO.PROJECTS.DCM_DT_PROJECT_DEV PURGE;
@@ -557,7 +532,7 @@ If PURGE ever fails, the script's comments show how to suspend the task and the 
 
 In this guide, you learned how to:
 
-- **Define a data pipeline as code** with a DCM Project: database, schemas, tables, dynamic tables, views, a task, an alert, a role and grants in SQL definition files
+- **Define a data pipeline as code** with a DCM Project: database, schemas, tables, dynamic tables, views, a semantic view and an alert in SQL definition files
 - **Deploy and manage** the pipeline through the DCM plan and deploy cycle, in Snowsight Workspaces or the Snowflake CLI
 - **Evolve a dynamic table's schema** by editing one definition and redeploying, with the plan showing a single ALTER
 - **Call AI_CLASSIFY** inside a dynamic table to enrich rows as they refresh
