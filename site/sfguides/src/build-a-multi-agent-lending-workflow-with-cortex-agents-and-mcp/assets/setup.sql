@@ -659,7 +659,7 @@ CREATE OR REPLACE SEMANTIC VIEW LENDING.LOANS.APPLICATION_ANALYTICS
 
 COPY FILES
     INTO @LENDING.LOANS.LAB_FILES
-    FROM @LENDING.GUIDE_FILES.SFQUICKSTARTS/branches/master/site/sfguides/src/automate-lending-decisions-with-cortex-agents/assets/
+    FROM @LENDING.GUIDE_FILES.SFQUICKSTARTS/branches/master/site/sfguides/src/build-a-multi-agent-lending-workflow-with-cortex-agents-and-mcp/assets/
     PATTERN = '.*doc_APP_[0-9]+_.*[.]pdf';
 
 /* Without REFRESH the directory table stays empty. */
@@ -690,7 +690,7 @@ CREATE STAGE LENDING.LOANS.PARSED_TEXT
 
 COPY FILES
     INTO @LENDING.LOANS.PARSED_TEXT
-    FROM @LENDING.GUIDE_FILES.SFQUICKSTARTS/branches/master/site/sfguides/src/automate-lending-decisions-with-cortex-agents/assets/
+    FROM @LENDING.GUIDE_FILES.SFQUICKSTARTS/branches/master/site/sfguides/src/build-a-multi-agent-lending-workflow-with-cortex-agents-and-mcp/assets/
     FILES = ('document_text.json');
 
 COPY INTO LENDING.LOANS.DOCUMENT_TEXT (FILE_NAME, APPLICANT_ID, DOC_TYPE, DOC_TEXT)
@@ -849,7 +849,7 @@ CREATE STAGE
 
 COPY FILES
     INTO @LENDING.LOANS.LAB_STAGE/
-    FROM @LENDING.GUIDE_FILES.SFQUICKSTARTS/branches/master/site/sfguides/src/automate-lending-decisions-with-cortex-agents/assets/
+    FROM @LENDING.GUIDE_FILES.SFQUICKSTARTS/branches/master/site/sfguides/src/build-a-multi-agent-lending-workflow-with-cortex-agents-and-mcp/assets/
     FILES = ('credit_analyst_baseline_eval.yaml', 'credit_analyst_eval.yaml');
 
 ALTER STAGE LENDING.LOANS.LAB_STAGE REFRESH;

@@ -1,14 +1,14 @@
 author: Neel Sengupta
-id: automate-lending-decisions-with-cortex-agents
+id: build-a-multi-agent-lending-workflow-with-cortex-agents-and-mcp
 language: en
-summary: Build a credit analyst agent and explore an underwriting agent that read loan documents, reconcile debt, apply lending policy and record a decision with Cortex Agents.
+summary: Build two Cortex Agents that automate a lending decision end to end: one reads loan documents and writes a credit memo, the other applies policy enforced outside the model, delegates over MCP, and runs on its own when a new application arrives.
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/ingestion/conversational-assistants, snowflake-site:taxonomy/snowflake-feature/unstructured-data-analysis, snowflake-site:taxonomy/snowflake-feature/cortex-analyst, snowflake-site:taxonomy/snowflake-feature/cortex-search, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions, snowflake-site:taxonomy/snowflake-feature/document-ai, snowflake-site:taxonomy/snowflake-feature/observability, snowflake-site:taxonomy/snowflake-feature/horizon, snowflake-site:taxonomy/industry/financial-services
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-fork repo link: https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/automate-lending-decisions-with-cortex-agents/assets
+fork repo link: https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/build-a-multi-agent-lending-workflow-with-cortex-agents-and-mcp/assets
 
-# Put Agents to Work: Automate Lending Decisions with Cortex Agents
+# Build a Multi-Agent Lending Workflow with Cortex Agents and MCP
 
 <!-- ------------------------ -->
 ## Overview
@@ -81,7 +81,7 @@ The guide runs in [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsi
 
 1. Select **Projects** » **Workspaces** in the left navigation.
 2. Select **+ Add new** » **SQL File** and name it `setup.sql`.
-3. Open [setup.sql](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/automate-lending-decisions-with-cortex-agents/assets/setup.sql), copy its contents into the file, and select **Run All**.
+3. Open [setup.sql](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/build-a-multi-agent-lending-workflow-with-cortex-agents-and-mcp/assets/setup.sql), copy its contents into the file, and select **Run All**.
 
 `setup.sql` creates the `LENDING` database and the `LENDING_WH` warehouse, and copies the applicant documents and evaluation settings from this guide's folder on GitHub.
 
@@ -90,7 +90,7 @@ The guide runs in [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsi
 ### Add the Lab SQL
 
 1. Select **+ Add new** » **SQL File** and name it `lab.sql`.
-2. Copy the contents of [lab.sql](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/automate-lending-decisions-with-cortex-agents/assets/lab.sql) into it.
+2. Copy the contents of [lab.sql](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/build-a-multi-agent-lending-workflow-with-cortex-agents-and-mcp/assets/lab.sql) into it.
 
 **lab.sql** has every block of SQL you run in this guide, labelled by step. CoCo is the panel on the right of the workspace.
 
@@ -654,7 +654,7 @@ Both evaluation runs have finished by now.
 <!-- ------------------------ -->
 ## Clean Up
 
-Run [teardown.sql](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/automate-lending-decisions-with-cortex-agents/assets/teardown.sql), or run:
+Run [teardown.sql](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/build-a-multi-agent-lending-workflow-with-cortex-agents-and-mcp/assets/teardown.sql), or run:
 
 ```sql
 USE ROLE ACCOUNTADMIN;
@@ -691,7 +691,7 @@ The guide uses `claude-sonnet-4-5` because both agents reason over multi-step ev
 
 ### Related Resources
 
-- [Files for this guide](https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/automate-lending-decisions-with-cortex-agents/assets)
+- [Files for this guide](https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/build-a-multi-agent-lending-workflow-with-cortex-agents-and-mcp/assets)
 - [Create and manage Cortex Agents](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents-manage)
 - [Cortex Agent evaluations](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents-evaluations)
 - [Cortex Agent versioning](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents-versioning)
