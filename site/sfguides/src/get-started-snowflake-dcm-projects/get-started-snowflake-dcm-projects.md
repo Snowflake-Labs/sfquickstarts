@@ -138,14 +138,26 @@ targets:
     project_owner: DCM_DEVELOPER
     templating_config: DEV
 
+  DCM_STAGE:
+    account_identifier: MYORG-MY_STAGE_ACCOUNT      # update to your account names
+    project_name: DCM_DEMO.PROJECTS.DCM_PROJECT_STG
+    project_owner: DCM_STAGE_DEPLOYER
+    templating_config: STAGE
+
   DCM_PROD_US:
     account_identifier: MYORG-MY_ACCOUNT_US         # update to your account names
     project_name: DCM_DEMO.PROJECTS.DCM_PROJECT_PROD
     project_owner: DCM_PROD_DEPLOYER
     templating_config: PROD
+
+  DCM_PROD_EU:
+    account_identifier: MYORG-MY_ACCOUNT_EU         # update to your account names
+    project_name: DCM_DEMO.PROJECTS.DCM_PROJECT_PROD
+    project_owner: DCM_PROD_DEPLOYER
+    templating_config: PROD
 ```
 
-A target is a deployment destination: which account to deploy into, which DCM Project object holds the state there, which role owns that project, and which templating_config to render the definitions with. Replace MYORG-MY_DEV_ACCOUNT with the account identifier the setup script printed. default_target is what you get when you omit --target. This is an excerpt: the file also ships with DCM_STAGE and DCM_PROD_EU targets, and only DCM_DEV is used here.
+A target is a deployment destination: which account to deploy into, which DCM Project object holds the state there, which role owns that project, and which templating_config to render the definitions with. Replace MYORG-MY_DEV_ACCOUNT with the account identifier the setup script printed. default_target is what you get when you omit --target. This guide only deploys DCM_DEV; the other three targets show how the same definitions promote to a stage account and to production accounts in two regions, both of which render with the PROD configuration.
 
 Next comes **assets**. Everything under sources/ is SQL that a DEFINE statement expresses in full, but some objects are backed by files instead: a Streamlit app is Python, not DDL. An asset is a named set of such files that the project carries along with its definitions:
 
@@ -237,7 +249,6 @@ Always plan first. A plan renders the templates, compiles the SQL, compares the 
 **In Snowsight:** the DCM control panel is the first tab in the bottom panel of your workspace. Select the project **get-started-snowflake-dcm-projects/DCM_Projects_Get_Started**. On the right side of the same bar, select the **DCM_DEV** target and click the play button to the right of **Plan**.
 
 ![DCM control panel with the project and target selected](assets/select_project.png)
-Screenshot placeholder: the DCM control panel with project get-started-snowflake-dcm-projects/DCM_Projects_Get_Started and target DCM_DEV selected, taken just before clicking Plan.
 
 **With the Snowflake CLI:** pass the manifest's owner role for the target with --role.
 
@@ -252,7 +263,6 @@ Planned 16 entities (15 to create, 1 to alter, 0 to drop).
 ```
 
 ![Plan results showing the planned changes](assets/plan_results.png)
-Screenshot placeholder: the first Plan result in Snowsight, showing 16 entities with 15 CREATE and 1 ALTER, including schemas ANALYTICS, PUBLIC, RAW and DEV_TEAM_1.
 
 With the CLI, --save-output writes the rendered definitions and a plan_result.json under out/. The JSON carries a per-entity changes array, which is where you look when a summary count surprises you. In Snowsight the same rendered output appears in a new out folder above sources in the file explorer. Open the rendered jinja_demo.sql side by side with the original to see how the templating resolved.
 
@@ -279,6 +289,8 @@ When the changeset matches what you expected, deploy it.
 
 **In Snowsight:** in the DCM control panel, set the operation to **Deploy** instead of **Plan**, add a deployment alias such as initial-deployment, and run it.
 
+![The operation selector in the DCM control panel, with Deploy below Plan](assets/deploy_selector.png)
+
 ![Deploy confirmation dialog](assets/deploy_dialog.png)
 
 **With the Snowflake CLI:**
@@ -292,11 +304,6 @@ Deployed 16 entities (15 created, 1 altered, 0 dropped).
 ```
 
 The --alias is a label on this deployment, the way a commit message labels a commit. It appears in the project's deployment history, so six weeks later you can tell which deploy introduced a change without diffing object definitions.
-
-Open the Database Explorer on the left of Snowsight and use its reload icon, and you will see DCM_DEMO_1_DEV with all of the created objects inside it.
-
-![Database Explorer showing the deployed objects](assets/deployed_objects.png)
-Screenshot placeholder: the Database Explorer after the first deploy, DCM_DEMO_1_DEV expanded to show the schemas ANALYTICS, DEV_TEAM_1, INFORMATION_SCHEMA, PUBLIC and RAW.
 
 <!-- ------------------------ -->
 ## Change It and Redeploy
@@ -355,7 +362,6 @@ Planned 5 entities (2 to create, 3 to alter, 0 to drop).
 ```
 
 ![Plan results after the three changes](assets/plan_results_2.png)
-Screenshot placeholder: the second Plan result in Snowsight, 5 entities with 2 CREATE (DEV_TEAM_2_OWNER_DEV, DEV_TEAM_2) and 3 ALTER (ENRICHED_ORDER_DETAILS, DCM_DEVELOPER, DCM_DEMO_1_WH_DEV).
 
 The two creates are DEV_TEAM_2's objects: a schema and a role, produced by the Jinja loop and macro from those two lines of YAML. The three alters are the dynamic table's target lag, the warehouse's size, and DCM_DEVELOPER taking ownership of the two new objects.
 
@@ -409,6 +415,10 @@ SHOW ENTITIES IN DCM PROJECT DCM_DEMO.PROJECTS.DCM_PROJECT_DEV;
 ```
 
 Every entity the project manages appears here, with its type and name. There are 17 rows at this point: the database, five schemas, three tables, the dynamic table, the semantic view, the Streamlit app, the tag, the warehouse and three roles. DCM_DEVELOPER was in both changesets but is not listed: it is altered to receive ownership grants, but it is not a managed entity because the project does not create it. This is the boundary of the project's authority: an object in this list is reconciled on every deploy, and an object that is not is invisible to DCM even if it sits in the same database.
+
+The same inventory is visible in the Database Explorer on the left of Snowsight (use its reload icon): DCM_DEMO_1_DEV with both team schemas, the dynamic table and semantic view in ANALYTICS, and the three tables in RAW.
+
+![Database Explorer showing DCM_DEMO_1_DEV with the ANALYTICS, DEV_TEAM_1, DEV_TEAM_2, PUBLIC and RAW schemas](assets/deployed_objects.png)
 
 That distinction is what makes the next command matter, because it tells you how the inventory got to its current shape:
 
@@ -599,7 +609,7 @@ Planned 1 entity (0 to create, 1 to alter, 0 to drop).
 
 The plan tracks the **contents of the asset**, not just the DEFINE statement, and a deploy publishes a new version of the app. The dashboard is versioned and promoted the same way as the tables it reads, in one plan and one deploy. Undo the edit before you go on, and the next plan returns No changes detected, the same convergence you saw earlier.
 
-DEFINE CODE BUNDLE uses assets the same way, for packaging Python jobs rather than apps.
+DEFINE CODE BUNDLE uses assets the same way, for packaging Spark and Python jobs rather than apps.
 
 <!-- ------------------------ -->
 ## Secrets and Environment Variables
@@ -642,7 +652,6 @@ Use a dummy value for the key; it is never shown back to you.
 **In Snowsight:** in the DCM control panel, select the project **get-started-snowflake-dcm-projects/DCM_Projects_Get_Started** and the **DCM_DEV** target. The **Environment Variables** section now lists BUILD_NUMBER and PARTNER_API_KEY. Type 101 for BUILD_NUMBER and any dummy string for PARTNER_API_KEY; the secret field shows a lock icon and masks what you type. You can also select **Import .env file** to load both. Then click the play button to the right of **Plan**. The **Override Variables** option in the same pane overrides templating values from the manifest; it does not supply environment variables or secrets.
 
 ![DCM control panel with the Environment Variables fields filled in](assets/env_vars_plan.png)
-Screenshot placeholder: the DCM control panel Plan operation after SECRETS STEP 1 and 2, with the Environment Variables section showing BUILD_NUMBER = 101 and PARTNER_API_KEY masked behind the lock icon, and the Import .env file button visible.
 
 **With the Snowflake CLI:** export both in your shell, or put them in a file and add --env-file .env (the repository's .gitignore already excludes .env files). The CLI sends the values as a bind variable, so they are not part of the SQL text recorded in query history.
 
@@ -658,8 +667,7 @@ ALTER    ROLE                 DCM_DEVELOPER
 Planned 2 entities (1 to create, 1 to alter, 0 to drop).
 ```
 
-![Plan result creating the secret](assets/plan_secret.png)
-Screenshot placeholder: the Plan result in Snowsight with 2 entities, CREATE PARTNER_API_KEY expanded to show the comment ending in build 101 and secret_string shown as ********.
+![Plan result creating PARTNER_API_KEY, with BUILD_NUMBER shown as 101 and PARTNER_API_KEY masked](assets/plan_secret.png)
 
 The rendered copy in out/rendered/sources/definitions/secrets.sql shows what DCM evaluated:
 
@@ -677,6 +685,8 @@ The build number was substituted as text; the key was not. The rendered SQL hold
 Deploy with the values still supplied; every plan and deploy that renders the definition needs them.
 
 **In Snowsight:** in the DCM control panel, set the operation to **Deploy** instead of **Plan**, add a deployment alias such as add-partner-secret, and run it.
+
+![Deploy dialog for the secret deployment](assets/deploy_dialog_3.png)
 
 **With the Snowflake CLI:**
 
