@@ -1,0 +1,13 @@
+evaluation:
+  agent_params:
+    agent_name: "LENDING.LOANS.CREDIT_ANALYST_AGENT_BASELINE"
+    agent_type: "CORTEX AGENT"
+  source_metadata:
+    type: "dataset"
+    dataset_name: "LENDING.LOANS.CREDIT_ANALYST_TESTS"
+
+metrics:
+  - name: "answer_correctness"
+    version: "v3"
+  - name: "logical_consistency"
+    version: "v3"

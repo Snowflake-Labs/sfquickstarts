@@ -1,0 +1,197 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900" role="img" aria-labelledby="ttl dsc" font-family="Lato, 'Helvetica Neue', Helvetica, Arial, sans-serif">
+<title id="ttl">Anatomy of a Cortex Agent for loan underwriting</title>
+<desc id="dsc">A circuit-board diagram. A model chip at the centre is labelled MODEL, reasons, plans, decides. Six zones surround it, each tinted a very pale blue, and every item inside a zone is coloured by the lab module that built it: light blue for Module 3, dark blue for Module 4. A legend beneath the HARNESS label states this. Down the left: CONTEXT, holding the APPLICATION_ANALYTICS semantic view and the credit analyst instructions from Module 3, plus the underwriting agent instructions from Module 4; CONTROL, holding the 120 second and 32k token budget for the credit analyst and the 300 second budget when documents are involved from Module 3, plus escalation on an unverifiable file from Module 4; and OBSERVE, holding evaluation runs from baseline to improved from Module 3, plus traces per conversation from Module 4. Down the right: RETRIEVE, holding the application_analytics tool over Cortex Analyst and the document_search tool over Cortex Search, both from Module 3; ACT, holding write_credit_memo and recompute_dti from Module 3, plus policy_check, record_decision and the credit analyst agent called over MCP from Module 4; and PERSIST, holding the CREDIT_MEMO table from Module 3, plus the decision on the loan application and the UNDERWRITING_LOG from Module 4. RETRIEVE is the only zone built entirely in Module 3, and it carries the palest tint; the other five mix both modules. A dashed inner boundary around all six zones is labelled HARNESS. A dashed outer boundary is labelled AGENT. The hatched band between the two boundaries runs unbroken around every zone and is labelled GOVERNANCE, role-based access control, policy enforced outside the model.</desc>
+<rect width="1600" height="900" fill="#FFFFFF"/>
+<!-- GOVERNANCE band: the hatched ring between the two boundaries -->
+<g stroke="#29B5E8" stroke-width="2.2" opacity="0.5" stroke-linecap="round">
+  <line x1="120" y1="46" x2="120" y2="90"/>
+  <line x1="120" y1="790" x2="120" y2="834"/>
+  <line x1="160" y1="46" x2="160" y2="90"/>
+  <line x1="160" y1="790" x2="160" y2="834"/>
+  <line x1="200" y1="46" x2="200" y2="90"/>
+  <line x1="200" y1="790" x2="200" y2="834"/>
+  <line x1="240" y1="46" x2="240" y2="90"/>
+  <line x1="240" y1="790" x2="240" y2="834"/>
+  <line x1="280" y1="46" x2="280" y2="90"/>
+  <line x1="280" y1="790" x2="280" y2="834"/>
+  <line x1="320" y1="46" x2="320" y2="90"/>
+  <line x1="320" y1="790" x2="320" y2="834"/>
+  <line x1="360" y1="46" x2="360" y2="90"/>
+  <line x1="400" y1="46" x2="400" y2="90"/>
+  <line x1="440" y1="46" x2="440" y2="90"/>
+  <line x1="480" y1="46" x2="480" y2="90"/>
+  <line x1="520" y1="46" x2="520" y2="90"/>
+  <line x1="560" y1="46" x2="560" y2="90"/>
+  <line x1="600" y1="46" x2="600" y2="90"/>
+  <line x1="640" y1="46" x2="640" y2="90"/>
+  <line x1="680" y1="46" x2="680" y2="90"/>
+  <line x1="720" y1="46" x2="720" y2="90"/>
+  <line x1="880" y1="46" x2="880" y2="90"/>
+  <line x1="920" y1="46" x2="920" y2="90"/>
+  <line x1="960" y1="46" x2="960" y2="90"/>
+  <line x1="1000" y1="46" x2="1000" y2="90"/>
+  <line x1="1040" y1="46" x2="1040" y2="90"/>
+  <line x1="1080" y1="46" x2="1080" y2="90"/>
+  <line x1="1120" y1="46" x2="1120" y2="90"/>
+  <line x1="1160" y1="46" x2="1160" y2="90"/>
+  <line x1="1200" y1="46" x2="1200" y2="90"/>
+  <line x1="1240" y1="46" x2="1240" y2="90"/>
+  <line x1="1280" y1="46" x2="1280" y2="90"/>
+  <line x1="1280" y1="790" x2="1280" y2="834"/>
+  <line x1="1320" y1="46" x2="1320" y2="90"/>
+  <line x1="1320" y1="790" x2="1320" y2="834"/>
+  <line x1="1360" y1="46" x2="1360" y2="90"/>
+  <line x1="1360" y1="790" x2="1360" y2="834"/>
+  <line x1="1400" y1="46" x2="1400" y2="90"/>
+  <line x1="1400" y1="790" x2="1400" y2="834"/>
+  <line x1="1440" y1="46" x2="1440" y2="90"/>
+  <line x1="1440" y1="790" x2="1440" y2="834"/>
+  <line x1="1480" y1="46" x2="1480" y2="90"/>
+  <line x1="1480" y1="790" x2="1480" y2="834"/>
+  <line x1="30" y1="130" x2="74" y2="130"/>
+  <line x1="1526" y1="130" x2="1570" y2="130"/>
+  <line x1="30" y1="170" x2="74" y2="170"/>
+  <line x1="1526" y1="170" x2="1570" y2="170"/>
+  <line x1="30" y1="210" x2="74" y2="210"/>
+  <line x1="1526" y1="210" x2="1570" y2="210"/>
+  <line x1="30" y1="250" x2="74" y2="250"/>
+  <line x1="1526" y1="250" x2="1570" y2="250"/>
+  <line x1="30" y1="290" x2="74" y2="290"/>
+  <line x1="1526" y1="290" x2="1570" y2="290"/>
+  <line x1="30" y1="330" x2="74" y2="330"/>
+  <line x1="1526" y1="330" x2="1570" y2="330"/>
+  <line x1="30" y1="370" x2="74" y2="370"/>
+  <line x1="1526" y1="370" x2="1570" y2="370"/>
+  <line x1="30" y1="490" x2="74" y2="490"/>
+  <line x1="1526" y1="490" x2="1570" y2="490"/>
+  <line x1="30" y1="530" x2="74" y2="530"/>
+  <line x1="1526" y1="530" x2="1570" y2="530"/>
+  <line x1="30" y1="570" x2="74" y2="570"/>
+  <line x1="1526" y1="570" x2="1570" y2="570"/>
+  <line x1="30" y1="610" x2="74" y2="610"/>
+  <line x1="1526" y1="610" x2="1570" y2="610"/>
+  <line x1="30" y1="650" x2="74" y2="650"/>
+  <line x1="1526" y1="650" x2="1570" y2="650"/>
+  <line x1="30" y1="690" x2="74" y2="690"/>
+  <line x1="1526" y1="690" x2="1570" y2="690"/>
+  <line x1="30" y1="730" x2="74" y2="730"/>
+  <line x1="1526" y1="730" x2="1570" y2="730"/>
+</g>
+<g transform="translate(786,53)" fill="none" stroke="#11567F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.85"><rect x="1" y="12" width="26" height="17" rx="3"/><path d="M6 12 V8 A8 8 0 0 1 22 8 V12"/><circle cx="14" cy="20.5" r="2.4"/></g>
+<g transform="translate(38,414)" fill="none" stroke="#11567F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.85"><rect x="1" y="12" width="26" height="17" rx="3"/><path d="M6 12 V8 A8 8 0 0 1 22 8 V12"/><circle cx="14" cy="20.5" r="2.4"/></g>
+<g transform="translate(1534,414)" fill="none" stroke="#11567F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.85"><rect x="1" y="12" width="26" height="17" rx="3"/><path d="M6 12 V8 A8 8 0 0 1 22 8 V12"/><circle cx="14" cy="20.5" r="2.4"/></g>
+<text x="800" y="824" text-anchor="middle"><tspan font-size="25" font-weight="700" letter-spacing="2.4" fill="#11567F">GOVERNANCE</tspan><tspan font-size="21" fill="#5B6B75">  ·  role-based access control, policy enforced outside the model</tspan></text>
+<rect x="24" y="40" width="1552" height="800" rx="22" fill="none" stroke="#24323D" stroke-width="2" stroke-dasharray="12 7" opacity="0.6"/>
+<text x="28" y="24" font-size="23" font-weight="700" letter-spacing="2.6" fill="#24323D">AGENT</text>
+<rect x="80" y="96" width="1440" height="688" rx="16" fill="none" stroke="#29B5E8" stroke-width="2" stroke-dasharray="9 6" opacity="0.9"/>
+<text x="108" y="126" font-size="22" font-weight="700" letter-spacing="2.4" fill="#29B5E8">HARNESS</text>
+<g font-size="18" fill="#5B6B75"><circle cx="114" cy="142" r="5.5" fill="#29B5E8"/><text x="128" y="148">Module 3</text><circle cx="232" cy="142" r="5.5" fill="#11567F"/><text x="246" y="148">Module 4</text></g>
+<!-- primary traces: chip pin to zone edge -->
+<g fill="none" stroke="#29B5E8" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M640 427 L620 407 V249 H544"/>
+  <path d="M640 463 H544"/>
+  <path d="M640 497 L620 517 V677 H544"/>
+  <path d="M960 427 L980 407 V249 H1056"/>
+  <path d="M960 463 H1056"/>
+  <path d="M960 497 L980 517 V677 H1056"/>
+</g>
+<!-- secondary traces and buses: board texture -->
+<g fill="none" stroke="#29B5E8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.4">
+  <path d="M640 397 H608 L588 377 V192 H544"/>
+  <path d="M640 527 H608 L588 547 V734 H544"/>
+  <path d="M960 397 H992 L1012 377 V192 H1056"/>
+  <path d="M960 527 H992 L1012 547 V734 H1056"/>
+  <path d="M690 375 V347 M750 375 V341 M850 375 V341 M910 375 V347"/>
+  <path d="M690 551 V579 M750 551 V585 M850 551 V585 M910 551 V579"/>
+</g>
+<!-- vias -->
+<g fill="#FFFFFF" stroke="#29B5E8" stroke-width="2.2">
+  <circle cx="544" cy="249" r="5.5"/>
+  <circle cx="1056" cy="249" r="5.5"/>
+  <circle cx="544" cy="463" r="5.5"/>
+  <circle cx="1056" cy="463" r="5.5"/>
+  <circle cx="544" cy="677" r="5.5"/>
+  <circle cx="1056" cy="677" r="5.5"/>
+</g>
+<g fill="#FFFFFF" stroke="#29B5E8" stroke-width="2" opacity="0.55">
+  <circle cx="544" cy="192" r="4.5"/>
+  <circle cx="1056" cy="192" r="4.5"/>
+  <circle cx="544" cy="734" r="4.5"/>
+  <circle cx="1056" cy="734" r="4.5"/>
+  <circle cx="690" cy="347" r="4"/>
+  <circle cx="690" cy="579" r="4"/>
+  <circle cx="750" cy="341" r="4"/>
+  <circle cx="750" cy="585" r="4"/>
+  <circle cx="850" cy="341" r="4"/>
+  <circle cx="850" cy="585" r="4"/>
+  <circle cx="910" cy="347" r="4"/>
+  <circle cx="910" cy="579" r="4"/>
+</g>
+<!-- MODEL chip -->
+<g fill="#11567F">
+  <rect x="632" y="391" width="8" height="12" rx="2"/>
+  <rect x="960" y="391" width="8" height="12" rx="2"/>
+  <rect x="632" y="421" width="8" height="12" rx="2"/>
+  <rect x="960" y="421" width="8" height="12" rx="2"/>
+  <rect x="632" y="456" width="8" height="12" rx="2"/>
+  <rect x="960" y="456" width="8" height="12" rx="2"/>
+  <rect x="632" y="491" width="8" height="12" rx="2"/>
+  <rect x="960" y="491" width="8" height="12" rx="2"/>
+  <rect x="632" y="521" width="8" height="12" rx="2"/>
+  <rect x="960" y="521" width="8" height="12" rx="2"/>
+  <rect x="684" y="367" width="12" height="8" rx="2"/>
+  <rect x="684" y="551" width="12" height="8" rx="2"/>
+  <rect x="744" y="367" width="12" height="8" rx="2"/>
+  <rect x="744" y="551" width="12" height="8" rx="2"/>
+  <rect x="844" y="367" width="12" height="8" rx="2"/>
+  <rect x="844" y="551" width="12" height="8" rx="2"/>
+  <rect x="904" y="367" width="12" height="8" rx="2"/>
+  <rect x="904" y="551" width="12" height="8" rx="2"/>
+</g>
+<rect x="640" y="375" width="320" height="176" rx="12" fill="#11567F"/>
+<rect x="656" y="391" width="288" height="144" rx="7" fill="none" stroke="#29B5E8" stroke-width="1.6" opacity="0.5"/>
+<text x="800" y="458" text-anchor="middle" font-size="48" font-weight="700" letter-spacing="3" fill="#FFFFFF">MODEL</text>
+<text x="800" y="494" text-anchor="middle" font-size="22" font-style="italic" fill="#FFFFFF" opacity="0.92">reasons, plans, decides</text>
+<!-- zone: CONTEXT -->
+<rect x="104" y="156" width="440" height="186" rx="14" fill="#E0F0F7" stroke="#A9DCF2" stroke-width="1.8"/>
+<g transform="translate(132,174)" fill="none" stroke="#11567F" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="3" width="30" height="36" rx="4"/><path d="M13 13 H29 M13 21 H29 M13 29 H23"/></g>
+<text x="132" y="250" font-size="28" font-weight="700" letter-spacing="2.2" fill="#24323D">CONTEXT</text>
+<text x="132" y="276" font-size="21" fill="#29B5E8">APPLICATION_ANALYTICS</text>
+<text x="132" y="302" font-size="21" fill="#29B5E8">semantic view, credit analyst instructions,</text>
+<text x="132" y="328" font-size="21" fill="#11567F">underwriting agent instructions</text>
+<!-- zone: CONTROL -->
+<rect x="104" y="370" width="440" height="186" rx="14" fill="#E0F0F7" stroke="#A9DCF2" stroke-width="1.8"/>
+<g transform="translate(132,388)" fill="none" stroke="#11567F" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 11 H37 M5 21 H37 M5 31 H37"/><circle cx="14" cy="11" r="4.2"/><circle cx="28" cy="21" r="4.2"/><circle cx="19" cy="31" r="4.2"/></g>
+<text x="132" y="464" font-size="28" font-weight="700" letter-spacing="2.2" fill="#24323D">CONTROL</text>
+<text x="132" y="490" font-size="21" fill="#29B5E8">120 s / 32k token budget (credit analyst),</text>
+<text x="132" y="516" font-size="21" fill="#29B5E8">300 s budget (with documents),</text>
+<text x="132" y="542" font-size="21" fill="#11567F">escalation on unverifiable file</text>
+<!-- zone: OBSERVE -->
+<rect x="104" y="584" width="440" height="186" rx="14" fill="#E0F0F7" stroke="#A9DCF2" stroke-width="1.8"/>
+<g transform="translate(132,602)" fill="none" stroke="#11567F" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4 V37 H39" stroke-width="2.2"/><path d="M12 12 H29" stroke-width="3.4"/><path d="M17 21 H37" stroke-width="3.4"/><path d="M12 30 H24" stroke-width="3.4"/></g>
+<text x="132" y="678" font-size="28" font-weight="700" letter-spacing="2.2" fill="#24323D">OBSERVE</text>
+<text x="132" y="704" font-size="21" fill="#29B5E8">evaluation runs: baseline → improved</text>
+<text x="132" y="730" font-size="21" fill="#11567F">traces (per conversation)</text>
+<!-- zone: RETRIEVE -->
+<rect x="1056" y="156" width="440" height="186" rx="14" fill="#F0F8FF" stroke="#A9DCF2" stroke-width="1.8"/>
+<g transform="translate(1084,174)" fill="none" stroke="#11567F" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="16" cy="9" rx="10" ry="4"/><path d="M6 9 V25 A10 4 0 0 0 26 25 V9"/><path d="M6 17 A10 4 0 0 0 26 17"/><circle cx="30" cy="29" r="8"/><path d="M35.7 34.7 L40 39"/></g>
+<text x="1084" y="250" font-size="28" font-weight="700" letter-spacing="2.2" fill="#24323D">RETRIEVE</text>
+<text x="1084" y="276" font-size="21" fill="#29B5E8">application_analytics tool (Cortex</text>
+<text x="1084" y="302" font-size="21" fill="#29B5E8">Analyst), document_search tool</text>
+<text x="1084" y="328" font-size="21" fill="#29B5E8">(Cortex Search)</text>
+<!-- zone: ACT -->
+<rect x="1056" y="370" width="440" height="186" rx="14" fill="#E0F0F7" stroke="#A9DCF2" stroke-width="1.8"/>
+<g transform="translate(1084,388)" fill="none" stroke="#11567F" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="21" cy="21" r="14"/><circle cx="21" cy="21" r="5.5"/><path d="M35 21 H39 M30.9 30.9 L33.7 33.7 M21 35 V39 M11.1 30.9 L8.3 33.7 M7 21 H3 M11.1 11.1 L8.3 8.3 M21 7 V3 M30.9 11.1 L33.7 8.3"/></g>
+<text x="1084" y="464" font-size="28" font-weight="700" letter-spacing="2.2" fill="#24323D">ACT</text>
+<text x="1084" y="490" font-size="21" fill="#29B5E8">write_credit_memo, recompute_dti,</text>
+<text x="1084" y="516" font-size="21" fill="#11567F">policy_check, record_decision,</text>
+<text x="1084" y="542" font-size="21" fill="#11567F">credit analyst over MCP</text>
+<!-- zone: PERSIST -->
+<rect x="1056" y="584" width="440" height="186" rx="14" fill="#E0F0F7" stroke="#A9DCF2" stroke-width="1.8"/>
+<g transform="translate(1084,602)" fill="none" stroke="#11567F" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3 H25 L33 11 V39 H7 Z"/><path d="M25 3 V11 H33"/><path d="M13 25 L18 30 L27.5 19.5"/></g>
+<text x="1084" y="678" font-size="28" font-weight="700" letter-spacing="2.2" fill="#24323D">PERSIST</text>
+<text x="1084" y="704" font-size="21" fill="#29B5E8">CREDIT_MEMO table,</text>
+<text x="1084" y="730" font-size="21" fill="#11567F">decision on loan application,</text>
+<text x="1084" y="756" font-size="21" fill="#11567F">UNDERWRITING_LOG</text>
+<text x="800" y="890" text-anchor="middle" font-size="27" font-style="italic" fill="#24323D">Every zone has something in it. You built the whole harness.</text>
+</svg>

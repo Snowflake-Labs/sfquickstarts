@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 886 400" width="886" height="400" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif">
+  <rect x="20" y="24" width="846" height="116" rx="8" fill="none" stroke="#E2E8F0"/>
+  <text x="36" y="45" font-size="8.5" font-weight="700" fill="#64748B" letter-spacing="0.8">INGESTION  ·  WHEN DOCUMENTS CHANGE</text>
+  <rect x="149" y="56" width="176" height="72" rx="6" fill="#F1F5F9" stroke="#CBD5E1"/>
+  <text x="237.0" y="88.0" font-size="10.5" font-weight="600" fill="#11567F" text-anchor="middle">Documents</text>
+  <text x="237.0" y="104.0" font-size="9" fill="#64748B" text-anchor="middle">the PDFs on a stage</text>
+  <text x="237.0" y="71" font-size="8" font-weight="700" fill="#94A3B8" letter-spacing="0.8" text-anchor="middle">STAGE</text>
+  <rect x="355" y="56" width="176" height="72" rx="6" fill="#EAF7FD" stroke="#29B5E8"/>
+  <text x="443.0" y="88.0" font-size="10.5" font-weight="600" fill="#11567F" text-anchor="middle">AI_PARSE_DOCUMENT</text>
+  <text x="443.0" y="104.0" font-size="9" fill="#64748B" text-anchor="middle">reads each PDF as text</text>
+  <rect x="561" y="56" width="176" height="72" rx="6" fill="#F1F5F9" stroke="#CBD5E1"/>
+  <text x="649.0" y="88.0" font-size="10.5" font-weight="600" fill="#11567F" text-anchor="middle">Chunks</text>
+  <text x="649.0" y="104.0" font-size="9" fill="#64748B" text-anchor="middle">the text split up</text>
+  <text x="649.0" y="71" font-size="8" font-weight="700" fill="#94A3B8" letter-spacing="0.8" text-anchor="middle">TABLE</text>
+  <path d="M 325 92.0 L 350 92.0" fill="none" stroke="#11567F" stroke-width="1.8"/>
+  <path d="M 349 88.0 L 356 92.0 L 349 96.0 z" fill="#11567F"/>
+  <path d="M 531 92.0 L 556 92.0" fill="none" stroke="#11567F" stroke-width="1.8"/>
+  <path d="M 555 88.0 L 562 92.0 L 555 96.0 z" fill="#11567F"/>
+  <rect x="313" y="176" width="260" height="62" rx="6" fill="#EAF7FD" stroke="#29B5E8"/>
+  <text x="443.0" y="203.0" font-size="10.5" font-weight="600" fill="#11567F" text-anchor="middle">Search index</text>
+  <text x="443.0" y="219.0" font-size="9" fill="#64748B" text-anchor="middle">every chunk, embedded and indexed</text>
+  <rect x="20" y="258" width="846" height="116" rx="8" fill="none" stroke="#E2E8F0"/>
+  <text x="36" y="279" font-size="8.5" font-weight="700" fill="#64748B" letter-spacing="0.8">QUERYING  ·  ON EVERY QUESTION</text>
+  <rect x="46" y="290" width="176" height="72" rx="6" fill="#F1F5F9" stroke="#CBD5E1"/>
+  <text x="134.0" y="322.0" font-size="10.5" font-weight="600" fill="#11567F" text-anchor="middle">A question</text>
+  <text x="134.0" y="338.0" font-size="9" fill="#64748B" text-anchor="middle">plain language or keywords</text>
+  <rect x="252" y="290" width="176" height="72" rx="6" fill="#EAF7FD" stroke="#29B5E8"/>
+  <text x="340.0" y="322.0" font-size="10.5" font-weight="600" fill="#11567F" text-anchor="middle">Vector and keyword</text>
+  <text x="340.0" y="338.0" font-size="9" fill="#64748B" text-anchor="middle">both searches run</text>
+  <rect x="458" y="290" width="176" height="72" rx="6" fill="#EAF7FD" stroke="#29B5E8"/>
+  <text x="546.0" y="322.0" font-size="10.5" font-weight="600" fill="#11567F" text-anchor="middle">Semantic reranking</text>
+  <text x="546.0" y="338.0" font-size="9" fill="#64748B" text-anchor="middle">reorders the matches</text>
+  <rect x="664" y="290" width="176" height="72" rx="6" fill="#FFFFFF" stroke="#24323D"/>
+  <text x="752.0" y="322.0" font-size="10.5" font-weight="600" fill="#24323D" text-anchor="middle">Results</text>
+  <text x="752.0" y="338.0" font-size="9" fill="#64748B" text-anchor="middle">chunks, up to the limit</text>
+  <path d="M 222 326.0 L 247 326.0" fill="none" stroke="#11567F" stroke-width="1.8"/>
+  <path d="M 246 322.0 L 253 326.0 L 246 330.0 z" fill="#11567F"/>
+  <path d="M 428 326.0 L 453 326.0" fill="none" stroke="#11567F" stroke-width="1.8"/>
+  <path d="M 452 322.0 L 459 326.0 L 452 330.0 z" fill="#11567F"/>
+  <path d="M 634 326.0 L 659 326.0" fill="none" stroke="#11567F" stroke-width="1.8"/>
+  <path d="M 658 322.0 L 665 326.0 L 658 330.0 z" fill="#11567F"/>
+  <path d="M 443.0 140 L 443.0 171" fill="none" stroke="#11567F" stroke-width="1.8"/>
+  <path d="M 439.0 169 L 443.0 177 L 447.0 169 z" fill="#11567F"/>
+  <text x="453.0" y="161.0" font-size="9" fill="#64748B">embed and index</text>
+  <path d="M 443.0 258 L 443.0 243" fill="none" stroke="#11567F" stroke-width="1.8"/>
+  <path d="M 439.0 245 L 443.0 237 L 447.0 245 z" fill="#11567F"/>
+  <text x="453.0" y="251.0" font-size="9" fill="#64748B">searches the index</text>
+</svg>
