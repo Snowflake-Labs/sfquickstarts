@@ -1,10 +1,11 @@
 author: Gayatri Ghanakota
 id: credit-risk-pd-model-snowflake-ml
 summary: Build, govern, and automate a credit risk Probability of Default (PD) model on Snowflake ML, migrated from SAS PROC GRADBOOST, with Feature Store, Experiment Tracking, Model Registry, SHAP explainability, Model Monitors, champion/challenger review, and Task DAGs.
-categories: getting-started, data-science-&-ml, financial-services
+categories: snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/industry/financial-services, snowflake-site:taxonomy/snowflake-feature/model-development
+language: en
 environments: web
-status: Draft
-feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+status: Published
+feedback link: https://github.com/Snowflake-Labs/sfquickstarts/issues
 tags: Getting Started, Machine Learning, Snowflake ML, Feature Store, Model Registry, Financial Services, Credit Risk
 
 # From SAS to Snowflake: Productionizing Credit Risk Models on a Modern ML Platform
@@ -18,9 +19,9 @@ In this Quickstart you migrate a SAS `PROC GRADBOOST` PD model to **XGBoost on S
 
 ![Solution architecture](assets/solution-architecture.png)
 
-The complete notebook is in the companion GitHub repository: **[Snowflake-Labs/sfguide-credit-risk-pd-model-snowflake-ml](https://github.com/Snowflake-Labs/sfguide-credit-risk-pd-model-snowflake-ml/site/sfguides/src/credit-risk-pd-model-snowflake-ml/assets/credit_risk_probability_of_default_model.ipynb)**. Each step below shows the notebook code with an explanation, so you can follow along cell by cell.
+The complete notebook is in the Quickstart assets on GitHub: **[credit_risk_probability_of_default_model.ipynb](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/credit-risk-pd-model-snowflake-ml/assets/credit_risk_probability_of_default_model.ipynb)**. Each step below shows the notebook code with an explanation, so you can follow along cell by cell.
 
-### What You Will Learn
+### What You'll Learn
 - How to convert a SAS `PROC GRADBOOST` PD model to Python with CoCo, and map its hyperparameters to `XGBClassifier`
 - How to build Feature Views (backed by Dynamic Tables) for behavioral, macroeconomic and forward-looking scenario features
 - How to generate immutable, point-in-time training Datasets
@@ -30,7 +31,7 @@ The complete notebook is in the companion GitHub repository: **[Snowflake-Labs/s
 - How to attach Model Monitors for drift and performance
 - How to automate monthly retraining and weekly scoring with Task DAGs, including an email-driven, role-gated model approval step
 
-### What You Will Build
+### What You'll Build
 - A Feature Store with three Feature Views: `LOAN_BEHAVIORAL_FEATURES`, `LOAN_MACRO_FEATURES` and `MACRO_SCENARIO_FEATURES`
 - A versioned training Dataset, `PD_TRAINING_DS`
 - A registered model, `PD_XGB_MODEL`, with champion and challenger versions, SHAP explainability and lineage
@@ -38,7 +39,7 @@ The complete notebook is in the companion GitHub repository: **[Snowflake-Labs/s
 - A monthly **training pipeline** Task DAG that retrains both models, scores them against production, gates them, and emails a reviewer for approval
 - A weekly **scoring pipeline** Task DAG that scores the portfolio with the approved models, computes scenario-weighted ECL, keeps history, and emails a summary
 
-### Prerequisites
+### What You'll Need
 - A Snowflake account with access to **Snowflake Notebooks** and a role that can create databases, warehouses, roles and notification integrations (the notebook was built with `ACCOUNTADMIN`)
 - A verified email address on your Snowflake user, for the review and scoring notification emails
 - Two free Snowflake Marketplace listings (installed in the next step):
@@ -47,7 +48,7 @@ The complete notebook is in the companion GitHub repository: **[Snowflake-Labs/s
 - Familiarity with Python and SQL. Credit risk knowledge helps but is not required.
 
 <!-- ------------------------ -->
-## Get the Data and the Notebook
+## Get Data and Notebook
 
 ### Install the Marketplace data
 1. In Snowsight, open **Data Products > Marketplace**.
@@ -57,15 +58,15 @@ The complete notebook is in the companion GitHub repository: **[Snowflake-Labs/s
 The notebook reads `ANALYTIC_DATASET_DEMOSAMPLE.DATASET.ANALYTICSSAMPLE_LATEST` and `FRED_FEDERAL_RESERVE_ECONOMIC_DATA_SERIES_OBSERVATIONS.FRED.FRED_SERIES_OBSERVATIONS_VW`. If you choose different database names, update those references.
 
 ### Import the notebook
-1. Download `credit_risk_probability_of_default_model.ipynb` from the [GitHub repository](https://github.com/Snowflake-Labs/sfguide-credit-risk-pd-model-snowflake-ml/site/sfguides/src/credit-risk-pd-model-snowflake-ml/assets/credit_risk_probability_of_default_model.ipynb).
+1. Download `credit_risk_probability_of_default_model.ipynb` from the [Quickstart assets](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/credit-risk-pd-model-snowflake-ml/assets/credit_risk_probability_of_default_model.ipynb).
 2. In Snowsight, go to **Projects > Notebooks**, choose **Import .ipynb file**, and select the downloaded notebook.
 3. Make sure these packages are available to the notebook: `snowflake-ml-python`, `xgboost`, `scikit-learn`, `scipy`, `matplotlib`, `altair`.
-4. Upload `python_pd_model.py` from the repository to the same notebook, next to the `.ipynb` file. The notebook and the training pipeline import the model from it (see the next step).
+4. Upload [`python_pd_model.py`](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/credit-risk-pd-model-snowflake-ml/assets/python_pd_model.py) from the Quickstart assets to the same notebook, next to the `.ipynb` file. The notebook and the training pipeline import the model from it (see the next step).
 
-The repository also contains `sas_pd_model.sas` (the original SAS model) and `python_pd_model.py` (the Python conversion produced with CoCo). The next step shows how that conversion is done.
+The Quickstart assets also contain [`sas_pd_model.sas`](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/credit-risk-pd-model-snowflake-ml/assets/sas_pd_model.sas) (the original SAS model) and [`python_pd_model.py`](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/credit-risk-pd-model-snowflake-ml/assets/python_pd_model.py) (the Python conversion produced with CoCo). The next step shows how that conversion is done.
 
 <!-- ------------------------ -->
-## Convert the SAS Model to Python with CoCo
+## Convert SAS with CoCo
 
 The starting point is a SAS PD model, `sas_pd_model.sas`. It follows a pattern found in many banks:
 1. `PROC SQL` joins Equifax loan data to FRED macro indicators, with `%let` macro variables for libraries and the observation window.
@@ -120,7 +121,7 @@ Convert @sas_pd_model.sas into a Python script, python_pd_model.py, that runs on
 Use the Snowpark session from get_active_session(); data is in CREDIT_RISK_ML.PD_MODEL.
 ```
 
-CoCo reads the SAS file and returns `python_pd_model.py` (in the repository). Ask it to structure the result as a reusable module, not just a one-off script: the feature lists, the SAS-mapped hyperparameters, and a small function for each SAS step. The notebook and the training pipeline then import the same code, so the converted model is the one that is actually trained in production:
+CoCo reads the SAS file and returns [`python_pd_model.py`](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/credit-risk-pd-model-snowflake-ml/assets/python_pd_model.py) (in the Quickstart assets). Ask it to structure the result as a reusable module, not just a one-off script: the feature lists, the SAS-mapped hyperparameters, and a small function for each SAS step. The notebook and the training pipeline then import the same code, so the converted model is the one that is actually trained in production:
 
 ```python
 # XGBoost hyperparameters mapped from SAS PROC GRADBOOST:
@@ -580,7 +581,7 @@ ds_df.show(5)
 ```
 
 <!-- ------------------------ -->
-## Train the Model with Experiment Tracking
+## Train with Experiment Tracking
 
 The PD model is an `XGBClassifier`, the Python equivalent of the SAS `PROC GRADBOOST` model (`sas_pd_model.sas`). It was converted with **CoCo**. The hyperparameters map directly from the SAS source:
 
@@ -740,7 +741,7 @@ else:
 > The per-segment models are a demonstration only. They are not registered or used by the pipelines later in this guide.
 
 <!-- ------------------------ -->
-## Register, Explain and Trace the Model
+## Register and Explain Model
 
 Register both models in the **Model Registry** as versions of `PD_XGB_MODEL`: **V1** gets the `champion` alias (production) and **V2** gets the `challenger` alias (candidate). Logging each model with a Snowpark sample from the versioned Dataset does two things:
 - it records **ML Lineage** from the model back to the Dataset and Feature Views;
@@ -845,7 +846,7 @@ for node in mv.lineage(direction="upstream"):
 ```
 
 <!-- ------------------------ -->
-## Batch Score and Compute Scenario-Weighted ECL
+## Batch Score and ECL
 
 Credit risk models run in batch, for monthly provisioning and quarterly stress tests. Features come straight from the Feature Store through `retrieve_feature_values`, so scoring uses exactly the same feature definitions as training.
 
@@ -1019,7 +1020,7 @@ print("View in Snowsight: AI & ML > Models > PD_XGB_MODEL > Monitors")
 View the monitors in Snowsight under **AI & ML > Models > PD_XGB_MODEL > Monitors**. When the training pipeline promotes a new version, it re-points that role's monitor automatically.
 
 <!-- ------------------------ -->
-## Automate Monthly Retraining with Human Approval
+## Automate Monthly Retraining
 
 Now automate the lifecycle with **Task DAGs**, replacing the cron and shell scripts common in SAS environments. Each task calls a Python stored procedure.
 
