@@ -125,12 +125,12 @@ The sources/definitions/ directory contains the SQL that defines your infrastruc
 
 | File | What it defines |
 |---|---|
-| infrastructure.sql | The warehouse that refreshes the dynamic tables, the database (with LOG_EVENT_LEVEL = ERROR) and its PUBLIC schema |
-| raw.sql | The RAW schema and three landing tables: MENU, CUSTOMER and ORDERS |
-| analytics.sql | The ANALYTICS schema, three dynamic tables, and a SQL function, CALCULATE_PROFIT_MARGIN, used by TRUCK_PERFORMANCE |
-| serve.sql | The SERVE schema, three views for dashboards and SALES_ANALYTICS, a semantic view over ENRICHED_ORDER_DETAILS |
-| expectations.sql | Three data quality expectations: on a table, a dynamic table and a view |
-| alerts.sql | DT_REFRESH_FAILURE, an alert built from a Snowflake alert template |
+| <span style="white-space: nowrap">infrastructure.sql</span> | The warehouse that refreshes the dynamic tables, the database (with LOG_EVENT_LEVEL = ERROR) and its PUBLIC schema |
+| <span style="white-space: nowrap">raw.sql</span> | The RAW schema and three landing tables: MENU, CUSTOMER and ORDERS |
+| <span style="white-space: nowrap">analytics.sql</span> | The ANALYTICS schema, three dynamic tables, and a SQL function, CALCULATE_PROFIT_MARGIN, used by TRUCK_PERFORMANCE |
+| <span style="white-space: nowrap">serve.sql</span> | The SERVE schema, three views for dashboards and SALES_ANALYTICS, a semantic view over ENRICHED_ORDER_DETAILS |
+| <span style="white-space: nowrap">expectations.sql</span> | Three data quality expectations: on a table, a dynamic table and a view |
+| <span style="white-space: nowrap">alerts.sql</span> | DT_REFRESH_FAILURE, an alert built from a Snowflake alert template |
 
 DT_REFRESH_FAILURE watches every dynamic table in DCM_DEMO_3_DEV and posts an in-app notification in Snowsight when a refresh fails. It reads the refresh failure events that LOG_EVENT_LEVEL = ERROR on the database writes to the event table. An alert built from a template cannot be declared STARTED, so DCM deploys it suspended and scripts/02_post_deploy.sql resumes it.
 
@@ -159,6 +159,7 @@ And here's how analytics.sql defines the dynamic table at the heart of this guid
 DEFINE DYNAMIC TABLE DCM_DEMO_3{{env_suffix}}.ANALYTICS.ENRICHED_ORDER_DETAILS
 WAREHOUSE = DCM_DEMO_3_WH{{env_suffix}}
 TARGET_LAG = 'DOWNSTREAM'
+REFRESH_MODE = ADAPTIVE
 INITIALIZE = 'ON_SCHEDULE'
 DATA_METRIC_SCHEDULE = 'TRIGGER_ON_CHANGES'
 COMMENT = 'One row per order line, joined to the menu and the customer'
@@ -185,6 +186,8 @@ JOIN DCM_DEMO_3{{env_suffix}}.RAW.CUSTOMER C ON O.CUSTOMER_ID = C.CUSTOMER_ID;
 
 CUSTOMER_SPENDING_SUMMARY and TRUCK_PERFORMANCE aggregate this table per customer and per truck brand.
 
+**Why REFRESH_MODE = ADAPTIVE?** All three dynamic tables declare it. An adaptive dynamic table refreshes incrementally, and Snowflake decides per refresh cycle when the changed data is large enough that recomputing is cheaper than maintaining the result incrementally. You don't lock the table into INCREMENTAL or FULL up front.
+
 **Why INITIALIZE = ON_SCHEDULE?** By default, a dynamic table runs a full synchronous refresh while it is being created. When a project creates several dynamic tables at once, those refreshes slow the deployment down. INITIALIZE = ON_SCHEDULE skips the refresh at creation, so the deploy finishes quickly and each dynamic table fills on its first scheduled (or manual) refresh. This is the recommended pattern for DCM deployments.
 
 <!-- ------------------------ -->
@@ -197,7 +200,6 @@ Before deploying, always run a **Plan**. A plan is a dry run that shows exactly 
 **In Snowsight:** the DCM control panel is the first tab in the bottom panel of your workspace. Select the project **dcm-projects-for-dynamic-tables/DCM_Projects_DT_Lifecycle**. On the right side of the same bar, select the **DCM_DEV** target and click the play button to the right of **Plan**.
 
 ![DCM control panel with the project and target selected](assets/select_project.png)
-Screenshot placeholder: the DCM control panel with project dcm-projects-for-dynamic-tables/DCM_Projects_DT_Lifecycle and target DCM_DEV selected, taken just before clicking Plan.
 
 **With the Snowflake CLI:** pass the manifest's owner role for the target with --role.
 
@@ -215,7 +217,6 @@ Since none of the defined objects exist yet, the plan shows **19 entities: 18 to
 | ALTER | the owner role DCM_DEVELOPER, which receives ownership of everything above |
 
 ![Plan results showing planned changes](assets/plan_results.png)
-Screenshot placeholder: the first Plan result, header reading 19 entities (18 CREATE, 1 ALTER).
 
 The plan also wrote an out folder next to sources. It holds the rendered definitions, with every {{env_suffix}} replaced by _DEV; open one next to its source to see what the plan actually ran.
 
@@ -227,8 +228,7 @@ When the changeset matches what you expected, deploy it.
 
 ![The operation selector in the DCM control panel, with Deploy below Plan](assets/deploy_selector.png)
 
-![Deploy confirmation dialog](assets/deploy_dialog.png)
-Screenshot placeholder: the Deploy dialog with the alias initial-pipeline entered, taken before confirming.
+![Deploy dialog for the second deployment](assets/deploy_dialog_2.png)
 
 **With the Snowflake CLI:**
 
@@ -236,7 +236,9 @@ Screenshot placeholder: the Deploy dialog with the alias initial-pipeline entere
 snow dcm deploy --target DCM_DEV --role DCM_DEVELOPER --alias initial-pipeline
 ```
 
-The deploy reports **19 entities (18 created, 1 altered, 0 dropped)**. Refresh the database explorer on the left of Snowsight to see DCM_DEMO_3_DEV and everything inside it.
+The deploy reports **19 entities (18 created, 1 altered, 0 dropped)**. Open ENRICHED_ORDER_DETAILS in the database explorer and select its **Lineage** tab to see how the layers connect: the three RAW tables feed it, and it feeds the two aggregate dynamic tables, the three dashboard views and the SALES_ANALYTICS semantic view.
+
+![Lineage of ENRICHED_ORDER_DETAILS, from the three RAW tables through the ANALYTICS dynamic tables to the SERVE views and semantic view](assets/lineage.png)
 
 <!-- ------------------------ -->
 ## Insert Sample Data
@@ -259,6 +261,10 @@ ALTER DYNAMIC TABLE DCM_DEMO_3_DEV.ANALYTICS.CUSTOMER_SPENDING_SUMMARY,
 ```
 
 Their shared upstream, ENRICHED_ORDER_DETAILS, refreshes with them. The result reports a refreshed_dt_count of 3 and one data_timestamp for both rows, so the two leaf tables are consistent with each other. You don't list the upstream yourself.
+
+The **Graph** tab of a dynamic table shows the same chain with each table's target lag and the state of its last refresh. ENRICHED_ORDER_DETAILS has TARGET_LAG = DOWNSTREAM, so it inherits the tightest lag of the tables that read it: 12 hours from TRUCK_PERFORMANCE.
+
+![Dynamic table graph: the RAW tables feed ENRICHED_ORDER_DETAILS (target lag 12h), which feeds CUSTOMER_SPENDING_SUMMARY (target lag 2d), both Succeeded](assets/dt_graph.png)
 
 ### 3. Verify
 
@@ -310,6 +316,7 @@ The changed definition:
 DEFINE DYNAMIC TABLE DCM_DEMO_3{{env_suffix}}.ANALYTICS.ENRICHED_ORDER_DETAILS
 WAREHOUSE = DCM_DEMO_3_WH{{env_suffix}}
 TARGET_LAG = 'DOWNSTREAM'
+REFRESH_MODE = ADAPTIVE
 INITIALIZE = 'ON_SCHEDULE'
 DATA_METRIC_SCHEDULE = 'TRIGGER_ON_CHANGES'
 COMMENT = 'One row per order line, joined to the menu and the customer'
@@ -401,14 +408,12 @@ snow dcm plan --target DCM_DEV --role DCM_DEVELOPER --save-output
 This plan looks different from the first one. Instead of 18 CREATEs, it shows **3 entities, all ALTERs**. ENRICHED_ORDER_DETAILS has three changes: FROZEN_WHERE set, the query changed, and the column DIET_CLASSIFICATION added as VARCHAR. V_DASHBOARD_SALES_BY_CATEGORY_CITY and SALES_ANALYTICS each change to carry the new column. All three land in one changeset, so the serve layer never points at a column the dynamic table doesn't have yet. DCM alters the existing dynamic table instead of replacing it. That matters: a replaced dynamic table starts over with an initial refresh, and the frozen region predicate is ignored during initialization, so every row would be computed and classified again.
 
 ![Plan results showing the ALTER operation for the modified dynamic table](assets/plan_redeployment.png)
-Screenshot placeholder: the second Plan result, 3 entities (3 ALTER): ENRICHED_ORDER_DETAILS, V_DASHBOARD_SALES_BY_CATEGORY_CITY and SALES_ANALYTICS, with ENRICHED_ORDER_DETAILS expanded to show the added DIET_CLASSIFICATION column, the frozen region and the query diff.
 
 When the changeset matches what you expected, deploy it.
 
 **In Snowsight:** in the DCM control panel, set the operation to **Deploy** instead of **Plan**, add a deployment alias such as add-ai-diet-frozen-region, and run it.
 
 ![Deploy confirmation dialog](assets/deploy_dialog.png)
-Screenshot placeholder: the Deploy dialog for the second cycle, with the alias add-ai-diet-frozen-region entered, taken before confirming.
 
 **With the Snowflake CLI:**
 
@@ -478,12 +483,12 @@ ORDER BY REFRESH_START_TIME DESC;
 
 | REFRESH_START_TIME | REFRESH_ACTION | ROWS_INSERTED | ROWS_DELETED | ROWS_COPIED |
 |---|---|---|---|---|
-| (after the second deploy) | FULL | 2 | 0 | 0 |
-| (after the first deploy) | FULL | 24 | 0 | 0 |
+| (after the second deploy) | REINITIALIZE | 2 | 0 | 0 |
+| (after the first deploy) | INCREMENTAL | 24 | 0 | 0 |
 
 The first refresh computed all 24 rows. The refresh after the schema change computed only the 2 active rows, and called AI_CLASSIFY only for them. It deleted and copied nothing: the 24 frozen rows stayed exactly as they were stored.
 
-REFRESH_ACTION reads FULL both times because Snowflake set this dynamic table to full refresh mode. SHOW DYNAMIC TABLES gives the reason in refresh_mode_reason: "This dynamic table contains a complex query." A frozen region works in either mode: only the active region is refreshed.
+REFRESH_ACTION reads REINITIALIZE for the second refresh because the query changed, so the adaptive dynamic table had to rebuild rather than apply a delta. A reinitialization normally recomputes every row; with a frozen region it recomputes only the active region, which is why it inserted 2 rows rather than 26.
 
 Last, it queries the semantic view by the new dimension, to show the column reached the serve layer in the same deploy:
 
