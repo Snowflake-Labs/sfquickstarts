@@ -63,7 +63,7 @@ You can build and run agents in several ways:
 1.  **Agent UI in Snowsight:** An interactive interface that handles identity, access control, and monitoring out of the box.
 2.  [**Cortex Agent API**](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents-rest-api): A REST API for integrating agents into your own applications (like Streamlit apps or custom apps).
 
->  **Pro tip:** Build agents using natural language with Snowflake's AI coding agent [**Cortex Code**](https://www.snowflake.com/en/developers/guides/best-practices-cortex-code-cli/#production-ready-cortex-agents). 
+>  **Pro tip:** Build agents using natural language with Snowflake's AI coding agent [**Cortex Code**](https://www.snowflake.com/en/developers/guides/best-practices-coco-cli/#production-ready-cortex-agents). 
 
 Consider the following when building an agent.
 

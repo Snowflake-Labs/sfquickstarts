@@ -175,4 +175,4 @@ The key to success with agentic ML in Snowflake is to start with a focused goal,
 - [Start your 30-day Cortex Code trial in Snowsight](https://signup.snowflake.com/)
 - [Snowflake Feature Store](https://docs.snowflake.com/en/developer-guide/snowflake-ml/feature-store/overview)
 - [Snowflake Model Registry](https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/overview)
-- [Best Practices for Cortex Code CLI](https://www.snowflake.com/en/developers/guides/best-practices-cortex-code-cli/)
+- [Best Practices for Cortex Code CLI](https://www.snowflake.com/en/developers/guides/best-practices-coco-cli/)

@@ -165,7 +165,7 @@ O índice abaixo vai listar todos os Tasty Bytes Quickstarts que podem utilizar 
 
 - #### [Governança financeira](https://quickstarts.snowflake.com/guide/tasty_bytes_zero_to_snowflake_financial_governance/)
     - Saiba mais sobre os armazenamentos virtuais Snowflake e suas opções de configuração, monitores de recursos e parâmetros de tempo limite no nível de conta e armazenamento.
-- #### [Transformação](/en/developers/guides/tasty-bytes-zero-to-snowflake-transformation-ptbr/)
+- #### [Transformação](https://www.snowflake.com/pt_br/developers/guides/tasty-bytes-zero-to-snowflake-transformation-ptbr/)
     - Saiba mais sobre o Snowflake Zero Copy Cloning, cache de conjunto de resultados, manipulação de tabelas, Time-Travel e funcionalidades de troca, descarte e cancelamento de descarte de tabelas.
 - #### [Dados semiestruturados](/en/developers/guides/tasty-bytes-zero-to-snowflake-semi-structured-data-ptbr/)
     - Saiba mais sobre o formato VARIANT de dados do Snowflake, processamento de dados semiestruturados com uso de notação de pontos e nivelamento lateral, bem como criação de exibições e criação de gráficos com o Snowsight.

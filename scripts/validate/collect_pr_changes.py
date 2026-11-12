@@ -78,6 +78,10 @@ def _is_quickstart(path: str) -> bool:
     return path.startswith(QUICKSTART_PREFIX) and UNDERSCORE_MARKER not in path
 
 
+def _is_journey(path: str) -> bool:
+    return path.startswith(JOURNEY_PREFIX) and UNDERSCORE_MARKER not in path
+
+
 def _journey_guide(path: str) -> dict[str, str] | None:
     """Return the guide a journey markdown file belongs to, or None if unusable."""
     source_path = path.rsplit("/", 1)[0]
@@ -107,7 +111,12 @@ def classify(entries: list[dict[str, Any]]) -> Changes:
             changes.has_quickstart_changes = True
             if entry.get("status") != "removed":
                 changes.changed_files.append(path)
-        elif path.startswith(JOURNEY_PREFIX) and path.endswith(".json"):
+            continue
+        # Journey files are downloaded and validated like quickstart files, so the
+        # staging step has them on disk and the content checks cover them too.
+        if _is_journey(path) and entry.get("status") != "removed":
+            changes.changed_files.append(path)
+        if path.startswith(JOURNEY_PREFIX) and path.endswith(".json"):
             changes.sidebar_files.append(path)
         elif path.startswith(JOURNEY_PREFIX) and path.endswith(".md"):
             guide = _journey_guide(path)
@@ -145,7 +154,7 @@ def _save(client: gh.GitHub, repo: str, blob_sha: str, path: str) -> bool:
 
 
 def download(client: gh.GitHub, repo: str, changes: Changes) -> None:
-    """Fetch every changed quickstart file into pr/."""
+    """Fetch every changed quickstart and journey file into pr/."""
     by_path = {
         entry["filename"]: entry.get("sha")
         for entry in changes.files
@@ -181,7 +190,7 @@ def download_sibling_markdown(
     folders = {
         path[: len(QUICKSTART_PREFIX)] + path[len(QUICKSTART_PREFIX) :].split("/", 1)[0]
         for path in changes.changed_files
-        if "/" in path[len(QUICKSTART_PREFIX) :]
+        if path.startswith(QUICKSTART_PREFIX) and "/" in path[len(QUICKSTART_PREFIX) :]
     }
     already = set(changes.downloaded_files)
 

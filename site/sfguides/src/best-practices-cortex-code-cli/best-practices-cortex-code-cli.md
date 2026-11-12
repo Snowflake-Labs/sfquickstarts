@@ -101,7 +101,7 @@ Then, discover use cases that could best match your goal:
 
 - **Data engineering (pipelines and operations)**: explore how to [create and manage dbt projects](#create-and-manage-dbt-projects), or operationalize runs with [Apache Airflow® orchestration](#apache-airflow-orchestration). Learn how to add [semantic views to your gold tables](#add-semantic-views-to-your-gold-tables) when you're ready to standardize metrics and definitions for downstream users.
 - **Analytics and app builders (interactive experiences)**: learn how to [build interactive dashboards](#build-interactive-dashboards) using Streamlit, or configure production-ready [Cortex Agents](#production-ready-cortex-agents) so end users can self-serve answers and insights in Snowflake Intelligence, grounded in governed data and the right tools.
-- **AI/Machine Learning Engineers**: try out the [agentic machine learning best practices guide](https://www.snowflake.com/en/developers/guides/agentic-machine-learning-best-practices-cortex-code/) and use the `$machine-learning` skill to automate building ML models, training, feature engineering, and deployment.
+- **AI/Machine Learning Engineers**: try out the [agentic machine learning best practices guide](https://www.snowflake.com/en/developers/guides/agentic-machine-learning-best-practices-coco/) and use the `$machine-learning` skill to automate building ML models, training, feature engineering, and deployment.
 
 ## Data exploration
 
