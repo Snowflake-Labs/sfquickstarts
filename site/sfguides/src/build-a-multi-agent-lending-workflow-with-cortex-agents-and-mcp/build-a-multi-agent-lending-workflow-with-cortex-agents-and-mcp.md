@@ -84,7 +84,7 @@ We recommend a new trial account. To open one:
 4. Confirm that **AWS** and **US West (Oregon)** are selected, complete the rest of the form, and select **Get started**.
 5. Sign in, then go to **Admin** » **Billing**, open the **Snowflake billing** tab, and add a credit card. AI features, including CoCo and Cortex Agents, are disabled on self-service trial accounts until you do. Adding a card doesn't upgrade the trial to a paid account or end the trial period. See [Trial accounts](https://docs.snowflake.com/en/user-guide/admin-trial-account).
 
-> **Why this account?** A new account has no existing objects that setup could replace, and CoCo in Snowsight is available on AWS. The agents use `claude-sonnet-4-5`, which every region reaches through [cross-region inference](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cross-region-inference), and setup turns that on for you.
+> **Why this account?** Setup changes an account-wide setting, so a new account keeps the guide separate from your other work. CoCo in Snowsight is available on AWS. The agents use `claude-sonnet-4-5`, which every region reaches through [cross-region inference](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cross-region-inference), and setup turns that on for you.
 
 ### Using a Different Account
 
@@ -93,7 +93,6 @@ You can use another account, such as an existing trial or a company account. The
 - You can use the **ACCOUNTADMIN** role.
 - Cross-region inference is allowed. Setup sets it to `ANY_REGION` for the whole account.
 - The account isn't in Azure East US (Virginia), where CoCo in Snowsight isn't available.
-- The account has no database called `LENDING` and no warehouse called `LENDING_WH` that you want to keep.
 
 If you received the account at a Snowflake event or workshop, AI features are usually turned on already, so you can skip the credit card step.
 
