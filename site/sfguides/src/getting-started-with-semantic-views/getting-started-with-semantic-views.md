@@ -4,7 +4,7 @@ language: en
 summary: Build semantic views over public Marketplace data with SQL, review their business meaning, and connect them to a Cortex Agent.
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/analytics
 environments: web
-status: Published
+status: Pubblicato
 feedback link: https://github.com/Snowflake-Labs/sfquickstarts/issues
 
 # Getting Started with Semantic Views and Cortex Agents
