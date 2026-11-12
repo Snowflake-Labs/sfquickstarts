@@ -315,7 +315,7 @@ Snowflake documentation and quickstarts will provide more information you will n
 - [Tutorial: Get started with Snowpipe Streaming high performance architecture SDK](https://docs.snowflake.com/en/user-guide/snowpipe-streaming-high-performance-getting-started)
 - [Python SDK elastic channel API](https://docs.snowflake.com/en/user-guide/snowpipe-streaming-sdk-python/reference/latest/api/snowflake/ingest/streaming/streaming_ingest_elastic_channel/index)
 - [Dynamic Tables Introduction](https://docs.snowflake.com/en/user-guide/dynamic-tables-intro)
-- Quickstart on [Dynamic Tables](/en/developers/guides/getting-started-with-dynamic-tables/)
+- Quickstart on [Dynamic Tables](https://www.snowflake.com/en/developers/guides/comprehensive-guide-to-dynamic-tables/)
 - Quickstart on [Streamlit](/en/developers/guides/getting-started-with-snowpark-for-python-streamlit/)
 
 
