@@ -838,7 +838,7 @@ DESC SEMANTIC VIEW balloon_silver.silver.balloon_game_semantic_view;
 
 #### Configure Snowflake Intelligence with the Semantic View
 
-With the Semantic View created, set up a Snowflake Intelligence **agent** that uses it as a tool for natural-language querying. This follows the same pattern as the official [Getting Started with Snowflake Intelligence](https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake-intelligence/) guide — but since we already have a Semantic View (not a YAML file), setup is simpler.
+With the Semantic View created, set up a Snowflake Intelligence **agent** that uses it as a tool for natural-language querying. This follows the same pattern as the official [Getting Started with Snowflake Intelligence](https://www.snowflake.com/en/developers/guides/getting-started-with-cowork/) guide — but since we already have a Semantic View (not a YAML file), setup is simpler.
 
 ##### Required Privileges
 

@@ -603,7 +603,7 @@ alter task monthly_revenue_data_pipeline_task suspend;
 ### 관련 리소스
 
 - [GitHub의 소스 코드](https://github.com/Snowflake-Labs/sfguide-ad-spend-roi-snowpark-python-streamlit-scikit-learn)
-- [Advanced:  Snowpark for Python Data Engineering Guide](/en/developers/guides/data-engineering-pipelines-with-snowpark-python-kr/)
+- [Advanced:  Snowpark for Python Data Engineering Guide](https://www.snowflake.com/ko/developers/guides/data-engineering-pipelines-with-snowpark-python-kr/)
 - [Advanced: Snowpark for Python Machine Learning Guide](/en/developers/guides/getting-started-snowpark-machine-learning/)
 - [Snowpark for Python 데모](https://github.com/Snowflake-Labs/snowpark-python-demos/blob/main/README.md)
 - [Snowpark for Python 개발자 가이드](https://docs.snowflake.com/ko/developer-guide/snowpark/python/index.html)

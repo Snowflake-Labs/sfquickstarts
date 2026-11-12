@@ -18,7 +18,7 @@ This guide walks through the CLI experience, which works well for users comforta
 
 > **Important:** Cortex Code is powered by LLMs and is non-deterministic. The code it generates may differ from what is shown in this guide. Always review the output and verify that the results match your expectations before proceeding to the next step.
 
-> If you prefer Snowsight Workspaces with interactive visualizations and Warehouse-based batch inference, see the companion guide: [Getting Started with Cortex Code in Snowsight for Data Science ML](https://www.snowflake.com/en/developers/guides/getting-started-with-cortex-code-in-snowsight-for-data-science-ml/).
+> If you prefer Snowsight Workspaces with interactive visualizations and Warehouse-based batch inference, see the companion guide: [Getting Started with Cortex Code in Snowsight for Data Science ML](https://www.snowflake.com/en/developers/guides/build-your-first-ml-model-in-snowflake-with-agentic-ml/).
 
 ### What You Will Learn
 
@@ -229,9 +229,9 @@ Congratulations! You have successfully built a customer LTV prediction model and
 
 ### Related Resources
 
-- [Getting Started with Cortex Code in Snowsight for Data Science ML](https://www.snowflake.com/en/developers/guides/getting-started-with-cortex-code-in-snowsight-for-data-science-ml/) — companion guide for Snowsight + Warehouse batch inference
+- [Getting Started with Cortex Code in Snowsight for Data Science ML](https://www.snowflake.com/en/developers/guides/build-your-first-ml-model-in-snowflake-with-agentic-ml/) — companion guide for Snowsight + Warehouse batch inference
 - [Cortex Code CLI Documentation](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-cli)
 - [Cortex Code in Snowsight Documentation](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-snowsight)
 - [Snowflake Model Registry](https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/overview)
 - [Snowpark Container Services](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview)
-- [Best Practices for Cortex Code CLI](https://www.snowflake.com/en/developers/guides/best-practices-cortex-code-cli/)
+- [Best Practices for Cortex Code CLI](https://www.snowflake.com/en/developers/guides/best-practices-coco-cli/)

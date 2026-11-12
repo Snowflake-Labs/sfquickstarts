@@ -265,4 +265,4 @@ You built a Cortex Agent that combines structured analytics, unstructured search
 - [Create and manage agents](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents-manage)
 - [CoCo](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code)
 - [Getting Started with Cortex Agent Evaluations](https://www.snowflake.com/en/developers/guides/getting-started-with-cortex-agent-evaluations/)
-- [Self-Improving Agents with CoCo](https://www.snowflake.com/en/developers/guides/self-improving-agents-with-cortex-code/)
+- [Self-Improving Agents with CoCo](https://www.snowflake.com/en/developers/guides/self-improving-agents-with-coco/)

@@ -282,4 +282,4 @@ The key to effective Snowpark development with Cortex Code is to think in DataFr
 - [Start your 30-day Cortex Code trial in Snowsight](https://signup.snowflake.com/cortex-code)  
 - [Snowpark Python Performance Tips](https://www.snowflake.com/en/developers/guides/snowpark-python-top-three-tips-for-optimal-performance/)  
 - [Intro to Data Engineering with Python](https://www.snowflake.com/en/developers/guides/data-engineering-with-snowpark-python-intro/)  
-- [Best Practices for Cortex Code CLI](https://www.snowflake.com/en/developers/guides/best-practices-cortex-code-cli/)
+- [Best Practices for Cortex Code CLI](https://www.snowflake.com/en/developers/guides/best-practices-coco-cli/)
