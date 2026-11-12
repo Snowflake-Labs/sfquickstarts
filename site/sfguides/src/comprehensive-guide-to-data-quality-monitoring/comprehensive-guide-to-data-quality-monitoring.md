@@ -3,9 +3,9 @@ id: comprehensive-guide-to-data-quality-monitoring
 summary: A cookbook of runnable examples for Snowflake data quality: system and custom DMFs, expectations, scoping, AI-suggested checks, anomaly detection, notifications, and quality as code.
 categories: snowflake-site:taxonomy/product/data-engineering,snowflake-site:taxonomy/snowflake-feature/transformation
 environments: web
-status: Draft
+status: Published
 language: en
-feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+feedback link: https://github.com/Snowflake-Labs/sfquickstarts/issues
 tags: Getting Started, Data Quality, Data Metric Functions, DMF, Data Engineering, Governance
 
 # Comprehensive Guide to Snowflake Data Quality Monitoring
@@ -20,7 +20,7 @@ Snowflake can check for these conditions natively, on a schedule, without moving
 
 Start with *The Example Data*, which creates everything the examples use. Each later section explores **one capability** and adds checks to the same table, so the sections are meant to be run in order; where a section relies on a check from an earlier one, it says so. Where something can be done both in SQL and in Snowsight, the section shows both. Profiling, AI-suggested checks, and the monitoring dashboard are Snowsight-only; everything else is shown in SQL.
 
-### What you will learn
+### What You'll Learn
 
 - How a check is assembled: metric, association, schedule, expectation, results
 - Which system data metric function to reach for, given a column's shape
@@ -30,7 +30,11 @@ Start with *The Example Data*, which creates everything the examples use. Each l
 - How to find the offending rows, get notified natively or through an alert created from a template
 - Where to place checks, how to keep them in code, and what monitoring costs
 
-### Prerequisites
+### What You'll Build
+
+A set of quality checks on a small IoT sensor telemetry dataset: system and custom metrics, expectations, scoped and grouped checks, schema-level coverage, anomaly detection, and notifications that fire when a check fails.
+
+### What You'll Need
 
 - A Snowflake account on **Enterprise Edition or higher**. Data Quality Monitoring is not available on Standard Edition or on [trial accounts](https://docs.snowflake.com/en/user-guide/data-quality-intro#label-data-quality-limitations).
 - A role that can create a database and a warehouse, and that holds:
@@ -839,7 +843,7 @@ ORDER BY START_TIME DESC;
 Across an organization, METERING_DAILY_HISTORY carries the same spend with SERVICE_TYPE = 'DATA_QUALITY_MONITORING'. Costs stay low when cadence matches how fast you would act, TRIGGER_ON_CHANGES is used where evaluating on data arrival fits, and schedules are suspended with an empty string rather than UNSET. Alerts, like the template alert, bill their own warehouse each time they run.
 
 <!-- ------------------------ -->
-## Cleanup
+## Clean Up
 
 If you tried the examples, dropping the database removes its tables, their associations, custom metrics, the secret, the alert, and the database's monitoring settings. The warehouse and the notification integrations live at account level and outlive the database:
 
