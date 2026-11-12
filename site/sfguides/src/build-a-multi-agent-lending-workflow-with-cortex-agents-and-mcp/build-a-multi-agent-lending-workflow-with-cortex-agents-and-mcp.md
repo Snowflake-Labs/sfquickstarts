@@ -63,6 +63,8 @@ Governance wraps all six. The agent runs as a Snowflake role and only sees what 
 
 - A [Snowflake trial account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) with the ACCOUNTADMIN role. Setup enables [cross-region inference](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cross-region-inference) so the agents can use `claude-sonnet-4-5` in any region.
 
+> **Using a trial account?** AI features, including CoCo and Cortex Agents, are disabled by default on self-service trial accounts. To turn them on, go to **Admin** » **Billing**, open the **Snowflake billing** tab, and add a credit card. Adding a card doesn't upgrade the trial to a paid account or end the trial period. See [Trial accounts](https://docs.snowflake.com/en/user-guide/admin-trial-account).
+
 ### What You'll Build
 
 ![The loan applications, documents, Cortex Analyst and Cortex Search are set up for you. On top of them you build a credit analyst agent that writes a credit memo, then explore a pre-built underwriting agent that applies the lending policy and writes the decision back to the loan application.](assets/00-architecture.svg)
