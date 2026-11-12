@@ -1,0 +1,173 @@
+/*==============================================================================
+  Credit Risk PD Model — SAS PROC GRADBOOST
+  
+  Purpose: Train a Probability of Default model using Gradient Boosting
+           on loan-level behavioral and macroeconomic features.
+  
+  Target:  DEFAULT_FLAG (1 = 90+ DPD, 0 = Current/30/60 DPD)
+  
+  Data:    WORK.PD_TRAINING — loan-level features joined with macro indicators
+==============================================================================*/
+
+/* -----------------------------------------------------------------
+   Step 1: Data Preparation — Feature Engineering via SAS Macros
+   ----------------------------------------------------------------- */
+
+%let EQUIFAX_LIB  = EQFX;
+%let FRED_LIB     = MACRO;
+%let OUT_LIB      = WORK;
+%let OBS_START    = '01JAN2022'd;
+%let OBS_END      = '31DEC2025'd;
+
+/* Join loan-level features with monthly macro indicators */
+proc sql;
+    create table &OUT_LIB..PD_TRAINING as
+    select
+        /* Entity keys */
+        l.TRADE_ID,
+        l.ARCHIVE_DATE,
+
+        /* Target */
+        case when l.STATUS_CATEGORY >= 4 then 1 else 0 end as DEFAULT_FLAG,
+
+        /* Behavioral features (Equifax) */
+        l.VANTAGE_SCORE_3,
+        l.NUMBER_OF_ACCOUNTS,
+        l.NUMBER_ACCOUNTS_PAST_DUE,
+        l.NUMBER_ACCOUNTS_MAJOR_DEROGATORY,
+        l.BANKCARD_ACCTS_OVER_75_PERCENT_UTILIZATION as HIGH_UTIL_ACCTS,
+        l.AGE_OLDEST_ACCOUNT,
+        l.TOTAL_PAST_DUE_AMOUNT,
+        l.BALANCE,
+
+        /* Macro features (FRED) */
+        m.UNEMPLOYMENT_RATE,
+        m.FED_FUNDS_RATE,
+        m.CPI_INDEX
+
+    from &EQUIFAX_LIB..ANALYTIC_SAMPLE as l
+    inner join &FRED_LIB..MACRO_INDICATORS as m
+        on intnx('month', l.ARCHIVE_DATE, 0, 'beginning') = m.OBSERVATION_MONTH
+    where l.ARCHIVE_DATE between &OBS_START and &OBS_END;
+quit;
+
+/* Impute missing values with 0 */
+data &OUT_LIB..PD_TRAINING;
+    set &OUT_LIB..PD_TRAINING;
+    array nums _numeric_;
+    do over nums;
+        if nums = . then nums = 0;
+    end;
+run;
+
+/* -----------------------------------------------------------------
+   Step 2: Train/Test Split
+   ----------------------------------------------------------------- */
+
+proc surveyselect data=&OUT_LIB..PD_TRAINING
+    out=&OUT_LIB..PD_SPLIT
+    method=srs
+    samprate=0.8
+    seed=42
+    outall;
+run;
+
+data &OUT_LIB..PD_TRAIN &OUT_LIB..PD_TEST;
+    set &OUT_LIB..PD_SPLIT;
+    if selected then output &OUT_LIB..PD_TRAIN;
+    else output &OUT_LIB..PD_TEST;
+run;
+
+/* -----------------------------------------------------------------
+   Step 3: Train PROC GRADBOOST — Gradient Boosting PD Model
+   ----------------------------------------------------------------- */
+
+proc gradboost data=&OUT_LIB..PD_TRAIN
+    ntrees=200
+    learningrate=0.1
+    maxdepth=6
+    vars_to_try=5
+    minleafsize=20
+    seed=42;
+
+    /* Target variable */
+    target DEFAULT_FLAG / level=nominal;
+
+    /* Behavioral features (interval = continuous) */
+    input VANTAGE_SCORE_3
+          NUMBER_OF_ACCOUNTS
+          NUMBER_ACCOUNTS_PAST_DUE
+          NUMBER_ACCOUNTS_MAJOR_DEROGATORY
+          HIGH_UTIL_ACCTS
+          AGE_OLDEST_ACCOUNT
+          TOTAL_PAST_DUE_AMOUNT
+          BALANCE
+          / level=interval;
+
+    /* Macro features (interval = continuous) */
+    input UNEMPLOYMENT_RATE
+          FED_FUNDS_RATE
+          CPI_INDEX
+          / level=interval;
+
+    /* Save model as an analytic store for scoring */
+    savestate rstore=&OUT_LIB..PD_GRADBOOST_STORE;
+
+    /* Output variable importance */
+    ods output VariableImportance = &OUT_LIB..PD_IMPORTANCE;
+    ods output FitStatistics      = &OUT_LIB..PD_FITSTATS;
+run;
+
+/* -----------------------------------------------------------------
+   Step 4: Score Test Set
+   ----------------------------------------------------------------- */
+
+proc astore;
+    score data=&OUT_LIB..PD_TEST
+          rstore=&OUT_LIB..PD_GRADBOOST_STORE
+          out=&OUT_LIB..PD_SCORED
+          copyvars=(TRADE_ID ARCHIVE_DATE DEFAULT_FLAG);
+run;
+
+/* -----------------------------------------------------------------
+   Step 5: Model Evaluation — Discrimination Metrics
+   ----------------------------------------------------------------- */
+
+/* AUC via PROC LOGISTIC on predicted probabilities */
+proc logistic data=&OUT_LIB..PD_SCORED;
+    model DEFAULT_FLAG(event='1') = P_DEFAULT_FLAG1 / nofit;
+    roc pred=P_DEFAULT_FLAG1;
+    ods output ROCAssociation = &OUT_LIB..PD_AUC;
+run;
+
+/* Print results */
+proc print data=&OUT_LIB..PD_AUC noobs;
+    var Area;
+    title "PD Model — AUC on Test Set";
+run;
+
+proc print data=&OUT_LIB..PD_IMPORTANCE(obs=11);
+    title "PD Model — Variable Importance (Top Features)";
+run;
+
+/* -----------------------------------------------------------------
+   Step 6: Export Metrics to Tracking Spreadsheet (manual process)
+   ----------------------------------------------------------------- */
+
+/* 
+   NOTE: In the SAS environment, model metrics are manually recorded
+   in an Excel tracker. There is no native experiment tracking, model
+   registry, or automated monitoring. The analytic store (model binary) is
+   kept in version-named locations on shared storage.
+   
+   This entire workflow — from feature generation through monitoring —
+   is replaced by Snowflake ML's integrated platform:
+   
+   SAS PROC GRADBOOST →  XGBClassifier on Snowflake
+   SAS macros          →  Feature Store (Feature Views + Dynamic Tables)
+   Manual freezes      →  Versioned Datasets
+   Excel tracking      →  Experiment Tracking
+   Analytic stores     →  Model Registry (versions, aliases, RBAC)
+   Quarterly reports   →  Model Monitors (continuous drift detection)
+   Cron scripts        →  Task DAGs
+*/
