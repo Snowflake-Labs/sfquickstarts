@@ -61,9 +61,8 @@ Governance wraps all six. The agent runs as a Snowflake role and only sees what 
 
 ### What You'll Need
 
-- A [Snowflake trial account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) with the ACCOUNTADMIN role. Setup enables [cross-region inference](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cross-region-inference) so the agents can use `claude-sonnet-4-5` in any region.
-
-> **Using a trial account?** AI features, including CoCo and Cortex Agents, are disabled by default on self-service trial accounts. To turn them on, go to **Admin** » **Billing**, open the **Snowflake billing** tab, and add a credit card. Adding a card doesn't upgrade the trial to a paid account or end the trial period. See [Trial accounts](https://docs.snowflake.com/en/user-guide/admin-trial-account).
+- A Snowflake account with the ACCOUNTADMIN role. A new trial account is recommended; the next step shows how to open one.
+- Nothing to install. Everything runs in your browser.
 
 ### What You'll Build
 
@@ -75,9 +74,33 @@ Governance wraps all six. The agent runs as a Snowflake role and only sees what 
 - An event-driven pipeline that underwrites each new loan application as it arrives
 
 <!-- ------------------------ -->
+## Open a Trial Account
+
+The guide is tested on a new trial account. To open one:
+
+1. Go to [signup.snowflake.com](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides&cloud=aws&region=us-west-2). This link pre-selects **AWS** and the **US West (Oregon)** region.
+2. Complete the first page of the form.
+3. On the next page, set the Snowflake edition to **Enterprise**.
+4. Confirm that **AWS** and **US West (Oregon)** are selected, complete the rest of the form, and select **Get started**.
+5. Sign in, then go to **Admin** » **Billing**, open the **Snowflake billing** tab, and add a credit card. AI features, including CoCo and Cortex Agents, are disabled on self-service trial accounts until you do. Adding a card doesn't upgrade the trial to a paid account or end the trial period. See [Trial accounts](https://docs.snowflake.com/en/user-guide/admin-trial-account).
+
+> **Why this account?** CoCo in Snowsight, Cortex Agents, agent evaluations and the Snowflake-managed MCP server are all available in AWS US West (Oregon). The agents use `claude-sonnet-4-5`, which every region reaches through [cross-region inference](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cross-region-inference), and setup turns that on for you.
+
+### Using a Different Account
+
+You can use another account, such as an existing trial or a company account. The guide assumes that:
+
+- You can use the **ACCOUNTADMIN** role.
+- Cross-region inference is allowed. Setup sets it to `ANY_REGION` for the whole account.
+- The account isn't in Azure East US (Virginia), where CoCo in Snowsight isn't available.
+- The account has no database called `LENDING` and no warehouse called `LENDING_WH` that you want to keep.
+
+If you received the account at a Snowflake event or workshop, AI features are usually turned on already, so you can skip the credit card step.
+
+<!-- ------------------------ -->
 ## Setup
 
-The guide runs in [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight) on your trial account. Setup takes three steps and about two minutes.
+The guide runs in [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight). Setup takes three steps and about two minutes.
 
 ### Let Snowflake Read the Repository
 
@@ -102,6 +125,8 @@ CREATE API INTEGRATION IF NOT EXISTS LENDING_LAB_GIT_API
 
 ### Run the Setup Script
 
+> **Account-level change:** `setup.sql` sets `CORTEX_ENABLED_CROSS_REGION = 'ANY_REGION'` for the whole account, so any Cortex request in the account can be processed in another region. It also replaces any existing `LENDING` database. Run it on a trial or other disposable account, or review it with your administrator first.
+
 1. In the new **sfguide-build-a-multi-agent-lending-workflow** workspace, open **setup.sql**.
 2. Select **Run All**.
 
@@ -112,6 +137,17 @@ The workspace holds the files for the rest of the guide: **lab.sql** has every b
 > TIP: To start over at any point, run **setup.sql** again. It rebuilds everything from nothing in about a minute. To put edited files back as they started, open the **Changes** tab at the top of the file list and discard your changes.
 
 Throughout the guide you use one warehouse, `LENDING_WH`, and one schema, `LENDING.LOANS`, and you stay in the **ACCOUNTADMIN** role. That keeps setup short. In production the agents would run under a role that can see only these objects.
+
+### Troubleshooting
+
+| Symptom | Likely cause | Fix |
+| --- | --- | --- |
+| CoCo says *Cortex Code is not enabled or the usage limit has been reached* | AI features are off on self-service trial accounts | Add a credit card under **Admin** » **Billing**. On another account, open **AI & ML** » **CoCo Admin** and complete **Enable CoCo** |
+| *AI function ... is not available for trial accounts* | Same cause | Add a credit card, then run **setup.sql** again |
+| Creating the workspace fails | The integration wasn't selected, or its prefix doesn't match the repository URL | Run the `CREATE API INTEGRATION` statement again and select **LENDING_LAB_GIT_API** in the dialog |
+| `setup.sql` can't find the lab files | The workspace was renamed | Recreate the workspace and keep the name **sfguide-build-a-multi-agent-lending-workflow** |
+| The last row says `Setup incomplete` | One part of setup didn't finish | The column that is lower than expected names the part. Run **setup.sql** again |
+| An agent fails with a model error | The model isn't reachable from your account | Check that cross-region inference is on with `SHOW PARAMETERS LIKE 'CORTEX_ENABLED_CROSS_REGION' IN ACCOUNT`, and that `SHOW CORTEX BASE MODELS LIKE 'claude-sonnet-4-5'` returns a row |
 
 <!-- ------------------------ -->
 ## Understand the Data
