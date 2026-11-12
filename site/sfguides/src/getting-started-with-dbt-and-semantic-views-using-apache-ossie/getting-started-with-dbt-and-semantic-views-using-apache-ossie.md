@@ -19,6 +19,8 @@ To see how that workflow operates end to end, suppose you want to find the top f
 
 With that end-to-end flow in mind, here are the specific skills you will cover along the way.
 
+> **Note:** Read the companion engineering blog post [Create Semantics Anywhere with Apache Ossie (Incubating)](https://www.snowflake.com/en/blog/engineering/dbt-snowflake-semantic-views-apache-ossie/) for the architectural background behind this workflow.
+
 ### What You'll Learn
 
 - How to model a star schema and daily time spine in dbt over Snowflake's shared TPC-H sample data
@@ -855,6 +857,7 @@ To dive deeper into Apache Ossie, Snowflake Semantic Views, and the dbt semantic
 
 ### Related Resources
 
+- [Companion Blog: Create Semantics Anywhere with Apache Ossie (Incubating)](https://www.snowflake.com/en/blog/engineering/dbt-snowflake-semantic-views-apache-ossie/)
 - [Apache Ossie Repository](https://github.com/apache/ossie)
 - [Overview of Snowflake Semantic Views](https://docs.snowflake.com/en/user-guide/views-semantic/overview)
 - [dbt Semantic Layer Documentation](https://docs.getdbt.com/docs/use-dbt-semantic-layer/dbt-sl)
