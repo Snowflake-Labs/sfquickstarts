@@ -324,4 +324,4 @@ Documentation:
 - [Monitoring Dynamic Tables](https://docs.snowflake.com/en/user-guide/dynamic-tables-monitor)
 
 Guides:
-- [Getting Started with Dynamic Tables](https://www.snowflake.com/en/developers/guides/getting-started-with-dynamic-tables/)
+- [Getting Started with Dynamic Tables](https://www.snowflake.com/en/developers/guides/comprehensive-guide-to-dynamic-tables/)

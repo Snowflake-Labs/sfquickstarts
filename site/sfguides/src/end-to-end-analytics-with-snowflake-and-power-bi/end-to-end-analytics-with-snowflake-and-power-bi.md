@@ -1392,7 +1392,7 @@ Congratulations! You have completed the End-to-End Analytics with Snowflake and 
 - [Snowflake and Power BI: Best Practices and Recent Improvements](https://medium.com/snowflake/snowflake-and-power-bi-best-practices-and-recent-improvements-183e2d970c0c) (Blog)
 - [Exploring Snowflake Data Governance with Power BI](https://medium.com/snowflake/exploring-snowflake-data-governance-with-power-bi-50835f301cfc) (Blog)
 - [Understand Star Schema and the Importance for Power BI](https://learn.microsoft.com/en-us/power-bi/guidance/star-schema) (Microsoft Documentation)
-- [Getting Started with Snowflake Dynamic Tables](/en/developers/guides/getting-started-with-dynamic-tables/) (Snowflake Quickstart)
+- [Getting Started with Snowflake Dynamic Tables](https://www.snowflake.com/en/developers/guides/comprehensive-guide-to-dynamic-tables/) (Snowflake Quickstart)
 - [Tasty Bytes - Zero to Snowflake - Collaboration](/en/developers/guides/tasty-bytes-zero-to-snowflake-collaboration/) (Snowflake Quickstart)
 - [Tasty Bytes - Zero to Snowflake - Governance with Snowflake Horizon](/en/developers/guides/tasty-bytes-zero-to-snowflake-governance-with-horizon/) (Snowflake Quickstart)
 - [Getting Started with Horizon for Data Governance in Snowflake](/en/developers/guides/getting-started-with-horizon-for-data-governance-in-snowflake/) (Snowflake Quickstart)
