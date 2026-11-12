@@ -479,16 +479,18 @@ Read each translation and decide whether you agree with its label:
 
 ### Before and after AI
 
-Here's what the AI bought you. Run the **`before_after`** cell. It answers one question two ways for the 100 returned Footwear lines in EMEA: *how many are about size?*
+Here's what the AI bought you. Run the **`before_after`** cell. It answers one question three ways for the 100 returned Footwear lines in EMEA: *how many are about size?*
 
-- `size_by_keyword` is what you might try without AI: search the original comments for English size words.
+- `keyword_original` is what you might try without AI: search the original comments for English size words.
+- `keyword_translated` runs the same search on `comment_english`, the AI translation.
 - `size_by_ai` counts the lines the AI labeled `Wrong size`.
 
 ```sql
--- How many returned Footwear/EMEA comments are about size? Without AI, then with AI.
+-- How many returned Footwear/EMEA comments are about size? Original text, translated text, AI label.
 SELECT
   COUNT(*) AS returned_lines,
-  COUNT_IF(comment ILIKE ANY ('%size%', '%small%', '%big%', '%tight%', '%fit%')) AS size_by_keyword,
+  COUNT_IF(comment ILIKE ANY ('%size%', '%small%', '%big%', '%tight%', '%fit%')) AS keyword_original,
+  COUNT_IF(comment_english ILIKE ANY ('%size%', '%small%', '%big%', '%tight%', '%fit%')) AS keyword_translated,
   COUNT_IF(return_reason = 'Wrong size') AS size_by_ai
 FROM ONLINE_RETURNS.CURATED.RETURN_REVIEW
 WHERE is_returned AND category = 'Footwear' AND region = 'EMEA';
@@ -496,11 +498,17 @@ WHERE is_returned AND category = 'Footwear' AND region = 'EMEA';
 
 Expected result:
 
-| returned_lines | size_by_keyword | size_by_ai |
-|---:|---:|---:|
-| 100 | **0** | **75** |
+| returned_lines | keyword_original | keyword_translated | size_by_ai |
+|---:|---:|---:|---:|
+| 100 | **0** | **75** | **75** |
 
-The keyword search finds nothing, because every comment is written in another language. The AI labels show that three out of four Footwear returns in EMEA are about size.
+Read it left to right:
+
+- **Original text: 0.** Every comment is in another language, so English keywords can't find anything. You can't search what you can't read.
+- **Translated text: 75.** Once `AI_TRANSLATE` has run, the same keywords work. Translation is what makes the comments searchable at all.
+- **AI label: 75.** On this data, the classification agrees with a well-chosen keyword list. The difference is what you get: a single `return_reason` column with six fixed values that you can group, filter, and check, instead of a keyword list you have to guess and maintain. That governed column is what the semantic view and the agent will use in the next steps.
+
+The AI labels show that three out of four Footwear returns in EMEA are about size.
 
 ### Check the answer before handing it to an agent
 
