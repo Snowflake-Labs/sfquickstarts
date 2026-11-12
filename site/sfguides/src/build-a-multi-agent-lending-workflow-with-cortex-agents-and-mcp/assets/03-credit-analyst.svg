@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 384" width="900" height="384" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+  <rect width="900" height="384" fill="#FFFFFF"/>
+  <text x="40" y="38" font-size="18" font-weight="600" fill="#11567F">The credit analyst agent</text>
+  <rect x="36" y="92" width="216" height="212" rx="8" fill="#F8FAFC" stroke="#CBD5E1"/>
+  <text x="50" y="118" font-size="12.5" font-weight="600" fill="#11567F">Input</text>
+  <rect x="50" y="136" width="188" height="22" rx="11" fill="#FFFFFF" stroke="#CBD5E1"/>
+  <text x="62" y="151" font-size="10.5" fill="#24323D">&#128196; Application record</text>
+  <rect x="50" y="163" width="188" height="22" rx="11" fill="#FFFFFF" stroke="#CBD5E1"/>
+  <text x="62" y="178" font-size="10.5" fill="#24323D">&#127963;&#65039; Credit report</text>
+  <rect x="50" y="190" width="188" height="22" rx="11" fill="#FFFFFF" stroke="#CBD5E1"/>
+  <text x="62" y="205" font-size="10.5" fill="#24323D">&#129534; Pay stubs</text>
+  <rect x="50" y="217" width="188" height="22" rx="11" fill="#FFFFFF" stroke="#CBD5E1"/>
+  <text x="62" y="232" font-size="10.5" fill="#24323D">&#127974; Bank statements</text>
+  <rect x="50" y="244" width="188" height="22" rx="11" fill="#FFFFFF" stroke="#CBD5E1"/>
+  <text x="62" y="259" font-size="10.5" fill="#24323D">&#128209; Tax returns</text>
+  <rect x="50" y="271" width="188" height="22" rx="11" fill="#FFFFFF" stroke="#CBD5E1"/>
+  <text x="62" y="286" font-size="10.5" fill="#24323D">&#128221; Loan agreements</text>
+  <rect x="280" y="64" width="320" height="268" rx="8" fill="#EAF7FD" stroke="#29B5E8" stroke-dasharray="6 4" stroke-width="1.6"/>
+  <text x="294" y="90" font-size="12.5" font-weight="600" fill="#11567F">The agent</text>
+  <circle cx="303" cy="126" r="9" fill="#FFFFFF" stroke="#29B5E8"/>
+  <text x="303" y="129" font-size="9.5" font-weight="700" fill="#11567F" text-anchor="middle">1</text>
+  <text x="320" y="130" font-size="10.5" fill="#11567F">Read every document in the file</text>
+  <circle cx="303" cy="164" r="9" fill="#FFFFFF" stroke="#29B5E8"/>
+  <text x="303" y="167" font-size="9.5" font-weight="700" fill="#11567F" text-anchor="middle">2</text>
+  <text x="320" y="168" font-size="10.5" fill="#11567F">Total what is actually paid each month</text>
+  <circle cx="303" cy="202" r="9" fill="#FFFFFF" stroke="#29B5E8"/>
+  <text x="303" y="205" font-size="9.5" font-weight="700" fill="#11567F" text-anchor="middle">3</text>
+  <text x="320" y="206" font-size="10.5" fill="#11567F">Compare that with what the reported ratio covers</text>
+  <circle cx="303" cy="240" r="9" fill="#FFFFFF" stroke="#29B5E8"/>
+  <text x="303" y="243" font-size="9.5" font-weight="700" fill="#11567F" text-anchor="middle">4</text>
+  <text x="320" y="244" font-size="10.5" fill="#11567F">Recompute the ratio from the difference</text>
+  <circle cx="303" cy="278" r="9" fill="#FFFFFF" stroke="#29B5E8"/>
+  <text x="303" y="281" font-size="9.5" font-weight="700" fill="#11567F" text-anchor="middle">5</text>
+  <text x="320" y="282" font-size="10.5" fill="#11567F">Write it up, citing the documents it used</text>
+  <rect x="640" y="92" width="220" height="212" rx="8" fill="#FFFFFF" stroke="#24323D"/>
+  <text x="654" y="118" font-size="12.5" font-weight="600" fill="#11567F">Output</text>
+  <text x="846" y="118" font-size="9.5" fill="#94A3B8" text-anchor="end">APP_1004</text>
+  <text x="654" y="144" font-size="9.5" fill="#64748B" font-weight="600">REPORTED_DTI</text>
+  <text x="654" y="159" font-size="11" fill="#24323D">0.19</text>
+  <text x="654" y="176" font-size="9.5" fill="#64748B" font-weight="600">RECOMPUTED_DTI</text>
+  <text x="654" y="191" font-size="11" fill="#24323D">0.52</text>
+  <text x="654" y="208" font-size="9.5" fill="#64748B" font-weight="600">FINDINGS</text>
+  <text x="654" y="223" font-size="11" fill="#24323D">3,870.00 and 612.00</text>
+  <text x="654" y="240" font-size="9.5" fill="#64748B" font-weight="600">MEMO_TEXT</text>
+  <text x="654" y="255" font-size="11" fill="#24323D">Debt understated</text>
+  <text x="654" y="272" font-size="9.5" fill="#64748B" font-weight="600">EVIDENCE_REFS</text>
+  <text x="654" y="287" font-size="11" fill="#24323D">statement, agreement</text>
+  <line x1="260" y1="198.0" x2="262" y2="198.0" stroke="#29B5E8" stroke-width="2"/>
+  <polygon points="262,193.0 272,198.0 262,203.0" fill="#29B5E8"/>
+  <line x1="608" y1="198.0" x2="622" y2="198.0" stroke="#29B5E8" stroke-width="2"/>
+  <polygon points="622,193.0 632,198.0 622,203.0" fill="#29B5E8"/>
+</svg>

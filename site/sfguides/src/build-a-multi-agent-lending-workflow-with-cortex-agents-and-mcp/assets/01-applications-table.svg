@@ -1,0 +1,99 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1226 378" width="1226" height="378" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+  <rect width="1226" height="378" fill="#FFFFFF"/>
+  <text x="36" y="34" font-size="17" font-weight="600" fill="#11567F">APPLICATIONS, the six applications waiting for a decision</text>
+  <text x="36" y="56" font-size="11.5" fill="#64748B">Some of the eighteen columns. None of these numbers has been checked against a document.</text>
+  <rect x="36" y="74" width="13" height="13" rx="3" fill="#EAF7FD" stroke="#29B5E8"/>
+  <text x="56" y="85" font-size="11" fill="#11567F">Stated by the applicant</text>
+  <rect x="194.88" y="74" width="13" height="13" rx="3" fill="#FFFBEB" stroke="#B45309"/>
+  <text x="214.88" y="85" font-size="11" fill="#B45309">Returned by the credit bureau</text>
+  <rect x="134" y="100" width="102" height="212" fill="#EAF7FD"/>
+  <rect x="236" y="100" width="120" height="212" fill="#EAF7FD"/>
+  <rect x="356" y="100" width="108" height="212" fill="#FFFBEB"/>
+  <rect x="464" y="100" width="118" height="212" fill="#EAF7FD"/>
+  <rect x="582" y="100" width="172" height="212" fill="#FFFBEB"/>
+  <rect x="754" y="100" width="142" height="212" fill="#EAF7FD"/>
+  <rect x="896" y="100" width="144" height="212" fill="#EAF7FD"/>
+  <rect x="1040" y="100" width="150" height="212" fill="#EAF7FD"/>
+  <rect x="36" y="100" width="1154" height="32" fill="#0F172A" opacity="0.06"/>
+  <text x="48" y="121" font-size="9.5" fill="#11567F" font-weight="700">APPLICANT_ID</text>
+  <text x="146" y="121" font-size="9.5" fill="#11567F" font-weight="700">FIRST_NAME</text>
+  <text x="248" y="121" font-size="9.5" fill="#11567F" font-weight="700">LAST_NAME</text>
+  <text x="452" y="121" font-size="9.5" fill="#B45309" font-weight="700" text-anchor="end">CREDIT_SCORE</text>
+  <text x="570" y="121" font-size="9.5" fill="#11567F" font-weight="700" text-anchor="end">ANNUAL_INCOME</text>
+  <text x="742" y="121" font-size="9.5" fill="#B45309" font-weight="700" text-anchor="end">DEBT_TO_INCOME_RATIO</text>
+  <text x="884" y="121" font-size="9.5" fill="#11567F" font-weight="700" text-anchor="end">REQUESTED_AMOUNT</text>
+  <text x="908" y="121" font-size="9.5" fill="#11567F" font-weight="700">LOAN_PURPOSE</text>
+  <text x="1052" y="121" font-size="9.5" fill="#11567F" font-weight="700">EMPLOYMENT_STATUS</text>
+  <line x1="36" y1="132" x2="1190" y2="132" stroke="#DCE3EA"/>
+  <text x="48" y="152" font-size="11" fill="#24323D" font-weight="700">APP_1001</text>
+  <text x="146" y="152" font-size="11" fill="#24323D">Diane</text>
+  <text x="248" y="152" font-size="11" fill="#24323D">Whitfield</text>
+  <text x="452" y="152" font-size="11" fill="#24323D" text-anchor="end">776</text>
+  <text x="570" y="152" font-size="11" fill="#24323D" text-anchor="end">142,000</text>
+  <text x="742" y="152" font-size="11" fill="#B45309" font-weight="700" text-anchor="end">0.24</text>
+  <text x="884" y="152" font-size="11" fill="#24323D" text-anchor="end">45,000</text>
+  <text x="908" y="152" font-size="11" fill="#24323D">home improvement</text>
+  <text x="1052" y="152" font-size="11" fill="#24323D">employed</text>
+  <line x1="36" y1="162" x2="1190" y2="162" stroke="#DCE3EA"/>
+  <text x="48" y="182" font-size="11" fill="#24323D" font-weight="700">APP_1002</text>
+  <text x="146" y="182" font-size="11" fill="#24323D">Marcus</text>
+  <text x="248" y="182" font-size="11" fill="#24323D">Adeyemi</text>
+  <text x="452" y="182" font-size="11" fill="#24323D" text-anchor="end">611</text>
+  <text x="570" y="182" font-size="11" fill="#24323D" text-anchor="end">88,500</text>
+  <text x="742" y="182" font-size="11" fill="#B45309" font-weight="700" text-anchor="end">0.44</text>
+  <text x="884" y="182" font-size="11" fill="#24323D" text-anchor="end">32,000</text>
+  <text x="908" y="182" font-size="11" fill="#24323D">debt consolidation</text>
+  <text x="1052" y="182" font-size="11" fill="#24323D">employed</text>
+  <line x1="36" y1="192" x2="1190" y2="192" stroke="#DCE3EA"/>
+  <text x="48" y="212" font-size="11" fill="#24323D" font-weight="700">APP_1003</text>
+  <text x="146" y="212" font-size="11" fill="#24323D">Priya</text>
+  <text x="248" y="212" font-size="11" fill="#24323D">Adeyemi</text>
+  <text x="452" y="212" font-size="11" fill="#24323D" text-anchor="end">752</text>
+  <text x="570" y="212" font-size="11" fill="#24323D" text-anchor="end">119,000</text>
+  <text x="742" y="212" font-size="11" fill="#B45309" font-weight="700" text-anchor="end">0.21</text>
+  <text x="884" y="212" font-size="11" fill="#24323D" text-anchor="end">0</text>
+  <text x="908" y="212" font-size="11" fill="#24323D">co-applicant</text>
+  <text x="1052" y="212" font-size="11" fill="#24323D">employed</text>
+  <line x1="36" y1="222" x2="1190" y2="222" stroke="#DCE3EA"/>
+  <text x="48" y="242" font-size="11" fill="#24323D" font-weight="700">APP_1004</text>
+  <text x="146" y="242" font-size="11" fill="#24323D">Grant</text>
+  <text x="248" y="242" font-size="11" fill="#24323D">Kelleher</text>
+  <text x="452" y="242" font-size="11" fill="#24323D" text-anchor="end">771</text>
+  <text x="570" y="242" font-size="11" fill="#24323D" text-anchor="end">163,000</text>
+  <text x="742" y="242" font-size="11" fill="#B45309" font-weight="700" text-anchor="end">0.19</text>
+  <text x="884" y="242" font-size="11" fill="#24323D" text-anchor="end">75,000</text>
+  <text x="908" y="242" font-size="11" fill="#24323D">debt consolidation</text>
+  <text x="1052" y="242" font-size="11" fill="#24323D">self-employed</text>
+  <line x1="36" y1="252" x2="1190" y2="252" stroke="#DCE3EA"/>
+  <text x="48" y="272" font-size="11" fill="#24323D" font-weight="700">APP_1005</text>
+  <text x="146" y="272" font-size="11" fill="#24323D">Tobias</text>
+  <text x="248" y="272" font-size="11" fill="#24323D">Renner</text>
+  <text x="452" y="272" font-size="11" fill="#24323D" text-anchor="end">648</text>
+  <text x="570" y="272" font-size="11" fill="#24323D" text-anchor="end">57,400</text>
+  <text x="742" y="272" font-size="11" fill="#B45309" font-weight="700" text-anchor="end">0.47</text>
+  <text x="884" y="272" font-size="11" fill="#24323D" text-anchor="end">24,000</text>
+  <text x="908" y="272" font-size="11" fill="#24323D">auto</text>
+  <text x="1052" y="272" font-size="11" fill="#24323D">self-employed</text>
+  <line x1="36" y1="282" x2="1190" y2="282" stroke="#DCE3EA"/>
+  <text x="48" y="302" font-size="11" fill="#24323D" font-weight="700">APP_1006</text>
+  <text x="146" y="302" font-size="11" fill="#24323D">Yolanda</text>
+  <text x="248" y="302" font-size="11" fill="#24323D">Castellanos</text>
+  <text x="452" y="302" font-size="11" fill="#24323D" text-anchor="end">694</text>
+  <text x="570" y="302" font-size="11" fill="#24323D" text-anchor="end">101,000</text>
+  <text x="742" y="302" font-size="11" fill="#B45309" font-weight="700" text-anchor="end">0.39</text>
+  <text x="884" y="302" font-size="11" fill="#24323D" text-anchor="end">40,000</text>
+  <text x="908" y="302" font-size="11" fill="#24323D">small business</text>
+  <text x="1052" y="302" font-size="11" fill="#24323D">self-employed</text>
+  <line x1="36" y1="312" x2="1190" y2="312" stroke="#DCE3EA"/>
+  <line x1="134" y1="100" x2="134" y2="312" stroke="#DCE3EA"/>
+  <line x1="236" y1="100" x2="236" y2="312" stroke="#DCE3EA"/>
+  <line x1="356" y1="100" x2="356" y2="312" stroke="#DCE3EA"/>
+  <line x1="464" y1="100" x2="464" y2="312" stroke="#DCE3EA"/>
+  <line x1="582" y1="100" x2="582" y2="312" stroke="#DCE3EA"/>
+  <line x1="754" y1="100" x2="754" y2="312" stroke="#DCE3EA"/>
+  <line x1="896" y1="100" x2="896" y2="312" stroke="#DCE3EA"/>
+  <line x1="1040" y1="100" x2="1040" y2="312" stroke="#DCE3EA"/>
+  <rect x="36" y="100" width="1154" height="212" fill="none" stroke="#DCE3EA" rx="4"/>
+  <text x="36" y="342" font-size="11" font-weight="600" fill="#B45309">DEBT_TO_INCOME_RATIO is built only from the debts the credit bureau can see.</text>
+  <text x="36" y="362" font-size="11" fill="#64748B">A loan agreement sitting unread on the stage is not in this number.</text>
+</svg>
