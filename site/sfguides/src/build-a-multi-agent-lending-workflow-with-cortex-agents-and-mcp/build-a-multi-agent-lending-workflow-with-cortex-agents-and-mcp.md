@@ -6,7 +6,7 @@ categories: snowflake-site:taxonomy/solution-center/certification/quickstart, sn
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-fork repo link: https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/build-a-multi-agent-lending-workflow-with-cortex-agents-and-mcp/assets
+fork repo link: https://github.com/sfc-gh-nsengupta/sfguide-build-a-multi-agent-lending-workflow
 
 # Build a Multi-Agent Lending Workflow with Cortex Agents and MCP
 
@@ -77,26 +77,39 @@ Governance wraps all six. The agent runs as a Snowflake role and only sees what 
 <!-- ------------------------ -->
 ## Setup
 
-The guide runs in [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight) on your trial account. Setup takes two steps and about two minutes.
+The guide runs in [Snowsight](https://docs.snowflake.com/en/user-guide/ui-snowsight) on your trial account. Setup takes three steps and about two minutes.
+
+### Let Snowflake Read the Repository
+
+1. Select **Projects** » **Workspaces** in the left navigation.
+2. Select **+ Add new** » **SQL File**.
+3. Paste the statement below and select **Run**.
+
+```sql
+CREATE API INTEGRATION IF NOT EXISTS LENDING_LAB_GIT_API
+    API_PROVIDER = git_https_api
+    API_ALLOWED_PREFIXES = ('https://github.com/sfc-gh-nsengupta/')
+    ENABLED = TRUE;
+```
+
+### Create the Workspace
+
+1. Open the workspace menu at the top left of the file list and select **From Git repository**.
+2. For **Repository URL**, paste `https://github.com/sfc-gh-nsengupta/sfguide-build-a-multi-agent-lending-workflow`.
+3. Leave the workspace name as it is. Setup reads the lab files from the workspace by that name.
+4. For **API Integration**, select **LENDING_LAB_GIT_API**.
+5. Select **Public repository**, then **Create**.
 
 ### Run the Setup Script
 
-1. Select **Projects** » **Workspaces** in the left navigation.
-2. Select **+ Add new** » **SQL File** and name it `setup.sql`.
-3. Open [setup.sql](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/build-a-multi-agent-lending-workflow-with-cortex-agents-and-mcp/assets/setup.sql), copy its contents into the file, and select **Run All**.
-
-`setup.sql` creates the `LENDING` database and the `LENDING_WH` warehouse, and copies the applicant documents and evaluation settings from this guide's folder on GitHub.
+1. In the new **sfguide-build-a-multi-agent-lending-workflow** workspace, open **setup.sql**.
+2. Select **Run All**.
 
 **What to expect.** About a minute later, the last result is a single row ending in `Setup complete`, with 12 documents parsed, 5 applicants with documents, and 3 search results. If it says `Setup incomplete`, the column that is lower than expected tells you which part did not finish. Run **setup.sql** again.
 
-### Add the Lab SQL
+The workspace holds the files for the rest of the guide: **lab.sql** has every block of SQL you run, labelled by step, **cortex_project/** holds the agent YAML files, and **utils/** has helpful queries. CoCo is the panel on the right.
 
-1. Select **+ Add new** » **SQL File** and name it `lab.sql`.
-2. Copy the contents of [lab.sql](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/build-a-multi-agent-lending-workflow-with-cortex-agents-and-mcp/assets/lab.sql) into it.
-
-**lab.sql** has every block of SQL you run in this guide, labelled by step. CoCo is the panel on the right of the workspace.
-
-> TIP: To start over at any point, run **setup.sql** again. It rebuilds everything from nothing in about a minute.
+> TIP: To start over at any point, run **setup.sql** again. It rebuilds everything from nothing in about a minute. To put edited files back as they started, open the **Changes** tab at the top of the file list and discard your changes.
 
 Throughout the guide you use one warehouse, `LENDING_WH`, and one schema, `LENDING.LOANS`, and you stay in the **ACCOUNTADMIN** role. That keeps setup short. In production the agents would run under a role that can see only these objects.
 
@@ -306,7 +319,7 @@ Give it two tools. The semantic view and the procedure already exist, so do not 
    Take the tool description and the parameters from the procedure's own comment and signature.
    In the tool's input schema, mark every parameter required except `P_FINDINGS`.
 
-Save the definition to `CREDIT_ANALYST_AGENT_BASELINE.agent.yaml` in this workspace. Create the agent by running `CREATE AGENT` directly in SQL.
+Save the definition to `cortex_project/CREDIT_ANALYST_AGENT_BASELINE.agent.yaml` in the `sfguide-build-a-multi-agent-lending-workflow` workspace. Create the agent by running `CREATE AGENT` directly in SQL.
 Then run DESCRIBE AGENT and show me the result.
 Check that `application_analytics` has the type `cortex_analyst_text_to_sql`, and that `write_credit_memo` has the type `generic` in tools and the type `procedure` in tool_resources.
 Then run one quick test: ask the agent 'Assess APP_1005 for credit risk and write a credit memo.' Show me the response.
@@ -316,7 +329,7 @@ Then run one quick test: ask the agent 'Assess APP_1005 for credit risk and writ
 
 That prompt set up five parts of the harness. The instructions and semantic view give it context, the budget controls it, it retrieves through `application_analytics`, acts through `write_credit_memo`, and the memo row persists its findings.
 
-> NOTE: If the agent does not respond or returns an error, open `CREDIT_ANALYST_AGENT_BASELINE.agent.yaml` in your workspace (or create it with **+ Add new** » **File**), replace its contents with the spec below, and select **Deploy** in the top right corner of the editor. If a dialog appears, set the agent name to `CREDIT_ANALYST_AGENT_BASELINE`, the target to `default`, and the database and schema to `LENDING` and `LOANS`.
+> NOTE: If the agent does not respond or returns an error, open `cortex_project/CREDIT_ANALYST_AGENT_BASELINE.agent.yaml` in your workspace, replace its contents with the spec below, and select **Deploy** in the top right corner of the editor. If a dialog appears, set the agent name to `CREDIT_ANALYST_AGENT_BASELINE`, the target to `default`, and the database and schema to `LENDING` and `LOANS`.
 
 ```yaml
 models:
@@ -656,7 +669,7 @@ Both evaluation runs have finished by now.
 <!-- ------------------------ -->
 ## Clean Up
 
-Run [teardown.sql](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/build-a-multi-agent-lending-workflow-with-cortex-agents-and-mcp/assets/teardown.sql), or run:
+Run `utils/teardown.sql` in the workspace, or run:
 
 ```sql
 USE ROLE ACCOUNTADMIN;
@@ -665,10 +678,10 @@ DROP DATABASE IF EXISTS LENDING;
 DROP WAREHOUSE IF EXISTS LENDING_WH;
 ```
 
-Then remove the integration setup used to read this guide's files from GitHub, and delete the `setup.sql`, `lab.sql` and agent YAML files from your workspace:
+Then delete the **sfguide-build-a-multi-agent-lending-workflow** workspace from the workspace menu and remove the integration it used:
 
 ```sql
-DROP API INTEGRATION IF EXISTS LENDING_GUIDE_GIT_API;
+DROP API INTEGRATION IF EXISTS LENDING_LAB_GIT_API;
 ```
 
 <!-- ------------------------ -->
@@ -693,7 +706,7 @@ The guide uses `claude-sonnet-4-5` because both agents reason over multi-step ev
 
 ### Related Resources
 
-- [Files for this guide](https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/build-a-multi-agent-lending-workflow-with-cortex-agents-and-mcp/assets)
+- [GitHub repository for this guide](https://github.com/sfc-gh-nsengupta/sfguide-build-a-multi-agent-lending-workflow)
 - [Create and manage Cortex Agents](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents-manage)
 - [Cortex Agent evaluations](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents-evaluations)
 - [Cortex Agent versioning](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents-versioning)
