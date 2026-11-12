@@ -51,13 +51,15 @@ Governance wraps all six. The agent runs as a Snowflake role and only sees what 
 
 ### What You'll Learn
 
-- How a semantic view and Cortex Analyst give an agent governed access to structured data
-- How `AI_PARSE_DOCUMENT` and Cortex Search give an agent access to the facts inside PDFs
-- How to build a Cortex Agent with CoCo, with custom tools backed by functions and stored procedures
-- How to measure an agent with Cortex Agent evaluations and compare two versions
-- How to enforce business policy outside the model and escalate files to a person
-- How one agent calls another through a Snowflake-managed MCP server
-- How to run an agent unattended with a stream and a triggered task
+The guide uses lending, but each pattern applies to any decision a person makes today by reading records and documents.
+
+- **Decide from all the evidence, not just the form.** The facts that change a decision often sit in documents that never reach a table, so an agent that reads only the record repeats what it was told. Cortex Analyst answers questions over the records through a semantic view, and Cortex Search finds facts in documents parsed with `AI_PARSE_DOCUMENT`.
+- **Give the agent the meaning of your data.** Without business definitions an agent guesses, and a confident guess is harder to catch than no answer. A semantic view stores those definitions once, so every agent and tool reads the same meaning.
+- **Measure every change before you trust it.** Agents rarely fail loudly: they write answers that sound right. A fixed set of test questions with known answers is the only way to tell whether a change helped. Cortex Agent evaluations score each version, and traces show every step it took.
+- **Let the model reason and let code decide.** A figure or a rule that an auditor relies on has to come out the same every time. Functions and stored procedures become tools the agent calls, so the calculation and the policy check run as code, outside the model.
+- **Hand off to a person when the evidence isn't there.** Automation earns trust by knowing its limits, and a case escalated with the right question attached is still progress. The agent's instructions and its decision record define when it stops and what it asks.
+- **Split the work across specialised agents.** Each step of a process has its own expertise, and a shared record lets one agent pick up where another left off. A table carries the work between agents, and a Snowflake-managed MCP server lets one agent call another directly.
+- **Turn a conversation into a process.** The value comes when work starts as each case arrives, not when someone remembers to ask. A stream and a triggered task run the agent on every new application.
 
 ### What You'll Need
 
@@ -730,12 +732,17 @@ You used every part of the harness. The semantic view and instructions give cont
 
 ### What You Learned
 
-- **Managed.** [Cortex Agents](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents) plan the work, call tools and reason over structured and unstructured data in one governed workflow.
-- **Reusable.** An agent bundles the model, tools, orchestration settings and instructions into a single securable object you can version and update.
-- **Composable.** The underwriter uses the credit analyst as a tool. An agent can also inherit another agent's tools through [agent toolsets](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents-toolsets).
-- **Interoperable.** The credit analyst is published on a [Snowflake-managed MCP server](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents-mcp), so an external client such as Claude or Cursor can call it too.
-- **Observable and measurable.** The baseline wrote a memo that read well and was wrong. The [trace](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents-monitor) showed why, the evaluation scored it, and the next version was built on both.
-- **Governed.** An agent runs with the privileges of the querying user's role. See [access control and authentication](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents-setup) and [AI cost management and governance](https://docs.snowflake.com/en/user-guide/snowflake-cortex/governance-and-availability/ai-cost-management-and-governance).
+You applied seven patterns, each to a real step in the lending process:
+
+- **Decide from all the evidence, not just the form.** The application reported a debt-to-income ratio of 0.19. The bank statement and the loan agreement put it at 0.52, which turned an approval into a decline. See [Cortex Analyst](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst) and [Cortex Search](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview).
+- **Give the agent the meaning of your data.** CoCo had to work out what each column meant from its name. Cortex Analyst read the definitions from the [semantic view](https://docs.snowflake.com/en/user-guide/views-semantic/overview).
+- **Measure every change before you trust it.** The baseline wrote a memo that read well and was wrong. The [evaluation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents-evaluations) scored it, the [trace](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents-monitor) showed why, and the improved version was built on both.
+- **Let the model reason and let code decide.** `recompute_dti` calculated the ratio, and `record_decision` ran the policy check again, so no approval could exceed the limit whatever the model concluded. See [custom tools](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents-manage).
+- **Hand off to a person when the evidence isn't there.** With no memo on file, the underwriter escalated Diane Whitfield's application with a question instead of guessing. The automated run did the same for Ana Ferreira.
+- **Split the work across specialised agents.** The credit memo carried the work from one agent to the other, and the [Snowflake-managed MCP server](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents-mcp) let the underwriter call the credit analyst when it needed one. External clients such as Claude or Cursor can call it the same way.
+- **Turn a conversation into a process.** A new application started the underwriter with nobody asking. See [triggered tasks](https://docs.snowflake.com/en/user-guide/tasks-triggered).
+
+The guide didn't cover governance. An agent runs with the privileges of the querying user's role, so it sees only what that role can see. See [access control and authentication](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents-setup) and [AI cost management and governance](https://docs.snowflake.com/en/user-guide/snowflake-cortex/governance-and-availability/ai-cost-management-and-governance).
 
 The guide uses `claude-sonnet-4-5` because both agents reason over multi-step evidence. For simpler tasks you can use a lighter model, or set the model to `"auto"` and let Snowflake choose. Either way, run the evaluation again and compare.
 
