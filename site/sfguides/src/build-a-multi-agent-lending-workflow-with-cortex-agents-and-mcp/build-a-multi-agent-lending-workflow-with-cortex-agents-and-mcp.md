@@ -76,7 +76,7 @@ Governance wraps all six. The agent runs as a Snowflake role and only sees what 
 <!-- ------------------------ -->
 ## Open a Trial Account
 
-The guide is tested on a new trial account. To open one:
+We recommend a new trial account. To open one:
 
 1. Go to [signup.snowflake.com](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides&cloud=aws&region=us-west-2). This link pre-selects **AWS** and the **US West (Oregon)** region.
 2. Complete the first page of the form.
@@ -84,7 +84,7 @@ The guide is tested on a new trial account. To open one:
 4. Confirm that **AWS** and **US West (Oregon)** are selected, complete the rest of the form, and select **Get started**.
 5. Sign in, then go to **Admin** » **Billing**, open the **Snowflake billing** tab, and add a credit card. AI features, including CoCo and Cortex Agents, are disabled on self-service trial accounts until you do. Adding a card doesn't upgrade the trial to a paid account or end the trial period. See [Trial accounts](https://docs.snowflake.com/en/user-guide/admin-trial-account).
 
-> **Why this account?** CoCo in Snowsight, Cortex Agents, agent evaluations and the Snowflake-managed MCP server are all available in AWS US West (Oregon). The agents use `claude-sonnet-4-5`, which every region reaches through [cross-region inference](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cross-region-inference), and setup turns that on for you.
+> **Why this account?** A new account has no existing objects that setup could replace, and CoCo in Snowsight is available on AWS. The agents use `claude-sonnet-4-5`, which every region reaches through [cross-region inference](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cross-region-inference), and setup turns that on for you.
 
 ### Using a Different Account
 
