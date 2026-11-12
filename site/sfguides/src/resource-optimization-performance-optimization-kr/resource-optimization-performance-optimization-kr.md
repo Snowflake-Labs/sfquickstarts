@@ -3,7 +3,7 @@ id: resource-optimization-performance-optimization-kr
 language: ko
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
 environments: web
-status: Hidden
+status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: 스노우플레이크, 리소스 최적화, 비용 최적화, 성능, 최적화, 성능 최적화, 모니터링, Resource Optimization, Cost Optimization, Monitoring, kr
 authors: Matt Meredith
