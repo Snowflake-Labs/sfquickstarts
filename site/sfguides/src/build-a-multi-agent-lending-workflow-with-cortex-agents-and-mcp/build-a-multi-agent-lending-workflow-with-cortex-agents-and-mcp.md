@@ -1,4 +1,4 @@
-author: Neel Sengupta
+author: Neel Sengupta (sfc-gh-nsengupta)
 id: build-a-multi-agent-lending-workflow-with-cortex-agents-and-mcp
 language: en
 summary: Build two Cortex Agents that automate a lending decision end to end: one reads loan documents and writes a credit memo, the other applies policy enforced outside the model, delegates over MCP, and runs on its own when a new application arrives.
