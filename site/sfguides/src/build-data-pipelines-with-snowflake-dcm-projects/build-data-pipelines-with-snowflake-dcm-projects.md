@@ -1,6 +1,6 @@
 author: Jan Sommerfeld, Gilberto Hernandez, Yoav Ostrinsky
 id: build-data-pipelines-with-snowflake-dcm-projects
-summary: Split platform infrastructure and a data pipeline into two DCM Projects, catch bad data with expectations, evolve a dynamic table without rewriting history, and serve it through a semantic view.
+summary: Split platform infrastructure and a data pipeline into two DCM Projects, catch bad data with expectations, and serve it through a semantic view.
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/dynamic-tables
 environments: web
 status: Published
@@ -19,7 +19,7 @@ This guide works with **two DCM Projects** that do exactly that:
 - **DCM_Platform_Demo** is owned by the platform. It defines a shared raw database with three staging tables, a stage, a file format and a load task, and a warehouse, a database and a role for each team.
 - **DCM_Pipeline_Demo** is owned by the Finance team. It reads the platform's raw tables and defines a silver and a gold layer of dynamic tables, data quality expectations, and a semantic view over the gold layer.
 
-Once both are running, you will go through the two moments every pipeline meets sooner or later. First, bad data arrives: a trade on an account nobody has loaded yet. An expectation catches it before anyone reads a wrong number, and you fix it. Second, the business asks for a new column. You add it to a dynamic table, and the plan shows a single ALTER rather than a rebuild, because a frozen region keeps settled history from being recomputed.
+Once both are running, you will go through a moment every pipeline meets sooner or later: bad data arrives, a trade on an account nobody has loaded yet. An expectation catches it before anyone reads a wrong number, and you fix it.
 
 ### Prerequisites
 - Familiarity with DCM Projects concepts (complete [Get Started with Snowflake DCM Projects](https://www.snowflake.com/en/developers/guides/get-started-snowflake-dcm-projects/) first)
@@ -29,7 +29,6 @@ Once both are running, you will go through the two moments every pipeline meets 
 - How to give each team its own warehouse, database and role from one Jinja loop
 - How to build silver and gold dynamic tables on top of another project's tables
 - How to attach data quality expectations and run them with TEST ALL
-- How to add a column to a dynamic table without recomputing its history
 - How to declare a semantic view in the same project as the tables it describes
 
 ### What You'll Need
@@ -62,8 +61,7 @@ DCM_Platform_Demo/ and DCM_Pipeline_Demo/ are the two DCM Projects. sample_data/
 | scripts/01_pre_deploy.sql | Once, before the first plan |
 | scripts/02_platform_post_deploy.sql | After the Platform project is deployed |
 | scripts/03_pipeline_post_deploy.sql | After the Pipeline project is deployed |
-| scripts/04_schema_change.sql | After the Pipeline project is deployed a second time |
-| scripts/05_cleanup.sql | When you are finished |
+| scripts/04_cleanup.sql | When you are finished |
 
 Every operational step in this guide is given twice: once for Snowsight, and once for the [Snowflake CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli/installation/installation) if you would rather drive the project from a terminal against your own copy of the repository.
 
@@ -290,8 +288,7 @@ The team role owns everything the team's projects deploy, so it gets what a proj
 
 **In Snowsight:** the DCM control panel is the first tab in the bottom panel of your workspace. Select the project **build-data-pipelines-with-snowflake-dcm-projects/DCM_Platform_Demo**. On the right side of the same bar, select the **DCM_DEV** target and click the play button to the right of **Plan**.
 
-![DCM control panel with the project and target selected](assets/select_platform_project.png)
-Screenshot placeholder: the DCM control panel with project build-data-pipelines-with-snowflake-dcm-projects/DCM_Platform_Demo and target DCM_DEV selected, taken just before clicking Plan.
+![DCM control panel project selector with DCM_Platform_Demo highlighted](assets/select_platform_project.png)
 
 **With the Snowflake CLI:** from inside the DCM_Platform_Demo folder of your clone, pass the manifest's owner role for the target with --role.
 
@@ -302,7 +299,6 @@ snow dcm plan --target DCM_DEV --role DCM_DEVELOPER --save-output
 Nothing exists yet, so the plan is almost all CREATEs: 21 entities, 20 to create and 1 to alter.
 
 ![Platform project plan results](assets/platform_plan_results.png)
-Screenshot placeholder: the Platform plan result listing 20 CREATE operations and 1 ALTER on ROLE DCM_DEVELOPER.
 
 | Operation | Entities |
 |---|---|
@@ -320,8 +316,9 @@ When the changeset matches what you expected, deploy it.
 
 **In Snowsight:** in the DCM control panel, set the operation to **Deploy** instead of **Plan**, add a deployment alias such as initial-platform, and run it.
 
-![Deploy confirmation dialog](assets/deploy_dialog.png)
-Screenshot placeholder: the Deploy confirmation dialog with the alias initial-platform entered, taken before confirming.
+![The operation selector in the DCM control panel, with Deploy below Plan and the DCM_DEV target selected](assets/deploy_selector.png)
+
+![Deploy confirmation dialog for the Platform project, as DCM_DEVELOPER](assets/deploy_dialog.png)
 
 **With the Snowflake CLI:**
 
@@ -369,7 +366,7 @@ VALUES
     (2022, CURRENT_TIMESTAMP(), 'CMPT', 'TMS', 'ACME', 75,  41.30, 4.95, 3.10, 1006);
 ```
 
-The files hold trades from the last week of October 2026. These two trades are stamped with CURRENT_TIMESTAMP(), so they are always from today, whenever you run this guide. That difference matters later on.
+The files hold trades from the last week of October 2026. These two trades are stamped with CURRENT_TIMESTAMP(), so they are always from today, whenever you run this guide.
 
 ### Verify
 
@@ -540,7 +537,7 @@ A [semantic view](https://docs.snowflake.com/en/user-guide/views-semantic/overvi
 
 ### Plan
 
-The Pipeline project object lives in DCM_DEMO_2_FINANCE_DEV.PROJECTS, a schema the platform deploy just created, so 01_pre_deploy.sql couldn't create it. Create it now as the Finance role, which owns this project, then refresh your browser so the DCM control panel lists it:
+The Pipeline project object lives in DCM_DEMO_2_FINANCE_DEV.PROJECTS, a schema the platform deploy just created, so 01_pre_deploy.sql couldn't create it. Section 5 of 02_platform_post_deploy.sql, which you already ran, created it as the Finance role, which owns this project:
 
 ```sql
 USE ROLE DCM_DEMO_2_FINANCE_DEV_ADMIN;
@@ -548,10 +545,11 @@ CREATE DCM PROJECT IF NOT EXISTS DCM_DEMO_2_FINANCE_DEV.PROJECTS.FINANCE_PIPELIN
     COMMENT = 'DEV pipeline project of the Build Data Pipelines with Snowflake DCM Projects quickstart';
 ```
 
+Refresh your browser so the DCM control panel lists it.
+
 **In Snowsight:** the DCM control panel is the first tab in the bottom panel of your workspace. Select the project **build-data-pipelines-with-snowflake-dcm-projects/DCM_Pipeline_Demo**. On the right side of the same bar, select the **DCM_DEV** target and click the play button to the right of **Plan**.
 
-![DCM control panel with the Pipeline project selected](assets/select_pipeline_project.png)
-Screenshot placeholder: the DCM control panel with project build-data-pipelines-with-snowflake-dcm-projects/DCM_Pipeline_Demo and target DCM_DEV selected, taken just before clicking Plan.
+![DCM control panel project selector with DCM_Pipeline_Demo highlighted](assets/select_pipeline_project.png)
 
 **With the Snowflake CLI:** from inside the DCM_Pipeline_Demo folder of your clone, you can create the project object with the CLI instead of the SQL above, then plan:
 
@@ -565,7 +563,6 @@ The project_owner in this manifest is the Finance role, not DCM_DEVELOPER, so th
 The plan shows 7 entities, 6 to create and 1 to alter:
 
 ![Pipeline project plan results](assets/pipeline_plan_results.png)
-Screenshot placeholder: the Pipeline plan result with 6 CREATE operations and 1 ALTER on ROLE DCM_DEMO_2_FINANCE_DEV_ADMIN, with TRADES_ENRICHED expanded to show its three data metric functions.
 
 | Operation | Entities |
 |---|---|
@@ -580,7 +577,9 @@ The three expectations do not get lines of their own: expand TRADES_ENRICHED and
 
 When the changeset matches what you expected, deploy it.
 
-**In Snowsight:** in the DCM control panel, set the operation to **Deploy** instead of **Plan**, add a deployment alias such as initial-pipeline, and run it.
+**In Snowsight:** in the DCM control panel, set the operation to **Deploy** instead of **Plan**, add a deployment alias such as initial-pipeline, and run it. The dialog shows the Finance role, the project owner, rather than DCM_DEVELOPER.
+
+![Deploy confirmation dialog for the Pipeline project, as DCM_DEMO_2_FINANCE_DEV_ADMIN](assets/pipeline_deploy_dialog.png)
 
 **With the Snowflake CLI:**
 
@@ -644,6 +643,10 @@ ORDER BY TRADE_DATE;
 
 You asked for two metrics by one dimension, by name; the semantic view supplied the aggregation. The last row is today's two trades. October 27 has 3 trades rather than 4 because the cancelled trade on that day is filtered out in the silver layer.
 
+In the Database Explorer, open TRADING_ANALYTICS and select the **Lineage** tab to see the whole chain across both projects: the Platform's raw tables, the silver and gold dynamic tables, and the semantic view.
+
+![Lineage of TRADING_ANALYTICS from the three raw tables through TRADES_ENRICHED and the two gold tables](assets/lineage.png)
+
 ### Run the expectations
 
 ```sql
@@ -677,7 +680,7 @@ Trade 2018 was placed on account 1009, and ACCOUNT_STG has no account 1009. The 
 <!-- ------------------------ -->
 ## Fix the Data and Test Again
 
-Run sections 6 and 7 of scripts/03_pipeline_post_deploy.sql.
+Run section 6 of scripts/03_pipeline_post_deploy.sql.
 
 ### Load the missing account
 
@@ -701,161 +704,12 @@ EXECUTE DCM PROJECT DCM_DEMO_2_FINANCE_DEV.PROJECTS.FINANCE_PIPELINE TEST ALL;
 
 The status is now SUCCESSFUL, and EVERY_TRADE_HAS_A_CUSTOMER reports value 0. Trade 2018 now belongs to Ravi Mehta, and the anonymous row is gone from CUSTOMER_TRADING.
 
-### Take note of this table
-
-The last query of the script lists the four newest trades, and whether each one sits in a frozen region:
-
-```sql
-SELECT T_ID, T_DTS, TRADE_VALUE, METADATA$IS_FROZEN AS IS_FROZEN
-FROM DCM_DEMO_2_FINANCE_DEV.SILVER.TRADES_ENRICHED
-ORDER BY T_DTS DESC
-LIMIT 4;
-```
-
-| T_ID | T_DTS | TRADE_VALUE | IS_FROZEN |
-|---|---|---|---|
-| 2022 | ... | 3097.50 | FALSE |
-| 2021 | ... | 6004.00 | FALSE |
-| 2020 | 2026-10-30 15:35:00 | 14935.00 | FALSE |
-| 2019 | 2026-10-30 13:25:00 | 2165.75 | FALSE |
-
-Today's two trades on top, last October's below, and nothing frozen. Remember this shape.
-
-<!-- ------------------------ -->
-## Evolve the Silver Layer
-
-The Finance team now wants net value: what a trade was worth after its fee and commission. That is one more column on TRADES_ENRICHED.
-
-Adding a column to a dynamic table normally means recomputing every row. Here that is wasteful, and in a larger pipeline it is expensive: last October's trades are settled and will never change. The analysts need net value for trades going forward, not a rewrite of history.
-
-A **frozen region** says exactly that. FROZEN WHERE declares a predicate over the dynamic table's own rows; rows that match are frozen, and every later refresh skips them. Adding a frozen region does not reinitialize the table ([Frozen regions and backfill](https://docs.snowflake.com/en/user-guide/dynamic-tables/frozen-regions)). Here the predicate freezes every trade older than one day, so only today's trades are recomputed when the column arrives.
-
-Open DCM_Pipeline_Demo/sources/definitions/silver_layer.sql and make two changes to TRADES_ENRICHED:
-
-1. Add a FROZEN WHERE line after COMMENT, before AS.
-2. Add NET_VALUE as the **last** column of the SELECT, after C_TIER (add a comma after C_TIER). A dynamic table ALTER cannot reorder columns, so a new column must be appended; inserting it anywhere else fails the deploy.
-
-```sql
-DEFINE DYNAMIC TABLE DCM_DEMO_2_FINANCE{{env_suffix}}.SILVER.TRADES_ENRICHED
-    WAREHOUSE = DCM_DEMO_2_FINANCE_WH{{env_suffix}}
-    TARGET_LAG = 'DOWNSTREAM'
-    INITIALIZE = 'ON_SCHEDULE'
-    DATA_METRIC_SCHEDULE = 'TRIGGER_ON_CHANGES'
-    COMMENT = 'One row per trade, joined to its account and customer'
-    FROZEN WHERE (T_DTS < CURRENT_TIMESTAMP() - INTERVAL '1 day')
-AS
-SELECT
-    T.T_ID,
-    T.T_DTS,
-    T.T_S_SYMB,
-    T.T_TT_ID,
-    T.T_QTY,
-    T.T_TRADE_PRICE,
-    T.T_QTY * T.T_TRADE_PRICE AS TRADE_VALUE,
-    T.T_CHRG,
-    T.T_COMM,
-    T.T_CA_ID,
-    A.CA_NAME,
-    C.C_ID,
-    C.C_F_NAME || ' ' || C.C_L_NAME AS CUSTOMER_NAME,
-    C.C_TIER,
-    T.T_QTY * T.T_TRADE_PRICE - T.T_CHRG - T.T_COMM AS NET_VALUE
-FROM DCM_DEMO_2{{env_suffix}}.RAW.TRADE_STG T
-LEFT JOIN DCM_DEMO_2{{env_suffix}}.RAW.ACCOUNT_STG A
-    ON T.T_CA_ID = A.CA_ID
-LEFT JOIN DCM_DEMO_2{{env_suffix}}.RAW.CUSTOMER_STG C
-    ON A.CA_C_ID = C.C_ID
-WHERE T.T_ST_ID = 'CMPT';
-```
-
-| | Before | After |
-|---|---|---|
-| Frozen region | none | trades older than one day |
-| Last column | C_TIER | NET_VALUE |
-
-The predicate uses T_DTS, a column of the dynamic table itself; a frozen region cannot reference base-table columns that the table does not output. After one refresh you will see both behaviors in one result: today's trades with a net value, last October's frozen and without one.
-
-<!-- ------------------------ -->
-## Redeploy and Verify
-
-### Plan the change
-
-**In Snowsight:** in the DCM control panel, select the project **build-data-pipelines-with-snowflake-dcm-projects/DCM_Pipeline_Demo** and the **DCM_DEV** target, then click the play button to the right of **Plan**.
-
-**With the Snowflake CLI:**
-
-```bash
-snow dcm plan --target DCM_DEV --role DCM_DEMO_2_FINANCE_DEV_ADMIN --save-output
-```
-
-Instead of CREATEs, the plan holds a single ALTER:
-
-```text
-ALTER    DYNAMIC_TABLE        DCM_DEMO_2_FINANCE_DEV.SILVER.TRADES_ENRICHED
-├─ set FROZEN_WHERE: T_DTS < CURRENT_TIMESTAMP() - INTERVAL '1 day'
-├─ changed QUERY: …ME, C.C_TIER FROM DCM_DEMO_2_DEV.RAW.TRADE_ST… → …ME, C.C_TIER, T.T_QTY * T.T_TRADE_PRICE - T.T_CHRG…
-└─ columns
-   └─ added NET_VALUE
-      └─ set DATATYPE: NUMBER(16,2)
-
-Planned 1 entity (0 to create, 1 to alter, 0 to drop).
-```
-
-![Pipeline redeployment plan](assets/pipeline_plan_redeployment.png)
-Screenshot placeholder: the second Pipeline plan showing only ALTER DYNAMIC_TABLE TRADES_ENRICHED with FROZEN_WHERE set and NET_VALUE added.
-
-DCM compared the definition with the deployed table and found the difference. The gold tables and the semantic view are untouched, because nothing they read changed.
-
-### Deploy
-
-When the changeset matches what you expected, deploy it.
-
-**In Snowsight:** in the DCM control panel, set the operation to **Deploy** instead of **Plan**, add a deployment alias such as frozen-region-net-value, and run it.
-
-**With the Snowflake CLI:**
-
-```bash
-snow dcm deploy --target DCM_DEV --role DCM_DEMO_2_FINANCE_DEV_ADMIN --alias frozen-region-net-value
-```
-
-### Verify
-
-Open scripts/04_schema_change.sql and run it. First, as DCM_DEVELOPER, it adds one more trade stamped with CURRENT_TIMESTAMP(), so at least one trade is in the active region however long ago you loaded the sample data:
-
-```sql
-INSERT INTO DCM_DEMO_2_DEV.RAW.TRADE_STG
-    (T_ID, T_DTS, T_ST_ID, T_TT_ID, T_S_SYMB, T_QTY, T_TRADE_PRICE, T_CHRG, T_COMM, T_CA_ID)
-VALUES
-    (2023, CURRENT_TIMESTAMP(), 'CMPT', 'TMB', 'SNOW', 25, 152.40, 4.95, 2.50, 1002);
-```
-
-Then, as the Finance role, it refreshes the pipeline once and queries the newest five trades:
-
-```sql
-SELECT T_ID, T_DTS, TRADE_VALUE, NET_VALUE, METADATA$IS_FROZEN AS IS_FROZEN
-FROM DCM_DEMO_2_FINANCE_DEV.SILVER.TRADES_ENRICHED
-ORDER BY T_DTS DESC
-LIMIT 5;
-```
-
-| T_ID | T_DTS | TRADE_VALUE | NET_VALUE | IS_FROZEN |
-|---|---|---|---|---|
-| 2023 | ... | 3810.00 | 3802.55 | FALSE |
-| 2022 | ... | 3097.50 | 3089.45 | FALSE |
-| 2021 | ... | 6004.00 | 5988.05 | FALSE |
-| 2020 | 2026-10-30 15:35:00 | 14935.00 | NULL | TRUE |
-| 2019 | 2026-10-30 13:25:00 | 2165.75 | NULL | TRUE |
-
-The trades from the last day are in the active region, so the refresh computed their net value. Last October's trades are frozen: the refresh skipped them, so they keep NULL rather than being recomputed. Trade 2023 always lands in the active region, because the script inserts it just before the refresh. If more than a day passed since you ran 02_platform_post_deploy.sql, trades 2021 and 2022 have aged into the frozen region too, and show NULL and TRUE like the October rows.
-
-The script's last query reads the frozen_where column of SHOW DYNAMIC TABLES, which shows the predicate now on the table.
-
 <!-- ------------------------ -->
 ## Cleanup
 
 Before tearing anything down, know that there is a gentler option. DROP DCM PROJECT on its own, without a PURGE first, removes the project and its deployment history and leaves every entity, grant and attachment in place as an ordinary unmanaged object. To release a single entity, call SYSTEM$UNMANAGE_ENTITY_FROM_DCM_PROJECT with its type and name; to release grants or attachments, pass the rendered statements to SYSTEM$UNMANAGE_FROM_DCM_PROJECT. Then remove the matching statements from your definitions, or the next deploy takes them back.
 
-To remove everything this guide created, open scripts/05_cleanup.sql and run it. It is irreversible. In order, it:
+To remove everything this guide created, open scripts/04_cleanup.sql and run it. It is irreversible. In order, it:
 
 1. **Purge the projects.** PURGE drops every entity a project manages, revokes its grants and removes its attachments, including the three expectations. Order matters: the Pipeline project goes first, as the Finance role, while the Finance database that hosts it still exists, because the Platform purge drops that database.
 2. **Drop the Pipeline project object**, which PURGE leaves behind.
@@ -899,7 +753,6 @@ In this guide, you:
 - **Gave each team the same footprint** from one Jinja loop and one macro, sized differently per environment
 - **Built silver and gold dynamic tables** that read another project's tables, with the freshness declared once at the gold layer
 - **Caught bad data with expectations** and TEST ALL, fixed it, and proved the fix
-- **Added a column without rewriting history**, with a frozen region that turned the change into a single ALTER
 - **Declared a semantic view** next to the tables it describes, so the business vocabulary is versioned with the pipeline
 
 ### What's Next
@@ -911,6 +764,5 @@ In this guide, you:
 
 ### Related Resources
 - [DCM Projects documentation](https://docs.snowflake.com/en/user-guide/dcm-projects/dcm-projects-overview)
-- [Frozen regions and backfill](https://docs.snowflake.com/en/user-guide/dynamic-tables/frozen-regions)
 - [Semantic views](https://docs.snowflake.com/en/user-guide/views-semantic/overview)
 - [Sample DCM Projects repository](https://github.com/Snowflake-Labs/snowflake-dcm-projects)
