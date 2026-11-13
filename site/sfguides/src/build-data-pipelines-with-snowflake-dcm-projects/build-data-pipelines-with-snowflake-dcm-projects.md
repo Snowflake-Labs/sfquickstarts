@@ -31,8 +31,10 @@ The two teams are completely separate. Each reads the shared raw layer and nothi
 - How to ship sample files and a Spark job with a project as assets
 - How to build silver and gold dynamic tables on top of another project's tables
 - How data quality expectations gate downstream refreshes, and how to see the gates
-- How to declare a semantic view, an alert and an agent in the same project as the tables they describe
-- How to run a task graph that writes into a table DCM created
+- How to declare a semantic view, an alert and an agent in the same project as the tables they describe, with the agent's specification in a YAML file
+- How to run a task graph that writes into an Iceberg table DCM created, with a PyPI package in the Spark job
+- How to add a failure branch to a task graph with advanced branching
+- How to ship a Streamlit dashboard in the same project as the table it reads
 - How to check that two teams are separated
 
 ### What You'll Need
@@ -41,8 +43,8 @@ The two teams are completely separate. Each reads the shared raw layer and nothi
 
 ### What You'll Build
 - A Platform project: one raw database with three staging tables, an ingestion stage and load task, and a warehouse, database, role and read-only role for the Finance and Marketing teams
-- A Finance project: one silver and two gold dynamic tables, three data quality expectations that act as gates, a semantic view, an alert and an agent
-- A Marketing project: a customer segments table, a Spark code bundle and a task graph with three tasks
+- A Finance project: one silver and two gold dynamic tables, five data quality expectations that act as gates, a semantic view, an alert and an agent
+- A Marketing project: a customer segments Iceberg table, a Spark code bundle with a PyPI dependency, a task graph with four tasks and a failure branch, and a Streamlit dashboard
 
 <!-- ------------------------ -->
 ## Create a Workspace from Git
@@ -138,7 +140,8 @@ targets:
 
 templating:
   defaults:
-    wh_size: "X-SMALL"
+    # Every warehouse is adaptive: Snowflake sizes each query up to this level.
+    wh_perf_level: "XSMALL"
 
   configurations:
     DEV:
@@ -151,7 +154,7 @@ templating:
           raw_access: "READ"
 ```
 
-The teams list drives a loop in the definitions. DEV has two teams. The PROD configuration in the same manifest lists four teams with different raw_access values (READ, WRITE and NONE) and a larger wh_size; you only deploy DEV in this guide.
+The teams list drives a loop in the definitions. DEV has two teams. The PROD configuration in the same manifest lists four teams with different raw_access values (READ, WRITE and NONE) and a higher wh_perf_level; you only deploy DEV in this guide.
 
 The manifest also declares an asset, the folder of sample files that ships with the project:
 
@@ -192,6 +195,18 @@ The load task (ingest.sql, lines 38 to 57) copies the three files into the three
 #### Per-team infrastructure
 
 wh_roles_and_grants.sql is one loop over the teams in the manifest. Every team gets the same footprint: a warehouse, a database with a PROJECTS schema for the team's own DCM projects, and a team role from the macro. A team with READ or WRITE access can read every table in RAW through an inherited grant; NONE skips those grants.
+
+Every warehouse in this guide is an [adaptive warehouse](https://docs.snowflake.com/en/user-guide/warehouses-adaptive) (lines 16 to 20):
+
+```sql
+    DEFINE WAREHOUSE DCM_DEMO_2_{{team_name}}_WH{{env_suffix}}
+    WITH
+        WAREHOUSE_TYPE = 'ADAPTIVE'
+        MAX_QUERY_PERFORMANCE_LEVEL = {{wh_perf_level}}
+        COMMENT = 'Compute for the {{team.name}} team in the DCM Build Data Pipelines Quickstart';
+```
+
+An adaptive warehouse has no size, cluster count or auto-suspend setting to tune. Snowflake allocates compute per query, up to MAX_QUERY_PERFORMANCE_LEVEL, so the manifest sets one ceiling per environment instead of a size. WAREHOUSE_SIZE and AUTO_SUSPEND aren't valid on an adaptive warehouse; a plan that includes them fails.
 
 Each team also gets the account-level privileges its pipeline style needs (lines 48 to 56):
 
@@ -261,7 +276,7 @@ The deploy reports "Deployed 23 entities (22 created, 1 altered, 0 dropped)." In
 <!-- ------------------------ -->
 ## Load Sample Data
 
-The tables exist but are empty. The deploy already put the three CSV files on the stage, because the stage is defined from the sample_data asset. Open scripts/02_platform_post_deploy.sql in a Snowsight worksheet and run it. It runs as DCM_DEVELOPER, which owns the raw tables, on the platform warehouse. It has four steps.
+The tables exist but are empty. The deploy already put the three CSV files on the stage, because the stage is defined from the sample_data asset. Open scripts/02_platform_post_deploy.sql in a Snowsight worksheet and run it. It runs as DCM_DEVELOPER, which owns the raw tables, on the platform warehouse. It has five steps.
 
 **1. Check the files.** LIST shows what the deploy put on the stage:
 
@@ -298,6 +313,18 @@ VALUES
 
 The trade file holds 20 trades, one of them cancelled (T_ST_ID is CNCL). Add the two trades inserted today and TRADE_STG has 22 rows.
 
+**5. Create the team projects.** The Finance and Marketing project objects live in the teams' PROJECTS schemas, which the platform deploy just created, so 01_pre_deploy.sql couldn't create them. Each is created by its team role, which owns it. Refresh your browser afterwards so the DCM control panel lists both.
+
+```sql
+USE ROLE DCM_DEMO_2_FINANCE_DEV_ADMIN;
+CREATE DCM PROJECT IF NOT EXISTS DCM_DEMO_2_FINANCE_DEV.PROJECTS.FINANCE_PIPELINE
+    COMMENT = 'DEV Finance project of the Build Data Pipelines with Snowflake DCM Projects quickstart';
+
+USE ROLE DCM_DEMO_2_MARKETING_DEV_ADMIN;
+CREATE DCM PROJECT IF NOT EXISTS DCM_DEMO_2_MARKETING_DEV.PROJECTS.MARKETING_PIPELINE
+    COMMENT = 'DEV Marketing project of the Build Data Pipelines with Snowflake DCM Projects quickstart';
+```
+
 <!-- ------------------------ -->
 ## Explore the Finance Project
 
@@ -324,10 +351,10 @@ The project object lives in the Finance team's own database, DCM_DEMO_2_FINANCE_
 |---|---|
 | silver_layer.sql | The SILVER schema and TRADES_ENRICHED, one row per trade |
 | gold_layer.sql | The GOLD schema and two aggregates, DAILY_TRADING and CUSTOMER_TRADING |
-| expectations.sql | Three data quality expectations on TRADES_ENRICHED, each acting as a gate |
+| expectations.sql | Five data quality expectations, three on TRADES_ENRICHED and one on each gold table, each acting as a gate |
 | semantic_view.sql | TRADING_ANALYTICS, a semantic view over the two gold tables |
 | alerts.sql | EXPECTATION_VIOLATIONS, an alert from a template |
-| agents.sql | TRADING_AGENT, an agent over the semantic view |
+| agents.sql | TRADING_AGENT, an agent over the semantic view, with its specification in agents/ |
 
 #### Silver layer
 
@@ -379,13 +406,14 @@ A few properties are worth a look:
 
 #### Gold layer
 
-gold_layer.sql defines two aggregates over the silver table, DAILY_TRADING by day and CUSTOMER_TRADING by customer. DAILY_TRADING (lines 10 to 22):
+gold_layer.sql defines two aggregates over the silver table, DAILY_TRADING by day and CUSTOMER_TRADING by customer. DAILY_TRADING (lines 10 to 23):
 
 ```sql
 DEFINE DYNAMIC TABLE DCM_DEMO_2_FINANCE{{env_suffix}}.GOLD.DAILY_TRADING
     WAREHOUSE = DCM_DEMO_2_FINANCE_WH{{env_suffix}}
     TARGET_LAG = '1 hour'
     INITIALIZE = 'ON_SCHEDULE'
+    DATA_METRIC_SCHEDULE = 'TRIGGER_ON_CHANGES'
     COMMENT = 'Trading volume and value per day'
 AS
 SELECT
@@ -397,7 +425,7 @@ FROM DCM_DEMO_2_FINANCE{{env_suffix}}.SILVER.TRADES_ENRICHED
 GROUP BY TRADE_DATE;
 ```
 
-The gold tables hold the pipeline's only real TARGET_LAG. Because the silver table is DOWNSTREAM, this one hour drives the whole graph.
+The gold tables hold the pipeline's only real TARGET_LAG. Because the silver table is DOWNSTREAM, this one hour drives the whole graph. Like the silver table, each gold table sets DATA_METRIC_SCHEDULE = 'TRIGGER_ON_CHANGES', so its own expectations are evaluated after each refresh.
 
 #### Data quality expectations
 
@@ -437,6 +465,26 @@ The ON_VIOLATION_ACTION lines (23, 30 and 37) turn each expectation into a **gat
 
 Put the action on every expectation of the monitored table, as the file does. An expectation without it currently stops the gate working. The sample data in this guide is clean, so you will not see a gate trigger; you will see how to inspect them in a later step.
 
+The gold tables are what the semantic view, the agent and any dashboard read, so expectations.sql also checks them, one expectation each (lines 47 to 59):
+
+```sql
+-- One row per trading day.
+ATTACH DATA METRIC FUNCTION SNOWFLAKE.CORE.DUPLICATE_COUNT
+    TO DYNAMIC TABLE DCM_DEMO_2_FINANCE{{env_suffix}}.GOLD.DAILY_TRADING
+    ON (TRADE_DATE)
+    EXPECTATION ONE_ROW_PER_DAY (value = 0)
+    ON_VIOLATION_ACTION = (TYPE = 'SKIP_DOWNSTREAM_DYNAMIC_TABLE_REFRESH');
+
+-- Every customer row carries a name for the agent and dashboards to show.
+ATTACH DATA METRIC FUNCTION SNOWFLAKE.CORE.NULL_COUNT
+    TO DYNAMIC TABLE DCM_DEMO_2_FINANCE{{env_suffix}}.GOLD.CUSTOMER_TRADING
+    ON (CUSTOMER_NAME)
+    EXPECTATION EVERY_CUSTOMER_IS_NAMED (value = 0)
+    ON_VIOLATION_ACTION = (TYPE = 'SKIP_DOWNSTREAM_DYNAMIC_TABLE_REFRESH');
+```
+
+They are gates too, but nothing is downstream of gold yet, so a failing gold check holds no refresh today. It starts holding refreshes as soon as a dynamic table is built on top of a gold table, with no change to this file. TEST ALL evaluates them with the others, but the alert below watches only the SILVER schema.
+
 #### Semantic view
 
 semantic_view.sql (lines 10 to 42) declares TRADING_ANALYTICS over the two gold tables, with three dimensions (TRADE_DATE, CUSTOMER_NAME, CUSTOMER_TIER) and three metrics (TOTAL_TRADES, TOTAL_TRADE_VALUE, CUSTOMER_TRADE_VALUE). A [semantic view](https://docs.snowflake.com/en/user-guide/views-semantic/overview) names the business concepts in your data so that SQL users and Cortex Analyst ask for "total trade value by day" instead of writing the aggregation. Declaring it in the same project as the gold tables means the vocabulary is versioned and reviewed with the pipeline that produces the numbers, and a renamed metric shows up in a plan diff. It reads only the gold tables, so nobody who queries it touches raw data.
@@ -464,18 +512,33 @@ A template alert deploys suspended, and STARTED is not accepted on DEFINE ALERT 
 
 #### Agent
 
-agents.sql (lines 11 to 39) defines TRADING_AGENT, an agent that answers trading questions in plain language. Its one tool is Cortex Analyst over TRADING_ANALYTICS, so it reads the same gold numbers, with the same names, as everyone else. The specification is inline, between $$ delimiters, because the database and warehouse names carry the env_suffix variable: Jinja renders inline specifications, not specification files.
+agents.sql (lines 13 to 18) defines TRADING_AGENT, an agent that answers trading questions in plain language. Its one tool is Cortex Analyst over TRADING_ANALYTICS, so it reads the same gold numbers, with the same names, as everyone else:
+
+```sql
+DEFINE AGENT DCM_DEMO_2_FINANCE{{env_suffix}}.GOLD.TRADING_AGENT
+    COMMENT = 'Answers questions about trading activity from the gold layer'
+    SPECIFICATION
+        FROM 'asset://trading_agent/{{agent_spec}}.yaml'
+    PROFILE
+        FROM 'asset://agent_profile';
+```
+
+The specification is a YAML file in the agents/ folder, in the same format Agent Studio reads and writes, so you can open it in Agent Studio, change it there and copy it back into the project. The manifest declares the folder as two assets:
+
+```yaml
+assets:
+  trading_agent:
+    path: 'agents/trading_agent/**/*'
+  agent_profile:
+    path: 'agents/profile.json'
+```
+
+Jinja doesn't render inside specification files, and the specification names the semantic view and the warehouse, which carry the env_suffix. So each target has its own file with literal names, DEV.yaml and PROD.yaml, and the agent_spec variable in the manifest picks one. Jinja does render inside the FROM URI.
 
 <!-- ------------------------ -->
 ## Deploy the Finance Project
 
-The Finance project object lives in DCM_DEMO_2_FINANCE_DEV.PROJECTS, a schema the platform deploy just created, so 01_pre_deploy.sql couldn't create it. Create it now as the Finance role, which owns this project, then refresh your browser so the DCM control panel lists it:
-
-```sql
-USE ROLE DCM_DEMO_2_FINANCE_DEV_ADMIN;
-CREATE DCM PROJECT IF NOT EXISTS DCM_DEMO_2_FINANCE_DEV.PROJECTS.FINANCE_PIPELINE
-    COMMENT = 'DEV Finance project of the Build Data Pipelines with Snowflake DCM Projects quickstart';
-```
+The Finance project object, DCM_DEMO_2_FINANCE_DEV.PROJECTS.FINANCE_PIPELINE, already exists: 02_platform_post_deploy.sql created it as the Finance role, which owns this project, once the platform deploy had created its schema. If the DCM control panel doesn't list it, refresh your browser.
 
 ### Plan
 
@@ -588,7 +651,7 @@ You asked for two metrics by one dimension, by name; the semantic view supplied 
 EXECUTE DCM PROJECT DCM_DEMO_2_FINANCE_DEV.PROJECTS.FINANCE_PIPELINE TEST ALL;
 ```
 
-TEST ALL evaluates every expectation the project defines and returns one JSON document. Its status is SUCCESSFUL: all three expectations pass on the sample data.
+TEST ALL evaluates every expectation the project defines and returns one JSON document. Its status is SUCCESSFUL: all five expectations pass on the sample data.
 
 ### See the gates
 
@@ -654,44 +717,58 @@ targets:
     templating_config: DEV
 ```
 
-The manifest also declares the Spark job as an asset. The asset folder becomes the root of the code bundle, so code_bundle.yml and the entry point sit at its top:
+The manifest also declares two assets: the Spark job, and the files of the Streamlit dashboard. The code bundle's asset folder becomes the root of the bundle, so code_bundle.yml and the entry point sit at its top:
 
 ```yaml
 assets:
   segments:
     path: 'code_bundles/segments/**/*'
+  segments_dashboard:
+    path: 'streamlit/segments_dashboard/**/*'
 ```
 
 ### Definition files
 
 | File | What it defines |
 |---|---|
-| sources/definitions/segments.sql | The SEGMENTS schema and the CUSTOMER_SEGMENTS table |
-| sources/definitions/pipeline.yml | The code bundle and a task graph with three tasks |
+| sources/definitions/segments.sql | The SEGMENTS schema and the CUSTOMER_SEGMENTS Iceberg table |
+| sources/definitions/pipeline.yml | The code bundle and a task graph with four tasks |
+| sources/definitions/dashboard.sql | SEGMENTS_DASHBOARD, a Streamlit app over the segments |
 | code_bundles/segments/ | The Spark job: code_bundle.yml, pyproject.toml and segments.py |
+| streamlit/segments_dashboard/ | The dashboard: streamlit_app.py and environment.yml |
 
 #### The table
 
-segments.sql (lines 7 to 18) is the table the Spark job fills. DCM creates it, with its columns, so the table is reviewed and versioned like every other object; the job only writes rows into it and never creates or replaces it:
+segments.sql (lines 12 to 27) is the table the Spark job fills. DCM creates it, with its columns, so the table is reviewed and versioned like every other object; the job only writes rows into it and never creates or replaces it:
 
 ```sql
 DEFINE SCHEMA DCM_DEMO_2_MARKETING{{env_suffix}}.SEGMENTS
     COMMENT = 'Customer segments built by the Marketing Spark job';
 
-DEFINE TABLE DCM_DEMO_2_MARKETING{{env_suffix}}.SEGMENTS.CUSTOMER_SEGMENTS (
-    C_ID           NUMBER(38,0)     COMMENT 'Customer identifier',
-    CUSTOMER_NAME  VARCHAR(50)      COMMENT 'First and last name',
-    TRADE_COUNT    NUMBER(18,0)     COMMENT 'Completed trades across all of the customer''s accounts',
-    TOTAL_VALUE    NUMBER(18,2)     COMMENT 'Quantity times trade price, summed',
-    ACTIVITY_TIER  VARCHAR(10)      COMMENT 'ACTIVE, OCCASIONAL or DORMANT',
-    SEGMENTED_AT   TIMESTAMP_NTZ(9) COMMENT 'When the Spark job wrote this row'
+DEFINE ICEBERG TABLE DCM_DEMO_2_MARKETING{{env_suffix}}.SEGMENTS.CUSTOMER_SEGMENTS (
+    C_ID              NUMBER(38,0)     COMMENT 'Customer identifier',
+    CUSTOMER_NAME     VARCHAR          COMMENT 'First and last name',
+    TRADE_COUNT       NUMBER(18,0)     COMMENT 'Completed trades across all of the customer''s accounts',
+    TOTAL_VALUE       NUMBER(18,2)     COMMENT 'Quantity times trade price, summed',
+    ACTIVITY_TIER     VARCHAR          COMMENT 'ACTIVE, OCCASIONAL or DORMANT',
+    PREFERRED_CHANNEL VARCHAR          COMMENT 'Synthetic marketing channel, generated with Faker',
+    CONTACT_EMAIL     VARCHAR          COMMENT 'Synthetic contact email, generated with Faker',
+    SEGMENTED_AT      TIMESTAMP_NTZ(6) COMMENT 'When the Spark job wrote this row'
 )
-COMMENT = 'One row per customer, rewritten on every run of the Marketing pipeline';
+    CATALOG = 'SNOWFLAKE'
+    EXTERNAL_VOLUME = 'SNOWFLAKE_MANAGED'
+    COMMENT = 'One row per customer, rewritten on every run of the Marketing pipeline';
 ```
+
+CUSTOMER_SEGMENTS is an Apache Iceberg table with Snowflake as its catalog. EXTERNAL_VOLUME = 'SNOWFLAKE_MANAGED' keeps its data and metadata in Snowflake storage, so there is no bucket or external volume to set up, and other engines can still read the segments through the Iceberg REST catalog. A few things differ from a standard table:
+
+- The column types are Iceberg types: VARCHAR without a length, and TIMESTAMP_NTZ(6), because Iceberg stores timestamps in microseconds.
+- BASE_LOCATION isn't accepted with Snowflake-managed storage; Snowflake chooses the location.
+- EXTERNAL_VOLUME can't change after the table is created, so moving the table to your own bucket later means recreating it.
 
 #### The Spark job
 
-code_bundle.yml describes the bundle:
+code_bundle.yml describes the bundle, and where its Python dependencies come from:
 
 ```yaml
 bundle:
@@ -700,9 +777,26 @@ bundle:
   language: python
   compute_options:
     runtime_version: "1.29"
+  properties:
+    # PyPI dependencies come from pyproject.toml and install from the default
+    # artifact repository, a PyPI proxy, so no external access integration is
+    # needed. Paths are relative to the bundle root.
+    python_dependencies:
+      requirements_files:
+        - pyproject.toml
 ```
 
-segments.py reads the shared raw tables from the platform, counts each customer's completed trades across all of their accounts, and assigns an activity tier: ACTIVE for four or more trades, OCCASIONAL for one or more, DORMANT for none. The important part is how it writes (lines 61 to 67):
+The job's one dependency, the [Faker](https://pypi.org/project/Faker/) library, is pinned in pyproject.toml:
+
+```toml
+dependencies = [
+    "faker==40.54.0",
+]
+```
+
+When the bundle runs, Snowflake installs it from PyPI through the default artifact repository, so the job needs no external access integration and no network rules.
+
+segments.py reads the shared raw tables from the platform, counts each customer's completed trades across all of their accounts, and assigns an activity tier: ACTIVE for four or more trades, OCCASIONAL for one or more, DORMANT for none. It then uses Faker to give each customer a synthetic preferred channel and contact email. Faker is seeded with the customer ID, so the same customer gets the same values on every run. The important part is how it writes (lines 90 to 97):
 
 ```python
     # Same column order as the table definition in segments.sql. Overwrite mode
@@ -710,15 +804,16 @@ segments.py reads the shared raw tables from the platform, counts each customer'
     # declared, so empty it and append instead.
     spark.sql(f"TRUNCATE TABLE {target}")
     segments.select(
-        "C_ID", "CUSTOMER_NAME", "TRADE_COUNT", "TOTAL_VALUE", "ACTIVITY_TIER", "SEGMENTED_AT"
+        "C_ID", "CUSTOMER_NAME", "TRADE_COUNT", "TOTAL_VALUE", "ACTIVITY_TIER",
+        "PREFERRED_CHANNEL", "CONTACT_EMAIL", "SEGMENTED_AT"
     ).write.insertInto(target)
 ```
 
-The job empties the table and appends the new rows, so the table itself, with its columns and comments, is never replaced.
+The job empties the table and appends the new rows, so the Iceberg table itself, with its columns and comments, is never replaced.
 
 #### The task graph
 
-pipeline.yml declares the code bundle and a task graph (lines 1 to 21):
+pipeline.yml declares the code bundle and a task graph (lines 1 to 23):
 
 ```yaml
 definitions:
@@ -730,8 +825,10 @@ definitions:
       asset: segments
     comment: Spark job that writes CUSTOMER_SEGMENTS from the shared raw tables
 
-  # Three tasks in one graph: check the inputs, run the job, report the result.
-  # The graph deploys suspended; the guide runs it once with EXECUTE TASK GRAPH.
+  # Four tasks in one graph: check the inputs, run the job, then branch on how
+  # the run went. REPORT_SEGMENTS runs only when everything succeeded;
+  # ON_FAILURE uses advanced branching and runs only when a step failed.
+  # The graph deploys suspended; the guide runs it with EXECUTE TASK GRAPH.
   - resource: task_graph_object
     name: DCM_DEMO_2_MARKETING{{env_suffix}}.SEGMENTS.SEGMENTS_PIPELINE
     roots:
@@ -744,15 +841,16 @@ definitions:
     comment: Builds the Marketing customer segments once a day
 ```
 
-The three tasks run in order:
+The four tasks:
 
-| Task | What it does |
-|---|---|
-| CHECK_INPUTS | Counts the rows in the raw trades table and returns early if there are none |
-| BUILD_SEGMENTS | Runs the Spark job with EXECUTE CODE BUNDLE |
-| REPORT_SEGMENTS | Summarises the segments the job wrote |
+| Task | Runs after | What it does |
+|---|---|---|
+| CHECK_INPUTS | (root) | Counts the rows in the raw trades table and fails the run if there are none |
+| BUILD_SEGMENTS | CHECK_INPUTS | Runs the Spark job with EXECUTE CODE BUNDLE |
+| REPORT_SEGMENTS | BUILD_SEGMENTS | Summarises the segments the job wrote |
+| ON_FAILURE | BUILD_SEGMENTS | Records which step stopped the run, and runs only when one did |
 
-BUILD_SEGMENTS (lines 39 to 53) is the task that runs the job:
+BUILD_SEGMENTS (lines 43 to 57) is the task that runs the job:
 
 ```yaml
   - resource: task
@@ -772,20 +870,53 @@ BUILD_SEGMENTS (lines 39 to 53) is the task that runs the job:
         END
 ```
 
-The graph deploys suspended, so its daily schedule never fires. You run it once on demand.
+The graph deploys suspended, so its daily schedule never fires. You run it on demand.
+
+#### A failure branch
+
+By default, a task runs only when all of its predecessors succeeded. If CHECK_INPUTS fails, nothing after it is scheduled, and the run simply stops. ON_FAILURE (lines 78 to 95) changes that with [advanced branching](https://docs.snowflake.com/en/user-guide/tasks-graphs#label-task-graph-advanced-branching):
+
+```yaml
+  - resource: task
+    name: DCM_DEMO_2_MARKETING{{env_suffix}}.SEGMENTS.ON_FAILURE
+    warehouse: DCM_DEMO_2_MARKETING_WH{{env_suffix}}
+    predecessors:
+      - DCM_DEMO_2_MARKETING{{env_suffix}}.SEGMENTS.BUILD_SEGMENTS
+    # Advanced branching: runs when BUILD_SEGMENTS failed, or was skipped
+    # because CHECK_INPUTS failed before it.
+    condition: SYSTEM$PREDECESSORS_STATE('ALL_DONE') AND SYSTEM$TASK_COMPLETION_STATE('BUILD_SEGMENTS') != 'SUCCEEDED'
+    comment: Records which step stopped the run
+```
+
+The condition becomes the task's WHEN clause. It uses two functions:
+
+- SYSTEM$PREDECESSORS_STATE('ALL_DONE') lets the task run however its predecessor finished, instead of only after a success.
+- SYSTEM$TASK_COMPLETION_STATE('BUILD_SEGMENTS') returns how one named task finished: SUCCEEDED, FAILED or SKIPPED. ON_FAILURE runs only when it isn't SUCCEEDED, and its body reads the same function for both earlier tasks to say which one stopped the run.
+
+As soon as one task in a graph calls either function, the whole graph uses advanced branching: every task is scheduled on every run, and a task whose condition isn't met is recorded as SKIPPED instead of being left out of the history. REPORT_SEGMENTS has no condition, so it keeps the default and runs only when BUILD_SEGMENTS succeeded. CHECK_INPUTS raises an exception when the raw trades table is empty, which is what sends a run down the ON_FAILURE branch.
+
+#### The dashboard
+
+dashboard.sql defines a Streamlit app for the Marketing team:
+
+```sql
+DEFINE STREAMLIT DCM_DEMO_2_MARKETING{{env_suffix}}.SEGMENTS.SEGMENTS_DASHBOARD
+    FROM 'asset://segments_dashboard/'
+    MAIN_FILE = 'streamlit_app.py'
+    QUERY_WAREHOUSE = DCM_DEMO_2_MARKETING_WH{{env_suffix}}
+    RUNTIME_NAME = 'SYSTEM$WAREHOUSE_RUNTIME'
+    TITLE = 'Customer segments'
+    COMMENT = 'Customer segments by activity tier and channel, for the Marketing team';
+```
+
+The app's files ship with the project as the segments_dashboard asset, so the dashboard is versioned and deployed with the table it reads. RUNTIME_NAME = 'SYSTEM$WAREHOUSE_RUNTIME' runs it on the Marketing warehouse, with streamlit as its one dependency in environment.yml. Jinja doesn't render inside streamlit_app.py, so the app finds its own database with CURRENT_DATABASE() and reads CUSTOMER_SEGMENTS from there. It shows the customers per activity tier and per preferred channel.
 
 ![SEGMENTS_PIPELINE task graph in Snowsight, showing CHECK_INPUTS, BUILD_SEGMENTS and REPORT_SEGMENTS](assets/task_graph_editor.png)
 
 <!-- ------------------------ -->
 ## Deploy the Marketing Project
 
-Create the Marketing project object as the Marketing role, which owns this project, then refresh your browser so the DCM control panel lists it:
-
-```sql
-USE ROLE DCM_DEMO_2_MARKETING_DEV_ADMIN;
-CREATE DCM PROJECT IF NOT EXISTS DCM_DEMO_2_MARKETING_DEV.PROJECTS.MARKETING_PIPELINE
-    COMMENT = 'DEV Marketing project of the Build Data Pipelines with Snowflake DCM Projects quickstart';
-```
+The Marketing project object, DCM_DEMO_2_MARKETING_DEV.PROJECTS.MARKETING_PIPELINE, was created by 02_platform_post_deploy.sql as the Marketing role, which owns this project.
 
 ### Plan
 
@@ -806,8 +937,9 @@ The plan creates what the definition files declare:
 
 | Definition | Entities |
 |---|---|
-| segments.sql | SEGMENTS schema, SEGMENTS.CUSTOMER_SEGMENTS |
-| pipeline.yml | The SEGMENTS_JOB code bundle, the SEGMENTS_PIPELINE task graph, and the CHECK_INPUTS, BUILD_SEGMENTS and REPORT_SEGMENTS tasks |
+| segments.sql | SEGMENTS schema, SEGMENTS.CUSTOMER_SEGMENTS (an Iceberg table) |
+| pipeline.yml | The SEGMENTS_JOB code bundle, the SEGMENTS_PIPELINE task graph, and the CHECK_INPUTS, BUILD_SEGMENTS, REPORT_SEGMENTS and ON_FAILURE tasks |
+| dashboard.sql | SEGMENTS.SEGMENTS_DASHBOARD |
 
 ### Deploy
 
@@ -821,7 +953,7 @@ When the changeset matches what you expected, deploy it.
 snow dcm deploy --target DCM_DEV --role DCM_DEMO_2_MARKETING_DEV_ADMIN --alias initial-marketing
 ```
 
-The deploy reports "Deployed 8 entities (7 created, 1 altered, 0 dropped)." The task graph exists but is suspended, and CUSTOMER_SEGMENTS is empty.
+The deploy reports "Deployed 10 entities (9 created, 1 altered, 0 dropped)." The task graph exists but is suspended, and CUSTOMER_SEGMENTS is empty.
 
 <!-- ------------------------ -->
 ## Run the Task Graph and Read the Segments
@@ -848,35 +980,54 @@ WHERE DATABASE_NAME = 'DCM_DEMO_2_MARKETING_DEV'
 ORDER BY SCHEDULED_TIME DESC;
 ```
 
-EXECUTE TASK GRAPH runs CHECK_INPUTS, then BUILD_SEGMENTS (the Spark job), then REPORT_SEGMENTS. It runs asynchronously, and the Spark job takes about two minutes. Rerun the history query until all three tasks show SUCCEEDED:
+EXECUTE TASK GRAPH runs CHECK_INPUTS, then BUILD_SEGMENTS (the Spark job), then REPORT_SEGMENTS. It runs asynchronously, and the Spark job takes about two minutes. Rerun the history query until all four tasks have a state:
 
 | NAME | STATE | RETURN_VALUE |
 |---|---|---|
 | REPORT_SEGMENTS | SUCCEEDED | segments: ACTIVE=2 OCCASIONAL=4 |
+| ON_FAILURE | SKIPPED | |
 | BUILD_SEGMENTS | SUCCEEDED | Spark job finished |
 | CHECK_INPUTS | SUCCEEDED | raw trades available: 22 |
 
+ON_FAILURE appears in the history even though it didn't run: the graph uses advanced branching, so every task is scheduled, and ON_FAILURE's condition evaluated to false. Its ERROR_MESSAGE reads "Conditional expression for task evaluated to false."
+
+When the raw trades table is empty, the same graph takes the other branch. We emptied TRADE_STG and ran it once to show the result (you don't need to do this; it means reloading the raw data afterwards):
+
+| NAME | STATE | RETURN_VALUE |
+|---|---|---|
+| ON_FAILURE | SUCCEEDED | segments not rebuilt: CHECK_INPUTS FAILED, BUILD_SEGMENTS SKIPPED |
+| REPORT_SEGMENTS | SKIPPED | |
+| BUILD_SEGMENTS | SKIPPED | |
+| CHECK_INPUTS | FAILED | |
+
+CHECK_INPUTS raised its exception, BUILD_SEGMENTS and REPORT_SEGMENTS were skipped because their default condition needs every predecessor to succeed, and ON_FAILURE ran and recorded which step stopped the run. CUSTOMER_SEGMENTS kept the segments from the last good run.
+
 The run also shows in Snowsight: open the SEGMENTS_PIPELINE task in DCM_DEMO_2_MARKETING_DEV.SEGMENTS and select **Run History**.
 
-![SEGMENTS_PIPELINE graph run with all three tasks succeeded](assets/task_graph_run.png)
+![SEGMENTS_PIPELINE graph run with three tasks succeeded and ON_FAILURE skipped](assets/task_graph_run.png)
 
 ### Read the segments
 
 ```sql
 SELECT * FROM DCM_DEMO_2_MARKETING_DEV.SEGMENTS.CUSTOMER_SEGMENTS ORDER BY TOTAL_VALUE DESC;
 
-SELECT TABLE_NAME, COMMENT, CREATED, ROW_COUNT
+SELECT TABLE_NAME, IS_ICEBERG, COMMENT, CREATED, ROW_COUNT
 FROM DCM_DEMO_2_MARKETING_DEV.INFORMATION_SCHEMA.TABLES
 WHERE TABLE_NAME = 'CUSTOMER_SEGMENTS';
 ```
 
-CUSTOMER_SEGMENTS has 6 rows, one per customer. The second query shows the table is the one DCM created:
+CUSTOMER_SEGMENTS has 6 rows, one per customer, each with a PREFERRED_CHANNEL and CONTACT_EMAIL from Faker. The second query shows the table is the one DCM created:
 
+- IS_ICEBERG is YES.
 - COMMENT is the comment from segments.sql: "One row per customer, rewritten on every run of the Marketing pipeline".
 - CREATED is the time of your deploy, before the Spark job ran.
 - ROW_COUNT is 6.
 
 The Spark job did not recreate the table. It only replaced its rows.
+
+### Open the dashboard
+
+**In Snowsight:** go to **Projects > Streamlit** and open **Customer segments**. It filters the customers by activity tier and shows their count, their total trading value, the number of customers per preferred channel, and the customer list. The dashboard reads CUSTOMER_SEGMENTS directly, so it shows whatever the last good run of the task graph wrote.
 
 <!-- ------------------------ -->
 ## Check Team Separation and the READER Role
@@ -967,9 +1118,10 @@ In this guide, you:
 - **Gave each team the same footprint** from one Jinja loop and one macro, with the privileges each team's pipeline style needs passed on through grant options
 - **Shipped sample files and a Spark job with the projects** as assets, so the deploy fills the stage and the code only writes rows into tables DCM created
 - **Built silver and gold dynamic tables** that read another project's tables, with the freshness declared once at the gold layer
-- **Gated the refreshes with expectations**, saw the gates with a query, and learned to put the action on every expectation of the monitored table
-- **Declared a semantic view, an alert and an agent** next to the tables they describe
-- **Ran a Spark task graph** into a DCM-created table, and checked that the two teams are separate
+- **Gated the refreshes with expectations** on the silver and gold layers, saw the gates with a query, and learned to put the action on every expectation of the monitored table
+- **Declared a semantic view, an alert and an agent** next to the tables they describe, with the agent's specification in a YAML file Agent Studio can open
+- **Ran a Spark task graph** into a DCM-created Iceberg table, with a PyPI package installed from pyproject.toml and a failure branch built with advanced branching
+- **Shipped a Streamlit dashboard** with the table it reads, on adaptive warehouses throughout, and checked that the two teams are separate
 
 ### What's Next
 
