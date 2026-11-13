@@ -55,6 +55,11 @@ BLOCKING: list[tuple[str, str, Check]] = [
         checks.check_language,
     ),
     ("Journey sidebar JSON validation", "sidebar-error.json", checks.check_sidebars),
+    (
+        "Duplicate content check (body must not match another guide)",
+        "duplicate-content-error.json",
+        checks.check_duplicate_content,
+    ),
 ]
 
 
