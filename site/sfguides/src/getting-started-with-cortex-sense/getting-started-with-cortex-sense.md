@@ -16,7 +16,7 @@ fork repo link: https://github.com/sfc-gh-JCHAEARLEY/sfguide-getting-started-wit
 
 Cortex Sense builds a working model of your business from metadata your account already produces: query history, semantic views, dashboards, table metadata, and documents on a stage. Cortex Agents and Cortex Code (CoCo) then use that context to answer questions accurately.
 
-An agent with full access to your tables can usually find the right columns and work out the joins. It can't find what sits outside the schema: what your team means by "clean claim", which admissions a readmission rate excludes, what an internal program name refers to, or what your data release policy says. When it has to guess at those, it usually gives you a confident, plausible, wrong answer.
+An agent with full access to your tables can usually find the right columns and work out the joins. It can't find what sits outside the schema: what your team means by "clean claim", which admissions a readmission rate excludes, what an internal program name refers to, or what your data release policy says. When it has to guess at those, it usually answers anyway, and the answer looks right.
 
 In this guide you work with **Juniper Valley Health**, a fictional health system. Its analytics warehouse has 8 tables and about 16,000 synthetic rows covering facilities, patients, encounters, claims, denials, readmissions, and patient surveys. As at a real organization, its business definitions are in internal docs, saved queries, and a dashboard. You ask an agent the same questions without and with a Cortex Sense context, as the same analyst role, and compare the answers.
 
@@ -34,12 +34,12 @@ In this guide you work with **Juniper Valley Health**, a fictional health system
 - How to grant a context to another role
 
 ### What You'll Need
-- [Cortex Code CLI](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-cli), version 1.1.94 or later. This guide uses the CLI's `/sense` page throughout; CoCo Desktop doesn't have that page yet.
+- [Cortex Code CLI](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-cli), version 1.1.94 or later (this guide was tested with 1.2.44). This guide uses the CLI's `/sense` page throughout; CoCo Desktop doesn't have that page yet.
 - A Snowflake CLI connection to your account in `~/.snowflake/connections.toml`
 
 ### What You'll Build
 - A health-system warehouse with its business definitions kept in a separate knowledge schema
-- A Cortex Sense context named `juniper_health` that indexes those definitions
+- A Cortex Sense context named `JUNIPER_HEALTH` that indexes those definitions
 - A side-by-side comparison of agent answers without and with that context
 
 <!-- ------------------------ -->
@@ -51,7 +51,7 @@ All of the demo's data, docs, saved queries, and dashboard are in the public [co
 2. Copy the contents of [`setup.sql`](https://github.com/sfc-gh-JCHAEARLEY/sfguide-getting-started-with-cortex-sense/blob/main/setup.sql) into the worksheet.
 3. Run all of it.
 
-The script starts as `ACCOUNTADMIN` and grants the `SNOWFLAKE.CORTEX_SENSE_BUILDER` database role to a new demo role. That grant succeeds whether or not your account is enrolled in the preview, so setup can't tell you. Enrollment is checked when you build the context. In an account that isn't enrolled, Snowflake reports that Cortex Context Builder is not enabled for this account.
+The script starts as `ACCOUNTADMIN` and grants the `SNOWFLAKE.CORTEX_SENSE_BUILDER` database role to a new demo role. That grant succeeds whether or not your account is enrolled in the preview, so setup can't tell you. Enrollment is checked when `/sense` runs its pre-flight checks. In an account that isn't enrolled, Snowflake reports that Cortex Context Builder is not enabled for this account.
 
 When it finishes, the last result shows one row per check. Every row should say `PASS`. The script is idempotent, so if something fails, fix the cause and run it again. Don't re-run it after you've built the context, though: it recreates the tables and semantic views the context indexed.
 
@@ -92,9 +92,9 @@ role = "JUNIPER_ANALYST"
 warehouse = "JUNIPER_WH"
 ```
 
-Keep whatever authentication settings your existing connection uses.
+Keep whatever authentication settings your existing connection uses. If you sign in with a programmatic access token that's restricted to one role, it can't use these roles; create a token without a role restriction, or use key-pair authentication.
 
-`cortex -c <connection>` sets only the SQL connection. CoCo's **Inference Connection** comes from your settings, so pin both for each role with a project-level settings file in its own working directory:
+`cortex -c <connection>` sets only the SQL connection. CoCo's **Agent Connection** (called **Inference Connection** in `/settings` and the docs) comes from your settings, so pin both for each role with a project-level settings file in its own working directory:
 
 ```bash
 mkdir -p ~/juniper-builder/.cortex ~/juniper-analyst/.cortex
@@ -120,7 +120,7 @@ The comparison is fair because of how access is split between the two schemas:
 | `ANALYTICS` | Tables whose comments describe grain and column meaning only, plus `CLAIMS_SV`, whose `clean_claims` metric is the outdated definition | `JUNIPER_BUILDER` and `JUNIPER_ANALYST` |
 | `KNOWLEDGE` | Every current definition, exclusion rule, program criterion, and threshold | `JUNIPER_BUILDER` only |
 
-`JUNIPER_ANALYST` can query every table but can't read a single current definition.
+`JUNIPER_ANALYST` can query every table but can't read any of the current definitions.
 
 ### See a definition gap in SQL
 
@@ -195,7 +195,7 @@ The `cortex-sense` skill takes over. It runs pre-flight checks and asks permissi
 | Files | `KNOWLEDGE_STAGE/markdown/` and `KNOWLEDGE_STAGE/query-history/` |
 | Excluded | `JUNIPER_HEALTH.KNOWLEDGE.*`, which keeps out the support view `CLAIMS_WITH_DENIAL_FLAG` |
 
-Query history doesn't appear in the box; the skill says it's handled internally. Be strict about the semantic view source. `ANALYTICS.CLAIMS_SV` is what the analyst sees without context, and indexing it as a definition would teach Cortex Sense the wrong one.
+Query history doesn't appear in the box; the skill says it's handled internally. The skill may also say it can't confirm the `.sql` files will be indexed, since only text and markdown files are documented as supported. Every definition is also in the markdown docs, so the answers don't depend on them. Be strict about the semantic view source. `ANALYTICS.CLAIMS_SV` is what the analyst sees without context, and indexing it as a definition would teach Cortex Sense the wrong one.
 
 The skill also stores the name in upper case, `JUNIPER_HEALTH`, unless you ask it to keep it lowercase. The rest of this guide uses `JUNIPER_HEALTH`.
 
@@ -206,7 +206,7 @@ The skill asks who else should get processing-failure notifications. Reply `just
 1. Type `build` to approve the scope and notification setup.
 2. The skill drafts a description that agents read to decide when to use this context. Type `yes` to accept it, or type your own.
 
-The skill saves the context as `JUNIPER_HEALTH.SENSE.JUNIPER_HEALTH` and queues the build. The build runs as `JUNIPER_BUILDER` on `JUNIPER_WH`; you can say `use warehouse <name>` to change the warehouse, but the build role is fixed. In our test the build of this small scope finished in about 10 minutes; larger scopes take longer. Leave this session open and move on to the baseline.
+The skill saves the context as `JUNIPER_HEALTH.SENSE.JUNIPER_HEALTH` and queues the build. The skill runs its queries as `JUNIPER_BUILDER`, the build role, which is fixed for the life of the context. The summary also names a warehouse (`JUNIPER_WH`), which you can change with `use warehouse <name>`; the indexing itself is billed as AI credits (see Cost below). The docs say builds take a few hours; this small scope finished in about 10 minutes in our test. Leave this session open and move on to the baseline.
 
 CoCo also accepts facts from you while it builds. Don't give it any here: if you tell it a definition, the comparison no longer measures what it learned from the sources.
 
@@ -238,7 +238,7 @@ local files, and don't search past conversations. If you have to guess a
 definition, say so.
 ```
 
-Check that the role is `JUNIPER_ANALYST` and that `CURRENT_SECONDARY_ROLES()` comes back empty before you continue. Many users have all their roles active as secondary roles by default, which would give the analyst session your builder privileges.
+Check that the role is `JUNIPER_ANALYST` and that `CURRENT_SECONDARY_ROLES()` comes back empty before you continue. For a stronger check, ask the agent to select from `JUNIPER_HEALTH.KNOWLEDGE.CLAIMS_WITH_DENIAL_FLAG`; it should get "does not exist or not authorized". Many users have all their roles active as secondary roles by default, which would give the analyst session your builder privileges.
 
 Roles can't hide query history. It shows a user every query they ran under any role, and you ran setup yourself, so without the query history rule in the prompt, the analyst session could read the definitions out of setup's statements.
 
@@ -265,7 +265,7 @@ Answers an agent tends to reach from the schema alone:
 | Question | The tempting answer |
 |---|---|
 | Clean claim rate | `submission_count = 1` alone gives **88.0%**, with UnitedHealthcare best at 92.5% |
-| Readmission rate | Unplanned readmissions over inpatient stays gives **about 20%** (20.8% over all 984 inpatient encounters), above the 18% that Juniper Valley Health treats as CMS penalty territory |
+| Readmission rate | Unplanned readmissions over inpatient stays gives **about 20%**: 20.3% (191 of 941 completed stays) in our baseline run, or 20.8% (205 of all 984), above the 18% that Juniper Valley Health treats as CMS penalty territory |
 | BEACON | No answer. The word appears nowhere the analyst can read. |
 | Tailwind rate | No answer, since the program name appears nowhere. An agent that guesses "claims within 24 hours" across all facilities gets **49.7%**. |
 | External release | Generic advice: privacy sign-off, a BAA, and the common HHS small-cell threshold of 11. Applied to readmission counts, that threshold suppresses the wrong facilities, and the Data Governance Council never comes up. |
@@ -277,7 +277,7 @@ Exit this session when you're done.
 <!-- ------------------------ -->
 ## Check the Build
 
-Back in the builder session, type `/sense` and pick `JUNIPER_HEALTH` from the list, or go straight to it with `/sense JUNIPER_HEALTH`. `Tab` moves between tabs and `?` lists the keys.
+Back in the builder session, type `/sense` and pick `JUNIPER_HEALTH` from the list. `Tab` moves between tabs and `?` lists the keys.
 
 | Tab | What to look for |
 |---|---|
@@ -294,7 +294,7 @@ A **ready** state means the build finished, not that every source succeeded, so 
 
 ### Grant the analyst role access
 
-Querying a context needs `USAGE` on it, and, as with any schema object, `USAGE` on its schema. Grant both from a Snowsight worksheet. If you kept the name lowercase, quote it: `JUNIPER_HEALTH.SENSE."juniper_health"`.
+The docs list `USAGE` on the context as the only requirement for querying it. In our test the analyst couldn't resolve the context until we also granted `USAGE` on the `SENSE` schema and used the fully qualified context name, so grant both from a Snowsight worksheet. If you kept the name lowercase, quote it: `JUNIPER_HEALTH.SENSE."juniper_health"`.
 
 ```sql
 USE ROLE JUNIPER_BUILDER;
@@ -329,15 +329,15 @@ read query history, search the web, or search past conversations.
 
 This prompt drops the baseline's rule against reading local files, because the `cortex-sense` skill reads its own instruction files.
 
-CoCo won't always reach for the context on its own yet, so ask each question through the skill, naming the context:
+The docs' intended way to query a context from CoCo is a serving skill generated on the **Activate** tab. This guide calls the `cortex-sense` skill directly instead, which worked in our test. CoCo won't always reach for the context on its own yet, so ask each question through the skill, naming the context in full:
 
 ```
 $cortex-sense query JUNIPER_HEALTH.SENSE.JUNIPER_HEALTH about: What's our clean claim rate by payer?
 ```
 
-Ask the same five questions that way. Each answer cites the context entries it used. Here are the correct answers, so you can check what comes back:
+Ask the same five questions that way. Each answer cites the context entries it used. If the skill says it can't find or resolve the context, check the fully qualified name and both grants above. Here are the correct answers, so you can check what comes back:
 
-| Question | Correct answer | Source of the definition |
+| Question | Correct answer | Where the definition is written |
 |---|---|---|
 | Clean claim rate | **63.9%** (2,001 of 3,131). A claim is clean only if it was accepted on first submission, is `Paid`, and has no denial. UnitedHealthcare drops from first to last, at 54.2%. | `Metrics_Glossary.md`, `clean_claim_rate_by_payer.sql` |
 | Readmission rate | **10.5%** (62 of 590 eligible index admissions), well below 18%. The base is inpatient stays that weren't cancelled and have a discharge date. Patients under 18 and obstetric admissions leave the denominator. The numerator counts only unplanned readmissions within 30 days whose index admission is eligible. | `Metrics_Glossary.md` |
@@ -349,9 +349,9 @@ The release and BEACON answers both depend on the readmission definition, becaus
 
 The Tailwind question shows that scope can matter more than the formula. The same 24-hour calculation gives 49.7% across all facilities and 78.3% across the ACO facilities the program covers.
 
-In our test run, all five answers with context matched this table, each with citations to the context. The readmission answer also flagged the naive 20.3% reading as the wrong method, unprompted.
+In our test run, all five answers with context matched this table, each with citations to the context. The readmission answer also mentioned the naive 20.3% (191 of 941) reading and said the context rules it out.
 
-A wrong answer to the release question costs the most. In our baseline run, the agent without context recommended suppressing Summit Orthopedic Hospital, which the policy doesn't require, and left Women's and Children's visible, which it does. It also never mentioned the Data Governance Council approval the policy requires.
+The release question has the most riding on it. In our baseline run, the agent without context recommended suppressing Summit Orthopedic Hospital, which the policy doesn't require, and left Women's and Children's visible, which it does. It also never mentioned the Data Governance Council approval the policy requires.
 
 ### Share it beyond CoCo
 
@@ -362,7 +362,7 @@ To put the context in front of people who don't use CoCo, open the **Activate** 
 
 ### Record corrections
 
-When an answer is wrong, tell CoCo what the right definition is. Corrections collect on the **Inbox** tab, where you approve or reject each one. Approved corrections take effect at query time, with no rebuild.
+When an answer is wrong, tell CoCo the right definition in the builder session. Corrections collect on the **Inbox** tab, where you approve or reject each one. Approved corrections take effect at query time, with no rebuild.
 
 ### Measure it with evals
 
@@ -381,7 +381,7 @@ If you used the **Activate** tab, first remove what it created: uninstall the Co
 Delete the JUNIPER_HEALTH Cortex Sense context in JUNIPER_HEALTH.SENSE.
 ```
 
-The skill shows the exact command it will run and asks you to type the context name to confirm. It leaves two things behind: the notification contact `JUNIPER_HEALTH.SENSE.JUNIPER_HEALTH_CONTACT`, which goes when the database is dropped, and a local `juniper_health_scope.yaml` draft in `~/juniper-builder`. Check that the context no longer appears on the `/sense` page before you continue.
+The skill shows the exact command it will run and asks you to type the context name to confirm. It leaves two things behind: the notification contact `JUNIPER_HEALTH.SENSE.JUNIPER_HEALTH_CONTACT`, which goes when the database is dropped, and a local `juniper_health_scope.yaml` draft in `~/juniper-builder`. Deletion can take a moment; check that the context no longer appears on the `/sense` page before you continue.
 
 Then run [`teardown.sql`](https://github.com/sfc-gh-JCHAEARLEY/sfguide-getting-started-with-cortex-sense/blob/main/teardown.sql) in a Snowsight SQL worksheet. It drops the database as `JUNIPER_BUILDER`, then removes the warehouse, the API integration, and both demo roles as `ACCOUNTADMIN`.
 
@@ -390,7 +390,7 @@ Finally, delete the `juniper_builder` and `juniper_analyst` blocks from `~/.snow
 <!-- ------------------------ -->
 ## Conclusion And Resources
 
-The context came entirely from artifacts Juniper Valley Health already had: internal docs, saved queries, a dashboard, and a certified semantic view. None of it required new modeling work. Semantic views remain the most precise path for domains you curate, and Cortex Sense covers the rest.
+The context came entirely from artifacts Juniper Valley Health already had: internal docs, saved queries, a dashboard, and a certified semantic view. Building it took a scope description and a few confirmations, with no new modeling. Semantic views remain the most precise path for domains you curate, and Cortex Sense covers the rest.
 
 ### What You Learned
 - Why an agent with full table access still gets house-definition questions wrong
