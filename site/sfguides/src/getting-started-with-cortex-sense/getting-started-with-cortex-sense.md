@@ -92,7 +92,23 @@ role = "JUNIPER_ANALYST"
 warehouse = "JUNIPER_WH"
 ```
 
-Keep whatever authentication settings your existing connection uses. You start each session with `cortex -c <connection>`, then type `/settings` and confirm that both **Inference Connection** and **SQL Connection** point at that same connection.
+Keep whatever authentication settings your existing connection uses.
+
+`cortex -c <connection>` sets only the SQL connection. CoCo's **Inference Connection** comes from your settings, so pin both for each role with a project-level settings file in its own working directory:
+
+```bash
+mkdir -p ~/juniper-builder/.cortex ~/juniper-analyst/.cortex
+
+cat > ~/juniper-builder/.cortex/settings.json <<'EOF'
+{ "cortexAgentConnectionName": "juniper_builder", "sqlConnectionName": "juniper_builder" }
+EOF
+
+cat > ~/juniper-analyst/.cortex/settings.json <<'EOF'
+{ "cortexAgentConnectionName": "juniper_analyst", "sqlConnectionName": "juniper_analyst" }
+EOF
+```
+
+From here on, start each session from its own directory. The header shows **Agent Connection** and **SQL Connection**; check that both name the same connection before you go on. The project-level files leave your global CoCo settings unchanged.
 
 <!-- ------------------------ -->
 ## Explore the Demo
@@ -151,57 +167,62 @@ Starting the build now lets it run in the background while you collect baseline 
 
 ### Start a new context
 
-Start a builder session and open the Cortex Sense page:
+Start a builder session from the builder directory:
 
 ```bash
+cd ~/juniper-builder
 cortex -c juniper_builder
 ```
 
-Type `/sense`, choose **+ Start a new Cortex Sense object**, and follow the prompts. CoCo scans your account and proposes a scope. Refine it in plain language until it matches this:
+Type `/sense` and choose **+ Start a new Cortex Sense object**. A short wizard follows:
 
-```
-Name the context juniper_health and create it in JUNIPER_HEALTH.SENSE.
-Include exactly these sources:
+1. **Name:** type `juniper_health`.
+2. **Scope:** paste this as a single line. A line break would submit it early.
 
-- Table and column metadata for JUNIPER_HEALTH.ANALYTICS.*
-- The semantic view JUNIPER_HEALTH.KNOWLEDGE.CLAIMS_SV_CERTIFIED, and no other semantic view
-- Query history, looking back 30 days
-- The markdown docs and saved SQL files on the stage
-  JUNIPER_HEALTH.KNOWLEDGE.KNOWLEDGE_STAGE, under markdown/ and query-history/
-- The Streamlit app JUNIPER_HEALTH.KNOWLEDGE.OPERATIONS_DASHBOARD
+   ```
+   Create it in JUNIPER_HEALTH.SENSE. Include exactly these sources: table and column metadata for JUNIPER_HEALTH.ANALYTICS.*; the semantic view JUNIPER_HEALTH.KNOWLEDGE.CLAIMS_SV_CERTIFIED and no other semantic view; query history looking back 30 days; the markdown docs and saved SQL files on the stage JUNIPER_HEALTH.KNOWLEDGE.KNOWLEDGE_STAGE under markdown/ and query-history/; and the Streamlit app JUNIPER_HEALTH.KNOWLEDGE.OPERATIONS_DASHBOARD. Don't include anything else from JUNIPER_HEALTH.KNOWLEDGE.
+   ```
 
-Don't include anything else from JUNIPER_HEALTH.KNOWLEDGE.
-```
+3. The wizard puts a `$cortex-sense create ...` message in the composer. Read it over and press Enter.
 
-Be strict about the semantic view source. It names one object in `KNOWLEDGE`, the certified view, rather than a wildcard over the schema. `ANALYTICS.CLAIMS_SV` is what the analyst sees without context, and indexing it as a definition would teach Cortex Sense the wrong one.
+The `cortex-sense` skill takes over. It runs pre-flight checks and asks permission to run its bundled scripts and some `SHOW` queries, all as `JUNIPER_BUILDER`. Then it shows the proposed scope:
 
-CoCo may ask about inputs it can't detect, such as a dbt project or BI tool. This demo has none, so skip them.
+| Source | Expected |
+|---|---|
+| Tables | `JUNIPER_HEALTH.ANALYTICS.*`, 8 tables |
+| Semantic views | `JUNIPER_HEALTH.KNOWLEDGE.CLAIMS_SV_CERTIFIED` only |
+| Streamlit apps | `JUNIPER_HEALTH.KNOWLEDGE.OPERATIONS_DASHBOARD` |
+| Files | `KNOWLEDGE_STAGE/markdown/` and `KNOWLEDGE_STAGE/query-history/` |
+| Excluded | `JUNIPER_HEALTH.KNOWLEDGE.*`, which keeps out the support view `CLAIMS_WITH_DENIAL_FLAG` |
+
+Query history doesn't appear in the box; the skill says it's handled internally. Be strict about the semantic view source. `ANALYTICS.CLAIMS_SV` is what the analyst sees without context, and indexing it as a definition would teach Cortex Sense the wrong one.
+
+The skill also stores the name in upper case, `JUNIPER_HEALTH`, unless you ask it to keep it lowercase. The rest of this guide uses `JUNIPER_HEALTH`.
 
 ### Confirm and let it run
 
-When the scope looks right, confirm it:
+The skill asks who else should get processing-failure notifications. Reply `just me`. Then:
 
-```
-looks good
-```
+1. Type `build` to approve the scope and notification setup.
+2. The skill drafts a description that agents read to decide when to use this context. Type `yes` to accept it, or type your own.
 
-Indexing starts only after you confirm, and the build takes a few hours. Leave this session open and move on to the baseline.
+The skill saves the context as `JUNIPER_HEALTH.SENSE.JUNIPER_HEALTH` and queues the build. The build runs as `JUNIPER_BUILDER` on `JUNIPER_WH`; you can say `use warehouse <name>` to change the warehouse, but the build role is fixed. In our test the build of this small scope finished in about 10 minutes; larger scopes take longer. Leave this session open and move on to the baseline.
 
 CoCo also accepts facts from you while it builds. Don't give it any here: if you tell it a definition, the comparison no longer measures what it learned from the sources.
 
 Scheduled refresh isn't implemented yet during private preview, so a context reflects its sources as they were when it was built.
 
-> **Cost:** Builds are billed at the same rates as `AI_COMPLETE` and scale with scope. Most early-preview customers spent fewer than 1,000 credits on an initial build, and small demo setups cost much less. During private preview you can't pick a warehouse or set a credit cap. Build credits appear in `CORTEX_AI_FUNCTIONS_USAGE_HISTORY`.
+> **Cost:** Builds are billed at the same rates as `AI_COMPLETE` and scale with scope. Most early-preview customers spent fewer than 1,000 credits on an initial build, and small demo setups cost much less. You can't set a credit cap during private preview. Build credits appear in `CORTEX_AI_FUNCTIONS_USAGE_HISTORY`.
 
 <!-- ------------------------ -->
 ## Ask Baseline Questions
 
 Now record what an agent answers without Cortex Sense. A new context has only one grant, `OWNERSHIP` for the builder role, so the analyst role can't reach it yet. **Finish this step before you grant the analyst role access** in a later step.
 
-Open a second terminal. Start the session from an empty directory, so the agent has no local files to read:
+Open a second terminal and start the analyst session from its directory, which holds nothing but its settings file:
 
 ```bash
-mkdir -p ~/juniper-analyst && cd ~/juniper-analyst
+cd ~/juniper-analyst
 cortex -c juniper_analyst
 ```
 
@@ -256,45 +277,39 @@ Exit this session when you're done.
 <!-- ------------------------ -->
 ## Check the Build
 
-Back in the builder session, type `/sense` to open the Cortex Sense page and pick `juniper_health`, or go straight to it with `/sense juniper_health`. `Tab` moves between tabs and `?` lists the keys.
+Back in the builder session, type `/sense` and pick `JUNIPER_HEALTH` from the list, or go straight to it with `/sense JUNIPER_HEALTH`. `Tab` moves between tabs and `?` lists the keys.
 
 | Tab | What to look for |
 |---|---|
-| **Overview** | Build state, eval score, and per-source progress |
-| **Scope** | The five sources from the build step, and nothing else from `KNOWLEDGE` |
+| **Overview** | Build state (**ready**), sources (**5 of 5**), accuracy, inbox, notification contacts, who has access, and suggested questions to try |
+| **Scope** | The sources from the build step, and nothing else from `KNOWLEDGE` |
 | **Inbox** | Corrections to what Cortex Sense believes about the data. `1` to `3` filter, `A` approves, `E` edits. |
 | **Accuracy** | Eval results, including lift over the pre-context baseline |
-| **Activate** | Options for using the context in an agent or a CoCo skill |
+| **Activate** | Ways to serve the context: a CoWork agent, an existing agent, or a CoCo skill |
 
-A **ready** state means the build finished, not that every source succeeded. Check per-source progress on **Overview** before you test anything, and note the context's exact name there. Don't create or change objects in `JUNIPER_HEALTH.SENSE` by hand, since that can corrupt the context.
+A **ready** state means the build finished, not that every source succeeded, so check the source count on **Overview**. Its suggested questions are a quick sign of what the build picked up: they should mention the readmission threshold, BEACON, and the Tailwind target. Don't create or change objects in `JUNIPER_HEALTH.SENSE` by hand, since that can corrupt the context.
 
 <!-- ------------------------ -->
 ## Ask Again with Cortex Sense
 
 ### Grant the analyst role access
 
-Querying a context needs only `USAGE` on it. Grant it from a Snowsight worksheet, keeping the quotes around the context name. If **Overview** showed a different name or case, use that:
+Querying a context needs `USAGE` on it, and, as with any schema object, `USAGE` on its schema. Grant both from a Snowsight worksheet. If you kept the name lowercase, quote it: `JUNIPER_HEALTH.SENSE."juniper_health"`.
 
 ```sql
 USE ROLE JUNIPER_BUILDER;
-GRANT USAGE ON CORTEX SENSE JUNIPER_HEALTH.SENSE."juniper_health" TO ROLE JUNIPER_ANALYST;
-SHOW GRANTS ON CORTEX SENSE JUNIPER_HEALTH.SENSE."juniper_health";
+GRANT USAGE ON SCHEMA JUNIPER_HEALTH.SENSE TO ROLE JUNIPER_ANALYST;
+GRANT USAGE ON CORTEX SENSE JUNIPER_HEALTH.SENSE.JUNIPER_HEALTH TO ROLE JUNIPER_ANALYST;
+SHOW GRANTS ON CORTEX SENSE JUNIPER_HEALTH.SENSE.JUNIPER_HEALTH;
 ```
 
 `SHOW GRANTS` reports the object type as `CORTEX_CONTEXT`, which is how `CORTEX SENSE` objects are reported back.
 
 `JUNIPER_ANALYST` still can't read the `KNOWLEDGE` schema. Any definition it uses from here on has to come through the context.
 
-### Activate the context
-
-In the builder session, open the **Activate** tab and choose how to serve the context:
-
-- A CoCo serving skill, which queries this context from CoCo. Follow the prompts on the tab to generate and install it. Anyone who uses it also needs `USAGE` on the context, which you just granted.
-- A Cortex Agent that uses this context, either new or an existing agent you add the context to. CoWork runs on Cortex Agents, so it uses the same context. Access to an agent is separate from access to its context, so also grant `USAGE` on the agent to `JUNIPER_ANALYST`.
-
 ### Ask the same questions
 
-For the serving skill, start a new analyst session from the same empty directory:
+Start a new analyst session from its directory:
 
 ```bash
 cd ~/juniper-analyst
@@ -307,12 +322,20 @@ Set the ground rules again, this time pointing at the context:
 You are a data analyst at Juniper Valley Health. Before anything else, run
 USE SECONDARY ROLES NONE; then show me
 SELECT CURRENT_ROLE(), CURRENT_SECONDARY_ROLES().
-Use the juniper_health Cortex Sense context for definitions, and compute every
-answer against the tables in JUNIPER_HEALTH.ANALYTICS. Don't read query history,
-search the web, read local files, or search past conversations.
+Use the JUNIPER_HEALTH.SENSE.JUNIPER_HEALTH Cortex Sense context for definitions,
+and compute every answer against the tables in JUNIPER_HEALTH.ANALYTICS. Don't
+read query history, search the web, or search past conversations.
 ```
 
-Ask the same five questions. Here are the correct answers, so you can check what comes back:
+This prompt drops the baseline's rule against reading local files, because the `cortex-sense` skill reads its own instruction files.
+
+CoCo won't always reach for the context on its own yet, so ask each question through the skill, naming the context:
+
+```
+$cortex-sense query JUNIPER_HEALTH.SENSE.JUNIPER_HEALTH about: What's our clean claim rate by payer?
+```
+
+Ask the same five questions that way. Each answer cites the context entries it used. Here are the correct answers, so you can check what comes back:
 
 | Question | Correct answer | Source of the definition |
 |---|---|---|
@@ -326,7 +349,13 @@ The release and BEACON answers both depend on the readmission definition, becaus
 
 The Tailwind question shows that scope can matter more than the formula. The same 24-hour calculation gives 49.7% across all facilities and 78.3% across the ACO facilities the program covers.
 
+In our test run, all five answers with context matched this table, each with citations to the context. The readmission answer also flagged the naive 20.3% reading as the wrong method, unprompted.
+
 A wrong answer to the release question costs the most. In our baseline run, the agent without context recommended suppressing Summit Orthopedic Hospital, which the policy doesn't require, and left Women's and Children's visible, which it does. It also never mentioned the Data Governance Council approval the policy requires.
+
+### Share it beyond CoCo
+
+To put the context in front of people who don't use CoCo, open the **Activate** tab in the builder session. You can create a CoWork agent from the context, add it to an existing agent, or create a CoCo skill. Access to an agent is separate from access to its context, so anyone using the agent also needs `USAGE` on the agent and on the context.
 
 <!-- ------------------------ -->
 ## Improve the Context
@@ -346,17 +375,17 @@ The companion repository has all seven questions and their expected answers in [
 <!-- ------------------------ -->
 ## Clean Up
 
-First remove what you created on the **Activate** tab: uninstall the serving skill, and drop any agent you created. Then delete the context. In the builder session, ask:
+If you used the **Activate** tab, first remove what it created: uninstall the CoCo skill, and drop any agent. Then delete the context. In the builder session, ask:
 
 ```
-Delete the juniper_health Cortex Sense context in JUNIPER_HEALTH.SENSE.
+Delete the JUNIPER_HEALTH Cortex Sense context in JUNIPER_HEALTH.SENSE.
 ```
 
-Deleting a context is asynchronous. Check that it no longer appears on the `/sense` page before you continue.
+The skill shows the exact command it will run and asks you to type the context name to confirm. It leaves two things behind: the notification contact `JUNIPER_HEALTH.SENSE.JUNIPER_HEALTH_CONTACT`, which goes when the database is dropped, and a local `juniper_health_scope.yaml` draft in `~/juniper-builder`. Check that the context no longer appears on the `/sense` page before you continue.
 
 Then run [`teardown.sql`](https://github.com/sfc-gh-JCHAEARLEY/sfguide-getting-started-with-cortex-sense/blob/main/teardown.sql) in a Snowsight SQL worksheet. It drops the database as `JUNIPER_BUILDER`, then removes the warehouse, the API integration, and both demo roles as `ACCOUNTADMIN`.
 
-Finally, delete the `juniper_builder` and `juniper_analyst` blocks from `~/.snowflake/connections.toml`, and the `~/juniper-analyst` directory.
+Finally, delete the `juniper_builder` and `juniper_analyst` blocks from `~/.snowflake/connections.toml`, and the `~/juniper-builder` and `~/juniper-analyst` directories.
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
