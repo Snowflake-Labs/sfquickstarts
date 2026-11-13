@@ -40,6 +40,7 @@ jobs:
             /scripts/validate/
             /scripts/aem-staging/
             /scripts/data/
+            /scripts/requirements.txt
             /site/sfguides/src/*/*.md
             /journeys/*/*/*.md
           sparse-checkout-cone-mode: false
@@ -91,6 +92,7 @@ jobs:
             large-files-error.json
             categories-error.json
             frontmatter-error.json
+            duplicate-content-error.json
             sidebar-error.json
             validation-error.json
             profanity-report.json
