@@ -97,7 +97,7 @@ The script is the same in every guide of this series. It runs as ACCOUNTADMIN an
 
 **3. Account-level privileges.** A project cannot grant account-level privileges to its own owner, so they all happen here, before the first plan. DCM_DEVELOPER gets the privileges that the guides in this series need together, one grant per line, each with a comment naming the guide or feature that uses it. Some are checked at plan time, so a missing one fails the first plan rather than the deploy.
 
-**4. Series container.** It creates the DCM_DEMO database and the DCM_DEMO.PROJECTS schema that holds the project objects of the series, and grants DCM_DEVELOPER USAGE on both and CREATE DCM PROJECT on the schema. A project cannot define the database or schema it lives in.
+**4. Series container.** It creates the DCM_DEMO database and the DCM_DEMO.PROJECTS schema that holds the platform project object of each guide in the series, and grants DCM_DEVELOPER USAGE on both and CREATE DCM PROJECT on the schema. A project cannot define the database or schema it lives in.
 
 **5. Project object.** It creates the Platform project object, DCM_DEMO.PROJECTS.DCM_PLATFORM_DEV, as DCM_DEVELOPER. This is the only section that differs between the guides.
 
@@ -117,7 +117,7 @@ The Platform project uses them to let each team read every table in the shared R
 
 Four grants in section 3 are there so the Platform project can hand privileges on to the teams. The script comments say why: EXECUTE DATA METRIC FUNCTION and the SNOWFLAKE.DATA_QUALITY_MONITORING_VIEWER application role are for the Finance team's expectations, EXECUTE ALERT is for Finance's alert, and EXECUTE TASK is for the Marketing team's task graph. A role can only pass on a privilege it holds WITH GRANT OPTION, which is why the script grants EXECUTE DATA METRIC FUNCTION, EXECUTE ALERT and EXECUTE TASK that way. Without the grant option on EXECUTE DATA METRIC FUNCTION, the first plan fails with "Grant not executed: Insufficient privileges".
 
-The Platform project object lives in DCM_DEMO.PROJECTS. The Finance and Marketing project objects will live somewhere else: each in a PROJECTS schema inside the team's own database, which the Platform project creates.
+The Platform project object lives in DCM_DEMO.PROJECTS. The Finance and Marketing project objects will live somewhere else: in a DCM schema inside the platform database, which the Platform project creates.
 
 **Update the manifests before the first plan.** Copy ACCOUNT_IDENTIFIER from the last query of scripts/01_pre_deploy.sql into the account_identifier line of the DCM_DEV target in all three manifests: DCM_Platform_Demo/manifest.yml, DCM_Finance_Demo/manifest.yml and DCM_Marketing_Demo/manifest.yml (line 11 in each, marked "# update to your account names").
 
@@ -168,14 +168,14 @@ assets:
 
 | File | What it defines |
 |---|---|
-| raw.sql | The shared database DCM_DEMO_2_DEV, its RAW schema and three staging tables |
+| raw.sql | The shared database DCM_DEMO_2_DEV, its RAW schema and three staging tables, and the DCM schema for the team projects |
 | ingest.sql | The platform warehouse, a stage filled from the sample_data asset, a file format and the load task |
 | wh_roles_and_grants.sql | A warehouse, a database and a role for each team, and the team's access to RAW |
 | sources/macros/grants_macro.sql | The team role and the read-only READER role, as a macro |
 
 #### Raw tables
 
-raw.sql defines CUSTOMER_STG, ACCOUNT_STG and TRADE_STG: customers, their brokerage accounts, and the trades placed on those accounts. Each table sets CHANGE_TRACKING = TRUE (lines 29, 39 and 54) so that the Finance project's dynamic tables can track what changed between refreshes.
+raw.sql defines CUSTOMER_STG, ACCOUNT_STG and TRADE_STG: customers, their brokerage accounts, and the trades placed on those accounts. Each table sets CHANGE_TRACKING = TRUE (lines 35, 45 and 60) so that the Finance project's dynamic tables can track what changed between refreshes.
 
 #### Ingestion
 
@@ -194,7 +194,7 @@ The load task (ingest.sql, lines 38 to 57) copies the three files into the three
 
 #### Per-team infrastructure
 
-wh_roles_and_grants.sql is one loop over the teams in the manifest. Every team gets the same footprint: a warehouse, a database with a PROJECTS schema for the team's own DCM projects, and a team role from the macro. A team with READ or WRITE access can read every table in RAW through an inherited grant; NONE skips those grants.
+wh_roles_and_grants.sql is one loop over the teams in the manifest. Every team gets the same footprint: a warehouse, a database, and a team role from the macro. A team with READ or WRITE access can read every table in RAW through an inherited grant; NONE skips those grants.
 
 Every warehouse in this guide is an [adaptive warehouse](https://docs.snowflake.com/en/user-guide/warehouses-adaptive) (lines 16 to 20):
 
@@ -224,7 +224,7 @@ Each team also gets the account-level privileges its pipeline style needs (lines
 
 Finance builds on dynamic tables: it attaches data quality expectations, reads their results, and owns an alert that watches them. Marketing builds on Spark and owns a task graph.
 
-The macro in sources/macros/grants_macro.sql creates the team role, DCM_DEMO_2_<TEAM>_DEV_ADMIN, with what a project owner needs inside the team database: create schemas, and create DCM projects in PROJECTS. It rolls each team role up to the Platform project's owner (line 16), so you can act as either team later without any extra setup.
+The macro in sources/macros/grants_macro.sql creates the team role, DCM_DEMO_2_<TEAM>_DEV_ADMIN, with what a project owner needs inside the team database (create schemas), and the right to create DCM projects in the platform's DCM schema. It rolls each team role up to the Platform project's owner (line 18), so you can act as either team later without any extra setup.
 
 The macro also defines a read-only role for the team's consumers, analysts and dashboards that query what the team publishes but never change it (lines 23 to 29):
 
@@ -313,15 +313,15 @@ VALUES
 
 The trade file holds 20 trades, one of them cancelled (T_ST_ID is CNCL). Add the two trades inserted today and TRADE_STG has 22 rows.
 
-**5. Create the team projects.** The Finance and Marketing project objects live in the teams' PROJECTS schemas, which the platform deploy just created, so 01_pre_deploy.sql couldn't create them. Each is created by its team role, which owns it. Refresh your browser afterwards so the DCM control panel lists both.
+**5. Create the team projects.** The Finance and Marketing project objects live in DCM_DEMO_2_DEV.DCM, a schema the platform deploy just created, so 01_pre_deploy.sql couldn't create them. Each is created by its team role, which owns it. Refresh your browser afterwards so the DCM control panel lists both.
 
 ```sql
 USE ROLE DCM_DEMO_2_FINANCE_DEV_ADMIN;
-CREATE DCM PROJECT IF NOT EXISTS DCM_DEMO_2_FINANCE_DEV.PROJECTS.FINANCE_PIPELINE
+CREATE DCM PROJECT IF NOT EXISTS DCM_DEMO_2_DEV.DCM.FINANCE_PIPELINE
     COMMENT = 'DEV Finance project of the Build Data Pipelines with Snowflake DCM Projects quickstart';
 
 USE ROLE DCM_DEMO_2_MARKETING_DEV_ADMIN;
-CREATE DCM PROJECT IF NOT EXISTS DCM_DEMO_2_MARKETING_DEV.PROJECTS.MARKETING_PIPELINE
+CREATE DCM PROJECT IF NOT EXISTS DCM_DEMO_2_DEV.DCM.MARKETING_PIPELINE
     COMMENT = 'DEV Marketing project of the Build Data Pipelines with Snowflake DCM Projects quickstart';
 ```
 
@@ -338,12 +338,12 @@ The DEV target and its configuration (the manifest also defines a DCM_PROD targe
 targets:
   DCM_DEV:
     account_identifier: MYORG-MY_DEV_ACCOUNT        # update to your account names
-    project_name: DCM_DEMO_2_FINANCE_DEV.PROJECTS.FINANCE_PIPELINE
+    project_name: DCM_DEMO_2_DEV.DCM.FINANCE_PIPELINE
     project_owner: DCM_DEMO_2_FINANCE_DEV_ADMIN
     templating_config: DEV
 ```
 
-The project object lives in the Finance team's own database, DCM_DEMO_2_FINANCE_DEV.PROJECTS, not in the shared DCM_DEMO.PROJECTS. Its owner is the Finance role the Platform project created. The Finance team can plan and deploy its pipeline without asking an account administrator for anything: everything it needs, the Platform project granted.
+The project object lives in DCM_DEMO_2_DEV.DCM, the DCM schema of the platform database, next to the raw data the pipeline builds on, not in the series-wide DCM_DEMO.PROJECTS. Both teams create their projects in that one schema, but each project is owned by its team role, so neither team can see or deploy the other's. Its owner is the Finance role the Platform project created. The Finance team can plan and deploy its pipeline without asking an account administrator for anything: everything it needs, the Platform project granted.
 
 ### Definition files
 
@@ -538,7 +538,7 @@ Jinja doesn't render inside specification files, and the specification names the
 <!-- ------------------------ -->
 ## Deploy the Finance Project
 
-The Finance project object, DCM_DEMO_2_FINANCE_DEV.PROJECTS.FINANCE_PIPELINE, already exists: 02_platform_post_deploy.sql created it as the Finance role, which owns this project, once the platform deploy had created its schema. If the DCM control panel doesn't list it, refresh your browser.
+The Finance project object, DCM_DEMO_2_DEV.DCM.FINANCE_PIPELINE, already exists: 02_platform_post_deploy.sql created it as the Finance role, which owns this project, once the platform deploy had created its schema. If the DCM control panel doesn't list it, refresh your browser.
 
 ### Plan
 
@@ -648,7 +648,7 @@ You asked for two metrics by one dimension, by name; the semantic view supplied 
 ### Run the expectations
 
 ```sql
-EXECUTE DCM PROJECT DCM_DEMO_2_FINANCE_DEV.PROJECTS.FINANCE_PIPELINE TEST ALL;
+EXECUTE DCM PROJECT DCM_DEMO_2_DEV.DCM.FINANCE_PIPELINE TEST ALL;
 ```
 
 TEST ALL evaluates every expectation the project defines and returns one JSON document. Its status is SUCCESSFUL: all five expectations pass on the sample data.
@@ -712,7 +712,7 @@ The DEV target and its configuration (the manifest also defines a DCM_PROD targe
 targets:
   DCM_DEV:
     account_identifier: MYORG-MY_DEV_ACCOUNT        # update to your account names
-    project_name: DCM_DEMO_2_MARKETING_DEV.PROJECTS.MARKETING_PIPELINE
+    project_name: DCM_DEMO_2_DEV.DCM.MARKETING_PIPELINE
     project_owner: DCM_DEMO_2_MARKETING_DEV_ADMIN
     templating_config: DEV
 ```
@@ -846,11 +846,11 @@ The four tasks:
 | Task | Runs after | What it does |
 |---|---|---|
 | CHECK_INPUTS | (root) | Counts the rows in the raw trades table and fails the run if there are none |
-| BUILD_SEGMENTS | CHECK_INPUTS | Runs the Spark job with EXECUTE CODE BUNDLE |
+| BUILD_SEGMENTS | CHECK_INPUTS | Runs the Spark job, as a code bundle task |
 | REPORT_SEGMENTS | BUILD_SEGMENTS | Summarises the segments the job wrote |
 | ON_FAILURE | BUILD_SEGMENTS | Records which step stopped the run, and runs only when one did |
 
-BUILD_SEGMENTS (lines 43 to 57) is the task that runs the job:
+BUILD_SEGMENTS (lines 43 to 59) is the task that runs the job:
 
 ```yaml
   - resource: task
@@ -859,22 +859,26 @@ BUILD_SEGMENTS (lines 43 to 57) is the task that runs the job:
     predecessors:
       - DCM_DEMO_2_MARKETING{{env_suffix}}.SEGMENTS.CHECK_INPUTS
     comment: Runs the Spark job
+    # A code bundle task: the graph runs the bundle declared above directly,
+    # with no SQL wrapper.
     definition:
-      type: sql
-      value: |
-        BEGIN
-            EXECUTE CODE BUNDLE DCM_DEMO_2_MARKETING{{env_suffix}}.SEGMENTS.SEGMENTS_JOB
-                ENTRYPOINT = 'segments.py'
-                ARGUMENTS = ('--raw-db', 'DCM_DEMO_2{{env_suffix}}', '--target-db', 'DCM_DEMO_2_MARKETING{{env_suffix}}');
-            CALL SYSTEM$SET_RETURN_VALUE('Spark job finished');
-        END
+      type: code_bundle
+      name: DCM_DEMO_2_MARKETING{{env_suffix}}.SEGMENTS.SEGMENTS_JOB
+      entrypoint: segments.py
+      arguments:
+        - --raw-db
+        - DCM_DEMO_2{{env_suffix}}
+        - --target-db
+        - DCM_DEMO_2_MARKETING{{env_suffix}}
 ```
+
+Its definition type is code_bundle, not sql: it names the SEGMENTS_JOB bundle declared at the top of the file, the entry point, and the arguments, and DCM turns that into an EXECUTE CODE BUNDLE task. In the Pipeline Builder canvas it shows as a code bundle node, with the bundle's specification one click away. Because there is no SQL body, the task sets no return value of its own.
 
 The graph deploys suspended, so its daily schedule never fires. You run it on demand.
 
 #### A failure branch
 
-By default, a task runs only when all of its predecessors succeeded. If CHECK_INPUTS fails, nothing after it is scheduled, and the run simply stops. ON_FAILURE (lines 78 to 95) changes that with [advanced branching](https://docs.snowflake.com/en/user-guide/tasks-graphs#label-task-graph-advanced-branching):
+By default, a task runs only when all of its predecessors succeeded. If CHECK_INPUTS fails, nothing after it is scheduled, and the run simply stops. ON_FAILURE (lines 80 to 97) changes that with [advanced branching](https://docs.snowflake.com/en/user-guide/tasks-graphs#label-task-graph-advanced-branching):
 
 ```yaml
   - resource: task
@@ -916,7 +920,7 @@ The app's files ship with the project as the segments_dashboard asset, so the da
 <!-- ------------------------ -->
 ## Deploy the Marketing Project
 
-The Marketing project object, DCM_DEMO_2_MARKETING_DEV.PROJECTS.MARKETING_PIPELINE, was created by 02_platform_post_deploy.sql as the Marketing role, which owns this project.
+The Marketing project object, DCM_DEMO_2_DEV.DCM.MARKETING_PIPELINE, was created by 02_platform_post_deploy.sql as the Marketing role, which owns this project.
 
 ### Plan
 
@@ -986,7 +990,7 @@ EXECUTE TASK GRAPH runs CHECK_INPUTS, then BUILD_SEGMENTS (the Spark job), then 
 |---|---|---|
 | REPORT_SEGMENTS | SUCCEEDED | segments: ACTIVE=2 OCCASIONAL=4 |
 | ON_FAILURE | SKIPPED | |
-| BUILD_SEGMENTS | SUCCEEDED | Spark job finished |
+| BUILD_SEGMENTS | SUCCEEDED | |
 | CHECK_INPUTS | SUCCEEDED | raw trades available: 22 |
 
 ON_FAILURE appears in the history even though it didn't run: the graph uses advanced branching, so every task is scheduled, and ON_FAILURE's condition evaluated to false. Its ERROR_MESSAGE reads "Conditional expression for task evaluated to false."
@@ -1065,15 +1069,15 @@ To remove everything this guide created, open scripts/05_cleanup.sql and run it.
 
     ```sql
     USE ROLE DCM_DEMO_2_FINANCE_DEV_ADMIN;
-    EXECUTE DCM PROJECT DCM_DEMO_2_FINANCE_DEV.PROJECTS.FINANCE_PIPELINE PURGE;
+    EXECUTE DCM PROJECT DCM_DEMO_2_DEV.DCM.FINANCE_PIPELINE PURGE;
 
     USE ROLE DCM_DEMO_2_MARKETING_DEV_ADMIN;
-    EXECUTE DCM PROJECT DCM_DEMO_2_MARKETING_DEV.PROJECTS.MARKETING_PIPELINE PURGE;
+    EXECUTE DCM PROJECT DCM_DEMO_2_DEV.DCM.MARKETING_PIPELINE PURGE;
 
-    DROP DCM PROJECT IF EXISTS DCM_DEMO_2_MARKETING_DEV.PROJECTS.MARKETING_PIPELINE;
+    DROP DCM PROJECT IF EXISTS DCM_DEMO_2_DEV.DCM.MARKETING_PIPELINE;
 
     USE ROLE DCM_DEMO_2_FINANCE_DEV_ADMIN;
-    DROP DCM PROJECT IF EXISTS DCM_DEMO_2_FINANCE_DEV.PROJECTS.FINANCE_PIPELINE;
+    DROP DCM PROJECT IF EXISTS DCM_DEMO_2_DEV.DCM.FINANCE_PIPELINE;
 
     USE ROLE DCM_DEVELOPER;
     EXECUTE DCM PROJECT DCM_DEMO.PROJECTS.DCM_PLATFORM_DEV PURGE;
