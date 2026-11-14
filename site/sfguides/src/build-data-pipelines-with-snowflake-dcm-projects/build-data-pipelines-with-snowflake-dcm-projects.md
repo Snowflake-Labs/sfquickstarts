@@ -35,7 +35,6 @@ The two teams are completely separate. Each reads the shared raw layer and nothi
 - How to run a task graph that writes into an Iceberg table DCM created, with a PyPI package in the Spark job
 - How to add a failure branch to a task graph with advanced branching
 - How to ship a Streamlit dashboard in the same project as the table it reads
-- How to check that two teams are separated
 
 ### What You'll Need
 - A Snowflake account with ACCOUNTADMIN access, for the one-time setup script
@@ -966,11 +965,10 @@ Open scripts/04_marketing_post_deploy.sql in a Snowsight worksheet. It runs as t
 
 ```sql
 USE ROLE DCM_DEMO_2_MARKETING_DEV_ADMIN;
-USE SECONDARY ROLES NONE;
 USE WAREHOUSE DCM_DEMO_2_MARKETING_WH_DEV;
 ```
 
-USE SECONDARY ROLES NONE makes every statement run with the team role alone. Without it, secondary roles granted to your user (often ACCOUNTADMIN) add their privileges, and the checks in the next section would all pass for the wrong reason. Run steps 1 and 2 now.
+Run steps 1 and 2.
 
 ### Run the task graph once
 
@@ -1032,29 +1030,6 @@ The Spark job did not recreate the table. It only replaced its rows.
 ### Open the dashboard
 
 **In Snowsight:** go to **Projects > Streamlit** and open **Customer segments**. It filters the customers by activity tier and shows their count, their total trading value, the number of customers per preferred channel, and the customer list. The dashboard reads CUSTOMER_SEGMENTS directly, so it shows whatever the last good run of the task graph wrote.
-
-<!-- ------------------------ -->
-## Check Team Separation and the READER Role
-
-Steps 3 and 4 of scripts/04_marketing_post_deploy.sql check that the two teams are separate. Keep USE SECONDARY ROLES NONE in effect and run each statement of step 3 on its own. The first succeeds; the other two fail.
-
-| Statement | Result |
-|---|---|
-| SELECT COUNT(*) FROM DCM_DEMO_2_DEV.RAW.TRADE_STG | 22. Both teams read the shared raw layer. |
-| SELECT COUNT(*) FROM DCM_DEMO_2_FINANCE_DEV.GOLD.DAILY_TRADING | Error 002003: does not exist or not authorized. Marketing cannot see the Finance database at all. |
-| INSERT INTO DCM_DEMO_2_DEV.RAW.TRADE_STG (T_ID) VALUES (9999) | Error 003001: insufficient privileges. No team writes to the platform's raw layer. |
-
-Without USE SECONDARY ROLES NONE, the default secondary roles of your user (often ACCOUNTADMIN) make every check pass.
-
-### The READER role
-
-Each team database has a READER database role for consumers. Step 4 shows what it grants:
-
-```sql
-SHOW GRANTS TO DATABASE ROLE DCM_DEMO_2_MARKETING_DEV.READER;
-```
-
-The role has USAGE on the database, USAGE on the schemas (inherited), and SELECT on the tables and dynamic tables (inherited). Because the grants are inherited, it reads everything the team publishes, including tables created after the grant, and changes nothing. The team admin role holds it and hands it out.
 
 <!-- ------------------------ -->
 ## Cleanup
@@ -1125,7 +1100,7 @@ In this guide, you:
 - **Gated the refreshes with expectations** on the silver and gold layers, saw the gates with a query, and learned to put the action on every expectation of the monitored table
 - **Declared a semantic view, an alert and an agent** next to the tables they describe, with the agent's specification in a YAML file Agent Studio can open
 - **Ran a Spark task graph** into a DCM-created Iceberg table, with a PyPI package installed from pyproject.toml and a failure branch built with advanced branching
-- **Shipped a Streamlit dashboard** with the table it reads, on adaptive warehouses throughout, and checked that the two teams are separate
+- **Shipped a Streamlit dashboard** with the table it reads, on adaptive warehouses throughout
 
 ### What's Next
 
