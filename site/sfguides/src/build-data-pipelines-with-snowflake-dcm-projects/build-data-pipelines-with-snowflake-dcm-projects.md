@@ -502,12 +502,13 @@ DEFINE ALERT DCM_DEMO_2_FINANCE{{env_suffix}}.SILVER.EXPECTATION_VIOLATIONS
         "SCOPE_ACTIVE": "SCHEMA",
         "SCOPE_DATABASE": "DCM_DEMO_2_FINANCE{{env_suffix}}",
         "SCOPE_SCHEMA": "SILVER",
-        "NOTIFICATION_MODE": "IN_APP"}}';
+        "NOTIFICATION_MODE": "IN_APP"}}'
+    STARTED;
 ```
 
 An alert template is a ready-made condition and action that Snowflake renders into an alert from a few parameters. DQ_EXPECTATION_VIOLATIONS checks for failed expectations on a schedule and notifies when it finds one, so you do not write the monitoring query yourself. FROM TEMPLATE generates the condition and the action; TEMPLATE_PARAMS only says what to watch (the SILVER schema, where the expectations live) and how to notify. IN_APP sends the notification to the Snowsight user who deployed the alert, so no notification integration is needed.
 
-A template alert deploys suspended, and STARTED is not accepted on DEFINE ALERT ... FROM TEMPLATE, so the post-deploy script resumes it.
+STARTED, last in the statement, makes DCM deploy the alert running, so there is nothing to resume after the deploy.
 
 #### Agent
 
@@ -577,20 +578,21 @@ When the changeset matches what you expected, deploy it.
 snow dcm deploy --target DCM_DEV --role DCM_DEMO_2_FINANCE_DEV_ADMIN --alias initial-finance
 ```
 
-The deploy reports "Deployed 9 entities (8 created, 1 altered, 0 dropped)." The dynamic tables are empty until their first refresh, and the alert is suspended until you resume it.
+The deploy reports "Deployed 9 entities (8 created, 1 altered, 0 dropped)." The dynamic tables are empty until their first refresh. The alert is already running.
 
 <!-- ------------------------ -->
 ## Query, Test and Inspect the Gates
 
 Open scripts/03_finance_post_deploy.sql in a Snowsight worksheet. It runs as the Finance role, on the Finance warehouse. Run steps 1 to 5 now; step 6 is the next section.
 
-### Start the alert
+### Check the alert
 
 ```sql
-ALTER ALERT DCM_DEMO_2_FINANCE_DEV.SILVER.EXPECTATION_VIOLATIONS RESUME;
+SHOW ALERTS IN SCHEMA DCM_DEMO_2_FINANCE_DEV.SILVER;
+SELECT "name", "state", "schedule" FROM TABLE(RESULT_SCAN(LAST_QUERY_ID()));
 ```
 
-The alert now checks the silver layer's expectations every five minutes and notifies you in Snowsight (the bell icon) if one fails.
+SHOW ALERTS reports EXPECTATION_VIOLATIONS as started. It checks the silver layer's expectations every five minutes and notifies you in Snowsight (the bell icon) if one fails.
 
 ### Refresh the pipeline
 
