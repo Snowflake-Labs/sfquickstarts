@@ -710,7 +710,7 @@ DESCRIBE SECRET DCM_DEMO_1_DEV.RAW.PARTNER_API_KEY;
 
 The deployment history keeps the same discipline: its deploy_result.json records "BUILD_NUMBER": "101" and "PARTNER_API_KEY": "********". When we ran this guide, a search for the key across the definition files, the plan output, the deployment's files and the account's query history found it nowhere.
 
-**When you rotate the key,** know that plan does not currently detect a change to a secret's value alone: it reports No changes detected and the old value stays. Change another property of the secret in the same deploy, such as the build number in its comment.
+**To rotate the key,** supply the new value and plan again. The changeset shows one ALTER on the secret, with SECRET_STRING changed from ******** to ********, and the deploy stores the new value. Nothing else about the definition has to change.
 
 <!-- ------------------------ -->
 ## Detach and Clean Up
