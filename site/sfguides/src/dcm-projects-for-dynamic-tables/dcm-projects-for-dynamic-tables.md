@@ -130,7 +130,7 @@ The sources/definitions/ directory contains the SQL that defines your infrastruc
 - **expectations.sql:** three data quality expectations: on a table, a dynamic table and a view.
 - **alerts.sql:** DT_REFRESH_FAILURE, an alert built from a Snowflake alert template.
 
-DT_REFRESH_FAILURE watches every dynamic table in DCM_DEMO_3_DEV and posts an in-app notification in Snowsight when a refresh fails. It reads the refresh failure events that LOG_EVENT_LEVEL = ERROR on the database writes to the event table. An alert built from a template cannot be declared STARTED, so DCM deploys it suspended and scripts/02_post_deploy.sql resumes it.
+DT_REFRESH_FAILURE watches every dynamic table in DCM_DEMO_3_DEV and posts an in-app notification in Snowsight when a refresh fails. It reads the refresh failure events that LOG_EVENT_LEVEL = ERROR on the database writes to the event table. Its definition ends with STARTED, so DCM deploys it running.
 
 Here's how infrastructure.sql defines the warehouse and the database:
 
