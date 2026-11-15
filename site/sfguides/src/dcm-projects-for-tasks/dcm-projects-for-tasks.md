@@ -272,7 +272,8 @@ DEFINE ALERT DCM_DEMO_4{{env_suffix}}.PIPELINE.TASK_ERROR_RATE
     WAREHOUSE = DCM_DEMO_4_WH{{env_suffix}}
     SCHEDULE = '60 MINUTE'
     COMMENT = 'Emails when more than 10% of task runs in the database failed'
-    TEMPLATE_PARAMS = '{"template_variables":{"ERROR_RATE_THRESHOLD":0.1,"SCOPE_ACTIVE":"DATABASE","SCOPE_DATABASE":"DCM_DEMO_4{{env_suffix}}","NOTIFICATION_MODE":"EMAIL","EMAIL_NOTIFICATION_INTEGRATION":"DCM_DEMO_4_EMAIL_INT"},"notification_config":{"notification_integration":"DCM_DEMO_4_EMAIL_INT","email_config":{"toAddress":["{{alert_email}}"]}}}';
+    TEMPLATE_PARAMS = '{"template_variables":{"ERROR_RATE_THRESHOLD":0.1,"SCOPE_ACTIVE":"DATABASE","SCOPE_DATABASE":"DCM_DEMO_4{{env_suffix}}","NOTIFICATION_MODE":"EMAIL","EMAIL_NOTIFICATION_INTEGRATION":"DCM_DEMO_4_EMAIL_INT"},"notification_config":{"notification_integration":"DCM_DEMO_4_EMAIL_INT","email_config":{"toAddress":["{{alert_email}}"]}}}'
+    STARTED;
 ```
 
 TEMPLATE_PARAMS fills in the template:
@@ -281,7 +282,7 @@ TEMPLATE_PARAMS fills in the template:
 - **NOTIFICATION_MODE and EMAIL_NOTIFICATION_INTEGRATION** send the notification by email through the integration from 02_guide_setup.sql.
 - **notification_config.email_config.toAddress** is the recipient, your alert_email from the manifest. Recipients aren't a template variable, and both the integration variable and toAddress are needed: with the integration only in notification_config, the alert emails the user who created it instead; with no toAddress, the send fails with "No recipients specified".
 
-The alert runs on the same warehouse as the tasks, so the whole guide uses one compute model. Two more things make it work. The alert counts only tasks owned by roles that its own owner holds, which is the case here because DCM_DEVELOPER owns both. And an alert from a template can't be declared STARTED: the keyword is a syntax error after FROM TEMPLATE. DCM therefore deploys the alert suspended, and you resume it right after the first deploy.
+The alert runs on the same warehouse as the tasks, so the whole guide uses one compute model. Two more things make it work. The alert counts only tasks owned by roles that its own owner holds, which is the case here because DCM_DEVELOPER owns both. And STARTED, last in the statement, makes DCM deploy the alert running, so there is nothing to resume after the deploy.
 
 <!-- ------------------------ -->
 ## Plan and Deploy
@@ -327,13 +328,7 @@ Open scripts/03_post_deploy.sql in a worksheet and run the whole script. It take
 
 The tables below show the values in a simplified form: predecessors without the JSON brackets, task_parameters as a name and a value, NULL for a NULL value and '' for an empty string. Your worksheet shows the raw values.
 
-Section 1 resumes the alert. DCM deployed it suspended, because an alert from a template can't be declared STARTED, so this one statement is the only state change you make outside the project:
-
-```sql
-ALTER ALERT DCM_DEMO_4_DEV.PIPELINE.TASK_ERROR_RATE RESUME;
-```
-
-SHOW ALERTS then reports it as started, checking every 60 minutes on the project's warehouse:
+Section 1 checks the alert. DCM deployed it running, because its definition ends with STARTED. SHOW ALERTS reports it as started, checking every 60 minutes on the project's warehouse:
 
 | NAME | STATE | SCHEDULE | WAREHOUSE |
 |---|---|---|---|
@@ -519,7 +514,7 @@ The graph and the alert are started the whole time.
 
 Open scripts/05_verify_change.sql and run the whole script. Like 03_post_deploy.sql, it waits for its graph run, and running it again changes nothing.
 
-SHOW TASK GRAPHS reports the graph as STARTED, has_pending_changes as false, and last_suspended_on as empty: the graph was never suspended during the deployment. Its task_defaults now show the 300000 ms timeout. SHOW ALERTS still reports TASK_ERROR_RATE as started: the redeploy didn't suspend the alert you resumed after the first deploy.
+SHOW TASK GRAPHS reports the graph as STARTED, has_pending_changes as false, and last_suspended_on as empty: the graph was never suspended during the deployment. Its task_defaults now show the 300000 ms timeout. SHOW ALERTS still reports TASK_ERROR_RATE as started: the redeploy didn't suspend it.
 
 SHOW COMMITTED TASKS shows version 2, and the new task is part of it. Every member, including the new one, inherited the shorter timeout from TASK_DEFAULTS:
 
@@ -560,7 +555,7 @@ HEAT_WARNINGS holds four rows. Two of them are the 85 F and 91 F readings from A
 
 Removing a task works the same way. If you comment the branch out again and redeploy, the Plan shows DROP for the task and its table, and DCM commits a version without it, still without suspending the graph.
 
-**To pause the pipeline**, change STARTED to SUSPENDED on line 66 and redeploy. The Plan shows the state change as an ALTER on the root task. After the deployment, SHOW TASK GRAPHS reports the graph as SUSPENDED, and SHOW TASKS shows all of its members as suspended. The alert has no desired state in the project, so pause it with ALTER ALERT ... SUSPEND.
+**To pause the pipeline**, change STARTED to SUSPENDED on line 66 and redeploy. The Plan shows the state change as an ALTER on the root task. After the deployment, SHOW TASK GRAPHS reports the graph as SUSPENDED, and SHOW TASKS shows all of its members as suspended. That change doesn't touch the alert, so pause it separately with ALTER ALERT ... SUSPEND.
 
 **With the Snowflake CLI:**
 
@@ -604,7 +599,7 @@ You defined a task graph and its alert as code, ran the graph, broke it on purpo
 
 - The graph owns the pipeline-wide settings: schedule, root, finalizer, overlap policy and TASK_DEFAULTS. Member tasks hold only their SQL and their predecessors.
 - STARTED or SUSPENDED on DEFINE TASK GRAPH sets the desired state of the whole graph; member tasks never declare one.
-- DEFINE ALERT ... FROM TEMPLATE TASKS_ERROR_RATE replaces a hand-written monitoring query. It needs LOG_EVENT_LEVEL on what it watches, the SNOWFLAKE.EVENTS_VIEWER application role and EXECUTE ALERT for its owner, and both the integration variable and a toAddress for email. It deploys suspended, so resume it once after the first deploy.
+- DEFINE ALERT ... FROM TEMPLATE TASKS_ERROR_RATE replaces a hand-written monitoring query. It needs LOG_EVENT_LEVEL on what it watches, the SNOWFLAKE.EVENTS_VIEWER application role and EXECUTE ALERT for its owner, and both the integration variable and a toAddress for email. End it with STARTED and it deploys running.
 - The Plan for a redeployment shows only what changed: here an ALTER on the graph and a CREATE for the new member, and for a change to a member's SQL alone, an ALTER on that task with no graph line at all. Either way, Deploy commits a new version without suspending the graph or the alert, and the GRAPH_VERSION column in the task history shows which version each run used.
 
 ### What's Next
