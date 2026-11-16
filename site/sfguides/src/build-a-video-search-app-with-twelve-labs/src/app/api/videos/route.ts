@@ -1,39 +1,31 @@
-import { DB, SCHEMA } from '@/lib/constants';
+import { DB, SCHEMA, VIDEO_STAGE } from '@/lib/constants';
 import { querySnowflake } from '@/lib/snowflake';
 
 export const dynamic = 'force-dynamic';
 
 export interface VideoItem {
-  stage: 'TRAILERS_STAGE' | 'VOYAGERS_STAGE';
+  stage: typeof VIDEO_STAGE;
   path: string;
   title: string;
   size: number;
 }
 
-function titleOf(stage: string, p: string): string {
-  const base = p.replace(/\.[^.]+$/, '');
-  if (stage === 'VOYAGERS_STAGE') return base.replace(/^Voyagers! - /, '');
-  return base
-    .replace(/_\d+K.*$/i, '')
-    .replace(/_/g, ' · ')
-    .replace(/([a-z])([A-Z])/g, '$1 $2');
+function titleOf(p: string): string {
+  return p.replace(/\.[^.]+$/, '').replace(/_/g, ' ');
 }
 
-/** Lists videos Pegasus can analyze: trailers plus full Voyagers! episodes. */
+/** Lists the videos on VIDEO_STAGE that Pegasus can analyze. */
 export async function GET() {
   try {
     const rows = await querySnowflake(
-      `SELECT 'TRAILERS_STAGE' AS STAGE, RELATIVE_PATH, SIZE FROM DIRECTORY(@${DB}.${SCHEMA}.TRAILERS_STAGE)
+      `SELECT RELATIVE_PATH, SIZE FROM DIRECTORY(@${DB}.${SCHEMA}.${VIDEO_STAGE})
          WHERE RELATIVE_PATH ILIKE '%.mp4' OR RELATIVE_PATH ILIKE '%.mov'
-       UNION ALL
-       SELECT 'VOYAGERS_STAGE', RELATIVE_PATH, SIZE FROM DIRECTORY(@${DB}.${SCHEMA}.VOYAGERS_STAGE)
-         WHERE RELATIVE_PATH ILIKE '%.mp4'
-       ORDER BY 1, 2`,
+       ORDER BY 1`,
     );
     const items: VideoItem[] = rows.map((r) => ({
-      stage: r.STAGE,
+      stage: VIDEO_STAGE,
       path: r.RELATIVE_PATH,
-      title: titleOf(r.STAGE, r.RELATIVE_PATH),
+      title: titleOf(r.RELATIVE_PATH),
       size: Number(r.SIZE),
     }));
     return Response.json({ items });
