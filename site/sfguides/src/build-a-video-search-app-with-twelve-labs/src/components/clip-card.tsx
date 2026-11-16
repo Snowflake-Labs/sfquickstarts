@@ -6,13 +6,13 @@ import { useEffect, useRef, useState } from 'react';
 
 const MODALITY_LABEL: Record<string, string> = { visual: 'Visual', transcript: 'Speech', audio: 'Audio' };
 
-/** One Marengo hit: plays the source episode from the matched timestamp, with per-index score bars. */
+/** One Marengo hit: plays the source video from the matched timestamp, with per-index score bars. */
 export function ClipCard({ clip, rank, onAskPegasus }: { clip: Clip; rank: number; onAskPegasus: (c: Clip) => void }) {
   const ref = useRef<HTMLVideoElement>(null);
   const [hover, setHover] = useState(false);
   const cols = clip.modality_scores ?? {};
   const total = clip.score;
-  const title = clip.episode.replace(/^Voyagers! - /, '');
+  const title = clip.episode.replace(/_/g, ' ');
 
   // Media-fragment URLs aren't honored everywhere; seek explicitly once metadata loads.
   useEffect(() => {
