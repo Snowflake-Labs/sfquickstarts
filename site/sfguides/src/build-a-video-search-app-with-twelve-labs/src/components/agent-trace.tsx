@@ -10,8 +10,6 @@ import remarkGfm from 'remark-gfm';
 const TOOL_LABEL: Record<string, string> = {
   MarengoSearch: 'Marengo · multi-index search',
   PegasusAnalyze: 'Pegasus · video understanding',
-  VideoAnalyst: 'Cortex Analyst · semantic view',
-  SceneSearch: 'Cortex Search · scene text',
 };
 
 /** Shows the Cortex Agent's plan (tool calls), status and streamed markdown answer. */
