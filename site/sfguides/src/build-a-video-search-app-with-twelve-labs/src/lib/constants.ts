@@ -18,8 +18,10 @@ export const SCHEMA = 'VIDEO_INTELLIGENCE';
 export const AGENT_NAME = 'VIDEO_AGENT';
 export const UPLOAD_STAGE = `${DB}.${SCHEMA}.SEARCH_UPLOADS`;
 
+export const VIDEO_STAGE = 'VIDEO_STAGE';
+
 /** Stages the Pegasus picker can read from (must match PEGASUS_ANALYZE allowlist). */
-export const PEGASUS_STAGES = ['TRAILERS_STAGE', 'VOYAGERS_STAGE', 'SEARCH_UPLOADS'] as const;
+export const PEGASUS_STAGES = [VIDEO_STAGE, 'SEARCH_UPLOADS'] as const;
 export type PegasusStage = (typeof PEGASUS_STAGES)[number];
 
 export type Modality = 'visual' | 'transcript' | 'audio';
