@@ -81,7 +81,7 @@ export function MarengoTab({ onAskPegasus }: { onAskPegasus: (clip: Clip) => voi
             <>
               <div className="mb-3 flex items-baseline gap-2">
                 <h2 className="text-sm font-medium">Moments</h2>
-                <span className="text-xs text-muted-foreground">{clips.length} clips · diversified across episodes</span>
+                <span className="text-xs text-muted-foreground">{clips.length} clips · diversified across videos</span>
               </div>
               <div className="grid gap-4 sm:grid-cols-2">
                 {clips.map((c, i) => (
@@ -97,8 +97,8 @@ export function MarengoTab({ onAskPegasus }: { onAskPegasus: (clip: Clip) => voi
             <div className="tl-panel flex min-h-48 flex-col items-center justify-center gap-2 p-6 text-center text-sm text-muted-foreground">
               {running ? <Loader2 className="h-5 w-5 animate-spin" /> : <Search className="h-5 w-5 text-marengo" />}
               <p className="max-w-sm">
-                Marengo embeds every few seconds of video across visual, speech and audio. Search all 20 Voyagers!
-                episodes by words or by example.
+                Marengo embeds every few seconds of video across visual, speech and audio. Search every video
+                on your stage by words or by example.
               </p>
             </div>
           )}
