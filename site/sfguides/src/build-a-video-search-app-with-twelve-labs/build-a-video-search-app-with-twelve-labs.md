@@ -233,17 +233,18 @@ The front end is a Next.js app that runs on **Snowflake App Runtime (SAR)**. It'
 
 ![Analyze](assets/app_analyze.png)
 
-Grab the app source from the [`src/`](https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/build-a-video-search-app-with-twelve-labs/src) folder of this guide, then run and deploy it:
+Grab the app source from the [`src/`](https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/build-a-video-search-app-with-twelve-labs/src) folder of this guide. `src/setup.sql` creates the stored procedures (`MARENGO_SEARCH`, `CLIP_VIDEO`, `PEGASUS_ANALYZE`) and the Cortex Agent the app calls; replace `COMPUTE_WH` in it with your warehouse, then:
 
 ```bash
 npx degit Snowflake-Labs/sfquickstarts/site/sfguides/src/build-a-video-search-app-with-twelve-labs/src tl-video-studio
 cd tl-video-studio
+snow sql -f setup.sql  # procedures + Cortex Agent
 npm install
 npm run dev            # run locally against your default Snowflake connection
 snow app deploy        # deploy to Snowflake App Runtime
 ```
 
-See the `src/` README for the Snowflake objects the app expects and the grants its owner role needs.
+See the `src/` README for the grants the app's owner role needs.
 
 ### Try it
 - **Search:** *"Find me a scene where a ship is burning at night"*, or upload a photo of a location or character.
