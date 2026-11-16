@@ -30,7 +30,6 @@ Snowflake App Runtime runs your app on Snowflake as an **APPLICATION SERVICE**. 
 * A browser. Nothing to install.
 * The free **Snowflake Curated Data (Free)** listing from Snowflake Marketplace. The next step shows how to get it.
 
-<!-- ------------------------ -->
 ## Get the Data
 
 Weather Watch uses free, public NOAA weather data that Snowflake curates and maintains.
