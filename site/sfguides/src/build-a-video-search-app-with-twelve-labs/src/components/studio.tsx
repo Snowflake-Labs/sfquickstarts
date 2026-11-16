@@ -2,6 +2,7 @@
 
 import { MarengoTab } from '@/components/marengo-tab';
 import { type PegasusSeed, PegasusTab } from '@/components/pegasus-tab';
+import { VIDEO_STAGE } from '@/lib/constants';
 import type { Clip } from '@/lib/use-agent';
 import { cn } from '@/lib/utils';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -40,7 +41,7 @@ export function Studio() {
 
   function askPegasus(clip: Clip) {
     setSeed({
-      stage: 'VOYAGERS_STAGE',
+      stage: VIDEO_STAGE,
       path: `${clip.episode}.mp4`,
       start: Math.max(0, clip.start_sec - 15),
       end: clip.end_sec + 45,
