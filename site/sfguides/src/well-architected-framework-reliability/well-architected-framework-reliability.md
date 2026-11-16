@@ -4,7 +4,7 @@ categories: snowflake-site:taxonomy/solution-center/certification/well-architect
 language: en
 summary: The Reliability Pillar focuses on ensuring a workload performs its intended function correctly and consistently, recovering from failures to meet business and regulatory demands. 
 environments: web
-status: Published
+status: Archived
 fork repo link: https://github.com/Snowflake-Labs/coco-skills/tree/main/skills/well-architected-framework-assessment
 
 
