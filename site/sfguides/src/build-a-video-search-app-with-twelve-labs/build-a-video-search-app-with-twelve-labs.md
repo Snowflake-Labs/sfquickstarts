@@ -159,11 +159,13 @@ AS (
 <!-- ------------------------ -->
 ## Search with multi_index_query
 
-Embed the query with the same Marengo model, then pass the vector to the index you want to search:
+Embed the query with the same Marengo model, then pass the vector to the index you want to search. Run these snippets in a [Snowflake Notebook](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks), where `session` comes from `get_active_session()`:
 
 ```python
 from snowflake.core import Root
+from snowflake.snowpark.context import get_active_session
 
+session = get_active_session()
 svc = (Root(session).databases["TWELVE_LABS_DEMO"]
        .schemas["VIDEO_INTELLIGENCE"]
        .cortex_search_services["VIDEO_MULTI_SEARCH_SVC"])
@@ -215,6 +217,9 @@ SELECT AI_COMPLETE(
 
 There's no frame extraction and no transcription step.
 
+> aside negative
+> **Preview:** video processing with `AI_COMPLETE`, including `twelvelabs-pegasus-1-5`, is in Public Preview. See [Cortex AI Functions: Multimodal](https://docs.snowflake.com/en/user-guide/snowflake-cortex/ai-multimodal) for current status and regional availability.
+
 > aside positive
 > Pegasus 1.5 accepts MP4, MOV, AVI, MKV, and WebM files up to **2 hours** and **2 GB**. See the [release note](https://docs.snowflake.com/en/release-notes/2026/other/2026-11-16-ai-complete-pegasus-1-5-preview) and [Cortex AI Functions: Multimodal](https://docs.snowflake.com/en/user-guide/snowflake-cortex/ai-multimodal).
 
@@ -222,7 +227,7 @@ There's no frame extraction and no transcription step.
 > **Pair it with search.** To analyze just one search hit, cut its `start_sec`/`end_sec` range to a clip and send the clip to Pegasus. The sample app's `PEGASUS_ANALYZE` procedure does this, caching clips in `SEARCH_UPLOADS/clips/`.
 
 <!-- ------------------------ -->
-## Deploy the App on Snowflake App Runtime
+## Deploy the App
 
 The front end is a Next.js app that runs on **Snowflake App Runtime (SAR)**. It's a thin layer over the SQL you just wrote:
 
@@ -241,6 +246,7 @@ cd tl-video-studio
 snow sql -f setup.sql  # procedures + Cortex Agent
 npm install
 npm run dev            # run locally against your default Snowflake connection
+snow app setup --app-name=tl_video_studio   # first deploy only: creates the app's deployment config
 snow app deploy        # deploy to Snowflake App Runtime
 ```
 
@@ -249,6 +255,19 @@ See the `src/` README for the grants the app's owner role needs.
 ### Try it
 - **Search:** *"Find me a scene where a ship is burning at night"*, or upload a photo of a location or character.
 - **Analyze:** open a hit and ask *"Return JSON with a summary, the main characters, and any historical references."*
+
+<!-- ------------------------ -->
+## Clean Up
+
+App Runtime apps keep consuming compute while they run. When you're done, remove the deployed app from the `tl-video-studio` folder, then drop the demo database (stages, tables, search service, procedures, and agent):
+
+```bash
+snow app teardown --force
+```
+
+```sql
+DROP DATABASE IF EXISTS TWELVE_LABS_DEMO;
+```
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
