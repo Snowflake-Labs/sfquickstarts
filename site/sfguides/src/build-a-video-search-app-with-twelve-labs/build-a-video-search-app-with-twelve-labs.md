@@ -233,17 +233,17 @@ The front end is a Next.js app that runs on **Snowflake App Runtime (SAR)**. It'
 
 ![Analyze](assets/app_analyze.png)
 
-Clone the repo, point it at your objects, and deploy:
+Grab the app source from the [`src/`](https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/build-a-video-search-app-with-twelve-labs/src) folder of this guide, then run and deploy it:
 
 ```bash
-git clone <REPO_URL>
+npx degit Snowflake-Labs/sfquickstarts/site/sfguides/src/build-a-video-search-app-with-twelve-labs/src tl-video-studio
 cd tl-video-studio
 npm install
 npm run dev            # run locally against your default Snowflake connection
 snow app deploy        # deploy to Snowflake App Runtime
 ```
 
-See the repo README for the setup script (stored procedures, stage, and service) and configuration.
+See the `src/` README for the Snowflake objects the app expects and the grants its owner role needs.
 
 ### Try it
 - **Search:** *"Find me a scene where a ship is burning at night"*, or upload a photo of a location or character.
@@ -268,7 +268,7 @@ You built a video search and analysis app with SQL functions and a small front e
 - Wrap search and analysis as tools on a Cortex Agent.
 
 ### Related Resources
-- [Sample app source](<REPO_URL>)
+- [Sample app source](https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/build-a-video-search-app-with-twelve-labs/src)
 - [AI_MULTI_EMBED documentation](https://docs.snowflake.com/en/sql-reference/functions/ai_multi_embed)
 - [AI_COMPLETE documentation](https://docs.snowflake.com/en/sql-reference/functions/ai_complete)
 - [Cortex AI Functions: Multimodal](https://docs.snowflake.com/en/user-guide/snowflake-cortex/ai-multimodal)
