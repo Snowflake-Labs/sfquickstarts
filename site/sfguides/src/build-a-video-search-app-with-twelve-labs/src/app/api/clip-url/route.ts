@@ -4,7 +4,7 @@ import { querySnowflake } from '@/lib/snowflake';
 
 export const dynamic = 'force-dynamic';
 
-/** Presigned URL for previewing a staged video. ?stage=TRAILERS_STAGE&path=foo.mp4 */
+/** Presigned URL for previewing a staged video. ?stage=VIDEO_STAGE&path=foo.mp4 */
 export async function GET(request: Request) {
   const params = new URL(request.url).searchParams;
   const stage = params.get('stage') ?? '';
