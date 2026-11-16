@@ -3,7 +3,7 @@
 import { AgentTrace } from '@/components/agent-trace';
 import { type Attachment, AttachmentDrop } from '@/components/attachment-drop';
 import type { VideoItem } from '@/app/api/videos/route';
-import { PEGASUS_PRESETS } from '@/lib/constants';
+import { PEGASUS_PRESETS, VIDEO_STAGE } from '@/lib/constants';
 import { formatTs, useAgent } from '@/lib/use-agent';
 import { cn } from '@/lib/utils';
 import { useQuery } from '@tanstack/react-query';
@@ -13,7 +13,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
 export interface PegasusSeed {
-  stage: 'TRAILERS_STAGE' | 'VOYAGERS_STAGE';
+  stage: typeof VIDEO_STAGE;
   path: string;
   start?: number;
   end?: number;
@@ -30,7 +30,7 @@ function parseTs(v: string): number {
 
 const MAX_CLIP_SEC = 600;
 
-type Source = 'TRAILERS_STAGE' | 'VOYAGERS_STAGE' | 'UPLOAD';
+type Source = typeof VIDEO_STAGE | 'UPLOAD';
 
 /** Pegasus returns free text; render it as JSON when it is JSON (optionally fenced). */
 function parseJson(text: string): unknown | null {
@@ -74,12 +74,13 @@ function JsonView({ value, depth = 0 }: { value: unknown; depth?: number }) {
 
 export function PegasusTab({ seed }: { seed: PegasusSeed | null }) {
   const { state, run, stop, reset } = useAgent();
-  const [source, setSource] = useState<Source>('TRAILERS_STAGE');
+  const [source, setSource] = useState<Source>(VIDEO_STAGE);
   const [selected, setSelected] = useState<string | null>(null);
   const [upload, setUpload] = useState<Attachment | null>(null);
   const [prompt, setPrompt] = useState(PEGASUS_PRESETS[0].prompt);
   const [rangeStart, setRangeStart] = useState('0:00');
   const [rangeEnd, setRangeEnd] = useState('2:00');
+  const [useRange, setUseRange] = useState(false);
   const running = state.status === 'running';
 
   const videos = useQuery({
@@ -106,6 +107,7 @@ export function PegasusTab({ seed }: { seed: PegasusSeed | null }) {
     setSelected(seed.path);
     setPrompt(seed.prompt);
     if (seed.start != null) {
+      setUseRange(true);
       setRangeStart(formatTs(seed.start));
       setRangeEnd(formatTs(seed.end ?? seed.start + 60));
     }
@@ -128,7 +130,7 @@ export function PegasusTab({ seed }: { seed: PegasusSeed | null }) {
   });
   const previewUrl = source === 'UPLOAD' ? upload?.previewUrl : preview.data;
 
-  const needsRange = source === 'VOYAGERS_STAGE';
+  const needsRange = source !== 'UPLOAD' && useRange;
   const startSec = parseTs(rangeStart);
   const endSec = parseTs(rangeEnd);
   const rangeError = !needsRange
@@ -181,8 +183,7 @@ export function PegasusTab({ seed }: { seed: PegasusSeed | null }) {
             <div className="flex flex-wrap gap-2">
               {(
                 [
-                  ['TRAILERS_STAGE', 'Trailers', Film],
-                  ['VOYAGERS_STAGE', 'Voyagers! episodes', Clapperboard],
+                  [VIDEO_STAGE, 'Videos', Film],
                   ['UPLOAD', 'Upload', Upload],
                 ] as const
               ).map(([id, label, Icon]) => (
@@ -223,6 +224,12 @@ export function PegasusTab({ seed }: { seed: PegasusSeed | null }) {
                 ))}
               </div>
             )}
+            {source !== 'UPLOAD' && (
+              <label className="flex items-center gap-2 text-xs text-muted-foreground">
+                <input type="checkbox" checked={useRange} onChange={(e) => setUseRange(e.target.checked)} className="accent-pegasus" />
+                Analyze a time range (recommended for long videos)
+              </label>
+            )}
             {needsRange && (
               <div className="flex flex-wrap items-center gap-2 rounded-lg bg-muted/40 px-3 py-2 text-xs text-muted-foreground">
                 <span>Clip range</span>
@@ -240,7 +247,7 @@ export function PegasusTab({ seed }: { seed: PegasusSeed | null }) {
                   aria-label="Clip end"
                 />
                 <span className={cn('ml-1', rangeError && 'text-destructive')}>
-                  {rangeError ?? 'Full episodes are clipped server-side (max 10 min) before Pegasus watches them.'}
+                  {rangeError ?? 'The range is clipped server-side (max 10 min) before Pegasus watches it.'}
                 </span>
               </div>
             )}
