@@ -1,6 +1,6 @@
 author: Jan Sommerfeld, Gilberto Hernandez, Yoav Ostrinsky
 id: build-data-pipelines-with-snowflake-dcm-projects
-summary: Split a data platform into three DCM Projects and build a gated dynamic table pipeline, a semantic view, an agent and a Spark task graph.
+summary: Split a data platform into four DCM Projects and build a gated dynamic table pipeline, a semantic view, an agent, a Spark task graph and streaming pipes that transform records as they land.
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/dynamic-tables
 environments: web
 status: Published
@@ -14,13 +14,14 @@ fork repo link: https://github.com/Snowflake-Labs/snowflake-dcm-projects
 
 In [Get Started with Snowflake DCM Projects](https://www.snowflake.com/en/developers/guides/get-started-snowflake-dcm-projects/) you defined Snowflake infrastructure as code in one project, then planned and deployed it from a Snowsight Workspace. Real platforms rarely fit in one project. A platform team owns the shared raw data, the warehouses and the roles; each data team builds its own pipeline on top, on its own schedule.
 
-This guide works with **three DCM Projects** that do exactly that. Each one is planned and deployed once.
+This guide works with **four DCM Projects** that do exactly that. Each one is planned and deployed once.
 
 - **DCM_Platform_Demo** is owned by the platform. It defines a shared raw database with three staging tables, a stage filled from the project's own sample files, a file format and a load task, and a warehouse, a database and roles for each team.
 - **DCM_Finance_Demo** is owned by the Finance team. It reads the platform's raw tables and defines a silver and a gold layer of dynamic tables, data quality expectations that gate the refreshes, a semantic view, an alert and an agent.
 - **DCM_Marketing_Demo** is owned by the Marketing team. It defines a table, a Spark job shipped with the project, and a task graph that runs the job and writes rows into that table.
+- **DCM_InfoSec_Demo** is owned by the InfoSec team. It defines two streaming pipes that filter, enrich and redact records as they are ingested, joining the platform's raw tables, and two low-latency dynamic tables on top.
 
-The two teams are completely separate. Each reads the shared raw layer and nothing else of the other's. Everything is declared in DCM and created by a deploy. Code, a Spark job or a task, only writes rows into tables that DCM created; it never runs a CREATE.
+The three teams are completely separate. Each reads the shared raw layer and nothing else of the others'. Everything is declared in DCM and created by a deploy. Code, a Spark job or a task, only writes rows into tables that DCM created; it never runs a CREATE.
 
 ### Prerequisites
 - Familiarity with DCM Projects concepts (complete [Get Started with Snowflake DCM Projects](https://www.snowflake.com/en/developers/guides/get-started-snowflake-dcm-projects/) first)
@@ -35,15 +36,18 @@ The two teams are completely separate. Each reads the shared raw layer and nothi
 - How to run a task graph that writes into an Iceberg table DCM created, with a PyPI package in the Spark job
 - How to add a failure branch to a task graph with advanced branching
 - How to ship a Streamlit dashboard in the same project as the table it reads
+- How to define streaming pipes that filter, enrich and redact records in flight, joining another project's tables
+- How to build low-latency dynamic tables with a 15 second target lag
 
 ### What You'll Need
 - A Snowflake account with ACCOUNTADMIN access, for the one-time setup script
 - (Optional) [Snowflake CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli/installation/installation) 3.24 or later, if you prefer a terminal to the Snowsight UI
 
 ### What You'll Build
-- A Platform project: one raw database with three staging tables, an ingestion stage and load task, and a warehouse, database, role and read-only role for the Finance and Marketing teams
+- A Platform project: one raw database with three staging tables, an ingestion stage and load task, and a warehouse, database, role and read-only role for the Finance, Marketing and InfoSec teams
 - A Finance project: one silver and two gold dynamic tables, five data quality expectations that act as gates, a semantic view, an alert and an agent
 - A Marketing project: a customer segments Iceberg table, a Spark code bundle with a PyPI dependency, a task graph with four tasks and a failure branch, and a Streamlit dashboard
+- An InfoSec project: two SQL functions, two streaming pipes with their target tables, and two low-latency dynamic tables
 
 <!-- ------------------------ -->
 ## Create a Workspace from Git
@@ -58,9 +62,9 @@ If you want to work in Snowsight rather than locally, create a Snowsight Workspa
 
 ![Creating a Workspace from a Git repository](assets/create_workspace.png)
 
-Once the workspace is created you will see the repository files in the file explorer. Navigate to **Quickstarts/build-data-pipelines-with-snowflake-dcm-projects** to find four directories.
+Once the workspace is created you will see the repository files in the file explorer. Navigate to **Quickstarts/build-data-pipelines-with-snowflake-dcm-projects** to find five directories.
 
-DCM_Platform_Demo/, DCM_Finance_Demo/ and DCM_Marketing_Demo/ are the three DCM Projects. scripts/ holds numbered SQL files that you run in Snowsight worksheets at different stages of this guide. They live outside the project directories, so nothing in them is ever picked up by a plan.
+DCM_Platform_Demo/, DCM_Finance_Demo/, DCM_Marketing_Demo/ and DCM_InfoSec_Demo/ are the four DCM Projects. scripts/ holds numbered SQL files that you run in Snowsight worksheets at different stages of this guide. They live outside the project directories, so nothing in them is ever picked up by a plan.
 
 | File | When to run |
 |---|---|
@@ -72,7 +76,7 @@ DCM_Platform_Demo/, DCM_Finance_Demo/ and DCM_Marketing_Demo/ are the three DCM 
 
 Every operational step in this guide is given twice: once for Snowsight, and once for the [Snowflake CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli/installation/installation) if you would rather drive the project from a terminal against your own copy of the repository.
 
-**With the Snowflake CLI:** clone the repository and work from the guide's folder. Run the snow dcm commands from inside the project folder you are working on (DCM_Platform_Demo, DCM_Finance_Demo or DCM_Marketing_Demo), and the snow sql commands from the guide's folder.
+**With the Snowflake CLI:** clone the repository and work from the guide's folder. Run the snow dcm commands from inside the project folder you are working on (DCM_Platform_Demo, DCM_Finance_Demo, DCM_Marketing_Demo or DCM_InfoSec_Demo), and the snow sql commands from the guide's folder.
 
 ```bash
 git clone https://github.com/Snowflake-Labs/snowflake-dcm-projects.git
@@ -116,9 +120,9 @@ The Platform project uses them to let each team read every table in the shared R
 
 Four grants in section 3 are there so the Platform project can hand privileges on to the teams. The script comments say why: EXECUTE DATA METRIC FUNCTION and the SNOWFLAKE.DATA_QUALITY_MONITORING_VIEWER application role are for the Finance team's expectations, EXECUTE ALERT is for Finance's alert, and EXECUTE TASK is for the Marketing team's task graph. A role can only pass on a privilege it holds WITH GRANT OPTION, which is why the script grants EXECUTE DATA METRIC FUNCTION, EXECUTE ALERT and EXECUTE TASK that way. Without the grant option on EXECUTE DATA METRIC FUNCTION, the first plan fails with "Grant not executed: Insufficient privileges".
 
-The Platform project object lives in DCM_DEMO.PROJECTS. The Finance and Marketing project objects will live somewhere else: in a DCM schema inside the platform database, which the Platform project creates.
+The Platform project object lives in DCM_DEMO.PROJECTS. The Finance, Marketing and InfoSec project objects will live somewhere else: in a DCM schema inside the platform database, which the Platform project creates.
 
-**Update the manifests before the first plan.** Copy ACCOUNT_IDENTIFIER from the last query of scripts/01_pre_deploy.sql into the account_identifier line of the DCM_DEV target in all three manifests: DCM_Platform_Demo/manifest.yml, DCM_Finance_Demo/manifest.yml and DCM_Marketing_Demo/manifest.yml (line 11 in each, marked "# update to your account names").
+**Update the manifests before the first plan.** Copy ACCOUNT_IDENTIFIER from the last query of scripts/01_pre_deploy.sql into the account_identifier line of the DCM_DEV target in all four manifests: DCM_Platform_Demo/manifest.yml, DCM_Finance_Demo/manifest.yml, DCM_Marketing_Demo/manifest.yml and DCM_InfoSec_Demo/manifest.yml (line 11 in each, marked "# update to your account names").
 
 <!-- ------------------------ -->
 ## Explore the Platform Project
@@ -151,9 +155,11 @@ templating:
           raw_access: "READ"
         - name: "Marketing"
           raw_access: "READ"
+        - name: "InfoSec"
+          raw_access: "READ"
 ```
 
-The teams list drives a loop in the definitions. DEV has two teams. The PROD configuration in the same manifest lists four teams with different raw_access values (READ, WRITE and NONE) and a higher wh_perf_level; you only deploy DEV in this guide.
+The teams list drives a loop in the definitions. DEV has three teams. The PROD configuration in the same manifest lists five teams with different raw_access values (READ, WRITE and NONE) and a higher wh_perf_level; you only deploy DEV in this guide.
 
 The manifest also declares an asset, the folder of sample files that ships with the project:
 
@@ -174,7 +180,15 @@ assets:
 
 #### Raw tables
 
-raw.sql defines CUSTOMER_STG, ACCOUNT_STG and TRADE_STG: customers, their brokerage accounts, and the trades placed on those accounts. Each table sets CHANGE_TRACKING = TRUE (lines 35, 45 and 60) so that the Finance project's dynamic tables can track what changed between refreshes.
+raw.sql defines CUSTOMER_STG, ACCOUNT_STG and TRADE_STG: customers, their brokerage accounts, and the trades placed on those accounts. Each table sets CHANGE_TRACKING = TRUE (lines 39, 49 and 64) so that the Finance project's dynamic tables can track what changed between refreshes.
+
+CUSTOMER_STG and ACCOUNT_STG also declare their primary key with RELY (lines 30 and 43):
+
+```sql
+    C_ID          NUMBER(38,0) PRIMARY KEY RELY COMMENT 'Customer identifier',
+```
+
+The InfoSec project's streaming pipes join these two tables as records arrive. A pipe treats a joined table as a key-value lookup, and it only accepts one whose RELY primary key exactly covers the join condition; the plan of the InfoSec project fails otherwise. Snowflake does not enforce a primary key, so RELY is a promise that the key is unique. The sample data keeps it.
 
 #### Ingestion
 
@@ -207,7 +221,7 @@ Every warehouse in this guide is an [adaptive warehouse](https://docs.snowflake.
 
 An adaptive warehouse has no size, cluster count or auto-suspend setting to tune. Snowflake allocates compute per query, up to MAX_QUERY_PERFORMANCE_LEVEL, so the manifest sets one ceiling per environment instead of a size. WAREHOUSE_SIZE and AUTO_SUSPEND aren't valid on an adaptive warehouse; a plan that includes them fails.
 
-Each team also gets the account-level privileges its pipeline style needs (lines 48 to 56):
+Each team also gets the account-level privileges its pipeline style needs (lines 44 to 52):
 
 ```sql
     {% if team_name == 'FINANCE' %}
@@ -221,7 +235,7 @@ Each team also gets the account-level privileges its pipeline style needs (lines
     {% endif %}
 ```
 
-Finance builds on dynamic tables: it attaches data quality expectations, reads their results, and owns an alert that watches them. Marketing builds on Spark and owns a task graph.
+Finance builds on dynamic tables: it attaches data quality expectations, reads their results, and owns an alert that watches them. Marketing builds on Spark and owns a task graph. InfoSec needs nothing extra: it owns its pipes and their target tables, and READ access to RAW covers the tables its pipes join.
 
 The macro in sources/macros/grants_macro.sql creates the team role, DCM_DEMO_2_<TEAM>_DEV_ADMIN, with what a project owner needs inside the team database (create schemas), and the right to create DCM projects in the platform's DCM schema. It rolls each team role up to the Platform project's owner (line 18), so you can act as either team later without any extra setup.
 
@@ -270,7 +284,7 @@ When the changeset matches what you expected, deploy it.
 snow dcm deploy --target DCM_DEV --role DCM_DEVELOPER --alias initial-platform
 ```
 
-The deploy reports "Deployed 23 entities (22 created, 1 altered, 0 dropped)." In the Database Explorer you now see DCM_DEMO_2_DEV, DCM_DEMO_2_FINANCE_DEV and DCM_DEMO_2_MARKETING_DEV.
+The deploy reports "Deployed 27 entities (26 created, 1 altered, 0 dropped)." In the Database Explorer you now see DCM_DEMO_2_DEV, DCM_DEMO_2_FINANCE_DEV, DCM_DEMO_2_MARKETING_DEV and DCM_DEMO_2_INFOSEC_DEV.
 
 <!-- ------------------------ -->
 ## Load Sample Data
@@ -312,7 +326,7 @@ VALUES
 
 The trade file holds 20 trades, one of them cancelled (T_ST_ID is CNCL). Add the two trades inserted today and TRADE_STG has 22 rows.
 
-**5. Create the team projects.** The Finance and Marketing project objects live in DCM_DEMO_2_DEV.DCM, a schema the platform deploy just created, so 01_pre_deploy.sql couldn't create them. Each is created by its team role, which owns it. Refresh your browser afterwards so the DCM control panel lists both.
+**5. Create the team projects.** The Finance, Marketing and InfoSec project objects live in DCM_DEMO_2_DEV.DCM, a schema the platform deploy just created, so 01_pre_deploy.sql couldn't create them. Each is created by its team role, which owns it. Refresh your browser afterwards so the DCM control panel lists all three.
 
 ```sql
 USE ROLE DCM_DEMO_2_FINANCE_DEV_ADMIN;
@@ -322,6 +336,10 @@ CREATE DCM PROJECT IF NOT EXISTS DCM_DEMO_2_DEV.DCM.FINANCE_PIPELINE
 USE ROLE DCM_DEMO_2_MARKETING_DEV_ADMIN;
 CREATE DCM PROJECT IF NOT EXISTS DCM_DEMO_2_DEV.DCM.MARKETING_PIPELINE
     COMMENT = 'DEV Marketing project of the Build Data Pipelines with Snowflake DCM Projects quickstart';
+
+USE ROLE DCM_DEMO_2_INFOSEC_DEV_ADMIN;
+CREATE DCM PROJECT IF NOT EXISTS DCM_DEMO_2_DEV.DCM.INFOSEC_PIPELINE
+    COMMENT = 'DEV InfoSec project of the Build Data Pipelines with Snowflake DCM Projects quickstart';
 ```
 
 <!-- ------------------------ -->
@@ -1034,6 +1052,154 @@ The Spark job did not recreate the table. It only replaced its rows.
 **In Snowsight:** go to **Projects > Streamlit** and open **Customer segments**. It filters the customers by activity tier and shows their count, their total trading value, the number of customers per preferred channel, and the customer list. The dashboard reads CUSTOMER_SEGMENTS directly, so it shows whatever the last good run of the task graph wrote.
 
 <!-- ------------------------ -->
+## Explore the InfoSec Project
+
+Navigate into **DCM_InfoSec_Demo/**. This project belongs to the InfoSec team. It ingests two event streams from the brokerage's trading app with [Snowpipe Streaming](https://docs.snowflake.com/en/user-guide/snowpipe-streaming/snowpipe-streaming-high-performance-overview), and transforms every record inside the pipe, before it lands. There is no landing table to clean up afterwards: the pipe is the transformation.
+
+### Manifest
+
+The manifest has the same shape as Finance's: a DEV and a PROD target, each owned by the team role, and an env_suffix per configuration.
+
+```yaml
+targets:
+  DCM_DEV:
+    account_identifier: MYORG-MY_DEV_ACCOUNT        # update to your account names
+    project_name: DCM_DEMO_2_DEV.DCM.INFOSEC_PIPELINE
+    project_owner: DCM_DEMO_2_INFOSEC_DEV_ADMIN
+    templating_config: DEV
+```
+
+### Definition files
+
+| File | What it defines |
+|---|---|
+| sources/definitions/streaming.sql | The SECURITY schema, two SQL functions, two target tables, two streaming pipes and two low-latency dynamic tables |
+
+#### Functions called from the pipes
+
+A pipe can call SQL and JavaScript scalar functions, in its SELECT list or its WHERE clause. CLASSIFY_SEVERITY (lines 24 to 38) turns an event type and an account status into HIGH, MEDIUM or LOW. HASH_PII (lines 40 to 47) returns a salted SHA-256 of a lowercased value, so the same email address always hashes the same way and the raw value never reaches a table.
+
+#### The access events pipe
+
+ACCESS_EVENTS_PIPE (lines 68 to 87) lands every login, order and API call against a brokerage account in ACCESS_EVENTS:
+
+```sql
+DEFINE PIPE DCM_DEMO_2_INFOSEC{{env_suffix}}.SECURITY.ACCESS_EVENTS_PIPE
+    COMMENT = 'Streams access events: drops health checks, adds the account owner and status, classifies severity'
+AS
+COPY INTO DCM_DEMO_2_INFOSEC{{env_suffix}}.SECURITY.ACCESS_EVENTS (
+    EVENT_TS, EVENT_TYPE, CA_ID, C_ID, ACCOUNT_STATUS, SRC_IP, SEVERITY
+)
+FROM (
+    SELECT
+        E.$1:ts::TIMESTAMP_NTZ,
+        E.$1:event_type::VARCHAR,
+        E.$1:ca_id::NUMBER,
+        A.CA_C_ID,
+        A.CA_ST_ID,
+        E.$1:src_ip::VARCHAR,
+        DCM_DEMO_2_INFOSEC{{env_suffix}}.SECURITY.CLASSIFY_SEVERITY(E.$1:event_type::VARCHAR, A.CA_ST_ID)
+    FROM TABLE(DATA_SOURCE(TYPE => 'STREAMING')) E
+    LEFT OUTER JOIN DCM_DEMO_2{{env_suffix}}.RAW.ACCOUNT_STG A
+        ON E.$1:ca_id::NUMBER = A.CA_ID
+    WHERE E.$1:event_type::VARCHAR <> 'health_check'
+);
+```
+
+Three transformations happen in flight:
+
+- **Filter.** The WHERE clause drops health checks before they land. A dropped record never appears in the table or the load history.
+- **Enrich.** The LEFT OUTER JOIN reads ACCOUNT_STG from the Platform project and adds the owning customer and the account status. This is the cross-project link for InfoSec, and the reason ACCOUNT_STG declares its primary key with RELY. An event for an account the platform has never heard of still lands, with an empty customer and status.
+- **Classify.** CLASSIFY_SEVERITY marks activity on an inactive account, or on an unknown one, as HIGH.
+
+The pipe reads the joined table from a snapshot that it refreshes periodically while it is ingesting, so a change to ACCOUNT_STG can take a few minutes to show up in new events. That suits slow-moving reference data like accounts.
+
+#### The contact changes pipe
+
+CONTACT_CHANGES_PIPE (lines 107 to 125) lands customers changing the email address or phone number on their profile. The raw values never reach a table:
+
+```sql
+    SELECT
+        E.$1:ts::TIMESTAMP_NTZ,
+        E.$1:c_id::NUMBER,
+        DCM_DEMO_2_INFOSEC{{env_suffix}}.SECURITY.HASH_PII(E.$1:email::VARCHAR),
+        CONCAT('***-***-', RIGHT(E.$1:phone::VARCHAR, 4)),
+        C.C_TIER,
+        C.C_CTRY
+    FROM TABLE(DATA_SOURCE(TYPE => 'STREAMING')) E
+    LEFT OUTER JOIN DCM_DEMO_2{{env_suffix}}.RAW.CUSTOMER_STG C
+        ON E.$1:c_id::NUMBER = C.C_ID
+    WHERE E.$1:consent::BOOLEAN = TRUE
+```
+
+Records of customers who did not give consent are dropped, the email is hashed, the phone number is masked to its last four digits, and the customer's tier and country come from CUSTOMER_STG.
+
+Both target tables set ERROR_LOGGING = TRUE, so a record that can't be ingested, for example one whose timestamp doesn't parse, is written to the table's error table instead of being lost.
+
+A pipe's definition can't be changed in place. Only its comment is mutable, so changing a transformation means removing the DEFINE PIPE, deploying, and defining the new pipe.
+
+#### Low-latency dynamic tables
+
+Two dynamic tables sit on the pipes' target tables with TARGET_LAG = '15 seconds', so they stay within seconds of the streams:
+
+- SUSPICIOUS_ACTIVITY (lines 133 to 154) keeps the HIGH-severity events and adds when that customer last changed their contact details. A takeover often starts with a contact change, followed by activity on the account.
+- ACCOUNT_RISK (lines 156 to 169) counts each account's events by severity and keeps the time of its last event.
+
+Both refresh incrementally. A short target lag only pays off with incremental refreshes, so check REFRESH_MODE after a deploy. A non-deterministic function such as ANY_VALUE, or a range join, makes a dynamic table fall back to full refreshes, each of which recomputes the whole table every 15 seconds.
+
+<!-- ------------------------ -->
+## Deploy the InfoSec Project
+
+The InfoSec project object, DCM_DEMO_2_DEV.DCM.INFOSEC_PIPELINE, was created by 02_platform_post_deploy.sql as the InfoSec role, which owns this project.
+
+### Plan
+
+**In Snowsight:** in the DCM control panel, select the project **build-data-pipelines-with-snowflake-dcm-projects/DCM_InfoSec_Demo**, select the **DCM_DEV** target and run **Plan**.
+
+**With the Snowflake CLI:** from inside the DCM_InfoSec_Demo folder of your clone:
+
+```bash
+snow dcm plan --target DCM_DEV --role DCM_DEMO_2_INFOSEC_DEV_ADMIN --save-output
+```
+
+The plan creates what streaming.sql declares: the SECURITY schema, the CLASSIFY_SEVERITY and HASH_PII functions, the ACCESS_EVENTS and CONTACT_CHANGES tables, the two pipes and the two dynamic tables.
+
+### Deploy
+
+**In Snowsight:** set the operation to **Deploy**, add a deployment alias such as initial-infosec, and run it.
+
+**With the Snowflake CLI:**
+
+```bash
+snow dcm deploy --target DCM_DEV --role DCM_DEMO_2_INFOSEC_DEV_ADMIN --alias initial-infosec
+```
+
+The deploy reports "Deployed 10 entities (9 created, 1 altered, 0 dropped)."
+
+### Check the pipes and dynamic tables
+
+Run these as the InfoSec role:
+
+```sql
+USE ROLE DCM_DEMO_2_INFOSEC_DEV_ADMIN;
+SHOW PIPES IN SCHEMA DCM_DEMO_2_INFOSEC_DEV.SECURITY;
+SHOW DYNAMIC TABLES IN SCHEMA DCM_DEMO_2_INFOSEC_DEV.SECURITY;
+```
+
+Both pipes show KIND STREAMING and an empty INVALID_REASON. Both dynamic tables show TARGET_LAG 15 seconds and REFRESH_MODE ADAPTIVE.
+
+The pipes are ready for a Snowpipe Streaming client. This guide doesn't send records to them, so the tables stay empty.
+
+Because they refresh every 15 seconds, the two dynamic tables consume credits even with no new data. Stop their scheduling when you are not using them:
+
+```sql
+ALTER DYNAMIC TABLE DCM_DEMO_2_INFOSEC_DEV.SECURITY.SUSPICIOUS_ACTIVITY SET SCHEDULER = DISABLE;
+ALTER DYNAMIC TABLE DCM_DEMO_2_INFOSEC_DEV.SECURITY.ACCOUNT_RISK SET SCHEDULER = DISABLE;
+```
+
+The next deploy of the project sets SCHEDULER back to ENABLE and TARGET_LAG back to 15 seconds, because that is what the definition declares; its plan lists both as changes.
+
+<!-- ------------------------ -->
 ## Cleanup
 
 Before tearing anything down, know that there is a gentler option. DROP DCM PROJECT on its own, without a PURGE first, removes the project and its deployment history and leaves every entity, grant and attachment in place as an ordinary unmanaged object. To release a single entity, call SYSTEM$UNMANAGE_ENTITY_FROM_DCM_PROJECT with its type and name; to release grants or attachments, pass the rendered statements to SYSTEM$UNMANAGE_FROM_DCM_PROJECT. Then remove the matching statements from your definitions, or the next deploy takes them back.
@@ -1051,6 +1217,12 @@ To remove everything this guide created, open scripts/05_cleanup.sql and run it.
     USE ROLE DCM_DEMO_2_MARKETING_DEV_ADMIN;
     EXECUTE DCM PROJECT DCM_DEMO_2_DEV.DCM.MARKETING_PIPELINE PURGE;
 
+    USE ROLE DCM_DEMO_2_INFOSEC_DEV_ADMIN;
+    EXECUTE DCM PROJECT DCM_DEMO_2_DEV.DCM.INFOSEC_PIPELINE PURGE;
+
+    DROP DCM PROJECT IF EXISTS DCM_DEMO_2_DEV.DCM.INFOSEC_PIPELINE;
+
+    USE ROLE DCM_DEMO_2_MARKETING_DEV_ADMIN;
     DROP DCM PROJECT IF EXISTS DCM_DEMO_2_DEV.DCM.MARKETING_PIPELINE;
 
     USE ROLE DCM_DEMO_2_FINANCE_DEV_ADMIN;
@@ -1095,7 +1267,7 @@ To remove everything this guide created, open scripts/05_cleanup.sql and run it.
 
 In this guide, you:
 
-- **Split a platform across three DCM Projects** with different owners: a platform project that owns shared raw data, compute, roles and read-only roles, and two team projects that build on it and on nothing else
+- **Split a platform across four DCM Projects** with different owners: a platform project that owns shared raw data, compute, roles and read-only roles, and three team projects that build on it and on nothing else
 - **Gave each team the same footprint** from one Jinja loop and one macro, with the privileges each team's pipeline style needs passed on through grant options
 - **Shipped sample files and a Spark job with the projects** as assets, so the deploy fills the stage and the code only writes rows into tables DCM created
 - **Built silver and gold dynamic tables** that read another project's tables, with the freshness declared once at the gold layer
@@ -1103,6 +1275,7 @@ In this guide, you:
 - **Declared a semantic view, an alert and an agent** next to the tables they describe, with the agent's specification in a YAML file Agent Studio can open
 - **Ran a Spark task graph** into a DCM-created Iceberg table, with a PyPI package installed from pyproject.toml and a failure branch built with advanced branching
 - **Shipped a Streamlit dashboard** with the table it reads, on adaptive warehouses throughout
+- **Defined streaming pipes** that filter, enrich and redact records in flight, joining the platform's raw tables, with low-latency dynamic tables on top
 
 ### What's Next
 
@@ -1114,4 +1287,5 @@ In this guide, you:
 ### Related Resources
 - [DCM Projects documentation](https://docs.snowflake.com/en/user-guide/dcm-projects/dcm-projects-overview)
 - [Semantic views](https://docs.snowflake.com/en/user-guide/views-semantic/overview)
+- [Snowpipe Streaming with high-performance architecture](https://docs.snowflake.com/en/user-guide/snowpipe-streaming/snowpipe-streaming-high-performance-overview)
 - [Sample DCM Projects repository](https://github.com/Snowflake-Labs/snowflake-dcm-projects)
