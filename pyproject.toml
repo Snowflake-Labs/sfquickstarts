@@ -43,6 +43,8 @@ ignore = [
 ]
 
 [tool.ruff.lint.per-file-ignores]
+# unittest assertions plus a few bare asserts to narrow Optional types.
+"scripts/validate/tests/*.py" = ["S101"]
 # These two predate the hardening and decide what actually reaches AEM. The
 # mechanical fixes (whitespace, unused imports, pyupgrade, import order) have been
 # applied and verified to leave parse_markdown.py's output byte-identical across
