@@ -1152,7 +1152,7 @@ cat > 'sql/07_ontology.sql' <<'BON_FILE_07_ONTOLOGY_SQL'
 -- Business Ontology demo, 07: Governed Business Ontology
 -- 3 domains, 40 nodes (ENTITY / METRIC / TERM / POLICY_CONCEPT), 51 typed edges.
 --
--- Design rules (per internal positioning: "Sense proposes, Ontology governs, SVs execute"):
+-- Design rules:
 --   * Every METRIC states the canonical definition in plain language, names the
 --     SV metric that implements it, and names the non-canonical variants.
 --   * Variants are separate METRIC nodes with a `scope` and a HAS_VARIANT edge.
@@ -1394,7 +1394,8 @@ cat > 'sql/09_agents.sql' <<'BON_FILE_09_AGENTS_SQL'
 -- After creating, DESCRIBE AGENT and confirm agent_spec contains
 --   "EnableSnowscopeBusinessOntologySearch":true, "type":"snowscope_search", "corpus":"businessOntology"
 -- (CREATE AGENT does not validate these values.)
--- BON search index refresh can take up to 6 hours after ontology edits or grants.
+-- Terms were first observed as searchable approximately 5 to 14 hours after the final ontology write.
+-- These are observation times, not guaranteed indexing durations. Confirm readiness with search checks.
 -- =====================================================================
 
 CREATE OR REPLACE AGENT BUSINESS_ONTOLOGY.SAP.BARE_AGENT
