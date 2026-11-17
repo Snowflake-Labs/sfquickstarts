@@ -193,7 +193,7 @@ The InfoSec project's streaming pipes join these two tables as records arrive. A
 
 #### Ingestion
 
-The stage is filled by the deploy itself. FROM 'asset://sample_data/' points at the sample_data asset declared in the manifest, so the CSV files ship with the project and land on the stage when it deploys (ingest.sql, lines 23 to 26):
+The stage is filled by the deploy itself. FROM 'asset://sample_data/' points at the sample_data asset declared in the manifest, so the CSV files ship with the project and land on the stage when it deploys (ingest.sql, lines 25 to 28):
 
 ```sql
 DEFINE STAGE DCM_DEMO_2{{env_suffix}}.RAW.DCM_SAMPLE_DATA
@@ -204,7 +204,7 @@ DEFINE STAGE DCM_DEMO_2{{env_suffix}}.RAW.DCM_SAMPLE_DATA
 
 DCM owns the stage's contents: a file uploaded by hand, or removed from the folder, is deleted on the next deploy.
 
-The load task (ingest.sql, lines 38 to 57) copies the three files into the three tables. It runs on the platform warehouse, like every scheduled and refreshing object in this guide, so there is one compute model to reason about. Its CRON schedule would load new files every hour of the working day. DCM creates new tasks suspended, so in this guide the schedule never fires and you run the task once by hand instead.
+The load task (ingest.sql, lines 40 to 60) copies the three files into the three tables. It runs on the platform warehouse, like every scheduled and refreshing object in this guide, so there is one compute model to reason about. Its CRON schedule would load new files every hour of the working day. The task declares SUSPENDED, last before AS, so the schedule never fires and you run the task once by hand instead. Without a target state DCM creates a new task suspended but leaves a deployed task in whatever state it is in; SUSPENDED makes every deploy put it back.
 
 #### Per-team infrastructure
 
@@ -380,7 +380,7 @@ The project object lives in DCM_DEMO_2_DEV.DCM, the DCM schema of the platform d
 
 #### Silver layer
 
-silver_layer.sql (lines 14 to 44) defines one dynamic table that joins the three raw staging tables into one row per trade:
+silver_layer.sql (lines 14 to 45) defines one dynamic table that joins the three raw staging tables into one row per trade:
 
 ```sql
 DEFINE SCHEMA DCM_DEMO_2_FINANCE{{env_suffix}}.SILVER
@@ -389,6 +389,7 @@ DEFINE SCHEMA DCM_DEMO_2_FINANCE{{env_suffix}}.SILVER
 DEFINE DYNAMIC TABLE DCM_DEMO_2_FINANCE{{env_suffix}}.SILVER.TRADES_ENRICHED
     WAREHOUSE = DCM_DEMO_2_FINANCE_WH{{env_suffix}}
     TARGET_LAG = 'DOWNSTREAM'
+    REFRESH_MODE = ADAPTIVE
     INITIALIZE = 'ON_SCHEDULE'
     DATA_METRIC_SCHEDULE = 'TRIGGER_ON_CHANGES'
     COMMENT = 'One row per trade, joined to its account and customer'
@@ -421,6 +422,7 @@ This is the cross-project link: a dynamic table in the Finance project reads thr
 A few properties are worth a look:
 
 - TARGET_LAG = 'DOWNSTREAM' gives this table no schedule of its own. It refreshes whenever a gold table needs it.
+- REFRESH_MODE = ADAPTIVE refreshes incrementally, and recomputes the whole table only for a refresh where so much changed that incremental work would cost more. Left at the default, AUTO, Snowflake chose FULL for this table ("This dynamic table contains a complex query"), and the two gold tables followed, since an incremental table can't read a full-refresh one. Every dynamic table in this guide declares ADAPTIVE.
 - INITIALIZE = 'ON_SCHEDULE' skips the refresh at creation, which keeps deployments fast. The dynamic tables are empty until their first refresh, which you run yourself.
 - DATA_METRIC_SCHEDULE = 'TRIGGER_ON_CHANGES' evaluates the expectations attached to this table after each refresh.
 - The joins are LEFT joins on purpose. A trade whose account has not arrived yet still shows up, with an empty customer, instead of silently disappearing from every total.
@@ -428,12 +430,13 @@ A few properties are worth a look:
 
 #### Gold layer
 
-gold_layer.sql defines two aggregates over the silver table, DAILY_TRADING by day and CUSTOMER_TRADING by customer. DAILY_TRADING (lines 10 to 23):
+gold_layer.sql defines two aggregates over the silver table, DAILY_TRADING by day and CUSTOMER_TRADING by customer. DAILY_TRADING (lines 10 to 24):
 
 ```sql
 DEFINE DYNAMIC TABLE DCM_DEMO_2_FINANCE{{env_suffix}}.GOLD.DAILY_TRADING
     WAREHOUSE = DCM_DEMO_2_FINANCE_WH{{env_suffix}}
     TARGET_LAG = '1 hour'
+    REFRESH_MODE = ADAPTIVE
     INITIALIZE = 'ON_SCHEDULE'
     DATA_METRIC_SCHEDULE = 'TRIGGER_ON_CHANGES'
     COMMENT = 'Trading volume and value per day'
@@ -1182,10 +1185,10 @@ A pipe's definition can't be changed in place. Only its comment is mutable, so c
 
 Two dynamic tables sit on the pipes' target tables with TARGET_LAG = '15 seconds', so they stay within seconds of the streams:
 
-- SUSPICIOUS_ACTIVITY (lines 133 to 154) keeps the HIGH-severity events and adds when that customer last changed their contact details. A takeover often starts with a contact change, followed by activity on the account.
-- ACCOUNT_RISK (lines 156 to 169) counts each account's events by severity and keeps the time of its last event.
+- SUSPICIOUS_ACTIVITY (lines 133 to 155) keeps the HIGH-severity events and adds when that customer last changed their contact details. A takeover often starts with a contact change, followed by activity on the account.
+- ACCOUNT_RISK (lines 157 to 171) counts each account's events by severity and keeps the time of its last event.
 
-Both refresh incrementally. A short target lag only pays off with incremental refreshes, so check REFRESH_MODE after a deploy. A non-deterministic function such as ANY_VALUE, or a range join, makes a dynamic table fall back to full refreshes, each of which recomputes the whole table every 15 seconds.
+Both declare REFRESH_MODE = ADAPTIVE. A short target lag only pays off with incremental refreshes, so check REFRESH_MODE after a deploy. A non-deterministic function such as ANY_VALUE, or a range join, makes a dynamic table fall back to full refreshes, each of which recomputes the whole table every 15 seconds.
 
 #### Alerts on the pipes
 
