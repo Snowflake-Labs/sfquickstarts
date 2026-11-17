@@ -42,7 +42,7 @@ data/        Snapshot of the cleaned ChEMBL1978 IC50 dataset (2,751 compounds) u
 docker/      R training script, Plumber API, Dockerfile, SPCS spec, bundled model artifacts
 streamlit/   Multipage app (Dashboard, Single Prediction, Batch Prediction, About, and Ask an Agent)
 notebooks/   01: raw ChEMBL, assays, publications, and EDA; 02: SQL scoring and agent tables
-agent/       Cortex Agent spec and 15-question evaluation fixtures
+agent/       Cortex Agent spec, Apache Ossie semantic model (aromatase_sv_ossie.yaml), and 15-question evaluation fixtures
 native_app/  Optional Native App package for per-consumer MCP deployment
 scripts/     Endpoint smoke test, dashboard data generator, and agent deployment script
 sql/         Setup, R-backed SQL functions, semantic view, Cortex Search, and triage procedure
@@ -127,7 +127,7 @@ The developer guide walks through each step in detail.
    snow streamlit deploy --replace
    cd ..
    ```
-9. **Deploy and evaluate the Cortex Agent (`AROMATASE_AGENT`).** Notebook 01 fetches 313 assay descriptions and 198 publication records, and Notebook 02 writes per-molecule predictions, full CDK fingerprints, and Rule of Five descriptors. Run `sql/agent.sql` to create the `AROMATASE_SV` semantic view, `ASSAY_SEARCH` Cortex Search service, and `TRIAGE_COMPOUNDS` procedure, then deploy `AROMATASE_AGENT` from `agent/aromatase_agent.yaml`:
+9. **Deploy and evaluate the Cortex Agent (`AROMATASE_AGENT`).** Notebook 01 fetches 313 assay descriptions and 198 publication records, and Notebook 02 writes per-molecule predictions, full CDK fingerprints, and Rule of Five descriptors. Run `sql/agent.sql` to create the `AROMATASE_SV` semantic view from the Apache Ossie `0.1.1` specification (`agent/aromatase_sv_ossie.yaml` via `SYSTEM$CREATE_SEMANTIC_VIEW_FROM_OSSIE_YAML`), the `ASSAY_SEARCH` Cortex Search service, and the `TRIAGE_COMPOUNDS` procedure, then deploy `AROMATASE_AGENT` from `agent/aromatase_agent.yaml`:
    ```bash
    python scripts/deploy_agent.py --connection <your_connection>
    ```
@@ -332,7 +332,276 @@ tool_resources:
       warehouse: QSAR_WH
 QSAR_FILE_02_EOF
 
-cat > 'agent/eval_config.yaml' <<'QSAR_FILE_03_EOF'
+cat > 'agent/aromatase_sv_ossie.yaml' <<'QSAR_FILE_03_EOF'
+version: 0.1.1
+semantic_model:
+  - name: AROMATASE_SV
+    description: "Measured human aromatase bioactivity and model scores; compound grain, one selected assay per compound. Training and test rows are mixed."
+    datasets:
+      - name: ASSAYS
+        source: QSAR_DB.PUBLIC.CHEMBL1978_ASSAYS
+        primary_key:
+          - ASSAY_CHEMBL_ID
+        fields:
+          - name: ASSAY_DESCRIPTION
+            expression:
+              dialects:
+                - dialect: SNOWFLAKE
+                  expression: assays.DESCRIPTION
+            dimension: {}
+          - name: ASSAY_ID
+            expression:
+              dialects:
+                - dialect: SNOWFLAKE
+                  expression: assays.ASSAY_CHEMBL_ID
+            dimension: {}
+          - name: ASSAY_TYPE
+            expression:
+              dialects:
+                - dialect: SNOWFLAKE
+                  expression: assays.ASSAY_TYPE
+            dimension: {}
+      - name: COMPOUNDS
+        source: QSAR_DB.PUBLIC.CHEMBL1978_COMPOUNDS
+        primary_key:
+          - MOLECULE_CHEMBL_ID
+        fields:
+          - name: ACTIVITY_LABEL
+            expression:
+              dialects:
+                - dialect: SNOWFLAKE
+                  expression: CASE WHEN compounds.ACTIVITY_CLASS = 1 THEN 'Active' ELSE 'Inactive' END
+            dimension: {}
+          - name: MOLECULE_ID
+            expression:
+              dialects:
+                - dialect: SNOWFLAKE
+                  expression: compounds.MOLECULE_CHEMBL_ID
+            dimension: {}
+          - name: SMILES
+            expression:
+              dialects:
+                - dialect: SNOWFLAKE
+                  expression: compounds.CANONICAL_SMILES
+            dimension: {}
+          - name: ACTIVE_FLAG
+            expression:
+              dialects:
+                - dialect: SNOWFLAKE
+                  expression: compounds.ACTIVITY_CLASS
+          - name: MEASURED_PIC50
+            expression:
+              dialects:
+                - dialect: SNOWFLAKE
+                  expression: compounds.PCHEMBL_VALUE
+      - name: DESCRIPTORS
+        source: QSAR_DB.PUBLIC.CHEMBL1978_DESCRIPTORS
+        primary_key:
+          - MOLECULE_CHEMBL_ID
+        fields:
+          - name: RO5_PASS
+            expression:
+              dialects:
+                - dialect: SNOWFLAKE
+                  expression: descriptors.RO5_PASS
+            dimension: {}
+          - name: HBA
+            expression:
+              dialects:
+                - dialect: SNOWFLAKE
+                  expression: descriptors.HBA
+          - name: HBD
+            expression:
+              dialects:
+                - dialect: SNOWFLAKE
+                  expression: descriptors.HBD
+          - name: LOGP
+            expression:
+              dialects:
+                - dialect: SNOWFLAKE
+                  expression: descriptors.LOGP
+          - name: MOLECULAR_WEIGHT
+            expression:
+              dialects:
+                - dialect: SNOWFLAKE
+                  expression: descriptors.MW
+          - name: RO5_VIOLATIONS
+            expression:
+              dialects:
+                - dialect: SNOWFLAKE
+                  expression: descriptors.RO5_VIOLATIONS
+          - name: TPSA
+            expression:
+              dialects:
+                - dialect: SNOWFLAKE
+                  expression: descriptors.TPSA
+      - name: DOCUMENTS
+        source: QSAR_DB.PUBLIC.CHEMBL1978_DOCUMENTS
+        primary_key:
+          - DOCUMENT_CHEMBL_ID
+        fields:
+          - name: DOCUMENT_ID
+            expression:
+              dialects:
+                - dialect: SNOWFLAKE
+                  expression: documents.DOCUMENT_CHEMBL_ID
+            dimension: {}
+          - name: JOURNAL
+            expression:
+              dialects:
+                - dialect: SNOWFLAKE
+                  expression: documents.JOURNAL
+            dimension: {}
+          - name: PUBLICATION_YEAR
+            expression:
+              dialects:
+                - dialect: SNOWFLAKE
+                  expression: TRY_TO_NUMBER(documents.YEAR)
+            dimension: {}
+          - name: TITLE
+            expression:
+              dialects:
+                - dialect: SNOWFLAKE
+                  expression: documents.TITLE
+            dimension: {}
+      - name: FINGERPRINTS
+        source: QSAR_DB.PUBLIC.CHEMBL1978_FINGERPRINTS
+        primary_key:
+          - MOLECULE_CHEMBL_ID
+        fields:
+          - name: BIT_COUNT
+            expression:
+              dialects:
+                - dialect: SNOWFLAKE
+                  expression: ARRAY_SIZE(fingerprints.ECFP4_BITS)
+      - name: PREDICTIONS
+        source: QSAR_DB.PUBLIC.CHEMBL1978_PREDICTIONS
+        primary_key:
+          - MOLECULE_CHEMBL_ID
+        fields:
+          - name: PREDICTED_PIC50
+            expression:
+              dialects:
+                - dialect: SNOWFLAKE
+                  expression: predictions.PRED_PIC50
+          - name: PREDICTION_ERROR
+            expression:
+              dialects:
+                - dialect: SNOWFLAKE
+                  expression: predictions.ERROR
+      - name: PREDICTION_LOG
+        source: QSAR_DB.PUBLIC.QSAR_PREDICTIONS_LOG
+        primary_key:
+          - PREDICTION_ID
+        fields:
+          - name: PREDICTED_AT
+            expression:
+              dialects:
+                - dialect: SNOWFLAKE
+                  expression: prediction_log.PREDICTED_AT
+            dimension: {}
+          - name: SERVICE_USER
+            expression:
+              dialects:
+                - dialect: SNOWFLAKE
+                  expression: prediction_log.USER_NAME
+            dimension: {}
+          - name: PREDICTED_PIC50
+            expression:
+              dialects:
+                - dialect: SNOWFLAKE
+                  expression: prediction_log.PREDICTED_PIC50
+    relationships:
+      - name: ASSAYS_TO_DOCUMENTS
+        from: ASSAYS
+        to: DOCUMENTS
+        from_columns:
+          - DOCUMENT_CHEMBL_ID
+        to_columns:
+          - DOCUMENT_CHEMBL_ID
+      - name: COMPOUNDS_TO_ASSAYS
+        from: COMPOUNDS
+        to: ASSAYS
+        from_columns:
+          - ASSAY_CHEMBL_ID
+        to_columns:
+          - ASSAY_CHEMBL_ID
+      - name: DESCRIPTORS_TO_COMPOUNDS
+        from: DESCRIPTORS
+        to: COMPOUNDS
+        from_columns:
+          - MOLECULE_CHEMBL_ID
+        to_columns:
+          - MOLECULE_CHEMBL_ID
+      - name: FINGERPRINTS_TO_COMPOUNDS
+        from: FINGERPRINTS
+        to: COMPOUNDS
+        from_columns:
+          - MOLECULE_CHEMBL_ID
+        to_columns:
+          - MOLECULE_CHEMBL_ID
+      - name: PREDICTIONS_TO_COMPOUNDS
+        from: PREDICTIONS
+        to: COMPOUNDS
+        from_columns:
+          - MOLECULE_CHEMBL_ID
+        to_columns:
+          - MOLECULE_CHEMBL_ID
+    metrics:
+      - name: compound_count
+        expression:
+          dialects:
+            - dialect: SNOWFLAKE
+              expression: COUNT(compounds.molecule_id)
+        description: Total number of deduplicated aromatase compounds
+      - name: active_count
+        expression:
+          dialects:
+            - dialect: SNOWFLAKE
+              expression: SUM(compounds.active_flag)
+        description: Number of measured active compounds (pIC50 >= 6.5)
+      - name: mean_measured_pic50
+        expression:
+          dialects:
+            - dialect: SNOWFLAKE
+              expression: AVG(compounds.measured_pic50)
+        description: Mean measured pIC50 across compounds
+      - name: mean_predicted_pic50
+        expression:
+          dialects:
+            - dialect: SNOWFLAKE
+              expression: AVG(predictions.predicted_pic50)
+        description: Mean predicted pIC50 from the R QSAR model
+      - name: rmse
+        expression:
+          dialects:
+            - dialect: SNOWFLAKE
+              expression: SQRT(AVG(POWER(predictions.prediction_error, 2)))
+        description: Root mean squared error across scored compounds
+      - name: ro5_pass_count
+        expression:
+          dialects:
+            - dialect: SNOWFLAKE
+              expression: COUNT_IF(descriptors.ro5_pass)
+        description: Number of compounds passing Lipinski's Rule of Five
+      - name: mean_bits_on
+        expression:
+          dialects:
+            - dialect: SNOWFLAKE
+              expression: AVG(fingerprints.bit_count)
+        description: Mean number of active ECFP4 bits per molecule
+      - name: request_count
+        expression:
+          dialects:
+            - dialect: SNOWFLAKE
+              expression: COUNT(prediction_log.predicted_at)
+        description: Total logged prediction requests
+    custom_extensions:
+      - vendor_name: SNOWFLAKE
+        data: '{"verified_queries":[{"name":"COMPOUND_TOTALS","sql":"SELECT * FROM SEMANTIC_VIEW(QSAR_DB.PUBLIC.AROMATASE_SV METRICS compound_count, active_count)","question":"How many compounds and actives are in the aromatase dataset?","use_as_onboarding_question":true},{"name":"ACTIVITY_BREAKDOWN","sql":"SELECT * FROM SEMANTIC_VIEW(QSAR_DB.PUBLIC.AROMATASE_SV DIMENSIONS compounds.activity_label METRICS compound_count)","question":"How many active and inactive aromatase compounds are there?"},{"name":"RO5_TOTAL","sql":"SELECT * FROM SEMANTIC_VIEW(QSAR_DB.PUBLIC.AROMATASE_SV METRICS ro5_pass_count)","question":"How many compounds pass the Rule of Five?"}]}'
+QSAR_FILE_03_EOF
+
+cat > 'agent/eval_config.yaml' <<'QSAR_FILE_04_EOF'
 dataset:
   dataset_type: CORTEX AGENT
   table_name: QSAR_DB.PUBLIC.AGENT_EVAL_QUESTIONS
@@ -358,9 +627,9 @@ metrics:
     version: v3
   - name: tool_selection_accuracy
     version: v3
-QSAR_FILE_03_EOF
+QSAR_FILE_04_EOF
 
-cat > 'agent/eval_questions.sql' <<'QSAR_FILE_04_EOF'
+cat > 'agent/eval_questions.sql' <<'QSAR_FILE_05_EOF'
 -- Optional evaluation fixture. Run in your own guide schema after reviewing
 -- the bundled-model expected values. This script replaces AGENT_EVAL_QUESTIONS.
 USE ROLE QSAR_ROLE;
@@ -388,9 +657,9 @@ FROM VALUES
  ('Triage not_a_smiles as a molecule', 'Return an invalid SMILES error, not a potency prediction.', '[{"tool_name":"Triage"}]'),
  ('How should I describe the model q05 and q95 values?', 'They are uncalibrated model quantiles, not a calibrated confidence interval. This is a teaching model.', '[]'),
  ('What does the nearest-neighbour Tanimoto score compare against?', 'It compares against all 2,751 measured compounds including held-out rows. It is a similarity heuristic, not a validated applicability-domain measure.', '[]');
-QSAR_FILE_04_EOF
+QSAR_FILE_05_EOF
 
-(base64 -d 2>/dev/null || base64 -D) <<'QSAR_FILE_05_EOF' | gunzip -c > 'data/chembl1978_cleaned.csv'
+(base64 -d 2>/dev/null || base64 -D) <<'QSAR_FILE_06_EOF' | gunzip -c > 'data/chembl1978_cleaned.csv'
 H4sIAAAAAAACE7y9S48cSZImeN+/kZcIjJOp78chgEUZNtAN7IYf8tiZaNTGNLANcJyL4swA++9X
 RFTVTFRVzMw9ImpYWUySSRXTp7zlk//288d/vP+PH//x7+//z3/8t//7x7//53+9vP/99vP2n+9/
 //Hvv/7bf/74j1+XX//977f/+vd//Nd//59///E//uPy/9a/Wn739/f//p//8z//+//37+8//v7r
@@ -1146,9 +1415,9 @@ h6LZQQQA0nQEvy3eU3FQUorav01NrfGRVSCPrDNetagvxTLKuhZSKkdrbzU48KXa26X4NptUphqd
 zS573euJ2BLf9NmXVxASTth3apqXJueyw2xWBoH3yube+kfUKA1QS5TtCyGFW93I1WH+gkUd6lpp
 V5sIFnDKkWxhllU3sv3kxrXbGwKqiBiR89oQwnQZwkS3b5ZUFOHJ1gRRxcpqkID0+jSRDGN+U1LH
 iwGmGcEa0+xozc6/3EgJs6Mns9j/B4tEXkJKLgMA
-QSAR_FILE_05_EOF
+QSAR_FILE_06_EOF
 
-cat > 'docker/Dockerfile.plumber' <<'QSAR_FILE_06_EOF'
+cat > 'docker/Dockerfile.plumber' <<'QSAR_FILE_07_EOF'
 # ─────────────────────────────────────────────────────────────────────────────
 # Pure R inference image for QSAR Aromatase SPCS service.
 # Serves predictions via R Plumber — no Python, no rpy2 bridge.
@@ -1203,9 +1472,9 @@ EXPOSE 5000
 
 CMD ["Rscript", "-e", \
      "pr <- plumber::plumb('/api/plumber_api.R'); pr$run(host='0.0.0.0', port=5000)"]
-QSAR_FILE_06_EOF
+QSAR_FILE_07_EOF
 
-cat > 'docker/kept_bits.csv' <<'QSAR_FILE_07_EOF'
+cat > 'docker/kept_bits.csv' <<'QSAR_FILE_08_EOF'
 "bit"
 "bit_1"
 "bit_4"
@@ -1385,9 +1654,9 @@ cat > 'docker/kept_bits.csv' <<'QSAR_FILE_07_EOF'
 "bit_1006"
 "bit_1019"
 "bit_1022"
-QSAR_FILE_07_EOF
+QSAR_FILE_08_EOF
 
-cat > 'docker/plumber_api.R' <<'QSAR_FILE_08_EOF'
+cat > 'docker/plumber_api.R' <<'QSAR_FILE_09_EOF'
 #!/usr/bin/env Rscript
 # ─────────────────────────────────────────────────────────────────────────────
 # QSAR Aromatase Plumber API
@@ -2025,9 +2294,9 @@ function(req) {
     error = list(code = -32601, message = paste("Method not found:", method))
   )
 }
-QSAR_FILE_08_EOF
+QSAR_FILE_09_EOF
 
-cat > 'docker/plumber_spec.yaml' <<'QSAR_FILE_09_EOF'
+cat > 'docker/plumber_spec.yaml' <<'QSAR_FILE_10_EOF'
 spec:
   containers:
     - name: qsar-r-plumber
@@ -2048,9 +2317,9 @@ spec:
     - name: api
       port: 5000
       public: true
-QSAR_FILE_09_EOF
+QSAR_FILE_10_EOF
 
-(base64 -d 2>/dev/null || base64 -D) <<'QSAR_FILE_10_EOF' | gunzip -c > 'docker/qsar_aromatase_model.rds'
+(base64 -d 2>/dev/null || base64 -D) <<'QSAR_FILE_11_EOF' | gunzip -c > 'docker/qsar_aromatase_model.rds'
 H4sIAAAAAAACExyXiT8TjOPHKzlKjh6PFLm6S8idY+7qKckjIccsue8cm5htOaKHHKWSeyo87mNY
 NrYHuRKb28wsOYYdYmxsNr/v6/f5Fz6vz/v1eatmSBz6/4hMCEQ/Ok1z+jMXtUR+2PYN/PzzSrLp
 9XSbxJ/SZV/FYyVYOSfnjmg+1P8qL/H3XFLr82Sn9KOVqwiqaUgAtTa3OLdM0LnBpxKiSyPw0DpN
@@ -69780,9 +70049,9 @@ ucJUoF1RrhBbZwcNdK4NgBx3J+m/pCocfnZLBNdqLQchibbyVDTHZuVyspFemiwQnWzqEim46ZY+
 f1PPpaGmwlSFhGyDkRw+DpXcoODY8tLN+kJ/mGPOxuSOxDomDCDjsITYKuTiHBODXJNuECAao5FM
 +mz/Ma7jMkFe6A8fWiu0W2Rm/SxVkuNjEikkRE37ILtOY36P5qRZzpGmqGhHZyEAbZqD8/3zxFzb
 dNTXZKxWskWfjSSzlACpnZ8T1KP1AYpNdHGjw/beijz2F/oDD5Yz7/8B90w9XdotPQA=
-QSAR_FILE_10_EOF
+QSAR_FILE_11_EOF
 
-cat > 'docker/top_features_rcdk.csv' <<'QSAR_FILE_11_EOF'
+cat > 'docker/top_features_rcdk.csv' <<'QSAR_FILE_12_EOF'
 "bit","importance"
 "bit_319",183.111231779933
 "bit_909",123.234154777659
@@ -69804,9 +70073,9 @@ cat > 'docker/top_features_rcdk.csv' <<'QSAR_FILE_11_EOF'
 "bit_353",27.3779892709846
 "bit_515",27.2988511800355
 "bit_182",26.5857289941666
-QSAR_FILE_11_EOF
+QSAR_FILE_12_EOF
 
-(base64 -d 2>/dev/null || base64 -D) <<'QSAR_FILE_12_EOF' | gunzip -c > 'docker/train_fingerprints.csv'
+(base64 -d 2>/dev/null || base64 -D) <<'QSAR_FILE_13_EOF' | gunzip -c > 'docker/train_fingerprints.csv'
 H4sIAAAAAAACE9y9W4+dSXIt9u6fMXohcdQzeb+gQMDQhgkZsFkP/SgNBJ3yGBbQqj5Qn3MA/3tn
 REZmRmTmd9lF9ljSYKqbZJOsnbe4rljrD//66y9/efsfv/zln97+n7/863/95Z/+5f/6w9/+4e2f
 3399/5e3f/7ln37713/55S+/lV/6b/Tf/+c///I//lJ+/s9v//1f/ue//Pf/95/efvnn3+A3/OXt
@@ -72351,9 +72620,9 @@ z297vWgHcVfXd/lQdTqH5tgXpEOHG804nbeONN11Uop70lN/YTr/aDRf9HR+xQ+KEKW01/WUPvUv
 Turdw0m9wT7na4+9Z1f0XeL8C7Wf1QkMC1+eKvGDpLf4IuEj7K1o3lH+R80ToLPS8i4cILrnprxL
 NyKJsvoRo8yodgQrntV+DLMb3iy18lfMLx4FsRWXogLZFsBE0OqRAcYasASjoswvaDf+D0cnUIGb
 +gkA
-QSAR_FILE_12_EOF
+QSAR_FILE_13_EOF
 
-cat > 'docker/train_rcdk.R' <<'QSAR_FILE_13_EOF'
+cat > 'docker/train_rcdk.R' <<'QSAR_FILE_14_EOF'
 #!/usr/bin/env Rscript
 # ─────────────────────────────────────────────────────────────────────────────
 # Retrain ranger QSAR model using PPM rcdk fingerprints.
@@ -72468,9 +72737,9 @@ metrics <- list(
 jsonlite::write_json(metrics, "/output/training_metrics.json", auto_unbox = TRUE, pretty = TRUE)
 
 cat("Done.\n")
-QSAR_FILE_13_EOF
+QSAR_FILE_14_EOF
 
-cat > 'docker/training_metrics.json' <<'QSAR_FILE_14_EOF'
+cat > 'docker/training_metrics.json' <<'QSAR_FILE_15_EOF'
 {
   "oob_r2": 0.649,
   "test_r2": 0.6855,
@@ -72484,9 +72753,9 @@ cat > 'docker/training_metrics.json' <<'QSAR_FILE_14_EOF'
   "fingerprint": "CDK ECFP4 (rcdk 3.8.2)",
   "model": "ranger quantile RF"
 }
-QSAR_FILE_14_EOF
+QSAR_FILE_15_EOF
 
-cat > 'docs/mcp-walkthrough.md' <<'QSAR_FILE_15_EOF'
+cat > 'docs/mcp-walkthrough.md' <<'QSAR_FILE_16_EOF'
 # MCP Server Walkthrough — QSAR Aromatase Inhibitor Predictor
 
 Two MCP endpoints are available. Use **Standalone** for immediate access with a PAT, or **Native App** for per-consumer installation where each user authenticates with their own Snowflake session.
@@ -72853,9 +73122,9 @@ docker push <org>-<account>.registry.snowflakecomputing.com/qsar_db/public/qsar_
 # Update service
 ALTER SERVICE QSAR_DB.PUBLIC.QSAR_PLUMBER_SVC FROM SPECIFICATION $$ ... $$;
 ```
-QSAR_FILE_15_EOF
+QSAR_FILE_16_EOF
 
-cat > 'native_app/README.md' <<'QSAR_FILE_16_EOF'
+cat > 'native_app/README.md' <<'QSAR_FILE_17_EOF'
 # QSAR Aromatase Inhibitor MCP Server
 
 A Snowflake Native App that exposes a **Model Context Protocol (MCP) server** for predicting small-molecule potency against human aromatase (CYP19A1).
@@ -72928,9 +73197,9 @@ Configure any MCP-compatible client (Claude Desktop, CoCo Desktop, etc.):
 
 This app implements `predict_pic50` as defined in `compound_profiling.ossie.yaml` —  
 a vendor-neutral semantic specification for the QSAR compound profiling model.
-QSAR_FILE_16_EOF
+QSAR_FILE_17_EOF
 
-cat > 'native_app/manifest.yml' <<'QSAR_FILE_17_EOF'
+cat > 'native_app/manifest.yml' <<'QSAR_FILE_18_EOF'
 manifest_version: 1
 
 version:
@@ -72958,9 +73227,9 @@ privileges:
       description: >
         Required to expose the /mcp and /predict endpoints publicly so
         AI agents and MCP clients can call the pIC50 prediction service.
-QSAR_FILE_17_EOF
+QSAR_FILE_18_EOF
 
-cat > 'native_app/setup.sql' <<'QSAR_FILE_18_EOF'
+cat > 'native_app/setup.sql' <<'QSAR_FILE_19_EOF'
 -- ─────────────────────────────────────────────────────────────────────────────
 -- QSAR Aromatase MCP Server — Native App Setup Script
 --
@@ -73030,9 +73299,9 @@ CREATE OR REPLACE PROCEDURE app_schema.grant_callback(privs ARRAY)
 
 GRANT USAGE ON PROCEDURE app_schema.grant_callback(ARRAY)
     TO APPLICATION ROLE QSAR_APP_USER;
-QSAR_FILE_18_EOF
+QSAR_FILE_19_EOF
 
-(base64 -d 2>/dev/null || base64 -D) <<'QSAR_FILE_19_EOF' | gunzip -c > 'notebooks/01_prepare_training_data.ipynb'
+(base64 -d 2>/dev/null || base64 -D) <<'QSAR_FILE_20_EOF' | gunzip -c > 'notebooks/01_prepare_training_data.ipynb'
 H4sIAAAAAAACE71bbVfbyJL+Pr+i1zl3R8o1il8wJNz1nOsAucNOIFwgM3cO+JiW1LY1yJJGLUE8
 HPZv7ff9ZftUt2S9WCYDYZeZgK3urq6uqq56qrp1/x1rOcL3ZWuPXX7H2D3+6SeTZBkJPG0teHzj
 hndBq63aPJceDnrbHdvtu9nDhUi4yxOOpvsH/UiGaeyIjCy+v2KdLvuf/2ansYh4LNhFzL3AC2bs
@@ -73128,9 +73397,9 @@ p5zniYgaU78DzOGH3N38vvXqlFq9Jq3f/d5waE3H0z6dNPL8bL98O5bq4CwvBqi38qhxlnqusNin
 x16Kbqv3nR950xoscddteNc6f+l8Zd4lAPgdI1dUvzrTuhFxIHyqLuaXaVquJyNEgUl+QeZUvQrN
 8ss35es0+i3prCHvrx+qt/eUnlYjJl4wDVfTVLtnNLKXK1T9w+p2W5pzItMKbCxvwckjb5e/TxYe
 gDaeDr57+F86R0eBfkIAAA==
-QSAR_FILE_19_EOF
+QSAR_FILE_20_EOF
 
-(base64 -d 2>/dev/null || base64 -D) <<'QSAR_FILE_20_EOF' | gunzip -c > 'notebooks/02_score_compounds.ipynb'
+(base64 -d 2>/dev/null || base64 -D) <<'QSAR_FILE_21_EOF' | gunzip -c > 'notebooks/02_score_compounds.ipynb'
 H4sIAAAAAAACE7UZa3ObSPJ7fsWUUluBlMzJDyWytlS1WJazqpMlBWSntiIXHmCwWCEgzGDZ5/Pv
 uu/3y657AAlZ2LEdn1OhYPox3T39mtbdO1JzWBDwWpt8f0fIHfzPVixxGzNYrS1oMnejZVirS5jv
 4qJ92HA+HXqf8sUFE9SlggLo7j5b4lGaOCxnC9/vSWOP/Pc/xHSihJFutIijNHQ5+eaLGREzRgxy
@@ -73175,9 +73444,9 @@ CF73QfuorA3/b5zA2oHsCJyA0ZC5qvbxw+tCfv/TbqPRar4s5Ic4ajcFiysbSgPaOIrhJHNAwugi
 wN9C4hgTA3j1nKSxBELqJNIIv8u5p/xtL4ioyxJOHOrg6DT/BQiLIXSL0HQkpe7vHUFDP/SC2pwl
 IQt4zJzCL2quz2NIl1Zx1uNbaGBCUowry54RS1AOWF0I5eJ+rbDuisLyQy9abbOJnvOAkMIwlMbW
 dndrmeTIphbaoBg0jQA7KH9bULyiBFab7+7/BykcazLUHQAA
-QSAR_FILE_20_EOF
+QSAR_FILE_21_EOF
 
-cat > 'scripts/deploy_agent.py' <<'QSAR_FILE_21_EOF'
+cat > 'scripts/deploy_agent.py' <<'QSAR_FILE_22_EOF'
 """Create the optional Cortex Agent from its versioned YAML specification."""
 
 import argparse
@@ -73216,9 +73485,9 @@ def main():
 
 if __name__ == "__main__":
     main()
-QSAR_FILE_21_EOF
+QSAR_FILE_22_EOF
 
-cat > 'scripts/generate_dashboard_data.py' <<'QSAR_FILE_22_EOF'
+cat > 'scripts/generate_dashboard_data.py' <<'QSAR_FILE_23_EOF'
 #!/usr/bin/env python3
 """
 Generate dashboard data files from ChEMBL1978 compounds and upload to Snowflake stage.
@@ -73393,9 +73662,9 @@ for fname in files:
 conn.close()
 
 print(f"\nDone — confirm with: LIST {STAGE}")
-QSAR_FILE_22_EOF
+QSAR_FILE_23_EOF
 
-cat > 'scripts/test_endpoint.py' <<'QSAR_FILE_23_EOF'
+cat > 'scripts/test_endpoint.py' <<'QSAR_FILE_24_EOF'
 """
 Smoke-test the AromatasePred R Plumber service through its public endpoint.
 
@@ -73456,86 +73725,283 @@ r = requests.post(f"{URL}/mcp", headers=HEADERS, timeout=120,
                                    "arguments": {"smiles": COMPOUNDS["letrozole"]}}})
 r.raise_for_status()
 print("\nMCP predict_pic50:\n" + r.json()["result"]["content"][0]["text"])
-QSAR_FILE_23_EOF
+QSAR_FILE_24_EOF
 
-cat > 'sql/agent.sql' <<'QSAR_FILE_24_EOF'
+cat > 'sql/agent.sql' <<'QSAR_FILE_25_EOF'
 -- Optional Aromatase analyst. Run after notebooks 01 and 02 and functions.sql.
 USE ROLE QSAR_ROLE;
 USE WAREHOUSE QSAR_WH;
 USE SCHEMA QSAR_DB.PUBLIC;
 
-CREATE OR REPLACE SEMANTIC VIEW AROMATASE_SV
-  TABLES (
-    compounds AS CHEMBL1978_COMPOUNDS PRIMARY KEY (MOLECULE_CHEMBL_ID),
-    predictions AS CHEMBL1978_PREDICTIONS PRIMARY KEY (MOLECULE_CHEMBL_ID),
-    descriptors AS CHEMBL1978_DESCRIPTORS PRIMARY KEY (MOLECULE_CHEMBL_ID),
-    fingerprints AS CHEMBL1978_FINGERPRINTS PRIMARY KEY (MOLECULE_CHEMBL_ID),
-    assays AS CHEMBL1978_ASSAYS PRIMARY KEY (ASSAY_CHEMBL_ID),
-    documents AS CHEMBL1978_DOCUMENTS PRIMARY KEY (DOCUMENT_CHEMBL_ID),
-    prediction_log AS QSAR_PREDICTIONS_LOG PRIMARY KEY (PREDICTION_ID)
-  )
-  RELATIONSHIPS (
-    predictions(MOLECULE_CHEMBL_ID) REFERENCES compounds(MOLECULE_CHEMBL_ID),
-    descriptors(MOLECULE_CHEMBL_ID) REFERENCES compounds(MOLECULE_CHEMBL_ID),
-    fingerprints(MOLECULE_CHEMBL_ID) REFERENCES compounds(MOLECULE_CHEMBL_ID),
-    compounds(ASSAY_CHEMBL_ID) REFERENCES assays(ASSAY_CHEMBL_ID),
-    assays(DOCUMENT_CHEMBL_ID) REFERENCES documents(DOCUMENT_CHEMBL_ID)
-  )
-  FACTS (
-    compounds.measured_pic50 AS compounds.PCHEMBL_VALUE,
-    compounds.active_flag AS compounds.ACTIVITY_CLASS,
-    predictions.predicted_pic50 AS predictions.PRED_PIC50,
-    predictions.prediction_error AS predictions.ERROR,
-    descriptors.molecular_weight AS descriptors.MW,
-    descriptors.logp AS descriptors.LOGP,
-    descriptors.hba AS descriptors.HBA,
-    descriptors.hbd AS descriptors.HBD,
-    descriptors.tpsa AS descriptors.TPSA,
-    descriptors.ro5_violations AS descriptors.RO5_VIOLATIONS,
-    fingerprints.bit_count AS ARRAY_SIZE(fingerprints.ECFP4_BITS),
-    prediction_log.predicted_pic50 AS prediction_log.PREDICTED_PIC50
-  )
-  DIMENSIONS (
-    compounds.molecule_id AS compounds.MOLECULE_CHEMBL_ID,
-    compounds.smiles AS compounds.CANONICAL_SMILES,
-    compounds.activity_label AS CASE WHEN compounds.ACTIVITY_CLASS = 1 THEN 'Active' ELSE 'Inactive' END,
-    assays.assay_id AS assays.ASSAY_CHEMBL_ID,
-    assays.assay_type AS assays.ASSAY_TYPE,
-    assays.assay_description AS assays.DESCRIPTION,
-    documents.document_id AS documents.DOCUMENT_CHEMBL_ID,
-    documents.title AS documents.TITLE,
-    documents.journal AS documents.JOURNAL,
-    documents.publication_year AS TRY_TO_NUMBER(documents.YEAR),
-    descriptors.ro5_pass AS descriptors.RO5_PASS,
-    prediction_log.predicted_at AS prediction_log.PREDICTED_AT,
-    prediction_log.service_user AS prediction_log.USER_NAME
-  )
-  METRICS (
-    compounds.compound_count AS COUNT(*),
-    compounds.active_count AS SUM(compounds.active_flag),
-    compounds.mean_measured_pic50 AS AVG(compounds.measured_pic50),
-    predictions.mean_predicted_pic50 AS AVG(predictions.predicted_pic50),
-    predictions.rmse AS SQRT(AVG(POWER(predictions.prediction_error, 2))),
-    descriptors.ro5_pass_count AS COUNT_IF(descriptors.ro5_pass),
-    fingerprints.mean_bits_on AS AVG(fingerprints.bit_count),
-    prediction_log.request_count AS COUNT(*)
-  )
-  COMMENT = 'Measured human aromatase bioactivity and model scores; compound grain, one selected assay per compound. Training and test rows are mixed.'
-  AI_VERIFIED_QUERIES (
-    compound_totals AS (
-      QUESTION 'How many compounds and actives are in the aromatase dataset?'
-      ONBOARDING_QUESTION TRUE
-      SQL 'SELECT * FROM SEMANTIC_VIEW(QSAR_DB.PUBLIC.AROMATASE_SV METRICS compounds.compound_count, compounds.active_count)'
-    ),
-    activity_breakdown AS (
-      QUESTION 'How many active and inactive aromatase compounds are there?'
-      SQL 'SELECT * FROM SEMANTIC_VIEW(QSAR_DB.PUBLIC.AROMATASE_SV DIMENSIONS compounds.activity_label METRICS compounds.compound_count)'
-    ),
-    ro5_total AS (
-      QUESTION 'How many compounds pass the Rule of Five?'
-      SQL 'SELECT * FROM SEMANTIC_VIEW(QSAR_DB.PUBLIC.AROMATASE_SV METRICS descriptors.ro5_pass_count)'
-    )
-  );
+-- Create AROMATASE_SV from the Apache Ossie 0.1.1 specification (agent/aromatase_sv_ossie.yaml)
+CALL SYSTEM$CREATE_SEMANTIC_VIEW_FROM_OSSIE_YAML('QSAR_DB.PUBLIC', $$
+version: 0.1.1
+semantic_model:
+  - name: AROMATASE_SV
+    description: "Measured human aromatase bioactivity and model scores; compound grain, one selected assay per compound. Training and test rows are mixed."
+    datasets:
+      - name: ASSAYS
+        source: QSAR_DB.PUBLIC.CHEMBL1978_ASSAYS
+        primary_key:
+          - ASSAY_CHEMBL_ID
+        fields:
+          - name: ASSAY_DESCRIPTION
+            expression:
+              dialects:
+                - dialect: SNOWFLAKE
+                  expression: assays.DESCRIPTION
+            dimension: {}
+          - name: ASSAY_ID
+            expression:
+              dialects:
+                - dialect: SNOWFLAKE
+                  expression: assays.ASSAY_CHEMBL_ID
+            dimension: {}
+          - name: ASSAY_TYPE
+            expression:
+              dialects:
+                - dialect: SNOWFLAKE
+                  expression: assays.ASSAY_TYPE
+            dimension: {}
+      - name: COMPOUNDS
+        source: QSAR_DB.PUBLIC.CHEMBL1978_COMPOUNDS
+        primary_key:
+          - MOLECULE_CHEMBL_ID
+        fields:
+          - name: ACTIVITY_LABEL
+            expression:
+              dialects:
+                - dialect: SNOWFLAKE
+                  expression: CASE WHEN compounds.ACTIVITY_CLASS = 1 THEN 'Active' ELSE 'Inactive' END
+            dimension: {}
+          - name: MOLECULE_ID
+            expression:
+              dialects:
+                - dialect: SNOWFLAKE
+                  expression: compounds.MOLECULE_CHEMBL_ID
+            dimension: {}
+          - name: SMILES
+            expression:
+              dialects:
+                - dialect: SNOWFLAKE
+                  expression: compounds.CANONICAL_SMILES
+            dimension: {}
+          - name: ACTIVE_FLAG
+            expression:
+              dialects:
+                - dialect: SNOWFLAKE
+                  expression: compounds.ACTIVITY_CLASS
+          - name: MEASURED_PIC50
+            expression:
+              dialects:
+                - dialect: SNOWFLAKE
+                  expression: compounds.PCHEMBL_VALUE
+      - name: DESCRIPTORS
+        source: QSAR_DB.PUBLIC.CHEMBL1978_DESCRIPTORS
+        primary_key:
+          - MOLECULE_CHEMBL_ID
+        fields:
+          - name: RO5_PASS
+            expression:
+              dialects:
+                - dialect: SNOWFLAKE
+                  expression: descriptors.RO5_PASS
+            dimension: {}
+          - name: HBA
+            expression:
+              dialects:
+                - dialect: SNOWFLAKE
+                  expression: descriptors.HBA
+          - name: HBD
+            expression:
+              dialects:
+                - dialect: SNOWFLAKE
+                  expression: descriptors.HBD
+          - name: LOGP
+            expression:
+              dialects:
+                - dialect: SNOWFLAKE
+                  expression: descriptors.LOGP
+          - name: MOLECULAR_WEIGHT
+            expression:
+              dialects:
+                - dialect: SNOWFLAKE
+                  expression: descriptors.MW
+          - name: RO5_VIOLATIONS
+            expression:
+              dialects:
+                - dialect: SNOWFLAKE
+                  expression: descriptors.RO5_VIOLATIONS
+          - name: TPSA
+            expression:
+              dialects:
+                - dialect: SNOWFLAKE
+                  expression: descriptors.TPSA
+      - name: DOCUMENTS
+        source: QSAR_DB.PUBLIC.CHEMBL1978_DOCUMENTS
+        primary_key:
+          - DOCUMENT_CHEMBL_ID
+        fields:
+          - name: DOCUMENT_ID
+            expression:
+              dialects:
+                - dialect: SNOWFLAKE
+                  expression: documents.DOCUMENT_CHEMBL_ID
+            dimension: {}
+          - name: JOURNAL
+            expression:
+              dialects:
+                - dialect: SNOWFLAKE
+                  expression: documents.JOURNAL
+            dimension: {}
+          - name: PUBLICATION_YEAR
+            expression:
+              dialects:
+                - dialect: SNOWFLAKE
+                  expression: TRY_TO_NUMBER(documents.YEAR)
+            dimension: {}
+          - name: TITLE
+            expression:
+              dialects:
+                - dialect: SNOWFLAKE
+                  expression: documents.TITLE
+            dimension: {}
+      - name: FINGERPRINTS
+        source: QSAR_DB.PUBLIC.CHEMBL1978_FINGERPRINTS
+        primary_key:
+          - MOLECULE_CHEMBL_ID
+        fields:
+          - name: BIT_COUNT
+            expression:
+              dialects:
+                - dialect: SNOWFLAKE
+                  expression: ARRAY_SIZE(fingerprints.ECFP4_BITS)
+      - name: PREDICTIONS
+        source: QSAR_DB.PUBLIC.CHEMBL1978_PREDICTIONS
+        primary_key:
+          - MOLECULE_CHEMBL_ID
+        fields:
+          - name: PREDICTED_PIC50
+            expression:
+              dialects:
+                - dialect: SNOWFLAKE
+                  expression: predictions.PRED_PIC50
+          - name: PREDICTION_ERROR
+            expression:
+              dialects:
+                - dialect: SNOWFLAKE
+                  expression: predictions.ERROR
+      - name: PREDICTION_LOG
+        source: QSAR_DB.PUBLIC.QSAR_PREDICTIONS_LOG
+        primary_key:
+          - PREDICTION_ID
+        fields:
+          - name: PREDICTED_AT
+            expression:
+              dialects:
+                - dialect: SNOWFLAKE
+                  expression: prediction_log.PREDICTED_AT
+            dimension: {}
+          - name: SERVICE_USER
+            expression:
+              dialects:
+                - dialect: SNOWFLAKE
+                  expression: prediction_log.USER_NAME
+            dimension: {}
+          - name: PREDICTED_PIC50
+            expression:
+              dialects:
+                - dialect: SNOWFLAKE
+                  expression: prediction_log.PREDICTED_PIC50
+    relationships:
+      - name: ASSAYS_TO_DOCUMENTS
+        from: ASSAYS
+        to: DOCUMENTS
+        from_columns:
+          - DOCUMENT_CHEMBL_ID
+        to_columns:
+          - DOCUMENT_CHEMBL_ID
+      - name: COMPOUNDS_TO_ASSAYS
+        from: COMPOUNDS
+        to: ASSAYS
+        from_columns:
+          - ASSAY_CHEMBL_ID
+        to_columns:
+          - ASSAY_CHEMBL_ID
+      - name: DESCRIPTORS_TO_COMPOUNDS
+        from: DESCRIPTORS
+        to: COMPOUNDS
+        from_columns:
+          - MOLECULE_CHEMBL_ID
+        to_columns:
+          - MOLECULE_CHEMBL_ID
+      - name: FINGERPRINTS_TO_COMPOUNDS
+        from: FINGERPRINTS
+        to: COMPOUNDS
+        from_columns:
+          - MOLECULE_CHEMBL_ID
+        to_columns:
+          - MOLECULE_CHEMBL_ID
+      - name: PREDICTIONS_TO_COMPOUNDS
+        from: PREDICTIONS
+        to: COMPOUNDS
+        from_columns:
+          - MOLECULE_CHEMBL_ID
+        to_columns:
+          - MOLECULE_CHEMBL_ID
+    metrics:
+      - name: compound_count
+        expression:
+          dialects:
+            - dialect: SNOWFLAKE
+              expression: COUNT(compounds.molecule_id)
+        description: Total number of deduplicated aromatase compounds
+      - name: active_count
+        expression:
+          dialects:
+            - dialect: SNOWFLAKE
+              expression: SUM(compounds.active_flag)
+        description: Number of measured active compounds (pIC50 >= 6.5)
+      - name: mean_measured_pic50
+        expression:
+          dialects:
+            - dialect: SNOWFLAKE
+              expression: AVG(compounds.measured_pic50)
+        description: Mean measured pIC50 across compounds
+      - name: mean_predicted_pic50
+        expression:
+          dialects:
+            - dialect: SNOWFLAKE
+              expression: AVG(predictions.predicted_pic50)
+        description: Mean predicted pIC50 from the R QSAR model
+      - name: rmse
+        expression:
+          dialects:
+            - dialect: SNOWFLAKE
+              expression: SQRT(AVG(POWER(predictions.prediction_error, 2)))
+        description: Root mean squared error across scored compounds
+      - name: ro5_pass_count
+        expression:
+          dialects:
+            - dialect: SNOWFLAKE
+              expression: COUNT_IF(descriptors.ro5_pass)
+        description: Number of compounds passing Lipinski's Rule of Five
+      - name: mean_bits_on
+        expression:
+          dialects:
+            - dialect: SNOWFLAKE
+              expression: AVG(fingerprints.bit_count)
+        description: Mean number of active ECFP4 bits per molecule
+      - name: request_count
+        expression:
+          dialects:
+            - dialect: SNOWFLAKE
+              expression: COUNT(prediction_log.predicted_at)
+        description: Total logged prediction requests
+    custom_extensions:
+      - vendor_name: SNOWFLAKE
+        data: '{"verified_queries":[{"name":"COMPOUND_TOTALS","sql":"SELECT * FROM SEMANTIC_VIEW(QSAR_DB.PUBLIC.AROMATASE_SV METRICS compound_count, active_count)","question":"How many compounds and actives are in the aromatase dataset?","use_as_onboarding_question":true},{"name":"ACTIVITY_BREAKDOWN","sql":"SELECT * FROM SEMANTIC_VIEW(QSAR_DB.PUBLIC.AROMATASE_SV DIMENSIONS compounds.activity_label METRICS compound_count)","question":"How many active and inactive aromatase compounds are there?"},{"name":"RO5_TOTAL","sql":"SELECT * FROM SEMANTIC_VIEW(QSAR_DB.PUBLIC.AROMATASE_SV METRICS ro5_pass_count)","question":"How many compounds pass the Rule of Five?"}]}'
+$$);
 
 -- One search row per measured molecule and assay. Repeated raw measurements
 -- for the same molecule, assay and document are deduplicated by SELECT DISTINCT.
@@ -73617,9 +74083,9 @@ $$;
 
 -- Create the agent from agent/aromatase_agent.yaml after the SQL above with
 -- scripts/deploy_agent.py. The script also lists it in Snowflake Intelligence.
-QSAR_FILE_24_EOF
+QSAR_FILE_25_EOF
 
-cat > 'sql/functions.sql' <<'QSAR_FILE_25_EOF'
+cat > 'sql/functions.sql' <<'QSAR_FILE_26_EOF'
 -- =============================================================================
 -- AromatasePred: shared SQL function layer
 --
@@ -73708,9 +74174,9 @@ $$;
 SELECT PREDICT_PIC50('N#Cc1ccc(cc1)C(n1cncn1)c1ccc(C#N)cc1') AS prediction,
        RO5('N#Cc1ccc(cc1)C(n1cncn1)c1ccc(C#N)cc1')           AS ro5,
        EXPLAIN_PREDICTION('N#Cc1ccc(cc1)C(n1cncn1)c1ccc(C#N)cc1', 3):top_features AS top_features;
-QSAR_FILE_25_EOF
+QSAR_FILE_26_EOF
 
-cat > 'sql/setup.sql' <<'QSAR_FILE_26_EOF'
+cat > 'sql/setup.sql' <<'QSAR_FILE_27_EOF'
 -- =============================================================================
 -- AromatasePred: Snowflake setup for the R Plumber inference service
 --
@@ -73824,9 +74290,9 @@ USE ROLE QSAR_ROLE;
 --
 -- SHOW SERVICE CONTAINERS IN SERVICE QSAR_PLUMBER_SVC;
 -- SHOW ENDPOINTS IN SERVICE QSAR_PLUMBER_SVC;
-QSAR_FILE_26_EOF
+QSAR_FILE_27_EOF
 
-cat > 'streamlit/_shared.py' <<'QSAR_FILE_27_EOF'
+cat > 'streamlit/_shared.py' <<'QSAR_FILE_28_EOF'
 """Shared utilities, constants, and cached data-loading functions."""
 
 import json
@@ -74101,9 +74567,9 @@ def load_predictions():
         return pd.read_csv(_stage_get("dashboard_predictions.csv", tmp))
     except Exception:
         return pd.DataFrame()
-QSAR_FILE_27_EOF
+QSAR_FILE_28_EOF
 
-cat > 'streamlit/app.py' <<'QSAR_FILE_28_EOF'
+cat > 'streamlit/app.py' <<'QSAR_FILE_29_EOF'
 """
 QSAR Aromatase Inhibitor Predictor — entry point.
 Initialises the Snowflake session and routes to pages.
@@ -74171,13 +74637,13 @@ if agent_available:
 pages.append(st.Page("pages/about.py", title="About", icon=":material/info:"))
 pg = st.navigation(pages, position="top")
 pg.run()
-QSAR_FILE_28_EOF
-
-cat > 'streamlit/packages.txt' <<'QSAR_FILE_29_EOF'
-libxrender1
 QSAR_FILE_29_EOF
 
-cat > 'streamlit/pages/about.py' <<'QSAR_FILE_30_EOF'
+cat > 'streamlit/packages.txt' <<'QSAR_FILE_30_EOF'
+libxrender1
+QSAR_FILE_30_EOF
+
+cat > 'streamlit/pages/about.py' <<'QSAR_FILE_31_EOF'
 """About page — model description, dataset, fingerprints, deployment."""
 
 import streamlit as st
@@ -74261,9 +74727,9 @@ Every component of this project runs entirely inside Snowflake:
 
 The inference service is intentionally **kept separate from Snowflake's Python ML stack** — it uses pure R (`ranger` + `rcdk`) to avoid any rpy2 bridge, ensuring fingerprint and model parity between training and serving.
 """)
-QSAR_FILE_30_EOF
+QSAR_FILE_31_EOF
 
-cat > 'streamlit/pages/ask_agent.py' <<'QSAR_FILE_31_EOF'
+cat > 'streamlit/pages/ask_agent.py' <<'QSAR_FILE_32_EOF'
 """Optional Cortex Agent chat over measured activity and the R predictor."""
 
 import json
@@ -74327,9 +74793,9 @@ if question := st.chat_input("Ask about aromatase compounds or paste a SMILES"):
             else:
                 st.markdown(answer)
                 st.session_state.agent_messages.append({"role": "assistant", "content": answer})
-QSAR_FILE_31_EOF
+QSAR_FILE_32_EOF
 
-cat > 'streamlit/pages/batch_prediction.py' <<'QSAR_FILE_32_EOF'
+cat > 'streamlit/pages/batch_prediction.py' <<'QSAR_FILE_33_EOF'
 """Batch Prediction page — predict pIC50 for multiple SMILES at once."""
 
 import pandas as pd
@@ -74430,9 +74896,9 @@ if predict_all_btn:
                 ),
             },
         )
-QSAR_FILE_32_EOF
+QSAR_FILE_33_EOF
 
-cat > 'streamlit/pages/dashboard.py' <<'QSAR_FILE_33_EOF'
+cat > 'streamlit/pages/dashboard.py' <<'QSAR_FILE_34_EOF'
 """Dashboard page — dataset overview, Ro5, model performance, feature importance."""
 
 import math
@@ -74911,9 +75377,9 @@ if not feat_df.empty:
             )
 else:
     st.info("Feature importance data not available.")
-QSAR_FILE_33_EOF
+QSAR_FILE_34_EOF
 
-cat > 'streamlit/pages/single_prediction.py' <<'QSAR_FILE_34_EOF'
+cat > 'streamlit/pages/single_prediction.py' <<'QSAR_FILE_35_EOF'
 """Single Prediction page — draw or type a SMILES and predict pIC50."""
 
 import altair as alt
@@ -75127,25 +75593,25 @@ if saved_result and saved_result["smiles"] == smiles_input.strip():
                         st.warning(f"**{act}**")
                     else:
                         st.error(f"**{act}**")
-QSAR_FILE_34_EOF
+QSAR_FILE_35_EOF
 
-cat > 'streamlit/pyproject.toml' <<'QSAR_FILE_35_EOF'
+cat > 'streamlit/pyproject.toml' <<'QSAR_FILE_36_EOF'
 [project]
 name = "qsar-aromatase-app"
 version = "1.0.0"
 requires-python = ">=3.11"
 dependencies = []
-QSAR_FILE_35_EOF
+QSAR_FILE_36_EOF
 
-cat > 'streamlit/requirements.txt' <<'QSAR_FILE_36_EOF'
+cat > 'streamlit/requirements.txt' <<'QSAR_FILE_37_EOF'
 streamlit>=1.61.0
 streamlit-jsme>=0.1.10
 snowflake-connector-python
 snowflake-snowpark-python
 rdkit
-QSAR_FILE_36_EOF
+QSAR_FILE_37_EOF
 
-cat > 'streamlit/snowflake.yml' <<'QSAR_FILE_37_EOF'
+cat > 'streamlit/snowflake.yml' <<'QSAR_FILE_38_EOF'
 definition_version: 2
 entities:
   qsar_aromatase_app:
@@ -75166,11 +75632,12 @@ entities:
       - _shared.py
       - pages/
       - requirements.txt
-QSAR_FILE_37_EOF
+QSAR_FILE_38_EOF
 
 files=(
   'README.md'
   'agent/aromatase_agent.yaml'
+  'agent/aromatase_sv_ossie.yaml'
   'agent/eval_config.yaml'
   'agent/eval_questions.sql'
   'data/chembl1978_cleaned.csv'
@@ -75214,5 +75681,5 @@ for file in "${files[@]}"; do
   fi
 done
 printf '%s\n' \
-  'Created 37 project files in bioinformatics/r-python-drug-discovery.' \
+  'Created 38 project files in bioinformatics/r-python-drug-discovery.' \
   'No Snowflake statements or container builds were executed.'

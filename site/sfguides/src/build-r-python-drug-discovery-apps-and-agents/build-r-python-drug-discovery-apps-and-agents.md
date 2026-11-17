@@ -49,7 +49,7 @@ You will build AromatasePred, an end-to-end R and Python drug discovery applicat
 - An R Plumber container service on Snowpark Container Services exposing `/health`, `/predict`, `/sf/*` SQL service-function routes, and `/mcp`, connected directly to external AI chat clients over MCP
 - Shared SQL functions (`PREDICT_PIC50`, `ECFP4`, `SIMILAR_COMPOUNDS`, `EXPLAIN_PREDICTION`, and RDKit `RO5`) and a second Snowflake Notebook that batch-scores the 2,751 compounds
 - A multipage Streamlit in Snowflake app with Dashboard, Single Prediction, Batch Prediction, About, and Ask an Agent pages
-- A Cortex Agent (`AROMATASE_AGENT`) backed by a semantic view (`AROMATASE_SV`), a Cortex Search service (`ASSAY_SEARCH`), and a candidate triage procedure (`TRIAGE_COMPOUNDS`)
+- A Cortex Agent (`AROMATASE_AGENT`) backed by an Apache Ossie semantic view (`AROMATASE_SV`), a Cortex Search service (`ASSAY_SEARCH`), and a candidate triage procedure (`TRIAGE_COMPOUNDS`)
 
 The four-lane architecture diagram below maps every data handoff and calling route across the system, and the tutorial sections follow these four lanes in order.
 
@@ -68,7 +68,7 @@ Before running any notebooks or container builds, you need a local copy of the p
 
 ### Create Working Directory
 
-The setup script creates all 37 project files (`data/`, `docker/`, `streamlit/`, `notebooks/`, `native_app/`, `scripts/`, `sql/`, `agent/`, and `docs/`) directly on your computer inside `bioinformatics/r-python-drug-discovery`. All file contents (including the bundled `.rds` model and `CHEMBL1978` snapshot) are included in the script, so folder setup works offline without cloning a separate repository.
+The setup script creates all 38 project files (`data/`, `docker/`, `streamlit/`, `notebooks/`, `native_app/`, `scripts/`, `sql/`, `agent/`, and `docs/`) directly on your computer inside `bioinformatics/r-python-drug-discovery`. All file contents (including the bundled `.rds` model and `CHEMBL1978` snapshot) are included in the script, so folder setup works offline without cloning a separate repository.
 
 Open [setup_r_python_drug_discovery.sh](https://github.com/sfc-gh-cnantasenamat/sfguide-build-r-python-drug-discovery-apps-and-agents/blob/main/quickstart/build-r-python-drug-discovery-apps-and-agents/src/setup_r_python_drug_discovery.sh) and use GitHub's **Download raw file** button to save it in your chosen local working directory. The script is bundled in this guide's `src/` folder, alongside `assets/`. If you already downloaded the guide files, copy `src/setup_r_python_drug_discovery.sh` into your chosen working directory instead.
 
@@ -83,7 +83,7 @@ pwd
 Review the expected setup output below (no action required; no Snowflake statements or container builds have run yet, and all subsequent relative file paths in this guide run from `bioinformatics/r-python-drug-discovery`):
 
 ```text
-Created 37 project files in bioinformatics/r-python-drug-discovery.
+Created 38 project files in bioinformatics/r-python-drug-discovery.
 No Snowflake statements or container builds were executed.
 ```
 
@@ -98,7 +98,7 @@ The `r-python-drug-discovery` directory is organized by architectural layer:
 | `native_app/` | Optional Snowflake Native App package for per-consumer MCP deployment |
 | `scripts/` | Endpoint smoke test (`test_endpoint.py`), dashboard data generator, and agent deployment script (`deploy_agent.py`) |
 | `sql/` | Snowflake setup (`setup.sql`), shared SQL functions (`functions.sql`), and agent DDL (`agent.sql`) |
-| `agent/` | Cortex Agent specification (`aromatase_agent.yaml`) and 15-case evaluation fixtures |
+| `agent/` | Cortex Agent specification (`aromatase_agent.yaml`), Apache Ossie semantic specification (`aromatase_sv_ossie.yaml`), and 15-case evaluation fixtures |
 | `docs/` | Standalone MCP client walkthrough (`mcp-walkthrough.md`) |
 
 With the repository on disk, the next step is creating the Snowflake objects that own and run the pipeline.
@@ -740,15 +740,22 @@ When a model score raises follow-up questions such as "How many compounds in the
 
 `sql/agent.sql` builds three governed capabilities that complement the R-backed SQL functions:
 
-1. **Measured Cohort Analytics (`AROMATASE_SV`):** Creates a Snowflake Semantic View over `CHEMBL1978_COMPOUNDS`, `CHEMBL1978_PREDICTIONS`, `CHEMBL1978_DESCRIPTORS`, `CHEMBL1978_ASSAYS`, `CHEMBL1978_DOCUMENTS`, `CHEMBL1978_FINGERPRINTS`, and `QSAR_PREDICTIONS_LOG` so Cortex Analyst answers measured active/inactive counts and potency statistics with deterministic SQL instead of estimating them from model calls.
+1. **Measured Cohort Analytics (`AROMATASE_SV`):** Uses [Apache Ossie](https://github.com/apache/ossie) (`version: 0.1.1`, stored in `agent/aromatase_sv_ossie.yaml`) and Snowflake's built-in `SYSTEM$CREATE_SEMANTIC_VIEW_FROM_OSSIE_YAML` loader to create a Snowflake Semantic View over `CHEMBL1978_COMPOUNDS`, `CHEMBL1978_PREDICTIONS`, `CHEMBL1978_DESCRIPTORS`, `CHEMBL1978_ASSAYS`, `CHEMBL1978_DOCUMENTS`, `CHEMBL1978_FINGERPRINTS`, and `QSAR_PREDICTIONS_LOG`. Defining `AROMATASE_SV` as an open Apache Ossie specification lets Cortex Analyst answer measured active/inactive counts and potency statistics with deterministic SQL instead of estimating them from model calls.
 2. **Assay and Literature Context (`ASSAY_SEARCH`):** Creates a Cortex Search service indexing assay descriptions and linked publication abstracts so the agent can retrieve experimental conditions and cite specific `ASSAY_CHEMBL_ID` and `DOCUMENT_CHEMBL_ID` identifiers (for example, showing that letrozole `CHEMBL1444` appears in cell-based assay `CHEMBL988317` as well as fluorimetric enzyme assays `CHEMBL1828368` and `CHEMBL1958525`).
 3. **Candidate Triage (`TRIAGE_COMPOUNDS`):** Creates a stored procedure that accepts up to 20 newline-separated SMILES strings, combines each molecule's predicted `pIC50`, Tanimoto similarity to the nearest measured compound (`SIMILAR_COMPOUNDS`), and Lipinski Rule-of-Five compliance (`RO5`), and returns a ranked review table with an explicit rationale per row (flagging low similarity as uncertain extrapolation).
 
-Review the verified semantic-view query excerpt from **sql/agent.sql** below (no action required) to see how measured cohort counts are queried separately from `PREDICT_PIC50`:
+Review the Apache Ossie semantic-view creation and verification query excerpt from **sql/agent.sql** below (no action required) to see how `SYSTEM$CREATE_SEMANTIC_VIEW_FROM_OSSIE_YAML` registers `AROMATASE_SV` and how measured cohort counts are queried separately from `PREDICT_PIC50`:
 
 ```sql
+CALL SYSTEM$CREATE_SEMANTIC_VIEW_FROM_OSSIE_YAML('QSAR_DB.PUBLIC', $$
+version: 0.1.1
+semantic_model:
+  - name: AROMATASE_SV
+...
+$$);
+
 SELECT * FROM SEMANTIC_VIEW(QSAR_DB.PUBLIC.AROMATASE_SV
-  METRICS compounds.compound_count, compounds.active_count);
+  METRICS compound_count, active_count);
 ```
 
 **Run this step:** Open `sql/agent.sql` in a Snowsight SQL worksheet and execute it under `QSAR_ROLE` to create `AROMATASE_SV`, `ASSAY_SEARCH`, and `TRIAGE_COMPOUNDS`.
@@ -921,6 +928,8 @@ Next, explore the companion source code, Snowflake documentation, and published 
 - [Streamlit in Snowflake Documentation](https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit)
 - [Cortex Agents Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents)
 - [Cortex Analyst Semantic Views](https://docs.snowflake.com/en/user-guide/views-semantic/overview)
+- [Create Semantics Anywhere with Apache Ossie (Incubating)](https://www.snowflake.com/en/blog/engineering/dbt-snowflake-semantic-views-apache-ossie/)
+- [Apache Ossie Repository](https://github.com/apache/ossie)
 - [Cortex Search Overview](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview)
 
 **Research Papers**
