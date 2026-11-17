@@ -86,7 +86,7 @@ Take the `SALES` table from this guide. The question you're answering decides th
 <!-- ------------------------ -->
 ## Set Up Sample Data
 
-Every prompt in this guide points at a small synthetic dataset in `HTML_REPORTS_QS.DEMO`. The [companion repo](https://github.com/sfc-gh-JCHAEARLEY/sfguide-build-interactive-html-dashboards-with-cortex-code) has this script as `setup.sql`, plus a finished example of every report in `reports/` that you can compare with your own.
+Every prompt in this guide points at a small synthetic dataset in `HTML_REPORTS_QS.DEMO`. The [companion repo](https://github.com/sfc-gh-JCHAEARLEY/sfguide-build-interactive-html-dashboards-with-cortex-code) has this script as `setup.sql`, plus a finished example of every report in `reports/` that you can compare with your own. The example reports load their libraries from the sandbox's `/libs/` path, so open them in Workspaces or Cortex Code Desktop. Opened directly from disk in a browser, the charts stay blank.
 
 Open a SQL worksheet (or a `.sql` file in Workspaces) and run the script below. It uses random values, so your numbers will differ from the screenshots and examples in this guide, and so may which region or segment comes out on top.
 
@@ -287,7 +287,7 @@ Make the summary table sortable by clicking a column header, with an arrow showi
 the sort direction.
 ```
 
-![The region table sorted by revenue](assets/sorted-table.png)
+![The summary table sorted by the Enterprise column](assets/sorted-table.png)
 
 You can also edit directly: open the report, select **Edit**, and choose **Preview** (edit text in the rendered page), **No JavaScript** (edit content that scripts would otherwise replace), or **Code** (edit HTML/CSS/JS). Saving updates the workspace file only. Published viewers see changes after you publish again.
 
@@ -552,8 +552,6 @@ tables in HTML_REPORTS_QS.DEMO. Start with only the page shell:
 Make every grid collapse to one column below about 600px wide.
 ```
 
-![The capstone shell: hero, chips, and sticky nav](assets/capstone-hero.png)
-
 ### 2. Examples
 
 ```text
@@ -561,6 +559,8 @@ Fill the Examples section with a KPI row (total revenue, order count, average or
 value for Q3 2026 from SALES) that counts up on load, and a bar chart of revenue by
 region with a collapsed "View SQL" toggle.
 ```
+
+![The hero, sticky nav, and the Examples KPI row](assets/capstone-hero.png)
 
 ### 3. Showcase
 
