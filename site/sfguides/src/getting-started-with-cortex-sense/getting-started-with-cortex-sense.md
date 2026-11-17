@@ -24,13 +24,13 @@ In this guide you work with **Juniper Valley Health**, a fictional health system
 
 ### How it compares to semantic views and the Business Ontology
 
-A semantic view is a model you write yourself: you define each metric, dimension, and relationship, and it gives the most precise answers for the domains you've modeled. The Business Ontology, also in private preview, is a governed vocabulary of business concepts, how they relate, and which Snowflake objects implement them, where data stewards approve each term. A Cortex Sense context is mined automatically for one use case from sources you already have, so it takes far less work to build, but it can be confidently wrong in places until you correct it.
+A semantic view is a model you write yourself: you define each metric, dimension, and relationship, and it gives the most precise answers for the domains you've modeled. The Business Ontology, also in private preview, is a governed vocabulary of approved business terms, how they relate, and which Snowflake objects implement them. A Cortex Sense context is mined automatically for one use case from sources you already have, so it takes far less work to build, but it can be confidently wrong in places until you correct it.
 
 A context treats the semantic views in its scope as authoritative definitions and can include Business Ontology domains as a source. After a build, the `cortex-sense` skill can offer to review what the context learned against an ontology domain and draft new terms for stewards to approve. This guide uses a semantic view but doesn't use the ontology.
 
-### Production accounts, trial accounts, and query history
+### Production, trial, and dev accounts
 
-Cortex Sense works best with the query history, dashboards, and documentation of a production account; the docs warn that dev environments often lack them. This demo brings its own: setup loads the internal docs, saved queries, and dashboard, and runs the saved queries once so they appear in query history. Every definition the questions depend on is written in those docs, so the comparison works on a new or quiet account, provided it's enrolled in the preview.
+Cortex Sense works best with the query history, dashboards, and documentation of a production account; the docs warn that dev environments often lack them. To make up for that, setup loads the demo's internal docs, saved queries, and dashboard, and runs the saved queries once so they appear in query history. Every definition the questions depend on is written in those docs, so the comparison works on a new or quiet account. A trial account can run the setup scripts, but building the context still needs an account enrolled in the preview.
 
 ### Prerequisites
 - A Snowflake account enrolled in the Cortex Sense private preview
@@ -61,7 +61,7 @@ All of the demo's data, docs, saved queries, and dashboard are in the public [co
 
 In Snowsight, open a new SQL worksheet, paste in [`admin_setup.sql`](https://github.com/sfc-gh-JCHAEARLEY/sfguide-getting-started-with-cortex-sense/blob/main/admin_setup.sql), and run all of it as `ACCOUNTADMIN`.
 
-If you don't have `ACCOUNTADMIN`, for example on a company account, send the script to an administrator. They replace `CURRENT_USER()` in the `SET quickstart_user` line with your user name in quotes and run it. It makes these changes and nothing else:
+If you don't have `ACCOUNTADMIN`, for example on a company account, send the script to an administrator. They replace `CURRENT_USER()` in the `SET quickstart_user` line with your user name, as `SELECT CURRENT_USER()` returns it, in single quotes, and run the script. If your user name contains characters such as `@` or `.`, it also needs double quotes, for example `'"jdoe@company.com"'`; the script's comments show both forms. It makes these changes and nothing else:
 
 | Grant or object | Why |
 |---|---|
@@ -87,7 +87,7 @@ When it finishes, the last result shows one row per check. Every row should say 
 | `JUNIPER_HEALTH.KNOWLEDGE` | `KNOWLEDGE_STAGE` (internal docs and saved queries), `STREAMLIT_STAGE` and the `OPERATIONS_DASHBOARD` Streamlit app, the certified `CLAIMS_SV_CERTIFIED` semantic view, and its support view `CLAIMS_WITH_DENIAL_FLAG` |
 | `JUNIPER_HEALTH.SENSE` | Empty. The Cortex Sense context goes here. |
 
-Both demo roles are granted to your user, and deliberately not to `SYSADMIN`, so no other role inherits access to the context. Setup also runs the four saved queries once, so they show up in query history the way they would at a real organization. At the end it drops its temporary `SETUP` schema, which held the Git repository clone, because the clone includes the answer key.
+`admin_setup.sql` grants both demo roles to your user, and deliberately not to `SYSADMIN`, so no other role inherits access to the context. `setup.sql` runs the four saved queries once, so they show up in query history the way they would at a real organization. At the end it drops its temporary `SETUP` schema, which held the Git repository clone, because the clone includes the answer key.
 
 <!-- ------------------------ -->
 ## Create the CoCo Connections
@@ -181,7 +181,7 @@ The docs teach definitions and deliberately state no answers, so an agent with c
 <!-- ------------------------ -->
 ## Build the Cortex Sense Context
 
-Start the build now so it runs in the background while you collect baseline answers in the next step.
+The build runs in the background. You collect baseline answers in the next step, once it has finished.
 
 > **One context per role:** During private preview, give each role access to a single context. A query that isn't scoped to named contexts searches every context the role can reach. The demo roles are new, so this holds as long as you don't grant them other contexts.
 
@@ -226,7 +226,7 @@ The skill asks who else should get processing-failure notifications. Reply `just
 1. Type `build` to approve the scope and notification setup.
 2. The skill drafts a description that agents read to decide when to use this context. Type `yes` to accept it, or type your own.
 
-The skill saves the context as `JUNIPER_HEALTH.SENSE.JUNIPER_HEALTH` and queues the build. The skill runs its queries as `JUNIPER_BUILDER`, the build role, which is fixed for the life of the context. The summary also names a warehouse (`JUNIPER_WH`), which you can change with `use warehouse <name>`; the indexing itself is billed as AI credits (see Cost below). The docs say builds take a few hours; this small scope finished in about 10 minutes in our test. Leave this session open and move on to the baseline.
+The skill saves the context as `JUNIPER_HEALTH.SENSE.JUNIPER_HEALTH` and queues the build. The skill runs its queries as `JUNIPER_BUILDER`, the build role, which is fixed for the life of the context. The summary also names a warehouse (`JUNIPER_WH`), which you can change with `use warehouse <name>`; the indexing itself is billed as AI credits (see Cost below). The docs say builds take a few hours; this small scope finished in about 10 minutes in our test. Leave this session open; you'll check that the build has finished at the start of the next step.
 
 CoCo also accepts facts from you while it builds. Don't give it any here: if you tell it a definition, the comparison no longer measures what it learned from the sources.
 
@@ -237,9 +237,9 @@ Scheduled refresh isn't implemented yet during private preview, so a context ref
 <!-- ------------------------ -->
 ## Ask Baseline Questions
 
-Now record what an agent answers without Cortex Sense. It doesn't matter how far the build has got. A new context has only one grant, `OWNERSHIP` for the builder role, so the analyst role can't use it until you grant access in the **Ask Again with Cortex Sense** step. If the build finishes while you're here, or you take a break and come back the next day, the baseline is unaffected. The baseline's own queries don't reach the context either, because during private preview a context isn't refreshed after its build.
+Now record what an agent answers without Cortex Sense. Start once the build has finished: in the builder session, type `/sense`, pick `JUNIPER_HEALTH`, and check that the **Overview** tab shows **ready**. We couldn't confirm when a running build reads query history, so baseline questions asked during the build might be indexed into the context. After the build, they can't be, because during private preview a context isn't refreshed unless you rebuild it.
 
-The order that matters is the grant: **finish this step before you grant the analyst role access.**
+Pausing is safe. A new context has only one grant, `OWNERSHIP` for the builder role, so the analyst role can't use it until you grant access in the **Ask Again with Cortex Sense** step. If you take a break and come back the next day, the baseline is unaffected. **Finish this step before you grant the analyst role access.**
 
 Open a second terminal and start the analyst session from its directory, which holds nothing but its settings file:
 
@@ -287,7 +287,7 @@ Answers an agent tends to reach from the schema alone:
 | Question | The tempting answer |
 |---|---|
 | Clean claim rate | `submission_count = 1` alone gives **88.0%**, with UnitedHealthcare best at 92.5% |
-| Readmission rate | Unplanned readmissions over inpatient stays gives **about 20%**: 20.3% (191 of 941 completed stays) in our baseline run, or 20.8% (205 of all 984), above the 18% that Juniper Valley Health treats as CMS penalty territory |
+| Readmission rate | **About 20%**, above the 18% that Juniper Valley Health treats as CMS penalty territory. In our baseline run the agent counted unplanned readmissions within 30 days over completed inpatient stays: 20.3% (191 of 941). Counting every unplanned readmission over all 984 inpatient encounters gives 20.8% (205). |
 | BEACON | No answer. The word appears nowhere the analyst can read. |
 | Tailwind rate | No answer, since the program name appears nowhere. An agent that guesses "claims within 24 hours" across all facilities gets **49.7%**. |
 | External release | Generic advice: privacy sign-off, a BAA, and the common HHS small-cell threshold of 11. Applied to readmission counts, that threshold suppresses the wrong facilities, and the Data Governance Council never comes up. |
@@ -388,7 +388,7 @@ When an answer is wrong, tell CoCo the right definition in the builder session. 
 
 ### Measure it with evals
 
-Seven questions are enough to see the difference by hand, but not to measure a context. The companion repository has 18 questions with expected answers in [`evals/questions.yaml`](https://github.com/sfc-gh-JCHAEARLEY/sfguide-getting-started-with-cortex-sense/blob/main/evals/questions.yaml): the seven you asked, two more routine ones, and nine more that need a definition, such as the Experience Score for each facility, which facilities are closest to BEACON, the Tailwind rate by facility, and whether a BAA covers an external release. Every number in the file is checked against the data when the data is generated.
+To measure a context, you need more than the seven questions you asked by hand. The companion repository has 18 questions with expected answers in [`evals/questions.yaml`](https://github.com/sfc-gh-JCHAEARLEY/sfguide-getting-started-with-cortex-sense/blob/main/evals/questions.yaml): the seven you asked, two more routine ones, and nine more that need a definition, such as the Experience Score for each facility, which facilities are closest to BEACON, the Tailwind rate by facility, and whether a BAA covers an external release. The data generator checks the computed figures in the file against the data each time it runs.
 
 To run them, open the **Accuracy** tab in the builder session, choose **+ Start a new evaluation run**, and give it those questions and answers. Cortex Sense runs them, reports which ones failed and why, and can update the context and re-run.
 
@@ -407,7 +407,7 @@ Delete the JUNIPER_HEALTH Cortex Sense context in JUNIPER_HEALTH.SENSE.
 
 The skill shows the exact command it will run and asks you to type the context name to confirm. It leaves two things behind: the notification contact `JUNIPER_HEALTH.SENSE.JUNIPER_HEALTH_CONTACT`, which goes when the database is dropped, and a local `juniper_health_scope.yaml` draft in `~/juniper-builder`. Deletion can take a moment; check that the context no longer appears on the `/sense` page before you continue.
 
-Then run [`teardown.sql`](https://github.com/sfc-gh-JCHAEARLEY/sfguide-getting-started-with-cortex-sense/blob/main/teardown.sql) in a Snowsight SQL worksheet. Part 1 drops the database as `JUNIPER_BUILDER`. Part 2 removes the warehouse, the API integration, and both demo roles as `ACCOUNTADMIN`; if an administrator ran the admin script for you, send them Part 2.
+Then run [`teardown.sql`](https://github.com/sfc-gh-JCHAEARLEY/sfguide-getting-started-with-cortex-sense/blob/main/teardown.sql) in a Snowsight SQL worksheet. Part 1 drops the database as `JUNIPER_BUILDER`. Part 2 removes the warehouse, the API integration, and both demo roles as `ACCOUNTADMIN`; if an administrator ran the admin script for you, send them Part 2 after you've run Part 1.
 
 Finally, delete the `juniper_builder` and `juniper_analyst` blocks from `~/.snowflake/connections.toml`, and the `~/juniper-builder` and `~/juniper-analyst` directories.
 
