@@ -29,6 +29,7 @@ The three teams are completely separate. Each reads the shared raw layer and not
 ### What You'll Learn
 - How to split infrastructure into separate DCM Projects with different owners
 - How to give each team its own warehouse, database, role and read-only role from one Jinja loop
+- How to watch every pipeline style with an alert template: expectations, dynamic table refreshes, tasks and streaming pipes
 - How to ship sample files and a Spark job with a project as assets
 - How to build silver and gold dynamic tables on top of another project's tables
 - How data quality expectations gate downstream refreshes, and how to see the gates
@@ -45,9 +46,9 @@ The three teams are completely separate. Each reads the shared raw layer and not
 
 ### What You'll Build
 - A Platform project: one raw database with three staging tables, an ingestion stage and load task, and a warehouse, database, role and read-only role for the Finance, Marketing and InfoSec teams
-- A Finance project: one silver and two gold dynamic tables, five data quality expectations that act as gates, a semantic view, an alert and an agent
-- A Marketing project: a customer segments Iceberg table, a Spark code bundle with a PyPI dependency, a task graph with four tasks and a failure branch, and a Streamlit dashboard
-- An InfoSec project: two SQL functions, two streaming pipes with their target tables, and two low-latency dynamic tables
+- A Finance project: one silver and two gold dynamic tables, five data quality expectations that act as gates, a semantic view, two alerts and an agent
+- A Marketing project: a customer segments Iceberg table, a Spark code bundle with a PyPI dependency, a task graph with four tasks and a failure branch, a Streamlit dashboard and an alert on failing tasks
+- An InfoSec project: two SQL functions, two streaming pipes with their target tables, two low-latency dynamic tables and two alerts on the pipes
 
 <!-- ------------------------ -->
 ## Create a Workspace from Git
@@ -118,7 +119,7 @@ An inherited grant cannot be combined with WITH GRANT OPTION, CASCADE or RESTRIC
 
 The Platform project uses them to let each team read every table in the shared RAW schema, including tables added later, and to give each team a read-only role.
 
-Four grants in section 3 are there so the Platform project can hand privileges on to the teams. The script comments say why: EXECUTE DATA METRIC FUNCTION and the SNOWFLAKE.DATA_QUALITY_MONITORING_VIEWER application role are for the Finance team's expectations, EXECUTE ALERT is for Finance's alert, and EXECUTE TASK is for the Marketing team's task graph. A role can only pass on a privilege it holds WITH GRANT OPTION, which is why the script grants EXECUTE DATA METRIC FUNCTION, EXECUTE ALERT and EXECUTE TASK that way. Without the grant option on EXECUTE DATA METRIC FUNCTION, the first plan fails with "Grant not executed: Insufficient privileges".
+Four grants in section 3 are there so the Platform project can hand privileges on to the teams. The script comments say why: EXECUTE DATA METRIC FUNCTION and the SNOWFLAKE.DATA_QUALITY_MONITORING_VIEWER application role are for the Finance team's expectations, EXECUTE ALERT and the SNOWFLAKE.EVENTS_VIEWER application role are for the teams' template alerts, and EXECUTE TASK is for the Marketing team's task graph. A role can only pass on a privilege it holds WITH GRANT OPTION, which is why the script grants EXECUTE DATA METRIC FUNCTION, EXECUTE ALERT and EXECUTE TASK that way. Without the grant option on EXECUTE DATA METRIC FUNCTION, the first plan fails with "Grant not executed: Insufficient privileges".
 
 The Platform project object lives in DCM_DEMO.PROJECTS. The Finance, Marketing and InfoSec project objects will live somewhere else: in a DCM schema inside the platform database, which the Platform project creates.
 
@@ -221,13 +222,17 @@ Every warehouse in this guide is an [adaptive warehouse](https://docs.snowflake.
 
 An adaptive warehouse has no size, cluster count or auto-suspend setting to tune. Snowflake allocates compute per query, up to MAX_QUERY_PERFORMANCE_LEVEL, so the manifest sets one ceiling per environment instead of a size. WAREHOUSE_SIZE and AUTO_SUSPEND aren't valid on an adaptive warehouse; a plan that includes them fails.
 
-Each team also gets the account-level privileges its pipeline style needs (lines 44 to 52):
+Each team database sets LOG_EVENT_LEVEL = WARN (lines 25 to 27), so the dynamic tables, tasks and pipes inside it log their warnings and failures to the account's event table. That is what the teams' alert templates read.
+
+Each team also gets the account-level privileges its pipeline style needs (lines 46 to 59):
 
 ```sql
+    GRANT EXECUTE ALERT ON ACCOUNT TO ROLE DCM_DEMO_2_{{team_name}}{{env_suffix}}_ADMIN;
+    GRANT APPLICATION ROLE SNOWFLAKE.EVENTS_VIEWER TO ROLE DCM_DEMO_2_{{team_name}}{{env_suffix}}_ADMIN;
+
     {% if team_name == 'FINANCE' %}
         GRANT EXECUTE DATA METRIC FUNCTION ON ACCOUNT TO ROLE DCM_DEMO_2_{{team_name}}{{env_suffix}}_ADMIN;
         GRANT APPLICATION ROLE SNOWFLAKE.DATA_QUALITY_MONITORING_VIEWER TO ROLE DCM_DEMO_2_{{team_name}}{{env_suffix}}_ADMIN;
-        GRANT EXECUTE ALERT ON ACCOUNT TO ROLE DCM_DEMO_2_{{team_name}}{{env_suffix}}_ADMIN;
     {% endif %}
     -- Marketing builds on Spark: it owns a task graph that runs its code bundle.
     {% if team_name == 'MARKETING' %}
@@ -235,7 +240,7 @@ Each team also gets the account-level privileges its pipeline style needs (lines
     {% endif %}
 ```
 
-Finance builds on dynamic tables: it attaches data quality expectations, reads their results, and owns an alert that watches them. Marketing builds on Spark and owns a task graph. InfoSec needs nothing extra: it owns its pipes and their target tables, and READ access to RAW covers the tables its pipes join.
+Every team owns at least one alert built from a template, and those templates read the event table, so every team gets EXECUTE ALERT and the SNOWFLAKE.EVENTS_VIEWER application role. Finance also attaches data quality expectations and reads their results. Marketing builds on Spark and owns a task graph. InfoSec needs nothing more: it owns its pipes and their target tables, and READ access to RAW covers the tables its pipes join.
 
 The macro in sources/macros/grants_macro.sql creates the team role, DCM_DEMO_2_<TEAM>_DEV_ADMIN, with what a project owner needs inside the team database (create schemas), and the right to create DCM projects in the platform's DCM schema. It rolls each team role up to the Platform project's owner (line 18), so you can act as either team later without any extra setup.
 
@@ -370,7 +375,7 @@ The project object lives in DCM_DEMO_2_DEV.DCM, the DCM schema of the platform d
 | gold_layer.sql | The GOLD schema and two aggregates, DAILY_TRADING and CUSTOMER_TRADING |
 | expectations.sql | Five data quality expectations, three on TRADES_ENRICHED and one on each gold table, each acting as a gate |
 | semantic_view.sql | TRADING_ANALYTICS, a semantic view over the two gold tables |
-| alerts.sql | EXPECTATION_VIOLATIONS, an alert from a template |
+| alerts.sql | EXPECTATION_VIOLATIONS and REFRESH_FAILURES, two alerts from templates |
 | agents.sql | TRADING_AGENT, an agent over the semantic view, with its specification in agents/ |
 
 #### Silver layer
@@ -506,9 +511,9 @@ They are gates too, but nothing is downstream of gold yet, so a failing gold che
 
 semantic_view.sql (lines 10 to 42) declares TRADING_ANALYTICS over the two gold tables, with three dimensions (TRADE_DATE, CUSTOMER_NAME, CUSTOMER_TIER) and three metrics (TOTAL_TRADES, TOTAL_TRADE_VALUE, CUSTOMER_TRADE_VALUE). A [semantic view](https://docs.snowflake.com/en/user-guide/views-semantic/overview) names the business concepts in your data so that SQL users and Cortex Analyst ask for "total trade value by day" instead of writing the aggregation. Declaring it in the same project as the gold tables means the vocabulary is versioned and reviewed with the pipeline that produces the numbers, and a renamed metric shows up in a plan diff. It reads only the gold tables, so nobody who queries it touches raw data.
 
-#### Alert
+#### Alerts
 
-alerts.sql (lines 14 to 23) watches the expectations:
+alerts.sql (lines 14 to 24) watches the expectations:
 
 ```sql
 DEFINE ALERT DCM_DEMO_2_FINANCE{{env_suffix}}.SILVER.EXPECTATION_VIOLATIONS
@@ -527,6 +532,17 @@ DEFINE ALERT DCM_DEMO_2_FINANCE{{env_suffix}}.SILVER.EXPECTATION_VIOLATIONS
 An alert template is a ready-made condition and action that Snowflake renders into an alert from a few parameters. DQ_EXPECTATION_VIOLATIONS checks for failed expectations on a schedule and notifies when it finds one, so you do not write the monitoring query yourself. FROM TEMPLATE generates the condition and the action; TEMPLATE_PARAMS only says what to watch (the SILVER schema, where the expectations live) and how to notify. IN_APP sends the notification to the Snowsight user who deployed the alert, so no notification integration is needed.
 
 STARTED, last in the statement, makes DCM deploy the alert running, so there is nothing to resume after the deploy.
+
+The second alert, REFRESH_FAILURES (lines 35 to 44), comes from the DT_REFRESH_FAILURE template. It reads the event table and notifies when any dynamic table in the Finance database fails to refresh, across the whole database rather than one schema:
+
+```sql
+    TEMPLATE_PARAMS = '{"template_variables": {
+        "SCOPE_ACTIVE": "DATABASE",
+        "SCOPE_DATABASE": "DCM_DEMO_2_FINANCE{{env_suffix}}",
+        "NOTIFICATION_MODE": "IN_APP"}}'
+```
+
+The two alerts cover different failures. A refresh that a data quality gate skips is not a refresh failure: EXPECTATION_VIOLATIONS reports the failing check that caused it. REFRESH_FAILURES reports refreshes that fail outright, for example because an upstream table changed shape. It sees them because the Platform project set LOG_EVENT_LEVEL = WARN on the Finance database.
 
 #### Agent
 
@@ -580,7 +596,7 @@ The plan creates what the definition files declare:
 | silver_layer.sql | SILVER schema, SILVER.TRADES_ENRICHED |
 | gold_layer.sql | GOLD schema, GOLD.DAILY_TRADING, GOLD.CUSTOMER_TRADING |
 | semantic_view.sql | GOLD.TRADING_ANALYTICS |
-| alerts.sql | SILVER.EXPECTATION_VIOLATIONS |
+| alerts.sql | SILVER.EXPECTATION_VIOLATIONS, GOLD.REFRESH_FAILURES |
 | agents.sql | GOLD.TRADING_AGENT |
 
 
@@ -596,21 +612,21 @@ When the changeset matches what you expected, deploy it.
 snow dcm deploy --target DCM_DEV --role DCM_DEMO_2_FINANCE_DEV_ADMIN --alias initial-finance
 ```
 
-The deploy reports "Deployed 9 entities (8 created, 1 altered, 0 dropped)." The dynamic tables are empty until their first refresh. The alert is already running.
+The deploy reports "Deployed 10 entities (9 created, 1 altered, 0 dropped)." The dynamic tables are empty until their first refresh. The alerts are already running.
 
 <!-- ------------------------ -->
 ## Query, Test and Inspect the Gates
 
 Open scripts/03_finance_post_deploy.sql in a Snowsight worksheet. It runs as the Finance role, on the Finance warehouse. Run steps 1 to 5 now; step 6 is the next section.
 
-### Check the alert
+### Check the alerts
 
 ```sql
-SHOW ALERTS IN SCHEMA DCM_DEMO_2_FINANCE_DEV.SILVER;
+SHOW ALERTS IN DATABASE DCM_DEMO_2_FINANCE_DEV;
 SELECT "name", "state", "schedule" FROM TABLE(RESULT_SCAN(LAST_QUERY_ID()));
 ```
 
-SHOW ALERTS reports EXPECTATION_VIOLATIONS as started. It checks the silver layer's expectations every five minutes and notifies you in Snowsight (the bell icon) if one fails.
+SHOW ALERTS reports EXPECTATION_VIOLATIONS and REFRESH_FAILURES as started. Each checks every five minutes and notifies you in Snowsight (the bell icon) when its condition is met.
 
 ### Refresh the pipeline
 
@@ -753,6 +769,7 @@ assets:
 | sources/definitions/segments.sql | The SEGMENTS schema and the CUSTOMER_SEGMENTS Iceberg table |
 | sources/definitions/pipeline.yml | The code bundle and a task graph with four tasks |
 | sources/definitions/dashboard.sql | SEGMENTS_DASHBOARD, a Streamlit app over the segments |
+| sources/definitions/alerts.sql | TASK_FAILURES, an alert from a template |
 | code_bundles/segments/ | The Spark job: code_bundle.yml, pyproject.toml and segments.py |
 | streamlit/segments_dashboard/ | The dashboard: streamlit_app.py and environment.yml |
 
@@ -936,6 +953,27 @@ The app's files ship with the project as the segments_dashboard asset, so the da
 
 ![SEGMENTS_PIPELINE task graph in Snowsight, showing CHECK_INPUTS, BUILD_SEGMENTS and REPORT_SEGMENTS](assets/task_graph_editor.png)
 
+#### The alert
+
+alerts.sql (lines 11 to 22) defines TASK_FAILURES from the TASKS_ERROR_RATE template:
+
+```sql
+DEFINE ALERT DCM_DEMO_2_MARKETING{{env_suffix}}.SEGMENTS.TASK_FAILURES
+    FROM TEMPLATE TASKS_ERROR_RATE
+    WAREHOUSE = DCM_DEMO_2_MARKETING_WH{{env_suffix}}
+    SCHEDULE = '30 MINUTE'
+    COMMENT = 'Notifies when too many task runs in the SEGMENTS schema fail'
+    TEMPLATE_PARAMS = '{"template_variables": {
+        "ERROR_RATE_THRESHOLD": 0.15,
+        "SCOPE_ACTIVE": "SCHEMA",
+        "SCOPE_DATABASE": "DCM_DEMO_2_MARKETING{{env_suffix}}",
+        "SCOPE_SCHEMA": "SEGMENTS",
+        "NOTIFICATION_MODE": "IN_APP"}}'
+    STARTED;
+```
+
+It reads task failures from the event table and notifies when more than 15 percent of the task runs in the SEGMENTS schema fail. The failure branch and the alert do different jobs: ON_FAILURE records why a run stopped, and TASK_FAILURES tells someone that runs keep stopping.
+
 <!-- ------------------------ -->
 ## Deploy the Marketing Project
 
@@ -963,6 +1001,7 @@ The plan creates what the definition files declare:
 | segments.sql | SEGMENTS schema, SEGMENTS.CUSTOMER_SEGMENTS (an Iceberg table) |
 | pipeline.yml | The SEGMENTS_JOB code bundle, the SEGMENTS_PIPELINE task graph, and the CHECK_INPUTS, BUILD_SEGMENTS, REPORT_SEGMENTS and ON_FAILURE tasks |
 | dashboard.sql | SEGMENTS.SEGMENTS_DASHBOARD |
+| alerts.sql | SEGMENTS.TASK_FAILURES |
 
 ### Deploy
 
@@ -976,7 +1015,7 @@ When the changeset matches what you expected, deploy it.
 snow dcm deploy --target DCM_DEV --role DCM_DEMO_2_MARKETING_DEV_ADMIN --alias initial-marketing
 ```
 
-The deploy reports "Deployed 10 entities (9 created, 1 altered, 0 dropped)." The task graph exists but is suspended, and CUSTOMER_SEGMENTS is empty.
+The deploy reports "Deployed 11 entities (10 created, 1 altered, 0 dropped)." The task graph exists but is suspended, CUSTOMER_SEGMENTS is empty, and the alert is running.
 
 <!-- ------------------------ -->
 ## Run the Task Graph and Read the Segments
@@ -1074,6 +1113,7 @@ targets:
 | File | What it defines |
 |---|---|
 | sources/definitions/streaming.sql | The SECURITY schema, two SQL functions, two target tables, two streaming pipes and two low-latency dynamic tables |
+| sources/definitions/alerts.sql | STREAMING_ROW_ERRORS and PIPE_ERRORS, two alerts from templates |
 
 #### Functions called from the pipes
 
@@ -1147,6 +1187,29 @@ Two dynamic tables sit on the pipes' target tables with TARGET_LAG = '15 seconds
 
 Both refresh incrementally. A short target lag only pays off with incremental refreshes, so check REFRESH_MODE after a deploy. A non-deterministic function such as ANY_VALUE, or a range join, makes a dynamic table fall back to full refreshes, each of which recomputes the whole table every 15 seconds.
 
+#### Alerts on the pipes
+
+alerts.sql defines two alerts from templates, both scoped to the SECURITY schema:
+
+- STREAMING_ROW_ERRORS (lines 19 to 31), from SNOWPIPE_STREAMING_ROW_ERROR_RATE, notifies when more than 10 percent of the streamed rows fail to ingest. Those rows are in the target tables' error tables. MIN_ROWS_PARSED = 100 keeps a few bad rows in a quiet period from firing it.
+- PIPE_ERRORS (lines 33 to 43), from SNOWPIPE_PIPE_ERROR, notifies when a pipe stops or enters an error state. A pipe stops, for example, if its owner loses SELECT on a raw table it joins, so this is also the alert that notices a change in the Platform project.
+
+```sql
+DEFINE ALERT DCM_DEMO_2_INFOSEC{{env_suffix}}.SECURITY.STREAMING_ROW_ERRORS
+    FROM TEMPLATE SNOWPIPE_STREAMING_ROW_ERROR_RATE
+    WAREHOUSE = DCM_DEMO_2_INFOSEC_WH{{env_suffix}}
+    SCHEDULE = '5 MINUTE'
+    COMMENT = 'Notifies when more than 10 percent of streamed rows fail to ingest'
+    TEMPLATE_PARAMS = '{"template_variables": {
+        "ERROR_RATE_THRESHOLD": 0.1,
+        "MIN_ROWS_PARSED": 100,
+        "SCOPE_ACTIVE": "SCHEMA",
+        "SCOPE_DATABASE": "DCM_DEMO_2_INFOSEC{{env_suffix}}",
+        "SCOPE_SCHEMA": "SECURITY",
+        "NOTIFICATION_MODE": "IN_APP"}}'
+    STARTED;
+```
+
 <!-- ------------------------ -->
 ## Deploy the InfoSec Project
 
@@ -1162,7 +1225,7 @@ The InfoSec project object, DCM_DEMO_2_DEV.DCM.INFOSEC_PIPELINE, was created by 
 snow dcm plan --target DCM_DEV --role DCM_DEMO_2_INFOSEC_DEV_ADMIN --save-output
 ```
 
-The plan creates what streaming.sql declares: the SECURITY schema, the CLASSIFY_SEVERITY and HASH_PII functions, the ACCESS_EVENTS and CONTACT_CHANGES tables, the two pipes and the two dynamic tables.
+The plan creates what the two definition files declare: the SECURITY schema, the CLASSIFY_SEVERITY and HASH_PII functions, the ACCESS_EVENTS and CONTACT_CHANGES tables, the two pipes, the two dynamic tables and the two alerts.
 
 ### Deploy
 
@@ -1174,7 +1237,7 @@ The plan creates what streaming.sql declares: the SECURITY schema, the CLASSIFY_
 snow dcm deploy --target DCM_DEV --role DCM_DEMO_2_INFOSEC_DEV_ADMIN --alias initial-infosec
 ```
 
-The deploy reports "Deployed 10 entities (9 created, 1 altered, 0 dropped)."
+The deploy reports "Deployed 12 entities (11 created, 1 altered, 0 dropped)."
 
 ### Check the pipes and dynamic tables
 
@@ -1186,7 +1249,7 @@ SHOW PIPES IN SCHEMA DCM_DEMO_2_INFOSEC_DEV.SECURITY;
 SHOW DYNAMIC TABLES IN SCHEMA DCM_DEMO_2_INFOSEC_DEV.SECURITY;
 ```
 
-Both pipes show KIND STREAMING and an empty INVALID_REASON. Both dynamic tables show TARGET_LAG 15 seconds and REFRESH_MODE ADAPTIVE.
+Both pipes show KIND STREAMING and an empty INVALID_REASON. Both dynamic tables show TARGET_LAG 15 seconds and REFRESH_MODE ADAPTIVE. SHOW ALERTS IN SCHEMA DCM_DEMO_2_INFOSEC_DEV.SECURITY reports STREAMING_ROW_ERRORS and PIPE_ERRORS as started.
 
 The pipes are ready for a Snowpipe Streaming client. This guide doesn't send records to them, so the tables stay empty.
 
@@ -1250,16 +1313,24 @@ To remove everything this guide created, open scripts/05_cleanup.sql and run it.
     -- ALTER ACCOUNT SET FEATURE_RBAC_INHERITED_GRANTS = 'DISABLED';
     ```
 
-7. **Verify.** SHOW statements for the databases, warehouses and roles whose names start with DCM_DEMO_2 all come back empty. The final SHOW DCM PROJECTS IN SCHEMA DCM_DEMO.PROJECTS no longer lists DCM_PLATFORM_DEV, but it still lists the project objects of any other guide in this series that you deployed. If a PURGE ever fails, the script's comments show how to suspend the load task, the alert and the three dynamic tables first, so nothing keeps consuming credits while you investigate:
+7. **Verify.** SHOW statements for the databases, warehouses and roles whose names start with DCM_DEMO_2 all come back empty. The final SHOW DCM PROJECTS IN SCHEMA DCM_DEMO.PROJECTS no longer lists DCM_PLATFORM_DEV, but it still lists the project objects of any other guide in this series that you deployed. If a PURGE ever fails, the script's comments show how to suspend the load task, the alerts and the dynamic tables first, so nothing keeps consuming credits while you investigate:
 
     ```sql
     USE ROLE DCM_DEVELOPER;
     ALTER TASK DCM_DEMO_2_DEV.RAW.LOAD_NEW_DATA SUSPEND;
     USE ROLE DCM_DEMO_2_FINANCE_DEV_ADMIN;
     ALTER ALERT DCM_DEMO_2_FINANCE_DEV.SILVER.EXPECTATION_VIOLATIONS SUSPEND;
+    ALTER ALERT DCM_DEMO_2_FINANCE_DEV.GOLD.REFRESH_FAILURES SUSPEND;
     ALTER DYNAMIC TABLE DCM_DEMO_2_FINANCE_DEV.GOLD.DAILY_TRADING SUSPEND;
     ALTER DYNAMIC TABLE DCM_DEMO_2_FINANCE_DEV.GOLD.CUSTOMER_TRADING SUSPEND;
     ALTER DYNAMIC TABLE DCM_DEMO_2_FINANCE_DEV.SILVER.TRADES_ENRICHED SUSPEND;
+    USE ROLE DCM_DEMO_2_MARKETING_DEV_ADMIN;
+    ALTER ALERT DCM_DEMO_2_MARKETING_DEV.SEGMENTS.TASK_FAILURES SUSPEND;
+    USE ROLE DCM_DEMO_2_INFOSEC_DEV_ADMIN;
+    ALTER ALERT DCM_DEMO_2_INFOSEC_DEV.SECURITY.STREAMING_ROW_ERRORS SUSPEND;
+    ALTER ALERT DCM_DEMO_2_INFOSEC_DEV.SECURITY.PIPE_ERRORS SUSPEND;
+    ALTER DYNAMIC TABLE DCM_DEMO_2_INFOSEC_DEV.SECURITY.SUSPICIOUS_ACTIVITY SUSPEND;
+    ALTER DYNAMIC TABLE DCM_DEMO_2_INFOSEC_DEV.SECURITY.ACCOUNT_RISK SUSPEND;
     ```
 
 <!-- ------------------------ -->
@@ -1272,7 +1343,7 @@ In this guide, you:
 - **Shipped sample files and a Spark job with the projects** as assets, so the deploy fills the stage and the code only writes rows into tables DCM created
 - **Built silver and gold dynamic tables** that read another project's tables, with the freshness declared once at the gold layer
 - **Gated the refreshes with expectations** on the silver and gold layers, saw the gates with a query, and learned to put the action on every expectation of the monitored table
-- **Declared a semantic view, an alert and an agent** next to the tables they describe, with the agent's specification in a YAML file Agent Studio can open
+- **Declared a semantic view, alerts and an agent** next to the tables they describe, with the agent's specification in a YAML file Agent Studio can open
 - **Ran a Spark task graph** into a DCM-created Iceberg table, with a PyPI package installed from pyproject.toml and a failure branch built with advanced branching
 - **Shipped a Streamlit dashboard** with the table it reads, on adaptive warehouses throughout
 - **Defined streaming pipes** that filter, enrich and redact records in flight, joining the platform's raw tables, with low-latency dynamic tables on top
