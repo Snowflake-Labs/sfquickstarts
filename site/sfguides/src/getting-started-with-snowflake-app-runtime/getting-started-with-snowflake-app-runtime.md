@@ -53,7 +53,13 @@ Workspaces creates a Next.js project from the Snowflake App Runtime template and
 * *app.yml*, the manifest that tells Snowflake how to build, run, and deploy the app
 * *package.json*, whose ***dev*** script starts the dev server
 * *app/page.tsx*, the home page
-* *lib/snowflake.ts*, a helper for running queries from the app. You don't need to edit it.
+* *lib/constants.ts*, where the app title, logo, and page links live
+* *app/globals.css*, the theme, including the `--brand-primary` accent color
+* *components/*, ready-made UI pieces: cards, tables, stat cards, skeletons, and empty states
+* *lib/snowflake.ts* and *lib/run-as.ts*, helpers for running queries from the app. You don't need to edit them.
+* *AGENTS.md*, notes that Cortex Code reads before it changes your app
+
+The starter app already looks finished. Its home page greets you by name and shows your role, account, and warehouse, with a card of example prompts and a short tour of how the page talks to Snowflake. The header has a light and dark mode toggle and a command palette you open with ⌘K (Ctrl+K on Windows).
 
 <!-- ------------------------ -->
 ## Preview Your App
@@ -73,26 +79,28 @@ Preview runs the dev server on Snowflake compute. It is yours alone: nobody else
 
 Paste each prompt into Cortex Code and watch Preview update. Before Cortex Code changes a file, it asks you to accept the change. Review it and accept it to let Cortex Code continue.
 
-The template's home page shows who you are and how the app talks to Snowflake. You'll turn it into Weather Watch, built on the NOAA tables in `SNOWFLAKE_CURATED_DATA_FREE.PUBLIC_DATA_FREE`.
+You'll turn the starter app into Weather Watch, built on the NOAA tables in `SNOWFLAKE_CURATED_DATA_FREE.PUBLIC_DATA_FREE`. The template already handles the basics: cards, charts, light and dark mode, loading skeletons, and empty and error states. Your prompts focus on the brand and the data.
 
 > **Tip:** The free listing has daily readings from thousands of US weather stations through July 24, 2026. The prompts ask Cortex Code to cache results, so charts load fast after the first view.
 
 > **Tip:** The prompts name the `claude-sonnet-5` model for every AI call. Without a model name, Cortex Code may pick a smaller model that writes weaker SQL and insights.
 
-### Give it a polished look
+### Make it yours
 
-Start with a quick restyle, no data. Every later page inherits this look.
+Start with a quick rebrand, no data. Every later page inherits this look.
 
 ```text
-Restyle the app: title "Weather Watch" (keep the name in app.yml),
-dark theme by default, a sky blue accent color, and rounded cards
-with soft shadows. Replace the home page demo cards with a hero over
-a subtle sky gradient: the headline "Ask the weather anything", a
+Rebrand the app as Weather Watch: set the title in lib/constants.ts
+(keep the name in app.yml), change --brand-primary to a warm sunset
+orange, and make dark mode the default instead of following the
+system setting. Replace the demo home page sections (the greeting
+hero, Make it yours, and How this page works) with a hero over a
+subtle sky gradient: the headline "Ask the weather anything", a
 one-line subtitle, and three small feature cards for real NOAA data,
 AI insights, and plain English questions.
 ```
 
-The whole app changes look before any data shows up.
+The header, buttons, and charts pick up the new accent color, because they all read from `--brand-primary`.
 
 ### Build the AI dashboard
 
@@ -104,13 +112,15 @@ NOAA_WEATHER_STATION_ID, limited to COUNTRY_NAME = 'United States'
 and DATE from 2026-01-01 to 2026-07-24. Values are in Celsius and
 millimeters. Use only the VARIABLE values maximum_temperature,
 minimum_temperature and precipitation. Show cards for the hottest
-reading and its state, and the number of stations reporting. Add a
-bar chart of the hottest temperature by STATE_NAME, top 10, and a
-line chart of the weekly average high for a state picked from a
+reading and its state, and the number of stations reporting, using
+the template's StatCard. With Recharts and components/chart-utils.tsx,
+add a bar chart of the hottest temperature by STATE_NAME, top 10, and
+a line chart of the weekly average high for a state picked from a
 dropdown, defaulting to Arizona. Run the queries in parallel and
 cache each result for 24 hours. Under each chart, add a one-sentence
 insight from AI_COMPLETE with the claude-sonnet-5 model given the
-chart's rows as JSON. Show a skeleton while each chart loads.
+chart's rows as JSON. Show the template's Skeleton while each chart
+loads.
 ```
 
 The bar chart puts California first at about 50 °C, and the AI points to Death Valley.
@@ -118,7 +128,8 @@ The bar chart puts California first at about 50 °C, and the AI points to Death 
 ### Add an Ask box
 
 ```text
-Add an Ask page with a question box and 4 example questions. On
+Add an Ask page, listed in NAV_ITEMS in lib/constants.ts so it shows
+up in the ⌘K palette, with a question box and 4 example questions. On
 submit, a server route sends the columns of SNOWFLAKE_CURATED_DATA_F
 REE.PUBLIC_DATA_FREE.NOAA_WEATHER_METRICS_TIMESERIES and
 NOAA_WEATHER_STATION_INDEX, the join key, the VARIABLE values
@@ -139,11 +150,11 @@ Try "Which 5 states got the most rain per station in July 2026?" You get a chart
 ### Pin answers and polish
 
 ```text
-Let me pin any answer to a Dashboard page, stored in the browser,
-that reruns each pinned SQL on load in a grid. Then polish the whole
-app: a loading state for every query and AI call, clear empty and
-error states, light and dark mode, and a layout that works on a
-phone.
+Let me pin any answer to a Dashboard page, stored in the browser and
+listed in NAV_ITEMS, that reruns each pinned SQL on load in a grid.
+Then check every page in light and dark mode, make sure each query
+and AI call uses the template's Skeleton and EmptyState, and make the
+layout work on a phone.
 ```
 
 > **Tip:** If something looks wrong, say so in plain words, for example "the chart is empty" or "make the table fit on my screen." Cortex Code reads the Preview logs and fixes it.
@@ -163,7 +174,9 @@ You can also select **Deploy** in the editor. The first deploy creates the **APP
 
 When the deploy finishes, open the app: ask Cortex Code to open it, or select **Open deployed app** from the menu next to **Deploy**.
 
-The app deploys to your personal database, so it's yours alone. To share apps with others, an admin first runs app development setup from **Settings » Apps**.
+Where the app lands depends on your account. The template's *app.yml* names the deploy target, such as the `SNOWFLAKE_APPS` database. Without admin setup, the app deploys to your personal database, so it's yours alone. To share apps with others, an admin first runs app development setup from **Settings » Apps**.
+
+Once deployed, each query in the app can run as the person viewing it or as the app itself. The template's *app/api/query/route.ts* shows both. In Preview, both run as you.
 
 <!-- ------------------------ -->
 ## Keep Going
@@ -172,7 +185,7 @@ You have a working app. Pick a path.
 
 ### Stay in Workspaces
 
-Try more prompts on the same app, then deploy again:
+Try more prompts on the same app, then deploy again. Add "and list it in NAV_ITEMS" to any prompt that creates a page, so the page shows up in the ⌘K palette:
 
 ```text
 Add a Station Cards page. Pick a random US station from SNOWFLAKE_CU
