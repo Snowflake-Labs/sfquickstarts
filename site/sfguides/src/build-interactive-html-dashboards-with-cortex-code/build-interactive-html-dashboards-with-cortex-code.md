@@ -4,7 +4,7 @@ language: en
 summary: Use prompts in Cortex Code (CoCo) to build interactive, animated HTML dashboards and reports, then publish them as shareable Snowflake artifacts.
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/analytics
 environments: web
-status: Hidden
+status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Getting Started, Cortex Code, CoCo, HTML Reports, Artifacts, Data Visualization, Snowsight, CoWork
 fork repo link: https://github.com/sfc-gh-JCHAEARLEY/sfguide-build-interactive-html-dashboards-with-cortex-code
