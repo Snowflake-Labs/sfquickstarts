@@ -14,21 +14,31 @@ fork repo link: https://github.com/sfc-gh-JCHAEARLEY/sfguide-getting-started-wit
 <!-- ------------------------ -->
 ## Overview
 
-Cortex Sense builds a working model of your business from metadata your account already produces: query history, semantic views, dashboards, table metadata, and documents on a stage. Cortex Agents and Cortex Code (CoCo) then use that context to answer questions accurately.
+Cortex Sense reads what your team already keeps in Snowflake, such as query history, semantic views, dashboards, table metadata, and documents on a stage, and turns it into a context that Cortex Agents and Cortex Code (CoCo) check before they answer a question.
 
-An agent with full access to your tables can usually find the right columns and work out the joins. It can't find what sits outside the schema: what your team means by "clean claim", which admissions a readmission rate excludes, what an internal program name refers to, or what your data release policy says. When it has to guess at those, it usually answers anyway, and the answer looks right.
+An agent with full access to your tables can usually find the right columns and work out the joins. It can't find what sits outside the schema: what your team means by "clean claim", which admissions a readmission rate excludes, what an internal program name refers to, or what your data release policy says. When it has to guess at those, it usually answers anyway, with numbers that look plausible.
 
 In this guide you work with **Juniper Valley Health**, a fictional health system. Its analytics warehouse has 8 tables and about 16,000 synthetic rows covering facilities, patients, encounters, claims, denials, readmissions, and patient surveys. As at a real organization, its business definitions are in internal docs, saved queries, and a dashboard. You ask an agent the same questions without and with a Cortex Sense context, as the same analyst role, and compare the answers.
 
 > **Private Preview:** Cortex Sense is in private preview. Your account must be enrolled before you can follow this guide. If it isn't, contact your account team.
 
+### How it compares to semantic views and the Business Ontology
+
+A semantic view is a model you write yourself: you define each metric, dimension, and relationship, and it gives the most precise answers for the domains you've modeled. The Business Ontology, also in private preview, is a governed vocabulary of business concepts, how they relate, and which Snowflake objects implement them, where data stewards approve each term. A Cortex Sense context is mined automatically for one use case from sources you already have, so it takes far less work to build, but it can be confidently wrong in places until you correct it.
+
+A context treats the semantic views in its scope as authoritative definitions and can include Business Ontology domains as a source. After a build, the `cortex-sense` skill can offer to review what the context learned against an ontology domain and draft new terms for stewards to approve. This guide uses a semantic view but doesn't use the ontology.
+
+### Production accounts, trial accounts, and query history
+
+Cortex Sense works best with the query history, dashboards, and documentation of a production account; the docs warn that dev environments often lack them. This demo brings its own: setup loads the internal docs, saved queries, and dashboard, and runs the saved queries once so they appear in query history. Every definition the questions depend on is written in those docs, so the comparison works on a new or quiet account, provided it's enrolled in the preview.
+
 ### Prerequisites
 - A Snowflake account enrolled in the Cortex Sense private preview
-- A user who can use the `ACCOUNTADMIN` role
+- Either the `ACCOUNTADMIN` role, or an administrator who will run a short setup script for you. The next section lists exactly what it grants.
 - Basic familiarity with Cortex Code CLI and SQL
 
 ### What You'll Learn
-- How Cortex Sense differs from a semantic view, and when each one does the work
+- How Cortex Sense differs from a semantic view and the Business Ontology
 - How to scope, build, and check a Cortex Sense context with the `/sense` command
 - How to measure an agent without and with context on the same questions
 - How to grant a context to another role
@@ -43,26 +53,36 @@ In this guide you work with **Juniper Valley Health**, a fictional health system
 - A side-by-side comparison of agent answers without and with that context
 
 <!-- ------------------------ -->
-## Run the Setup Script
+## Run the Setup Scripts
 
-All of the demo's data, docs, saved queries, and dashboard are in the public [companion repository](https://github.com/sfc-gh-JCHAEARLEY/sfguide-getting-started-with-cortex-sense). One SQL script loads them straight from GitHub through Snowflake's Git integration, so there's nothing to clone or install.
+All of the demo's data, docs, saved queries, and dashboard are in the public [companion repository](https://github.com/sfc-gh-JCHAEARLEY/sfguide-getting-started-with-cortex-sense). Two SQL scripts load them straight from GitHub through Snowflake's Git integration, so there's nothing to clone or install. The first needs `ACCOUNTADMIN`; the second runs as a demo role.
 
-1. In Snowsight, open a new SQL worksheet.
-2. Copy the contents of [`setup.sql`](https://github.com/sfc-gh-JCHAEARLEY/sfguide-getting-started-with-cortex-sense/blob/main/setup.sql) into the worksheet.
-3. Run all of it.
+### Run the admin script
 
-The script starts as `ACCOUNTADMIN` and grants the `SNOWFLAKE.CORTEX_SENSE_BUILDER` database role to a new demo role. That grant succeeds whether or not your account is enrolled in the preview, so setup can't tell you. Enrollment is checked when `/sense` runs its pre-flight checks. In an account that isn't enrolled, Snowflake reports that Cortex Context Builder is not enabled for this account.
+In Snowsight, open a new SQL worksheet, paste in [`admin_setup.sql`](https://github.com/sfc-gh-JCHAEARLEY/sfguide-getting-started-with-cortex-sense/blob/main/admin_setup.sql), and run all of it as `ACCOUNTADMIN`.
 
-When it finishes, the last result shows one row per check. Every row should say `PASS`. The script is idempotent, so if something fails, fix the cause and run it again. Don't re-run it after you've built the context, though: it recreates the tables and semantic views the context indexed.
+If you don't have `ACCOUNTADMIN`, for example on a company account, send the script to an administrator. They replace `CURRENT_USER()` in the `SET quickstart_user` line with your user name in quotes and run it. It makes these changes and nothing else:
 
-### Objects created by setup
-
-| Object | Purpose |
+| Grant or object | Why |
 |---|---|
-| `JUNIPER_BUILDER` role | Owns the demo and builds the Cortex Sense context |
-| `JUNIPER_ANALYST` role | Can read the `ANALYTICS` schema only. You'll ask all your questions as this role. |
-| `JUNIPER_WH` warehouse | XSMALL, auto-suspends after 60 seconds |
-| `JUNIPER_GITHUB` API integration | Read-only access to the companion repository |
+| Roles `JUNIPER_BUILDER` and `JUNIPER_ANALYST`, both granted to your user | The builder owns the demo and builds the context. The analyst asks the questions. |
+| Database role `SNOWFLAKE.CORTEX_SENSE_BUILDER` to `JUNIPER_BUILDER` | Required to build a context. Only `ACCOUNTADMIN` can grant it. |
+| Warehouse `JUNIPER_WH` (XSMALL, auto-suspends after 60 seconds), with `USAGE` for both roles | Runs setup and the agents' queries |
+| API integration `JUNIPER_GITHUB`, with `USAGE` for `JUNIPER_BUILDER` | Read-only access to the companion repository |
+| Empty database `JUNIPER_HEALTH`, owned by `JUNIPER_BUILDER` | Everything else is created inside it |
+
+The `CORTEX_SENSE_BUILDER` grant succeeds whether or not your account is enrolled in the preview, so the script can't tell you. Enrollment is checked when `/sense` runs its pre-flight checks. In an account that isn't enrolled, Snowflake reports that Cortex Context Builder is not enabled for this account.
+
+### Run the main script
+
+Open a new worksheet, paste in [`setup.sql`](https://github.com/sfc-gh-JCHAEARLEY/sfguide-getting-started-with-cortex-sense/blob/main/setup.sql), and run all of it. It runs entirely as `JUNIPER_BUILDER`, so you don't need `ACCOUNTADMIN` for this step.
+
+When it finishes, the last result shows one row per check. Every row should say `PASS`. Both scripts are idempotent, so if something fails, fix the cause and run it again. Don't re-run `setup.sql` after you've built the context, though: it recreates the tables and semantic views the context indexed.
+
+### What setup.sql creates
+
+| Schema | Holds |
+|---|---|
 | `JUNIPER_HEALTH.ANALYTICS` | The 8 tables and the `CLAIMS_SV` semantic view analysts use today |
 | `JUNIPER_HEALTH.KNOWLEDGE` | `KNOWLEDGE_STAGE` (internal docs and saved queries), `STREAMLIT_STAGE` and the `OPERATIONS_DASHBOARD` Streamlit app, the certified `CLAIMS_SV_CERTIFIED` semantic view, and its support view `CLAIMS_WITH_DENIAL_FLAG` |
 | `JUNIPER_HEALTH.SENSE` | Empty. The Cortex Sense context goes here. |
@@ -144,7 +164,7 @@ SELECT * FROM SEMANTIC_VIEW(KNOWLEDGE.CLAIMS_SV_CERTIFIED
 ORDER BY clean_claims / total_claims DESC;
 ```
 
-The first view puts UnitedHealthcare at the top. The second puts it last. Nothing an analyst can read tells them which reading is right.
+The first view ranks UnitedHealthcare first and the second ranks it last, and nothing in `ANALYTICS` tells an analyst which one to trust.
 
 ### Browse the knowledge stage
 
@@ -161,7 +181,7 @@ The docs teach definitions and deliberately state no answers, so an agent with c
 <!-- ------------------------ -->
 ## Build the Cortex Sense Context
 
-Starting the build now lets it run in the background while you collect baseline answers in the next step.
+Start the build now so it runs in the background while you collect baseline answers in the next step.
 
 > **One context per role:** During private preview, give each role access to a single context. A query that isn't scoped to named contexts searches every context the role can reach. The demo roles are new, so this holds as long as you don't grant them other contexts.
 
@@ -217,7 +237,9 @@ Scheduled refresh isn't implemented yet during private preview, so a context ref
 <!-- ------------------------ -->
 ## Ask Baseline Questions
 
-Now record what an agent answers without Cortex Sense. A new context has only one grant, `OWNERSHIP` for the builder role, so the analyst role can't reach it yet. **Finish this step before you grant the analyst role access** in a later step.
+Now record what an agent answers without Cortex Sense. It doesn't matter how far the build has got. A new context has only one grant, `OWNERSHIP` for the builder role, so the analyst role can't use it until you grant access in the **Ask Again with Cortex Sense** step. If the build finishes while you're here, or you take a break and come back the next day, the baseline is unaffected. The baseline's own queries don't reach the context either, because during private preview a context isn't refreshed after its build.
+
+The order that matters is the grant: **finish this step before you grant the analyst role access.**
 
 Open a second terminal and start the analyst session from its directory, which holds nothing but its settings file:
 
@@ -351,7 +373,7 @@ The Tailwind question shows that scope can matter more than the formula. The sam
 
 In our test run, all five answers with context matched this table, each with citations to the context. The readmission answer also mentioned the naive 20.3% (191 of 941) reading and said the context rules it out.
 
-The release question has the most riding on it. In our baseline run, the agent without context recommended suppressing Summit Orthopedic Hospital, which the policy doesn't require, and left Women's and Children's visible, which it does. It also never mentioned the Data Governance Council approval the policy requires.
+The release question is the one where a wrong answer does the most damage. In our baseline run, the agent without context recommended suppressing Summit Orthopedic Hospital, which the policy doesn't require, and left Women's and Children's visible, which it does. It also never mentioned the Data Governance Council approval the policy requires.
 
 ### Share it beyond CoCo
 
@@ -366,7 +388,9 @@ When an answer is wrong, tell CoCo the right definition in the builder session. 
 
 ### Measure it with evals
 
-The companion repository has all seven questions and their expected answers in [`evals/questions.yaml`](https://github.com/sfc-gh-JCHAEARLEY/sfguide-getting-started-with-cortex-sense/blob/main/evals/questions.yaml). To run them, open the **Accuracy** tab in the builder session, choose **+ Start a new evaluation run**, and give it those questions and answers. Cortex Sense runs them, reports which ones failed and why, and can update the context and re-run.
+Seven questions are enough to see the difference by hand, but not to measure a context. The companion repository has 18 questions with expected answers in [`evals/questions.yaml`](https://github.com/sfc-gh-JCHAEARLEY/sfguide-getting-started-with-cortex-sense/blob/main/evals/questions.yaml): the seven you asked, two more routine ones, and nine more that need a definition, such as the Experience Score for each facility, which facilities are closest to BEACON, the Tailwind rate by facility, and whether a BAA covers an external release. Every number in the file is checked against the data when the data is generated.
+
+To run them, open the **Accuracy** tab in the builder session, choose **+ Start a new evaluation run**, and give it those questions and answers. Cortex Sense runs them, reports which ones failed and why, and can update the context and re-run.
 
 ### Check the answers yourself
 
@@ -383,17 +407,17 @@ Delete the JUNIPER_HEALTH Cortex Sense context in JUNIPER_HEALTH.SENSE.
 
 The skill shows the exact command it will run and asks you to type the context name to confirm. It leaves two things behind: the notification contact `JUNIPER_HEALTH.SENSE.JUNIPER_HEALTH_CONTACT`, which goes when the database is dropped, and a local `juniper_health_scope.yaml` draft in `~/juniper-builder`. Deletion can take a moment; check that the context no longer appears on the `/sense` page before you continue.
 
-Then run [`teardown.sql`](https://github.com/sfc-gh-JCHAEARLEY/sfguide-getting-started-with-cortex-sense/blob/main/teardown.sql) in a Snowsight SQL worksheet. It drops the database as `JUNIPER_BUILDER`, then removes the warehouse, the API integration, and both demo roles as `ACCOUNTADMIN`.
+Then run [`teardown.sql`](https://github.com/sfc-gh-JCHAEARLEY/sfguide-getting-started-with-cortex-sense/blob/main/teardown.sql) in a Snowsight SQL worksheet. Part 1 drops the database as `JUNIPER_BUILDER`. Part 2 removes the warehouse, the API integration, and both demo roles as `ACCOUNTADMIN`; if an administrator ran the admin script for you, send them Part 2.
 
 Finally, delete the `juniper_builder` and `juniper_analyst` blocks from `~/.snowflake/connections.toml`, and the `~/juniper-builder` and `~/juniper-analyst` directories.
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
 
-The context came entirely from artifacts Juniper Valley Health already had: internal docs, saved queries, a dashboard, and a certified semantic view. Building it took a scope description and a few confirmations, with no new modeling. Semantic views remain the most precise path for domains you curate, and Cortex Sense covers the rest.
+The context came entirely from artifacts Juniper Valley Health already had: internal docs, saved queries, a dashboard, and a certified semantic view. Building it took a scope description and a few confirmations, with no new modeling. For domains you model carefully, semantic views stay the most precise source, and a context reads them as authoritative definitions alongside everything else in its scope.
 
 ### What You Learned
-- Why an agent with full table access still gets house-definition questions wrong
+- Why an agent with full table access still gets house-definition questions wrong, and how Cortex Sense compares with semantic views and the Business Ontology
 - How to scope a context so it indexes the right sources and nothing more
 - How to build, check, and activate a context with `/sense`
 - How to grant a context to another role and improve it with corrections and evals
