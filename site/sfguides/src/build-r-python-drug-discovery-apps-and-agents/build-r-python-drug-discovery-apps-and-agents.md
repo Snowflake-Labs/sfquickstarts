@@ -80,7 +80,7 @@ cd bioinformatics/r-python-drug-discovery
 pwd
 ```
 
-Review the expected setup output below (no action required; no Snowflake statements or container builds have run yet, and all subsequent relative file paths in this guide run from `bioinformatics/r-python-drug-discovery`):
+**Expected output:** Review the expected setup output below (no action required; no Snowflake statements or container builds have run yet, and all subsequent relative file paths in this guide run from `bioinformatics/r-python-drug-discovery`):
 
 ```text
 Created 38 project files in bioinformatics/r-python-drug-discovery.
@@ -225,7 +225,7 @@ SELECT
     (SELECT COUNT(*) FROM QSAR_DB.PUBLIC.CHEMBL1978_DOCUMENTS)           AS PUBLICATIONS;
 ```
 
-Review the expected query output below (no action required):
+**Expected output:** Review the expected query output below (no action required):
 
 ```text
 RAW_RECORDS  COMPOUNDS  ACTIVE  ASSAYS  PUBLICATIONS
@@ -457,7 +457,7 @@ USE WAREHOUSE QSAR_WH;
 SELECT SYSTEM$GET_SERVICE_LOGS('QSAR_DB.PUBLIC.QSAR_PLUMBER_SVC', 0, 'qsar-r-plumber', 20);
 ```
 
-Review the expected log output below (no action required):
+**Expected output:** Review the expected log output below (no action required):
 
 ```text
 Loading model artifacts...
@@ -526,7 +526,7 @@ Because MCP returns structured tool data directly from the R service, the AI cli
 
 #### Register the Client
 
-**Run this step:** Add the `qsar-aromatase` server entry to `~/.snowflake/cortex/mcp.json` (or your MCP client's configuration file), replacing `<your-ingress-url>` with the host from `SHOW ENDPOINTS IN SERVICE QSAR_DB.PUBLIC.QSAR_PLUMBER_SVC` and `<your-PAT>` with a PAT restricted to `QSAR_ROLE`.
+Add the `qsar-aromatase` server entry to `~/.snowflake/cortex/mcp.json` (or your MCP client's configuration file), replacing `<your-ingress-url>` with the host from `SHOW ENDPOINTS IN SERVICE QSAR_DB.PUBLIC.QSAR_PLUMBER_SVC` and `<your-PAT>` with a PAT restricted to `QSAR_ROLE`:
 
 ```json
 {
@@ -542,7 +542,17 @@ Because MCP returns structured tool data directly from the R service, the AI cli
 }
 ```
 
-**Check:** Reconnect the server (`cortex mcp reconnect qsar-aromatase` in Cortex Code, confirming 6 tools load) and ask: "Predict the aromatase activity of letrozole, SMILES `N#Cc1ccc(cc1)C(n1cncn1)c1ccc(C#N)cc1`". Review the expected `predict_pic50` tool output below (from the bundled model; a model trained on Notebook 01's row order returns `8.26`):
+Once the server configuration is saved, you can reconnect your MCP client and invoke the R tools directly from chat.
+
+#### Running the MCP Tool
+
+Reconnect the server (`cortex mcp reconnect qsar-aromatase` in Cortex Code, confirming 6 tools load) and submit the following prompt to your AI assistant:
+
+```text
+Predict the aromatase activity of letrozole, SMILES N#Cc1ccc(cc1)C(n1cncn1)c1ccc(C#N)cc1
+```
+
+**Expected output:** Review the expected `predict_pic50` tool output below (from the bundled model; a model trained on Notebook 01's row order returns `8.26`):
 
 ```text
 SMILES: N#Cc1ccc(cc1)C(n1cncn1)c1ccc(C#N)cc1
@@ -583,7 +593,7 @@ SELECT
     EXPLAIN_PREDICTION('N#Cc1ccc(cc1)C(n1cncn1)c1ccc(C#N)cc1', 3):top_features[0]:fragment::STRING AS FRAGMENT;
 ```
 
-Review the expected query output below when serving the bundled model (no action required):
+**Expected output:** Review the expected query output below when serving the bundled model (no action required):
 
 ```text
 PIC50  CLASS   Q05   Q95   TOP_FEATURE  FRAGMENT
@@ -620,7 +630,7 @@ SELECT
 FROM QSAR_DB.PUBLIC.CHEMBL1978_PREDICTIONS;
 ```
 
-Review the expected query output below (no action required; `RMSE_ALL` combines training and test rows across all `2,751` molecules and is not a held-out test metric):
+**Expected output:** Review the expected query output below (no action required; `RMSE_ALL` combines training and test rows across all `2,751` molecules and is not a held-out test metric):
 
 ```text
 SCORED  FAILED  RMSE_ALL  FINGERPRINTS  RO5_PASS
@@ -821,7 +831,7 @@ GROUP BY METRIC_NAME
 ORDER BY METRIC_NAME;
 ```
 
-Review the expected summary output below from a completed 15-case evaluation run (no action required; these scores measure agent tool routing and response fidelity rather than the chemical accuracy of the underlying QSAR forest):
+**Expected output:** Review the expected summary output below from a completed 15-case evaluation run (no action required; these scores measure agent tool routing and response fidelity rather than the chemical accuracy of the underlying QSAR forest):
 
 ```text
 METRIC_NAME              SCORED  MEAN_SCORE
