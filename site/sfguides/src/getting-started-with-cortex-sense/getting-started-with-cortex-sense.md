@@ -44,7 +44,7 @@ Cortex Sense works best with the query history, dashboards, and documentation of
 - How to grant a context to another role
 
 ### What You'll Need
-- [Cortex Code CLI](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-cli), version 1.1.94 or later (this guide was tested with 1.2.44). This guide uses the CLI's `/sense` page throughout; CoCo Desktop doesn't have that page yet.
+- [Cortex Code CLI](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-cli), version 1.1.94 or later (this guide was tested with 1.2.44 and 1.2.50). This guide uses the CLI's `/sense` page throughout; CoCo Desktop doesn't have that page yet.
 - A Snowflake CLI connection to your account in `~/.snowflake/connections.toml`
 
 ### What You'll Build
@@ -67,6 +67,7 @@ If you don't have `ACCOUNTADMIN`, for example on a company account, send the scr
 |---|---|
 | Roles `JUNIPER_BUILDER` and `JUNIPER_ANALYST`, both granted to your user | The builder owns the demo and builds the context. The analyst asks the questions. |
 | Database role `SNOWFLAKE.CORTEX_SENSE_BUILDER` to `JUNIPER_BUILDER` | Required to build a context. Only `ACCOUNTADMIN` can grant it. |
+| `EXECUTE TASK` on the account to `JUNIPER_BUILDER` | Scoring an evaluation run on the **Accuracy** tab runs as a task owned by the builder role |
 | Warehouse `JUNIPER_WH` (XSMALL, auto-suspends after 60 seconds), with `USAGE` for both roles | Runs setup and the agents' queries |
 | API integration `JUNIPER_GITHUB`, with `USAGE` for `JUNIPER_BUILDER` | Read-only access to the companion repository |
 | Empty database `JUNIPER_HEALTH`, owned by `JUNIPER_BUILDER` | Everything else is created inside it |
@@ -213,20 +214,19 @@ The `cortex-sense` skill takes over. It runs pre-flight checks and asks permissi
 | Semantic views | `JUNIPER_HEALTH.KNOWLEDGE.CLAIMS_SV_CERTIFIED` only |
 | Streamlit apps | `JUNIPER_HEALTH.KNOWLEDGE.OPERATIONS_DASHBOARD` |
 | Files | `KNOWLEDGE_STAGE/markdown/` and `KNOWLEDGE_STAGE/query-history/` |
-| Excluded | `JUNIPER_HEALTH.KNOWLEDGE.*`, which keeps out the support view `CLAIMS_WITH_DENIAL_FLAG` |
 
-Query history doesn't appear in the box; the skill says it's handled internally. The skill may also say it can't confirm the `.sql` files will be indexed, since only text and markdown files are documented as supported. Every definition is also in the markdown docs, so the answers don't depend on them. Be strict about the semantic view source. `ANALYTICS.CLAIMS_SV` is what the analyst sees without context, and indexing it as a definition would teach Cortex Sense the wrong one.
+Nothing else from `KNOWLEDGE` should be listed. In particular, the support view `CLAIMS_WITH_DENIAL_FLAG` stays out; the skill names it as out of scope rather than adding an exclude rule. Query history doesn't appear in the box. The skill confirms the 30-day window separately and notes that it covers queries across the whole account, not only queries on `ANALYTICS` tables; on a shared account, you can ask it to limit query history to `JUNIPER_HEALTH.ANALYTICS.*`. The skill may also say it can't confirm the `.sql` files will be indexed, since only text and markdown files are documented as supported. Every definition is also in the markdown docs, so the answers don't depend on them. Be strict about the semantic view source. `ANALYTICS.CLAIMS_SV` is what the analyst sees without context, and indexing it as a definition would teach Cortex Sense the wrong one.
 
 The skill also stores the name in upper case, `JUNIPER_HEALTH`, unless you ask it to keep it lowercase. The rest of this guide uses `JUNIPER_HEALTH`.
 
 ### Confirm and let it run
 
-The skill asks who else should get processing-failure notifications. Reply `just me`. Then:
+The skill asks two questions: who else should get processing-failure notifications, and whether to create a Business Ontology domain for the context. Reply `just me, and skip the Business Ontology`. Then:
 
 1. Type `build` to approve the scope and notification setup.
 2. The skill drafts a description that agents read to decide when to use this context. Type `yes` to accept it, or type your own.
 
-The skill saves the context as `JUNIPER_HEALTH.SENSE.JUNIPER_HEALTH` and queues the build. The skill runs its queries as `JUNIPER_BUILDER`, the build role, which is fixed for the life of the context. The summary also names a warehouse (`JUNIPER_WH`), which you can change with `use warehouse <name>`; the indexing itself is billed as AI credits (see Cost below). The docs say builds take a few hours; this small scope finished in about 10 minutes in our test. Leave this session open; you'll check that the build has finished at the start of the next step.
+The skill saves the context as `JUNIPER_HEALTH.SENSE.JUNIPER_HEALTH` and queues the build. The skill runs its queries as `JUNIPER_BUILDER`, the build role, which is fixed for the life of the context. The summary also names a warehouse (`JUNIPER_WH`), which you can change with `use warehouse <name>`; the indexing itself is billed as AI credits (see Cost below). The docs say builds take a few hours; this small scope finished in 6 to 10 minutes in our tests. Leave this session open; you'll check that the build has finished at the start of the next step.
 
 CoCo also accepts facts from you while it builds. Don't give it any here: if you tell it a definition, the comparison no longer measures what it learned from the sources.
 
@@ -371,7 +371,7 @@ The release and BEACON answers both depend on the readmission definition, becaus
 
 The Tailwind question shows that scope can matter more than the formula. The same 24-hour calculation gives 49.7% across all facilities and 78.3% across the ACO facilities the program covers.
 
-In our test run, all five answers with context matched this table, each with citations to the context. The readmission answer also mentioned the naive 20.3% (191 of 941) reading and said the context rules it out.
+In our test runs, all five answers with context matched this table, each with citations to the context. The readmission answer also mentioned the naive 20.3% (191 of 941) reading and said the context rules it out.
 
 The release question is the one where a wrong answer does the most damage. In our baseline run, the agent without context recommended suppressing Summit Orthopedic Hospital, which the policy doesn't require, and left Women's and Children's visible, which it does. It also never mentioned the Data Governance Council approval the policy requires.
 
@@ -390,7 +390,30 @@ When an answer is wrong, tell CoCo the right definition in the builder session. 
 
 To measure a context, you need more than the seven questions you asked by hand. The companion repository has 18 questions with expected answers in [`evals/questions.yaml`](https://github.com/sfc-gh-JCHAEARLEY/sfguide-getting-started-with-cortex-sense/blob/main/evals/questions.yaml): the seven you asked, two more routine ones, and nine more that need a definition, such as the Experience Score for each facility, which facilities are closest to BEACON, the Tailwind rate by facility, and whether a BAA covers an external release. The data generator checks the computed figures in the file against the data each time it runs.
 
-To run them, open the **Accuracy** tab in the builder session, choose **+ Start a new evaluation run**, and give it those questions and answers. Cortex Sense runs them, reports which ones failed and why, and can update the context and re-run.
+To run them:
+
+1. Download the questions into the builder directory:
+
+   ```bash
+   cd ~/juniper-builder
+   curl -sSLO https://raw.githubusercontent.com/sfc-gh-JCHAEARLEY/sfguide-getting-started-with-cortex-sense/main/evals/questions.yaml
+   ```
+
+2. In the builder session, open the **Accuracy** tab on the `/sense` page and choose **+ Start a new evaluation run**. CoCo puts a `$cortex-sense run eval ...` message in the composer. Add ` using the 18 questions and expected answers in questions.yaml in this directory` to the end and press Enter.
+3. The skill saves the questions as the context's eval set. Scoring needs a Cortex Agent, so it offers to create one, `JUNIPER_HEALTH.SENSE.JUNIPER_HEALTH`, over the context and usable only by the builder role. Type `go`, review the agent spec it shows, and type `create`. It may report that it couldn't add the agent to CoWork, which needs `ACCOUNTADMIN`; the eval doesn't depend on that.
+4. Approve the evaluation dataset it proposes, a table in `JUNIPER_HEALTH.SENSE`. When it asks for a judge version and a custom metric, reply `A, B` for the recommended judge and no custom metric.
+
+It finished within 15 minutes in our test. The skill reports a mean answer-correctness score, links to the per-question results in Snowsight, and offers to `refine` any question that failed.
+
+In our run the agent scored a mean answer correctness of **0.85**: 11 questions passed, 6 were partial, and 1 failed. All four routine questions passed. Most of the partial scores came from the expected answers, not the agent's numbers. On the readmission rate, Tailwind rate, Experience Score, and CMS threshold questions, the agent's figures were right, and the judge took points off because it didn't also mention the naive-method comparisons and totals the expected answers include. The remaining three show where a context needs work:
+
+| Question | What the agent got wrong |
+|---|---|
+| How do I get approval for an external data release, and how long does it take? | Said the documents didn't give a timeline, and left out the Data Governance Council's email address |
+| Can I send facility-level readmission rates to an external partner? | Covered the four conditions but didn't name the suppressed facilities, the email address, or the 10 business days |
+| Which facilities are closest to earning BEACON? | Ranked Women's and Children's, which meets one criterion, ahead of Willow Creek, which meets two |
+
+The CoCo skill answered the release question correctly earlier, so the context does hold those details; the eval agent didn't retrieve them. These are the questions to `refine`. The eval runs as `JUNIPER_BUILDER`, which can also read `KNOWLEDGE`, so treat the score as a measure of the context and agent together, not of the analyst setup.
 
 ### Check the answers yourself
 
@@ -399,13 +422,13 @@ To run them, open the **Accuracy** tab in the builder session, choose **+ Start 
 <!-- ------------------------ -->
 ## Clean Up
 
-If you used the **Activate** tab, first remove what it created: uninstall the CoCo skill, and drop any agent. Then delete the context. In the builder session, ask:
+If you used the **Activate** tab, first remove what it created: uninstall the CoCo skill, and drop any agent outside `JUNIPER_HEALTH`. The agent the eval created, `JUNIPER_HEALTH.SENSE.JUNIPER_HEALTH`, and its dataset table go when the database is dropped. Then delete the context. In the builder session, ask:
 
 ```
 Delete the JUNIPER_HEALTH Cortex Sense context in JUNIPER_HEALTH.SENSE.
 ```
 
-The skill shows the exact command it will run and asks you to type the context name to confirm. It leaves two things behind: the notification contact `JUNIPER_HEALTH.SENSE.JUNIPER_HEALTH_CONTACT`, which goes when the database is dropped, and a local `juniper_health_scope.yaml` draft in `~/juniper-builder`. Deletion can take a moment; check that the context no longer appears on the `/sense` page before you continue.
+The skill lists what will be deleted and what stays, then asks you to type the context name to confirm. What stays in `JUNIPER_HEALTH.SENSE` is the notification contact `JUNIPER_HEALTH_CONTACT` and, if you ran the eval, the agent, the eval dataset, and `EVAL_CONFIG_STAGE`. All of them go when the database is dropped. It also leaves its local working files in `~/juniper-builder`, such as `state.yaml` and a `cortex_project/` folder, which go when you delete that directory. Deletion can take a moment; check that the context no longer appears on the `/sense` page before you continue.
 
 Then run [`teardown.sql`](https://github.com/sfc-gh-JCHAEARLEY/sfguide-getting-started-with-cortex-sense/blob/main/teardown.sql) in a Snowsight SQL worksheet. Part 1 drops the database as `JUNIPER_BUILDER`. Part 2 removes the warehouse, the API integration, and both demo roles as `ACCOUNTADMIN`; if an administrator ran the admin script for you, send them Part 2 after you've run Part 1.
 
