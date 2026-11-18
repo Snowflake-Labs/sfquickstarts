@@ -42,7 +42,7 @@ Now that you know the skills covered in this tutorial, review the prerequisites 
 With those prerequisites in place, let us look at the architecture and components you will assemble.
 
 ### What You'll Build
-You will build AromatasePred, an end-to-end R and Python drug discovery application for predicting human aromatase inhibition:
+You will build an end-to-end R and Python drug discovery application for predicting human aromatase inhibition:
 
 - A biological target and curation workflow in a Snowflake Notebook that transforms raw ChEMBL records for human aromatase (`CHEMBL1978`) into 2,751 deduplicated compounds with exploratory analysis and Lipinski Rule-of-Five descriptors
 - An R training script that computes CDK ECFP4 fingerprints, selects informative bits, fits a 500-tree `ranger` quantile random forest, and exports paired model and feature artifacts

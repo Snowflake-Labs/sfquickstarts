@@ -73666,7 +73666,7 @@ QSAR_FILE_23_EOF
 
 cat > 'scripts/test_endpoint.py' <<'QSAR_FILE_24_EOF'
 """
-Smoke-test the AromatasePred R Plumber service through its public endpoint.
+Smoke-test the QSAR Drug Discovery R Plumber service through its public endpoint.
 
 Usage:
     export QSAR_ENDPOINT="https://<your-ingress-url>"
@@ -74087,7 +74087,7 @@ QSAR_FILE_25_EOF
 
 cat > 'sql/functions.sql' <<'QSAR_FILE_26_EOF'
 -- =============================================================================
--- AromatasePred: shared SQL function layer
+-- QSAR Drug Discovery: shared SQL function layer
 --
 -- Run after the R service QSAR_PLUMBER_SVC is READY. The four service functions
 -- call the R Plumber container, so fingerprints, predictions, similarity, and
@@ -74178,7 +74178,7 @@ QSAR_FILE_26_EOF
 
 cat > 'sql/setup.sql' <<'QSAR_FILE_27_EOF'
 -- =============================================================================
--- AromatasePred: Snowflake setup for the R Plumber inference service
+-- QSAR Drug Discovery: Snowflake setup for the R Plumber inference service
 --
 -- Run steps 1-2 as ACCOUNTADMIN, then switch to QSAR_ROLE for the rest.
 -- Replace <your_user> before running.
@@ -74606,7 +74606,7 @@ except Exception:
 _ALL_CLASSES = ["Active", "Intermediate", "Inactive"]
 
 with st.sidebar:
-    st.title(":material/science: AromatasePred")
+    st.title(":material/science: QSAR Drug Discovery")
     st.caption(
         "Predict aromatase inhibitory activity (pIC50) of small molecules "
         "using a Random Forest model trained on Human aromatase (CYP19A1) [ChEMBL1978]."
