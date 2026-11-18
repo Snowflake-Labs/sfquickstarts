@@ -14,7 +14,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 You will build and deploy Weather Watch, an AI weather analyst for the United States, without installing anything. It runs on real NOAA weather station data, its charts explain themselves, and you can ask the data a question in plain English and get back a chart. You create the app from a template in a Snowsight workspace, watch it run in Preview, change it by chatting with Cortex Code, and deploy it to its own URL.
 
-Snowflake App Runtime runs your app on Snowflake as an **APPLICATION SERVICE**. You don't build container images, run a registry, or set up a pipeline.
+Snowflake App Runtime runs your app on Snowflake as an `APPLICATION SERVICE`. You don't build container images, run a registry, or set up a pipeline.
 
 ### What You'll Learn
 
@@ -27,8 +27,8 @@ Snowflake App Runtime runs your app on Snowflake as an **APPLICATION SERVICE**. 
 ### What You'll Need
 
 * A Snowflake account with Snowflake App Runtime and workspace preview enabled
-* A browser. Nothing to install.
-* The free **Snowflake Curated Data (Free)** listing from Snowflake Marketplace. The next step shows how to get it.
+* A browser. You don't need to install anything.
+* The free Snowflake Curated Data (Free) listing from Snowflake Marketplace. The next step shows how to get it.
 
 <!-- ------------------------ -->
 ## Get the Data
@@ -37,9 +37,9 @@ Weather Watch uses free, public NOAA weather data that Snowflake curates and mai
 
 1. Open the [Snowflake Curated Data (Free)](https://app.snowflake.com/marketplace/listing/GZTSZ290BV255) listing in Snowflake Marketplace.
 2. Select **Get**.
-3. Keep the default database name, **SNOWFLAKE_CURATED_DATA_FREE**, and select **Get** again.
+3. Keep the default database name, `SNOWFLAKE_CURATED_DATA_FREE`, and select **Get** again.
 
-> **Note:** Getting a listing needs the **ACCOUNTADMIN** role or a role with the **IMPORT SHARE** privilege. On a trial account you have **ACCOUNTADMIN** already.
+> **Note:** Getting a listing needs the `ACCOUNTADMIN` role or a role with the `IMPORT SHARE` privilege. On a trial account you have `ACCOUNTADMIN` already.
 
 <!-- ------------------------ -->
 ## Create Your App
@@ -48,16 +48,16 @@ Weather Watch uses free, public NOAA weather data that Snowflake curates and mai
 2. In the file explorer, select **+ Add new » Next.js App**.
 3. Keep the suggested project name. It ends in a random suffix, so it won't clash with other apps in your account.
 
-Workspaces creates a Next.js project from the Snowflake App Runtime template and opens its *app.yml*. The project includes:
+Workspaces creates a Next.js project from the Snowflake App Runtime template and opens its **app.yml**. The project includes:
 
-* *app.yml*, the manifest that tells Snowflake how to build, run, and deploy the app
-* *package.json*, whose ***dev*** script starts the dev server
-* *app/page.tsx*, the home page
-* *lib/constants.ts*, where the app title, logo, and page links live
-* *app/globals.css*, the theme, including the `--brand-primary` accent color
-* *components/*, ready-made UI pieces: cards, tables, stat cards, skeletons, and empty states
-* *lib/snowflake.ts* and *lib/run-as.ts*, helpers for running queries from the app. You don't need to edit them.
-* *AGENTS.md*, notes that Cortex Code reads before it changes your app
+* **app.yml**, the manifest that tells Snowflake how to build, run, and deploy the app
+* **package.json**, whose `dev` script starts the dev server
+* **app/page.tsx**, the home page
+* **lib/constants.ts**, where the app title, logo, and page links live
+* **app/globals.css**, the theme, including the `--brand-primary` accent color
+* **components/**, ready-made UI pieces: cards, tables, stat cards, skeletons, and empty states
+* **lib/snowflake.ts** and **lib/run-as.ts**, helpers for running queries from the app. You don't need to edit them.
+* **AGENTS.md**, notes that Cortex Code reads before it changes your app
 
 The starter app already looks finished. Its home page greets you by name and shows your role, account, and warehouse, with a card of example prompts and a short tour of how the page talks to Snowflake. The header has a light and dark mode toggle and a command palette you open with ⌘K (Ctrl+K on Windows).
 
@@ -68,7 +68,7 @@ In the file explorer, hover over your project folder and select the eye icon (**
 
 Wait for the dev server to start. Preview shows its progress in the logs pane, then shows your running app.
 
-> **Tip:** You can also do this in steps: select **Preview** above *app.yml*, select **Fullscreen** on the Preview pane, then open Cortex Code with the star icon in the side bar.
+> **Tip:** You can also do this in steps: select **Preview** above **app.yml**, select **Fullscreen** on the Preview pane, then open Cortex Code with the star icon in the side bar.
 
 Preview runs the dev server on Snowflake compute. It is yours alone: nobody else can open it, and it creates no service until you deploy.
 
@@ -87,7 +87,7 @@ You'll turn the starter app into Weather Watch, built on the NOAA tables in `SNO
 
 ### Make it yours
 
-Start with a quick rebrand, no data. Every later page inherits this look.
+Start with a quick rebrand before you add any data. Every later page inherits this look.
 
 ```text
 Rebrand the app as Weather Watch: set the title in lib/constants.ts
@@ -170,13 +170,13 @@ Ask Cortex Code:
 Deploy this app.
 ```
 
-You can also select **Deploy** in the editor. The first deploy creates the **APPLICATION SERVICE** and can take a few minutes. Later deploys update the same URL.
+You can also select **Deploy** in the editor. The first deploy creates the `APPLICATION SERVICE` and can take a few minutes. Later deploys update the same URL.
 
 When the deploy finishes, open the app: ask Cortex Code to open it, or select **Open deployed app** from the menu next to **Deploy**.
 
-Where the app lands depends on your account. The template's *app.yml* names the deploy target, such as the `SNOWFLAKE_APPS` database. Without admin setup, the app deploys to your personal database, so it's yours alone. To share apps with others, an admin first runs app development setup from **Settings » Apps**.
+Where the app lands depends on your account. The template's **app.yml** names the deploy target, such as the `SNOWFLAKE_APPS` database. Without admin setup, the app deploys to your personal database, so it's yours alone. To share apps with others, an admin first runs app development setup from **Settings » Apps**.
 
-Once deployed, each query in the app can run as the person viewing it or as the app itself. The template's *app/api/query/route.ts* shows both. In Preview, both run as you.
+Once deployed, each query in the app can run as the person viewing it or as the app itself. The template's **app/api/query/route.ts** shows both. In Preview, both run as you.
 
 <!-- ------------------------ -->
 ## Keep Going
@@ -216,7 +216,7 @@ with row counts. Load each level only when I open it.
 
 > **Tip:** To check the phone layout, open Preview in a new browser window and turn on your browser's device emulation in its developer tools.
 
-To use your own data, name the table in the prompt. Your role needs **SELECT** on it.
+To use your own data, name the table in the prompt. Your role needs `SELECT` on it.
 
 ### Build a bigger app on your laptop
 
