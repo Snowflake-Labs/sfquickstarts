@@ -45,19 +45,17 @@ The architecture below follows the data from source tables to agent answers. The
 4. **Make definitions searchable.** Approve the drafts and verify search indexing before testing answers. The BON agent looks up definitions to select metrics and apply business rules; the baseline agent has no ontology search.
 5. **Compare the answers.** Check both agents' numbers and explanations. The optional benchmark repeats the comparison. The warehouse supplies compute for the SQL operations.
 
-By the end of this guide, your account holds the objects below: three domains of governed nodes, the relationships and representations that connect them to each other and to your data, and the semantic views and agents that put them to work. The counts are the same ones the **Check** lines confirm along the way.
+By the end of this guide, your account holds the objects below: three domains of governed nodes, the relationships and representations that connect them to each other and to your data, and the semantic views and agents that put them to work. The counts are the same ones the **Check** lines confirm along the way:
 
-| Object | Count | Notes |
-|---|---|---|
-| Domains | 3 | Procurement · Finance & Controlling · Sales & Distribution |
-| Entities | 13 | Supplier, Material, Assembly, Bill of Materials, Purchase Order, Shipment, Carrier, Inspection Lot, AP Line Item, Cost Posting, Sales Order, Customer, Pricing Condition |
-| Metrics | 16 | Canonical metrics, their look-alikes (e.g. *Vendor Record Count*, *Carrier Reported On-Time Rate*, *Gross Bookings*), and cross-domain metrics (*Product Gross Margin*, *Customer Profit*, *Revenue at Risk*) |
-| Terms | 8 | Code fields and company vocabulary: Vendor Account Group, Material Group, Posting Key, GL Account, Cost Object, Condition Type, Sales Organization, **Tier A Supplier** |
-| Policies | 3 | Probationary Vendor Exclusion, Credit Memo Sign Rule, BOM Input Protection |
-| Relationships | 51 | MEASURES 13 · DERIVES 13 · CLASSIFIES 8 · RELATED_TO 6 · APPLIES_TO 4 · HAS_PART 3 · HAS_VARIANT 3 · IS_A 1 |
-| Representations | 43 | IMPLEMENTS 12 · REPRESENTS 14 · RELATED_SEMANTIC_VIEW 8 · DESCRIBES 7 · REFERENCE_DATA 2 |
-| Semantic views | 6 | Three enriched views used here: `PROCUREMENT_ENRICHED_SV`, `FINANCE_ENRICHED_SV`, `SALES_ENRICHED_SV`; three bare views for the additional baseline agent |
-| Agents | 7 | Arm A is `BARE_AGENT`, an additional bare-SV baseline not evaluated here. The A/B experiment compares arm B, `ENRICHED_AGENT` (enriched SVs only), with arm C, `BON_AGENT` (same SVs + ontology search and instructions). The script also creates two Finance/Sales team pairs for consistency checks. |
+- **Domains (3):** Procurement · Finance & Controlling · Sales & Distribution
+- **Entities (13):** Supplier, Material, Assembly, Bill of Materials, Purchase Order, Shipment, Carrier, Inspection Lot, AP Line Item, Cost Posting, Sales Order, Customer, Pricing Condition
+- **Metrics (16):** Canonical metrics, their look-alikes (e.g. *Vendor Record Count*, *Carrier Reported On-Time Rate*, *Gross Bookings*), and cross-domain metrics (*Product Gross Margin*, *Customer Profit*, *Revenue at Risk*)
+- **Terms (8):** Code fields and company vocabulary: Vendor Account Group, Material Group, Posting Key, GL Account, Cost Object, Condition Type, Sales Organization, **Tier A Supplier**
+- **Policies (3):** Probationary Vendor Exclusion, Credit Memo Sign Rule, BOM Input Protection
+- **Relationships (51):** MEASURES 13 · DERIVES 13 · CLASSIFIES 8 · RELATED_TO 6 · APPLIES_TO 4 · HAS_PART 3 · HAS_VARIANT 3 · IS_A 1
+- **Representations (43):** IMPLEMENTS 12 · REPRESENTS 14 · RELATED_SEMANTIC_VIEW 8 · DESCRIBES 7 · REFERENCE_DATA 2
+- **Semantic views (6):** Three enriched views used here (`PROCUREMENT_ENRICHED_SV`, `FINANCE_ENRICHED_SV`, `SALES_ENRICHED_SV`); three bare views for the additional baseline agent
+- **Agents (7):** Arm A is `BARE_AGENT`, an additional bare-SV baseline not evaluated here. The A/B experiment compares arm B, `ENRICHED_AGENT` (enriched SVs only), with arm C, `BON_AGENT` (same SVs + ontology search and instructions). The script also creates two Finance/Sales team pairs for consistency checks.
 
 The semantic views and agents live in `BUSINESS_ONTOLOGY.SAP`. Ontology domains are account-level containers; their representations point to objects in that schema.
 
@@ -67,17 +65,15 @@ With the end result in mind, check that you have everything needed to build it.
 
 ### What You'll Need
 
-Here's what you need before you start. Everything in the table is required except Python, which you only need for the optional full benchmark in Step 10.
+Here's what you need before you start. Everything below is required except Python, which you only need for the optional full benchmark in Step 10:
 
-| Requirement | Details |
-|---|---|
-| Account | Business Ontology enabled (Private Preview); search indexing enabled in your region |
-| Snowsight | **Catalog > Business Ontology**, and a SQL worksheet to run the scripts |
-| Role | One role for the whole guide, used as your primary role. It needs `CREATE ONTOLOGY DOMAIN` on the account to create the three domains (`ACCOUNTADMIN` has it by default), plus the usual privileges to create a database, warehouse, semantic views and agents. The role that creates a domain owns it, so it can then draft, approve and link nodes, and search them. The demo used ACCOUNTADMIN. |
-| Local setup | A terminal with Bash and standard `mkdir` and `cat` commands. The Setup section writes all nine SQL scripts, including the synthetic SAP data, and the Python benchmark locally; no Git or repository download is required |
-| CoCo | Cortex Code in Snowsight (opened by **Generate Ontology**, below) or Cortex Code Desktop, for the prompts, plus the Cortex Code CLI for the search check in Step 8. The `business-ontology` skill is bundled, so no install is needed. |
-| Python (optional) | Python 3.10+ and `snowflake-connector-python`, only for the full benchmark in Step 10 |
-| Time | About an hour of hands-on work, plus a variable search-indexing wait. In our trials, terms were first observed as searchable approximately 5 to 14 hours after the final ontology write. These are observation times, not guaranteed indexing durations (Step 8). |
+- **Account:** Business Ontology enabled (Private Preview); search indexing enabled in your region
+- **Snowsight:** **Catalog > Business Ontology**, and a SQL worksheet to run the scripts
+- **Role:** One role for the whole guide, used as your primary role. It needs `CREATE ONTOLOGY DOMAIN` on the account to create the three domains (`ACCOUNTADMIN` has it by default), plus the usual privileges to create a database, warehouse, semantic views and agents. The role that creates a domain owns it, so it can then draft, approve and link nodes, and search them. The demo used `ACCOUNTADMIN`.
+- **Local setup:** A terminal with Bash and standard `mkdir` and `cat` commands. The Setup section writes all nine SQL scripts, including the synthetic SAP data, and the Python benchmark locally; no Git or repository download is required.
+- **CoCo:** Cortex Code in Snowsight (opened by **Generate Ontology**, below) or Cortex Code Desktop, for the prompts, plus the Cortex Code CLI for the search check in Step 8. The `business-ontology` skill is bundled, so no install is needed.
+- **Python (optional):** Python 3.10+ and `snowflake-connector-python`, only for the full benchmark in Step 10
+- **Time:** About an hour of hands-on work, plus a variable search-indexing wait. In our trials, terms were first observed as searchable approximately 5 to 14 hours after the final ontology write. These are observation times, not guaranteed indexing durations (Step 8).
 
 If this is your first time with Business Ontology, start by finding it in Snowsight. In the left sidebar, hover over **Catalog** under **Horizon Catalog** and click **Business Ontology**, which carries a **PREVIEW** label. The page lists every node you can see, with its domain and description, and you can switch between a **List** and a **Graph** view or filter by domain and state. On a new account the list is empty; the screenshot below comes from an account that already has the demo ontology.
 
@@ -111,10 +107,10 @@ Business Ontology is the governed meaning layer in Horizon Catalog. It models sh
 
 The table below puts the two layers side by side, using the supplier count example from the introduction.
 
-| Layer | Owns | Example from the demo |
+| Layer of the stack | What it owns | Example from the demo |
 |---|---|---|
-| Semantic View | Tables, joins, dimensions, metric SQL; executes the number | `PROCUREMENT_ENRICHED_SV` has `VENDOR_RECORD_COUNT` (15); `FINANCE_ENRICHED_SV` has `ACTIVE_SUPPLIER_COUNT` (14) |
-| Business Ontology | Which metric is canonical, business vocabulary, policies, cross-domain links | "Supplier Count" means active suppliers; *Probationary Vendor Exclusion* applies to it; it is implemented by `ACTIVE_SUPPLIER_COUNT` |
+| Semantic View | Tables, joins, dimensions, metric SQL; executes the number | `PROCUREMENT_ENRICHED_SV` (`VENDOR_RECORD_COUNT` = 15) and `FINANCE_ENRICHED_SV` (`ACTIVE_SUPPLIER_COUNT` = 14) |
+| Business Ontology | Canonical metric choice, business vocabulary, policies, cross-domain links | "Supplier Count" means active suppliers, governed by *Probationary Vendor Exclusion* and implemented by `ACTIVE_SUPPLIER_COUNT` |
 
 The picture below shows the same question asked twice. On the left, the agent has only the semantic views: it sees two defensible metrics, `VENDOR_RECORD_COUNT` and `ACTIVE_SUPPLIER_COUNT`, and either picks one or hedges. On the right, the ontology tells it which metric is official and which policy applies, so it answers 14 and cites the governed term.
 
@@ -248,12 +244,12 @@ sql/06_enriched_svs.sql       # PROCUREMENT / FINANCE / SALES _ENRICHED_SV
 
 | Script | Sample result messages | Expected resulting state |
 |---|---|---|
-| `01_setup.sql` | `Database BUSINESS_ONTOLOGY successfully created.`; `Schema RAW successfully created.`; `Warehouse BUSINESS_ONTOLOGY_WH successfully created.` | Database, RAW schema and warehouse created |
-| `02_raw_data.sql` | `Table LFA1 successfully created.`; insert results show `number of rows inserted` = `1` for individual inserts | 15 RAW tables; sample counts: LFA1 = 15, MARA = 24, EKPO = 25, LIKP = 20 |
-| `03_sap_schema.sql` | `RAW source tables found`; `cloned 15` | 15 SAP clones with matching counts; T077K = 3 rows, T023T = 6 rows |
-| `04_ground_truth.sql` | `Table BENCHMARK_QUESTIONS successfully created.`; `Table BENCHMARK_GROUND_TRUTH successfully created.` | 20 questions and 20 ground-truth rows |
-| `05_bare_svs.sql` | `Semantic view PROCUREMENT_BARE_SV successfully created.` (and corresponding Finance/Sales messages) | CUSTOMERS_VIEW, BOM_EXPLOSION_VIEW and three bare semantic views |
-| `06_enriched_svs.sql` | `Semantic view FINANCE_ENRICHED_SV successfully created.` (and corresponding Procurement/Sales messages) | Three enriched semantic views; active suppliers = 14, net revenue = 711915 |
+| `01_setup.sql` | `Database BUSINESS_ONTOLOGY successfully created.` and warehouse created | Database, `RAW` schema and warehouse created |
+| `02_raw_data.sql` | `Table LFA1 successfully created.`; `number of rows inserted` = `1` | 15 `RAW` tables (LFA1 = 15, MARA = 24, EKPO = 25, LIKP = 20) |
+| `03_sap_schema.sql` | `RAW source tables found`; `cloned 15` | 15 `SAP` clones with matching counts; T077K = 3, T023T = 6 |
+| `04_ground_truth.sql` | `Table BENCHMARK_QUESTIONS successfully created.` and ground truth created | 20 questions and 20 ground-truth rows |
+| `05_bare_svs.sql` | `Semantic view PROCUREMENT_BARE_SV successfully created.` (plus Finance/Sales) | Helper views and three bare semantic views |
+| `06_enriched_svs.sql` | `Semantic view FINANCE_ENRICHED_SV successfully created.` (plus Procurement/Sales) | Three enriched semantic views (active suppliers = 14, net revenue = 711915) |
 
 The final query in `02_raw_data.sql` returns the following counts for the synthetic dataset. Rows are shown here alphabetically for readability.
 
@@ -412,17 +408,23 @@ Add Sales Order, Customer and Pricing Condition to Sales & Distribution.
 
 **Expected from CoCo (illustrative review content):** proposed entities with business descriptions, followed by draft IDs if you confirm. This prompt drafts entities only; it does not reproduce the script's metrics, terms and policies.
 
-| Candidate | Kind | Definition detail to review |
-|---|---|---|
-| Procurement.Supplier | ENTITY | Vendor number `LFA1.LIFNR`; probationary exclusion |
-| Finance & Controlling.AP Line Item | ENTITY | An accounts-payable posting line |
-| Sales & Distribution.Customer | ENTITY | A customer identified in sales and pricing data |
+| Entity candidate | Definition detail to review |
+|---|---|
+| Procurement: Supplier | Vendor number `LFA1.LIFNR`; probationary exclusion |
+| Finance & Controlling: AP Line Item | An accounts-payable posting line |
+| Sales & Distribution: Customer | A customer identified in sales and pricing data |
 
 Each entity becomes one call to the function below.
 
 ### The SQL Behind It
 
-Both the script and the prompt call this function underneath. One call looks like `SYSTEM$DRAFT_GLOSSARY_TERM('{"name":"Supplier","domainName":"Procurement","itemKind":"ENTITY","description":"<business-description>"}')`, and you don't need to run it separately. The description is a placeholder in this reference example. The skill shows each draft before it writes it.
+Both the script and the prompt call `SYSTEM$DRAFT_GLOSSARY_TERM` underneath. You don't need to run the reference example below separately; `<business-description>` is a placeholder and the skill shows each draft before it writes it:
+
+```sql
+SELECT SYSTEM$DRAFT_GLOSSARY_TERM(
+  '{"name":"Supplier","domainName":"Procurement","itemKind":"ENTITY","description":"<business-description>"}'
+);
+```
 
 Because this one run drafts 39 nodes at once, check that every statement worked before you move on.
 
@@ -676,7 +678,13 @@ Each arrow in that picture comes from one call to the function below.
 
 ### The SQL Behind It
 
-Both the script and the prompt call this function underneath. One call looks like `SYSTEM$CREATE_GLOSSARY_RELATIONSHIP('Procurement.Tier A Supplier','Procurement.Supplier','IS_A')`, and you don't need to run it separately. That call creates the edge straight away. For reference only, the alternative `SYSTEM$DRAFT_GLOSSARY_RELATIONSHIP` workflow drafts an edge for later approval; it is not an additional execution step here. Both calls accept domain-qualified names or term IDs.
+Both the script and the prompt call `SYSTEM$CREATE_GLOSSARY_RELATIONSHIP` underneath. That call creates the edge straight away, and you don't need to run the reference example below separately. For reference only, the alternative `SYSTEM$DRAFT_GLOSSARY_RELATIONSHIP` workflow drafts an edge for later approval; it is not an additional execution step here. Both calls accept domain-qualified names or term IDs:
+
+```sql
+SELECT SYSTEM$CREATE_GLOSSARY_RELATIONSHIP(
+  'Procurement.Tier A Supplier', 'Procurement.Supplier', 'IS_A'
+);
+```
 
 The graph is useful to people, but the agent doesn't read it directly, which affects how you write your definitions.
 
@@ -824,10 +832,10 @@ Then propose representations for every other node in all three domains and show 
 
 **Expected from CoCo (illustrative review content):** the explicit Supplier Count mapping plus proposals for the remaining nodes. Review the object, logical table and field, not just the view name. The proposed total can differ from 43.
 
-| Node | Role | Target to review |
+| Ontology node | Association role | Target to review |
 |---|---|---|
-| Procurement.Supplier Count | IMPLEMENTS | `BUSINESS_ONTOLOGY.SAP.FINANCE_ENRICHED_SV`, `VENDORS.ACTIVE_SUPPLIER_COUNT` |
-| Sales & Distribution.Customer | REPRESENTS | `BUSINESS_ONTOLOGY.SAP.CUSTOMERS_VIEW` |
+| Procurement: Supplier Count | `IMPLEMENTS` | `FINANCE_ENRICHED_SV` (`VENDORS.ACTIVE_SUPPLIER_COUNT`) |
+| Sales & Distribution: Customer | `REPRESENTS` | `BUSINESS_ONTOLOGY.SAP.CUSTOMERS_VIEW` |
 
 Each of the 43 representations comes from one call to the same function.
 
@@ -848,10 +856,10 @@ One caution applies to representations after you create them:
 
 **Expected from the drift prompt (illustrative review content):** a comparison of meaning, binding and current SQL, followed by proposed fixes for review. A stored `VALID` flag alone is not proof that the implementation still matches.
 
-| Node | Comparison to review | Next action if different |
+| Ontology node | Comparison to review | Next action if different |
 |---|---|---|
-| Procurement.Supplier Count | Approved exclusion rule versus `VENDORS.ACTIVE_SUPPLIER_COUNT` SQL in `FINANCE_ENRICHED_SV` | Review both definition and implementation changes |
-| Sales & Distribution.Customer | Representation target versus current `CUSTOMERS_VIEW` | Repair the binding if the target changed |
+| Procurement: Supplier Count | Approved exclusion rule vs. `ACTIVE_SUPPLIER_COUNT` SQL in `FINANCE_ENRICHED_SV` | Review both definition and implementation changes |
+| Sales & Distribution: Customer | Representation target vs. current `CUSTOMERS_VIEW` | Repair the binding if the target changed |
 
 Next, confirm that the representations were created and point at real objects.
 
@@ -868,10 +876,10 @@ UNION ALL SELECT 'Customer', TO_JSON(PARSE_JSON(SYSTEM$GET_GLOSSARY_TERM('Sales 
 
 The query returns two rows. These selected fields from each `REPRESENTATIONS` value make the targets easier to read.
 
-| NODE | associationRole | fqn | entityQualifier / subObjectName | validity |
-|---|---|---|---|---|
-| Supplier Count | IMPLEMENTS | BUSINESS_ONTOLOGY.SAP.FINANCE_ENRICHED_SV | VENDORS / ACTIVE_SUPPLIER_COUNT | VALID |
-| Customer | REPRESENTS | BUSINESS_ONTOLOGY.SAP.CUSTOMERS_VIEW | Not applicable | VALID |
+| Node | Association role | Target object (`fqn`) | Sub-object (`VALID`) |
+|---|---|---|---|
+| Supplier Count | `IMPLEMENTS` | `SAP.FINANCE_ENRICHED_SV` | `VENDORS / ACTIVE_SUPPLIER_COUNT` |
+| Customer | `REPRESENTS` | `SAP.CUSTOMERS_VIEW` | Not applicable |
 
 The Supplier Count array contains an object with the fields below; additional returned fields are omitted here.
 
@@ -943,10 +951,10 @@ The diagram below shows what happens when a question comes in. The agent first s
 
 Run all of `sql/09_agents.sql`. It creates 7 agents with the same `auto` model setting and budget. Each BON agent adds ontology-oriented orchestration and citation instructions as well as the search tool. Agents with Business Ontology (BON) search turned on have `BON` in their name, such as `BON_AGENT`. An A/B comparison asks two configurations the same questions to see how their answers differ. The script labels its main configurations A (bare semantic views), B (enriched semantic views) and C (enriched semantic views plus BON). Arm A is an additional baseline not evaluated in this guide; the experiment compares B and C:
 
-| Arm | Agent | Tools |
+| Benchmark arm | Agent name | Tools attached |
 |---|---|---|
-| B | `ENRICHED_AGENT` | 3 enriched SVs |
-| C | `BON_AGENT` | the same 3 enriched SVs + `business_ontology` search |
+| Arm B (baseline) | `ENRICHED_AGENT` | 3 enriched semantic views |
+| Arm C (ontology) | `BON_AGENT` | Same 3 enriched semantic views + `business_ontology` search |
 
 The script also creates arm A, `BARE_AGENT` (the additional bare-SV baseline, not run by the current harness), and the benchmark consistency pairs `FINANCE_ENRICHED_AGENT` / `FINANCE_BON_AGENT` and `SALES_ENRICHED_AGENT` / `SALES_BON_AGENT`.
 
@@ -1100,10 +1108,10 @@ In Snowsight, open **AI & ML > Agents**, and ask `ENRICHED_AGENT` and then `BON_
 
 | Agent and question | Observed answer summary | Observed tool path |
 |---|---|---|
-| ENRICHED_AGENT: suppliers | Led with 15 suppliers on file, then offered 14 active | `query_procurement`, `system_execute_sql` |
-| BON_AGENT: suppliers | 14 suppliers; ZSTR/ZSTD included, ZPRB excluded; official Supplier Count and `vendors.active_supplier_count` | `business_ontology`, `query_finance`, `system_execute_sql` |
-| ENRICHED_AGENT: revenue | Offered both 711,915 net and 746,000 gross | `query_sales`, `system_execute_sql` |
-| BON_AGENT: revenue | 711,915; governed Revenue, implemented by `SALES_ENRICHED_SV.net_revenue` | `business_ontology`, `query_sales`, `system_execute_sql` |
+| `ENRICHED_AGENT` (suppliers) | Led with 15 on file, then offered 14 active | `query_procurement`, `system_execute_sql` |
+| `BON_AGENT` (suppliers) | 14 active (ZSTR/ZSTD included, ZPRB excluded) via Supplier Count | `business_ontology`, `query_finance`, `system_execute_sql` |
+| `ENRICHED_AGENT` (revenue) | Offered both 711,915 net and 746,000 gross | `query_sales`, `system_execute_sql` |
+| `BON_AGENT` (revenue) | 711,915 net via governed Revenue (`SALES_ENRICHED_SV.net_revenue`) | `business_ontology`, `query_sales`, `system_execute_sql` |
 
 **Sample BON answers:** these excerpts are normalised and paraphrased from the observed responses for readability, not exact transcripts.
 
@@ -1238,10 +1246,10 @@ For each, give the expected answer, the wrong-but-defensible answer, and the gov
 
 | Question type | Sample question | Expected answer | Look-alike / refusal check | Governing node |
 |---|---|---|---|---|
-| Competing metrics | How many suppliers do we have? | 14 on this dataset | 15 is the vendor record count | Procurement.Supplier Count |
-| Vocabulary | What does Tier A supplier mean? | ZSTR strategic suppliers | Not every active supplier | Procurement.Tier A Supplier |
-| Policy | Do probationary vendors count as suppliers? | No | Including ZPRB conflicts with policy | Procurement.Probationary Vendor Exclusion |
-| Unknown term | What is our Platinum-Plus supplier rule? | No approved definition found, if absent from your ontology | Do not invent a definition | None; verify absence |
+| Competing metrics | How many suppliers do we have? | 14 on this dataset | 15 is the vendor record count | Procurement: Supplier Count |
+| Vocabulary | What does Tier A supplier mean? | ZSTR strategic suppliers | Not every active supplier | Procurement: Tier A Supplier |
+| Policy | Do probationary vendors count as suppliers? | No | Including ZPRB conflicts with policy | Procurement: Probationary Vendor Exclusion |
+| Unknown term | What is our Platinum-Plus supplier rule? | No approved definition found | Do not invent a definition | None; verify absence |
 
 For your own evaluation, the expected deliverable is a reviewed question set with ground truth, followed by repeat-run results recording correctness, hedging and citations. The suggested unknown term above is an illustrative test case, not an assertion about every account's catalog.
 
@@ -1255,15 +1263,23 @@ The first part shows how to keep the ontology current as definitions change. The
 
 Once the ontology is live, the prompts below start common maintenance workflows. These are optional examples, not steps to run against the finished demo before evaluating it. Replace placeholder descriptions with approved business definitions. In particular, `<domain>` must identify a domain you own and intend to remove.
 
-**Expected for each prompt (illustrative review content):** review the proposed change before applying it. The adjacent column shows the content to expect, not exact card formatting or guaranteed completion.
+**Expected for each prompt (illustrative review content):** review the proposed change before applying it. Each item below shows the prompt and the review content to expect, not exact card formatting or guaranteed completion:
 
-| Task | Prompt | Expected review content |
-|---|---|---|
-| Edit a definition or formula | `$business-ontology Update Procurement.Supplier Count: also exclude temporary vendors (ZTMP)` | Before: active ZSTR/ZSTD suppliers. Proposal: explicitly exclude ZTMP. Check whether SQL needs a change; ZTMP is already outside the demo metric's inclusion list. No invented new supplier count. |
-| Add a metric | `$business-ontology Add a metric Net Price Realization to Sales & Distribution. Formula: <approved-formula>. Description: <approved-description>.` | Candidate name, domain, formula and business definition; ask for missing meaning rather than inventing the formula. |
-| Find missing edges | `$business-ontology Find more relationships in the Finance & Controlling domain` | Candidate source/type/target and rationale; proposals can be empty if no further edges are justified. |
-| Rename a node | `$business-ontology Rename Procurement.Inspection Lot to Quality Inspection` | Before: Inspection Lot. Proposed name: Quality Inspection. Approval pending; affected references shown for review. Search can still show the old name until refresh. |
-| Delete a domain | `$business-ontology Delete the <domain> domain` | Exact target and dependent contents, followed by a destructive-action confirmation; no deletion before confirmation. |
+- **Edit a definition or formula:**
+  - Prompt: `$business-ontology Update Procurement.Supplier Count: also exclude temporary vendors (ZTMP)`
+  - Expected review content: Before: active ZSTR/ZSTD suppliers. Proposal: explicitly exclude ZTMP. Check whether SQL needs a change; ZTMP is already outside the demo metric's inclusion list. No invented new supplier count.
+- **Add a metric:**
+  - Prompt: `$business-ontology Add a metric Net Price Realization to Sales & Distribution. Formula: <approved-formula>. Description: <approved-description>.`
+  - Expected review content: Candidate name, domain, formula and business definition; ask for missing meaning rather than inventing the formula.
+- **Find missing edges:**
+  - Prompt: `$business-ontology Find more relationships in the Finance & Controlling domain`
+  - Expected review content: Candidate source/type/target and rationale; proposals can be empty if no further edges are justified.
+- **Rename a node:**
+  - Prompt: `$business-ontology Rename Procurement.Inspection Lot to Quality Inspection`
+  - Expected review content: Before: Inspection Lot. Proposed name: Quality Inspection. Approval pending; affected references shown for review. Search can still show the old name until refresh.
+- **Delete a domain:**
+  - Prompt: `$business-ontology Delete the <domain> domain`
+  - Expected review content: Exact target and dependent contents, followed by a destructive-action confirmation; no deletion before confirmation.
 
 Edits to **ACTIVE** nodes go through an **edit card** (`SYSTEM$DRAFT_GLOSSARY_TERM_UPDATE`). The live definition stays in force until the edit is approved, and agents see the change only after the index refreshes. The skill's quality gate shows the old and new values side by side.
 
@@ -1284,9 +1300,9 @@ $business-ontology Bootstrap ontology from our semantic views in BUSINESS_ONTOLO
 | Candidate | Evidence to show at review | Business decision still needed |
 |---|---|---|
 | Supplier entity | Vendor identity and joins in the semantic views | Official scope of a supplier |
-| Supplier-count metric | `FINANCE_ENRICHED_SV.VENDORS.ACTIVE_SUPPLIER_COUNT` | Whether it is canonical |
-| Vendor-record metric | `PROCUREMENT_ENRICHED_SV.VENDORS.VENDOR_RECORD_COUNT` | Whether it is an operational variant |
-| IMPLEMENTS representation | Source view, logical table and metric | Confirm the proposed binding |
+| Supplier-count metric | `FINANCE_ENRICHED_SV` (`VENDORS.ACTIVE_SUPPLIER_COUNT`) | Whether it is canonical |
+| Vendor-record metric | `PROCUREMENT_ENRICHED_SV` (`VENDORS.VENDOR_RECORD_COUNT`) | Whether it is an operational variant |
+| `IMPLEMENTS` representation | Source view, logical table and metric | Confirm the proposed binding |
 
 Candidate names and counts depend on your source metadata. Bootstrap output alone does not establish the demo's 40 nodes or its policies.
 
@@ -1312,55 +1328,99 @@ Add those by hand using Steps 3 to 5. **Expected:** the review content should no
 
 Semantic views aren't the only starting point. Depending on where your definitions live today, you can start from any of these sources:
 
-**Expected for alternate sources (illustrative review content):** substitute your actual stage path, schema or context. Candidates and counts depend on the source contents and the import's outcome.
+**Expected for alternate sources (illustrative review content):** substitute your actual stage path, schema or context. Candidates and counts depend on the source contents and the import's outcome:
 
-| You have | Prompt or reference | Expected review content |
-|---|---|---|
-| CSV, spreadsheet or document on a stage | `$business-ontology Import ontology terms from @my_stage/glossary.csv` | Source row or passage, proposed term, domain and definition; unresolved mappings flagged |
-| dbt project | `$business-ontology Extract ontology from our dbt manifest at @my_stage/manifest.json` | Source model/metric, candidate concept and provenance; business meaning needing review |
-| Table and column comments | `$business-ontology Extract terms from our tables in <db.schema>` | Source table/column comment paired with a candidate term; duplicates for review |
-| Cortex Sense context | `$business-ontology Promote our <context> context to the ontology` | Selected context definitions and proposed ontology mappings; conflicts for review |
-| Knowledge in people's heads | `$business-ontology I need an ontology for procurement. We count suppliers excluding probationary vendors.` | Supplier Count candidate, exclusion policy and questions about the implementation |
-| OWL / RDF / Turtle | Reference only: `business-ontology-owl-dev`; no execution required in this guide | Confirm the skill's availability and supported import path before using it |
+- **CSV, spreadsheet or document on a stage:**
+  - Prompt: `$business-ontology Import ontology terms from @my_stage/glossary.csv`
+  - Expected review content: Source row or passage, proposed term, domain and definition; unresolved mappings flagged.
+- **dbt project:**
+  - Prompt: `$business-ontology Extract ontology from our dbt manifest at @my_stage/manifest.json`
+  - Expected review content: Source model/metric, candidate concept and provenance; business meaning needing review.
+- **Table and column comments:**
+  - Prompt: `$business-ontology Extract terms from our tables in <db.schema>`
+  - Expected review content: Source table/column comment paired with a candidate term; duplicates for review.
+- **Cortex Sense context:**
+  - Prompt: `$business-ontology Promote our <context> context to the ontology`
+  - Expected review content: Selected context definitions and proposed ontology mappings; conflicts for review.
+- **Knowledge in people's heads:**
+  - Prompt: `$business-ontology I need an ontology for procurement. We count suppliers excluding probationary vendors.`
+  - Expected review content: Supplier Count candidate, exclusion policy and questions about the implementation.
+- **OWL / RDF / Turtle:**
+  - Reference only: `business-ontology-owl-dev`; no execution required in this guide. Confirm the skill's availability and supported import path before using it.
 
-If any step didn't match its expected check, the table below maps common symptoms to their likely causes and fixes.
+If any step didn't match its expected check, the list below maps common symptoms to their likely causes and fixes.
 
 ## Troubleshooting
 
-Each row starts from what you see, then gives a possible cause, a fix and the state to check afterward. These are conditional recovery actions, not a script to run in full. **Expected** entries below are illustrative postconditions or review content; confirm the actual result after applying a fix.
+Each entry starts from what you see, then gives a possible cause, a fix and the state to check afterward. These are conditional recovery actions, not a script to run in full. **Expected** checks below are illustrative postconditions or review content; confirm the actual result after applying a fix:
 
-| Symptom | Possible cause | Fix | Expected |
-|---|---|---|---|
-| `Unknown function SYSTEM$CREATE_GLOSSARY_DOMAIN` | Feature not enabled | Contact your account team | Confirmation of preview eligibility/enablement before retrying; no provisioning result is assumed |
-| `Insufficient privileges ... must have CREATE ONTOLOGY DOMAIN` | Your primary role can't create top-level domains | Select a primary role with the privilege, or have an admin review `GRANT CREATE ONTOLOGY DOMAIN ON ACCOUNT TO ROLE <role>` with the intended role substituted | Role/grant review names the intended role and privilege; a subsequent domain call can return `error:false` as in Step 1 |
-| A relationship statement fails | A node it names is still a draft | Approve the intended drafts (Step 5, action 1), then rerun only the failed statement | Approval counts reflect remaining drafts; relationship result has `error:false`, `state:APPROVED` |
-| Node counts in Step 6 are short | Missing drafts or drafts made in another session | Create any missing drafts first. For existing drafts from another session, approve by actual term ID; the current-session prompt cannot select them | Review the intended names, domains and IDs; final script-path counts are 19/12/9 |
-| Agent never calls `business_ontology` | Flag, type or corpus misspelled | `DESCRIBE AGENT` and check all three settings | Step 9's flag/type/corpus values match; a later answer trace actually includes `business_ontology` |
-| Search returns nothing for new terms | Draft state, indexing delay, search error or lack of access | Confirm approval and role access, allow more time, then repeat Step 8's probes | Supplier Count, Tier A Supplier and Revenue match by identity and meaning; elapsed time alone does not establish readiness |
-| Deleted or renamed terms still returned | Stale index | Wait for re-index; don't benchmark until probes are clean | Current identities and definitions are returned; absence of stale hits is checked, not inferred from elapsed time |
-| Agent still picks the look-alike metric | Definition does not distinguish canonical and variant metrics | Review a separate look-alike metric and the applicable policy | Proposal: Vendor Record Count is operational; Supplier Count excludes ZPRB. After approval/indexing, test for a headline answer of 14 |
-| Agent can't follow a cross-domain link | Bridge exists only as a graph edge | Also state the bridge in the definition text | Review content names the chain, for example sold assembly to BOM components to material standard cost; retest the answer |
-| Agent picks the wrong SV tool | Tool description or representation is incomplete | Review `IMPLEMENTS` bindings and regenerate the spec, or edit tool descriptions | Supplier Count maps to `FINANCE_ENRICHED_SV.VENDORS.ACTIVE_SUPPLIER_COUNT`; agent tool selection agrees |
-| `GET_GLOSSARY_TERM` error inside a query | The argument must be a constant | Pass a literal name or ID | Step 6's literal Supplier Count read returns the documented formula |
-| Representation points at a rebuilt view | No revalidation in preview | Use the drift prompt in Step 7 | Review shows stored target versus current object and SQL; discrepancies remain flagged until repaired |
-| `Invalid identifier` or parsing error near JSON | Quoting may be wrong | Inspect the SQL string and double embedded single quotes where required | The intended field text parses correctly and the call succeeds; do not assume every identifier error is a quoting issue |
+- **`Unknown function SYSTEM$CREATE_GLOSSARY_DOMAIN`**
+  - **Possible cause:** Feature not enabled.
+  - **Fix:** Contact your account team.
+  - **Expected:** Confirmation of preview eligibility and enablement before retrying; no provisioning result is assumed.
+- **`Insufficient privileges ... must have CREATE ONTOLOGY DOMAIN`**
+  - **Possible cause:** Your primary role can't create top-level domains.
+  - **Fix:** Select a primary role with the privilege, or have an admin review `GRANT CREATE ONTOLOGY DOMAIN ON ACCOUNT TO ROLE <role>` with the intended role substituted.
+  - **Expected:** Role/grant review names the intended role and privilege; a subsequent domain call can return `error:false` as in Step 1.
+- **A relationship statement fails**
+  - **Possible cause:** A node it names is still a draft.
+  - **Fix:** Approve the intended drafts (Step 5, action 1), then rerun only the failed statement.
+  - **Expected:** Approval counts reflect remaining drafts; relationship result has `error:false`, `state:APPROVED`.
+- **Node counts in Step 6 are short**
+  - **Possible cause:** Missing drafts or drafts made in another session.
+  - **Fix:** Create any missing drafts first. For existing drafts from another session, approve by actual term ID; the current-session prompt cannot select them.
+  - **Expected:** Review the intended names, domains and IDs; final script-path counts are 19/12/9.
+- **Agent never calls `business_ontology`**
+  - **Possible cause:** Flag, type or corpus misspelled.
+  - **Fix:** Run `DESCRIBE AGENT` and check all three settings.
+  - **Expected:** Step 9's flag/type/corpus values match; a later answer trace actually includes `business_ontology`.
+- **Search returns nothing for new terms**
+  - **Possible cause:** Draft state, indexing delay, search error or lack of access.
+  - **Fix:** Confirm approval and role access, allow more time, then repeat Step 8's probes.
+  - **Expected:** Supplier Count, Tier A Supplier and Revenue match by identity and meaning; elapsed time alone does not establish readiness.
+- **Deleted or renamed terms still returned**
+  - **Possible cause:** Stale index.
+  - **Fix:** Wait for re-index; don't benchmark until probes are clean.
+  - **Expected:** Current identities and definitions are returned; absence of stale hits is checked, not inferred from elapsed time.
+- **Agent still picks the look-alike metric**
+  - **Possible cause:** Definition does not distinguish canonical and variant metrics.
+  - **Fix:** Review a separate look-alike metric and the applicable policy.
+  - **Expected:** Proposal: Vendor Record Count is operational; Supplier Count excludes ZPRB. After approval/indexing, test for a headline answer of 14.
+- **Agent can't follow a cross-domain link**
+  - **Possible cause:** Bridge exists only as a graph edge.
+  - **Fix:** Also state the bridge in the definition text.
+  - **Expected:** Review content names the chain, for example sold assembly to BOM components to material standard cost; retest the answer.
+- **Agent picks the wrong SV tool**
+  - **Possible cause:** Tool description or representation is incomplete.
+  - **Fix:** Review `IMPLEMENTS` bindings and regenerate the spec, or edit tool descriptions.
+  - **Expected:** Supplier Count maps to `FINANCE_ENRICHED_SV` (`VENDORS.ACTIVE_SUPPLIER_COUNT`); agent tool selection agrees.
+- **`GET_GLOSSARY_TERM` error inside a query**
+  - **Possible cause:** The argument must be a constant.
+  - **Fix:** Pass a literal name or ID.
+  - **Expected:** Step 6's literal Supplier Count read returns the documented formula.
+- **Representation points at a rebuilt view**
+  - **Possible cause:** No revalidation in preview.
+  - **Fix:** Use the drift prompt in Step 7.
+  - **Expected:** Review shows stored target versus current object and SQL; discrepancies remain flagged until repaired.
+- **`Invalid identifier` or parsing error near JSON**
+  - **Possible cause:** Quoting may be wrong.
+  - **Fix:** Inspect the SQL string and double embedded single quotes where required.
+  - **Expected:** The intended field text parses correctly and the call succeeds; do not assume every identifier error is a quoting issue.
 
 For day-to-day work after this guide, the quick reference below collects the calls you used in one place.
 
 ## API Quick Reference
 
-The table is reference only, with no execution required. It lists the calls already discussed; angle-bracket values are placeholders, not runnable identifiers. Read the corresponding build step for executable context and expected output.
+The list below is reference only, with no execution required. It collects the calls already discussed; angle-bracket values are placeholders, not runnable identifiers. Read the corresponding build step for executable context and expected output:
 
-| Operation | Call |
-|---|---|
-| Create domain | `SYSTEM$CREATE_GLOSSARY_DOMAIN('<name>')` |
-| Draft node | `SYSTEM$DRAFT_GLOSSARY_TERM('{"name":"<name>","domainName":"<domain>","itemKind":"ENTITY","description":"<description>"}')`; use the appropriate kind and add `formula` only for a metric |
-| Approve nodes | `SYSTEM$APPROVE_ALL_GLOSSARY_TERMS('["<generated-term-id>"]')` or `SYSTEM$APPROVE_GLOSSARY_TERM('<id or name>')` |
-| Edit an active node | `SYSTEM$DRAFT_GLOSSARY_TERM_UPDATE(...)`, then approve the edit card |
-| Relationship | `SYSTEM$CREATE_GLOSSARY_RELATIONSHIP('<src>','<tgt>','<TYPE>')` or `DRAFT_` + `APPROVE_` |
-| Representation | `SYSTEM$CREATE_GLOSSARY_ASSOCIATION('<node>','<assetRefJson>','<ROLE>')` |
-| Read | `SYSTEM$GET_GLOSSARY_TERM('<id or domain.name>')`, `SYSTEM$GET_GLOSSARY_TERM_LIST('<domain>')`, `SYSTEM$GET_GLOSSARY_GRAPH('<domain>')`, `SYSTEM$GET_GLOSSARY_DRAFT_GRAPH()` |
-| Delete domain | `SYSTEM$DELETE_GLOSSARY_DOMAIN('<domain>')` |
+- **Create domain:** `SYSTEM$CREATE_GLOSSARY_DOMAIN('<name>')`
+- **Draft node:** `SYSTEM$DRAFT_GLOSSARY_TERM('{"name": "<name>", "domainName": "<domain>", "itemKind": "ENTITY", "description": "<description>"}')`; use the appropriate kind and add `formula` only for a metric
+- **Approve nodes:** `SYSTEM$APPROVE_ALL_GLOSSARY_TERMS('["<generated-term-id>"]')` or `SYSTEM$APPROVE_GLOSSARY_TERM('<id or name>')`
+- **Edit an active node:** `SYSTEM$DRAFT_GLOSSARY_TERM_UPDATE(...)`, then approve the edit card
+- **Relationship:** `SYSTEM$CREATE_GLOSSARY_RELATIONSHIP('<src>', '<tgt>', '<TYPE>')` or `DRAFT_` + `APPROVE_`
+- **Representation:** `SYSTEM$CREATE_GLOSSARY_ASSOCIATION('<node>', '<assetRefJson>', '<ROLE>')`
+- **Read:** `SYSTEM$GET_GLOSSARY_TERM('<id or domain.name>')`, `SYSTEM$GET_GLOSSARY_TERM_LIST('<domain>')`, `SYSTEM$GET_GLOSSARY_GRAPH('<domain>')`, `SYSTEM$GET_GLOSSARY_DRAFT_GRAPH()`
+- **Delete domain:** `SYSTEM$DELETE_GLOSSARY_DOMAIN('<domain>')`
 
 Gotchas:
 - The field is `itemKind`, not `termType`.
