@@ -14,9 +14,9 @@ fork repo link: https://github.com/Snowflake-Labs/snowflake-dcm-projects
 
 Snowflake DCM (Database Change Management) Projects let you declare the Snowflake objects you want in SQL files, then let Snowflake work out how to get there.
 
-That is the whole idea, and it is worth being precise about what it replaces. A script is imperative: it says "create this table", and running it twice either fails or destroys what you had. A migration framework is imperative with bookkeeping: it says "apply change 7, then change 8", and it needs a ledger of which changes already ran so it never applies one twice. Both encode a *path*.
+Compare that with the two usual approaches. A script says "create this table": run it twice and it either fails or replaces what you had. A migration framework says "apply change 7, then change 8" and keeps a ledger of the changes that already ran, so it never applies one twice. Both describe the steps to take.
 
-A DCM Project encodes a *destination*. Each DEFINE statement states the object you want and the properties it should have. When you deploy, DCM inspects what exists, compares it to what you declared, and issues only the differences. There is no migration ledger to keep, because there is nothing to replay: the files are always the current desired state, and the account converges on them. Run a deploy twice and the second one does nothing.
+A DCM Project describes the result instead. Each DEFINE statement states the object you want and the properties it should have. When you deploy, DCM inspects what exists, compares it to what you declared, and issues only the differences. There is no migration ledger to keep, because there is nothing to replay: the files are always the current desired state, and the account converges on them. Run a deploy twice and the second one does nothing.
 
 You get two things from that. The first is a **plan**: a dry run that tells you exactly which objects would be created, altered and dropped before anything happens. The second is **convergence**: DEFINE executes as CREATE OR ALTER, so redeploying reconciles an object in place rather than recreating it.
 
@@ -55,7 +55,7 @@ You will walk it in order (creating the manifest and project object, reading the
 
 If you want to work in Snowsight rather than locally, create a Snowsight Workspace linked to the sample repository on GitHub.
 
-1. Navigate to **Projects > Workspaces** in Snowsight.
+1. Navigate to **Workspaces > Workspaces** in Snowsight.
 2. Click **Create** (+) and select **Git repository**.
 3. Enter the repository URL: https://github.com/Snowflake-Labs/snowflake-dcm-projects
 4. Select an API Integration for GitHub ([create one if needed](https://docs.snowflake.com/en/user-guide/ui-snowsight/workspaces-git#label-create-a-git-workspace)).
@@ -363,9 +363,9 @@ Planned 5 entities (2 to create, 3 to alter, 0 to drop).
 
 ![Plan results after the three changes](assets/plan_results_2.png)
 
-The two creates are DEV_TEAM_2's objects: a schema and a role, produced by the Jinja loop and macro from those two lines of YAML. The three alters are the dynamic table's target lag, the warehouse's size, and DCM_DEVELOPER taking ownership of the two new objects.
+The two CREATEs are DEV_TEAM_2's objects: a schema and a role, produced by the Jinja loop and macro from those two lines of YAML. The three ALTERs are the dynamic table's target lag, the warehouse's size, and DCM_DEVELOPER taking ownership of the two new objects.
 
-Open out/plan_result.json and find the dynamic table. Its entire change is one nested attribute:
+Open out/plan_result.json, format it from the [...] menu of the editor tab to make it readable, and find the dynamic table. Its entire change is one nested attribute:
 
 ```text
 target_lag.seconds  3600 -> 1800
@@ -566,9 +566,9 @@ DEFINE SEMANTIC VIEW means the vocabulary your BI tools and AI agents depend on 
 <!-- ------------------------ -->
 ## The App That Reads It
 
-Everything so far has been SQL that a DEFINE statement can express in full. A Streamlit app is Python files, so DCM carries it as **project assets**.
+Everything so far has been SQL that a DEFINE statement can express in full. A Streamlit app runs one or more Python files, so DCM carries those files as **project assets**.
 
-An asset is a named set of source files, declared at the top level of manifest.yml, a sibling of targets and templating, not nested inside either:
+An asset is a named set of source files, declared at the top level of manifest.yml:
 
 ```yaml
 assets:
@@ -616,10 +616,10 @@ DEFINE CODE BUNDLE uses assets the same way, for packaging Spark and Python jobs
 
 Some values cannot go in the manifest. The templating section of manifest.yml is committed to Git and rendered into plain text on the project's stage, which is fine for a warehouse size and wrong for an API key. DCM handles those with two kinds of runtime value, both declared by name in the manifest and supplied fresh on every plan and deploy:
 
-- An **environment variable** is a value that changes per run but is safe to read, such as a CI build number. It renders into the SQL as plain text.
+- An **environment variable** is a value that changes per run but is safe to read, such as the address of a service that differs between environments. It renders into the SQL as plain text.
 - An **environment secret** is a value that must never be written down. It renders as a reference, and DCM masks it in plan and deploy output and in the deployment history.
 
-The partner that sends this pipeline its orders issues an API key. You will store it in a Snowflake secret, declared in the project like any other object, and record which build deployed it.
+The partner that sends this pipeline its orders issues an API key. You will store it in a Snowflake secret, declared in the project like any other object, and record which partner endpoint the key belongs to.
 
 ### Turn it on
 
@@ -629,7 +629,7 @@ This takes two small edits, marked SECRETS STEP 1 of 2 and 2 of 2.
 
 ```yaml
   env_vars:
-    - BUILD_NUMBER:
+    - PARTNER_API_URL:
   env_secrets:
     - PARTNER_API_KEY:
 ```
@@ -640,7 +640,7 @@ This takes two small edits, marked SECRETS STEP 1 of 2 and 2 of 2.
 DEFINE SECRET DCM_DEMO_1{{env_suffix}}.RAW.PARTNER_API_KEY
     TYPE = GENERIC_STRING
     SECRET_STRING = {{ _snow.env_secret("PARTNER_API_KEY") }}
-    COMMENT = 'API key for the partner order feed, deployed by build {{ _snow.env_var("BUILD_NUMBER") }}';
+    COMMENT = 'API key for the partner order feed at {{ _snow.env_var("PARTNER_API_URL") }}';
 ```
 
 The value comes from the environment secret and the comment from the environment variable. The file shipped inside a Jinja comment for the reason in the render-order section: a referenced environment secret must be supplied on every plan, and a -- comment would not have stopped Jinja from asking for it. Never write a literal for SECRET_STRING: DCM stores the rendered definition, literal included, as plain text on the project's stage.
@@ -649,14 +649,14 @@ The value comes from the environment secret and the comment from the environment
 
 Use a dummy value for the key; it is never shown back to you.
 
-**In Snowsight:** in the DCM control panel, select the project **get-started-snowflake-dcm-projects/DCM_Projects_Get_Started** and the **DCM_DEV** target. The **Environment Variables** section now lists BUILD_NUMBER and PARTNER_API_KEY. Type 101 for BUILD_NUMBER and any dummy string for PARTNER_API_KEY; the secret field shows a lock icon and masks what you type. You can also select **Import .env file** to load both. Then click the play button to the right of **Plan**. The **Override Variables** option in the same pane overrides templating values from the manifest; it does not supply environment variables or secrets.
+**In Snowsight:** in the DCM control panel, select the project **get-started-snowflake-dcm-projects/DCM_Projects_Get_Started** and the **DCM_DEV** target. The **Environment Variables** section now lists PARTNER_API_URL and PARTNER_API_KEY. Type https://partner.example.com/orders for PARTNER_API_URL and any dummy string for PARTNER_API_KEY; the secret field shows a lock icon and masks what you type. You can also select **Import .env file** to load both. Then click the play button to the right of **Plan**. The **Override Variables** option in the same pane overrides templating values from the manifest; it does not supply environment variables or secrets.
 
 ![DCM control panel with the Environment Variables fields filled in](assets/env_vars_plan.png)
 
 **With the Snowflake CLI:** export both in your shell, or put them in a file and add --env-file .env (the repository's .gitignore already excludes .env files). The CLI sends the values as a bind variable, so they are not part of the SQL text recorded in query history.
 
 ```bash
-export BUILD_NUMBER=101
+export PARTNER_API_URL=https://partner.example.com/orders
 export PARTNER_API_KEY='demo-key-not-a-real-secret'
 snow dcm plan --target DCM_DEV --role DCM_DEVELOPER --save-output
 ```
@@ -667,7 +667,7 @@ ALTER    ROLE                 DCM_DEVELOPER
 Planned 2 entities (1 to create, 1 to alter, 0 to drop).
 ```
 
-![Plan result creating PARTNER_API_KEY, with BUILD_NUMBER shown as 101 and PARTNER_API_KEY masked](assets/plan_secret.png)
+![Plan result creating PARTNER_API_KEY, with PARTNER_API_URL shown in full and PARTNER_API_KEY masked](assets/plan_secret.png)
 
 The rendered copy in out/rendered/sources/definitions/secrets.sql shows what DCM evaluated:
 
@@ -675,10 +675,10 @@ The rendered copy in out/rendered/sources/definitions/secrets.sql shows what DCM
 DEFINE SECRET DCM_DEMO_1_DEV.RAW.PARTNER_API_KEY
     TYPE = GENERIC_STRING
     SECRET_STRING = secretref('PARTNER_API_KEY')
-    COMMENT = 'API key for the partner order feed, deployed by build 101';
+    COMMENT = 'API key for the partner order feed at https://partner.example.com/orders';
 ```
 
-The build number was substituted as text; the key was not. The rendered SQL holds a reference, and the secret_string change in out/plan_result.json reads ********. If you forget to supply the secret, the plan stops with an error naming it: "Template variable 'PARTNER_API_KEY' is declared in 'env_secrets' section of the manifest, but was not supplied in the ENVIRONMENT parameters".
+The endpoint was substituted as text; the key was not. The rendered SQL holds a reference, and the secret_string change in out/plan_result.json reads ********. If you forget to supply the secret, the plan stops with an error naming it: "Template variable 'PARTNER_API_KEY' is declared in 'env_secrets' section of the manifest, but was not supplied in the ENVIRONMENT parameters".
 
 ### Deploy and check
 
@@ -708,14 +708,16 @@ DESCRIBE SECRET DCM_DEMO_1_DEV.RAW.PARTNER_API_KEY;
 |---|---|---|---|
 | PARTNER_API_KEY | GENERIC_STRING | DCM_DEVELOPER | API key for the partner order feed, deployed by build 101 |
 
-The deployment history keeps the same discipline: its deploy_result.json records "BUILD_NUMBER": "101" and "PARTNER_API_KEY": "********". When we ran this guide, a search for the key across the definition files, the plan output, the deployment's files and the account's query history found it nowhere.
+The deployment history keeps the same discipline: its deploy_result.json records "PARTNER_API_URL": "https://partner.example.com/orders" and "PARTNER_API_KEY": "********". When we ran this guide, a search for the key across the definition files, the plan output, the deployment's files and the account's query history found it nowhere.
 
 **To rotate the key,** supply the new value and plan again. The changeset shows one ALTER on the secret, with SECRET_STRING changed from ******** to ********, and the deploy stores the new value. Nothing else about the definition has to change.
 
 <!-- ------------------------ -->
-## Detach and Clean Up
+## Keep the Objects, Release the Project
 
-Before tearing anything down, know that there is a gentler option. DROP DCM PROJECT on its own, without a PURGE first, removes the project and its deployment history and leaves every entity, grant and attachment in place as an ordinary unmanaged object. To release a single entity, call SYSTEM$UNMANAGE_ENTITY_FROM_DCM_PROJECT with its type and name; to release grants or attachments, pass the rendered statements to SYSTEM$UNMANAGE_FROM_DCM_PROJECT. Then remove the matching statements from your definitions, or the next deploy takes them back.
+Cleaning up a demo and keeping what a project built are different goals. This section is about keeping: you want to stop managing some or all objects with DCM, but leave them in the account. The next section is the demo cleanup.
+
+DROP DCM PROJECT on its own, without a PURGE first, removes the project and its deployment history and leaves every entity, grant and attachment in place as an ordinary unmanaged object. To release a single entity, call SYSTEM$UNMANAGE_ENTITY_FROM_DCM_PROJECT with its type and name; to release grants or attachments, pass the rendered statements to SYSTEM$UNMANAGE_FROM_DCM_PROJECT. Then remove the matching statements from your definitions, or the next deploy takes them back.
 
 For example, this releases the read role's warehouse grant without revoking it:
 
@@ -725,9 +727,12 @@ SELECT SYSTEM$UNMANAGE_FROM_DCM_PROJECT(
     $$GRANT USAGE ON WAREHOUSE DCM_DEMO_1_WH_DEV TO ROLE DCM_DEMO_1_DEV_READ;$$);
 ```
 
-It returns 1, the number of items released, and SHOW GRANTS IN DCM PROJECT lists one grant fewer while the role keeps its privilege. If the GRANT statement is still in access.sql, the next deploy adopts the grant again. Supply BUILD_NUMBER and PARTNER_API_KEY for that deploy as before: with the secret live, every deploy renders it. That deploy reports No changes detected, because nothing in the account changes, so check SHOW GRANTS IN DCM PROJECT rather than the deploy summary.
+It returns 1, the number of items released, and SHOW GRANTS IN DCM PROJECT lists one grant fewer while the role keeps its privilege. If the GRANT statement is still in access.sql, the next deploy adopts the grant again. Supply PARTNER_API_URL and PARTNER_API_KEY for that deploy as before: with the secret live, every deploy renders it. That deploy reports No changes detected, because nothing in the account changes, so check SHOW GRANTS IN DCM PROJECT rather than the deploy summary.
 
-This guide cleans up fully. **In Snowsight:** open scripts/03_cleanup.sql in a worksheet and run it as DCM_DEVELOPER. **With the Snowflake CLI:**
+<!-- ------------------------ -->
+## Clean Up
+
+This guide is a demo, so clean it up fully. **In Snowsight:** open scripts/03_cleanup.sql in a worksheet and run it as DCM_DEVELOPER. **With the Snowflake CLI:**
 
 ```bash
 snow sql -f scripts/03_cleanup.sql
