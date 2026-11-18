@@ -14,9 +14,9 @@ fork repo link: https://github.com/sfc-gh-JCHAEARLEY/sfguide-getting-started-wit
 <!-- ------------------------ -->
 ## Overview
 
-Cortex Sense reads what your team already keeps in Snowflake, such as query history, semantic views, dashboards, table metadata, and documents on a stage, and turns it into a context that Cortex Agents and Cortex Code (CoCo) check before they answer a question.
+Cortex Sense turns what your team already keeps in Snowflake (query history, semantic views, dashboards, table metadata, and documents on a stage) into a context that Cortex Agents and Cortex Code (CoCo) check before they answer a question.
 
-An agent with full access to your tables can usually find the right columns and work out the joins. It can't find what sits outside the schema: what your team means by "clean claim", which admissions a readmission rate excludes, what an internal program name refers to, or what your data release policy says. When it has to guess at those, it usually answers anyway, with numbers that look plausible.
+An agent with full access to your tables can usually find the right columns and work out the joins. It can't find what sits outside the schema: what your team means by "clean claim", which admissions a readmission rate excludes, what an internal program name refers to, or what your data release policy says. When it has to guess at those, it usually still answers, and nothing in the answer says it guessed.
 
 In this guide you work with **Juniper Valley Health**, a fictional health system. Its analytics warehouse has 8 tables and about 16,000 synthetic rows covering facilities, patients, encounters, claims, denials, readmissions, and patient surveys. As at a real organization, its business definitions are in internal docs, saved queries, and a dashboard. You ask an agent the same questions without and with a Cortex Sense context, as the same analyst role, and compare the answers.
 
@@ -182,7 +182,7 @@ The docs teach definitions and deliberately state no answers, so an agent with c
 <!-- ------------------------ -->
 ## Build the Cortex Sense Context
 
-The build runs in the background. You collect baseline answers in the next step, once it has finished.
+The build runs in the background, and you collect baseline answers in the next step after it finishes.
 
 > **One context per role:** During private preview, give each role access to a single context. A query that isn't scoped to named contexts searches every context the role can reach. The demo roles are new, so this holds as long as you don't grant them other contexts.
 
@@ -239,7 +239,7 @@ Scheduled refresh isn't implemented yet during private preview, so a context ref
 
 Now record what an agent answers without Cortex Sense. Start once the build has finished: in the builder session, type `/sense`, pick `JUNIPER_HEALTH`, and check that the **Overview** tab shows **ready**. We couldn't confirm when a running build reads query history, so baseline questions asked during the build might be indexed into the context. After the build, they can't be, because during private preview a context isn't refreshed unless you rebuild it.
 
-Pausing is safe. A new context has only one grant, `OWNERSHIP` for the builder role, so the analyst role can't use it until you grant access in the **Ask Again with Cortex Sense** step. If you take a break and come back the next day, the baseline is unaffected. **Finish this step before you grant the analyst role access.**
+You can pause at any point. A new context has only one grant, `OWNERSHIP` for the builder role, so the analyst role can't use it until you grant access in the **Ask Again with Cortex Sense** step. If you take a break and come back the next day, the baseline is unaffected. **Finish this step before you grant the analyst role access.**
 
 Open a second terminal and start the analyst session from its directory, which holds nothing but its settings file:
 
@@ -373,7 +373,7 @@ The Tailwind question shows that scope can matter more than the formula. The sam
 
 In our test runs, all five answers with context matched this table, each with citations to the context. The readmission answer also mentioned the naive 20.3% (191 of 941) reading and said the context rules it out.
 
-The release question is the one where a wrong answer does the most damage. In our baseline run, the agent without context recommended suppressing Summit Orthopedic Hospital, which the policy doesn't require, and left Women's and Children's visible, which it does. It also never mentioned the Data Governance Council approval the policy requires.
+The release question carries the most risk, because acting on a wrong answer can send data outside the organization. In our baseline run, the agent without context recommended suppressing Summit Orthopedic Hospital, which the policy doesn't require, and left Women's and Children's visible, which it does. It also never mentioned the Data Governance Council approval the policy requires.
 
 ### Share it beyond CoCo
 
@@ -405,7 +405,7 @@ To run them:
 
 It finished within 15 minutes in our test. The skill reports a mean answer-correctness score, links to the per-question results in Snowsight, and offers to `refine` any question that failed.
 
-In our run the agent scored a mean answer correctness of **0.85**: 11 questions passed, 6 were partial, and 1 failed. All four routine questions passed. Most of the partial scores came from the expected answers, not the agent's numbers. On the readmission rate, Tailwind rate, Experience Score, and CMS threshold questions, the agent's figures were right, and the judge took points off because it didn't also mention the naive-method comparisons and totals the expected answers include. The remaining three show where a context needs work:
+In our run the agent scored a mean answer correctness of **0.85**: 11 questions passed, 6 were partial, and 1 failed. All four routine questions passed. Most of the partial scores reflect how much the expected answers ask for. On the readmission rate, Tailwind rate, Experience Score, and CMS threshold questions, the agent's figures were right, and the judge took points off because it didn't also mention the naive-method comparisons and totals the expected answers include. These answers were wrong or incomplete in ways that matter:
 
 | Question | What the agent got wrong |
 |---|---|
@@ -413,7 +413,7 @@ In our run the agent scored a mean answer correctness of **0.85**: 11 questions 
 | Can I send facility-level readmission rates to an external partner? | Covered the four conditions but didn't name the suppressed facilities, the email address, or the 10 business days |
 | Which facilities are closest to earning BEACON? | Ranked Women's and Children's, which meets one criterion, ahead of Willow Creek, which meets two |
 
-The CoCo skill answered the release question correctly earlier, so the context does hold those details; the eval agent didn't retrieve them. These are the questions to `refine`. The eval runs as `JUNIPER_BUILDER`, which can also read `KNOWLEDGE`, so treat the score as a measure of the context and agent together, not of the analyst setup.
+The CoCo skill answered the release question correctly earlier, so the context does hold those details; the eval agent didn't retrieve them. These are the questions to `refine`. The eval runs as `JUNIPER_BUILDER`, which can also read `KNOWLEDGE`, so the score measures the context and agent together, with the builder's access.
 
 ### Check the answers yourself
 
