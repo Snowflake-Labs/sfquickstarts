@@ -109,8 +109,8 @@ The table below puts the two layers side by side, using the supplier count examp
 
 | Layer of the stack | What it owns | Example from the demo |
 |---|---|---|
-| Semantic View | Tables, joins, dimensions, metric SQL; executes the number | `PROCUREMENT_ENRICHED_SV` (`VENDOR_RECORD_COUNT` = 15) and `FINANCE_ENRICHED_SV` (`ACTIVE_SUPPLIER_COUNT` = 14) |
-| Business Ontology | Canonical metric choice, business vocabulary, policies, cross-domain links | "Supplier Count" means active suppliers, governed by *Probationary Vendor Exclusion* and implemented by `ACTIVE_SUPPLIER_COUNT` |
+| **Semantic View** (`*_ENRICHED_SV`) | Tables, joins, dimensions and metric SQL; executes the number | `VENDOR_RECORD_COUNT` = 15 vs. `ACTIVE_SUPPLIER_COUNT` = 14 |
+| **Business Ontology** (Horizon Catalog) | Canonical metric choice, vocabulary, policies and cross-domain links | Supplier Count = active suppliers (`ACTIVE_SUPPLIER_COUNT`, excludes `ZPRB`) |
 
 The picture below shows the same question asked twice. On the left, the agent has only the semantic views: it sees two defensible metrics, `VENDOR_RECORD_COUNT` and `ACTIVE_SUPPLIER_COUNT`, and either picks one or hedges. On the right, the ontology tells it which metric is official and which policy applies, so it answers 14 and cites the governed term.
 
@@ -283,16 +283,16 @@ The scripts and the build steps are numbered separately, so the table below show
 
 | Build step | What you run |
 |---|---|
-| 1. Create Domains | `07_ontology.sql`: the `Domains` section |
-| 2. Add Entities | `07_ontology.sql`: the three node sections |
-| 3. Add Metrics | Nothing new; Step 2 already drafted them |
-| 4. Terms and Policies | Nothing new; Step 2 drafted them, except *Tier A Supplier*, which comes in Step 5 |
-| 5. Define Relationships | The approval SQL in this guide, then the `Relationships` section and the last section of `07_ontology.sql`, approving Tier A Supplier before its relationships |
-| 6. Approve and Verify | The check queries in this guide |
-| 7. Add Representations | All of `08_representations.sql` |
-| 8. Confirm Search Indexing | Three search commands, no script |
-| 9. Build the Agent | All of `09_agents.sql` |
-| 10. Run A/B Tests | Questions to the agents in Snowsight, plus an optional Python benchmark |
+| Step 1 — Create Domains | `07_ontology.sql`: the `Domains` section |
+| Step 2 — Add Entities | `07_ontology.sql`: the three domain node sections |
+| Step 3 — Add Metrics | Nothing new; Step 2 already drafted them |
+| Step 4 — Terms and Policies | Nothing new; Step 2 drafted them (*Tier A Supplier* comes in Step 5) |
+| Step 5 — Define Relationships | Approval SQL in this guide, then `Relationships` and *Tier A Supplier* in `07_ontology.sql` |
+| Step 6 — Approve and Verify | The verification queries in this guide |
+| Step 7 — Add Representations | All of `08_representations.sql` |
+| Step 8 — Confirm Search Indexing | Three CLI search commands (no SQL script) |
+| Step 9 — Build the Agent | All of `09_agents.sql` |
+| Step 10 — Run A/B Tests | Agent questions in Snowsight, plus the optional Python benchmark |
 
 Before you build anything on top of the setup, it's worth confirming that it worked.
 
@@ -834,8 +834,8 @@ Then propose representations for every other node in all three domains and show 
 
 | Ontology node | Association role | Target to review |
 |---|---|---|
-| Procurement: Supplier Count | `IMPLEMENTS` | `FINANCE_ENRICHED_SV` (`VENDORS.ACTIVE_SUPPLIER_COUNT`) |
-| Sales & Distribution: Customer | `REPRESENTS` | `BUSINESS_ONTOLOGY.SAP.CUSTOMERS_VIEW` |
+| `Procurement.Supplier Count` | `IMPLEMENTS` (metric binding) | `FINANCE_ENRICHED_SV` (`VENDORS.ACTIVE_SUPPLIER_COUNT`) |
+| `Sales & Distribution.Customer` | `REPRESENTS` (entity binding) | `BUSINESS_ONTOLOGY.SAP.CUSTOMERS_VIEW` |
 
 Each of the 43 representations comes from one call to the same function.
 
@@ -858,8 +858,8 @@ One caution applies to representations after you create them:
 
 | Ontology node | Comparison to review | Next action if different |
 |---|---|---|
-| Procurement: Supplier Count | Approved exclusion rule vs. `ACTIVE_SUPPLIER_COUNT` SQL in `FINANCE_ENRICHED_SV` | Review both definition and implementation changes |
-| Sales & Distribution: Customer | Representation target vs. current `CUSTOMERS_VIEW` | Repair the binding if the target changed |
+| `Procurement.Supplier Count` | Exclusion rule vs. `ACTIVE_SUPPLIER_COUNT` in `FINANCE_ENRICHED_SV` | Review definition and implementation |
+| `Sales & Distribution.Customer` | Representation target vs. `CUSTOMERS_VIEW` | Repair binding if target changed |
 
 Next, confirm that the representations were created and point at real objects.
 
@@ -876,10 +876,10 @@ UNION ALL SELECT 'Customer', TO_JSON(PARSE_JSON(SYSTEM$GET_GLOSSARY_TERM('Sales 
 
 The query returns two rows. These selected fields from each `REPRESENTATIONS` value make the targets easier to read.
 
-| Node | Association role | Target object (`fqn`) | Sub-object (`VALID`) |
+| Ontology node | Association role | Target object (`fqn`) | Sub-object (`VALID`) |
 |---|---|---|---|
-| Supplier Count | `IMPLEMENTS` | `SAP.FINANCE_ENRICHED_SV` | `VENDORS / ACTIVE_SUPPLIER_COUNT` |
-| Customer | `REPRESENTS` | `SAP.CUSTOMERS_VIEW` | Not applicable |
+| `Procurement.Supplier Count` | `IMPLEMENTS` | `SAP.FINANCE_ENRICHED_SV` | `VENDORS / ACTIVE_SUPPLIER_COUNT` |
+| `Sales & Distribution.Customer` | `REPRESENTS` | `SAP.CUSTOMERS_VIEW` | Not applicable |
 
 The Supplier Count array contains an object with the fields below; additional returned fields are omitted here.
 
@@ -915,11 +915,11 @@ cortex search object "revenue net of discounts" --types=business-ontology
 
 **Expected:** results include the intended identities and definitions below. These sample contents use the guide's domain names rather than a fixed terminal layout. Rank, result count and duplicate-looking names can vary.
 
-| Search | Identity to match | Definition detail to check |
+| Search query | Identity to match | Definition detail to check |
 |---|---|---|
-| supplier count active suppliers | Procurement.Supplier Count (`METRIC`) | Active ZSTR/ZSTD suppliers; ZPRB excluded; `FINANCE_ENRICHED_SV` and `vendors.active_supplier_count` |
-| tier a suppliers | Procurement.Tier A Supplier (`TERM`) | Tier A means vendor account group ZSTR, not all active suppliers |
-| revenue net of discounts | Sales & Distribution.Revenue (`METRIC`) | Net of K007 discounts; `SALES_ENRICHED_SV` and `net_revenue` |
+| `"supplier count active suppliers"` | `Procurement.Supplier Count` (`METRIC`) | Active `ZSTR`/`ZSTD` suppliers (`ZPRB` excluded); `FINANCE_ENRICHED_SV` |
+| `"tier a suppliers"` | `Procurement.Tier A Supplier` (`TERM`) | Tier A means account group `ZSTR`, not all active suppliers |
+| `"revenue net of discounts"` | `Sales & Distribution.Revenue` (`METRIC`) | Net of `K007` discounts; `SALES_ENRICHED_SV` (`net_revenue`) |
 
 **Abridged, normalised search example:** this shows one matching result using the guide's domain names. The number is illustrative, not a promised rank.
 
@@ -953,8 +953,8 @@ Run all of `sql/09_agents.sql`. It creates 7 agents with the same `auto` model s
 
 | Benchmark arm | Agent name | Tools attached |
 |---|---|---|
-| Arm B (baseline) | `ENRICHED_AGENT` | 3 enriched semantic views |
-| Arm C (ontology) | `BON_AGENT` | Same 3 enriched semantic views + `business_ontology` search |
+| Arm B (no-ontology baseline) | `ENRICHED_AGENT` | 3 enriched semantic views |
+| Arm C (with Business Ontology) | `BON_AGENT` | Same 3 enriched semantic views + `business_ontology` search |
 
 The script also creates arm A, `BARE_AGENT` (the additional bare-SV baseline, not run by the current harness), and the benchmark consistency pairs `FINANCE_ENRICHED_AGENT` / `FINANCE_BON_AGENT` and `SALES_ENRICHED_AGENT` / `SALES_BON_AGENT`.
 
@@ -1001,11 +1001,11 @@ $business-ontology Add the ontology to agent BUSINESS_ONTOLOGY.SAP.ENRICHED_AGEN
 
 **Expected from CoCo (illustrative review content):** a before/after proposal to review before changing the existing agent.
 
-| Item | Before | Proposed after |
+| Spec section | Before change | Proposed after |
 |---|---|---|
-| Enriched SV tools | Three | Same three |
-| Ontology search | Absent | `business_ontology` with the flag/type/corpus above |
-| Instructions | Existing analytics instructions | Existing instructions plus ontology lookup and citations |
+| Enriched SV tools | Three semantic views | Same three semantic views |
+| Ontology search tool | Absent | `business_ontology` (`snowscope_search` / `businessOntology`) |
+| Agent instructions | Existing analytics instructions | Existing instructions + ontology lookup and citations |
 | Evaluation role | No-ontology baseline | No longer a no-ontology baseline if applied |
 
 To understand what the script or the skill actually creates, it helps to read the agent's specification.
@@ -1244,12 +1244,12 @@ For each, give the expected answer, the wrong-but-defensible answer, and the gov
 
 **Expected from CoCo (illustrative evaluation draft):** 10 proposed questions in the requested mix. The sample rows below show the content to review; confirm numeric ground truth against the data before using the draft as a benchmark.
 
-| Question type | Sample question | Expected answer | Look-alike / refusal check | Governing node |
-|---|---|---|---|---|
-| Competing metrics | How many suppliers do we have? | 14 on this dataset | 15 is the vendor record count | Procurement: Supplier Count |
-| Vocabulary | What does Tier A supplier mean? | ZSTR strategic suppliers | Not every active supplier | Procurement: Tier A Supplier |
-| Policy | Do probationary vendors count as suppliers? | No | Including ZPRB conflicts with policy | Procurement: Probationary Vendor Exclusion |
-| Unknown term | What is our Platinum-Plus supplier rule? | No approved definition found | Do not invent a definition | None; verify absence |
+| Question type | Sample question | Expected answer (vs. look-alike) | Governing node |
+|---|---|---|---|
+| Competing metric check | How many suppliers do we have? | 14 active (vs. 15 vendor records) | `Procurement.Supplier Count` |
+| Business vocabulary check | What does Tier A supplier mean? | `ZSTR` strategic (not all active) | `Procurement.Tier A Supplier` |
+| Governance policy check | Do probationary vendors count as suppliers? | No (`ZPRB` excluded by policy) | `Procurement.Probationary Vendor Exclusion` |
+| Unknown-term refusal check | What is our Platinum-Plus supplier rule? | No approved definition (do not invent) | None (verify absence) |
 
 For your own evaluation, the expected deliverable is a reviewed question set with ground truth, followed by repeat-run results recording correctness, hedging and citations. The suggested unknown term above is an illustrative test case, not an assertion about every account's catalog.
 
