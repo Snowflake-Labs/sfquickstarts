@@ -106,9 +106,9 @@ The output should confirm the creation of each object.
 <!-- ------------------------ -->
 ## Open the Notebook
 
-The whole pipeline lives in one notebook. You can run the [companion notebook](assets/scos-iceberg-churn-demo.ipynb) cell by cell, or paste the code from each step of this guide into a new notebook.
+The whole pipeline lives in one notebook. You can run the [companion notebook](https://github.com/Snowflake-Labs/sf-samples/tree/main/samples/pyspark_iceberg_churn_snowpark_connect) cell by cell, or paste the code from each step of this guide into a new notebook.
 
-1. Download **scos-iceberg-churn-demo.ipynb**.
+1. Download **pyspark_iceberg_churn_snowpark_connect.ipynb** from the companion repo.
 2. In Snowsight, go to **Projects** > **Workspaces** and upload the file.
 3. Open the notebook and connect it to a service running as **SCOS_CHURN_ROLE**.
 4. Under **Artifact Repository**, select `snowflake.snowpark.pypi_shared_repository` so the notebook can install Snowpark Connect.
@@ -632,6 +632,7 @@ You ran a complete PySpark churn pipeline on Snowflake without rewriting it. Eve
 The same code also works on Iceberg tables managed by an external catalog such as AWS Glue. To try it, connect Glue through a catalog integration and a catalog-linked database, then point the pipeline at that database.
 
 ### Resources
+- [Companion notebook on GitHub](https://github.com/Snowflake-Labs/sf-samples/tree/main/samples/pyspark_iceberg_churn_snowpark_connect)
 - [Snowpark Connect for Spark](https://docs.snowflake.com/en/developer-guide/snowpark-connect/snowpark-connect-overview)
 - [Apache Iceberg tables in Snowflake](https://docs.snowflake.com/en/user-guide/tables-iceberg)
 - [Catalog-linked databases](https://docs.snowflake.com/en/user-guide/tables-iceberg-catalog-linked-database)
