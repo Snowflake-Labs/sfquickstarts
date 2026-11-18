@@ -1,4 +1,4 @@
-author: James Cha-Earley
+author: James Cha-Earley, Josh Reini
 id: getting-started-with-cortex-sense
 language: en
 summary: Build a Cortex Sense context over a synthetic health-system warehouse and measure how it changes agent answers on questions that depend on house definitions.
