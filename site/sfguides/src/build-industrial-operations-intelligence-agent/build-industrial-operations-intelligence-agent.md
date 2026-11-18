@@ -724,7 +724,7 @@ DESCRIBE AGENT INDUSTRIAL_OPERATIONS_DEMO.DEMO.INDUSTRIAL_OPERATIONS_AGENT;
 <!-- ------------------------ -->
 ## Test the Agent in Snowflake CoWork
 
-The agent can be used directly in Snowflake CoWork. Open **AI & ML > Snowflake CoWork** (or [ai.snowflake.com](https://ai.snowflake.com)), select **Industrial Operations Intelligence**, and choose one of the sample questions. Users need USAGE on the agent and access to its semantic views, Search services, and warehouse. If your account curates visible agents with a Snowflake CoWork object, an administrator adds it with `ALTER SNOWFLAKE INTELLIGENCE SNOWFLAKE_INTELLIGENCE_OBJECT_DEFAULT ADD AGENT INDUSTRIAL_OPERATIONS_DEMO.DEMO.INDUSTRIAL_OPERATIONS_AGENT;`.
+The agent can be used directly in Snowflake CoWork. Open **AI > Snowflake CoWork** (or [ai.snowflake.com](https://ai.snowflake.com)), select **Industrial Operations Intelligence**, and choose one of the sample questions. Users need USAGE on the agent and access to its semantic views, Search services, and warehouse. If your account curates visible agents with a Snowflake CoWork object, an administrator adds it with `ALTER SNOWFLAKE INTELLIGENCE SNOWFLAKE_INTELLIGENCE_OBJECT_DEFAULT ADD AGENT INDUSTRIAL_OPERATIONS_DEMO.DEMO.INDUSTRIAL_OPERATIONS_AGENT;`.
 
 Ask the sample questions and compare the answers with the expected results below. The values follow from the generation rules; check quantities exactly and displayed percentages within 0.01 percentage points.
 
