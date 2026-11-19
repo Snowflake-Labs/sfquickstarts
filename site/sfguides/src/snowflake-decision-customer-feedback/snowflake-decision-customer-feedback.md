@@ -5,13 +5,14 @@ summary: Classify customer feedback with Snowflake Decision, route records to th
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions
 environments: web
 status: Published
-feedback link: https://github.com/Snowflake-Labs/sfquickstarts/issues
-fork repo link: https://github.com/Snowflake-Labs/sfquickstarts
+feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 # Turn Customer Feedback into Team Actions with Snowflake Decision
 
 <!-- ------------------------ -->
 ## Overview
+
+> **Preview:** Snowflake Decision is in preview. Confirm that your account meets the model access and cross-region requirements before starting this quickstart.
 
 Bring feedback from social media, support tickets, email, live chat, app reviews, community forums, and surveys into one workflow. Classify each message, determine whether a customer needs a response and which team should act, propose the next step, and summarize recurring issues across channels.
 
@@ -37,7 +38,7 @@ Customer responses and internal work are separate decisions. A billing complaint
 - A role with `USE AI FUNCTIONS`, an appropriate AI Functions database role such as `SNOWFLAKE.CORTEX_USER`, and required model access. See [AI Functions privileges](https://docs.snowflake.com/en/user-guide/snowflake-cortex/aisql).
 - A query warehouse and privileges to create a database, schema, tables, and views in a lab account or approved sandbox
 - Access to [Snowflake Notebooks](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks-create), plus model access and approved cross-region configuration that meet the [Snowflake Decision preview requirements](https://docs.snowflake.com/en/LIMITEDACCESS/snowflake-cortex/ai-complete-snowflake-decision)
-- The [customer feedback notebook](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/snowflake-decision-customer-feebdack/assets/snowflake_decision_customer_feedback_quickstart.ipynb); all sample data is created inside the notebook
+- The [customer feedback notebook](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/snowflake-decision-customer-feedback/assets/snowflake_decision_customer_feedback_quickstart.ipynb); all sample data is created inside the notebook
 ### What You'll Build
 
 | Stage | Function or operation | Output |
@@ -275,7 +276,7 @@ ORDER BY feedback_id;
 ```
 
 <!-- ------------------------ -->
-## Route Feedback to the Right Next Step
+## Route Feedback
 Duration: 3 minutes
 
 SQL turns the independent assessments into a processing path.
@@ -332,7 +333,7 @@ ORDER BY route;
 ```
 
 <!-- ------------------------ -->
-## Propose Actions and Draft Customer Responses
+## Draft Actions and Replies
 Duration: 5 minutes
 
 ### Select Only Actionable Records
