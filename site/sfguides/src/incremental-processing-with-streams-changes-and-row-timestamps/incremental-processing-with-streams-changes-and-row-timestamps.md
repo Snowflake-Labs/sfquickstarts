@@ -11,11 +11,22 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 <!-- ------------------------ -->
 ## Overview
 
-Most pipelines don't need to reprocess a whole table every run. They need the rows that changed since the last run, applied to a target exactly once. Snowflake gives you three primitives for this, and they make different promises:
+Most pipelines don't need to reprocess a whole table every run. They need the rows that changed since the last run, applied to a target exactly once.
 
-- **Streams** keep an offset for you. You read the changes since the offset, and the offset moves forward only when a DML transaction that reads the stream commits.
-- **The CHANGES clause** is stateless. You ask for the changes between two points in time, and you can ask again for the same window as often as you like.
-- **Row timestamps** stamp every row with the time its last change committed, exposed as the METADATA$ROW_LAST_COMMIT_TIME column. You keep your own watermark and filter on it.
+**Start with a dynamic table.** If the target can be described as a SELECT over the source, a dynamic table is the simplest way to keep it incrementally up to date: Snowflake tracks the changes, refreshes the result and skips refreshes when nothing changed, with no load code to write. The last section of this guide shows the whole stream load below rewritten as one.
+
+This guide is about the cases a dynamic table doesn't cover, where you act on the changes yourself: calling an external system, sending an alert, writing several tables in one transaction, or running procedural code per change. For those, Snowflake gives you three primitives, and they make different promises:
+
+- **Streams** keep an offset for you. You read the changes since the offset, and the offset moves forward only when a DML transaction that reads the stream commits. This is the one to reach for first.
+- **The CHANGES clause** is stateless. You ask for the changes between two points, and you can ask again for the same window as often as you like. Use it when a stream can't do the job, typically replay and backfill, and know that you have to track the window boundary yourself.
+- **Row timestamps** stamp every row with the time its last change committed, exposed as the METADATA$ROW_LAST_COMMIT_TIME column. You keep your own watermark and filter on it. A watermark only sees rows that still exist, so it can't capture deletes: use it on insert-only tables or tables that soft-delete rows with a flag.
+
+| You need to | Use |
+|:--|:--|
+| Keep a derived table up to date | A dynamic table |
+| Act on every insert, update and delete exactly once | A standard stream |
+| Replay or backfill a window of changes, or let several readers each read the same changes | CHANGES |
+| Pick up new rows from an insert-only or soft-delete table with no change tracking | A row-timestamp watermark |
 
 In this guide you build one small order table and load it into a target with three primitives plus a naive event-time loader for contrast. Then you change the source (an update, a delete, a new order and a late, backfilled order), run the four loads again and compare the results in one query. Along the way you'll see how a stream behaves when a transaction fails, how streams go stale, why an event-time watermark misses late rows that a commit-time watermark catches, and how to measure latency across a pipeline step.
 
@@ -203,6 +214,8 @@ COMMIT;
 
 Because the MERGE is keyed on LOADER and ORDER_ID, running it again for the same window leaves the target unchanged. That's what makes a CHANGES load safe to replay.
 
+**Watch out for timestamp boundaries.** A timestamp passed to AT or END doesn't name an exact point in the change history. Snowflake resolves it to a table version, and a commit close to the boundary can land on either side of it. This loader tolerates that, because the MERGE is idempotent and a change read twice is applied once. A loader that isn't idempotent, for example one that appends rows or sends a message per change, can count a change twice or miss one. That's why a stream, which keeps an exact offset, is the better default for continuous loads, and CHANGES is the tool for replay, backfill and one-off reads. When you do need an exact boundary, use a statement or stream reference instead of a timestamp, as described next.
+
 ### Choosing the start and end points
 
 CHANGES accepts the same reference points as Time Travel. A few behaviours are worth knowing:
@@ -222,6 +235,8 @@ Change tracking must cover the whole window. On a table without it, CHANGES fail
 
 <!-- ------------------------ -->
 ## Load 3: A Row-Timestamp Watermark
+
+**Know what a watermark can't see before you choose one.** A row-timestamp watermark reads the table itself, so a hard-deleted row is simply gone and never reaches the target. Use it only when the source is insert-only, or when it soft-deletes, marking a row deleted with a flag such as IS_DELETED instead of removing it, so the delete arrives as an update the watermark can read. If you need hard deletes, use a stream.
 
 With ROW_TIMESTAMP enabled, every row exposes METADATA$ROW_LAST_COMMIT_TIME: the time its most recent change committed. Rows changed in the same transaction share one timestamp, and rows changed in different transactions are ordered by commit time within the table. Look at it:
 
@@ -883,9 +898,9 @@ On your machine, delete the demo_incremental dbt folder and the demo-incremental
 You loaded the same changing table with three primitives, plus a naive event-time loader for contrast, and saw where each primitive stands:
 
 - **Streams** give you exactly-once change processing with Snowflake keeping the offset, as long as you consume them in a transaction that aborts on error, and before they go stale.
-- **CHANGES** gives you any window of changes on demand, which makes replay and backfill simple, within Time Travel retention.
-- **Row timestamps** give you a commit-time watermark that never goes stale and catches late rows, at the cost of not seeing hard deletes, plus a direct way to measure latency.
-- **Dynamic tables** replace most stream-and-task pipelines with a single SELECT.
+- **CHANGES** gives you any window of changes on demand, which makes replay and backfill simple, within Time Travel retention. Prefer a stream for continuous loads, because timestamp boundaries are approximate.
+- **Row timestamps** give you a commit-time watermark that never goes stale and catches late rows, plus a direct way to measure latency. They can't see hard deletes, so use them on insert-only or soft-delete tables.
+- **Dynamic tables** replace most stream-and-task pipelines with a single SELECT, and are where to start when the target is a transformation of the source.
 
 ### Related Resources
 
