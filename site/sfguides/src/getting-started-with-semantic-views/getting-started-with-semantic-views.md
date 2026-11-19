@@ -13,9 +13,11 @@ feedback link: https://github.com/Snowflake-Labs/sfquickstarts/issues
 
 A semantic view is an agreement about what the business means. Someone still needs to decide whether a price should be averaged, whether two terms mean the same thing, and which questions the model should answer. Generating the definition is the easy part; reviewing it is the work.
 
-In this guide, you start with public data from Snowflake Marketplace. You create two semantic views, check them against hand-written SQL, refine their vocabulary and instructions, and connect both to a Cortex Agent through Cortex Analyst tools.
+In this guide, you start with public data from Snowflake Marketplace. You create two semantic views, check them against hand-written SQL, refine their vocabulary and instructions, and connect both to a Cortex Agent through Cortex Analyst tools. 
 
 **This guide uses SQL for every step.** Snowflake also offers other ways to do most of this work: Semantic View Autopilot and Semantic Studio in Snowsight for semantic views, the Snowsight agent editor for agents, and Cortex Code skills that generate definitions from a prompt. They produce the same objects. This guide mentions them where they apply but doesn't walk through them. SQL definitions are explicit, reviewable in a diff, and easy to put under version control.
+
+Building AI-powered Business Intelligence apps on top of semantic views is covered in: [Getting Started with Snowflake Semantic View](https://www.snowflake.com/en/developers/guides/snowflake-semantic-view/). This guide contains runnable SQL and all SQL is available in the accompanying [labs.sql](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/getting-started-with-semantic-views/assets/lab.sql) file.
 
 ### Prerequisites
 
@@ -539,7 +541,7 @@ DROP VIEW IF EXISTS SEMANTIC_VIEWS_LAB.DEMO.MORTGAGE_VARIABLES;
 
 Ask the database owner to remove the lab schema and database if they contain no other work. Do not drop the imported Marketplace database or a shared warehouse as part of this cleanup.
 
-## Conclusion and Resources
+## Conclusion And Resources
 
 You now have two semantic views with reviewed business meaning, and an agent that chooses between them and combines their results when a question spans both. All of it is defined in SQL you can review and version.
 
@@ -552,7 +554,7 @@ You now have two semantic views with reviewed business meaning, and an agent tha
 - Add synonyms, SQL generation instructions, and verified queries deliberately.
 - Connect semantic views to an agent as Cortex Analyst tools with `CREATE AGENT`.
 
-Next, adapt the question set to one domain in your own organisation. When you're ready to measure answer quality systematically, see Cortex Analyst and Cortex Agent evaluations.
+Next, adapt the question set to one domain in your own organisation. When you're ready to measure answer quality systematically, see Cortex Analyst and [Cortex Agent evaluations](https://www.snowflake.com/en/developers/guides/getting-started-with-cortex-agent-evaluations/).
 
 ### Related Resources
 

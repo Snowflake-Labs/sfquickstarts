@@ -45,7 +45,7 @@ All data in this guide is synthetic.
 
 ### What You'll Need
 
-- A Snowflake account and a role that can create a warehouse and a database. A sandbox account with `ACCOUNTADMIN` is simplest.
+- A Snowflake account and a role that can create a warehouse and a database.
 - Access to Cortex Agents and Cortex AI functions. If a model isn't available in your region, enable [cross-region inference](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cross-region-inference).
 - A budget of about $1 for the first evaluation run and $10–12 for each full run, at list price.
 
@@ -73,11 +73,24 @@ Cortex Agent evaluations run a dataset of questions through a specific agent ver
 <!-- ------------------------ -->
 ## Set Up the Environment
 
-Download [northbank-agent-evals-quickstart.zip](https://github.com/Snowflake-Labs/sfquickstarts/raw/master/site/sfguides/src/evaluate-and-gate-cortex-agents-for-lending/assets/northbank-agent-evals-quickstart.zip) and unzip it. It contains the SQL scripts, the evaluation configs, the policy PDFs and the evaluation dataset.
+### Install in One Step
+
+All of the setup is in a single script, [INSTALL.sql](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/evaluate-and-gate-cortex-agents-for-lending/assets/INSTALL.sql). Open a new SQL worksheet in Snowsight, paste the whole script and select **Run All**. In about 10 minutes it creates:
+
+- an X-Small warehouse, `NORTHBANK_EVAL_WH`, and a database, `NORTHBANK_AGENT_EVALS`;
+- the synthetic loan book, the customer notes and the seven policy PDFs, which it writes into a stage for you, so there's nothing to upload;
+- the two Cortex Search services, the semantic view and the agent `LENDING_OPS_AGENT` with its three versions;
+- the evaluation datasets, and the gate procedures and Tasks (suspended).
+
+It doesn't start any evaluation run. Its last queries check the row counts and list the agent versions, datasets and Tasks. When it finishes, go to [Score the Path](#score-the-path) to start your first run.
+
+The installer runs the same scripts as the step-by-step setup below. When a later step tells you to run `00` to `05` or `07`, you've already done it: open the script from the zip to see how that part works.
+
+### Or Build It Step by Step
+
+Download [northbank-agent-evals-quickstart.zip](https://github.com/Snowflake-Labs/sfquickstarts/raw/master/site/sfguides/src/evaluate-and-gate-cortex-agents-for-lending/assets/northbank-agent-evals-quickstart.zip) and unzip it. It contains the SQL scripts, the evaluation configs, the policy PDFs and the evaluation dataset. You also need it for the scripts that run evaluations (`06`), gate your runs (`07b`) and attribute cost (`08`).
 
 Every script runs in a Snowsight SQL worksheet. Open each one, select **Run All** unless a step says otherwise, and run them in order.
-
-### Create the Objects
 
 Run `sql/00_setup.sql`. It creates:
 
@@ -85,9 +98,7 @@ Run `sql/00_setup.sql`. It creates:
 - a database, `NORTHBANK_AGENT_EVALS`, with two schemas: `DEMO` for everything the agent can see, and `GROUND_TRUTH` for evaluation-only labels the agent can never reach;
 - three stages for the files.
 
-### Upload the Files
-
-In Snowsight, go to **Ingestion** » **Add Data** » **Load files into a Stage**, and upload into the root of each stage:
+Then, in Snowsight, go to **Ingestion** » **Add Data** » **Load files into a Stage**, and upload into the root of each stage:
 
 | Files from the zip | Stage |
 |---|---|
@@ -95,7 +106,7 @@ In Snowsight, go to **Ingestion** » **Add Data** » **Load files into a Stage**
 | `data/eval_questions.ndjson` | `NORTHBANK_AGENT_EVALS.DEMO.EVAL_DATA_STAGE` |
 | `eval_configs/*.yaml` (5 files) | `NORTHBANK_AGENT_EVALS.DEMO.EVAL_CONFIG_STAGE` |
 
-Then re-run the four statements at the end of `00_setup.sql` to check that every file is in place.
+Re-run the four statements at the end of `00_setup.sql` to check that every file is in place.
 
 ### Build the Data and Tools
 
@@ -115,8 +126,7 @@ The data generator is deterministic, and the expected answers depend on it. The 
 | `FORBEARANCE` | 47 |
 | `CUSTOMER_NOTES` | 2,724 |
 
-> aside negative
-> If your counts differ, don't edit the expected answers to match. Re-run `01_synthetic_data.sql` unchanged.
+> **Important:** If your counts differ, don't edit the expected answers to match. Re-run `01_synthetic_data.sql` unchanged.
 
 <!-- ------------------------ -->
 ## Create Three Agent Versions
@@ -130,8 +140,7 @@ Northbank's credit operations and collections teams use an agent with four tools
 
 ![The agent's four tools in Snowsight](assets/agent-tools.png)
 
-> aside positive
-> The screenshots in this guide come from the original build, so run names differ from the ones the scripts create: for example `v1_baseline_v3_r1` instead of `v1_r1`, and `v3_v3_r1` instead of `v3_r1`.
+> **Note:** The screenshots in this guide come from the original build, so run names differ from the ones the scripts create: for example `v1_baseline_v3_r1` instead of `v1_r1`, and `v3_v3_r1` instead of `v3_r1`.
 
 Run `sql/04_agent_versions.sql`. It creates the custom tool and three committed versions of the agent, changing one thing at a time:
 
@@ -150,8 +159,7 @@ ALTER AGENT LENDING_OPS_AGENT COMMIT COMMENT = 'VERSION$2: rich instructions, mo
 
 The script ends with `SHOW VERSIONS`. Note that VERSION$3 is now the default: committing a version moves the default to it. You'll come back to that in the step on pinning.
 
-> aside positive
-> The agent specifications are in `agent_specs/` so you can diff them. Replace the model names with models available in your account, but keep VERSION$1 and VERSION$2 on the same model so only the instructions change.
+> **Note:** The agent specifications are in `agent_specs/` so you can diff them. Replace the model names with models available in your account, but keep VERSION$1 and VERSION$2 on the same model so only the instructions change.
 
 <!-- ------------------------ -->
 ## Build a Dataset with Traps
@@ -166,7 +174,7 @@ An evaluation only measures what its dataset makes difficult. So before writing 
 
 The evaluation set has 40 questions across core metrics, cross-tool reasoning, policy change, affordability, data quality, vulnerability (with non-vulnerable controls) and refusals. Every expected answer was computed in SQL against the source tables, never by asking the agent. Here's one row:
 
-```json
+```javascript
 {
   "QUESTION_ID": "Q01",
   "TIER": "core",
@@ -354,8 +362,7 @@ In the original build, VERSION$2 failed with "answer_correctness 0.893 < 0.925",
 
 The per-row rule earns its place. In a later rerun of VERSION$3, every average cleared its floor (answer correctness 0.942, tool selection 0.902), yet the gate blocked the run with `consumer_duty_min 0 < 5`. On question 30, a control case, the agent read the neighbour's bereavement as the customer's own and advised against a default notice that policy requires. Answer correctness, consumer duty and policy grounding all scored it 0. Your runs may or may not hit this: that's the variance you just measured.
 
-> aside negative
-> Each scheduled run costs about $10–12 at list price. Resume the Tasks only when you want nightly runs: `ALTER TASK CHECK_AGENT_EVAL_GATE RESUME;` then `ALTER TASK NIGHTLY_AGENT_EVAL RESUME;`.
+> **Important:** Each scheduled run costs about $10–12 at list price. Resume the Tasks only when you want nightly runs: `ALTER TASK CHECK_AGENT_EVAL_GATE RESUME;` then `ALTER TASK NIGHTLY_AGENT_EVAL RESUME;`.
 
 <!-- ------------------------ -->
 ## Understand the Cost
@@ -381,7 +388,7 @@ How it's priced (Snowflake Service Consumption Table):
 - **Judge tokens.** These use the judge model's Cortex Inference rate: 1.50 AI Credits per million input tokens and 7.50 per million output tokens.
 - **Platform Credits.** Only the warehouse that runs the evaluation tasks bills in Platform Credits, at $3.90 for Enterprise on AWS EU Dublin. The quickstart uses an X-Small warehouse, which is smaller than the original Large Gen2.
 
-Capacity contracts lower these prices.
+*PS: Capacity contracts may lower these prices.*
 
 Logical consistency sends the whole trace to its judge, so it takes 73% of judge tokens and 65% of judge spend, about 23 times the cost of answer correctness. Leaving it out of nightly runs and keeping it for release runs takes a run from about $12 to about $6.70. Tool selection adds no judge cost: once you've paid to invoke the agent, it's free to include on every run.
 

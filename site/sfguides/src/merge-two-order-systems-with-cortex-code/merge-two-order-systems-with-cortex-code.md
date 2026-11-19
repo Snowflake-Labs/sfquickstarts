@@ -2,7 +2,7 @@ author: James Cha-Earley
 id: merge-two-order-systems-with-cortex-code
 language: en
 summary: A coffee chain just bought a rival, and the two order systems disagree on everything. Use CoCo in Snowsight to reconcile them, build a Dynamic Table pipeline, fix it live when an upstream change breaks it, and ship a Streamlit revenue dashboard.
-categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/dynamic-tables, snowflake-site:taxonomy/snowflake-feature/cortex-code, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/industry/retail-and-cpg
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/dynamic-tables, snowflake-site:taxonomy/snowflake-feature/transformation, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/industry/retail-and-cpg
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
@@ -12,13 +12,23 @@ fork repo link: https://github.com/sfc-gh-JCHAEARLEY/sfguide-merge-two-order-sys
 <!-- ------------------------ -->
 ## Overview
 
-Northbound Coffee just bought Daily Grind. The CEO wants one revenue dashboard by Monday. The problem: the two companies' order systems disagree on almost everything.
+Northbound Coffee just bought Daily Grind. The CEO wants one revenue dashboard by Friday. The problem: the two companies' order systems disagree on almost everything.
 
 In this guide you play the data engineer who has to make the numbers agree. You'll use **CoCo** (Cortex Code), the AI coding agent built into Snowsight, to compare the two sources, build a pipeline with Dynamic Tables, survive a surprise schema change upstream, and build the CEO's dashboard as a Streamlit app from scratch.
 
 Every step ends with a check query and the exact numbers you should see, so you always know whether you're on track.
 
 > **Important:** CoCo is powered by LLMs and is non-deterministic. The SQL and code it writes may differ from what you see here. That's fine. The check queries read your tables, not CoCo's chat, so they tell you whether the result is right.
+
+### Prerequisites
+- Basic SQL: you can read a `SELECT` with a join and a `GROUP BY`
+- Familiarity with Snowsight. No Python, Streamlit, or Dynamic Tables experience needed; CoCo writes that code.
+
+### What You'll Learn
+- How to use CoCo to compare two messy sources and write a mapping between them
+- How to build a raw → unified → daily-metrics pipeline with Dynamic Tables using CoCo's Plan mode
+- How to diagnose a failed pipeline with Dynamic Table refresh history, and fix it with CoCo
+- How to build a Streamlit app from scratch with CoCo and run it in Snowflake
 
 ### What You'll Need
 - A Snowflake account with access to CoCo in Snowsight. A [free trial](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) works.
@@ -28,21 +38,15 @@ Every step ends with a check query and the exact numbers you should see, so you 
 
 > **Using a trial account?** AI features, including CoCo, are disabled by default on self-service trial accounts. To turn them on, go to **Admin** » **Billing**, open the **Snowflake billing** tab, and add a credit card. Adding a card doesn't upgrade the trial to a paid account or end the trial period.
 
-### What You'll Learn
-- How to use CoCo to compare two messy sources and write a mapping between them
-- How to build a raw → unified → daily-metrics pipeline with Dynamic Tables using CoCo's Plan mode
-- How to diagnose a failed pipeline with Dynamic Table refresh history, and fix it with CoCo
-- How to build a Streamlit app from scratch with CoCo and run it in Snowflake
-
 ### What You'll Build
 - Two Dynamic Tables, `ORDERS_UNIFIED` and `DAILY_REVENUE`, that merge both companies' orders into one trustworthy revenue number
-- A Streamlit dashboard, running in Snowflake, that the CEO can open on Monday
+- A Streamlit dashboard, running in Snowflake, that the CEO can open on Friday
 
 ### Run sheet
 
 | Step | What happens | Time |
 |------|--------------|------|
-| 1 | Set up: open the repo and run one script | 5 min |
+| 1 | Set up: open the repo as a workspace and run the setup script | 5 min |
 | 2 | Discover the data: CoCo compares the sources and writes a mapping | 10 min |
 | 3 | Build the pipeline: CoCo plans and builds the Dynamic Tables | 12 min |
 | 4 | The break: an upstream change fails the pipeline, and CoCo fixes it | 5 min |
@@ -83,16 +87,25 @@ Sign in to Snowsight. In the user menu in the lower-left corner, switch your rol
 
 The companion repo holds every file you'll run in this lab. Open it as a workspace so the files are already in Snowsight.
 
-1. In the navigation menu, select **Projects** » **Workspaces**.
-2. Select the **+** icon next to **Workspaces/Databases**, then **Create new Git workspace**.
-3. Fill out the dialog:
-   - **Repository URL:** `https://github.com/sfc-gh-JCHAEARLEY/sfguide-merge-two-order-systems-with-cortex-code`
-   - **Workspace name:** anything you like, for example `the-merger`
-   - **API integration:** select **+ / Create new** and enter:
-     - **Name:** `GITHUB_MERGER_LAB`
-     - **Allowed prefixes:** `https://github.com/sfc-gh-JCHAEARLEY`
-   - Select **Public repository**.
-4. Select **Create**.
+First, allow Snowflake to clone from the repo's GitHub account. In the navigation menu, select **Projects** » **Workspaces**. In **My Workspace**, select **+ Add new** » **SQL File**, paste the statements below, and select **Run all**:
+
+```sql
+USE ROLE ACCOUNTADMIN;
+
+CREATE API INTEGRATION IF NOT EXISTS GITHUB_MERGER_LAB
+  API_PROVIDER = GIT_HTTPS_API
+  API_ALLOWED_PREFIXES = ('https://github.com/sfc-gh-JCHAEARLEY')
+  ENABLED = TRUE;
+```
+
+Then create the workspace:
+
+1. In the **Workspaces** menu, select **From Git repository**.
+2. For **Repository URL**, enter `https://github.com/sfc-gh-JCHAEARLEY/sfguide-merge-two-order-systems-with-cortex-code`.
+3. Optional: rename the workspace, for example to `the-merger`.
+4. In the **API Integration** menu, select `GITHUB_MERGER_LAB`.
+5. Select **Public repository**.
+6. Select **Create**.
 
 The workspace opens with the repo's files in the file explorer on the left:
 
@@ -103,8 +116,6 @@ The workspace opens with the repo's files in the file explorer on the left:
 | `break_batch.sql` | The surprise schema change in step 4 |
 | `solutions/` | Reference answers, if you fall behind |
 
-> **What just happened?** The dialog created a Git API integration, a one-time step that tells Snowflake which GitHub accounts workspaces are allowed to clone from.
-
 ### Run the setup script
 
 Open **`setup.sql`** and select **Run all**. The script:
@@ -113,11 +124,11 @@ Open **`setup.sql`** and select **Run all**. The script:
 - creates `MERGER_DB` and makes `MERGER_ROLE` its owner
 - switches to `MERGER_ROLE` and builds the `RAW` and `ANALYTICS` schemas and three source tables with 28 days of orders (Sept 1–28, 2026)
 
-The data is generated deterministically, so everyone gets exactly the same rows.
+The data is generated deterministically, so everyone gets exactly the same rows. If you need to start over, run `setup.sql` again: it resets the lab.
 
 ### Switch to the lab role
 
-In the user menu in the lower-left corner, switch your role to **MERGER_ROLE**. CoCo works with whatever role is active in Snowsight, so from here on it can change only the objects the lab created.
+In the user menu in the lower-left corner, switch your role to **MERGER_ROLE**. CoCo starts its session with whatever role is active in Snowsight, so the objects it creates from here on are owned by the lab role. `MERGER_ROLE` is granted only one warehouse, `MERGER_WH`, so use that wherever you're asked to choose a warehouse.
 
 ### CHECK 1
 
@@ -131,7 +142,7 @@ Open **`checks.sql`**. You'll run one block from it after each step. Select and 
 
 ### Open CoCo
 
-Select the **CoCo** icon in the lower-right corner of the workspace. You'll use one CoCo conversation for the discovery and pipeline steps, so CoCo can reuse what it learns.
+Select the **CoCo** icon in the lower-right corner of the workspace. You'll use one CoCo conversation for the discovery, pipeline, and break steps, so CoCo can reuse what it learns.
 
 > **Tip:** Type `@` in the CoCo message box to add a table as context, for example `@MERGER_DB.RAW.WEB_ORDERS`.
 
@@ -152,7 +163,7 @@ For each source, tell me how it records the order ID, the store, the timestamp
 and its time zone, and the amount and its unit. Find anything that would make a
 combined revenue number wrong, including duplicate orders. Then write a
 column-by-column mapping from both sources into one unified order shape.
-Don't create any objects yet.
+Use warehouse MERGER_WH, and don't create any objects yet.
 ```
 
 ### What CoCo should find
@@ -164,8 +175,6 @@ CoCo runs a few exploratory queries, such as sampling rows, flattening the JSON,
 3. **Time zones:** `SALE_TIMESTAMP` is store-local time, while `created_at` is a UTC string. Each store's time zone is in `STORE_CROSSWALK.TIMEZONE`.
 4. **Store IDs:** POS uses register numbers (`101`–`105`), web uses location codes (`DG-SF-01` and so on), and both map to a `STORE_ID` through `STORE_CROSSWALK`.
 5. **Duplicates:** `WEB_ORDERS` has **3,106** documents but only **3,040** distinct `order_id` values. The retried copies share an `order_id` and have a later `LOADED_AT`.
-
-<!-- TODO screenshot: CoCo's discovery summary and mapping table (assets/coco_discovery_mapping.png) -->
 
 If CoCo misses one, ask about it directly, for example: *"Are there duplicate order IDs in WEB_ORDERS? What unit is amount_cents in?"*
 
@@ -192,11 +201,13 @@ RAW.STORE_CROSSWALK ┘     (one row per order)        (one row per store per da
 
 A Dynamic Table is defined by a `SELECT`. Snowflake keeps it up to date as the source tables change, within the `TARGET_LAG` you set, and works out the refresh order from the dependency graph. `TARGET_LAG = DOWNSTREAM` means "refresh only when a table downstream needs fresh data."
 
-### Switch to Plan mode
+### Turn on Plan mode
 
-Creating core tables is a good time to review before anything runs. Press **Shift+Tab** in the CoCo message box to switch to **Plan mode**. CoCo lays out what it intends to do and waits for your approval before it creates anything.
+Creating core tables is a good time to review before anything runs. In the CoCo message box, select **+**, and then select **Plan mode**. You can also press **Cmd+Shift+P** (macOS) or **Ctrl+Shift+P** (Windows). A **Plan** label appears in the message box.
 
-> **No Plan mode toggle?** Add this line to the start of the prompt below: *"Make a plan first and wait for my approval before you create anything."*
+In Plan mode, CoCo researches the task and proposes a plan instead of making changes. When you confirm the plan, CoCo turns Plan mode off and starts the work.
+
+> **Don't see Plan mode?** Start the prompt below with: *"Make a plan first and wait for my approval before you create anything."*
 
 ### Prompt
 
@@ -216,8 +227,9 @@ uses warehouse MERGER_WH. Read from the RAW tables directly.
 
 Business rules:
 - All amounts in dollars.
-- BUSINESS_DATE is the store's LOCAL date. Convert web UTC timestamps using the
-  store's TIMEZONE from STORE_CROSSWALK.
+- BUSINESS_DATE is the store's LOCAL date. POS SALE_TIMESTAMP is already local,
+  so use its date as-is. Convert web UTC timestamps using the store's TIMEZONE
+  from STORE_CROSSWALK.
 - Count each web order once: keep the copy with the earliest LOADED_AT.
 - Get STORE_ID, STORE_NAME and CITY from STORE_CROSSWALK for both sources.
 ```
@@ -232,9 +244,7 @@ Before you approve, check that the plan:
 
 If something is off, tell CoCo in plain language before approving. When the plan looks right, approve it and let CoCo create the tables.
 
-<!-- TODO screenshot: CoCo's plan for the two Dynamic Tables (assets/coco_plan_mode_pipeline.png) -->
-
-> **Note:** Snowflake may set the refresh mode to `FULL` for `ORDERS_UNIFIED` because the query unions two sources and deduplicates with a window function. At a few thousand rows, a full refresh takes seconds, so that's expected and fine.
+> **Note:** Snowflake may set the refresh mode to `FULL` for both tables: `ORDERS_UNIFIED` because its query unions two sources and deduplicates with a window function, and `DAILY_REVENUE` because it reads from a `FULL` table. At a few thousand rows, a full refresh takes seconds, so that's expected and fine.
 
 ### CHECK 3
 
@@ -264,9 +274,9 @@ Ask CoCo to fix the Dynamic Table rather than editing the SQL yourself, then run
 > **Short on time?** Open **`solutions/solution.sql`** and select **Run all** to create the reference version of both tables, then continue.
 
 <!-- ------------------------ -->
-## The Monday-Morning Break
+## The Morning-After Break
 
-It's Monday. Over the weekend, Northbound's POS vendor shipped a "minor" update: the export now calls the dollar column `SALE_AMOUNT_USD` instead of `TOTAL_USD`. The first batch in the new format, Tuesday Sept 29, just landed. Then the CEO opens the dashboard.
+It's Wednesday morning. Northbound's POS vendor shipped a "minor" update: the export now calls the dollar column `SALE_AMOUNT_USD` instead of `TOTAL_USD`. The first batch in the new format, Tuesday Sept 29, landed overnight. Then the CEO asks for fresh numbers.
 
 ### Run the break
 
@@ -285,26 +295,24 @@ please query refresh history.
 
 ### Prompt
 
-Don't go looking for the cause yourself. In CoCo, switch back to normal mode (**Shift+Tab**) and send:
+Don't go looking for the cause yourself. CoCo needs to make changes here, so Plan mode should be off. It turns off when you confirm a plan; if the **Plan** label is still showing in the message box, select the **x** on it. In the same CoCo conversation, send:
 
 ```
 MERGER_DB.ANALYTICS.DAILY_REVENUE failed to refresh after this morning's POS
-batch landed. Use the dynamic table refresh history and the pipeline's upstream
-dependencies to find which table failed and why. Then fix the pipeline so it
+batch landed. Use today's dynamic table refresh history and the pipeline's
+upstream dependencies to find which table failed and why. Then fix the pipeline so it
 refreshes again and includes the new batch. Don't change the raw data.
 ```
 
 ### What CoCo should do
 
 1. Query `INFORMATION_SCHEMA.DYNAMIC_TABLE_REFRESH_HISTORY` for `MERGER_DB.ANALYTICS` and find two problems:
-   - `ORDERS_UNIFIED` is **FAILED** with `invalid identifier 'S.TOTAL_USD'`.
+   - `ORDERS_UNIFIED` is **FAILED** with an `invalid identifier` error on `TOTAL_USD`.
    - `DAILY_REVENUE` is **UPSTREAM_FAILED**: it was skipped because its input failed. The root cause is upstream.
 2. Inspect `RAW.STORE_SALES` and see that `TOTAL_USD` is gone and `SALE_AMOUNT_USD` has replaced it.
 3. Update `ORDERS_UNIFIED` to read `SALE_AMOUNT_USD`, then refresh `DAILY_REVENUE`.
 
-CoCo may use `CREATE OR ALTER DYNAMIC TABLE` or `CREATE OR REPLACE DYNAMIC TABLE` for the fix. Both work here. `CREATE OR ALTER` updates the existing table's definition, while `CREATE OR REPLACE` rebuilds the table, which makes downstream incremental Dynamic Tables reinitialize. That difference matters more in large pipelines than in this lab.
-
-<!-- TODO screenshot: CoCo diagnosing the failure from refresh history (assets/coco_break_diagnosis.png) -->
+CoCo may use `CREATE OR ALTER DYNAMIC TABLE` or `CREATE OR REPLACE DYNAMIC TABLE` for the fix. Both work here. `CREATE OR ALTER` keeps the existing table and its grants, and updates its definition. `CREATE OR REPLACE` drops and recreates it. Either way, changing the query makes `ORDERS_UNIFIED` reinitialize on its next refresh, which takes seconds at this size.
 
 > **Tip:** You can see the same story in the UI. Go to **Transformation** » **Dynamic tables**, open `ORDERS_UNIFIED`, and look at the **Refresh History** and **Graph** tabs.
 
@@ -331,7 +339,8 @@ The numbers agree, and the pipeline survives upstream changes. Now give the CEO 
 
 1. In the workspace file explorer, select **+ Add new** » **Streamlit app**. Name it `merger_dashboard`.
 2. Snowflake creates a folder with starter files, including `streamlit_app.py`. Open `streamlit_app.py`.
-3. Open the **CoCo** panel. Start a new conversation so CoCo focuses on the app.
+3. Point the app at the lab warehouse. In the project pane toolbar, select **Settings**. On the **Targets** tab, open **Preview in workspace**, set the query warehouse under **Execution** to `MERGER_WH`, and select **Save settings**. The warehouse list shows only warehouses the app's role can use on its own, and `MERGER_ROLE` is granted only `MERGER_WH`.
+4. Open the **CoCo** panel. Start a new conversation so CoCo focuses on the app.
 
 ### Prompt
 
@@ -362,27 +371,30 @@ Select **Run** in the action bar at the top of the file. This starts a private p
 
 Change the filters to explore. Saturdays are busier than weekdays, and Daily Grind's web orders skew toward the evening.
 
-<!-- TODO screenshot: the finished dashboard (assets/merger_dashboard.png) -->
-
 If the app shows an error, paste the error into CoCo and ask it to fix the app. If you're stuck, copy the contents of **`solutions/streamlit_app.py`** into your `streamlit_app.py`.
 
 ### Optional: deploy it
 
-The preview is private. To share the dashboard, deploy it as a Streamlit object other users can open.
+The preview is private. To share the dashboard, deploy it to a *deploy target*: a copy of the app that runs outside the workspace as a Streamlit object.
 
-1. In the project pane toolbar, select **Deploy**.
-2. Review the settings:
-   - **Location:** `MERGER_DB.ANALYTICS`
-   - **Execution:** keep the default compute pool, and choose `MERGER_WH` as the query warehouse. Unless your account has changed it, the default pool is the Snowflake-created `SYSTEM_COMPUTE_POOL_CPU`.
-   - **Sharing:** optionally add the roles or users who should see the app.
-3. Select **Deploy**.
+1. In the project pane toolbar, select **Settings**.
+2. On the **Targets** tab, select the existing deploy target if there is one, or select **Add deploy target**. Set:
+   - **Owner role of deployed app:** `MERGER_ROLE`
+   - **App location:** `MERGER_DB.ANALYTICS`
+   - **Execution:** `MERGER_WH` as the query warehouse, and the default compute pool. Unless your account has changed it, the default pool is the Snowflake-created `SYSTEM_COMPUTE_POOL_CPU`.
+3. Select **Save settings**.
+4. In the project pane toolbar, select **Deploy**, select your target, and then select **Deploy**.
 
-Open the deployed app. That's the dashboard the CEO gets on Monday: one revenue number, from two systems that didn't agree on anything.
+To let teammates open it, share the deployed app with their roles or users. See [Create and run a Streamlit app in a workspace](https://docs.snowflake.com/en/developer-guide/streamlit/streamlit-in-workspaces/streamlit-in-workspaces-create-run) for the sharing steps.
+
+To open the deployed app, go to **Projects** » **Streamlit** and select it. That's the dashboard the CEO gets on Friday: one revenue number, from two systems that didn't agree on anything.
 
 <!-- ------------------------ -->
 ## Clean Up
 
-To stop all credit consumption from this guide, run:
+To stop all credit consumption from this guide:
+
+1. Open the SQL file you created in **My Workspace** for the API integration, replace its contents with the statements below, and select **Run all**:
 
 ```sql
 USE ROLE ACCOUNTADMIN;
@@ -393,11 +405,11 @@ DROP DATABASE IF EXISTS MERGER_DB;
 DROP WAREHOUSE IF EXISTS MERGER_WH;
 DROP ROLE IF EXISTS MERGER_ROLE;
 
--- Only if you created this integration for this lab and don't use it elsewhere
+-- The Git API integration you created for this lab
 DROP API INTEGRATION IF EXISTS GITHUB_MERGER_LAB;
 ```
 
-You can also delete the `the-merger` workspace from **Projects** » **Workspaces**.
+2. In **Projects** » **Workspaces**, delete your lab workspace. Then delete the SQL file in **My Workspace**.
 
 <!-- ------------------------ -->
 ## Conclusion and Resources

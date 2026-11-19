@@ -3789,15 +3789,16 @@
       "lastUpdatedAt": "2025-12-11"
     },
     {
-      "title": "Getting Started with Streams & Tasks",
+      "title": "Incremental Processing with Streams, CHANGES and Row Timestamps",
       "categories": [
         "snowflake-site:taxonomy/solution-center/certification/quickstart",
-        "snowflake-site:taxonomy/product/platform"
+        "snowflake-site:taxonomy/product/data-engineering",
+        "snowflake-site:taxonomy/snowflake-feature/transformation"
       ],
       "contentType": "quickstart",
-      "url": "https://www.snowflake.com/en/developers/guides/getting-started-with-streams-and-tasks/",
-      "summary": "Learn how to use streams and tasks with Snowflake.",
-      "lastUpdatedAt": "2025-12-19"
+      "url": "https://www.snowflake.com/en/developers/guides/incremental-processing-with-streams-changes-and-row-timestamps/",
+      "summary": "Process only changed data in Snowflake with streams, the CHANGES clause and row timestamps, and choose the right primitive for each pipeline.",
+      "lastUpdatedAt": "2026-10-30"
     },
     {
       "title": "Getting Started with Llama 3.1 405B: Build Custom LLMs with Synthetic Data Generation and Distillation",

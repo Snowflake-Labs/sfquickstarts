@@ -4,7 +4,7 @@ language: en
 summary: Process only changed data in Snowflake with streams, the CHANGES clause and row timestamps, and choose the right primitive for each pipeline.
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/transformation, snowflake-site:taxonomy/snowflake-feature/dynamic-tables, snowflake-site:taxonomy/snowflake-feature/serverless-tasks
 environments: web
-status: Draft
+status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 # Incremental Processing with Streams, CHANGES and Row Timestamps
@@ -36,7 +36,7 @@ The core sections need no scheduler. Tasks appear only in the section on trigger
 
 A source table, DEMO_ORDERS, and one target table that four loaders write into side by side: one loader per primitive plus a naive event-time loader for contrast. You'll also build a dbt incremental model and read an Iceberg table incrementally from Spark.
 
-### Prerequisites
+### What You'll Need
 
 - A Snowflake account and a role that can create a database and a warehouse (the guide uses ACCOUNTADMIN for brevity)
 - For the triggered task section, the EXECUTE TASK and EXECUTE MANAGED TASK privileges
@@ -864,7 +864,7 @@ If you're coming from streams and tasks, this is how the pieces map:
 If your load has to keep MERGE or INSERT logic, for example different handling per change type, a custom incremental dynamic table runs that logic in its REFRESH USING clause on top of CHANGES, with Snowflake advancing the position. Streams and tasks remain the better fit for loops and cursor-based procedural code, side effects such as external calls, writing several tables in one transaction, sources that dynamic tables don't support (external and directory tables), or latency below the one-minute [minimum target lag](https://docs.snowflake.com/en/user-guide/dynamic-tables-target-lag). For everything else about dynamic tables, see the [comprehensive guide to dynamic tables](/en/developers/guides/comprehensive-guide-to-dynamic-tables/).
 
 <!-- ------------------------ -->
-## Cleanup
+## Clean Up
 
 Suspend the task and the dynamic table, then drop everything this guide created:
 

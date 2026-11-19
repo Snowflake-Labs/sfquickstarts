@@ -7,6 +7,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 authors: Elizabeth Christensen
 fork repo link: https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/getting-started-with-snowflake-postgres
+open in snowflake link: https://app.snowflake.com/templates/?template=getting_started_with_snowflake_postgres&utm_source=snowflake-devrel&utm_medium=developer-guides&utm_content=getting-started-with-snowflake-postgres&utm_cta=developer-guides-deeplink
 tags: Postgres
 
 # Getting Started with Snowflake Postgres
