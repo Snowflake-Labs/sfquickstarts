@@ -224,7 +224,7 @@ Load the SQL scripts in the `code/sql` directory into [Snowsight Worksheets](htt
 ### Execute Setup SQL Scripts
 
 1. `100_Setup_Data_Model`: create the TastyBytes foundational data model.
-[TastyBytes](/en/developers/guides/tasty-bytes-introduction/) is a fictitious global food truck network that operates in 30 major cities located in 15 countries with localized menu options and brands. The single `Frostbytes_Tasty_Bytes` is organized in the following schemas:
+[TastyBytes](https://www.snowflake.com/en/developers/guides/zero-to-snowflake/) is a fictitious global food truck network that operates in 30 major cities located in 15 countries with localized menu options and brands. The single `Frostbytes_Tasty_Bytes` is organized in the following schemas:
 
 - `RAW_CUSTOMER`: raw customer loyalty data with personally identifiable information (PII)
 - `RAW_POS`: raw point-of-sale data denormalized by orders, menu, franchise and country
@@ -1222,7 +1222,7 @@ Navigate to **Provider Studio** (under Data Products) and click on `+ Listing` t
 Now select the `HORIZON_QUICKSTART_PACKAGE` and fill in a brief description using the rich text editor.
 You can use this text to get started, but feel free to get creative!
 
-> _[Tasty Bytes](/en/developers/guides/tasty-bytes-introduction/) is a fictitious global food truck network_
+> _[Tasty Bytes](https://www.snowflake.com/en/developers/guides/zero-to-snowflake/) is a fictitious global food truck network_
 > _that is on a mission to serve unique food options with high quality items in a safe, convenient and cost effective way._
 > _In order to drive forward on their mission, Tasty Bytes is beginning to leverage the Snowflake Data Cloud._
 >

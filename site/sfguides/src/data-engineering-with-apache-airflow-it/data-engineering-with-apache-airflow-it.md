@@ -4,7 +4,7 @@ categories: snowflake-site:taxonomy/solution-center/certification/quickstart, sn
 language: it
 summary: questo è un esempio di guida di Snowflake
 environments: web
-status: Pubblicato
+status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 # Data Engineering con Apache Airflow, Snowflake e dbt

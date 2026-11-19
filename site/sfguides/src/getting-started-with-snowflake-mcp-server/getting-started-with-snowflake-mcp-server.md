@@ -4,6 +4,7 @@ language: en
 summary: This guide outlines the process for getting started with Managed Snowflake MCP Server. 
 environments: web
 status: Published
+open in snowflake link: https://app.snowflake.com/templates/?template=getting_started_with_managed_snowflake_mcp_server&utm_source=snowflake-devrel&utm_medium=developer-guides&utm_content=getting-started-with-snowflake-mcp-server&utm_cta=developer-guides-deeplink
 feedback link: <https://github.com/Snowflake-Labs/sfguides/issues>
 authors: Dash Desai
 

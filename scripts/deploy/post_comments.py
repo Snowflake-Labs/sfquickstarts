@@ -177,8 +177,25 @@ def _frontmatter(report: dict[str, Any] | None) -> str | None:
         return None
     heading = "### 📄 Frontmatter Validation Failed"
     if not mdsafe.as_list(report.get("issues")):
-        return f"{heading}\n\nFrontmatter id check failed."
-    blurb = "Frontmatter id must be slugified and match file and folder."
+        return f"{heading}\n\nFrontmatter check failed."
+    blurb = (
+        "Frontmatter id must be slugified and match file and folder. "
+        "Translated guides must declare their language, and status must be spelled exactly."
+    )
+    return f"{heading}\n\n{blurb}\n\n{_issue_list(report, 'errors', '; ')}"
+
+
+def _duplicate_content(report: dict[str, Any] | None) -> str | None:
+    if report is None:
+        return None
+    heading = "### 🧬 Duplicate Content"
+    if not mdsafe.as_list(report.get("issues")):
+        return f"{heading}\n\nDuplicate content check failed."
+    blurb = (
+        "This guide's body closely matches a guide we already publish. Two pages with "
+        "the same content compete for the same searches. Either fold this into the "
+        "existing guide, or make clear what is different about this one."
+    )
     return f"{heading}\n\n{blurb}\n\n{_issue_list(report, 'errors', '; ')}"
 
 
@@ -229,6 +246,7 @@ def failure_body(reports: Reports) -> str | None:
         _language(reports.read("validation-error.json")),
         _categories(reports.read("categories-error.json")),
         _frontmatter(reports.read("frontmatter-error.json")),
+        _duplicate_content(reports.read("duplicate-content-error.json")),
         _sidebars(reports.read("sidebar-error.json")),
         _profanity(
             reports.read("profanity-report.json"),

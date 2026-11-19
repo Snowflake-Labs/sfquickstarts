@@ -30,13 +30,13 @@ Industrial operations questions rarely stay inside one system. A production disr
 - Define reusable semantic views with consistent operational metrics.
 - Configure one agent to route questions to domain Analysts and retrieve supporting documentation.
 - Combine operational measurements and documentary evidence without inventing relationships or causes.
-- Test answers, follow-ups, tool selection, and unsupported questions in Snowflake Intelligence.
+- Test answers, follow-ups, tool selection, and unsupported questions in Snowflake CoWork.
 
 ### What You'll Build
 
 You will build an agent over a connected synthetic data foundation: three sites, two products, six assets, 540 production runs, inspection summaries, maintenance events, and daily supply balances. Three domain semantic views support Manufacturing, Quality, and Supply Chain analysis. Two Search tools retrieve fictional investigation notes and analytical review workflows.
 
-The guide includes SQL to create the views, Search services, and agent, followed by sample questions with expected answers for testing in Snowflake Intelligence. Business definitions live in the semantic views, while the agent handles tool selection and evidence-backed responses.
+The guide includes SQL to create the views, Search services, and agent, followed by sample questions with expected answers for testing in Snowflake CoWork. Business definitions live in the semantic views, while the agent handles tool selection and evidence-backed responses.
 
 <!-- ------------------------ -->
 ## Understand the Scenario
@@ -722,9 +722,9 @@ DESCRIBE AGENT INDUSTRIAL_OPERATIONS_DEMO.DEMO.INDUSTRIAL_OPERATIONS_AGENT;
 ```
 
 <!-- ------------------------ -->
-## Test the Agent in Snowflake Intelligence
+## Test the Agent in Snowflake CoWork
 
-The agent can be used directly in Snowflake Intelligence. Open **AI & ML > Snowflake Intelligence** (or [ai.snowflake.com](https://ai.snowflake.com)), select **Industrial Operations Intelligence**, and choose one of the sample questions. Users need USAGE on the agent and access to its semantic views, Search services, and warehouse. If your account curates visible agents with a Snowflake Intelligence object, an administrator adds it with `ALTER SNOWFLAKE INTELLIGENCE SNOWFLAKE_INTELLIGENCE_OBJECT_DEFAULT ADD AGENT INDUSTRIAL_OPERATIONS_DEMO.DEMO.INDUSTRIAL_OPERATIONS_AGENT;`.
+The agent can be used directly in Snowflake CoWork. Open **AI > Snowflake CoWork** (or [ai.snowflake.com](https://ai.snowflake.com)), select **Industrial Operations Intelligence**, and choose one of the sample questions. Users need USAGE on the agent and access to its semantic views, Search services, and warehouse. If your account curates visible agents with a Snowflake CoWork object, an administrator adds it with `ALTER SNOWFLAKE INTELLIGENCE SNOWFLAKE_INTELLIGENCE_OBJECT_DEFAULT ADD AGENT INDUSTRIAL_OPERATIONS_DEMO.DEMO.INDUSTRIAL_OPERATIONS_AGENT;`.
 
 Ask the sample questions and compare the answers with the expected results below. The values follow from the generation rules; check quantities exactly and displayed percentages within 0.01 percentage points.
 
@@ -792,5 +792,5 @@ The guide connects synthetic operational data to three domain semantic views, tw
 - [Cortex Search](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search)
 - [Cortex Agents](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents)
 - [Create and manage agents](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents-manage)
-- [Snowflake Intelligence agent access](https://docs.snowflake.com/en/user-guide/snowflake-cortex/snowflake-cowork/deploy-agents)
+- [Snowflake CoWork agent access](https://docs.snowflake.com/en/user-guide/snowflake-cortex/snowflake-cowork/deploy-agents)
 - [Cortex Agents Run API and response schema](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents-run)

@@ -1,7 +1,7 @@
 author: Marie Coolsaet
 id: tasty-bytes-snowpark-101-for-data-science-kr
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/snowpark
-language: en
+language: ko
 summary: Tasty Bytes - Snowpark 101 for Data Science Quickstart
 environments: web
 status: Published 
@@ -372,4 +372,4 @@ rm -rf sfguide-tasty-bytes-snowpark-101-for-data-science
 
 Snowflake 데이터 클라우드에서의 여정을 계속하려면 아래 링크를 방문하여 사용 가능한 더 많은 Tasty Bytes - Quickstart를 확인하십시오.
 
-- ### [Tasty Bytes 사용 - Quickstarts 목차](/en/developers/guides/tasty-bytes-introduction-kr/)
+- ### [Tasty Bytes 사용 - Quickstarts 목차](https://www.snowflake.com/ko/developers/guides/tasty-bytes-introduction-kr/)
