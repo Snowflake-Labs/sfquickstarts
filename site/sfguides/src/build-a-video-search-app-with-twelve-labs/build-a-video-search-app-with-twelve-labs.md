@@ -1,45 +1,47 @@
 author: Akhil Ramasagaram
 id: build-a-video-search-app-with-twelve-labs
 language: en
-summary: Build an end-to-end video search and analysis app on Snowflake with Twelve Labs Marengo, Pegasus, Cortex Search, and Streamlit.
+summary: Build an end-to-end video search and analysis app on Snowflake with TwelveLabs Marengo 3.0, Pegasus 1.5, multi-index Cortex Search, and Snowflake App Runtime.
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/cortex-search, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
-# Build a Video Search App with Twelve Labs on Snowflake
+# Build a Video Search App with TwelveLabs on Snowflake
 <!-- ------------------------ -->
 ## Overview
 
 In this guide you'll turn a folder of video files into an app that lets you:
 
-- **Search** every video by typing a description or dropping in an image, and jump straight to the matching moment.
-- **Analyze** any video with a plain-language prompt and get structured answers back (optional, requires Pegasus Private Preview access).
+- **Search** every video by typing a description or dropping in an image, across what's **seen**, **heard**, and **said**, and jump straight to the matching moment.
+- **Analyze** any video with a plain-language prompt and get structured answers back with **Pegasus 1.5**.
 
-The whole pipeline runs inside Snowflake. No video leaves your account, and every step is a SQL function call.
+The whole pipeline runs inside Snowflake. No video leaves your account, and every model call is a SQL function.
 
-![Architecture](assets/tl_arch.png)
+![Architecture](assets/tl_arch_v2.png)
 
 ### What You'll Build
 | Step | What it does | Snowflake surface |
 |---|---|---|
 | 1. Stage | Point Snowflake at your videos | Stage + directory table |
 | 2. Embed | Turn each video into time-stamped vectors | `AI_MULTI_EMBED` with **Marengo 3.0** |
-| 3. Index | Make the vectors searchable | **Cortex Search** (vector index) |
-| 4. Analyze (optional) | Ask questions about a video | `AI_COMPLETE` with **Pegasus 1.2** |
-| 5. App | Put it all behind a UI | **Streamlit** |
+| 3. Index | Make visual, audio, and transcript vectors searchable | **Cortex Search** (multi-index) |
+| 4. Search | Query one or all modalities at once | `multi_index_query` |
+| 5. Analyze | Ask questions about a video | `AI_COMPLETE` with **Pegasus 1.5** |
+| 6. App | Put it all behind a UI | **Snowflake App Runtime** (Next.js) |
 
 ### What You'll Learn
 - How to embed video, text, and images into one shared vector space with `AI_MULTI_EMBED`
-- How to query a Cortex Search vector index with your own embeddings
-- How to play search hits at the exact matching timestamp in a Streamlit app
-- (Optional) How to ask questions about a video with `AI_COMPLETE` and Pegasus
+- How to build a Cortex Search service with **multiple vector indexes**, one per modality
+- How to search them with `multi_index_query`
+- How to ask questions about a video with `AI_COMPLETE` and Pegasus 1.5
+- How to deploy the app on Snowflake App Runtime
 
 ### What You'll Need
 - A Snowflake account in a region that supports `twelvelabs-marengo-embed-3-0`, or with cross-region inference enabled. See [AI_MULTI_EMBED regional availability](https://docs.snowflake.com/en/sql-reference/functions/ai_multi_embed).
 - A role with `SNOWFLAKE.CORTEX_USER` and privileges to create a database, stage, and Cortex Search service
 - A few `.mp4` files (a handful of short clips is enough to start)
-- (Optional) Pegasus 1.2 access. Pegasus is in Private Preview, so the Analyze step and app tab are optional. Everything else uses Marengo 3.0, which is generally available.
+- Node.js 20+ and the Snowflake CLI to run and deploy the app
 
 <!-- ------------------------ -->
 ## Stage Your Videos
@@ -72,7 +74,7 @@ SELECT RELATIVE_PATH, SIZE FROM DIRECTORY(@VIDEO_STAGE);
 > aside positive
 > **Already have video in S3, GCS, or Azure?** Create an external stage on a storage integration instead. The rest of this guide works the same with either kind of stage.
 
-We also need a small internal stage where the app uploads images for image-to-video search:
+We also need a small internal stage where the app uploads images for image-to-video search and caches clips for Pegasus:
 
 ```sql
 CREATE STAGE IF NOT EXISTS SEARCH_UPLOADS
@@ -116,206 +118,179 @@ GROUP BY modality;
 ```
 
 > aside positive
-> Marengo puts text, images, and video in the **same vector space**. That's why a text query or an uploaded photo can be matched directly against video segments. You'll use this in the app.
+> Marengo puts text, images, and video in the **same vector space**. That's why a text query or an uploaded photo can be matched directly against video segments.
 
-<!-- ------------------------ -->
-## Index with Cortex Search
-
-Create a Cortex Search service with a **vector index** on the Marengo embeddings. This guide indexes the `visual` modality, which works best for "find the scene where..." queries.
+Now pivot to **one row per segment** with a column per modality, so each modality can get its own index:
 
 ```sql
-CREATE OR REPLACE CORTEX SEARCH SERVICE VIDEO_SEARCH_SERVICE
-  TEXT INDEXES   EPISODE
-  VECTOR INDEXES EMBEDDING_VEC
-  ATTRIBUTES     EPISODE, MODALITY, START_SEC, END_SEC
-  WAREHOUSE      = <your_warehouse>
-  TARGET_LAG     = '1 day'
+CREATE OR REPLACE TABLE VIDEO_SEGMENT_VECTORS AS
+SELECT
+    episode || '_' || start_sec::STRING AS segment_id,
+    episode, start_sec, end_sec,
+    MAX(IFF(modality = 'visual',        embedding_vec, NULL)) AS visual_vec,
+    MAX(IFF(modality = 'audio',         embedding_vec, NULL)) AS audio_vec,
+    MAX(IFF(modality = 'transcription', embedding_vec, NULL)) AS transcript_vec
+FROM VIDEO_EMBEDDINGS
+GROUP BY episode, start_sec, end_sec;
+```
+
+<!-- ------------------------ -->
+## Index with Multi-Index Cortex Search
+
+Create one Cortex Search service with **three vector indexes**. Setting `query_model` tells the service which model produced the vectors, so you can query each index independently or together.
+
+```sql
+CREATE OR REPLACE CORTEX SEARCH SERVICE VIDEO_MULTI_SEARCH_SVC
+  VECTOR INDEXES
+    VISUAL_VEC     (query_model = 'twelvelabs-marengo-embed-3-0'),
+    AUDIO_VEC      (query_model = 'twelvelabs-marengo-embed-3-0'),
+    TRANSCRIPT_VEC (query_model = 'twelvelabs-marengo-embed-3-0')
+  PRIMARY KEY (SEGMENT_ID)
+  ATTRIBUTES  EPISODE
+  WAREHOUSE   = <your_warehouse>
+  TARGET_LAG  = '1 day'
 AS (
-    SELECT EPISODE, EMBEDDING_VEC, MODALITY, START_SEC, END_SEC
-    FROM VIDEO_EMBEDDINGS
-    WHERE MODALITY = 'visual'
+    SELECT SEGMENT_ID, EPISODE, START_SEC, END_SEC,
+           VISUAL_VEC, AUDIO_VEC, TRANSCRIPT_VEC
+    FROM VIDEO_SEGMENT_VECTORS
 );
 ```
 
-Because the vectors come from Marengo rather than a built-in Cortex embedding model, you embed the query with the same model at search time and pass the vector to the service. The app handles this in the next steps.
-
 <!-- ------------------------ -->
-## (Optional) Analyze Video with Pegasus
+## Search with multi_index_query
+
+Embed the query with the same Marengo model, then pass the vector to the index you want to search. Run these snippets in a [Snowflake Notebook](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks), where `session` comes from `get_active_session()`:
+
+```python
+from snowflake.core import Root
+from snowflake.snowpark.context import get_active_session
+
+session = get_active_session()
+svc = (Root(session).databases["TWELVE_LABS_DEMO"]
+       .schemas["VIDEO_INTELLIGENCE"]
+       .cortex_search_services["VIDEO_MULTI_SEARCH_SVC"])
+
+query_vec = session.sql("""
+  SELECT AI_MULTI_EMBED('twelvelabs-marengo-embed-3-0',
+         'Find me a scene where a ship is burning at night'):value[0]['embedding']::ARRAY
+""").collect()[0][0]
+
+results = svc.search(
+    multi_index_query={"visual_vec": [{"vector": query_vec}]},
+    columns=["episode", "start_sec", "end_sec"],
+    limit=5,
+)
+```
+
+To search what's **seen, heard, and said** in one request, pass the same vector to every index:
+
+```python
+results = svc.search(
+    multi_index_query={
+        "visual_vec":     [{"vector": query_vec}],
+        "audio_vec":      [{"vector": query_vec}],
+        "transcript_vec": [{"vector": query_vec}],
+    },
+    columns=["episode", "start_sec", "end_sec"],
+    limit=5,
+)
+```
+
+> aside positive
+> **Image search** works the same way: upload the image to `SEARCH_UPLOADS` and embed it with `AI_MULTI_EMBED('twelvelabs-marengo-embed-3-0', TO_FILE('@SEARCH_UPLOADS', '<image>.jpg'))`. `multi_index_query` accepts text or vectors, so always embed files first.
 
 > aside negative
-> **Private Preview:** `twelvelabs-pegasus-1-2` is not yet in the public `AI_COMPLETE` model list. If your account isn't enrolled, skip this step and leave `ENABLE_PEGASUS = False` in the app. Search works without it. Contact your Snowflake account team to request access.
+> Raw Marengo similarity scores are on different scales per modality (transcript matches typically score much higher than visual or audio). If you want to weight modalities yourself, query each index separately, min-max normalize the scores, and combine them. The sample app does this in its `MARENGO_SEARCH` procedure.
 
-Pegasus is a video-language model. Give it a video and a prompt, and it answers in text:
+<!-- ------------------------ -->
+## Analyze Video with Pegasus 1.5
+
+Pegasus 1.5 is a video understanding model, available in `AI_COMPLETE`. Give it a staged video and a natural-language prompt to summarize it, answer questions about it, or extract structured information:
 
 ```sql
 SELECT AI_COMPLETE(
-    'twelvelabs-pegasus-1-2',
-    'Summarize this video in 3 bullets, then list the main characters as JSON.',
+    'twelvelabs-pegasus-1-5',
+    'Summarize this video in 3 bullets, then return JSON with the main characters and the timestamp each first appears.',
     TO_FILE('@VIDEO_STAGE', '<your_video>.mp4')
 ) AS analysis;
 ```
 
-There's no frame extraction and no transcription step. That one call is all the app needs for its Analyze tab.
+There's no frame extraction and no transcription step.
+
+> aside negative
+> **Preview:** video processing with `AI_COMPLETE`, including `twelvelabs-pegasus-1-5`, is in Public Preview. See [Cortex AI Functions: Multimodal](https://docs.snowflake.com/en/user-guide/snowflake-cortex/ai-multimodal) for current status and regional availability.
+
+> aside positive
+> Pegasus 1.5 accepts MP4, MOV, AVI, MKV, and WebM files up to **2 hours** and **2 GB**. See the [release note](https://docs.snowflake.com/en/release-notes/2026/other/2026-11-16-ai-complete-pegasus-1-5-preview) and [Cortex AI Functions: Multimodal](https://docs.snowflake.com/en/user-guide/snowflake-cortex/ai-multimodal).
+
+> aside positive
+> **Pair it with search.** To analyze just one search hit, cut its `start_sec`/`end_sec` range to a clip and send the clip to Pegasus. The sample app's `PEGASUS_ANALYZE` procedure does this, caching clips in `SEARCH_UPLOADS/clips/`.
 
 <!-- ------------------------ -->
-## Build the Streamlit App
+## Deploy the App
 
-The app has two tabs:
+The front end is a Next.js app that runs on **Snowflake App Runtime (SAR)**. It's a thin layer over the SQL you just wrote:
 
-- **Embed + Search**: embed the text or image query with Marengo, send the vector to Cortex Search, and play each hit at its timestamp using a presigned URL.
-- **Analyze** (optional): pick a video, write a prompt, and run Pegasus. Set `ENABLE_PEGASUS = True` only if your account has Pegasus access.
+- **Search**: embeds the text or image query with Marengo, runs `multi_index_query` against `VIDEO_MULTI_SEARCH_SVC`, and plays each hit at its timestamp with a presigned URL.
+- **Analyze**: sends a video (or a search hit's time range) and a prompt to Pegasus 1.5.
 
-Create `streamlit_app.py`:
+![Search](assets/app_search.png)
 
-```python
-import json
-import streamlit as st
-from snowflake.core import Root
+![Analyze](assets/app_analyze.png)
 
-st.set_page_config(page_title="Twelve Labs x Snowflake", layout="wide")
-
-DB, SCHEMA = "TWELVE_LABS_DEMO", "VIDEO_INTELLIGENCE"
-VIDEO_STAGE = f"@{DB}.{SCHEMA}.VIDEO_STAGE"
-UPLOAD_STAGE = f"@{DB}.{SCHEMA}.SEARCH_UPLOADS"
-ENABLE_PEGASUS = False  # Pegasus is Private Preview; set True if your account is enrolled
-
-conn = st.connection("snowflake")
-session = conn.session()
-search_svc = (Root(session).databases[DB].schemas[SCHEMA]
-              .cortex_search_services["VIDEO_SEARCH_SERVICE"])
-
-
-def embed_query(text=None, image=None) -> list:
-    """Embed a text string or an uploaded image with Marengo."""
-    if image is not None:
-        name = image.name.replace(" ", "_")
-        session.file.put_stream(image, f"{UPLOAD_STAGE}/{name}",
-                                auto_compress=False, overwrite=True)
-        sql = f"""SELECT AI_MULTI_EMBED('twelvelabs-marengo-embed-3-0',
-                  TO_FILE('{UPLOAD_STAGE}', ?)):value[0]['embedding']::VARCHAR AS v"""
-        row = session.sql(sql, params=[name]).collect()[0]
-    else:
-        sql = """SELECT AI_MULTI_EMBED('twelvelabs-marengo-embed-3-0', ?)
-                 :value[0]['embedding']::VARCHAR AS v"""
-        row = session.sql(sql, params=[text]).collect()[0]
-    return json.loads(row["V"])
-
-
-def presigned_url(stage: str, path: str) -> str:
-    sql = f"SELECT GET_PRESIGNED_URL({stage}, ?, 3600) AS url"
-    return session.sql(sql, params=[path]).collect()[0]["URL"]
-
-
-def fmt(sec: float) -> str:
-    return f"{int(sec // 60)}:{int(sec % 60):02d}"
-
-
-tab_names = ["Embed + Search"] + (["Analyze"] if ENABLE_PEGASUS else [])
-tabs = st.tabs(tab_names)
-tab_search = tabs[0]
-
-# ── Search ──────────────────────────────────────────
-with tab_search:
-    query = st.text_input("Describe a scene")
-    image = st.file_uploader("...or search with an image", type=["jpg", "jpeg", "png"])
-
-    if st.button("Search", type="primary") and (query or image):
-        with st.spinner("Searching..."):
-            vec = embed_query(text=query, image=image)
-            resp = search_svc.search(
-                multi_index_query={"EMBEDDING_VEC": [{"vector": vec}]},
-                columns=["EPISODE", "START_SEC", "END_SEC"],
-                limit=50,
-            )
-            # Adjacent segments are usually the same scene; keep hits spread out.
-            results, kept = [], {}
-            for r in resp.results:
-                ep, start = r["EPISODE"], float(r["START_SEC"])
-                prior = kept.setdefault(ep, [])
-                if len(prior) < 2 and all(abs(start - p) >= 45 for p in prior):
-                    prior.append(start)
-                    results.append(r)
-                if len(results) == 6:
-                    break
-            urls = {ep: presigned_url(VIDEO_STAGE, f"{ep}.mp4")
-                    for ep in {r["EPISODE"] for r in results}}
-            st.session_state.hits = (results, urls)
-
-    if "hits" in st.session_state:
-        results, urls = st.session_state.hits
-        cols = st.columns(2)
-        for i, r in enumerate(results):
-            with cols[i % 2].container(border=True):
-                start, end = float(r["START_SEC"]), float(r["END_SEC"])
-                st.markdown(f"**{r['EPISODE']}** · `{fmt(start)} – {fmt(end)}`")
-                st.video(urls[r["EPISODE"]], start_time=int(start))
-
-# ── Analyze (optional, Pegasus) ─────────────────────
-if ENABLE_PEGASUS:
-    with tabs[1]:
-        files = [r["RELATIVE_PATH"] for r in
-                 session.sql(f"SELECT RELATIVE_PATH FROM DIRECTORY({VIDEO_STAGE}) ORDER BY 1").collect()]
-        left, right = st.columns([2, 3])
-        with left:
-            video = st.selectbox("Video", files)
-            if video:
-                st.video(presigned_url(VIDEO_STAGE, video))
-            prompt = st.text_area("Prompt", placeholder="Ask anything about this video...")
-            run = st.button("Analyze with Pegasus", type="primary")
-        with right:
-            if run and video and prompt:
-                with st.spinner("Pegasus is watching..."):
-                    sql = f"""SELECT AI_COMPLETE('twelvelabs-pegasus-1-2', ?,
-                              TO_FILE('{VIDEO_STAGE}', ?)) AS a"""
-                    answer = session.sql(sql, params=[prompt, video]).collect()[0]["A"]
-                st.markdown(answer)
-```
-
-### Run it
-Locally, add a Snowflake connection to `.streamlit/secrets.toml`:
-
-```toml
-[connections.snowflake]
-account   = "<account_identifier>"
-user      = "<user>"
-authenticator = "externalbrowser"
-role      = "<role>"
-warehouse = "<warehouse>"
-```
-
-Then:
+Grab the app source from the [`src/`](https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/build-a-video-search-app-with-twelve-labs/src) folder of this guide. `src/setup.sql` creates the stored procedures (`MARENGO_SEARCH`, `CLIP_VIDEO`, `PEGASUS_ANALYZE`) and the Cortex Agent the app calls; replace `COMPUTE_WH` in it with your warehouse, then:
 
 ```bash
-pip install streamlit snowflake-snowpark-python snowflake
-streamlit run streamlit_app.py
+npx degit Snowflake-Labs/sfquickstarts/site/sfguides/src/build-a-video-search-app-with-twelve-labs/src tl-video-studio
+cd tl-video-studio
+snow sql -f setup.sql  # procedures + Cortex Agent
+npm install
+npm run dev            # run locally against your default Snowflake connection
+snow app setup --app-name=tl_video_studio   # first deploy only: creates the app's deployment config
+snow app deploy        # deploy to Snowflake App Runtime
 ```
 
-To deploy on Snowflake instead, create a **Streamlit in Snowflake** app in Snowsight (**Projects » Streamlit**), paste in the same code, and add the `snowflake` package. `st.connection("snowflake")` picks up the app's session automatically.
+See the `src/` README for the grants the app's owner role needs.
 
 ### Try it
-- **Search:** type something like *"two people running through a crowded street"*, or upload a photo of a location or character.
-- **Analyze:** pick a video and ask *"Return JSON with a summary, the main characters, and any historical references."*
+- **Search:** *"Find me a scene where a ship is burning at night"*, or upload a photo of a location or character.
+- **Analyze:** open a hit and ask *"Return JSON with a summary, the main characters, and any historical references."*
+
+<!-- ------------------------ -->
+## Clean Up
+
+App Runtime apps keep consuming compute while they run. When you're done, remove the deployed app from the `tl-video-studio` folder, then drop the demo database (stages, tables, search service, procedures, and agent):
+
+```bash
+snow app teardown --force
+```
+
+```sql
+DROP DATABASE IF EXISTS TWELVE_LABS_DEMO;
+```
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
 
-You built a video search and analysis app with nothing but SQL functions and a small Streamlit front end:
+You built a video search and analysis app with SQL functions and a small front end on Snowflake App Runtime:
 
-- **Marengo** (`AI_MULTI_EMBED`) turned your videos into time-stamped vectors.
-- **Cortex Search** made them searchable by text or image.
-- **Pegasus** (`AI_COMPLETE`) answered questions about any video.
+- **Marengo 3.0** (`AI_MULTI_EMBED`) turned your videos into time-stamped visual, audio, and transcript vectors.
+- **Multi-index Cortex Search** made every modality searchable by text or image in one service.
+- **Pegasus 1.5** (`AI_COMPLETE`) answered questions about any video or moment.
 
 ### What You Learned
-- How to embed video, text, and images into one shared vector space
-- How to query a Cortex Search vector index with your own embeddings
-- How to play search hits at the exact matching timestamp
+- How to embed video, text, and images into one shared vector space with Marengo
+- How to build and query a multi-index Cortex Search service with `multi_index_query`
+- How to analyze a video, or a single search hit, with Pegasus
 
 ### Next Steps
-- Index the `audio` and `transcription` modalities too, and combine them for multi-vector search.
 - Run Pegasus over your whole library with a JSON schema and store the output as a metadata table you can join to your business data.
+- Wrap search and analysis as tools on a Cortex Agent.
 
 ### Related Resources
+- [Sample app source](https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/build-a-video-search-app-with-twelve-labs/src)
 - [AI_MULTI_EMBED documentation](https://docs.snowflake.com/en/sql-reference/functions/ai_multi_embed)
 - [AI_COMPLETE documentation](https://docs.snowflake.com/en/sql-reference/functions/ai_complete)
+- [Cortex AI Functions: Multimodal](https://docs.snowflake.com/en/user-guide/snowflake-cortex/ai-multimodal)
 - [Cortex Search overview](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview)
-- [Twelve Labs](https://www.twelvelabs.io)
+- [TwelveLabs](https://www.twelvelabs.io)

@@ -4,7 +4,7 @@ categories: snowflake-site:taxonomy/solution-center/certification/quickstart, sn
 language: en
 summary: Build real-time financial dashboards using Change Data Capture from PostgreSQL to Snowflake with Dynamic Tables and Streamlit.
 environments: web
-status: Published
+status: Archived
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 tags: Postgres
 

@@ -25,11 +25,11 @@ Along the way, you will use **CoCo**, Snowflake's AI coding assistant, to write 
 - No Python experience required for Module 1; basic Python familiarity helps for Module 2
 
 ### What You'll Learn
-- How to call large language models (LLMs) directly in Snowflake using `COMPLETE`
+- How to call large language models (LLMs) directly in Snowflake using `AI_COMPLETE`
 - The architecture behind Retrieval-Augmented Generation (RAG) and why it prevents hallucinations
 - How to build a production RAG app using `CORTEX SEARCH SERVICE` and a Snowflake Notebook
 - How to use CoCo to generate complex Snowflake SQL and Python from plain English
-- How to evaluate your AI application's response quality with Snowsight Evaluations
+- How to evaluate your AI application's response quality using an LLM as a judge
 - Why naive LLM text-to-SQL produces silently wrong numbers — and how Semantic Views and Cortex Analyst fix it
 
 ### What You'll Need
@@ -44,7 +44,7 @@ Along the way, you will use **CoCo**, Snowflake's AI coding assistant, to write 
 - A **Semantic View** encoding correct business metric formulas and a **Cortex Analyst** interface for production-grade Text-to-SQL
 
 ### Lab Files
-This lab includes a pre-built Snowflake Notebook (`building-ai-apps-snowflake-cortex.ipynb`) with all Python cells ready to run. You will upload it in the next section — no manual cell creation required.
+This lab includes a pre-built Snowflake Notebook (`accelerate-app-dev-cortex-code.ipynb`) with all Python cells ready to run. You will upload it in the next section — no manual cell creation required.
 
 <!-- ------------------------ -->
 ## Set Up Your Environment
@@ -52,21 +52,15 @@ This lab includes a pre-built Snowflake Notebook (`building-ai-apps-snowflake-co
 
 All setup runs in a **SQL Worksheet** in Snowsight. Navigate to **Left Pane > Create (+) Button ** and click **SQL File** to create a new worksheet.
 
-### Step 1: Enable Your Personal Database and Secondary Roles
+### Step 1: Enable Secondary Roles
 
 
 ```sql
---Find your USER IDENTIFIER. Paste this value in the CURRENT_USER field.
-SELECT CURRENT_USER();
-
--- Enable secondary roles for permission inheritance. Replace CURRENT_USER in the script with the USER IDENTIFIER from the previous step.
-ALTER USER CURRENT_USER SET DEFAULT_SECONDARY_ROLES = ('ALL');
+-- Enable secondary roles for permission inheritance (applies to the current user)
+ALTER USER SET DEFAULT_SECONDARY_ROLES = ('ALL');
 
 -- Activate secondary roles in the current session
 USE SECONDARY ROLES ALL;
-
--- Enable a Personal Database for Private Notebooks
-ALTER ACCOUNT SET ENABLE_PERSONAL_DATABASE = TRUE;
 ```
 
 ### Step 2: Create the Workshop Database and Schemas
@@ -96,7 +90,9 @@ CREATE WAREHOUSE IF NOT EXISTS WORKSHOP_WH
 USE WAREHOUSE WORKSHOP_WH;
 ```
 
-> **Note:** X-Small warehouses are sufficient for all steps in this lab. Cortex Search and Cortex Complete use serverless compute that does not consume warehouse credits.
+> **Note:** X-Small warehouses are sufficient for all steps in this lab. `AI_COMPLETE` calls are billed separately from your warehouse. The Cortex Search Service you create in Module 2 refreshes its index on `WORKSHOP_WH`, so drop it when you finish the lab (see **Clean Up**).
+
+> **Note:** On a brand-new trial account, access to Cortex models can take a few minutes to become available. If an early cell fails with "Not authorized to access model", wait a few minutes and re-run it.
 
 <!-- ------------------------ -->
 ## Upload the Workshop Notebook
@@ -117,9 +113,9 @@ Now run the setup code cell in the notebook imports all libraries and sets the a
 
 ```
 Session ready.
-  Database : AI_WORKSHOP_DB
-  Schema   : RAG_DATA
-  Warehouse: WORKSHOP_WH
+  Database : "AI_WORKSHOP_DB"
+  Schema   : "RAG_DATA"
+  Warehouse: "WORKSHOP_WH"
 ```
 
 If you see an error, confirm the SQL Worksheet setup steps completed successfully.
@@ -139,36 +135,28 @@ Navigate back to your SQL Worksheet, look for the icon (sparkle ✦) in the righ
 
 > **Tip:** CoCo is context-aware. It can see your active database, schema, and table names, so your prompts don't need to be overly specific.
 
-### Demo 1: Generate Setup SQL
+### Demo 1: Generate a Query
 
-In the CoCo chat panel, type the following prompt exactly:
+In the CoCo chat panel, type the following prompt:
 
 ```
-Create an internal stage in the AI_WORKSHOP_DB database and RAG_DATA schema called DOCS_STAGE with directory
-tables enabled and Snowflake SSE encryption.
+Write a query that shows the 10 largest orders in SNOWFLAKE_SAMPLE_DATA.TPCH_SF1.ORDERS,
+including the customer name and market segment from the CUSTOMER table.
 ```
 
-CoCo will return the SQL below. Accept it and run the command in your worksheet:
+CoCo will return a `SELECT` that joins `ORDERS` to `CUSTOMER`. Your exact SQL may differ. Run it in your worksheet and review the results — you'll use these same TPC-H tables in Module 3.
 
-```sql
-CREATE OR REPLACE STAGE AI_WORKSHOP_DB.RAG_DATA.DOCS_STAGE
-  DIRECTORY = (ENABLE = TRUE)
-  ENCRYPTION = (TYPE = 'SNOWFLAKE_SSE');
-```
-You should see the text "Stage DOCS_STAGE created with directory tables enabled and Snowflake SSE encryption."
+> **What just happened?** You described what you wanted in plain English, and CoCo produced Snowflake SQL with the right table paths and join key. Throughout this lab, use CoCo whenever you encounter a function or pattern you haven't seen before.
 
-> **What just happened?** You described what you wanted in plain English, and CoCo produced syntactically correct, Snowflake-idiomatic SQL — including the less-obvious `DIRECTORY` and `ENCRYPTION` parameters. Throughout this lab, use CoCo whenever you encounter a function or DDL pattern you haven't seen before.
-
-### Demo 2: Explore an Unknown Function
+### Demo 2: Ask CoCo to Explain a Concept
 
 Now try this prompt in the CoCo panel:
 
 ```
-How do I use SNOWFLAKE.CORTEX.SPLIT_TEXT_RECURSIVE_CHARACTER to chunk text into
-pieces of 1500 characters with 200-character overlap?
+What is the difference between Cortex Search and Cortex Analyst, and when would I use each?
 ```
 
-CoCo will return a working example of SQL functions with explanation. Keep this pattern in mind — you'll use this exact function in Module 2.
+CoCo will explain that Cortex Search retrieves passages from unstructured text, while Cortex Analyst answers questions over structured tables. You'll build with both in this lab — Cortex Search in Module 2 and Cortex Analyst in Module 3.
 
 ### Key Principle
 
@@ -201,7 +189,7 @@ print(complete(model, prompt))
 
 You just called a hosted LLM running inside your Snowflake account. No API key, no data leaving your security perimeter.
 
-Run the **model comparison cell** below it to contrast `mistral-7b` and `llama3-70b` side by side.
+Run the **model comparison cell** below it to contrast `mistral-7b` and `llama3.3-70b` side by side.
 
 ### Step 2: The Hallucination Problem
 
@@ -218,7 +206,7 @@ The model guesses, hedges, or states something unverifiable. This is the **hallu
 
 The solution is to **retrieve** relevant facts from your own data and **inject** them into the prompt as context. The LLM then answers using only what you provided.
 
-Run the Step 3 cell. It pulls the top 5 customers by revenue live from `SNOWFLAKE_SAMPLE_DATA.TPCH_SF1` — the TPC-H order dataset pre-loaded in every trial account — formats them as context, and asks the LLM a grounded question using only that data.
+Run the Step 3 cell. It pulls the top 5 customers by total order value live from `SNOWFLAKE_SAMPLE_DATA.TPCH_SF1` — the TPC-H order dataset pre-loaded in every trial account — formats them as context, and asks the LLM a grounded question using only that data.
 
 Compare the grounded answer to Step 2. This is the RAG pattern: **your data → context → accurate answer**.
 
@@ -244,7 +232,7 @@ This table is your document library — the raw material for the RAG app in Modu
 FEATURE_DOCS table
        │
        ▼
-  Chunk the text            ← SPLIT_TEXT_RECURSIVE_CHARACTER
+  Chunk the text            ← Python chunk_doc() function
        │
        ▼
   CHUNKED_DOCS table
@@ -260,7 +248,7 @@ FEATURE_DOCS table
 
 Real documents are too long to fit in a single LLM prompt. We break them into overlapping chunks so the search index can return the most relevant piece. Cortex Search indexes chunks, not the whole document. The search service finds the most relevant chunk for a question. If you indexed full documents, you'd retrieve a wall of text (much of it irrelevant) and would send it all to the LLM. Precision in this case improves answer quality and provides you a higher groundedness score (covered later in this lab).
 
-Run the **Step 1 cell** in the notebook. It splits each document into chunks of 1500 characters with a 200-character overlap between consecutive chunks, then writes the results to `CHUNKED_DOCS`. The overlap ensures that answers near a chunk boundary aren't cut off. You should see:
+Run the **Step 1 cell** in the notebook. It uses a small Python function, `chunk_doc()`, to split each document into chunks of 1500 characters with a 200-character overlap between consecutive chunks, then writes the results to `CHUNKED_DOCS`. The overlap ensures that answers near a chunk boundary aren't cut off. You should see:
 
 ```
 Chunks created: 15
@@ -314,7 +302,7 @@ Run the **Step 5 cell** in the notebook. This cell makes 15 LLM calls (5 questio
 Mean — Groundedness: 0.92 | Context Relevance: 0.90 | Answer Relevance: 0.93
 ```
 
-A well-tuned RAG app should score **> 0.8 on all metrics**.
+A well-tuned RAG app should average **above 0.8** on each metric. Individual questions can score lower — for example, a terse one-word answer may be judged as poorly grounded even when it is correct. LLM judges vary between runs, so your scores will differ from the sample above.
 
 - If **Groundedness** is low, your prompt isn't constraining the model tightly enough.
 - If **Context Relevance** is low, your search service or chunking needs improvement.
@@ -384,7 +372,7 @@ Run the **Step 3 cells**. We give the LLM only the table and column names — no
 
 Both queries run without errors. Both return plausible-looking numbers. Run the **comparison cell** to see the discrepancy against the gold standard from Step 2.
 
-> **Note:** The COGS cell may take 1–3 minutes — it calls `mistral-large2` (a larger, slower model) and executes a join across LINEITEM (6M rows) and PARTSUPP (800K rows) on an XSmall warehouse.
+> **Note:** The COGS cell may take 1–3 minutes — it calls `llama3.3-70b` (a larger, slower model) and executes a join across LINEITEM (6M rows) and PARTSUPP (800K rows) on an XSmall warehouse.
 
 ### Step 4: Why It Failed
 
@@ -450,6 +438,21 @@ app.query_data("Revenue by segment?")      # Cortex Analyst — structured table
 Run the **bonus cell** to ask your own question against the Semantic View.
 
 <!-- ------------------------ -->
+## Clean Up
+
+> **Note:** If you are completing this lab for a badge, run the grading script before cleaning up. The grader checks for the objects below, so dropping them first will cause it to fail.
+
+To avoid ongoing costs, drop the objects you created in this lab. Run the following in a SQL Worksheet:
+
+```sql
+DROP CORTEX SEARCH SERVICE IF EXISTS AI_WORKSHOP_DB.RAG_DATA.FEATURE_SEARCH_SERVICE;
+DROP DATABASE IF EXISTS AI_WORKSHOP_DB;
+DROP WAREHOUSE IF EXISTS WORKSHOP_WH;
+```
+
+You can also delete the uploaded notebook from **Projects > Workspaces**.
+
+<!-- ------------------------ -->
 ## Conclusion & Resources
 
 
@@ -463,12 +466,12 @@ In this lab you built two fully functional AI applications from scratch on a Sno
 
 ### What You Learned
 
-- How to call LLMs with `COMPLETE` in Python and SQL
+- How to call LLMs with `AI_COMPLETE` in Python and SQL
 - The RAG architecture — retrieval → grounding → generation — and why it prevents hallucination
-- How to chunk text with `SPLIT_TEXT_RECURSIVE_CHARACTER` and build a `CORTEX SEARCH SERVICE`
-- How to write a reusable RAG Python class using `snowflake.core` and `snowflake.cortex`
+- How to chunk text for retrieval and build a `CORTEX SEARCH SERVICE`
+- How to write a reusable RAG Python class using `snowflake.core` and `AI_COMPLETE`
 - How to use CoCo to generate Snowflake-idiomatic SQL and Python from descriptions
-- How to evaluate application quality with Snowsight Evaluations
+- How to evaluate application quality with an LLM-as-a-judge
 - Why naive LLM text-to-SQL fails silently — and the exact failure modes (revenue inflated by tax, COGS wrong by 2.8×)
 - How Semantic Views encode business metric definitions as a contract between your data and the AI
 - How to use Cortex Analyst with a Semantic View for deterministic, production-grade Text-to-SQL
@@ -486,6 +489,6 @@ In this lab you built two fully functional AI applications from scratch on a Sno
 - [Cortex Search Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview)
 - [Cortex Analyst Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-analyst)
 - [Snowflake Notebooks](https://docs.snowflake.com/en/user-guide/ui-snowsight/notebooks)
-- [CoCo (Snowflake Copilot)](https://docs.snowflake.com/en/user-guide/snowflake-copilot)
+- [CoCo in Snowsight](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-snowsight)
 - [Getting Started with Cortex Agents — Quickstart](https://quickstarts.snowflake.com/guide/getting_started_with_cortex_agents)
 - [Streamlit in Snowflake](https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit)

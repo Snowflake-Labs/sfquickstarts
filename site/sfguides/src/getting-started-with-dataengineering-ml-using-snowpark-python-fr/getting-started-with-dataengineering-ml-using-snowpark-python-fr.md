@@ -1,6 +1,6 @@
 id: getting-started-with-dataengineering-ml-using-snowpark-python-fr
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/snowflake-feature/ml-functions
-language: en
+language: fr
 summary: Premiers pas avec le Data Engineering et le Machine Learning à l’aide de Snowpark for Python
 environments: web
 status: Published
