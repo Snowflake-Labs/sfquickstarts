@@ -55,11 +55,11 @@ time CoCo runs a shell command there.
 Install the plugin from its repository and check it:
 
 ```bash
-cortex plugin install zozo123/sandboxed-shell/plugins/islo
-cortex plugin validate islo
+cortex plugin install zozo123/sandboxed-shell/plugins/sandboxed-shell
+cortex plugin validate sandboxed-shell
 ```
 
-The second command prints `Plugin 'islo' is valid.`
+The second command prints `Plugin 'sandboxed-shell' is valid.`
 
 <!-- ------------------------ -->
 ## Run a Command in the Sandbox
@@ -91,7 +91,7 @@ and time limits stop the command inside the sandbox.
 A user can switch a plugin off. To leave the agent no shell except the sandbox, an
 administrator denies the built-in shell tool in CoCo's managed settings and deploys the
 plugin's MCP server, whose `sandbox_exec` tool runs commands through the same runner. The
-plugin ships both files as examples in `plugins/islo/managed/`. Check the managed-settings
+plugin ships both files as examples in `plugins/sandboxed-shell/managed/`. Check the managed-settings
 file before rolling it out:
 
 ```bash
