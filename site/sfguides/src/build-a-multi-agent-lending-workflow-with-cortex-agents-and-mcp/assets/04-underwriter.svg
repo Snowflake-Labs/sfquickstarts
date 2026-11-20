@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 552" width="900" height="552" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+  <rect width="900" height="552" fill="#FFFFFF"/>
+  <text x="40" y="38" font-size="18" font-weight="600" fill="#11567F">The underwriting agent</text>
+  <rect x="36" y="122" width="208" height="95" rx="8" fill="#F8FAFC" stroke="#CBD5E1"/>
+  <text x="50" y="148" font-size="12.5" font-weight="600" fill="#11567F">Input</text>
+  <rect x="50" y="166" width="180" height="22" rx="11" fill="#FFFFFF" stroke="#CBD5E1"/>
+  <text x="62" y="181" font-size="10.5" fill="#24323D">&#128221; Credit memo</text>
+  <rect x="50" y="193" width="180" height="22" rx="11" fill="#FFFFFF" stroke="#CBD5E1"/>
+  <text x="62" y="208" font-size="10.5" fill="#24323D">&#128196; Application record</text>
+  <rect x="272" y="64" width="330" height="268" rx="8" fill="#EAF7FD" stroke="#29B5E8" stroke-dasharray="6 4" stroke-width="1.6"/>
+  <text x="286" y="90" font-size="12.5" font-weight="600" fill="#11567F">The agent</text>
+  <circle cx="295" cy="126" r="9" fill="#FFFFFF" stroke="#29B5E8"/>
+  <text x="295" y="129" font-size="9.5" font-weight="700" fill="#11567F" text-anchor="middle">1</text>
+  <text x="312" y="130" font-size="10.5" fill="#11567F">Look for a credit memo on this applicant</text>
+  <circle cx="295" cy="164" r="9" fill="#FFFFFF" stroke="#29B5E8"/>
+  <text x="295" y="167" font-size="9.5" font-weight="700" fill="#11567F" text-anchor="middle">2</text>
+  <text x="312" y="168" font-size="10.5" fill="#11567F">Ask the credit analyst when there is none</text>
+  <circle cx="295" cy="202" r="9" fill="#FFFFFF" stroke="#29B5E8"/>
+  <text x="295" y="205" font-size="9.5" font-weight="700" fill="#11567F" text-anchor="middle">3</text>
+  <text x="312" y="206" font-size="10.5" fill="#11567F">Test the score and the ratio against policy</text>
+  <circle cx="295" cy="240" r="9" fill="#FFFFFF" stroke="#29B5E8"/>
+  <text x="295" y="243" font-size="9.5" font-weight="700" fill="#11567F" text-anchor="middle">4</text>
+  <text x="312" y="244" font-size="10.5" fill="#11567F">Approve within the limit, decline, or escalate</text>
+  <circle cx="295" cy="278" r="9" fill="#FFFFFF" stroke="#29B5E8"/>
+  <text x="295" y="281" font-size="9.5" font-weight="700" fill="#11567F" text-anchor="middle">5</text>
+  <text x="312" y="282" font-size="10.5" fill="#11567F">Record the decision on the application</text>
+  <rect x="646" y="108" width="218" height="180" rx="8" fill="#FFFFFF" stroke="#24323D"/>
+  <text x="660" y="134" font-size="12.5" font-weight="600" fill="#11567F">Output</text>
+  <text x="850" y="134" font-size="9.5" fill="#94A3B8" text-anchor="end">APP_1004</text>
+  <text x="660" y="164" font-size="9" fill="#94A3B8" font-weight="600">STATUS</text>
+  <text x="850" y="164" font-size="11" fill="#24323D" font-weight="600" text-anchor="end">DECLINED</text>
+  <line x1="660" y1="174" x2="850" y2="174" stroke="#DCE3EA"/>
+  <text x="660" y="194" font-size="9" fill="#94A3B8" font-weight="600">POLICY_TIER</text>
+  <text x="850" y="194" font-size="11" fill="#24323D" font-weight="600" text-anchor="end">REFERRAL</text>
+  <line x1="660" y1="204" x2="850" y2="204" stroke="#DCE3EA"/>
+  <text x="660" y="224" font-size="9" fill="#94A3B8" font-weight="600">MAX_EXPOSURE</text>
+  <text x="850" y="224" font-size="11" fill="#24323D" font-weight="600" text-anchor="end">24,450.00</text>
+  <line x1="660" y1="234" x2="850" y2="234" stroke="#DCE3EA"/>
+  <text x="660" y="254" font-size="9" fill="#94A3B8" font-weight="600">APPROVED_AMOUNT</text>
+  <text x="850" y="254" font-size="11" fill="#24323D" font-weight="600" text-anchor="end">0.00</text>
+  <text x="660" y="312" font-size="10" fill="#94A3B8">At the ratio reported at intake the same file</text>
+  <text x="660" y="327" font-size="10" fill="#94A3B8">was TIER_1, eligible for the full 75,000.</text>
+  <rect x="36" y="372" width="828" height="148" rx="8" fill="#FCFDFE" stroke="#E2E8F0"/>
+  <text x="48" y="389" font-size="9.5" fill="#64748B" font-weight="700">TOOLS</text>
+  <rect x="52" y="398" width="468" height="106" rx="8" fill="#FFFBEB" stroke="#B45309"/>
+  <text x="66" y="424" font-size="12.5" font-weight="600" fill="#B45309">Lending policy</text>
+  <text x="170" y="424" font-size="9.5" fill="#64748B">POLICY_CHECK, run on the ratio the memo established</text>
+  <text x="66" y="448" font-size="9.5" fill="#B45309" font-weight="700">TIER_1</text>
+  <text x="142" y="448" font-size="9.5" fill="#24323D">740 or above &#183; 0.36 or below</text>
+  <text x="506" y="448" font-size="9.5" fill="#B45309" text-anchor="end">50% of income</text>
+  <text x="66" y="468" font-size="9.5" fill="#B45309" font-weight="700">TIER_2</text>
+  <text x="142" y="468" font-size="9.5" fill="#24323D">680 or above &#183; 0.43 or below</text>
+  <text x="506" y="468" font-size="9.5" fill="#B45309" text-anchor="end">35% of income</text>
+  <text x="66" y="488" font-size="9.5" fill="#B45309" font-weight="700">REFERRAL</text>
+  <text x="142" y="488" font-size="9.5" fill="#24323D">anything else</text>
+  <text x="506" y="488" font-size="9.5" fill="#B45309" text-anchor="end">15% of income</text>
+  <rect x="542" y="398" width="306" height="106" rx="8" fill="#EAF7FD" stroke="#29B5E8" stroke-dasharray="6 4" stroke-width="1.6"/>
+  <text x="556" y="424" font-size="12.5" font-weight="600" fill="#11567F">The credit analyst agent</text>
+  <text x="556" y="448" font-size="10" fill="#64748B">Built and measured in Module 3.</text>
+  <text x="556" y="465" font-size="10" fill="#64748B">Reached over a Snowflake-managed</text>
+  <text x="556" y="482" font-size="10" fill="#64748B">MCP server.</text>
+  <line x1="437.0" y1="332" x2="437.0" y2="372" stroke="#29B5E8" stroke-width="2" stroke-dasharray="5 4"/>
+  <polygon points="432.0,362 442.0,362 437.0,372 " fill="#29B5E8"/>
+  <polygon points="432.0,342 442.0,342 437.0,332 " fill="#29B5E8"/>
+  <line x1="252" y1="198.0" x2="254" y2="198.0" stroke="#29B5E8" stroke-width="2"/>
+  <polygon points="254,193.0 264,198.0 254,203.0" fill="#29B5E8"/>
+  <line x1="610" y1="198.0" x2="628" y2="198.0" stroke="#29B5E8" stroke-width="2"/>
+  <polygon points="628,193.0 638,198.0 628,203.0" fill="#29B5E8"/>
+</svg>

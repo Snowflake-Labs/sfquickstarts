@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 430" width="1120" height="430" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+  <rect width="1120" height="430" fill="#FFFFFF"/>
+  <defs>
+    <marker id="h" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" fill="#11567F"/></marker>
+    <marker id="t" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" fill="#64748B"/></marker>
+  </defs>
+  <text x="32" y="30" font-size="17" font-weight="600" fill="#11567F">Module 4</text>
+  <text x="32" y="51" font-size="11.5" fill="#64748B">Explore the agent that applies the lending policy and records the decision.</text>
+  <rect x="32" y="64" width="1056" height="316" rx="10" fill="none" stroke="#E2E8F0"/>
+  <text x="46" y="82" font-size="8.5" font-weight="700" fill="#94A3B8" letter-spacing="0.8">SNOWFLAKE</text>
+  <g opacity="0.22">
+    <rect x="56" y="100" width="176" height="264" rx="8" fill="none" stroke="#E2E8F0"/>
+    <text x="70" y="120" font-size="8.5" font-weight="700" fill="#64748B" letter-spacing="0.8">SET UP FOR YOU</text>
+  </g>
+  <g opacity="0.22">
+    <rect x="68" y="140" width="152" height="80" rx="6" fill="#F1F5F9" stroke="#CBD5E1"/>
+    <text x="144.0" y="184.0" font-size="11" font-weight="600" fill="#11567F" text-anchor="middle">Applications</text>
+  </g>
+  <text x="144.0" y="156" font-size="8" font-weight="700" fill="#94A3B8" letter-spacing="0.8" text-anchor="middle" opacity="0.22">TABLE</text>
+  <g opacity="0.22">
+    <rect x="68" y="252" width="152" height="80" rx="6" fill="#F1F5F9" stroke="#CBD5E1"/>
+    <text x="144.0" y="296.0" font-size="11" font-weight="600" fill="#11567F" text-anchor="middle">Documents</text>
+  </g>
+  <text x="144.0" y="268" font-size="8" font-weight="700" fill="#94A3B8" letter-spacing="0.8" text-anchor="middle" opacity="0.22">STAGE</text>
+  <g opacity="0.22">
+    <rect x="256" y="100" width="272" height="264" rx="8" fill="none" stroke="#E2E8F0"/>
+    <text x="270" y="120" font-size="8.5" font-weight="700" fill="#64748B" letter-spacing="0.8">REASONING LAYER  ·  MODULE 2 EXPLORES IT</text>
+  </g>
+  <g opacity="0.22">
+    <rect x="270" y="140" width="244" height="80" rx="6" fill="#F1F5F9" stroke="#CBD5E1"/>
+    <text x="392.0" y="175.0" font-size="11" font-weight="600" fill="#11567F" text-anchor="middle">Cortex Analyst</text>
+    <text x="392.0" y="192.0" font-size="9.5" fill="#64748B" text-anchor="middle">answers questions using a semantic view</text>
+  </g>
+  <g opacity="0.22">
+    <rect x="270" y="252" width="244" height="80" rx="6" fill="#F1F5F9" stroke="#CBD5E1"/>
+    <text x="392.0" y="287.0" font-size="11" font-weight="600" fill="#11567F" text-anchor="middle">Cortex Search</text>
+    <text x="392.0" y="304.0" font-size="9.5" fill="#64748B" text-anchor="middle">searches the document text by meaning</text>
+  </g>
+  <g>
+    <rect x="552" y="100" width="336" height="264" rx="8" fill="none" stroke="#E2E8F0"/>
+    <text x="566" y="120" font-size="8.5" font-weight="700" fill="#64748B" letter-spacing="0.8">THE AGENTS  ·  MODULES 3 AND 4</text>
+  </g>
+  <g opacity="0.22">
+    <rect x="568" y="132" width="304" height="76" rx="6" fill="#EAF7FD" stroke="#29B5E8"/>
+    <text x="720.0" y="165.0" font-size="11" font-weight="600" fill="#11567F" text-anchor="middle">Credit analyst agent</text>
+    <text x="720.0" y="182.0" font-size="9.5" fill="#64748B" text-anchor="middle">reads each application and its documents</text>
+  </g>
+  <g opacity="0.22">
+    <rect x="630" y="222" width="180" height="44" rx="6" fill="#EAF7FD" stroke="#29B5E8"/>
+    <text x="720.0" y="248.0" font-size="10" font-weight="600" fill="#11567F" text-anchor="middle">Credit memo</text>
+  </g>
+  <g>
+    <rect x="568" y="280" width="304" height="76" rx="6" fill="#EAF7FD" stroke="#29B5E8"/>
+    <text x="720.0" y="313.0" font-size="11" font-weight="600" fill="#11567F" text-anchor="middle">Underwriting agent</text>
+    <text x="720.0" y="330.0" font-size="9.5" fill="#64748B" text-anchor="middle">applies the lending policy</text>
+  </g>
+  <g>
+    <rect x="912" y="100" width="160" height="264" rx="8" fill="none" stroke="#E2E8F0"/>
+    <text x="926" y="120" font-size="8.5" font-weight="700" fill="#64748B" letter-spacing="0.8">OUTCOME</text>
+  </g>
+  <g>
+    <rect x="924" y="196" width="136" height="104" rx="6" fill="#EAF7FD" stroke="#29B5E8"/>
+    <text x="992.0" y="220" font-size="11" font-weight="600" fill="#11567F" text-anchor="middle">Decision</text>
+  </g>
+    <text x="992.0" y="246" font-size="9.5" fill="#64748B" text-anchor="middle">approved</text>
+    <text x="992.0" y="264" font-size="9.5" fill="#64748B" text-anchor="middle">declined</text>
+    <text x="992.0" y="282" font-size="9.5" fill="#64748B" text-anchor="middle">escalated</text>
+  <path d="M 232 180.0 L 250 180.0" fill="none" stroke="#11567F" stroke-width="1.8" marker-end="url(#h)" opacity="0.22"/>
+  <path d="M 232 292.0 L 250 292.0" fill="none" stroke="#11567F" stroke-width="1.8" marker-end="url(#h)" opacity="0.22"/>
+  <path d="M 528 232.0 L 546 232.0" fill="none" stroke="#11567F" stroke-width="1.8" marker-end="url(#h)" opacity="0.22"/>
+  <path d="M 720.0 208 L 720.0 217" fill="none" stroke="#64748B" stroke-width="1.2" marker-end="url(#t)" opacity="0.22"/>
+  <path d="M 720.0 266 L 720.0 275" fill="none" stroke="#64748B" stroke-width="1.2" marker-end="url(#t)"/>
+  <path d="M 888 248.0 L 906 248.0" fill="none" stroke="#11567F" stroke-width="1.8" marker-end="url(#h)"/>
+  <path d="M 992.0 300 L 992.0 408 L 44 408 L 44 180.0 L 50 180.0" fill="none" stroke="#64748B" stroke-width="1.2" stroke-dasharray="4 3" marker-end="url(#t)"/>
+  <text x="72" y="401" font-size="9.5" fill="#64748B">the decision is written back to the application</text>
+</svg>

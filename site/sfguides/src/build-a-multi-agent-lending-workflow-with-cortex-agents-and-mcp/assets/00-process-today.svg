@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 490" width="900" height="490" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+  <rect width="900" height="490" fill="#FFFFFF"/>
+  <text x="48" y="42" font-size="18" font-weight="600" fill="#11567F">How a lending decision gets made today</text>
+  <rect x="48" y="68" width="252" height="250" rx="8" fill="#F8FAFC" stroke="#CBD5E1"/>
+  <circle cx="74" cy="96" r="12" fill="#94A3B8"/>
+  <text x="74" y="101" font-size="12" font-weight="700" fill="#FFFFFF" text-anchor="middle">1</text>
+  <text x="94" y="94" font-size="12.5" font-weight="600" fill="#11567F">Information gathering</text>
+  <text x="94" y="110" font-size="10.5" fill="#94A3B8">&#9881;&#65039; automated</text>
+  <text x="62" y="136" font-size="9.5" font-weight="600" fill="#64748B" letter-spacing="0.5">FROM THE APPLICANT</text>
+  <rect x="62" y="144" width="224" height="22" rx="11" fill="#FFFFFF" stroke="#CBD5E1"/>
+  <text x="74" y="159" font-size="10.5" fill="#24323D">&#128196; Application form</text>
+  <rect x="62" y="169" width="224" height="22" rx="11" fill="#FFFFFF" stroke="#CBD5E1"/>
+  <text x="74" y="184" font-size="10.5" fill="#24323D">&#129534; Pay stubs</text>
+  <rect x="62" y="194" width="224" height="22" rx="11" fill="#FFFFFF" stroke="#CBD5E1"/>
+  <text x="74" y="209" font-size="10.5" fill="#24323D">&#127974; Bank statements</text>
+  <rect x="62" y="219" width="224" height="22" rx="11" fill="#FFFFFF" stroke="#CBD5E1"/>
+  <text x="74" y="234" font-size="10.5" fill="#24323D">&#128209; Tax returns</text>
+  <rect x="62" y="244" width="224" height="22" rx="11" fill="#FFFFFF" stroke="#CBD5E1"/>
+  <text x="74" y="259" font-size="10.5" fill="#24323D">&#128221; Loan agreements</text>
+  <text x="62" y="282" font-size="9.5" font-weight="600" fill="#64748B" letter-spacing="0.5">FROM THIRD PARTIES</text>
+  <rect x="62" y="290" width="224" height="22" rx="11" fill="#FFFFFF" stroke="#CBD5E1"/>
+  <text x="74" y="305" font-size="10.5" fill="#24323D">&#127963;&#65039; Credit report</text>
+  <rect x="330" y="68" width="252" height="250" rx="8" fill="#EAF7FD" stroke="#29B5E8"/>
+  <circle cx="356" cy="96" r="12" fill="#11567F"/>
+  <text x="356" y="101" font-size="12" font-weight="700" fill="#FFFFFF" text-anchor="middle">2</text>
+  <text x="376" y="94" font-size="12.5" font-weight="600" fill="#11567F">Information analysis</text>
+  <text x="376" y="110" font-size="10.5" fill="#11567F">&#128100; credit analyst</text>
+  <text x="344" y="146" font-size="11.5" fill="#11567F">Reads every document in the file</text>
+  <text x="344" y="170" font-size="11.5" fill="#11567F">Adds up what is paid each month</text>
+  <text x="344" y="194" font-size="11.5" fill="#11567F">Compares that with the credit report</text>
+  <text x="344" y="218" font-size="11.5" fill="#11567F">Chases whatever does not match</text>
+  <text x="344" y="264" font-size="9.5" font-weight="600" fill="#11567F" letter-spacing="0.5">PRODUCES</text>
+  <rect x="344" y="272" width="224" height="22" rx="11" fill="#FFFFFF" stroke="#29B5E8"/>
+  <text x="356" y="287" font-size="11" fill="#11567F">&#128203; Credit memo</text>
+  <rect x="612" y="68" width="252" height="250" rx="8" fill="#EAF7FD" stroke="#29B5E8"/>
+  <circle cx="638" cy="96" r="12" fill="#11567F"/>
+  <text x="638" y="101" font-size="12" font-weight="700" fill="#FFFFFF" text-anchor="middle">3</text>
+  <text x="658" y="94" font-size="12.5" font-weight="600" fill="#11567F">Decision making</text>
+  <text x="658" y="110" font-size="10.5" fill="#11567F">&#128100; underwriter</text>
+  <text x="626" y="144" font-size="11.5" fill="#11567F">Reads the credit memo</text>
+  <text x="626" y="166" font-size="11.5" fill="#11567F">Applies lending policy to it</text>
+  <text x="626" y="196" font-size="9.5" font-weight="600" fill="#11567F" letter-spacing="0.5">DECIDES ONE OF THREE</text>
+  <rect x="626" y="204" width="224" height="22" rx="11" fill="#FFFFFF" stroke="#29B5E8"/>
+  <text x="638" y="219" font-size="11" fill="#11567F">&#9989; Approve, up to the limit</text>
+  <rect x="626" y="231" width="224" height="22" rx="11" fill="#FFFFFF" stroke="#29B5E8"/>
+  <text x="638" y="246" font-size="11" fill="#11567F">&#128683; Decline</text>
+  <rect x="626" y="258" width="224" height="22" rx="11" fill="#FFFFFF" stroke="#29B5E8"/>
+  <text x="638" y="273" font-size="11" fill="#11567F">&#128587; Refer to a senior underwriter</text>
+  <line x1="300" y1="182" x2="318" y2="182" stroke="#29B5E8" stroke-width="2"/>
+  <polygon points="318,177 328,182 318,187" fill="#29B5E8"/>
+  <text x="314" y="170" font-size="9.5" fill="#11567F" text-anchor="middle">file</text>
+  <line x1="582" y1="182" x2="600" y2="182" stroke="#29B5E8" stroke-width="2"/>
+  <polygon points="600,177 610,182 600,187" fill="#29B5E8"/>
+  <text x="596" y="170" font-size="9.5" fill="#11567F" text-anchor="middle">memo</text>
+  <text x="568" y="110" font-size="10" fill="#11567F" text-anchor="end">&#9203; waits on a person</text>
+  <text x="850" y="110" font-size="10" fill="#11567F" text-anchor="end">&#9203; waits on a person</text>
+  <line x1="738" y1="340" x2="738" y2="326" stroke="#E8C468" stroke-width="2"/>
+  <polygon points="733,326 738,316 743,326" fill="#E8C468"/>
+  <rect x="330" y="340" width="534" height="136" rx="8" fill="#FFFBF0" stroke="#E8C468"/>
+  <text x="348" y="362" font-size="12" fill="#8A6A16" font-weight="600">&#128213; Lending policy</text>
+  <text x="846" y="362" font-size="10" fill="#B08D2E" text-anchor="end">returns a limit, never a verdict</text>
+  <text x="348" y="384" font-size="9.5" font-weight="600" fill="#B08D2E" letter-spacing="0.5">TIER</text>
+  <text x="452" y="384" font-size="9.5" font-weight="600" fill="#B08D2E" letter-spacing="0.5">CREDIT SCORE</text>
+  <text x="580" y="384" font-size="9.5" font-weight="600" fill="#B08D2E" letter-spacing="0.5">DTI</text>
+  <text x="846" y="384" font-size="9.5" font-weight="600" fill="#B08D2E" letter-spacing="0.5" text-anchor="end">MAY LEND UP TO</text>
+  <line x1="348" y1="390" x2="846" y2="390" stroke="#EFDDAE"/>
+  <text x="348" y="406" font-size="11" fill="#8A6A16" font-weight="600">Tier 1</text>
+  <text x="452" y="406" font-size="11" fill="#8A6A16">740 and above</text>
+  <text x="580" y="406" font-size="11" fill="#8A6A16">0.36 or less</text>
+  <text x="846" y="406" font-size="11" fill="#8A6A16" font-weight="600" text-anchor="end">50% of income</text>
+  <line x1="348" y1="412" x2="846" y2="412" stroke="#EFDDAE"/>
+  <text x="348" y="428" font-size="11" fill="#8A6A16" font-weight="600">Tier 2</text>
+  <text x="452" y="428" font-size="11" fill="#8A6A16">680 and above</text>
+  <text x="580" y="428" font-size="11" fill="#8A6A16">0.43 or less</text>
+  <text x="846" y="428" font-size="11" fill="#8A6A16" font-weight="600" text-anchor="end">35% of income</text>
+  <line x1="348" y1="434" x2="846" y2="434" stroke="#EFDDAE"/>
+  <text x="348" y="450" font-size="11" fill="#8A6A16" font-weight="600">Referral</text>
+  <text x="452" y="450" font-size="11" fill="#8A6A16">620 and above</text>
+  <text x="580" y="450" font-size="11" fill="#8A6A16">0.43 or less</text>
+  <text x="846" y="450" font-size="11" fill="#8A6A16" font-weight="600" text-anchor="end">15% of income</text>
+  <text x="348" y="468" font-size="10" fill="#B08D2E">Below 620, or above 0.43, fails outright</text>
+</svg>

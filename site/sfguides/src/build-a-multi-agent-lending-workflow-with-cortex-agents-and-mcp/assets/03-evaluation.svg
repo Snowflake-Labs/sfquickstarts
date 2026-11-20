@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 380" width="920" height="380" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+  <rect width="920" height="380" fill="#FFFFFF"/>
+  <text x="24" y="30" font-size="15" font-weight="600" fill="#11567F">One question through one evaluation run</text>
+  <text x="896" y="30" font-size="10" fill="#64748B" text-anchor="end">APP_1004</text>
+  <rect x="12" y="52" width="896" height="140" rx="8" fill="#FCFDFE" stroke="#E2E8F0"/>
+  <text x="24" y="68" font-size="9.5" font-weight="700" fill="#64748B" letter-spacing="0.8">THE AGENT RUN</text>
+  <rect x="12" y="206" width="896" height="140" rx="8" fill="#FCFDFE" stroke="#E2E8F0"/>
+  <text x="24" y="222" font-size="9.5" font-weight="700" fill="#64748B" letter-spacing="0.8">THE EVALUATION</text>
+  <text x="24" y="86" font-size="8.5" font-weight="700" fill="#94A3B8" letter-spacing="0.8">THE QUESTION</text>
+  <rect x="24" y="96" width="232" height="82" rx="6" fill="#FFFFFF" stroke="#CBD5E1"/>
+  <text x="140.0" y="125.0" font-size="10.5" font-weight="600" fill="#24323D" text-anchor="middle">Assess APP_1004 and</text>
+  <text x="140.0" y="141.0" font-size="10.5" font-weight="600" fill="#24323D" text-anchor="middle">reconcile the reported</text>
+  <text x="140.0" y="157.0" font-size="10.5" font-weight="600" fill="#24323D" text-anchor="middle">ratio against the statement</text>
+  <rect x="314" y="96" width="158" height="82" rx="6" fill="#EAF7FD" stroke="#29B5E8" stroke-dasharray="6 4"/>
+  <text x="393.0" y="142.0" font-size="12" font-weight="600" fill="#11567F" text-anchor="middle">The agent</text>
+  <text x="528" y="86" font-size="8.5" font-weight="700" fill="#94A3B8" letter-spacing="0.8">ITS ANSWER</text>
+  <rect x="528" y="96" width="172" height="82" rx="6" fill="#FFFFFF" stroke="#24323D"/>
+  <text x="614.0" y="133.0" font-size="10.5" font-weight="600" fill="#24323D" text-anchor="middle">7,062.83 a month,</text>
+  <text x="614.0" y="149.0" font-size="10.5" font-weight="600" fill="#24323D" text-anchor="middle">so 0.52 not 0.19</text>
+  <text x="24" y="240" font-size="8.5" font-weight="700" fill="#94A3B8" letter-spacing="0.8">THE EXPECTED ANSWER</text>
+  <rect x="24" y="250" width="232" height="82" rx="6" fill="#FFFFFF" stroke="#CBD5E1"/>
+  <text x="140.0" y="287.0" font-size="10.5" font-weight="600" fill="#24323D" text-anchor="middle">Finds 3,870.00 and 612.00,</text>
+  <text x="140.0" y="303.0" font-size="10.5" font-weight="600" fill="#24323D" text-anchor="middle">arrives at about 0.52</text>
+  <rect x="528" y="250" width="172" height="82" rx="6" fill="#EAF7FD" stroke="#29B5E8"/>
+  <text x="614.0" y="290.0" font-size="12" font-weight="600" fill="#11567F" text-anchor="middle">A judge</text>
+  <text x="614.0" y="307.0" font-size="9.5" fill="#64748B" text-anchor="middle">claude-4-sonnet</text>
+  <text x="748" y="240" font-size="8.5" font-weight="700" fill="#94A3B8" letter-spacing="0.8">THE SCORES</text>
+  <rect x="748" y="250" width="148" height="82" rx="6" fill="#FFFFFF" stroke="#24323D"/>
+  <text x="760" y="280" font-size="9" fill="#64748B">Answer correctness</text>
+  <text x="884" y="293" font-size="13" font-weight="700" fill="#11567F" text-anchor="end">1.00</text>
+  <text x="760" y="306" font-size="9" fill="#64748B">Logical consistency</text>
+  <text x="884" y="319" font-size="13" font-weight="700" fill="#11567F" text-anchor="end">1.00</text>
+  <line x1="256" y1="137.0" x2="305" y2="137.0" stroke="#11567F" stroke-width="1.8"/>
+  <polygon points="305,132.5 313,137.0 305,141.5" fill="#11567F"/>
+  <line x1="472" y1="137.0" x2="519" y2="137.0" stroke="#11567F" stroke-width="1.8"/>
+  <polygon points="519,132.5 527,137.0 519,141.5" fill="#11567F"/>
+  <line x1="614.0" y1="178" x2="614.0" y2="241" stroke="#11567F" stroke-width="1.8"/>
+  <polygon points="609.5,241 614.0,249 618.5,241" fill="#11567F"/>
+  <line x1="256" y1="291.0" x2="519" y2="291.0" stroke="#11567F" stroke-width="1.8"/>
+  <polygon points="519,286.5 527,291.0 519,295.5" fill="#11567F"/>
+  <line x1="700" y1="291.0" x2="739" y2="291.0" stroke="#11567F" stroke-width="1.8"/>
+  <polygon points="739,286.5 747,291.0 739,295.5" fill="#11567F"/>
+  <text x="24" y="364" font-size="9.5" fill="#64748B">Only answer correctness uses the expected answer. Logical consistency scores the agent&#8217;s own reasoning, so it needs nothing to compare against.</text>
+</svg>
