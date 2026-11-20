@@ -1,121 +1,175 @@
+author: Kamesh Sampath, Gilberto Hernandez
 id: getting-started-with-openflow-postgresql-cdc
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/platform, snowflake-site:taxonomy/snowflake-feature/ingestion, snowflake-site:taxonomy/snowflake-feature/transformation, snowflake-site:taxonomy/snowflake-feature/openflow, snowflake-site:taxonomy/snowflake-feature/postgres
 language: en
-summary: Getting Started with Openflow PostgreSQL Change Data Capture (CDC)
+summary: Build a real-time CDC pipeline from PostgreSQL to Snowflake with the gen 2 Openflow PostgreSQL connector, then explore the changes in natural language with Snowflake CoWork.
 environments: web
 status: published
 feedback link: <https://github.com/Snowflake-Labs/sfquickstarts/issues>
-author: Kamesh Sampath
+fork repo link: https://github.com/Snowflake-Labs/sfguide-getting-started-openflow-postgresql-cdc
 tags: Postgres
 
 # Getting Started with PostgreSQL CDC
 <!-- ------------------------ -->
 ## Overview
 
-This quickstart demonstrates how to build a real-time Change Data Capture (CDC) pipeline from PostgreSQL to Snowflake using Openflow. You'll learn how to capture both initial snapshots and incremental changes, enabling real-time analytics on transactional data.
+In this Quickstart, you'll build a real-time Change Data Capture (CDC) pipeline from PostgreSQL to Snowflake using the gen 2 Openflow PostgreSQL connector. We'll capture an initial snapshot of a transactional database, stream every insert, update, and delete into Snowflake within seconds, and then ask questions about those changes in plain English with Snowflake CoWork.
 
-We use a healthcare appointment management system as our demo dataset, but the same patterns apply to any database-based application including e-commerce, CRM, ERP, and other transactional systems.
+We use a healthcare appointment management system as our demo dataset, and the same patterns apply to any transactional application, including e-commerce, CRM, and ERP systems.
+
+> **Note:** If you already run gen 1 Openflow, which most Openflow users do today, read the **Already on Gen 1?** step before you start. It explains how your existing setup maps to gen 2 and where to rejoin the guide.
 
 ### Healthcare Appointments Demo Dataset
 
-You'll work with a realistic **Healthcare Appointment Management** system that includes:
+You'll work with a synthetic healthcare appointment management system that includes:
 
-- **100 synthetic patients** with diverse demographics
-- **10 doctors** across 5 medical specializations
-- **170 appointments** (150 historical + 20 upcoming)
-- **120 visit records** with diagnoses and charges
-- **Real-time CDC events** demonstrating INSERT, UPDATE operations
+- 100 synthetic patients with diverse demographics
+- 10 doctors across 5 medical specializations
+- 170 appointments (150 historical and 20 upcoming)
+- 120 visit records with diagnoses and charges
+- Real-time CDC events covering INSERT, UPDATE, and DELETE operations
 
-> **IMPORTANT - Demo Data Disclaimer:** All patient data, doctor information, and healthcare records in this demo are **entirely fictitious** and created for demonstration purposes only. No real PHI (Protected Health Information) is used.
-
-By completing this guide, you will build an end-to-end CDC pipeline that captures changes from PostgreSQL in real-time and enables analytics in Snowflake.
-
-Here is a summary of what you will learn in each step by following this quickstart:
-
-- **Setup Environment**: Configure Snowflake database objects, PostgreSQL instance, and network access
-- **Openflow Configuration**: Set up [Openflow](https://docs.snowflake.com/en/user-guide/data-integration/openflow/about) SPCS runtime
-- **Add PostgreSQL Connector**: Configure the [PostgreSQL CDC connector](https://docs.snowflake.com/en/user-guide/data-integration/openflow/connectors/postgres/about)
-- **Initialize PostgreSQL Database**: Load healthcare schema and synthetic data
-- **Verify Snapshot Load**: Confirm initial data capture in Snowflake
-- **Generate Live CDC Events**: Simulate real-time appointment operations
-- **Real-time Analytics**: Query live data and analyze CDC metadata
-- **Monitor CDC Pipeline**: Track replication lag and data quality
+> **Important:** All patient data, doctor information, and healthcare records in this demo are entirely fictitious and created for demonstration purposes only. No real PHI (Protected Health Information) is used.
 
 ### What is Openflow
 
-[Snowflake Openflow](https://docs.snowflake.com/en/user-guide/data-integration/openflow/about) is an integration service that connects any data source and any destination with hundreds of processors supporting structured and unstructured text, images, audio, video and sensor data. Built on Apache NiFi, Openflow lets you run a fully managed service in your own cloud for complete control.
+[Snowflake Openflow](https://docs.snowflake.com/en/user-guide/data-integration/openflow/about) is an integration service, built on Apache NiFi, that moves data from almost any source into Snowflake. It ships with ready-made connectors for databases, SaaS apps, files, and streams.
 
-**Key Features and Benefits**:
+Openflow runs in one of two deployment types. A Snowflake deployment runs on Snowpark Container Services inside your Snowflake account. A BYOC (bring your own cloud) deployment runs the data plane in your own AWS account. This Quickstart uses a Snowflake deployment.
 
-- **Open and Extensible**: An extensible managed service powered by Apache NiFi, enabling you to build and extend processors from any data source to any destination
-- **Unified Data Integration Platform**: Handle complex, bi-directional data extraction and loading through a fully managed service
-- **Enterprise-Ready**: Out-of-the-box security, compliance, and observability hooks for data integration
-- **High Speed Ingestion**: Handle structured and unstructured data in both batch and streaming modes at virtually any scale
-- **Continuous Multimodal Data**: Near real-time unstructured data ingestion from sources like SharePoint, Google Drive, and more
+### What's New in Gen 2 Openflow
 
-**Openflow Deployment Models**:
+Gen 2 is the current Openflow management model, and every new Openflow deployment is gen 2. Here's what changes compared with gen 1:
 
-Openflow is available in two deployment options, both supporting the same connectors and features:
+- Deployments, runtimes, and connectors are Snowflake objects. You create and manage them with SQL (`CREATE OPENFLOW DEPLOYMENT`, `CREATE OPENFLOW RUNTIME`, `CREATE OPENFLOW CONNECTOR`) or in the Openflow UI.
+- Runtimes and connectors live in a schema and use standard Snowflake RBAC. Each runtime runs as an execute-as role, and that role's grants decide what the connector can read and write.
+- The PostgreSQL connector installs through a setup wizard that validates your connection and privileges before the connector starts. In gen 1 you configured parameter contexts and controller services by hand on the canvas.
+- Connector configuration is versioned. You can draft changes, commit them, abort them, and reuse the same configuration across environments.
 
-- **Snowflake Deployment (SPCS)**: Streamlined and integrated solution using Snowpark Container Services. Native integration with Snowflake's security model for seamless authentication, authorization, and network security. *This quickstart uses SPCS deployment.*
-- **Bring Your Own Cloud (BYOC)**: Data processing engine runs within your own cloud environment (AWS, Azure, GCP) while Snowflake manages the overall service and control plane. Ideal for handling sensitive data preprocessing locally within your organization's cloud environment.
-
-Learn more at the [Openflow documentation](https://docs.snowflake.com/en/user-guide/data-integration/openflow/about) and [BYOC deployments](https://docs.snowflake.com/en/user-guide/data-integration/openflow/about-byoc).
+Learn more in [Openflow gen 1 and gen 2](https://docs.snowflake.com/en/user-guide/data-integration/openflow/gen2/openflow-generations).
 
 ### What is Change Data Capture (CDC)
 
-Change Data Capture (CDC) is a design pattern that identifies and captures changes made to data in a database, then delivers those changes in real-time to a downstream system. Instead of periodically querying the entire database, CDC efficiently tracks only what changed.
+Change Data Capture (CDC) identifies the changes made to data in a database and delivers them to a downstream system as they happen. CDC tracks only what changed, so there's no need to re-query the entire database on a schedule.
 
-**How PostgreSQL CDC Works**:
-
-PostgreSQL CDC uses **logical replication**, which reads changes from the Write-Ahead Log (WAL). When data is modified in PostgreSQL:
+PostgreSQL CDC uses logical replication, which reads changes from the Write-Ahead Log (WAL). When data is modified in PostgreSQL:
 
 1. Changes are written to the WAL (a transaction log)
 2. A replication slot captures these changes
 3. A publication defines which tables to track
 4. Openflow reads from the replication slot and delivers changes to Snowflake
 
-**CDC Benefits**:
-
-- Changes flow to Snowflake within seconds
-- Complete history of all INSERT, UPDATE, DELETE operations  
-- Built-in audit trail with CDC metadata
-- Minimal overhead on source database
-- Only changes are transferred after initial snapshot
-
-**CDC vs Traditional Batch ETL**:
+Here's how CDC compares with traditional batch ETL:
 
 | Aspect | CDC | Batch ETL |
 |--------|-----|-----------|
-| **Latency** | Seconds | Hours/Days |
-| **Data Freshness** | Real-time | Scheduled intervals |
-| **Network Impact** | Changes only | Full table scans |
-| **Database Load** | Minimal (log reading) | High (full queries) |
-| **History** | All changes tracked | Point-in-time snapshots |
+| Latency | Seconds | Hours/Days |
+| Data Freshness | Real-time | Scheduled intervals |
+| Network Impact | Changes only | Full table scans |
+| Database Load | Minimal (log reading) | High (full queries) |
+| History | All changes tracked | Point-in-time snapshots |
 
-Learn more about [PostgreSQL CDC with Openflow](https://docs.snowflake.com/en/user-guide/data-integration/openflow/connectors/postgres/about).
+Learn more about the [Openflow Connector for PostgreSQL](https://docs.snowflake.com/en/user-guide/data-integration/openflow/connectors/postgres/about).
 
-### What You Will Learn
+### What You'll Learn
 
-You'll configure PostgreSQL logical replication, set up the Openflow CDC connector, and capture both snapshot and incremental changes. Then you'll use Snowflake Intelligence to query your CDC data with natural language.
+- How to create gen 2 Openflow deployments and runtimes with SQL
+- How the execute-as role controls what an Openflow connector can access in Snowflake
+- How to install and validate the PostgreSQL CDC connector with the setup wizard
+- How to store source credentials in a Snowflake secret
+- How to capture snapshot and incremental changes, including soft deletes and journal tables
+- How to recreate the same connector as code with versioned configuration
+- How to explore CDC data in natural language with Snowflake CoWork
 
-### What You Will Build
+### What You'll Need
 
-A real-time healthcare appointment tracking system with an automated CDC pipeline from PostgreSQL to Snowflake, complete with audit trails for all data changes.
+- A Snowflake account in an AWS, Azure, or GCP commercial region where Openflow is available
+- ACCOUNTADMIN access, or an admin who can run the SQL block in the **Setup: Role & Grants** step for you
+- Room for one more Openflow Snowflake deployment. Each account supports up to three, and gen 1 and gen 2 deployments share that limit. You can also reuse an existing gen 2 deployment.
+- A PostgreSQL 11 to 18 instance with logical replication enabled. We recommend [Snowflake Postgres](https://www.snowflake.com/en/product/features/postgres/) (see [Getting Started with Snowflake Postgres](https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake-postgres/)). AWS RDS, Amazon Aurora, GCP Cloud SQL, Azure Database for PostgreSQL, and self-hosted PostgreSQL also work.
+- Network connectivity from Snowflake to your PostgreSQL instance
+- Git and a PostgreSQL client such as `psql`
+- [Snowflake CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli/index), only for the optional **Recreate the Connector as Code** step
 
-### Prerequisites
+<!-- TODO (DEVREL-113): Confirm GCP availability for Openflow Snowflake deployments and whether BCR bundle 2025_06 is still required; the gen 1 guide required it. -->
 
-Before starting, ensure you have:
+### What You'll Build
 
-- **Snowflake Account**: Enterprise account with Openflow Snowflake Deployment enabled (AWS or Azure regions)
-- **Account Permissions**: ACCOUNTADMIN role or equivalent for initial setup
-- **PostgreSQL Instance**: PostgreSQL 11+ with logical replication enabled. **Recommended**: [Snowflake Postgres](https://www.snowflake.com/en/product/features/postgres/) - see [Getting Started with Snowflake Postgres](https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake-postgres/) for setup. Alternatives: AWS RDS, Amazon Aurora, GCP Cloud SQL, Azure Database, or self-hosted
-- **Network Connectivity**: Ability to configure network access from Snowflake to PostgreSQL
-
-> **Openflow Deployment**: This quickstart uses **Openflow Snowflake Deployment** (Snowflake-managed). If you're using [Openflow BYOC deployment](https://docs.snowflake.com/en/user-guide/data-integration/openflow/about-byoc), the connector setup and concepts are the same, but runtime deployment steps will differ.
+A real-time healthcare appointment pipeline that replicates PostgreSQL tables into Snowflake through a gen 2 Openflow connector, complete with an audit trail of every change and a CoWork agent you can question in plain English.
 
 <!-- ------------------------ -->
+## Setup: Role & Grants
 
+Before we begin, we'll create a dedicated role for this Quickstart and grant it the privileges you'll need. If you don't have ACCOUNTADMIN access in your Snowflake account, send the SQL block below to your Snowflake admin. They can review and run it to provision the role on your behalf.
+
+We'll create two roles:
+
+- `QUICKSTART_ROLE` is the role you work in. It creates the Openflow deployment, runtime, and connector, and it owns the database, warehouse, and CoWork agent.
+- `QUICKSTART_PGCDC_RUNTIME_ROLE` is the runtime's execute-as role. The connector uses this role to read and write in Snowflake, so it only gets the grants the connector needs. We grant it to `QUICKSTART_ROLE` so you can query the tables the connector creates.
+
+```sql
+-- Run as ACCOUNTADMIN
+USE ROLE ACCOUNTADMIN;
+
+-- 1. Create the role for this Quickstart
+CREATE ROLE IF NOT EXISTS QUICKSTART_ROLE;
+
+-- 2. Grant the role to the user who will run the Quickstart
+GRANT ROLE QUICKSTART_ROLE TO USER <your_username>;
+
+-- 3. Warehouse privileges
+GRANT CREATE WAREHOUSE ON ACCOUNT TO ROLE QUICKSTART_ROLE;
+
+-- 4. Database & schema privileges
+GRANT CREATE DATABASE ON ACCOUNT TO ROLE QUICKSTART_ROLE;
+
+-- 5. Integration privileges (external access integration for the runtime)
+GRANT CREATE INTEGRATION ON ACCOUNT TO ROLE QUICKSTART_ROLE;
+
+-- 6. Future grants
+-- -- N/A for this guide
+
+-- 7. Stage privileges
+-- -- N/A for this guide (QUICKSTART_ROLE owns the stage it creates)
+
+-- 8. Guide-specific grants
+-- Openflow gen 2: create deployments, and compute pools for Snowflake deployments
+GRANT CREATE OPENFLOW DEPLOYMENT ON ACCOUNT TO ROLE QUICKSTART_ROLE;
+GRANT CREATE COMPUTE POOL ON ACCOUNT TO ROLE QUICKSTART_ROLE;
+
+-- Execute-as role for the Openflow runtime
+CREATE ROLE IF NOT EXISTS QUICKSTART_PGCDC_RUNTIME_ROLE;
+GRANT ROLE QUICKSTART_PGCDC_RUNTIME_ROLE TO ROLE QUICKSTART_ROLE;
+
+-- 9. Switch into the role for the rest of the Quickstart
+USE ROLE QUICKSTART_ROLE;
+```
+
+> **Note:** If you don't have ACCOUNTADMIN access, send the SQL block above to your Snowflake admin to run on your behalf. Once the role is granted, run `USE ROLE QUICKSTART_ROLE;` and continue with the Quickstart.
+
+Every object in the rest of this Quickstart is created by `QUICKSTART_ROLE`. The admin doesn't need to create any integrations or network rules on your behalf.
+
+<!-- ------------------------ -->
+## Already on Gen 1?
+
+Skip this step if you're new to Openflow. If you already run Openflow, start here.
+
+Your existing gen 1 deployments, runtimes, and connectors keep working. New gen 1 deployments can't be created, so this Quickstart builds on gen 2 objects. You have three ways forward:
+
+- Create a new gen 2 deployment for this Quickstart. This is the simplest path if your account has room under the limit of three Snowflake deployments. Continue with the next step.
+- Migrate your existing gen 1 deployment and runtimes to gen 2, then continue with this Quickstart and skip deployment creation. See [Migrate a gen 1 deployment and runtimes to gen 2](https://docs.snowflake.com/en/user-guide/data-integration/openflow/gen2/migrate-deployment-runtime).
+- Migrate a gen 1 PostgreSQL connector you already run to gen 2. See [Migrate a gen 1 connector to gen 2](https://docs.snowflake.com/en/user-guide/data-integration/openflow/gen2/migrate-connector).
+
+A few differences you'll notice coming from gen 1:
+
+- Runtimes are schema-level objects. `USAGE` on a deployment no longer shows you its runtimes. You need `USAGE`, `OPERATE`, or `MONITOR` on the runtime itself, plus `USAGE` on its database and schema.
+- The runtime role from gen 1 becomes the runtime's `EXECUTE_AS_ROLE`. The connector's access to Snowflake follows that role's grants.
+- The runtime canvas is read-only for gen 2 connectors. You configure them through the setup wizard, **Installed Connectors**, or SQL.
+- Gen 2 runtimes also run gen 1 connectors, so you can move your runtimes first and connectors later.
+
+> **Note:** The deployment limit counts gen 1 and gen 2 together. If your account already has three Snowflake deployments, migrate an existing one or remove one you no longer use before continuing.
+
+<!-- ------------------------ -->
 ## Clone the QuickStart Repository
 
 First, clone the repository to get access to SQL scripts and setup files:
@@ -125,13 +179,16 @@ git clone https://github.com/Snowflake-Labs/sfguide-getting-started-openflow-pos
 cd sfguide-getting-started-openflow-postgresql-cdc
 ```
 
-**Repository Contents:**
+Here's what's in the repository:
 
-- **`sql/0.init_healthcare.sql`** - PostgreSQL schema and synthetic data initialization
-- **`sql/1.snowflake_setup.sql`** - Snowflake environment setup (role, database, warehouse, network rules)
-- **`sql/2.verify_snapshot.sql`** - Snapshot load verification queries
-- **`sql/3.live_appointments.sql`** - Live CDC event generation script
-- **`sql/4.analytics_queries.sql`** - Real-time analytics query examples
+- **sql/0.init_healthcare.sql**: PostgreSQL schema and synthetic data initialization
+- **sql/2.verify_snapshot.sql**: Snapshot load verification queries
+- **sql/3.live_appointments.sql**: Live CDC event generation script
+- **sql/4.analytics_queries.sql**: Real-time analytics query examples
+
+> **Note:** This Quickstart runs the Snowflake setup SQL inline in the **Setup Snowflake Environment** step, so you won't need the repository's Snowflake setup script.
+
+<!-- TODO (DEVREL-113): Update the companion repo's setup script for gen 2 (execute-as role, control schema, secret), or remove it. -->
 
 <!-- ------------------------ -->
 ## Setup PostgreSQL Database
@@ -148,7 +205,7 @@ This guide assumes you have a PostgreSQL instance already created and available.
 > - **Logical replication enabled**: `wal_level = logical` (required for CDC) - see configuration instructions below
 > - **User with REPLICATION privileges**: The PostgreSQL user must have replication permissions
 > - **Network access**: Configure network access from Snowflake SPCS to your PostgreSQL instance
-> - **Supported versions**: PostgreSQL 11-17
+> - **Supported versions**: PostgreSQL 11-18
 >
 > This quickstart was tested with **Snowflake Postgres v17**.
 
@@ -529,484 +586,262 @@ Next, let us setup the Snowflake environment.
 <!-- ------------------------ -->
 ## Setup Snowflake Environment
 
-In this section, we'll set up the Snowflake objects needed for the CDC pipeline.
+Now let's create the Snowflake objects the pipeline needs. We'll run everything as `QUICKSTART_ROLE`.
+
+Here's what we're creating:
+
+- `QUICKSTART_PGCDC_WH`, a warehouse the connector uses to merge changes
+- `QUICKSTART_PGCDC_DB`, the destination database. The connector creates the `healthcare` schema and its tables here during the snapshot load.
+- `QUICKSTART_PGCDC_DB.OPENFLOW`, the control schema that holds the Openflow runtime, connector, and the PostgreSQL password secret
+- `QUICKSTART_PGCDC_DB.NETWORKS`, a schema for the network rule
+- `quickstart_pgcdc_access`, an external access integration that lets the runtime reach PostgreSQL
+- `snowflake_intelligence.agents` and the `semantic_models` stage, which CoWork uses later in the Quickstart
+
+<!-- TODO (DEVREL-113): Confirm CoWork still uses the snowflake_intelligence database and agents schema after the Snowflake Intelligence rename. -->
 
 ### Create Snowflake Objects
 
-Now we'll set up all required Snowflake objects for the CDC pipeline. This includes creating a dedicated role, database, warehouse, and network access configuration.
-
-#### What We're Creating
-
-- **Role**: `QUICKSTART_ROLE` - Dedicated role for Openflow runtime
-- **Database**: `QUICKSTART_PGCDC_DB` - Database for healthcare CDC data
-- **Warehouse**: `QUICKSTART_PGCDC_WH` - Compute warehouse for data processing
-- **Network Rule**: PostgreSQL connection endpoint
-- **External Access Integration**: Allows SPCS to connect to PostgreSQL
-- **Snowflake Intelligence Infrastructure**: `snowflake_intelligence` database and `agents` schema for AI-powered analytics
-
-#### Execute the Setup Script
-
-Open <a href="https://app.snowflake.com/_deeplink/#/workspaces?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_content=getting-started-with-openflow-postgresql-cdc&utm_cta=developer-guides-deeplink" class="_deeplink">Workspaces</a> in Snowsight (**Projects** → **Workspaces**), copy paste the `sql/1.snowflake_setup.sql` script and execute it.
-
-> **IMPORTANT:** Before running the script, update line 64 with your PostgreSQL endpoint:
->
-> ```sql
-> VALUE_LIST = ('YOUR-POSTGRES-HOST:5432');
-> ```
->
-> Replace `YOUR-POSTGRES-HOST` with:
->
-> - **Snowflake Postgres**: Your Snowflake Postgres connection endpoint
-> - **GCP Cloud SQL**: Your instance's public IP (e.g., `34.123.45.67`)
-> - **AWS RDS**: Your RDS endpoint hostname
-> - **Azure Database**: Your Azure PostgreSQL server name
-> - **Self-hosted**: Your server hostname or IP address
-
-The script will:
-
-1. Create the `QUICKSTART_ROLE` role (or reuse if coming from SPCS quickstart)
-2. Create `QUICKSTART_PGCDC_DB` database with two schemas:
-   - `HEALTHCARE` - For CDC data tables
-   - `NETWORKS` - For network rule definitions
-3. Create `QUICKSTART_PGCDC_WH` warehouse (MEDIUM size, auto-suspend after 5 minutes)
-4. Create network rule for PostgreSQL connectivity
-5. Create external access integration `quickstart_pgcdc_access`
-6. Create Snowflake Intelligence infrastructure (`snowflake_intelligence` database and `agents` schema)
-7. Grant appropriate permissions
-
-#### Verify Snowflake Setup
-
-After running the script, verify the setup in a new SQL worksheet in Snowsight.
-
-Open a new SQL worksheet and run the following verification queries:
-
-#### Verify Schemas
+Open [Workspaces](https://app.snowflake.com/_deeplink/#/workspaces?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_content=getting-started-with-openflow-postgresql-cdc&utm_cta=developer-guides-deeplink) in Snowsight (**Projects** > **Workspaces**), create a new SQL file, and run the following. Replace `YOUR-POSTGRES-HOST` with your PostgreSQL endpoint and `YOUR-POSTGRES-PASSWORD` with the password of the PostgreSQL user the connector will use.
 
 ```sql
 USE ROLE QUICKSTART_ROLE;
-USE WAREHOUSE QUICKSTART_PGCDC_WH;
+
+-- Warehouse and destination database
+CREATE WAREHOUSE IF NOT EXISTS QUICKSTART_PGCDC_WH
+  WAREHOUSE_SIZE = MEDIUM
+  AUTO_SUSPEND = 300
+  AUTO_RESUME = TRUE;
+
+CREATE DATABASE IF NOT EXISTS QUICKSTART_PGCDC_DB;
+CREATE SCHEMA IF NOT EXISTS QUICKSTART_PGCDC_DB.OPENFLOW;
+CREATE SCHEMA IF NOT EXISTS QUICKSTART_PGCDC_DB.NETWORKS;
+
+-- Stage for the CoWork semantic model
+CREATE STAGE IF NOT EXISTS QUICKSTART_PGCDC_DB.PUBLIC.semantic_models
+  DIRECTORY = (ENABLE = TRUE);
+
+-- Network rule and external access integration for PostgreSQL
+CREATE OR REPLACE NETWORK RULE QUICKSTART_PGCDC_DB.NETWORKS.postgres_network_rule
+  MODE = EGRESS
+  TYPE = HOST_PORT
+  VALUE_LIST = ('YOUR-POSTGRES-HOST:5432');
+
+CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION quickstart_pgcdc_access
+  ALLOWED_NETWORK_RULES = (QUICKSTART_PGCDC_DB.NETWORKS.postgres_network_rule)
+  ENABLED = TRUE
+  COMMENT = 'Openflow runtime access for PostgreSQL CDC';
+
+-- PostgreSQL password, stored as a Snowflake secret
+CREATE OR REPLACE SECRET QUICKSTART_PGCDC_DB.OPENFLOW.postgres_password
+  TYPE = GENERIC_STRING
+  SECRET_STRING = 'YOUR-POSTGRES-PASSWORD';
+
+-- Grants for the runtime's execute-as role
+GRANT USAGE ON WAREHOUSE QUICKSTART_PGCDC_WH TO ROLE QUICKSTART_PGCDC_RUNTIME_ROLE;
+GRANT OPERATE ON WAREHOUSE QUICKSTART_PGCDC_WH TO ROLE QUICKSTART_PGCDC_RUNTIME_ROLE;
+GRANT USAGE ON DATABASE QUICKSTART_PGCDC_DB TO ROLE QUICKSTART_PGCDC_RUNTIME_ROLE;
+GRANT CREATE SCHEMA ON DATABASE QUICKSTART_PGCDC_DB TO ROLE QUICKSTART_PGCDC_RUNTIME_ROLE;
+GRANT USAGE ON SCHEMA QUICKSTART_PGCDC_DB.OPENFLOW TO ROLE QUICKSTART_PGCDC_RUNTIME_ROLE;
+GRANT READ ON SECRET QUICKSTART_PGCDC_DB.OPENFLOW.postgres_password TO ROLE QUICKSTART_PGCDC_RUNTIME_ROLE;
+GRANT USAGE ON INTEGRATION quickstart_pgcdc_access TO ROLE QUICKSTART_PGCDC_RUNTIME_ROLE;
+
+-- CoWork agent infrastructure
+CREATE DATABASE IF NOT EXISTS snowflake_intelligence;
+CREATE SCHEMA IF NOT EXISTS snowflake_intelligence.agents;
+GRANT USAGE ON DATABASE snowflake_intelligence TO ROLE PUBLIC;
+GRANT USAGE ON SCHEMA snowflake_intelligence.agents TO ROLE PUBLIC;
+```
+
+Here's what the code does:
+
+- Creates the warehouse, destination database, and the schemas for Openflow objects and network rules
+- Allows the runtime to reach your PostgreSQL host and port through a network rule and external access integration
+- Stores the PostgreSQL password as a secret, so it never appears in the connector configuration
+- Grants the execute-as role only what the connector needs: the warehouse, `CREATE SCHEMA` on the destination database, the control schema, the secret, and the integration
+- Creates the database and schema that will hold the CoWork agent
+
+> **Note:** The connector creates the `healthcare` schema itself, which is why the execute-as role gets `CREATE SCHEMA` on the database. Don't create that schema ahead of time.
+
+Use your PostgreSQL endpoint for `YOUR-POSTGRES-HOST`:
+
+- Snowflake Postgres: your Snowflake Postgres connection endpoint
+- GCP Cloud SQL: your instance's public IP (for example, `34.123.45.67`)
+- AWS RDS: your RDS endpoint hostname
+- Azure Database: your Azure PostgreSQL server name
+- Self-hosted: your server hostname or IP address
+
+### Verify Snowflake Setup
+
+Let's confirm the schemas exist:
+
+```sql
 SHOW SCHEMAS IN DATABASE QUICKSTART_PGCDC_DB;
 ```
 
-Expected output (note: the `healthcare` schema will be automatically created by Openflow when the connector is added):
+You should see `NETWORKS`, `OPENFLOW`, and `PUBLIC` (plus `INFORMATION_SCHEMA`).
 
-```text
-| created_on          | name                  | is_default | is_current | database_name      | owner            | comment | options | retention_time | owner_role_type |
-|---------------------|-----------------------|------------|------------|--------------------|--------------------|---------|---------|----------------|-----------------|
-| 2025-10-07 10:00:00 | INFORMATION_SCHEMA    | N          | N          | QUICKSTART_PGCDC_DB | ACCOUNTADMIN      |         |         | 1              | ROLE            |
-| 2025-10-07 10:00:00 | NETWORKS              | N          | N          | QUICKSTART_PGCDC_DB | QUICKSTART_ROLE   |         |         | 1              | ROLE            |
-| 2025-10-07 10:00:00 | PUBLIC                | Y          | N          | QUICKSTART_PGCDC_DB | QUICKSTART_ROLE   |         |         | 1              | ROLE            |
-```
-
-#### Verify Integration
-
-```sql
-SHOW INTEGRATIONS LIKE 'quickstart_pgcdc_access';
-```
-
-Expected output:
-
-```text
-| name                      | type              | category          | enabled | comment                                    | created_on          |
-|---------------------------|-------------------|-------------------|---------|--------------------------------------------|--------------------|
-| quickstart_pgcdc_access   | EXTERNAL_ACCESS   | SECURITY          | true    | OpenFlow SPCS runtime access for PostgreSQL CDC | 2025-10-07 10:00:00 |
-```
-
-#### Verify Network Rule
-
-Verify that Snowflake's network rule is correctly configured to allow connections to your PostgreSQL instance.
-
-> **⚠️ IMPORTANT - Snowflake Network Connectivity**
->
-> For Openflow to connect to your PostgreSQL instance, two things must be true:
->
-> 1. **PostgreSQL must allow inbound connections from Snowflake**: Configure your cloud provider's firewall/security groups to allow connections from Snowflake SPCS IP ranges (or use broad access for demo purposes)
-> 2. **Snowflake network rule must match your PostgreSQL host/port**: The network rule created in `1.snowflake_setup.sql` must specify the exact host and port of your PostgreSQL instance
->
-> This section verifies requirement #2. If you encounter connection errors when starting the Openflow connector later, you'll need to verify both requirements.
-
-Check the network rule configuration:
+Next, confirm the network rule points at your PostgreSQL host:
 
 ```sql
 DESC NETWORK RULE QUICKSTART_PGCDC_DB.NETWORKS.postgres_network_rule;
 ```
 
-Expected output should show your actual PostgreSQL host:
+The `value_list` column should show your actual host and port. If it doesn't, update the rule in place:
 
-```text
-| name                     | type       | mode   | value_list                     | comment |
-|--------------------------|------------|--------|--------------------------------|---------|
-| postgres_network_rule    | HOST_PORT  | EGRESS | ['your-actual-host.com:5432']  |         |
+```sql
+ALTER NETWORK RULE QUICKSTART_PGCDC_DB.NETWORKS.postgres_network_rule
+  SET VALUE_LIST = ('YOUR-CORRECT-POSTGRES-HOST:5432');
 ```
 
-> **⚠️ Host Mismatch?** If the `value_list` doesn't match your PostgreSQL host, you **must** recreate the network rule and external access integration with the correct host:
->
-> ```sql
-> -- Drop existing objects
-> USE ROLE ACCOUNTADMIN;
-> DROP INTEGRATION IF EXISTS quickstart_pgcdc_access;
-> USE ROLE QUICKSTART_ROLE;
-> DROP NETWORK RULE IF EXISTS QUICKSTART_PGCDC_DB.NETWORKS.postgres_network_rule;
-> 
-> -- Create network rule with CORRECT PostgreSQL host
-> USE DATABASE QUICKSTART_PGCDC_DB;
-> USE SCHEMA NETWORKS;
-> CREATE OR REPLACE NETWORK RULE postgres_network_rule
->   MODE = EGRESS
->   TYPE = HOST_PORT
->   VALUE_LIST = ('YOUR-CORRECT-POSTGRES-HOST:5432');  -- ⚠️ Update this!
-> 
-> -- Recreate external access integration
-> USE ROLE ACCOUNTADMIN;
-> CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION quickstart_pgcdc_access
->   ALLOWED_NETWORK_RULES = (QUICKSTART_PGCDC_DB.NETWORKS.postgres_network_rule)
->   ENABLED = true
->   COMMENT = 'OpenFlow SPCS runtime access for PostgreSQL CDC';
-> 
-> -- Grant to role
-> GRANT USAGE ON INTEGRATION quickstart_pgcdc_access TO ROLE QUICKSTART_ROLE;
-> 
-> -- Verify
-> USE ROLE QUICKSTART_ROLE;
-> SHOW INTEGRATIONS LIKE 'quickstart_pgcdc_access';
-> ```
-
-**✅ Network Rule Verification Complete!**
-
-You've verified that the Snowflake network rule matches your PostgreSQL host and port.
-
-> **Note**: Full end-to-end connectivity (Snowflake → PostgreSQL) will be tested when the Openflow connector starts. If you encounter connection errors during connector startup, verify:
->
-> 1. PostgreSQL firewall/security groups allow inbound connections from Snowflake SPCS
-> 2. Network rule configuration is correct (verified above)
-> 3. PostgreSQL credentials are correct
-> 4. PostgreSQL is running and accessible
+> **Important:** Openflow can reach PostgreSQL only when two things are true. Your PostgreSQL firewall or security group must allow inbound connections from Snowflake, and the network rule must match your PostgreSQL host and port exactly. The setup wizard tests the connection for you in a later step.
 
 <!-- ------------------------ -->
-## Openflow Configuration
+## Create the Openflow Deployment and Runtime
 
-In this section, you'll set up the Openflow Snowflake Deployments infrastructure needed to run the PostgreSQL connector. Before proceeding, ensure you've completed the Snowflake setup with `QUICKSTART_ROLE`, `QUICKSTART_PGCDC_DB` database, and `QUICKSTART_PGCDC_WH` warehouse.
+With the Snowflake objects in place, let's create the Openflow infrastructure. In gen 2, both the deployment and the runtime are Snowflake objects, so we'll create them with SQL.
 
-### Complete Openflow Snowflake Deployments Setup
+### Create the Deployment
 
-This CDC quickstart builds on the foundational Openflow Snowflake Deployments setup. Navigate to the [Getting Started with Openflow Snowflake Deployments](/en/developers/guides/getting-started-with-openflow-spcs/) quickstart and complete the following two sections (approximately 15 minutes total):
+A deployment is the Openflow environment that hosts your runtimes. We'll create a Snowflake deployment, which runs on Snowpark Container Services in your account.
 
-- **Setup Core Snowflake**: Create `OPENFLOW_ADMIN` role and enable BCR Bundle 2025_06.
-
-- **Create Deployment**: Set up your Openflow Snowflake Deployment (e.g., `QUICKSTART_DEPLOYMENT`).
-
-Once your deployment is active, return here to create a runtime. If you already have an Openflow deployment, you can skip the deployment creation and just ensure you select the correct deployment name when creating the runtime.
-
-After completing these prerequisite sections, you'll have:
-
-- `OPENFLOW_ADMIN` role with deployment privileges
-- BCR Bundle 2025_06 enabled (required for CDC connectors)
-- Active Openflow deployment
-- Network rules for Snowflake infrastructure
-
-### Create Runtime for PostgreSQL CDC
-
-Now that you have an active Openflow deployment, create a runtime environment specifically configured for the PostgreSQL connector.
-
-**Resources from Setup Environment**: You already created the following in the "Setup Environment" section:
-
-- `QUICKSTART_ROLE` - Runtime role
-- `QUICKSTART_PGCDC_DB` - Database with `NETWORKS` schema  
-- `QUICKSTART_PGCDC_WH` - Warehouse
-- `postgres_network_rule` - Network rule
-- `quickstart_pgcdc_access` - External access integration
-
-#### Verify External Access Integration
-
-Verify the external access integration created in the "Setup Environment" section:
+> **Note:** Skip this step if you already have a gen 2 deployment you want to reuse. Use its name in place of `QUICKSTART_DEPLOYMENT` below.
 
 ```sql
 USE ROLE QUICKSTART_ROLE;
 
--- Verify integration exists and is enabled
-SHOW INTEGRATIONS LIKE 'quickstart_pgcdc_access';
-DESC INTEGRATION quickstart_pgcdc_access;
+CREATE OPENFLOW DEPLOYMENT QUICKSTART_DEPLOYMENT
+  DEPLOYMENT_TYPE = SNOWFLAKE
+  DISPLAY_NAME = 'Quickstart PostgreSQL CDC Deployment';
 ```
 
-Expected output for `SHOW INTEGRATIONS`:
+Deployment creation takes several minutes. Check its status:
 
-```text
-| name                     | type              | category | enabled | comment                                              | created_on          |
-|--------------------------|-------------------|----------|---------|------------------------------------------------------|---------------------|
-| quickstart_pgcdc_access  | EXTERNAL_ACCESS   | SECURITY | true    | OpenFlow SPCS runtime access for PostgreSQL CDC      | 2025-10-07 10:00:00 |
+```sql
+SHOW OPENFLOW DEPLOYMENTS LIKE 'QUICKSTART_DEPLOYMENT';
 ```
 
-> **What's an External Access Integration?** This allows your Openflow runtime to communicate with external services (your PostgreSQL database) from within Snowpark Container Services. The `postgres_network_rule` you created earlier defines which PostgreSQL endpoints are accessible.
+<!-- TODO (DEVREL-113): Confirm SHOW OPENFLOW DEPLOYMENTS syntax, the status column name and ready value, and typical provisioning time. -->
 
-#### Create Runtime via Snowsight
+You can also watch it in Snowsight under **Ingestion** > **Openflow** > **Deployments**. Wait until the deployment is active before continuing.
 
-Follow these steps to create your runtime:
+> **Important:** PrivateLink settings can only be set when a deployment is created. This Quickstart uses public connectivity. If your organization requires PrivateLink, see [Quickstart: gen 2 Openflow](https://docs.snowflake.com/en/user-guide/data-integration/openflow/gen2/quickstart) before you create the deployment.
 
-1. **Navigate to Openflow**: Go to **Work with data** → **Ingestion** → **Openflow**
-2. **Switch to Runtimes Tab**: Click the **Runtimes** tab
-3. **Ensure Correct Role**: Verify your role is set to `OPENFLOW_ADMIN` (check top-right corner of Snowsight)
-4. **Click Create Runtime**: Click the **+ Runtime** button
-5. **Configure Runtime**:
-   - **Name**: `QUICKSTART_PGCDC_RUNTIME`
-   - **Deployment**: Select `QUICKSTART_DEPLOYMENT` (or your deployment name)
-   - **Runtime Role**: Select `QUICKSTART_ROLE`
-   - **External Access Integration**: Select `quickstart_pgcdc_access`
-6. **Click Create**: Complete the runtime creation
+### Create the Runtime
 
-![Create Openflow Runtime](assets/openflow_spcs_runtime_create.gif)
+A runtime is the compute that runs your connectors. Let's create one in the control schema, set its execute-as role, and attach the external access integration so it can reach PostgreSQL.
 
-> **Runtime Creation Time**: Runtime creation typically takes 3-5 minutes. The status will progress from `CREATING` → `ACTIVE`.
+```sql
+USE DATABASE QUICKSTART_PGCDC_DB;
+USE SCHEMA OPENFLOW;
 
-#### Verify Runtime Status
+CREATE OPENFLOW RUNTIME QUICKSTART_PGCDC_RUNTIME
+  IN DEPLOYMENT QUICKSTART_DEPLOYMENT
+  NODE_TYPE = MEDIUM
+  NODE_TYPE_TIER = 'M4'
+  MIN_NODES = 1
+  MAX_NODES = 1
+  EXECUTE_AS_ROLE = QUICKSTART_PGCDC_RUNTIME_ROLE
+  EXTERNAL_ACCESS_INTEGRATIONS = (quickstart_pgcdc_access)
+  DISPLAY_NAME = 'Quickstart PostgreSQL CDC Runtime';
+```
 
-Check that your runtime is active:
+Here's what the code does:
 
-1. **Navigate to Runtimes Tab**: Go to **Work with data** → **Ingestion** → **Openflow** → **Runtimes**
-2. **Check Status**: Look for `QUICKSTART_PGCDC_RUNTIME` with status **ACTIVE**
+- Creates the runtime as a schema-level object, `QUICKSTART_PGCDC_DB.OPENFLOW.QUICKSTART_PGCDC_RUNTIME`
+- Runs on a single node. The PostgreSQL connector doesn't support multi-node runtimes, so `MIN_NODES` and `MAX_NODES` are both `1`.
+- Sets `EXECUTE_AS_ROLE`, so the connector reads and writes in Snowflake with the grants you gave `QUICKSTART_PGCDC_RUNTIME_ROLE`
+- Attaches `quickstart_pgcdc_access`, which allows outbound connections to your PostgreSQL host
 
-![Openflow Runtime Active Status](assets/openflow_spcs_runtime_active_example.png)
+<!-- TODO (DEVREL-113): Confirm NODE_TYPE/NODE_TYPE_TIER sizing for this workload against the CDC runtime sizing doc. -->
 
-Expected status: **ACTIVE**
+Check the runtime status:
 
-> **Troubleshooting**: If the runtime status shows `ERROR` or stays in `CREATING` for more than 10 minutes:
->
-> - Verify the external access integration exists: `SHOW INTEGRATIONS LIKE 'quickstart_pgcdc_access';`
-> - Check that `QUICKSTART_ROLE` has all required grants: `SHOW GRANTS TO ROLE QUICKSTART_ROLE;`
-> - Review the [Openflow Snowflake Deployments](/en/developers/guides/getting-started-with-openflow-spcs/) troubleshooting guide
+```sql
+SHOW OPENFLOW RUNTIMES IN SCHEMA QUICKSTART_PGCDC_DB.OPENFLOW;
+```
 
-#### Access the Runtime Canvas
+You can also find it in Snowsight under **Ingestion** > **Openflow** > **Runtimes**. Wait until the runtime is active before installing the connector.
 
-Once your runtime is active, you can access the Openflow canvas to add and configure connectors:
+<!-- TODO (DEVREL-113): Screenshot: gen 2 runtime active in the Runtimes tab. -->
 
-**Click on the runtime name** (`QUICKSTART_PGCDC_RUNTIME`) to open the canvas. This will open in a new browser tab where you'll configure connectors and build your data pipeline.
-
-> **Authentication**: When opening the runtime canvas for the first time, you may be prompted to authenticate/authorize access. Accept these prompts to allow the canvas to access the runtime and required resources.
-
-![Openflow Runtime Empty Canvas](assets/openflow_runtime_empty_canvas.png)
-
-> **REFERENCE DOCUMENTATION:**
->
-> For detailed information, see [Create runtime](https://docs.snowflake.com/en/user-guide/data-integration/openflow/setup-openflow-spcs-create-runtime) in the official documentation.
+Great job! Your gen 2 Openflow infrastructure is ready.
 
 <!-- ------------------------ -->
-## Add PostgreSQL Connector
+## Install the Connector with the Setup Wizard
 
-Navigate to your Openflow runtime canvas. In Snowsight's Openflow UI, you can access the canvas by clicking on the runtime name from the Overview page.
+Now we'll install the PostgreSQL CDC connector on the runtime. The setup wizard walks through each setting and validates it before the connector starts, so configuration problems surface early.
 
-### Openflow Database CDC Connectors
+### Download the PostgreSQL JDBC Driver
 
-While this quickstart focuses on PostgreSQL, the concepts and workflow apply to all Openflow database CDC connectors. Openflow provides CDC connectors for major relational databases, enabling real-time replication of database tables into Snowflake for comprehensive, centralized reporting.
+The connector needs the PostgreSQL JDBC driver to connect to your database. Download it from [jdbc.postgresql.org](https://jdbc.postgresql.org/download/). This Quickstart uses **postgresql-42.7.7.jar**, and any recent version works. You'll upload the file in the wizard.
 
-#### Supported Databases
+### Start the Wizard
 
-- **[PostgreSQL](https://docs.snowflake.com/en/user-guide/data-integration/openflow/connectors/postgres/about)**: Versions 11-17 (Snowflake Postgres, AWS RDS, Amazon Aurora, GCP Cloud SQL, Azure Database, Standard) - *Used in this quickstart*
-- **[MySQL](https://docs.snowflake.com/en/user-guide/data-integration/openflow/connectors/mysql/about)**: Versions 8.0, 8.4 (Standard, AWS RDS, Amazon Aurora, GCP Cloud SQL)
-- **[SQL Server](https://docs.snowflake.com/en/user-guide/data-integration/openflow/connectors/sql-server/about)**: SQL Server 2017+ (Standard, AWS RDS, Azure SQL Database)
+1. In Snowsight, go to **Ingestion** > **Openflow** and select **Launch Openflow**.
+2. Open the **Connector library** tab.
+3. Find the gen 2 **PostgreSQL CDC** connector.
+4. Select `QUICKSTART_PGCDC_RUNTIME` as the runtime. The list only shows runtimes sized for the connector.
+5. Select **Install**.
 
-#### Why Use Openflow for CDC
+<!-- TODO (DEVREL-113): Screenshot: gen 2 PostgreSQL CDC entry in the Connector library. -->
 
-Openflow provides a unified platform for CDC across all major databases with consistent workflows and metadata, whether you're using PostgreSQL, MySQL, SQL Server, or Oracle (coming soon).
+### Configure the Connector
 
-### Add PostgreSQL Connector to Runtime
+Step through the wizard and enter the following values. Each step includes help text in the panel on the right.
 
-Navigate to **Work with data** → **Ingestion** → **Openflow** → **Overview**. Follow the animation below to add the PostgreSQL connector to your runtime:
+| Setting | Value |
+|---------|-------|
+| PostgreSQL host | Your PostgreSQL endpoint (same as the network rule) |
+| Port | `5432` |
+| Database | `postgres` |
+| Username | `snowflake_admin`, or the PostgreSQL user with `REPLICATION` privileges |
+| Password | The `QUICKSTART_PGCDC_DB.OPENFLOW.postgres_password` secret |
+| JDBC driver | Upload **postgresql-42.7.7.jar** |
+| Publication | `healthcare_cdc_publication` |
+| Replication slot | Leave empty to auto-generate a name like `snowflake_connector_<unique_id>` |
+| Destination database | `QUICKSTART_PGCDC_DB` |
+| Warehouse | `QUICKSTART_PGCDC_WH` |
+| Tables to replicate | `healthcare\..*` (all tables in the `healthcare` schema) |
+| Ingestion type | `full` (snapshot first, then incremental changes) |
 
-![Add PostgreSQL Connector](assets/pgcdc_install_on_runtime.gif)
+<!-- TODO (DEVREL-113): Capture the wizard's actual step names and field labels on a test run; confirm where the JDBC JAR is uploaded, how the secret is selected, and the merge schedule default. -->
 
-> **New Tab & Authentication**: Adding the connector to your runtime will open a new runtime tab in your browser with the canvas showing the **PostgreSQL** processor group. If prompted, authenticate/authorize access to allow the canvas to access the runtime. You'll configure this connector in the next section.
+> **Note:** The table pattern is a regular expression. The backslash escapes the dot so it matches the literal period in schema-qualified names like `healthcare.patients`.
 
-The **PostgreSQL** connector is now on your canvas. It includes all the processors and services needed for snapshot load and incremental CDC from PostgreSQL to Snowflake.
+### Validate Before You Create
 
-<!-- ------------------------ -->
-## Configure PostgreSQL Connector
+Each wizard step has a **Verify** button that tests what you entered. Let's see it catch a mistake. On the source connection step, enter the wrong password, select **Verify**, and read the result. The wizard reports the failed connection and explains how to fix it in the panel on the right.
 
-The PostgreSQL connector uses three parameter contexts to organize its configuration:
+Correct the password and select **Verify** again. This time the connection test passes. The wizard also checks that your Snowflake role has the privileges it needs on the destination database and that values like hostnames and ports are well formed.
 
-1. **PostgreSQL Source Parameters** - PostgreSQL connection details and CDC-specific settings like publication and replication slot
-2. **PostgreSQL Destination Parameters** - Snowflake table mapping and schema configuration
-3. **PostgreSQL Ingestion Parameters** - Schema and columns that need to be loaded into Snowflake
+<!-- TODO (DEVREL-113): Screenshot: failed and passing Verify results. -->
 
-To access parameter contexts:
+> **Note:** You can move past a failed check on an intermediate step. Only the final validation before **Create Connector** has to pass. Select **Save and Close** at any point to keep your progress and come back later.
 
-![Access Parameter Contexts](assets/access_parameter_contexts.gif)
+### Create and Start the Connector
 
-> **Production Tip:** For production deployments, use a SecretManagerParameterProvider (like `AwsSecretsManagerParameterProvider`) to store credentials in a secrets manager rather than directly in the connector configuration.
+1. On the last step, select **Create Connector**.
+2. You're redirected to **Installed Connectors**. Wait for the connector to finish installing.
+3. Select **Start** from the connector's menu.
 
-### Configure PostgreSQL Source Parameters
+The connector begins with a snapshot load of every table in the `healthcare` schema, then switches to streaming incremental changes.
 
-Configure the PostgreSQL database connection details and CDC-specific settings.
-
-#### Download PostgreSQL JDBC Driver
-
-Before configuring the parameters, download the PostgreSQL JDBC driver that will be used for the database connection.
-
-Get the PostgreSQL JDBC driver from [https://jdbc.postgresql.org/download/](https://jdbc.postgresql.org/download/)
-
-- This quickstart uses `postgresql-42.7.7.jar` (you can use any recent version)
-
-You'll upload this JAR file as a reference asset so the connector can use it to connect to PostgreSQL.
-
-#### Access PostgreSQL Source Parameters
-
-From the Parameter contexts list, click the **three dots menu (⋮)** next to **PostgreSQL Source Parameters** and select **Edit**.
-
-![Edit PostgreSQL Source Parameters](assets/edit_param_context_pg_source_params.png)
-
-Click on the **Parameters** tab and configure the following values:
-
-| Parameter | Value | Description |
-|-----------|-------|-------------|
-| **PostgreSQL Connection URL** | `jdbc:postgresql://<YOUR-POSTGRES-HOST>:5432/postgres` | JDBC connection URL to your PostgreSQL instance. Replace `<YOUR-POSTGRES-HOST>` with your actual PostgreSQL host (e.g., your Snowflake Postgres endpoint) |
-| **PostgreSQL JDBC Driver** | `postgresql-42.7.7.jar` | Reference to the PostgreSQL JDBC driver JAR (see upload instructions below) |
-| **PostgreSQL Password** | `<YOUR-PASSWORD>` | Password for the PostgreSQL user (stored as sensitive value) |
-| **PostgreSQL Username** | `snowflake_admin` | PostgreSQL username (or the user you configured with REPLICATION privileges) |
-| **Publication Name** | `healthcare_cdc_publication` | Name of the PostgreSQL publication created in [0.init_healthcare.sql](https://github.com/Snowflake-Labs/sfguide-getting-started-openflow-postgresql-cdc/blob/main/sql/0.init_healthcare.sql#L348) |
-| **Replication Slot Name** | Leave empty for auto-generation | Optional. If specified, this exact name will be used for the replication slot. If left empty, Openflow automatically generates a unique name following the pattern `snowflake_connector_<unique_id>`. |
-
-> **Connection URL Format**: The PostgreSQL JDBC URL format is `jdbc:postgresql://HOST:PORT/DATABASE`.
->
-> - For Snowflake Postgres: Use your Snowflake Postgres endpoint (e.g., `jdbc:postgresql://your-snowflake-postgres-endpoint:5432/postgres`)
-> - For GCP Cloud SQL: Use the public IP address (e.g., `jdbc:postgresql://34.123.45.67:5432/postgres`)
-> - For AWS RDS: Use the endpoint hostname (e.g., `jdbc:postgresql://mydb.abc123.us-east-1.rds.amazonaws.com:5432/postgres`)
-> - For other services: Use your specific connection details
-
-#### Upload JDBC Driver as Reference Asset
-
-Follow the animation below to upload the downloaded JAR file and reference it in the **PostgreSQL JDBC Driver** parameter:
-
-![Upload JDBC Driver as Reference Asset](assets/param_jdbc_driver_ref_asset.gif)
-
-Your completed configuration should look like this:
-
-![Set PostgreSQL Source Parameters](assets/set_pg_source_params.png)
-
-> **Note:** The screenshot shows `postgres` as the PostgreSQL Username. Based on your setup, use the appropriate username (e.g., Snowflake Postgres uses `snowflake_admin` by default).
-
-Click **Apply** to save your PostgreSQL source parameters configuration.
-
-### Configure PostgreSQL Destination Parameters
-
-Configure the Snowflake destination connection where PostgreSQL data will be replicated.
-
-> **IMPORTANT**: Ensure you have completed the [Create Snowflake Objects](#create-snowflake-objects) section before proceeding. The PostgreSQL connector requires the database, warehouse, and role to be created in advance.
-
-#### Access PostgreSQL Destination Parameters
-
-From the Parameter contexts list, click the **three dots menu (⋮)** next to **PostgreSQL Destination Parameters** and select **Edit**.
-
-![Edit PostgreSQL Destination Parameters](assets/edit_param_context_pg_destination_params.png)
-
-Click on the **Parameters** tab and configure the following values:
-
-| Parameter | Value | Description |
-|-----------|-------|-------------|
-| **Destination Database** | `QUICKSTART_PGCDC_DB` | Snowflake database where tables will be created (defined in [1.snowflake_setup.sql#L23](https://github.com/Snowflake-Labs/sfguide-getting-started-openflow-postgresql-cdc/blob/main/sql/1.snowflake_setup.sql#L23)) |
-| **Snowflake Account Identifier** | Leave empty | Not required when using session token authentication |
-| **Snowflake Authentication Strategy** | `SNOWFLAKE_SESSION_TOKEN` | Uses the runtime's session for authentication (recommended for SPCS deployments) |
-| **Snowflake Private Key** | Leave empty | Not required when using session token authentication |
-| **Snowflake Private Key File** | Leave empty | Not required when using session token authentication |
-| **Snowflake Private Key Password** | Leave empty | Not required when using session token authentication |
-| **Snowflake Role** | `QUICKSTART_ROLE` | Runtime role with permissions to create tables and write data (defined in [1.snowflake_setup.sql#L20](https://github.com/Snowflake-Labs/sfguide-getting-started-openflow-postgresql-cdc/blob/main/sql/1.snowflake_setup.sql#L20)) |
-| **Snowflake Username** | Leave empty | Not required when using session token authentication |
-| **Snowflake Warehouse** | `QUICKSTART_PGCDC_WH` | Warehouse for data processing (defined in [1.snowflake_setup.sql#L26](https://github.com/Snowflake-Labs/sfguide-getting-started-openflow-postgresql-cdc/blob/main/sql/1.snowflake_setup.sql#L26)) |
-
-Your completed configuration should look like this:
-
-![Set PostgreSQL Destination Parameters](assets/set_pg_destination_params.png)
-
-> **Session Token Authentication**: When using `SNOWFLAKE_SESSION_TOKEN`, the connector authenticates using the Openflow runtime's Snowflake session. This is the recommended approach for SPCS deployments as it eliminates the need to manage separate credentials.
-
-Click **Apply** to save your PostgreSQL destination parameters configuration.
-
-### Configure PostgreSQL Ingestion Parameters
-
-Configure CDC ingestion settings and table filters. This parameter context inherits values from both **PostgreSQL Source Parameters** and **PostgreSQL Destination Parameters**.
-
-#### Access PostgreSQL Ingestion Parameters
-
-From the Parameter contexts list, click the **three dots menu (⋮)** next to **PostgreSQL Ingestion Parameters (1)** and select **Edit**.
-
-![Edit PostgreSQL Ingestion Parameters](assets/pg_ingestion_params_no_inheritence.png)
-
-Click on the **Parameters** tab. By default, you'll see only the parameters specific to this context. To view all parameters (including inherited ones), check the **Show inherited parameters** checkbox at the bottom.
-
-![PostgreSQL Ingestion Parameters with Inheritance](assets/pg_ingestion_params_with_inheritence.png)
-
-> **Note:** The screenshot shows `postgres` as the PostgreSQL Username. Based on your setup, use the appropriate username (e.g., Snowflake Postgres uses `snowflake_admin` by default).
-
-Configure the following key parameters:
-
-| Parameter | Value | Description |
-|-----------|-------|-------------|
-| **Column Filter JSON** | `[]` | Empty array means all columns are included |
-| **Included Table Names** | Leave empty | Use regex instead for flexible filtering |
-| **Included Table Regex** | `healthcare\..*` | Regular expression to match table names for CDC. The pattern `healthcare\..*` matches all tables in the `healthcare` schema. The backslash escapes the dot to match a literal period in the schema-qualified table names (e.g., `healthcare.patients`, `healthcare.doctors`). |
-| **Ingestion Type** | `full` | Performs full snapshot followed by incremental CDC. Other option is "incremental" which only performs incremental CDC, existing data is not loaded. |
-| **Merge Task Schedule CRON** | `* * * * * ?` | Runs merge tasks every second for near real-time updates |
-
-**Inherited Parameters** (visible when "Show inherited parameters" is checked):
-
-From **PostgreSQL Source Parameters**:
-
-- PostgreSQL Connection URL
-- PostgreSQL JDBC Driver
-- PostgreSQL Username
-- PostgreSQL Password
-- Publication Name (`healthcare_cdc_publication` - created in [0.init_healthcare.sql#L348](https://github.com/Snowflake-Labs/sfguide-getting-started-openflow-postgresql-cdc/blob/main/sql/0.init_healthcare.sql#L348))
-- Replication Slot Name (auto-generated)
-
-From **PostgreSQL Destination Parameters**:
-
-- Destination Database
-- Snowflake Role
-- Snowflake Warehouse
-- Snowflake Authentication Strategy
-
-Your completed configuration with inherited parameters should look like this:
-
-![Set PostgreSQL Ingestion Parameters](assets/set_pg_ingestion_parmeters_with_inheritance.png)
-
-> **Note:** The screenshot shows `postgres` as the PostgreSQL Username. Based on your setup, use the appropriate username (e.g., Snowflake Postgres uses `snowflake_admin` by default).
-
-> **Configuration Notes**:
->
-> - **Table Regex Pattern**: The regex `healthcare\..*` matches all tables in the `healthcare` schema. The backslash escapes the dot to match a literal period (e.g., `healthcare.patients`, `healthcare.doctors`, `healthcare.appointments`, `healthcare.visits`).
-> - **Merge Task Schedule**: The CRON expression `* * * * * ?` means "every second", providing near real-time CDC updates. For production workloads, adjust based on your latency requirements and cost considerations. Learn more about [Quartz CRON expressions](http://www.quartz-scheduler.org/documentation/quartz-2.3.0/tutorials/crontrigger.html).
-
-Click **Apply** to save your PostgreSQL ingestion parameters configuration.
-
-With all three parameter contexts configured, you're now ready to start the CDC pipeline!
+Great job! The CDC pipeline is running.
 
 <!-- ------------------------ -->
 ## Verify Snapshot Load
 
 With the connector configured, you're now ready to start the CDC pipeline and verify that the initial snapshot is loaded correctly.
 
-### Enable Services and Start Connector
+### Monitor the Connector
 
-Before starting the connector, you need to enable the controller services that manage the CDC replication process.
+Let's watch the snapshot load. Open **Ingestion** > **Openflow** > **Connector Observability** to see the connector's health, throughput, and any errors.
 
-Follow these steps to enable services and start the connector:
+For a closer look, select **Go to canvas** for the connector. The runtime canvas shows the connector's processors, queues, and bulletins. For gen 2 connectors the canvas is read-only, so you can inspect the flow but configuration changes go through **Installed Connectors** > **Edit** or SQL.
 
-1. **Open Controller Services**: Right-click on the canvas and select "Configure"
-2. **Enable Services**: Enable the two controller services (State Provider and Database Connection Pool)
-3. **Start Process Groups**: Right-click on the process groups and start them
-4. **Monitor Progress**: Watch the connector flow execute the snapshot load
+<!-- TODO (DEVREL-113): Screenshots: Connector Observability dashboard and read-only canvas during snapshot load. -->
 
-![Enable Services and Start Connector](assets/enable_service_and_start.gif)
-
-> **Note**: You may see an error message about "Snowflake Private Key Service" failing to enable. This error can be safely ignored since this quickstart uses `SNOWFLAKE_SESSION_TOKEN` authentication instead of private key authentication. The connector will function normally with session token authentication.
-
-> **What's Happening?** The connector performs two main operations:
->
-> 1. **Snapshot Load**: Captures all existing data from PostgreSQL tables and loads it into Snowflake
-> 2. **CDC Initialization**: Establishes the replication slot and begins listening for changes
->
-> The snapshot typically takes 1-2 minutes for the demo dataset. For larger datasets, the duration will be proportional to the data volume.
-
-Once the services are running, your connector status should show all components active:
-
-![PostgreSQL Connector Enabled and Started](assets/pg_connector_enabled_and_started.png)
+> **Note:** The snapshot typically takes 1 to 2 minutes for the demo dataset. Larger datasets take proportionally longer. After the snapshot, the connector listens on the replication slot and applies new changes as they arrive.
 
 ### Verify Data in Snowflake
 
@@ -1164,9 +999,11 @@ You can run this script directly in Snowsight by copying and pasting the SQL.
 > **Snapshot Load Complete!** If all queries return expected results, your PostgreSQL tables are successfully replicated to Snowflake. The connector is now listening for changes and will automatically capture any INSERT, UPDATE, or DELETE operations in real-time.
 
 <!-- ------------------------ -->
-## Snowflake Intelligence
+## Snowflake CoWork
 
-Now that the snapshot is loaded, let's set up Snowflake Intelligence before generating CDC events. This allows you to establish a baseline understanding of your data, then observe changes in real-time after running the CDC demo.
+<!-- TODO (DEVREL-113): CoWork was renamed from Snowflake Intelligence. Confirm current UI navigation, button labels, and deeplinks in this section, and recapture all si_* screenshots. -->
+
+Now that the snapshot is loaded, let's set up Snowflake CoWork before generating CDC events. This allows you to establish a baseline understanding of your data, then observe changes in real-time after running the CDC demo.
 
 > **Why Set Up Intelligence First?** By asking baseline questions about your snapshot data now, you'll be able to compare results after the CDC demo and see exactly how the data changed. This creates a powerful before/after experience for understanding CDC!
 
@@ -1183,17 +1020,17 @@ The agent understands your healthcare schema AND the CDC metadata columns for tr
 
 ### Prerequisites
 
-Before setting up Snowflake Intelligence, ensure you have:
+Before setting up Snowflake CoWork, ensure you have:
 
 - ✅ Completed snapshot load with Openflow pipeline running
-- ✅ Snowflake Intelligence infrastructure created (this was done in `1.snowflake_setup.sql` which created the `snowflake_intelligence` database and `agents` schema)
+- ✅ Snowflake CoWork infrastructure created (created in the Setup Snowflake Environment step: the `snowflake_intelligence` database and `agents` schema)
 - ✅ Default role and warehouse set in your Snowflake user profile
 
 ### Upload Semantic Model
 
 The semantic model defines your healthcare schema for the AI agent. It includes table definitions, relationships, and CDC metadata columns.
 
-> **NOTE:** The `semantic_models` stage and `snowflake_intelligence` database were already created when you ran `1.snowflake_setup.sql`. You just need to upload the semantic model file!
+> **NOTE:** The `semantic_models` stage and `snowflake_intelligence` database were already created in the Setup Snowflake Environment step. You just need to upload the semantic model file!
 
 Upload the semantic model to the stage using Snowsight:
 
@@ -1227,14 +1064,14 @@ Verify the upload via <a href="https://app.snowflake.com/_deeplink/#/data/databa
 
 1. Sign in to Snowsight
 2. **Switch to `QUICKSTART_ROLE`** using the role selector in the top-right corner
-3. Navigate directly to Agents: <a href="https://app.snowflake.com/_deeplink/#/agents?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_campaign=-us-en-all&utm_content=app-buidling-new-snowflake-intelligence-agents&utm_cta=developer-guides-deeplink" class="_deeplink">Create Snowflake Intelligence Agent</a>
+3. Navigate directly to Agents: <a href="https://app.snowflake.com/_deeplink/#/agents?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_campaign=-us-en-all&utm_content=app-buidling-new-snowflake-intelligence-agents&utm_cta=developer-guides-deeplink" class="_deeplink">Create Snowflake CoWork Agent</a>
 4. Select **"Create agent"**
 
 ![Agent Creation Interface](assets/si_agent_create.png)
 
 **Platform Integration:**
 
-- ☑️ Select **"Create this agent for Snowflake Intelligence"**
+- ☑️ Select **"Create this agent for Snowflake CoWork"**
 
 **Agent Details:**
 
@@ -1348,7 +1185,7 @@ Now that your agent is configured, let's ask baseline questions about the snapsh
 
 #### Getting Started with Queries
 
-1. Access Snowflake Intelligence: [Open Snowflake Intelligence](https://ai.snowflake.com/)
+1. Access Snowflake CoWork: [Open Snowflake CoWork](https://ai.snowflake.com/)
 2. Select your agent `Healthcare Data Intelligence (Snapshot & CDC)` from the dropdown
 
    ![Choose Agent](assets/si_chat_choose_agent.png)
@@ -1718,11 +1555,11 @@ The exact counts and percentages will vary based on your baseline snapshot data 
 
 ---
 
-### Return to Snowflake Intelligence (Ask CDC Questions)
+### Return to Snowflake CoWork (Ask CDC Questions)
 
-Now that CDC events have been processed, return to your Snowflake Intelligence agent and ask CDC-specific questions to see the changes!
+Now that CDC events have been processed, return to your Snowflake CoWork agent and ask CDC-specific questions to see the changes!
 
-1. Access Snowflake Intelligence: [Open Snowflake Intelligence](https://ai.snowflake.com/)
+1. Access Snowflake CoWork: [Open Snowflake CoWork](https://ai.snowflake.com/)
 2. Select your agent `HEALTHCARE_DATA_INTELLIGENCE` from the dropdown
 3. **Refresh the agent cache** by clicking the refresh button or typing a new question (this ensures the agent fetches the latest CDC data)
 4. Ask these CDC-focused questions:
@@ -1861,7 +1698,7 @@ Table with appointment details and `_SNOWFLAKE_UPDATED_AT` timestamps
 
 **Expected:** Count from visits where `follow_up_required = TRUE`
 
-> **Pro Tip:** Snowflake Intelligence understands the CDC metadata columns and can differentiate between snapshot data and real-time changes. Try asking comparative questions like "Show me only the appointments that changed today" to see CDC-specific insights!
+> **Pro Tip:** Snowflake CoWork understands the CDC metadata columns and can differentiate between snapshot data and real-time changes. Try asking comparative questions like "Show me only the appointments that changed today" to see CDC-specific insights!
 
 ### Alternative: SQL Queries
 
@@ -1913,244 +1750,234 @@ GROUP BY d."doctor_id", d."first_name", d."last_name", d."specialization"
 ORDER BY completed DESC;
 ```
 
-> **Best of Both Worlds:** Use Snowflake Intelligence for ad-hoc exploration and business user queries, and SQL for repeatable reporting and dashboards!
+> **Best of Both Worlds:** Use Snowflake CoWork for ad-hoc exploration and business user queries, and SQL for repeatable reporting and dashboards!
+
+<!-- ------------------------ -->
+## Recreate the Connector as Code (Optional)
+
+The wizard is the fastest way to set up your first connector. When you want the same setup in another environment, or in a CI/CD pipeline, you can create the connector with SQL and a versioned configuration file. Let's build a second copy of our connector this way.
+
+> **Note:** This step needs [Snowflake CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli/index). Snowsight doesn't support `GET` and `PUT` on connector stages.
+
+### Create the Connector from a Definition
+
+Each gen 2 catalog entry has a definition ID. Let's list them:
+
+```sql
+SHOW OPENFLOW CONNECTOR DEFINITIONS;
+```
+
+The PostgreSQL CDC definition is `OPENFLOW_POSTGRES_CDC`. Create a connector from it:
+
+```sql
+USE ROLE QUICKSTART_ROLE;
+USE DATABASE QUICKSTART_PGCDC_DB;
+USE SCHEMA OPENFLOW;
+
+CREATE OPENFLOW CONNECTOR QUICKSTART_PGCDC_CONNECTOR_CODE
+  IN RUNTIME QUICKSTART_PGCDC_RUNTIME
+  FROM DEFINITION OPENFLOW_POSTGRES_CDC
+  DISPLAY_NAME = 'Quickstart PostgreSQL CDC (as code)';
+```
+
+The new connector starts in a STOPPED state with Draft status. It has a live configuration version you can edit and no committed version yet.
+
+### Reuse the Wizard's Configuration
+
+Gen 2 connectors store their configuration in a **config.json** file on an internal versioned stage. The easiest template is the one the wizard already generated for your first connector. Let's download it:
+
+```bash
+snow stage copy \
+  'snow://openflow_connector/QUICKSTART_PGCDC_DB.OPENFLOW.<WIZARD_CONNECTOR_NAME>/versions/live/config.json' .
+```
+
+<!-- TODO (DEVREL-113): Confirm how to find the wizard-created connector's name (SHOW OPENFLOW CONNECTORS) and whether its live version is available after commit or needs ADD LIVE VERSION FROM LAST first. -->
+
+Open **config.json** and look at the password setting. It references the secret, so the file holds no credentials:
+
+```json
+"Source Database Password": {
+  "valueType": "SECRET_REFERENCE",
+  "fullyQualifiedSecretName": "QUICKSTART_PGCDC_DB.OPENFLOW.POSTGRES_PASSWORD"
+}
+```
+
+To keep the two connectors from competing for the same tables, change the destination database or table pattern in **config.json** before uploading it.
+
+<!-- TODO (DEVREL-113): Pick the exact config.json keys to change so the second connector doesn't collide with the first (separate destination database or replication slot); capture from a real config.json. -->
+
+### Upload, Commit, and Start
+
+Upload the file to the new connector's live version. The destination is the live version directory. Including **config.json** in the destination path creates a nested file that hides the real one.
+
+```sql
+PUT 'file://./config.json'
+  'snow://openflow_connector/QUICKSTART_PGCDC_DB.OPENFLOW.QUICKSTART_PGCDC_CONNECTOR_CODE/versions/live/'
+  AUTO_COMPRESS = FALSE
+  OVERWRITE = TRUE;
+```
+
+Commit the live version to make it the default, then start the connector and wait for it to stabilize:
+
+```sql
+ALTER OPENFLOW CONNECTOR QUICKSTART_PGCDC_CONNECTOR_CODE COMMIT;
+
+ALTER OPENFLOW CONNECTOR QUICKSTART_PGCDC_CONNECTOR_CODE START;
+
+SELECT SYSTEM$WAIT_FOR_STABLE_OPENFLOW_CONNECTORS(600, 'QUICKSTART_PGCDC_CONNECTOR_CODE');
+```
+
+Here's what the code does:
+
+- Uploads your edited configuration to the connector's live version
+- Commits the live version, which becomes the default version the connector runs
+- Starts the connector and blocks until it reaches a stable state, which makes the sequence safe to script
+
+To change the configuration later, create a new live version from the last commit with `ALTER OPENFLOW CONNECTOR ... ADD LIVE VERSION FROM LAST`, edit and upload **config.json**, then `COMMIT` or `ABORT`.
+
+That's it. The same connector setup now lives in a file you can keep in Git and promote across environments.
 
 <!-- ------------------------ -->
 ## Cleanup
 
-When you're done with the quickstart, follow these steps to clean up all resources. This prevents unnecessary compute costs and removes test data from your environment.
+When you're done with the Quickstart, follow these steps to remove everything you created and stop any compute costs.
 
-> **⚠️ DESTRUCTIVE OPERATIONS**: Some cleanup steps below will permanently delete databases, schemas, tables, and all data created during this quickstart. Make sure you've captured any queries or insights you want to keep before proceeding!
+> **Important:** Some of these steps permanently delete databases, tables, and data created during this Quickstart. Save any queries or results you want to keep before proceeding.
 
-### Step 1: Stop the PostgreSQL Connector (Optional)
+### Stop and Remove the Connectors
 
-If you want to temporarily pause CDC replication without deleting any configuration:
-
-1. Navigate to your Openflow runtime canvas
-2. Right-click on the **PostgreSQL** processor group
-3. Select **Stop** to halt CDC replication
-4. Wait for the connector to fully stop (status indicator turns red)
-
-> **TIP:** Stopping the connector preserves your configuration while preventing further CDC processing and associated compute costs. You can restart it later by right-clicking and selecting **Start**. Use this option if you want to keep your runtime and connector configuration intact.
-
-### Step 2: Delete Openflow Runtime (Permanent)
-
-Deleting the Openflow runtime will automatically stop all services and connectors, and clean up the container infrastructure.
-
-#### For Dedicated Runtime (Created for This Quickstart)
-
-If you created a dedicated Openflow runtime for this quickstart:
-
-**Via Snowsight:**
-
-1. Navigate to **Work with data** → **Ingestion** → **Openflow**
-2. Go to **Runtimes** tab
-3. Find your runtime (e.g., `quickstart_pgcdc_runtime`)
-4. Click on the runtime and select **Delete**
-5. Confirm deletion
-6. Wait for the runtime to be fully removed (this may take a few minutes)
-
-> **What Gets Deleted**: Deleting the runtime removes all connectors, services (NiFi, Registry), and the SPCS infrastructure. This automatically closes all database connections, including PostgreSQL replication slots.
-
-#### For Shared Runtime (From Companion Quickstart)
-
-> **⚠️ IMPORTANT**: If you're using the Openflow runtime from the companion quickstart "[Getting Started with Openflow on SPCS](https://quickstarts.snowflake.com/guide/getting-started-openflow-spcs)", DO NOT delete the runtime! It may be used by other connectors or projects.
-
-Instead, stop the PostgreSQL connector and its related services:
-
-1. Navigate to **Work with data** → **Ingestion** → **Openflow**
-2. Select your runtime and open the canvas
-3. Right-click on the **PostgreSQL** processor group
-4. Select **Stop** to halt the connector
-5. Right-click on each related service (NiFi processors, controller services)
-6. Select **Stop** or **Disable** to stop all CDC-related services
-7. Wait for all components to fully stop (status indicators turn red/gray)
-
-![Stop Openflow PostgreSQL Services](assets/openflow_pgcdc_stop_all.gif)
-
-> **Keep the Runtime**: The shared runtime can be reused for future Openflow projects, including other CDC connectors, API integrations, or file ingestion pipelines. Stopping services preserves all configuration while eliminating compute costs.
-
-### Step 3: Clean Up PostgreSQL
-
-Remove the CDC configuration and test database from PostgreSQL.
-
-#### Terminate Active Replication Slots
-
-Connect to your PostgreSQL database and run these queries:
+Gen 2 connectors are removed in three steps: stop, terminate, then drop. Run these for the wizard connector, and for `QUICKSTART_PGCDC_CONNECTOR_CODE` if you completed the optional step.
 
 ```sql
--- View replication slots
-SELECT slot_name, slot_type, active, restart_lsn 
-FROM pg_replication_slots 
+USE ROLE QUICKSTART_ROLE;
+USE DATABASE QUICKSTART_PGCDC_DB;
+USE SCHEMA OPENFLOW;
+
+ALTER OPENFLOW CONNECTOR <WIZARD_CONNECTOR_NAME> STOP;
+ALTER OPENFLOW CONNECTOR <WIZARD_CONNECTOR_NAME> TERMINATE;
+DROP OPENFLOW CONNECTOR <WIZARD_CONNECTOR_NAME>;
+```
+
+You can also use **Installed Connectors** in the Openflow UI: select **Stop**, then **Delete**, then **Drop** from the connector's menu.
+
+> **Note:** To pause replication without removing anything, run only the `STOP` statement. Start it again later with `ALTER OPENFLOW CONNECTOR ... START`.
+
+### Remove the Runtime and Deployment
+
+Runtimes follow the same pattern: suspend, terminate, then drop.
+
+```sql
+ALTER OPENFLOW RUNTIME QUICKSTART_PGCDC_RUNTIME SUSPEND;
+ALTER OPENFLOW RUNTIME QUICKSTART_PGCDC_RUNTIME TERMINATE;
+DROP OPENFLOW RUNTIME QUICKSTART_PGCDC_RUNTIME;
+```
+
+If you created `QUICKSTART_DEPLOYMENT` for this Quickstart and nothing else uses it, drop it as well. Skip this if you reused an existing deployment.
+
+```sql
+DROP OPENFLOW DEPLOYMENT QUICKSTART_DEPLOYMENT;
+```
+
+<!-- TODO (DEVREL-113): Confirm DROP OPENFLOW DEPLOYMENT syntax and any prerequisite state. -->
+
+### Clean Up PostgreSQL
+
+Connect to your PostgreSQL database and look for the connector's replication slot:
+
+```sql
+SELECT slot_name, slot_type, active, restart_lsn
+FROM pg_replication_slots
 WHERE database = 'postgres';
 ```
 
-Since you stopped the connector in previous steps, the slot will show `active = false`. Drop the inactive slot:
+With the connectors removed, the slot shows `active = false`. Drop it so PostgreSQL stops retaining WAL for it:
 
 ```sql
--- Drop inactive replication slot(s)
-SELECT pg_drop_replication_slot(slot_name) 
-FROM pg_replication_slots 
-WHERE database = 'postgres' 
+SELECT pg_drop_replication_slot(slot_name)
+FROM pg_replication_slots
+WHERE database = 'postgres'
   AND NOT active;
 ```
 
-> **Replication Slot Naming**: The replication slot name is automatically generated by Openflow following the pattern `snowflake_connector_<unique_id>`. The query above will show you the exact name.
->
-> **If Slot is Active**: If the slot still shows `active = true` (connector not fully stopped), first terminate the backend connection:
->
-> ```sql
-> -- Terminate the active backend connection
-> SELECT pg_terminate_backend(active_pid)
-> FROM pg_replication_slots
-> WHERE slot_name = 'snowflake_connector_XXXXX' AND active = true;
-> 
-> -- Then drop the slot
-> SELECT pg_drop_replication_slot('snowflake_connector_XXXXX');
-> ```
-
-#### Drop the Publication
-
-Remove the CDC publication:
+Drop the publication:
 
 ```sql
--- Drop the publication for healthcare tables
 DROP PUBLICATION IF EXISTS healthcare_cdc_publication;
 ```
 
-#### Drop the Healthcare Schema (Optional)
-
-If you want to completely remove the test data:
+If this was a dedicated test instance, you can also drop the demo data:
 
 ```sql
--- Drop the healthcare schema and all its objects
 DROP SCHEMA IF EXISTS healthcare CASCADE;
-
--- Verify cleanup
-SELECT schema_name 
-FROM information_schema.schemata 
-WHERE schema_name = 'healthcare';
 ```
 
-Expected output: Empty result set (0 rows), confirming the healthcare schema has been removed.
+### Drop Snowflake Objects
 
-> **Keep PostgreSQL?** If you're using a shared PostgreSQL instance, you may want to keep the schema and just drop the publication. If this was a dedicated test instance, you can safely drop everything.
-
-### Step 4: Drop Snowflake Intelligence Agent
-
-Remove the AI agent and its associated database:
+Finally, remove the CoWork agent and the Snowflake objects:
 
 ```sql
--- Use ACCOUNTADMIN role (required for agent operations)
-USE ROLE ACCOUNTADMIN;
+USE ROLE QUICKSTART_ROLE;
 
--- Drop the Snowflake Intelligence agent
 DROP AGENT IF EXISTS snowflake_intelligence.agents.HEALTHCARE_DATA_INTELLIGENCE;
+
+DROP DATABASE IF EXISTS QUICKSTART_PGCDC_DB;
+DROP WAREHOUSE IF EXISTS QUICKSTART_PGCDC_WH;
+DROP INTEGRATION IF EXISTS quickstart_pgcdc_access;
 ```
 
-### Step 5: Drop Snowflake Objects
+> **Note:** Leave the `snowflake_intelligence` database in place if other CoWork agents in your account use it. Otherwise, drop it with `DROP DATABASE IF EXISTS snowflake_intelligence;`.
 
-Remove all Snowflake resources created for this quickstart:
+Drop the roles created for this Quickstart:
 
 ```sql
--- Use ACCOUNTADMIN role for cleanup
 USE ROLE ACCOUNTADMIN;
 
--- Drop the main database (includes healthcare schema and all tables)
-DROP DATABASE IF EXISTS QUICKSTART_PGCDC_DB CASCADE;
+DROP ROLE IF EXISTS QUICKSTART_PGCDC_RUNTIME_ROLE;
 
--- Drop the warehouse
-DROP WAREHOUSE IF EXISTS QUICKSTART_PGCDC_WH;
-
--- Drop the external access integration
-DROP INTEGRATION IF EXISTS quickstart_pgcdc_access;
-
--- Drop the role
+-- Drop the role created for this Quickstart
 DROP ROLE IF EXISTS QUICKSTART_ROLE;
 ```
-
-#### Verify Cleanup
-
-Confirm all objects are removed:
-
-```sql
--- Check for remaining objects
-SHOW DATABASES LIKE 'QUICKSTART_PGCDC_DB';
-SHOW DATABASES LIKE 'snowflake_intelligence';
-SHOW WAREHOUSES LIKE 'QUICKSTART_PGCDC_WH';
-SHOW INTEGRATIONS LIKE 'quickstart_pgcdc_access';
-SHOW ROLES LIKE 'QUICKSTART_ROLE';
-```
-
-Expected output: Empty result sets for all queries.
-
-### Step 6: Remove Local Files (Optional)
-
-If you cloned the quickstart repository locally and no longer need it:
-
-```bash
-# Navigate to parent directory
-cd ..
-
-# Remove the quickstart directory
-rm -rf openflow-postgresql-cdc-demo
-
-# Verify removal
-ls -la | grep openflow-postgresql-cdc-demo
-```
-
-### Cleanup Complete
-
-All resources have been removed. You can verify by:
-
-- ✅ Checking Snowflake compute usage (warehouse should not be running)
-- ✅ Confirming no active PostgreSQL replication slots
-- ✅ Verifying no Openflow services consuming compute credits
-
-> **Cost Savings**: By cleaning up unused resources, you avoid unnecessary compute costs. Warehouses, services, and replication slots all consume credits when active!
 
 <!-- ------------------------ -->
 ## Conclusion And Resources
 
-Congratulations! You've successfully built a real-time CDC pipeline from PostgreSQL to Snowflake using Openflow.
+Congratulations! You've built a real-time CDC pipeline from PostgreSQL to Snowflake with gen 2 Openflow, and you can explore every change in natural language with Snowflake CoWork.
 
 ### What You Learned
 
 - How to configure PostgreSQL logical replication for CDC
-- How to set up Snowflake Intelligence with semantic models for natural language queries
-- How to configure Openflow PostgreSQL connector for CDC
-- How to capture both snapshot and incremental changes
-- How to analyze real-time data and CDC metadata with AI-powered insights
-- How to use natural language to explore CDC changes
+- How to create gen 2 Openflow deployments and runtimes with SQL
+- How the runtime's execute-as role controls what the connector can access
+- How to install and validate the PostgreSQL CDC connector with the setup wizard
+- How to capture snapshot and incremental changes, including soft deletes and journal tables
+- How to recreate a connector as code with versioned configuration
+- How to use Snowflake CoWork to explore CDC data in natural language
 
 ### Related Resources
 
-**Openflow Documentation**:
+Openflow documentation:
 
 - [Openflow Overview](https://docs.snowflake.com/en/user-guide/data-integration/openflow/about)
-- [PostgreSQL CDC Connector](https://docs.snowflake.com/en/user-guide/data-integration/openflow/connectors/postgres/about)
+- [Quickstart: gen 2 Openflow](https://docs.snowflake.com/en/user-guide/data-integration/openflow/gen2/quickstart)
+- [Openflow gen 1 and gen 2](https://docs.snowflake.com/en/user-guide/data-integration/openflow/gen2/openflow-generations)
+- [Configure a connector with the setup wizard](https://docs.snowflake.com/en/user-guide/data-integration/openflow/gen2/setup-connector-wizard)
+- [Configure a gen 2 connector with SQL](https://docs.snowflake.com/en/user-guide/data-integration/openflow/gen2/configure-connector-sql)
+- [Openflow Connector for PostgreSQL](https://docs.snowflake.com/en/user-guide/data-integration/openflow/connectors/postgres/about)
 - [MySQL CDC Connector](https://docs.snowflake.com/en/user-guide/data-integration/openflow/connectors/mysql/about)
 - [SQL Server CDC Connector](https://docs.snowflake.com/en/user-guide/data-integration/openflow/connectors/sql-server/about)
-- [Manage Openflow](https://docs.snowflake.com/en/user-guide/data-integration/openflow/manage)
-- [Monitor Openflow](https://docs.snowflake.com/en/user-guide/data-integration/openflow/monitor)
 
-**Snowflake Intelligence**:
+Snowflake CoWork:
 
-- [Snowflake Intelligence Overview](https://docs.snowflake.com/en/user-guide/snowflake-cortex/snowflake-intelligence)
+- [Snowflake CoWork Overview](https://docs.snowflake.com/en/user-guide/snowflake-cortex/snowflake-intelligence)
 - [Semantic Models](https://docs.snowflake.com/en/user-guide/snowflake-cortex/semantic-model-spec)
 - [Agents](https://docs.snowflake.com/en/user-guide/snowflake-cortex/agents)
 
-**PostgreSQL Resources**:
+<!-- TODO (DEVREL-113): Update CoWork doc links if the URLs changed with the rename. -->
+
+PostgreSQL resources:
 
 - [Snowflake Postgres](https://www.snowflake.com/en/product/features/postgres/)
 - [Getting Started with Snowflake Postgres](https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake-postgres/)
 - [PostgreSQL Logical Replication](https://www.postgresql.org/docs/current/logical-replication.html)
 
-**Snowflake Platform**:
-
-- [Snowpark Container Services](https://docs.snowflake.com/en/developer-guide/snowpark-container-services/overview)
-- [External Access Integration](https://docs.snowflake.com/en/sql-reference/sql/create-external-access-integration)
-
----
-
-**Feedback**: Please provide feedback on this quickstart via [GitHub Issues](https://github.com/Snowflake-Labs/sfquickstarts/issues)
+Feedback: Please provide feedback on this Quickstart via [GitHub Issues](https://github.com/Snowflake-Labs/sfquickstarts/issues).
