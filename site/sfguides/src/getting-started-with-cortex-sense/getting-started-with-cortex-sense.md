@@ -20,20 +20,20 @@ An agent with full access to your tables can usually find the right columns and 
 
 In this guide you work with **Juniper Valley Health**, a fictional health system. Its analytics warehouse has 8 tables and about 16,000 synthetic rows covering facilities, patients, encounters, claims, denials, readmissions, and patient surveys. As at a real organization, its business definitions are in internal docs, saved queries, and a dashboard. You ask an agent the same questions without and with a Cortex Sense context, as the same analyst role, and compare the answers.
 
-> **Private Preview:** Cortex Sense is in private preview. Your account must be enrolled before you can follow this guide. If it isn't, contact your account team.
+> **Public Preview:** Cortex Sense is in public preview. If `/sense` isn't available in your account, or the build reports that Cortex Context Builder is not enabled for this account, contact your account team.
 
 ### How it compares to semantic views and the Business Ontology
 
-A semantic view is a model you write yourself: you define each metric, dimension, and relationship, and it gives the most precise answers for the domains you've modeled. The Business Ontology, also in private preview, is a governed vocabulary of approved business terms, how they relate, and which Snowflake objects implement them. A Cortex Sense context is mined automatically for one use case from sources you already have, so it takes far less work to build, but it can be confidently wrong in places until you correct it.
+A semantic view is a model you write yourself: you define each metric, dimension, and relationship, and it gives the most precise answers for the domains you've modeled. The Business Ontology, also in public preview, is a governed vocabulary of approved business terms, how they relate, and which Snowflake objects implement them. A Cortex Sense context is mined automatically for one use case from sources you already have, so it takes far less work to build, but it can be confidently wrong in places until you correct it.
 
 A context treats the semantic views in its scope as authoritative definitions and can include Business Ontology domains as a source. After a build, the `cortex-sense` skill can offer to review what the context learned against an ontology domain and draft new terms for stewards to approve. This guide uses a semantic view but doesn't use the ontology.
 
 ### Production, trial, and dev accounts
 
-Cortex Sense works best with the query history, dashboards, and documentation of a production account; the docs warn that dev environments often lack them. To make up for that, setup loads the demo's internal docs, saved queries, and dashboard, and runs the saved queries once so they appear in query history. Every definition the questions depend on is written in those docs, so the comparison works on a new or quiet account. A trial account can run the setup scripts, but building the context still needs an account enrolled in the preview.
+Cortex Sense works best with the query history, dashboards, and documentation of a production account; the docs warn that dev environments often lack them. To make up for that, setup loads the demo's internal docs, saved queries, and dashboard, and runs the saved queries once so they appear in query history. Every definition the questions depend on is written in those docs, so the comparison works on a new or quiet account. A trial account can run the setup scripts, but building the context needs Cortex Sense to be enabled on the account.
 
 ### Prerequisites
-- A Snowflake account enrolled in the Cortex Sense private preview
+- A Snowflake account with Cortex Sense enabled
 - Either the `ACCOUNTADMIN` role, or an administrator who will run a short setup script for you. The next section lists exactly what it grants.
 - Basic familiarity with Cortex Code CLI and SQL
 
@@ -72,7 +72,7 @@ If you don't have `ACCOUNTADMIN`, for example on a company account, send the scr
 | API integration `JUNIPER_GITHUB`, with `USAGE` for `JUNIPER_BUILDER` | Read-only access to the companion repository |
 | Empty database `JUNIPER_HEALTH`, owned by `JUNIPER_BUILDER` | Everything else is created inside it |
 
-The `CORTEX_SENSE_BUILDER` grant succeeds whether or not your account is enrolled in the preview, so the script can't tell you. Enrollment is checked when `/sense` runs its pre-flight checks. In an account that isn't enrolled, Snowflake reports that Cortex Context Builder is not enabled for this account.
+The `CORTEX_SENSE_BUILDER` grant succeeds whether or not Cortex Sense is enabled on your account, so the script can't tell you. That's checked when `/sense` runs its pre-flight checks. In an account where it isn't enabled, Snowflake reports that Cortex Context Builder is not enabled for this account.
 
 ### Run the main script
 
@@ -184,7 +184,7 @@ The docs teach definitions and deliberately state no answers, so an agent with c
 
 The build runs in the background, and you collect baseline answers in the next step after it finishes.
 
-> **One context per role:** During private preview, give each role access to a single context. A query that isn't scoped to named contexts searches every context the role can reach. The demo roles are new, so this holds as long as you don't grant them other contexts.
+> **One context per role:** During the preview, give each role access to a single context. A query that isn't scoped to named contexts searches every context the role can reach. The demo roles are new, so this holds as long as you don't grant them other contexts.
 
 ### Start a new context
 
@@ -230,14 +230,14 @@ The skill saves the context as `JUNIPER_HEALTH.SENSE.JUNIPER_HEALTH` and queues 
 
 CoCo also accepts facts from you while it builds. Don't give it any here: if you tell it a definition, the comparison no longer measures what it learned from the sources.
 
-Scheduled refresh isn't implemented yet during private preview, so a context reflects its sources as they were when it was built.
+Scheduled refresh isn't implemented yet during the preview, so a context reflects its sources as they were when it was built.
 
-> **Cost:** Builds are billed at the same rates as `AI_COMPLETE` and scale with scope. Most early-preview customers spent fewer than 1,000 credits on an initial build, and small demo setups cost much less. You can't set a credit cap during private preview. Build credits appear in `CORTEX_AI_FUNCTIONS_USAGE_HISTORY`.
+> **Cost:** Builds are billed at the same rates as `AI_COMPLETE` and scale with scope. Most early-preview customers spent fewer than 1,000 credits on an initial build, and small demo setups cost much less. You can't set a credit cap during the preview. Build credits appear in `CORTEX_AI_FUNCTIONS_USAGE_HISTORY`.
 
 <!-- ------------------------ -->
 ## Ask Baseline Questions
 
-Now record what an agent answers without Cortex Sense. Start once the build has finished: in the builder session, type `/sense`, pick `JUNIPER_HEALTH`, and check that the **Overview** tab shows **ready**. We couldn't confirm when a running build reads query history, so baseline questions asked during the build might be indexed into the context. After the build, they can't be, because during private preview a context isn't refreshed unless you rebuild it.
+Now record what an agent answers without Cortex Sense. Start once the build has finished: in the builder session, type `/sense`, pick `JUNIPER_HEALTH`, and check that the **Overview** tab shows **ready**. We couldn't confirm when a running build reads query history, so baseline questions asked during the build might be indexed into the context. After the build, they can't be, because during the preview a context isn't refreshed unless you rebuild it.
 
 You can pause at any point. A new context has only one grant, `OWNERSHIP` for the builder role, so the analyst role can't use it until you grant access in the **Ask Again with Cortex Sense** step. If you take a break and come back the next day, the baseline is unaffected. **Finish this step before you grant the analyst role access.**
 
