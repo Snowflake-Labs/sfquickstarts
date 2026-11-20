@@ -23,82 +23,73 @@ Build a  customer review analytics dashboard that processes unstructured text d
 ```sql
 SELECT 
   filename,
-  SNOWFLAKE.CORTEX.PARSE_DOCUMENT(
-    @avalanche_db.avalanche_schema.customer_reviews,
-    filename,
-    {'mode': 'layout'}
+  AI_PARSE_DOCUMENT(
+    TO_FILE('@avalanche_db.avalanche_schema.customer_reviews', filename),
+    {'mode': 'LAYOUT'}
   ):content AS layout
 FROM files;
 
 SELECT 
   filename,
-  SNOWFLAKE.CORTEX.PARSE_DOCUMENT(
-    @avalanche_db.avalanche_schema.customer_reviews,
-    filename,
-    {'mode': 'layout'}
+  AI_PARSE_DOCUMENT(
+    TO_FILE('@avalanche_db.avalanche_schema.customer_reviews', filename),
+    {'mode': 'LAYOUT'}
   ):content AS layout
 FROM files;
 
 SELECT 
   filename,
-  SNOWFLAKE.CORTEX.PARSE_DOCUMENT(
-    @avalanche_db.avalanche_schema.customer_reviews,
-    filename,
-    {'mode': 'layout'}
+  AI_PARSE_DOCUMENT(
+    TO_FILE('@avalanche_db.avalanche_schema.customer_reviews', filename),
+    {'mode': 'LAYOUT'}
   ):content AS layout
 FROM files;
 
 SELECT 
   filename,
-  SNOWFLAKE.CORTEX.PARSE_DOCUMENT(
-    @avalanche_db.avalanche_schema.customer_reviews,
-    filename,
-    {'mode': 'layout'}
+  AI_PARSE_DOCUMENT(
+    TO_FILE('@avalanche_db.avalanche_schema.customer_reviews', filename),
+    {'mode': 'LAYOUT'}
   ):content AS layout
 FROM files;
 
 SELECT 
   filename,
-  SNOWFLAKE.CORTEX.PARSE_DOCUMENT(
-    @avalanche_db.avalanche_schema.customer_reviews,
-    filename,
-    {'mode': 'layout'}
+  AI_PARSE_DOCUMENT(
+    TO_FILE('@avalanche_db.avalanche_schema.customer_reviews', filename),
+    {'mode': 'LAYOUT'}
   ):content AS layout
 FROM files;
 
 SELECT 
   filename,
-  SNOWFLAKE.CORTEX.PARSE_DOCUMENT(
-    @avalanche_db.avalanche_schema.customer_reviews,
-    filename,
-    {'mode': 'layout'}
+  AI_PARSE_DOCUMENT(
+    TO_FILE('@avalanche_db.avalanche_schema.customer_reviews', filename),
+    {'mode': 'LAYOUT'}
   ):content AS layout
 FROM files;
 
 SELECT 
   filename,
-  SNOWFLAKE.CORTEX.PARSE_DOCUMENT(
-    @avalanche_db.avalanche_schema.customer_reviews,
-    filename,
-    {'mode': 'layout'}
+  AI_PARSE_DOCUMENT(
+    TO_FILE('@avalanche_db.avalanche_schema.customer_reviews', filename),
+    {'mode': 'LAYOUT'}
   ):content AS layout
 FROM files;
 
 SELECT 
   filename,
-  SNOWFLAKE.CORTEX.PARSE_DOCUMENT(
-    @avalanche_db.avalanche_schema.customer_reviews,
-    filename,
-    {'mode': 'layout'}
+  AI_PARSE_DOCUMENT(
+    TO_FILE('@avalanche_db.avalanche_schema.customer_reviews', filename),
+    {'mode': 'LAYOUT'}
   ):content AS layout
 FROM files;
 
 SELECT 
   filename,
-  SNOWFLAKE.CORTEX.PARSE_DOCUMENT(
-    @avalanche_db.avalanche_schema.customer_reviews,
-    filename,
-    {'mode': 'layout'}
+  AI_PARSE_DOCUMENT(
+    TO_FILE('@avalanche_db.avalanche_schema.customer_reviews', filename),
+    {'mode': 'LAYOUT'}
   ):content AS layout
 FROM files;
 ```
