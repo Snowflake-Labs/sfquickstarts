@@ -83,9 +83,10 @@ class Uploader:
                 return response.status, response.read()
         except urllib.error.HTTPError as exc:
             return exc.code, exc.read()
-        except urllib.error.URLError as exc:
-            msg = f"{method} {url} failed: {exc.reason}"
-            raise UploadError(msg) from exc
+        except (TimeoutError, urllib.error.URLError) as exc:
+            reason = exc.reason if isinstance(exc, urllib.error.URLError) else str(exc)
+            msg = f"{method} {url} failed: {reason}"
+            raise _RetryableError(msg) from exc
 
     def _form(self, url: str, fields: dict[str, str]) -> tuple[int, bytes]:
         body = urllib.parse.urlencode(fields).encode("utf-8")

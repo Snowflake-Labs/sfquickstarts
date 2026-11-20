@@ -34,7 +34,15 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v7.0.0
         with:
-          fetch-depth: 2
+          fetch-depth: 1
+          # Detection reads only trusted scripts and guide markdown for language
+          # metadata. Excluding assets keeps the ~4 GB content tree out of this job.
+          sparse-checkout: |
+            /scripts/lib/
+            /scripts/publish/
+            /site/sfguides/src/*/*.md
+            /journeys/*/*/*.md
+          sparse-checkout-cone-mode: false
 
       # Selecting a cached interpreter, not installing packages: detect_changes.py
       # is stdlib-only, so this job still pulls in no third-party code.
