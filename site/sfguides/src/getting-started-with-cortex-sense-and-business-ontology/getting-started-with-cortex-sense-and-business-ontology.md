@@ -8,7 +8,7 @@ status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 fork repo link: https://github.com/sfc-gh-JCHAEARLEY/sfguide-getting-started-with-cortex-sense-and-business-ontology
 
-# Getting Started with Cortex Sense and Business Ontology
+# Getting Started with Cortex Sense, Semantic Views, and Business Ontology
 <!-- ------------------------ -->
 ## Overview
 
