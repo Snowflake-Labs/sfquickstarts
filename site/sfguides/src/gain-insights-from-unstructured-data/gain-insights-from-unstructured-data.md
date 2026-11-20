@@ -14,7 +14,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 The fictitious food truck company, Tasty Bytes, receives thousands of customer reviews, food photos, social media video clips, and voicemail complaints across multiple channels. To improve operations, the company needs to extract structured, queryable data from all of this unstructured content at scale — turning free-text reviews into categorized issues, food truck photos into menu item inventories, video clips into brand mentions, and voicemails into actionable tickets.
 
-This guide shows you how to build a batch data extraction pipeline entirely within Snowflake using [Cortex AI Functions](https://docs.snowflake.com/en/user-guide/snowflake-cortex/aisql). You will use AI_EXTRACT for structured field extraction from text and images, AI_COMPLETE with video support (public preview) for multimodal analysis, and AI_TRANSCRIBE for audio processing. Finally, you will use [Cortex AI Function Studio](https://docs.snowflake.com/en/LIMITEDACCESS/snowflake-cortex/cortex-ai-function-studio) to create a reusable custom AI function, evaluate its accuracy, and optimize it for production use.
+This guide shows you how to build a batch data extraction pipeline entirely within Snowflake using [Cortex AI Functions](https://docs.snowflake.com/en/user-guide/snowflake-cortex/aisql). You will use AI_EXTRACT for structured field extraction from text and images, AI_COMPLETE with video support (public preview) for multimodal analysis, and AI_TRANSCRIBE for audio processing. Finally, you will use [Cortex AI Function Studio](https://docs.snowflake.com/en/user-guide/snowflake-cortex/ai-function-studio) to create a reusable custom AI function, evaluate its accuracy, and optimize it for production use.
 
 ### Prerequisites
 * Familiarity with SQL
@@ -139,7 +139,7 @@ LIMIT 10;
 
 ### Extraction with Scores
 
-AI_EXTRACT supports confidence scores (preview) that indicate the model's certainty about each extracted value. Use scores to flag low-confidence extractions for human review:
+AI_EXTRACT supports [extraction scores](https://docs.snowflake.com/en/sql-reference/functions/ai_extract#label-ai-extract-scores) that indicate the model's certainty about each extracted value. Use scores to flag low-confidence extractions for human review:
 
 ```sql
 SELECT 
@@ -525,7 +525,7 @@ WHERE
 <!-- ------------------------ -->
 ## Cortex AI Function Studio: Create
 
-In this phase, you will use [Cortex AI Function Studio](https://docs.snowflake.com/en/user-guide/snowflake-cortex/ai-function-studio), Public Preview, to create a reusable custom AI function that encapsulates the text extraction logic from earlier. This allows you to call extraction as a simple SQL function across any table without rewriting prompts.
+In this phase, you will use [Cortex AI Function Studio](https://docs.snowflake.com/en/user-guide/snowflake-cortex/ai-function-studio) to create a reusable custom AI function that encapsulates the text extraction logic from earlier. This allows you to call extraction as a simple SQL function across any table without rewriting prompts.
 
 AI Function Studio provides a managed workflow to create, evaluate, and optimize custom AI functions. The function you create here uses AI_COMPLETE under the hood but is deployed as a standard SQL UDF that can be called from any query.
 
@@ -762,5 +762,5 @@ Want to learn more about the tools and technologies used in this quickstart? Che
 * [Cortex AI Functions Documentation](https://docs.snowflake.com/user-guide/snowflake-cortex/aisql)
 * [AI_EXTRACT Reference](https://docs.snowflake.com/en/sql-reference/functions/ai_extract)
 * [Cortex AI Functions: Multimodal](https://docs.snowflake.com/en/user-guide/snowflake-cortex/ai-audio)
-* [AI Function Studio](https://docs.snowflake.com/en/LIMITEDACCESS/snowflake-cortex/cortex-ai-function-studio)
+* [AI Function Studio](https://docs.snowflake.com/en/user-guide/snowflake-cortex/ai-function-studio)
 * [GitHub Repository](https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/gain-insights-from-unstructured-data)
