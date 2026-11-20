@@ -1,8 +1,12 @@
-# 🧪 Snowflake AI Governance System - Hands-On Lab
-#author:Wondi Wolde
-
-**Learn to build a production-grade autonomous governance system in Snowflake**
-
+---
+author: Wondi Wolde
+id: snowflake-ai-governance-system
+language: en
+summary: Learn to build a production-grade autonomous governance system in Snowflake
+categories: snowflake-site:taxonomy/solution-center/certification/quickstart
+environments: web
+status: Published
+feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 ---
 
 ## 📚 Lab Overview
