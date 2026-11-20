@@ -498,7 +498,7 @@ Clicking on any table will bring you to the graph view for that table.
 >
 > If you don't see any Dynamic Tables, you'll need to create one first.
 >
-> For a step-by-step guide, try this quickstart: [Getting Started with Snowflake Dynamic Tables](/en/developers/guides/getting-started-with-dynamic-tables/).
+> For a step-by-step guide, try this quickstart: [Getting Started with Snowflake Dynamic Tables](https://www.snowflake.com/en/developers/guides/comprehensive-guide-to-dynamic-tables/).
 
 ### Additional Resources
 
@@ -568,7 +568,7 @@ Now that you have explored the basics of Snowflake Trail, consider these possibl
 
 - [Getting Started with AI Observability](/en/developers/guides/getting-started-with-ai-observability/)
 - [Getting Started with Event Tables and Alerts](/en/developers/guides/alert-on-events/)
-- [Getting Started with Snowflake Dynamic Tables](/en/developers/guides/getting-started-with-dynamic-tables/)
+- [Getting Started with Snowflake Dynamic Tables](https://www.snowflake.com/en/developers/guides/comprehensive-guide-to-dynamic-tables/)
 - [Getting Started with Snowflake Task Graphs](/en/developers/guides/getting-started-with-task-graphs/)
 - [Getting Started with Snowpipe Streaming and Azure Event Hubs](/en/developers/guides/getting-started-with-snowpipe-streaming-azure-eventhubs/)
 - [Getting Started with Snowpipe](/en/developers/guides/getting-started-with-snowpipe/)
