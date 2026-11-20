@@ -1,13 +1,13 @@
 author: Akhil Ramasagaram
 id: build-a-video-search-app-with-twelve-labs
 language: en
-summary: Build an end-to-end video search and analysis app on Snowflake with Twelve Labs Marengo 3.0, Pegasus 1.5, multi-index Cortex Search, and Snowflake App Runtime.
+summary: Build an end-to-end video search and analysis app on Snowflake with TwelveLabs Marengo 3.0, Pegasus 1.5, multi-index Cortex Search, and Snowflake App Runtime.
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/applications-and-collaboration, snowflake-site:taxonomy/snowflake-feature/cortex-search, snowflake-site:taxonomy/snowflake-feature/cortex-llm-functions
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
-# Build a Video Search App with Twelve Labs on Snowflake
+# Build a Video Search App with TwelveLabs on Snowflake
 <!-- ------------------------ -->
 ## Overview
 
@@ -293,4 +293,4 @@ You built a video search and analysis app with SQL functions and a small front e
 - [AI_COMPLETE documentation](https://docs.snowflake.com/en/sql-reference/functions/ai_complete)
 - [Cortex AI Functions: Multimodal](https://docs.snowflake.com/en/user-guide/snowflake-cortex/ai-multimodal)
 - [Cortex Search overview](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview)
-- [Twelve Labs](https://www.twelvelabs.io)
+- [TwelveLabs](https://www.twelvelabs.io)
