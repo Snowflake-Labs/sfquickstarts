@@ -215,10 +215,12 @@ Download the iceberg_dt.py file from [this git repository](https://github.com/Sn
 
 This step creates a Snowflake Catalog Integration to connect to the AWS Glue Catalog, which acts as the metadata store for the Iceberg tables. A catalog integration is a named, account-level Snowflake object that stores information about how your table metadata is organized for the following scenarios:
 
-* When you don’t use Snowflake as the Iceberg catalog. For example, you need a catalog integration if your table is managed by AWS Glue.
+* When you don't use Snowflake as the Iceberg catalog. For example, you need a catalog integration if your table is managed by AWS Glue.
 * When you want to integrate with Snowflake Open Catalog to:
         * Query an Iceberg table in Snowflake Open Catalog using Snowflake.
         * Sync a Snowflake-managed Iceberg table with Snowflake Open Catalog so that third-party compute engines can query the table.
+
+> **Note:** This guide uses `CATALOG_SOURCE = ICEBERG_REST` with `CATALOG_API_TYPE = AWS_GLUE` — the current recommended approach for connecting Snowflake to the Glue Data Catalog via the Iceberg REST API. If you have an older catalog integration using `CATALOG_SOURCE = GLUE`, migrate to this approach to get access to Catalog-Linked Databases, vended credentials, and full Iceberg REST feature support.
 
 ```sql
 CREATE or replace CATALOG INTEGRATION glue_catalog_integration
@@ -780,6 +782,41 @@ select count(*) from gold_analytics_db.public."sales_summary_trends";
 
 <!-------------->
 
+## Continue Building with Cortex Code
+
+[Cortex Code](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code) is Snowflake's AI coding agent — built into the Snowflake CLI. It can guide you through setting up, verifying, and troubleshooting your Glue catalog integration interactively, without switching between AWS console tabs and documentation.
+
+### Set up or troubleshoot your Glue catalog integration
+
+Use these prompts to get started. Cortex Code will ask for your AWS account ID, region, IAM role, and access delegation preference — then generate and execute the SQL, retrieve the Snowflake IAM user ARN, and walk you through the trust policy update.
+
+**Create a new catalog integration:**
+```
+Help me create a catalog integration for AWS Glue Iceberg REST
+```
+
+**Verify an existing integration is working:**
+```
+Verify my Glue catalog integration and list the namespaces and tables it can see
+```
+
+**Troubleshoot a broken integration:**
+```
+My Glue catalog integration is failing — help me diagnose and fix it
+```
+
+**Set up a Catalog-Linked Database after the integration is ready:**
+```
+Create a catalog-linked database from my Glue catalog integration
+```
+
+**Add Dynamic Iceberg Tables on top of your Bronze layer:**
+```
+Help me create Dynamic Iceberg Tables in Snowflake that read from my Glue-managed Iceberg tables and write results back to S3
+```
+
+<!-------------->
+
 ## Conclusion and Resources
 
 
@@ -807,5 +844,5 @@ So far, you learned to work with:
 ### Relevant Resources
 
 * [Dynamic Tables](https://docs.snowflake.com/en/user-guide/dynamic-tables-about)
-* [Make your lakehouse AI-ready](/en/developers/solutions-center/modern-lakehouse-analytics-blueprint/)
+* [Make your lakehouse AI-ready](https://www.snowflake.com/en/developers/solutions-center/modern-lakehouse-analytics-blueprint/)
 * [Catalog Linked Databases](https://docs.snowflake.com/en/user-guide/tables-iceberg-catalog-linked-database)

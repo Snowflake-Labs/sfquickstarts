@@ -1,0 +1,33 @@
+Source System,Source Column,Source Type,Silver Target Column,Target Type,Required?,Transform,Business Rules / Notes,Status
+BAAN IV,BAN_INVOICE_ID,text (20),INVOICE_ID,VARCHAR(20),Yes,Direct map,Primary key in Baan. Format: BAN-NNN.,Confirmed
+BAAN IV,BAN_INVOICE_REF,text (30),INVOICE_NUMBER,VARCHAR(30),Yes,Direct map,Business-facing invoice number — use for dedup.,Confirmed
+BAAN IV,BAN_VENDOR_CODE,text (15),VENDOR_ID,VARCHAR(15),Yes,Direct map,Format: BV-NNN.,Confirmed
+BAAN IV,BAN_VENDOR_DESC,text (100),VENDOR_NAME,VARCHAR(100),Yes,Direct map,May contain special chars (ü é etc.) from European vendor names. Ensure UTF-8.,Confirmed
+BAAN IV,BAN_INV_DATE,date,INVOICE_DATE,DATE,Yes,Direct map,Always in YYYY-MM-DD.,Confirmed
+BAAN IV,BAN_PAY_DATE,date,DUE_DATE,DATE,Yes,Direct map,,Confirmed
+BAAN IV,BAN_AMOUNT,number,INVOICE_AMOUNT,"NUMBER(18,2)",Yes,Direct map,Always positive. Credit memos come as separate records with negative amounts.,Confirmed
+BAAN IV,BAN_CURR,text (3),CURRENCY_CODE,VARCHAR(3),Yes,Direct map,Only EUR and GBP observed so far.,Confirmed
+BAAN IV,BAN_PAY_TERMS,text (20),PAYMENT_TERMS,VARCHAR(20),Yes,Normalize,"Baan uses ""N30"", ""N60"" — standardize to SAP format ""NET30""/""NET60""? Decision: keep as-is for now, normalize in Gold layer.",Open — needs decision
+BAAN IV,BAN_PO_REF,text (20),PO_NUMBER,VARCHAR(20),No,Direct map,Optional. ~15% of Baan invoices have no PO (service invoices).,Confirmed
+BAAN IV,BAN_LINE_DESC,text (200),LINE_DESCRIPTION,VARCHAR(200),No,Direct map,Free text. Sometimes contains Dutch language descriptions.,Confirmed
+BAAN IV,BAN_GL_CODE,text (20),GL_ACCOUNT,VARCHAR(20),Yes,Direct map,Format: GL-NNN. Do NOT attempt to cross-map at Silver layer.,Confirmed
+BAAN IV,BAN_COST_CTR,text (20),COST_CENTER,VARCHAR(20),Yes,Direct map,Format changed Jan 2025: old=BC-XX new=BC-XXX. Both may appear.,Confirmed
+BAAN IV,BAN_STATUS,text (20),APPROVAL_STATUS,VARCHAR(20),Yes,Map values,"POSTED→APPROVED, APPROVED→APPROVED, PENDING→PENDING.",Confirmed
+BAAN IV,BAN_CREATED,timestamp,CREATED_AT,TIMESTAMP_NTZ,Yes,Direct map,UTC. Baan server is in CET but extract converts to UTC.,Confirmed
+BAAN IV,BAN_COMPANY,text (10),—,—,No,DROP,Baan company code. Not needed in Silver. Available in Bronze if required for audit.,Confirmed — drop
+WORKDAY,WD_INVOICE_ID,text (20),INVOICE_ID,VARCHAR(20),Yes,Direct map,Format: WD-NNN.,Confirmed
+WORKDAY,WD_INVOICE_NUM,text (30),INVOICE_NUMBER,VARCHAR(30),Yes,Direct map,Format: WD-AP-NNNNN. Business-facing number.,Confirmed
+WORKDAY,WD_SUPPLIER_ID,text (15),VENDOR_ID,VARCHAR(15),Yes,Direct map,Format: WS-NNN. Workday calls them suppliers — we standardize to vendor.,Confirmed
+WORKDAY,WD_SUPPLIER_NAME,text (100),VENDOR_NAME,VARCHAR(100),Yes,Direct map,Clean data — no special char issues observed.,Confirmed
+WORKDAY,WD_INVOICE_DATE,date,INVOICE_DATE,DATE,Yes,Direct map,,Confirmed
+WORKDAY,WD_DUE_DATE,date,DUE_DATE,DATE,Yes,Direct map,,Confirmed
+WORKDAY,WD_AMOUNT,number,INVOICE_AMOUNT,"NUMBER(18,2)",Yes,Direct map,Positive values only.,Confirmed
+WORKDAY,WD_CURRENCY,text (3),CURRENCY_CODE,VARCHAR(3),Yes,Direct map,"USD, GBP, EUR observed. USD is ~70% of volume.",Confirmed
+WORKDAY,WD_PAY_TERMS,text (20),PAYMENT_TERMS,VARCHAR(20),Yes,Normalize?,"Workday uses ""Net 30"", ""Net 60"" (with space). Same open question as Baan.",Open — needs decision
+WORKDAY,WD_PO_NUMBER,text (20),PO_NUMBER,VARCHAR(20),No,Direct map,Format: WPO-NNNN. Higher PO coverage than Baan (~90%).,Confirmed
+WORKDAY,WD_MEMO,text (200),LINE_DESCRIPTION,VARCHAR(200),No,Direct map,Workday calls it Memo. Same purpose as LINE_DESCRIPTION.,Confirmed
+WORKDAY,WD_LEDGER_ACCOUNT,text (20),GL_ACCOUNT,VARCHAR(20),Yes,Direct map,Format: LA-NNNN. Do NOT cross-map.,Confirmed
+WORKDAY,WD_COST_CENTER,text (20),COST_CENTER,VARCHAR(20),Yes,Direct map,Format: WCC-XXXX. Consistent format.,Confirmed
+WORKDAY,WD_APPROVAL_STATUS,text (20),APPROVAL_STATUS,VARCHAR(20),Yes,Map values,"Approved→APPROVED, In Review→PENDING.",Confirmed
+WORKDAY,WD_CREATED_DATE,timestamp,CREATED_AT,TIMESTAMP_NTZ,Yes,Direct map,UTC. Workday cloud — no timezone conversion needed.,Confirmed
+WORKDAY,WD_TENANT_ID,text (10),—,—,No,DROP,WD-T1=US WD-T2=London. Not needed in Silver.,Confirmed — drop

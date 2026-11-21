@@ -258,7 +258,7 @@ You'll notice that an in-memory cache is used to cache responses for 180 seconds
 
 Later on, we'll have the opportunity to test the endpoint with and without the in-memory cache.
 
-While this is only a single endpoint, you can easily add other endpoints as well. Check out how to create other endpoints in a similar version to this guide [here](https://github.com/sfc-gh-bculberson/lab_data_api_python).
+While this is only a single endpoint, you can easily add other endpoints as well. Check out how to create other endpoints in a similar version to this guide [here](https://github.com/snowflake-labs/lab_data_api_python).
 
 <!-- ------------------------ -->
 ## Build and Push Container
@@ -537,4 +537,4 @@ To get more comfortable with this solution, implement new endpoints with new dat
 
 ### Resources
 
-If you want to build a Data API using Snowflake standard tables for analytical queries, be sure to check out the previous version of this [here](https://github.com/sfc-gh-bculberson/lab_data_api_python). 
+If you want to build a Data API using Snowflake standard tables for analytical queries, be sure to check out the previous version of this [here](https://github.com/Snowflake-Labs/lab_data_api_python). 

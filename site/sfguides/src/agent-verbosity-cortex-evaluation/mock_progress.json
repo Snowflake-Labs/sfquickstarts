@@ -1,0 +1,1752 @@
+[
+  {
+    "user_id": 1,
+    "step_name": "cli_installed",
+    "completed": true,
+    "completed_at": "2026-02-19T19:22:17.124337",
+    "details": "Version: 2.1.47"
+  },
+  {
+    "user_id": 1,
+    "step_name": "network_policy",
+    "completed": true,
+    "completed_at": "2026-01-30T18:22:30.487247",
+    "details": "Mock completion for network_policy"
+  },
+  {
+    "user_id": 1,
+    "step_name": "pat_created",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 1,
+    "step_name": "settings_configured",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 1,
+    "step_name": "test_successful",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 2,
+    "step_name": "cli_installed",
+    "completed": true,
+    "completed_at": "2026-01-20T18:22:30.487259",
+    "details": "Mock completion for cli_installed"
+  },
+  {
+    "user_id": 2,
+    "step_name": "network_policy",
+    "completed": true,
+    "completed_at": "2026-01-21T18:22:30.487261",
+    "details": "Mock completion for network_policy"
+  },
+  {
+    "user_id": 2,
+    "step_name": "pat_created",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 2,
+    "step_name": "settings_configured",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 2,
+    "step_name": "test_successful",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 3,
+    "step_name": "cli_installed",
+    "completed": true,
+    "completed_at": "2026-01-31T18:22:30.487267",
+    "details": "Mock completion for cli_installed"
+  },
+  {
+    "user_id": 3,
+    "step_name": "network_policy",
+    "completed": true,
+    "completed_at": "2026-01-31T18:22:30.487268",
+    "details": "Mock completion for network_policy"
+  },
+  {
+    "user_id": 3,
+    "step_name": "pat_created",
+    "completed": true,
+    "completed_at": "2026-01-27T18:22:30.487270",
+    "details": "Mock completion for pat_created"
+  },
+  {
+    "user_id": 3,
+    "step_name": "settings_configured",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 3,
+    "step_name": "test_successful",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 4,
+    "step_name": "cli_installed",
+    "completed": true,
+    "completed_at": "2026-02-06T18:22:30.487275",
+    "details": "Mock completion for cli_installed"
+  },
+  {
+    "user_id": 4,
+    "step_name": "network_policy",
+    "completed": true,
+    "completed_at": "2026-02-02T18:22:30.487276",
+    "details": "Mock completion for network_policy"
+  },
+  {
+    "user_id": 4,
+    "step_name": "pat_created",
+    "completed": true,
+    "completed_at": "2026-02-06T18:22:30.487277",
+    "details": "Mock completion for pat_created"
+  },
+  {
+    "user_id": 4,
+    "step_name": "settings_configured",
+    "completed": true,
+    "completed_at": "2026-02-05T18:22:30.487278",
+    "details": "Mock completion for settings_configured"
+  },
+  {
+    "user_id": 4,
+    "step_name": "test_successful",
+    "completed": true,
+    "completed_at": "2026-02-02T18:22:30.487280",
+    "details": "Mock completion for test_successful"
+  },
+  {
+    "user_id": 5,
+    "step_name": "cli_installed",
+    "completed": true,
+    "completed_at": "2026-02-06T18:22:30.487284",
+    "details": "Mock completion for cli_installed"
+  },
+  {
+    "user_id": 5,
+    "step_name": "network_policy",
+    "completed": true,
+    "completed_at": "2026-02-07T18:22:30.487285",
+    "details": "Mock completion for network_policy"
+  },
+  {
+    "user_id": 5,
+    "step_name": "pat_created",
+    "completed": true,
+    "completed_at": "2026-02-06T18:22:30.487287",
+    "details": "Mock completion for pat_created"
+  },
+  {
+    "user_id": 5,
+    "step_name": "settings_configured",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 5,
+    "step_name": "test_successful",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 6,
+    "step_name": "cli_installed",
+    "completed": true,
+    "completed_at": "2026-02-03T18:22:30.487293",
+    "details": "Mock completion for cli_installed"
+  },
+  {
+    "user_id": 6,
+    "step_name": "network_policy",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 6,
+    "step_name": "pat_created",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 6,
+    "step_name": "settings_configured",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 6,
+    "step_name": "test_successful",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 7,
+    "step_name": "cli_installed",
+    "completed": true,
+    "completed_at": "2026-01-26T18:22:30.487297",
+    "details": "Mock completion for cli_installed"
+  },
+  {
+    "user_id": 7,
+    "step_name": "network_policy",
+    "completed": true,
+    "completed_at": "2026-01-29T18:22:30.487298",
+    "details": "Mock completion for network_policy"
+  },
+  {
+    "user_id": 7,
+    "step_name": "pat_created",
+    "completed": true,
+    "completed_at": "2026-01-27T18:22:30.487299",
+    "details": "Mock completion for pat_created"
+  },
+  {
+    "user_id": 7,
+    "step_name": "settings_configured",
+    "completed": true,
+    "completed_at": "2026-01-25T18:22:30.487300",
+    "details": "Mock completion for settings_configured"
+  },
+  {
+    "user_id": 7,
+    "step_name": "test_successful",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 8,
+    "step_name": "cli_installed",
+    "completed": true,
+    "completed_at": "2026-02-11T18:22:30.487304",
+    "details": "Mock completion for cli_installed"
+  },
+  {
+    "user_id": 8,
+    "step_name": "network_policy",
+    "completed": true,
+    "completed_at": "2026-02-09T18:22:30.487306",
+    "details": "Mock completion for network_policy"
+  },
+  {
+    "user_id": 8,
+    "step_name": "pat_created",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 8,
+    "step_name": "settings_configured",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 8,
+    "step_name": "test_successful",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 9,
+    "step_name": "cli_installed",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 9,
+    "step_name": "network_policy",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 9,
+    "step_name": "pat_created",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 9,
+    "step_name": "settings_configured",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 9,
+    "step_name": "test_successful",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 10,
+    "step_name": "cli_installed",
+    "completed": true,
+    "completed_at": "2026-02-18T18:22:30.487313",
+    "details": "Mock completion for cli_installed"
+  },
+  {
+    "user_id": 10,
+    "step_name": "network_policy",
+    "completed": true,
+    "completed_at": "2026-02-13T18:22:30.487314",
+    "details": "Mock completion for network_policy"
+  },
+  {
+    "user_id": 10,
+    "step_name": "pat_created",
+    "completed": true,
+    "completed_at": "2026-02-15T18:22:30.487316",
+    "details": "Mock completion for pat_created"
+  },
+  {
+    "user_id": 10,
+    "step_name": "settings_configured",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 10,
+    "step_name": "test_successful",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 11,
+    "step_name": "cli_installed",
+    "completed": true,
+    "completed_at": "2026-01-30T18:22:30.487320",
+    "details": "Mock completion for cli_installed"
+  },
+  {
+    "user_id": 11,
+    "step_name": "network_policy",
+    "completed": true,
+    "completed_at": "2026-02-03T18:22:30.487321",
+    "details": "Mock completion for network_policy"
+  },
+  {
+    "user_id": 11,
+    "step_name": "pat_created",
+    "completed": true,
+    "completed_at": "2026-02-03T18:22:30.487322",
+    "details": "Mock completion for pat_created"
+  },
+  {
+    "user_id": 11,
+    "step_name": "settings_configured",
+    "completed": true,
+    "completed_at": "2026-02-02T18:22:30.487323",
+    "details": "Mock completion for settings_configured"
+  },
+  {
+    "user_id": 11,
+    "step_name": "test_successful",
+    "completed": true,
+    "completed_at": "2026-01-30T18:22:30.487325",
+    "details": "Mock completion for test_successful"
+  },
+  {
+    "user_id": 12,
+    "step_name": "cli_installed",
+    "completed": true,
+    "completed_at": "2026-02-05T18:22:30.487329",
+    "details": "Mock completion for cli_installed"
+  },
+  {
+    "user_id": 12,
+    "step_name": "network_policy",
+    "completed": true,
+    "completed_at": "2026-02-04T18:22:30.487330",
+    "details": "Mock completion for network_policy"
+  },
+  {
+    "user_id": 12,
+    "step_name": "pat_created",
+    "completed": true,
+    "completed_at": "2026-02-03T18:22:30.487331",
+    "details": "Mock completion for pat_created"
+  },
+  {
+    "user_id": 12,
+    "step_name": "settings_configured",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 12,
+    "step_name": "test_successful",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 13,
+    "step_name": "cli_installed",
+    "completed": true,
+    "completed_at": "2026-02-18T18:22:30.487335",
+    "details": "Mock completion for cli_installed"
+  },
+  {
+    "user_id": 13,
+    "step_name": "network_policy",
+    "completed": true,
+    "completed_at": "2026-02-18T18:22:30.487336",
+    "details": "Mock completion for network_policy"
+  },
+  {
+    "user_id": 13,
+    "step_name": "pat_created",
+    "completed": true,
+    "completed_at": "2026-02-18T18:22:30.487337",
+    "details": "Mock completion for pat_created"
+  },
+  {
+    "user_id": 13,
+    "step_name": "settings_configured",
+    "completed": true,
+    "completed_at": "2026-02-18T18:22:30.487338",
+    "details": "Mock completion for settings_configured"
+  },
+  {
+    "user_id": 13,
+    "step_name": "test_successful",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 14,
+    "step_name": "cli_installed",
+    "completed": true,
+    "completed_at": "2026-02-04T18:22:30.487344",
+    "details": "Mock completion for cli_installed"
+  },
+  {
+    "user_id": 14,
+    "step_name": "network_policy",
+    "completed": true,
+    "completed_at": "2026-02-06T18:22:30.487345",
+    "details": "Mock completion for network_policy"
+  },
+  {
+    "user_id": 14,
+    "step_name": "pat_created",
+    "completed": true,
+    "completed_at": "2026-02-07T18:22:30.487347",
+    "details": "Mock completion for pat_created"
+  },
+  {
+    "user_id": 14,
+    "step_name": "settings_configured",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 14,
+    "step_name": "test_successful",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 15,
+    "step_name": "cli_installed",
+    "completed": true,
+    "completed_at": "2026-02-07T18:22:30.487351",
+    "details": "Mock completion for cli_installed"
+  },
+  {
+    "user_id": 15,
+    "step_name": "network_policy",
+    "completed": true,
+    "completed_at": "2026-02-02T18:22:30.487352",
+    "details": "Mock completion for network_policy"
+  },
+  {
+    "user_id": 15,
+    "step_name": "pat_created",
+    "completed": true,
+    "completed_at": "2026-02-04T18:22:30.487353",
+    "details": "Mock completion for pat_created"
+  },
+  {
+    "user_id": 15,
+    "step_name": "settings_configured",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 15,
+    "step_name": "test_successful",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 16,
+    "step_name": "cli_installed",
+    "completed": true,
+    "completed_at": "2026-02-18T18:22:30.487358",
+    "details": "Mock completion for cli_installed"
+  },
+  {
+    "user_id": 16,
+    "step_name": "network_policy",
+    "completed": true,
+    "completed_at": "2026-02-18T18:22:30.487359",
+    "details": "Mock completion for network_policy"
+  },
+  {
+    "user_id": 16,
+    "step_name": "pat_created",
+    "completed": true,
+    "completed_at": "2026-02-18T18:22:30.487361",
+    "details": "Mock completion for pat_created"
+  },
+  {
+    "user_id": 16,
+    "step_name": "settings_configured",
+    "completed": true,
+    "completed_at": "2026-02-16T18:22:30.487362",
+    "details": "Mock completion for settings_configured"
+  },
+  {
+    "user_id": 16,
+    "step_name": "test_successful",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 17,
+    "step_name": "cli_installed",
+    "completed": true,
+    "completed_at": "2026-02-09T18:22:30.487367",
+    "details": "Mock completion for cli_installed"
+  },
+  {
+    "user_id": 17,
+    "step_name": "network_policy",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 17,
+    "step_name": "pat_created",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 17,
+    "step_name": "settings_configured",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 17,
+    "step_name": "test_successful",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 18,
+    "step_name": "cli_installed",
+    "completed": true,
+    "completed_at": "2026-02-08T18:22:30.487371",
+    "details": "Mock completion for cli_installed"
+  },
+  {
+    "user_id": 18,
+    "step_name": "network_policy",
+    "completed": true,
+    "completed_at": "2026-02-04T18:22:30.487372",
+    "details": "Mock completion for network_policy"
+  },
+  {
+    "user_id": 18,
+    "step_name": "pat_created",
+    "completed": true,
+    "completed_at": "2026-02-06T18:22:30.487373",
+    "details": "Mock completion for pat_created"
+  },
+  {
+    "user_id": 18,
+    "step_name": "settings_configured",
+    "completed": true,
+    "completed_at": "2026-02-03T18:22:30.487374",
+    "details": "Mock completion for settings_configured"
+  },
+  {
+    "user_id": 18,
+    "step_name": "test_successful",
+    "completed": true,
+    "completed_at": "2026-02-03T18:22:30.487375",
+    "details": "Mock completion for test_successful"
+  },
+  {
+    "user_id": 19,
+    "step_name": "cli_installed",
+    "completed": true,
+    "completed_at": "2026-02-03T18:22:30.487379",
+    "details": "Mock completion for cli_installed"
+  },
+  {
+    "user_id": 19,
+    "step_name": "network_policy",
+    "completed": true,
+    "completed_at": "2026-02-04T18:22:30.487380",
+    "details": "Mock completion for network_policy"
+  },
+  {
+    "user_id": 19,
+    "step_name": "pat_created",
+    "completed": true,
+    "completed_at": "2026-02-04T18:22:30.487381",
+    "details": "Mock completion for pat_created"
+  },
+  {
+    "user_id": 19,
+    "step_name": "settings_configured",
+    "completed": true,
+    "completed_at": "2026-02-01T18:22:30.487383",
+    "details": "Mock completion for settings_configured"
+  },
+  {
+    "user_id": 19,
+    "step_name": "test_successful",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 20,
+    "step_name": "cli_installed",
+    "completed": true,
+    "completed_at": "2026-02-12T18:22:30.487387",
+    "details": "Mock completion for cli_installed"
+  },
+  {
+    "user_id": 20,
+    "step_name": "network_policy",
+    "completed": true,
+    "completed_at": "2026-02-11T18:22:30.487388",
+    "details": "Mock completion for network_policy"
+  },
+  {
+    "user_id": 20,
+    "step_name": "pat_created",
+    "completed": true,
+    "completed_at": "2026-02-14T18:22:30.487389",
+    "details": "Mock completion for pat_created"
+  },
+  {
+    "user_id": 20,
+    "step_name": "settings_configured",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 20,
+    "step_name": "test_successful",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 21,
+    "step_name": "cli_installed",
+    "completed": true,
+    "completed_at": "2026-02-02T18:22:30.487393",
+    "details": "Mock completion for cli_installed"
+  },
+  {
+    "user_id": 21,
+    "step_name": "network_policy",
+    "completed": true,
+    "completed_at": "2026-01-30T18:22:30.487395",
+    "details": "Mock completion for network_policy"
+  },
+  {
+    "user_id": 21,
+    "step_name": "pat_created",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 21,
+    "step_name": "settings_configured",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 21,
+    "step_name": "test_successful",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 22,
+    "step_name": "cli_installed",
+    "completed": true,
+    "completed_at": "2026-02-07T18:22:30.487399",
+    "details": "Mock completion for cli_installed"
+  },
+  {
+    "user_id": 22,
+    "step_name": "network_policy",
+    "completed": true,
+    "completed_at": "2026-02-09T18:22:30.487400",
+    "details": "Mock completion for network_policy"
+  },
+  {
+    "user_id": 22,
+    "step_name": "pat_created",
+    "completed": true,
+    "completed_at": "2026-02-07T18:22:30.487401",
+    "details": "Mock completion for pat_created"
+  },
+  {
+    "user_id": 22,
+    "step_name": "settings_configured",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 22,
+    "step_name": "test_successful",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 23,
+    "step_name": "cli_installed",
+    "completed": true,
+    "completed_at": "2026-01-31T18:22:30.487405",
+    "details": "Mock completion for cli_installed"
+  },
+  {
+    "user_id": 23,
+    "step_name": "network_policy",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 23,
+    "step_name": "pat_created",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 23,
+    "step_name": "settings_configured",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 23,
+    "step_name": "test_successful",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 24,
+    "step_name": "cli_installed",
+    "completed": true,
+    "completed_at": "2026-01-21T18:22:30.487409",
+    "details": "Mock completion for cli_installed"
+  },
+  {
+    "user_id": 24,
+    "step_name": "network_policy",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 24,
+    "step_name": "pat_created",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 24,
+    "step_name": "settings_configured",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 24,
+    "step_name": "test_successful",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 25,
+    "step_name": "cli_installed",
+    "completed": true,
+    "completed_at": "2026-01-31T18:22:30.487413",
+    "details": "Mock completion for cli_installed"
+  },
+  {
+    "user_id": 25,
+    "step_name": "network_policy",
+    "completed": true,
+    "completed_at": "2026-02-02T18:22:30.487415",
+    "details": "Mock completion for network_policy"
+  },
+  {
+    "user_id": 25,
+    "step_name": "pat_created",
+    "completed": true,
+    "completed_at": "2026-01-29T18:22:30.487416",
+    "details": "Mock completion for pat_created"
+  },
+  {
+    "user_id": 25,
+    "step_name": "settings_configured",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 25,
+    "step_name": "test_successful",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 26,
+    "step_name": "cli_installed",
+    "completed": true,
+    "completed_at": "2026-02-07T18:22:30.487420",
+    "details": "Mock completion for cli_installed"
+  },
+  {
+    "user_id": 26,
+    "step_name": "network_policy",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 26,
+    "step_name": "pat_created",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 26,
+    "step_name": "settings_configured",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 26,
+    "step_name": "test_successful",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 27,
+    "step_name": "cli_installed",
+    "completed": true,
+    "completed_at": "2026-02-04T18:22:30.487426",
+    "details": "Mock completion for cli_installed"
+  },
+  {
+    "user_id": 27,
+    "step_name": "network_policy",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 27,
+    "step_name": "pat_created",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 27,
+    "step_name": "settings_configured",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 27,
+    "step_name": "test_successful",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 28,
+    "step_name": "cli_installed",
+    "completed": true,
+    "completed_at": "2026-02-18T18:22:30.487430",
+    "details": "Mock completion for cli_installed"
+  },
+  {
+    "user_id": 28,
+    "step_name": "network_policy",
+    "completed": true,
+    "completed_at": "2026-02-16T18:22:30.487432",
+    "details": "Mock completion for network_policy"
+  },
+  {
+    "user_id": 28,
+    "step_name": "pat_created",
+    "completed": true,
+    "completed_at": "2026-02-16T18:22:30.487433",
+    "details": "Mock completion for pat_created"
+  },
+  {
+    "user_id": 28,
+    "step_name": "settings_configured",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 28,
+    "step_name": "test_successful",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 29,
+    "step_name": "cli_installed",
+    "completed": true,
+    "completed_at": "2026-02-14T18:22:30.487437",
+    "details": "Mock completion for cli_installed"
+  },
+  {
+    "user_id": 29,
+    "step_name": "network_policy",
+    "completed": true,
+    "completed_at": "2026-02-18T18:22:30.487438",
+    "details": "Mock completion for network_policy"
+  },
+  {
+    "user_id": 29,
+    "step_name": "pat_created",
+    "completed": true,
+    "completed_at": "2026-02-18T18:22:30.487439",
+    "details": "Mock completion for pat_created"
+  },
+  {
+    "user_id": 29,
+    "step_name": "settings_configured",
+    "completed": true,
+    "completed_at": "2026-02-16T18:22:30.487440",
+    "details": "Mock completion for settings_configured"
+  },
+  {
+    "user_id": 29,
+    "step_name": "test_successful",
+    "completed": true,
+    "completed_at": "2026-02-15T18:22:30.487441",
+    "details": "Mock completion for test_successful"
+  },
+  {
+    "user_id": 30,
+    "step_name": "cli_installed",
+    "completed": true,
+    "completed_at": "2026-02-06T18:22:30.487445",
+    "details": "Mock completion for cli_installed"
+  },
+  {
+    "user_id": 30,
+    "step_name": "network_policy",
+    "completed": true,
+    "completed_at": "2026-02-02T18:22:30.487446",
+    "details": "Mock completion for network_policy"
+  },
+  {
+    "user_id": 30,
+    "step_name": "pat_created",
+    "completed": true,
+    "completed_at": "2026-02-02T18:22:30.487447",
+    "details": "Mock completion for pat_created"
+  },
+  {
+    "user_id": 30,
+    "step_name": "settings_configured",
+    "completed": true,
+    "completed_at": "2026-02-04T18:22:30.487448",
+    "details": "Mock completion for settings_configured"
+  },
+  {
+    "user_id": 30,
+    "step_name": "test_successful",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 31,
+    "step_name": "cli_installed",
+    "completed": true,
+    "completed_at": "2026-02-14T18:22:30.487453",
+    "details": "Mock completion for cli_installed"
+  },
+  {
+    "user_id": 31,
+    "step_name": "network_policy",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 31,
+    "step_name": "pat_created",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 31,
+    "step_name": "settings_configured",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 31,
+    "step_name": "test_successful",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 32,
+    "step_name": "cli_installed",
+    "completed": true,
+    "completed_at": "2026-02-15T18:22:30.487457",
+    "details": "Mock completion for cli_installed"
+  },
+  {
+    "user_id": 32,
+    "step_name": "network_policy",
+    "completed": true,
+    "completed_at": "2026-02-12T18:22:30.487458",
+    "details": "Mock completion for network_policy"
+  },
+  {
+    "user_id": 32,
+    "step_name": "pat_created",
+    "completed": true,
+    "completed_at": "2026-02-13T18:22:30.487460",
+    "details": "Mock completion for pat_created"
+  },
+  {
+    "user_id": 32,
+    "step_name": "settings_configured",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 32,
+    "step_name": "test_successful",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 33,
+    "step_name": "cli_installed",
+    "completed": true,
+    "completed_at": "2026-02-02T18:22:30.487464",
+    "details": "Mock completion for cli_installed"
+  },
+  {
+    "user_id": 33,
+    "step_name": "network_policy",
+    "completed": true,
+    "completed_at": "2026-02-04T18:22:30.487465",
+    "details": "Mock completion for network_policy"
+  },
+  {
+    "user_id": 33,
+    "step_name": "pat_created",
+    "completed": true,
+    "completed_at": "2026-02-01T18:22:30.487466",
+    "details": "Mock completion for pat_created"
+  },
+  {
+    "user_id": 33,
+    "step_name": "settings_configured",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 33,
+    "step_name": "test_successful",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 34,
+    "step_name": "cli_installed",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 34,
+    "step_name": "network_policy",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 34,
+    "step_name": "pat_created",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 34,
+    "step_name": "settings_configured",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 34,
+    "step_name": "test_successful",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 35,
+    "step_name": "cli_installed",
+    "completed": true,
+    "completed_at": "2026-01-23T18:22:30.487473",
+    "details": "Mock completion for cli_installed"
+  },
+  {
+    "user_id": 35,
+    "step_name": "network_policy",
+    "completed": true,
+    "completed_at": "2026-01-28T18:22:30.487474",
+    "details": "Mock completion for network_policy"
+  },
+  {
+    "user_id": 35,
+    "step_name": "pat_created",
+    "completed": true,
+    "completed_at": "2026-01-25T18:22:30.487475",
+    "details": "Mock completion for pat_created"
+  },
+  {
+    "user_id": 35,
+    "step_name": "settings_configured",
+    "completed": true,
+    "completed_at": "2026-01-23T18:22:30.487476",
+    "details": "Mock completion for settings_configured"
+  },
+  {
+    "user_id": 35,
+    "step_name": "test_successful",
+    "completed": true,
+    "completed_at": "2026-01-24T18:22:30.487478",
+    "details": "Mock completion for test_successful"
+  },
+  {
+    "user_id": 36,
+    "step_name": "cli_installed",
+    "completed": true,
+    "completed_at": "2026-02-16T18:22:30.487482",
+    "details": "Mock completion for cli_installed"
+  },
+  {
+    "user_id": 36,
+    "step_name": "network_policy",
+    "completed": true,
+    "completed_at": "2026-02-17T18:22:30.487483",
+    "details": "Mock completion for network_policy"
+  },
+  {
+    "user_id": 36,
+    "step_name": "pat_created",
+    "completed": true,
+    "completed_at": "2026-02-18T18:22:30.487484",
+    "details": "Mock completion for pat_created"
+  },
+  {
+    "user_id": 36,
+    "step_name": "settings_configured",
+    "completed": true,
+    "completed_at": "2026-02-18T18:22:30.487485",
+    "details": "Mock completion for settings_configured"
+  },
+  {
+    "user_id": 36,
+    "step_name": "test_successful",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 37,
+    "step_name": "cli_installed",
+    "completed": true,
+    "completed_at": "2026-02-04T18:22:30.487489",
+    "details": "Mock completion for cli_installed"
+  },
+  {
+    "user_id": 37,
+    "step_name": "network_policy",
+    "completed": true,
+    "completed_at": "2026-02-02T18:22:30.487490",
+    "details": "Mock completion for network_policy"
+  },
+  {
+    "user_id": 37,
+    "step_name": "pat_created",
+    "completed": true,
+    "completed_at": "2026-02-03T18:22:30.487491",
+    "details": "Mock completion for pat_created"
+  },
+  {
+    "user_id": 37,
+    "step_name": "settings_configured",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 37,
+    "step_name": "test_successful",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 38,
+    "step_name": "cli_installed",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 38,
+    "step_name": "network_policy",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 38,
+    "step_name": "pat_created",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 38,
+    "step_name": "settings_configured",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 38,
+    "step_name": "test_successful",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 39,
+    "step_name": "cli_installed",
+    "completed": true,
+    "completed_at": "2026-02-17T18:22:30.487498",
+    "details": "Mock completion for cli_installed"
+  },
+  {
+    "user_id": 39,
+    "step_name": "network_policy",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 39,
+    "step_name": "pat_created",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 39,
+    "step_name": "settings_configured",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 39,
+    "step_name": "test_successful",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 40,
+    "step_name": "cli_installed",
+    "completed": true,
+    "completed_at": "2026-01-25T18:22:30.487502",
+    "details": "Mock completion for cli_installed"
+  },
+  {
+    "user_id": 40,
+    "step_name": "network_policy",
+    "completed": true,
+    "completed_at": "2026-01-22T18:22:30.487503",
+    "details": "Mock completion for network_policy"
+  },
+  {
+    "user_id": 40,
+    "step_name": "pat_created",
+    "completed": true,
+    "completed_at": "2026-01-27T18:22:30.487504",
+    "details": "Mock completion for pat_created"
+  },
+  {
+    "user_id": 40,
+    "step_name": "settings_configured",
+    "completed": true,
+    "completed_at": "2026-01-25T18:22:30.487505",
+    "details": "Mock completion for settings_configured"
+  },
+  {
+    "user_id": 40,
+    "step_name": "test_successful",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 41,
+    "step_name": "cli_installed",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 41,
+    "step_name": "network_policy",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 41,
+    "step_name": "pat_created",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 41,
+    "step_name": "settings_configured",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 41,
+    "step_name": "test_successful",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 42,
+    "step_name": "cli_installed",
+    "completed": true,
+    "completed_at": "2026-01-25T18:22:30.487512",
+    "details": "Mock completion for cli_installed"
+  },
+  {
+    "user_id": 42,
+    "step_name": "network_policy",
+    "completed": true,
+    "completed_at": "2026-01-27T18:22:30.487513",
+    "details": "Mock completion for network_policy"
+  },
+  {
+    "user_id": 42,
+    "step_name": "pat_created",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 42,
+    "step_name": "settings_configured",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 42,
+    "step_name": "test_successful",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 43,
+    "step_name": "cli_installed",
+    "completed": true,
+    "completed_at": "2026-02-09T18:22:30.487517",
+    "details": "Mock completion for cli_installed"
+  },
+  {
+    "user_id": 43,
+    "step_name": "network_policy",
+    "completed": true,
+    "completed_at": "2026-02-05T18:22:30.487518",
+    "details": "Mock completion for network_policy"
+  },
+  {
+    "user_id": 43,
+    "step_name": "pat_created",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 43,
+    "step_name": "settings_configured",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 43,
+    "step_name": "test_successful",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 44,
+    "step_name": "cli_installed",
+    "completed": true,
+    "completed_at": "2026-01-27T18:22:30.487522",
+    "details": "Mock completion for cli_installed"
+  },
+  {
+    "user_id": 44,
+    "step_name": "network_policy",
+    "completed": true,
+    "completed_at": "2026-01-26T18:22:30.487523",
+    "details": "Mock completion for network_policy"
+  },
+  {
+    "user_id": 44,
+    "step_name": "pat_created",
+    "completed": true,
+    "completed_at": "2026-01-24T18:22:30.487524",
+    "details": "Mock completion for pat_created"
+  },
+  {
+    "user_id": 44,
+    "step_name": "settings_configured",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 44,
+    "step_name": "test_successful",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 45,
+    "step_name": "cli_installed",
+    "completed": true,
+    "completed_at": "2026-01-27T18:22:30.487528",
+    "details": "Mock completion for cli_installed"
+  },
+  {
+    "user_id": 45,
+    "step_name": "network_policy",
+    "completed": true,
+    "completed_at": "2026-01-25T18:22:30.487529",
+    "details": "Mock completion for network_policy"
+  },
+  {
+    "user_id": 45,
+    "step_name": "pat_created",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 45,
+    "step_name": "settings_configured",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 45,
+    "step_name": "test_successful",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 46,
+    "step_name": "cli_installed",
+    "completed": true,
+    "completed_at": "2026-01-29T18:22:30.487534",
+    "details": "Mock completion for cli_installed"
+  },
+  {
+    "user_id": 46,
+    "step_name": "network_policy",
+    "completed": true,
+    "completed_at": "2026-01-29T18:22:30.487535",
+    "details": "Mock completion for network_policy"
+  },
+  {
+    "user_id": 46,
+    "step_name": "pat_created",
+    "completed": true,
+    "completed_at": "2026-01-30T18:22:30.487536",
+    "details": "Mock completion for pat_created"
+  },
+  {
+    "user_id": 46,
+    "step_name": "settings_configured",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 46,
+    "step_name": "test_successful",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 47,
+    "step_name": "cli_installed",
+    "completed": true,
+    "completed_at": "2026-02-05T18:22:30.487540",
+    "details": "Mock completion for cli_installed"
+  },
+  {
+    "user_id": 47,
+    "step_name": "network_policy",
+    "completed": true,
+    "completed_at": "2026-02-02T18:22:30.487541",
+    "details": "Mock completion for network_policy"
+  },
+  {
+    "user_id": 47,
+    "step_name": "pat_created",
+    "completed": true,
+    "completed_at": "2026-02-04T18:22:30.487542",
+    "details": "Mock completion for pat_created"
+  },
+  {
+    "user_id": 47,
+    "step_name": "settings_configured",
+    "completed": true,
+    "completed_at": "2026-02-04T18:22:30.487543",
+    "details": "Mock completion for settings_configured"
+  },
+  {
+    "user_id": 47,
+    "step_name": "test_successful",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 48,
+    "step_name": "cli_installed",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 48,
+    "step_name": "network_policy",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 48,
+    "step_name": "pat_created",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 48,
+    "step_name": "settings_configured",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 48,
+    "step_name": "test_successful",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 49,
+    "step_name": "cli_installed",
+    "completed": true,
+    "completed_at": "2026-02-18T18:22:30.487550",
+    "details": "Mock completion for cli_installed"
+  },
+  {
+    "user_id": 49,
+    "step_name": "network_policy",
+    "completed": true,
+    "completed_at": "2026-02-16T18:22:30.487551",
+    "details": "Mock completion for network_policy"
+  },
+  {
+    "user_id": 49,
+    "step_name": "pat_created",
+    "completed": true,
+    "completed_at": "2026-02-18T18:22:30.487552",
+    "details": "Mock completion for pat_created"
+  },
+  {
+    "user_id": 49,
+    "step_name": "settings_configured",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 49,
+    "step_name": "test_successful",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 50,
+    "step_name": "cli_installed",
+    "completed": true,
+    "completed_at": "2026-01-23T18:22:30.487556",
+    "details": "Mock completion for cli_installed"
+  },
+  {
+    "user_id": 50,
+    "step_name": "network_policy",
+    "completed": true,
+    "completed_at": "2026-01-27T18:22:30.487557",
+    "details": "Mock completion for network_policy"
+  },
+  {
+    "user_id": 50,
+    "step_name": "pat_created",
+    "completed": true,
+    "completed_at": "2026-01-26T18:22:30.487558",
+    "details": "Mock completion for pat_created"
+  },
+  {
+    "user_id": 50,
+    "step_name": "settings_configured",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  },
+  {
+    "user_id": 50,
+    "step_name": "test_successful",
+    "completed": false,
+    "completed_at": null,
+    "details": null
+  }
+]

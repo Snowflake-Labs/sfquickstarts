@@ -1,7 +1,7 @@
 author: Jacob Kranzler
 id: tasty-bytes-introduction-kr
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
-language: en
+language: ko
 summary: This is the Tasty Bytes Introduction and Data Foundation Quickstart guide 
 environments: web
 status: Published 
@@ -20,7 +20,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 Tasty Bytes 조직에 대해 알아본 후에는 Tasty Bytes 기초 데이터 모델, 워크로드 전용 역할 및 웨어하우스, 모든 필수 역할 기반 액세스 제어(RBAC) 설정 프로세스를 완료하겠습니다.
 
-이 Quickstart를 완료한 시점에는 [Tasty Bytes 사용 - Quickstart](/en/developers/guides/tasty-bytes-introduction-kr/) 섹션에서 확인할 수 있는 Quickstart를 실행하는 데 필요한 상태일 것입니다.
+이 Quickstart를 완료한 시점에는 [Tasty Bytes 사용 - Quickstart](https://www.snowflake.com/ko/developers/guides/tasty-bytes-introduction-kr/) 섹션에서 확인할 수 있는 Quickstart를 실행하는 데 필요한 상태일 것입니다.
 
 ### Tasty Bytes란 무엇일까요?
 

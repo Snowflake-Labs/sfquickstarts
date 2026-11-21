@@ -113,7 +113,7 @@ SELECT GET_DDL('schema','"DATABASE_NAME"."SCHEMA_NAME"', true);
 
 ### Option 2) Use the example schema 
 
-Download our [example DDL](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/database_modeling_with_sqldbm/assets/sample_schema.sql) 
+Download our [example DDL](assets/sample_schema.sql) 
 
 
 * you can paste the contents directly into the text area on the screen.

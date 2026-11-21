@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Cortex REST API Usage — Visualization Dashboard</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #0f1724;
+      color: #e0e6ed;
+      padding: 24px;
+    }
+    h1 { text-align: center; font-size: 1.8rem; margin-bottom: 4px; color: #29b5e8; }
+    .subtitle { text-align: center; font-size: 0.9rem; color: #8899aa; margin-bottom: 32px; }
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    .card {
+      background: #1a2332;
+      border-radius: 12px;
+      padding: 20px;
+      border: 1px solid #2a3a4a;
+    }
+    .card h2 { font-size: 1rem; color: #29b5e8; margin: 0 0 4px 0; }
+    .card p { font-size: 0.78rem; color: #6a7a8a; margin: 0 0 12px 0; }
+    .full-width { grid-column: 1 / -1; }
+    canvas { width: 100%; display: block; }
+    .legend { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 8px; }
+    .legend-item { display: flex; align-items: center; gap: 5px; font-size: 0.75rem; color: #8899aa; }
+    .legend-swatch { width: 12px; height: 12px; border-radius: 3px; }
+    .tooltip {
+      position: fixed; background: #1a2332; border: 1px solid #3a4a5a; border-radius: 6px;
+      padding: 8px 12px; font-size: 0.75rem; color: #e0e6ed; pointer-events: none;
+      display: none; z-index: 100; box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    }
+    .tooltip .tt-label { color: #8899aa; }
+    .tooltip .tt-value { color: #e0e6ed; font-weight: 600; }
+  </style>
+</head>
+<body>
+
+<h1>Cortex REST API Usage Dashboard</h1>
+<p class="subtitle">Visualizing SNOWFLAKE.ACCOUNT_USAGE.CORTEX_REST_API_USAGE_HISTORY &middot; Pure Canvas Rendering</p>
+
+<div class="grid">
+  <div class="card">
+    <h2>1. Token Scatter &mdash; Per Request</h2>
+    <p>Each dot is one Cortex REST API call. Size = tokens consumed.</p>
+    <canvas id="scatter" height="300"></canvas>
+    <div id="scatter-legend" class="legend"></div>
+  </div>
+
+  <div class="card">
+    <h2>2. Token Distribution &mdash; Histogram</h2>
+    <p>Token counts per request bucketed into ranges, stacked by model.</p>
+    <canvas id="histogram" height="300"></canvas>
+    <div id="histogram-legend" class="legend"></div>
+  </div>
+
+  <div class="card">
+    <h2>3. Request Volume &mdash; Circle Plot</h2>
+    <p>Circle size = total tokens. Each row is a model, each column is a date.</p>
+    <canvas id="circle" height="260"></canvas>
+  </div>
+
+  <div class="card">
+    <h2>4. Trellis Dot Plot &mdash; Tokens per Request by Model</h2>
+    <p>Faceted strip plot showing individual request token counts per model.</p>
+    <canvas id="trellis" height="300"></canvas>
+  </div>
+
+  <div class="card full-width">
+    <h2>5. Interactive Multi-Line &mdash; Cumulative Tokens by Model</h2>
+    <p>Hover to see all model token totals at each date.</p>
+    <canvas id="multiline" height="350"></canvas>
+    <div id="multiline-legend" class="legend"></div>
+  </div>
+</div>
+
+<div class="tooltip" id="tooltip"></div>
+
+<script>
+const requests = [
+  {"date":"2026-03-13","hour":"03:00","model":"claude-sonnet-4-5","tokens":19757,"id":"92b20b48"},
+  {"date":"2026-03-13","hour":"03:00","model":"claude-sonnet-4-5","tokens":160,"id":"c13c01fc"},
+  {"date":"2026-03-13","hour":"03:00","model":"claude-sonnet-4-5","tokens":75,"id":"0e40b73d"},
+  {"date":"2026-03-13","hour":"03:00","model":"claude-sonnet-4-5","tokens":140,"id":"cc088989"},
+  {"date":"2026-03-13","hour":"03:00","model":"claude-sonnet-4-5","tokens":19781,"id":"dc2f312e"},
+  {"date":"2026-03-13","hour":"03:00","model":"claude-sonnet-4-5","tokens":19676,"id":"dad46953"},
+  {"date":"2026-03-13","hour":"03:00","model":"claude-sonnet-4-5","tokens":99,"id":"a33fd3d2"},
+  {"date":"2026-03-13","hour":"03:00","model":"claude-sonnet-4-5","tokens":19941,"id":"180e214d"},
+  {"date":"2026-03-13","hour":"03:00","model":"claude-sonnet-4-5","tokens":19651,"id":"dd180cab"},
+  {"date":"2026-03-13","hour":"03:00","model":"claude-sonnet-4-5","tokens":56,"id":"58dc8420"},
+  {"date":"2026-03-13","hour":"03:00","model":"claude-sonnet-4-5","tokens":104,"id":"51b98b63"},
+  {"date":"2026-03-13","hour":"03:00","model":"claude-sonnet-4-5","tokens":19620,"id":"46c5e4a0"},
+  {"date":"2026-03-14","hour":"00:00","model":"openai-gpt-5.2","tokens":415,"id":"fb95d48b"},
+  {"date":"2026-03-14","hour":"00:00","model":"claude-sonnet-4-5","tokens":19824,"id":"62d4a3d9"},
+  {"date":"2026-03-14","hour":"00:00","model":"claude-sonnet-4-5","tokens":232,"id":"00307912"},
+  {"date":"2026-03-14","hour":"00:00","model":"claude-sonnet-4-5","tokens":19691,"id":"f42a75dc"},
+  {"date":"2026-03-14","hour":"00:00","model":"claude-sonnet-4-5","tokens":19793,"id":"628543ef"},
+  {"date":"2026-03-14","hour":"00:00","model":"claude-sonnet-4-5","tokens":19750,"id":"dd493ee1"},
+  {"date":"2026-03-14","hour":"00:00","model":"claude-sonnet-4-5","tokens":19737,"id":"a92849c3"},
+  {"date":"2026-03-14","hour":"00:00","model":"claude-sonnet-4-5","tokens":250,"id":"ad84a189"},
+  {"date":"2026-03-14","hour":"00:00","model":"claude-sonnet-4-5","tokens":315,"id":"7575dbdf"},
+  {"date":"2026-03-14","hour":"00:00","model":"claude-sonnet-4-5","tokens":195,"id":"a0cbb2d5"},
+  {"date":"2026-03-14","hour":"00:00","model":"claude-sonnet-4-5","tokens":277,"id":"230bda3d"},
+  {"date":"2026-03-14","hour":"00:00","model":"openai-gpt-5.2","tokens":150,"id":"08a7f957"},
+  {"date":"2026-03-14","hour":"00:00","model":"claude-sonnet-4-5","tokens":293,"id":"74c946bc"},
+  {"date":"2026-03-14","hour":"00:00","model":"openai-gpt-5.2","tokens":278,"id":"aca18ab6"},
+  {"date":"2026-03-14","hour":"00:00","model":"claude-sonnet-4-5","tokens":297,"id":"646f71d5"},
+  {"date":"2026-03-14","hour":"00:00","model":"claude-sonnet-4-5","tokens":234,"id":"c5203b0e"},
+  {"date":"2026-03-14","hour":"00:00","model":"claude-sonnet-4-5","tokens":19671,"id":"5de562b6"},
+  {"date":"2026-03-14","hour":"00:00","model":"claude-sonnet-4-5","tokens":19769,"id":"97ac5de6"},
+  {"date":"2026-03-14","hour":"00:00","model":"claude-sonnet-4-5","tokens":375,"id":"cdce6d3b"},
+  {"date":"2026-03-14","hour":"00:00","model":"claude-sonnet-4-5","tokens":19727,"id":"d335db81"},
+  {"date":"2026-03-14","hour":"00:00","model":"openai-gpt-5.2","tokens":364,"id":"af3964ca"},
+  {"date":"2026-03-14","hour":"00:00","model":"openai-gpt-5.2","tokens":296,"id":"c3a03c7e"},
+  {"date":"2026-03-14","hour":"00:00","model":"claude-sonnet-4-5","tokens":213,"id":"ef32e3c5"},
+  {"date":"2026-03-14","hour":"00:00","model":"claude-sonnet-4-5","tokens":220,"id":"ca1b316b"},
+  {"date":"2026-03-14","hour":"00:00","model":"openai-gpt-5.2","tokens":246,"id":"4daade67"},
+  {"date":"2026-03-14","hour":"00:00","model":"claude-sonnet-4-5","tokens":239,"id":"59c8309a"},
+  {"date":"2026-03-14","hour":"00:00","model":"claude-sonnet-4-5","tokens":233,"id":"e26f2e4c"},
+  {"date":"2026-03-14","hour":"00:00","model":"openai-gpt-5.2","tokens":242,"id":"a04f6c53"},
+  {"date":"2026-03-14","hour":"00:00","model":"openai-gpt-5.2","tokens":397,"id":"01dafd5e"},
+  {"date":"2026-03-14","hour":"00:00","model":"claude-sonnet-4-5","tokens":270,"id":"47668b7f"},
+  {"date":"2026-03-14","hour":"00:00","model":"claude-sonnet-4-5","tokens":343,"id":"63453d4a"},
+  {"date":"2026-03-14","hour":"00:00","model":"openai-gpt-5.2","tokens":263,"id":"0bda57ae"},
+  {"date":"2026-03-14","hour":"00:00","model":"claude-sonnet-4-5","tokens":350,"id":"e3b0a8b8"},
+  {"date":"2026-03-14","hour":"00:00","model":"claude-sonnet-4-5","tokens":19749,"id":"3f46b0dd"},
+  {"date":"2026-03-14","hour":"00:00","model":"claude-sonnet-4-5","tokens":248,"id":"55cee982"},
+  {"date":"2026-03-14","hour":"00:00","model":"openai-gpt-5.2","tokens":271,"id":"108158d0"},
+  {"date":"2026-03-14","hour":"00:00","model":"openai-gpt-5.2","tokens":496,"id":"53165fa0"},
+  {"date":"2026-03-14","hour":"00:00","model":"openai-gpt-5.2","tokens":206,"id":"4dc7a54f"},
+  {"date":"2026-03-14","hour":"00:00","model":"openai-gpt-5.2","tokens":146,"id":"237ad91c"},
+  {"date":"2026-03-14","hour":"00:00","model":"claude-sonnet-4-5","tokens":19764,"id":"250a1592"},
+  {"date":"2026-03-14","hour":"00:00","model":"claude-sonnet-4-5","tokens":236,"id":"194a18db"},
+  {"date":"2026-03-14","hour":"00:00","model":"openai-gpt-5.2","tokens":396,"id":"e0727fa7"},
+  {"date":"2026-03-14","hour":"00:00","model":"openai-gpt-5.2","tokens":215,"id":"0bc01767"},
+  {"date":"2026-03-14","hour":"00:00","model":"claude-sonnet-4-5","tokens":242,"id":"dbc2402d"},
+  {"date":"2026-03-14","hour":"00:00","model":"openai-gpt-5.2","tokens":265,"id":"7f13bc24"},
+  {"date":"2026-03-14","hour":"00:00","model":"openai-gpt-5.2","tokens":389,"id":"164e67c9"},
+  {"date":"2026-03-14","hour":"00:00","model":"claude-sonnet-4-5","tokens":290,"id":"4304a48d"},
+  {"date":"2026-03-14","hour":"00:00","model":"openai-gpt-5.2","tokens":241,"id":"fda18c58"},
+  {"date":"2026-03-14","hour":"00:00","model":"openai-gpt-5.2","tokens":204,"id":"4e9f9554"},
+  {"date":"2026-03-14","hour":"00:00","model":"claude-sonnet-4-5","tokens":218,"id":"41b6a650"},
+  {"date":"2026-03-14","hour":"00:00","model":"claude-sonnet-4-5","tokens":236,"id":"9f632c51"},
+  {"date":"2026-03-14","hour":"00:00","model":"claude-sonnet-4-5","tokens":234,"id":"f2026a9a"},
+  {"date":"2026-03-14","hour":"00:00","model":"openai-gpt-5.2","tokens":272,"id":"d6d42935"},
+  {"date":"2026-03-14","hour":"00:00","model":"claude-sonnet-4-5","tokens":19721,"id":"0a01dacc"},
+  {"date":"2026-03-14","hour":"00:00","model":"claude-sonnet-4-5","tokens":168,"id":"7eb41b6f"},
+  {"date":"2026-03-14","hour":"00:00","model":"claude-sonnet-4-5","tokens":206,"id":"461643a0"},
+  {"date":"2026-03-14","hour":"00:00","model":"claude-sonnet-4-5","tokens":256,"id":"a1cbea19"},
+  {"date":"2026-03-14","hour":"00:00","model":"openai-gpt-5.2","tokens":290,"id":"a65886fb"},
+  {"date":"2026-03-19","hour":"19:00","model":"claude-sonnet-4-6","tokens":7168,"id":"339a1672"},
+  {"date":"2026-03-19","hour":"19:00","model":"claude-sonnet-4-6","tokens":4049,"id":"6d6c5fbd"},
+  {"date":"2026-03-19","hour":"19:00","model":"claude-sonnet-4-6","tokens":144,"id":"c2c40028"},
+  {"date":"2026-03-19","hour":"19:00","model":"claude-opus-4-6","tokens":197,"id":"ce917d35"},
+  {"date":"2026-03-19","hour":"19:00","model":"claude-sonnet-4-6","tokens":136,"id":"10ca1b16"},
+  {"date":"2026-03-19","hour":"19:00","model":"claude-sonnet-4-6","tokens":3390,"id":"71329be4"},
+  {"date":"2026-03-19","hour":"20:00","model":"claude-sonnet-4-6","tokens":205,"id":"4a3adb03"},
+  {"date":"2026-03-19","hour":"20:00","model":"claude-sonnet-4-6","tokens":170,"id":"cb1ed737"},
+  {"date":"2026-03-31","hour":"15:00","model":"claude-opus-4-6","tokens":70,"id":"79210dc2"},
+  {"date":"2026-03-31","hour":"15:00","model":"claude-opus-4-6","tokens":359,"id":"ddd778e4"},
+  {"date":"2026-03-31","hour":"15:00","model":"claude-opus-4-6","tokens":731,"id":"7b6a5915"},
+  {"date":"2026-03-31","hour":"15:00","model":"claude-opus-4-6","tokens":33,"id":"3237b606"},
+  {"date":"2026-03-31","hour":"15:00","model":"claude-opus-4-6","tokens":33,"id":"c44c4e54"},
+  {"date":"2026-03-31","hour":"15:00","model":"claude-opus-4-6","tokens":740,"id":"705d4833"},
+  {"date":"2026-03-31","hour":"15:00","model":"claude-opus-4-6","tokens":33,"id":"e9812ddf"},
+  {"date":"2026-03-31","hour":"15:00","model":"claude-opus-4-6","tokens":33,"id":"0d46b74d"},
+  {"date":"2026-04-02","hour":"22:00","model":"openai-gpt-5.2","tokens":283,"id":"4ffbba51"},
+  {"date":"2026-04-02","hour":"22:00","model":"openai-gpt-5.2","tokens":240,"id":"47e53553"},
+  {"date":"2026-04-02","hour":"22:00","model":"claude-sonnet-4-5","tokens":35,"id":"a692f6db"},
+  {"date":"2026-04-02","hour":"23:00","model":"openai-gpt-5.2","tokens":38,"id":"8fb3a186"},
+  {"date":"2026-04-02","hour":"23:00","model":"openai-gpt-5.2","tokens":38,"id":"222512d7"},
+  {"date":"2026-04-02","hour":"23:00","model":"openai-gpt-5.2","tokens":20,"id":"7883e2ab"},
+  {"date":"2026-04-02","hour":"23:00","model":"openai-gpt-5.2","tokens":257,"id":"ffaa915b"},
+  {"date":"2026-04-02","hour":"23:00","model":"openai-gpt-5.2","tokens":17,"id":"55543d6c"}
+];
+
+requests.forEach((r, i) => r.index = i);
+
+const modelColorMap = {
+  "claude-sonnet-4-5": "#7c3aed",
+  "claude-sonnet-4-6": "#a855f7",
+  "claude-opus-4-6": "#f59e0b",
+  "openai-gpt-5.2": "#10b981"
+};
+const allModels = Object.keys(modelColorMap);
+
+const aggMap = {};
+requests.forEach(r => {
+  const key = r.date + "|" + r.model;
+  if (!aggMap[key]) aggMap[key] = {date: r.date, model: r.model, total_tokens: 0, requests: 0};
+  aggMap[key].total_tokens += r.tokens;
+  aggMap[key].requests += 1;
+});
+const aggregated = Object.values(aggMap);
+const allDates = [...new Set(requests.map(r => r.date))].sort();
+
+const tooltipEl = document.getElementById("tooltip");
+
+function showTooltip(e, html) {
+  tooltipEl.innerHTML = html;
+  tooltipEl.style.display = "block";
+  tooltipEl.style.left = (e.clientX + 14) + "px";
+  tooltipEl.style.top = (e.clientY - 10) + "px";
+}
+function hideTooltip() { tooltipEl.style.display = "none"; }
+
+function setupCanvas(id) {
+  const c = document.getElementById(id);
+  const dpr = window.devicePixelRatio || 1;
+  const rect = c.parentElement.getBoundingClientRect();
+  const w = rect.width - 40;
+  const h = parseInt(c.getAttribute("height"));
+  c.width = w * dpr;
+  c.height = h * dpr;
+  c.style.width = w + "px";
+  c.style.height = h + "px";
+  const ctx = c.getContext("2d");
+  ctx.scale(dpr, dpr);
+  return {ctx, w, h, canvas: c};
+}
+
+function buildLegend(containerId, models) {
+  const el = document.getElementById(containerId);
+  el.innerHTML = models.map(m =>
+    `<div class="legend-item"><div class="legend-swatch" style="background:${modelColorMap[m]}"></div>${m}</div>`
+  ).join("");
+}
+
+function drawAxes(ctx, margin, w, h, xLabel, yLabel) {
+  ctx.strokeStyle = "#3a4a5a";
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(margin.left, margin.top);
+  ctx.lineTo(margin.left, h - margin.bottom);
+  ctx.lineTo(w - margin.right, h - margin.bottom);
+  ctx.stroke();
+  ctx.fillStyle = "#aabbcc";
+  ctx.font = "11px -apple-system, sans-serif";
+  ctx.textAlign = "center";
+  if (xLabel) ctx.fillText(xLabel, margin.left + (w - margin.left - margin.right) / 2, h - 4);
+  ctx.save();
+  ctx.translate(12, margin.top + (h - margin.top - margin.bottom) / 2);
+  ctx.rotate(-Math.PI / 2);
+  ctx.textAlign = "center";
+  if (yLabel) ctx.fillText(yLabel, 0, 0);
+  ctx.restore();
+}
+
+function drawTicks(ctx, margin, w, h, xTicks, yTicks, xFmt, yFmt) {
+  ctx.fillStyle = "#8899aa";
+  ctx.font = "10px -apple-system, sans-serif";
+  ctx.strokeStyle = "#2a3a4a";
+  ctx.lineWidth = 0.5;
+  const plotW = w - margin.left - margin.right;
+  const plotH = h - margin.top - margin.bottom;
+
+  if (xTicks) {
+    ctx.textAlign = "center";
+    xTicks.forEach(t => {
+      const x = margin.left + t.pos * plotW;
+      ctx.fillText(xFmt ? xFmt(t.val) : t.val, x, h - margin.bottom + 14);
+      ctx.beginPath(); ctx.moveTo(x, margin.top); ctx.lineTo(x, h - margin.bottom); ctx.stroke();
+    });
+  }
+  if (yTicks) {
+    ctx.textAlign = "right";
+    yTicks.forEach(t => {
+      const y = h - margin.bottom - t.pos * plotH;
+      ctx.fillText(yFmt ? yFmt(t.val) : t.val, margin.left - 6, y + 3);
+      ctx.beginPath(); ctx.moveTo(margin.left, y); ctx.lineTo(w - margin.right, y); ctx.stroke();
+    });
+  }
+}
+
+function makeTicks(min, max, count) {
+  const step = (max - min) / count;
+  const ticks = [];
+  for (let i = 0; i <= count; i++) {
+    const val = min + step * i;
+    ticks.push({val, pos: (val - min) / (max - min)});
+  }
+  return ticks;
+}
+
+// ── Chart 1: Scatter Plot ──
+(function() {
+  const {ctx, w, h, canvas} = setupCanvas("scatter");
+  const margin = {top: 16, right: 16, bottom: 36, left: 60};
+  const plotW = w - margin.left - margin.right;
+  const plotH = h - margin.top - margin.bottom;
+  const maxTokens = Math.max(...requests.map(r => r.tokens));
+  const sqrtScale = v => Math.sqrt(v / maxTokens);
+
+  drawAxes(ctx, margin, w, h, "Request #", "Tokens (√ scale)");
+  const yTicks = [0, 5000, 10000, 15000, 20000].map(v => ({val: v, pos: sqrtScale(v)}));
+  const xTicks = makeTicks(0, requests.length, 5).map(t => ({...t, val: Math.round(t.val)}));
+  drawTicks(ctx, margin, w, h, xTicks, yTicks, null, v => v >= 1000 ? (v/1000)+"K" : v);
+
+  const points = [];
+  requests.forEach((r, i) => {
+    const x = margin.left + (i / requests.length) * plotW;
+    const y = h - margin.bottom - sqrtScale(r.tokens) * plotH;
+    const radius = 3 + (r.tokens / maxTokens) * 14;
+    ctx.globalAlpha = 0.75;
+    ctx.fillStyle = modelColorMap[r.model];
+    ctx.beginPath(); ctx.arc(x, y, radius, 0, Math.PI * 2); ctx.fill();
+    points.push({x, y, radius, data: r});
+  });
+  ctx.globalAlpha = 1;
+
+  canvas.addEventListener("mousemove", e => {
+    const rect = canvas.getBoundingClientRect();
+    const mx = e.clientX - rect.left, my = e.clientY - rect.top;
+    const hit = points.find(p => Math.hypot(mx - p.x, my - p.y) < p.radius + 2);
+    if (hit) {
+      showTooltip(e,
+        `<span class="tt-label">Date:</span> <span class="tt-value">${hit.data.date}</span><br>` +
+        `<span class="tt-label">Model:</span> <span class="tt-value">${hit.data.model}</span><br>` +
+        `<span class="tt-label">Tokens:</span> <span class="tt-value">${hit.data.tokens.toLocaleString()}</span><br>` +
+        `<span class="tt-label">ID:</span> <span class="tt-value">${hit.data.id}</span>`
+      );
+    } else hideTooltip();
+  });
+  canvas.addEventListener("mouseleave", hideTooltip);
+  buildLegend("scatter-legend", allModels);
+})();
+
+// ── Chart 2: Histogram ──
+(function() {
+  const {ctx, w, h, canvas} = setupCanvas("histogram");
+  const margin = {top: 16, right: 16, bottom: 36, left: 60};
+  const plotW = w - margin.left - margin.right;
+  const plotH = h - margin.top - margin.bottom;
+
+  const bins = [
+    {label: "0-100", min: 0, max: 100},
+    {label: "100-500", min: 100, max: 500},
+    {label: "500-1K", min: 500, max: 1000},
+    {label: "1K-5K", min: 1000, max: 5000},
+    {label: "5K-10K", min: 5000, max: 10000},
+    {label: "10K-20K", min: 10000, max: 20000},
+    {label: "20K+", min: 20000, max: Infinity}
+  ];
+
+  const stackedData = bins.map(b => {
+    const counts = {};
+    allModels.forEach(m => counts[m] = 0);
+    requests.forEach(r => {
+      if (r.tokens >= b.min && r.tokens < b.max) counts[r.model]++;
+    });
+    return {label: b.label, counts};
+  });
+
+  const maxStack = Math.max(...stackedData.map(d => Object.values(d.counts).reduce((a,b)=>a+b,0)));
+  const barWidth = plotW / bins.length * 0.7;
+  const gap = plotW / bins.length * 0.3;
+
+  drawAxes(ctx, margin, w, h, "Token Range", "Count");
+  const yTicks = makeTicks(0, maxStack, 4).map(t => ({...t, val: Math.round(t.val)}));
+  drawTicks(ctx, margin, w, h, null, yTicks);
+
+  ctx.textAlign = "center";
+  ctx.fillStyle = "#8899aa";
+  ctx.font = "10px -apple-system, sans-serif";
+
+  const barRects = [];
+  stackedData.forEach((d, i) => {
+    const bx = margin.left + i * (plotW / bins.length) + gap / 2;
+    let cumY = 0;
+    allModels.forEach(m => {
+      const count = d.counts[m];
+      if (count === 0) return;
+      const barH = (count / maxStack) * plotH;
+      const by = h - margin.bottom - cumY - barH;
+      ctx.fillStyle = modelColorMap[m];
+      ctx.fillRect(bx, by, barWidth, barH);
+      barRects.push({x: bx, y: by, w: barWidth, h: barH, model: m, count, bin: d.label});
+      cumY += barH;
+    });
+    ctx.fillStyle = "#8899aa";
+    ctx.save();
+    ctx.translate(bx + barWidth / 2, h - margin.bottom + 6);
+    ctx.rotate(-Math.PI / 6);
+    ctx.textAlign = "right";
+    ctx.fillText(d.label, 0, 0);
+    ctx.restore();
+  });
+
+  canvas.addEventListener("mousemove", e => {
+    const rect = canvas.getBoundingClientRect();
+    const mx = e.clientX - rect.left, my = e.clientY - rect.top;
+    const hit = barRects.find(r => mx >= r.x && mx <= r.x + r.w && my >= r.y && my <= r.y + r.h);
+    if (hit) {
+      showTooltip(e,
+        `<span class="tt-label">Range:</span> <span class="tt-value">${hit.bin}</span><br>` +
+        `<span class="tt-label">Model:</span> <span class="tt-value">${hit.model}</span><br>` +
+        `<span class="tt-label">Count:</span> <span class="tt-value">${hit.count}</span>`
+      );
+    } else hideTooltip();
+  });
+  canvas.addEventListener("mouseleave", hideTooltip);
+  buildLegend("histogram-legend", allModels);
+})();
+
+// ── Chart 3: Circle Plot ──
+(function() {
+  const {ctx, w, h, canvas} = setupCanvas("circle");
+  const margin = {top: 16, right: 16, bottom: 50, left: 160};
+  const plotW = w - margin.left - margin.right;
+  const plotH = h - margin.top - margin.bottom;
+  const maxTokens = Math.max(...aggregated.map(r => r.total_tokens));
+
+  ctx.fillStyle = "#8899aa";
+  ctx.font = "11px -apple-system, sans-serif";
+  ctx.textAlign = "right";
+  allModels.forEach((m, i) => {
+    const y = margin.top + (i + 0.5) * (plotH / allModels.length);
+    ctx.fillText(m, margin.left - 10, y + 4);
+  });
+
+  ctx.textAlign = "center";
+  allDates.forEach((d, i) => {
+    const x = margin.left + (i + 0.5) * (plotW / allDates.length);
+    ctx.save();
+    ctx.translate(x, h - margin.bottom + 12);
+    ctx.rotate(-Math.PI / 6);
+    ctx.fillText(d.slice(5), 0, 0);
+    ctx.restore();
+  });
+
+  const circles = [];
+  aggregated.forEach(r => {
+    const di = allDates.indexOf(r.date);
+    const mi = allModels.indexOf(r.model);
+    if (di < 0 || mi < 0) return;
+    const x = margin.left + (di + 0.5) * (plotW / allDates.length);
+    const y = margin.top + (mi + 0.5) * (plotH / allModels.length);
+    const radius = 6 + Math.sqrt(r.total_tokens / maxTokens) * 30;
+    ctx.globalAlpha = 0.8;
+    ctx.fillStyle = modelColorMap[r.model];
+    ctx.beginPath(); ctx.arc(x, y, radius, 0, Math.PI * 2); ctx.fill();
+    circles.push({x, y, radius, data: r});
+  });
+  ctx.globalAlpha = 1;
+
+  canvas.addEventListener("mousemove", e => {
+    const rect = canvas.getBoundingClientRect();
+    const mx = e.clientX - rect.left, my = e.clientY - rect.top;
+    const hit = circles.find(c => Math.hypot(mx - c.x, my - c.y) < c.radius + 2);
+    if (hit) {
+      showTooltip(e,
+        `<span class="tt-label">Date:</span> <span class="tt-value">${hit.data.date}</span><br>` +
+        `<span class="tt-label">Model:</span> <span class="tt-value">${hit.data.model}</span><br>` +
+        `<span class="tt-label">Total Tokens:</span> <span class="tt-value">${hit.data.total_tokens.toLocaleString()}</span><br>` +
+        `<span class="tt-label">Requests:</span> <span class="tt-value">${hit.data.requests}</span>`
+      );
+    } else hideTooltip();
+  });
+  canvas.addEventListener("mouseleave", hideTooltip);
+})();
+
+// ── Chart 4: Trellis Dot Plot ──
+(function() {
+  const {ctx, w, h, canvas} = setupCanvas("trellis");
+  const margin = {top: 10, right: 16, bottom: 30, left: 160};
+  const plotW = w - margin.left - margin.right;
+  const plotH = h - margin.top - margin.bottom;
+  const facetH = plotH / allModels.length;
+  const maxTokens = Math.max(...requests.map(r => r.tokens));
+  const sqrtScale = v => Math.sqrt(v / maxTokens);
+
+  const xTicks = [0, 5000, 10000, 15000, 20000].map(v => ({val: v, pos: sqrtScale(v)}));
+
+  const points = [];
+  allModels.forEach((m, mi) => {
+    const fy = margin.top + mi * facetH;
+    ctx.fillStyle = "#aabbcc";
+    ctx.font = "11px -apple-system, sans-serif";
+    ctx.textAlign = "right";
+    ctx.fillText(m, margin.left - 10, fy + facetH / 2 + 4);
+
+    ctx.strokeStyle = "#2a3a4a";
+    ctx.lineWidth = 0.5;
+    ctx.beginPath(); ctx.moveTo(margin.left, fy + facetH); ctx.lineTo(w - margin.right, fy + facetH); ctx.stroke();
+
+    xTicks.forEach(t => {
+      const x = margin.left + t.pos * plotW;
+      ctx.beginPath(); ctx.moveTo(x, fy); ctx.lineTo(x, fy + facetH); ctx.stroke();
+    });
+
+    const modelReqs = requests.filter(r => r.model === m);
+    const dateGroups = {};
+    modelReqs.forEach(r => { if (!dateGroups[r.date]) dateGroups[r.date] = []; dateGroups[r.date].push(r); });
+    const dates = Object.keys(dateGroups).sort();
+    const rowH = facetH / Math.max(dates.length, 1);
+
+    dates.forEach((d, di) => {
+      dateGroups[d].forEach(r => {
+        const x = margin.left + sqrtScale(r.tokens) * plotW;
+        const y = fy + di * rowH + rowH / 2;
+        ctx.fillStyle = modelColorMap[m];
+        ctx.globalAlpha = 0.8;
+        ctx.beginPath(); ctx.arc(x, y, 4, 0, Math.PI * 2); ctx.fill();
+        points.push({x, y, radius: 4, data: r});
+      });
+    });
+  });
+  ctx.globalAlpha = 1;
+
+  ctx.fillStyle = "#8899aa";
+  ctx.font = "10px -apple-system, sans-serif";
+  ctx.textAlign = "center";
+  xTicks.forEach(t => {
+    const x = margin.left + t.pos * plotW;
+    const label = t.val >= 1000 ? (t.val/1000)+"K" : String(t.val);
+    ctx.fillText(label, x, h - 6);
+  });
+
+  canvas.addEventListener("mousemove", e => {
+    const rect = canvas.getBoundingClientRect();
+    const mx = e.clientX - rect.left, my = e.clientY - rect.top;
+    const hit = points.find(p => Math.hypot(mx - p.x, my - p.y) < p.radius + 3);
+    if (hit) {
+      showTooltip(e,
+        `<span class="tt-label">Date:</span> <span class="tt-value">${hit.data.date}</span><br>` +
+        `<span class="tt-label">Tokens:</span> <span class="tt-value">${hit.data.tokens.toLocaleString()}</span><br>` +
+        `<span class="tt-label">ID:</span> <span class="tt-value">${hit.data.id}</span>`
+      );
+    } else hideTooltip();
+  });
+  canvas.addEventListener("mouseleave", hideTooltip);
+})();
+
+// ── Chart 5: Multi-Line Cumulative ──
+(function() {
+  const {ctx, w, h, canvas} = setupCanvas("multiline");
+  const margin = {top: 16, right: 16, bottom: 36, left: 70};
+  const plotW = w - margin.left - margin.right;
+  const plotH = h - margin.top - margin.bottom;
+
+  const modelDates = {};
+  aggregated.forEach(r => {
+    if (!modelDates[r.model]) modelDates[r.model] = [];
+    modelDates[r.model].push({date: r.date, tokens: r.total_tokens});
+  });
+  const filledData = {};
+  allModels.forEach(model => {
+    const sorted = (modelDates[model] || []).sort((a, b) => a.date.localeCompare(b.date));
+    let cumul = 0;
+    const byDate = {};
+    sorted.forEach(d => { cumul += d.tokens; byDate[d.date] = cumul; });
+    let last = 0;
+    filledData[model] = allDates.map(date => {
+      if (byDate[date] !== undefined) last = byDate[date];
+      return {date, cumulative: last};
+    });
+  });
+
+  const maxCumul = Math.max(...allModels.flatMap(m => filledData[m].map(d => d.cumulative)));
+
+  drawAxes(ctx, margin, w, h, "Date", "Cumulative Tokens");
+  const yTicks = makeTicks(0, maxCumul, 5);
+  const xTicks = allDates.map((d, i) => ({val: d, pos: i / (allDates.length - 1)}));
+  drawTicks(ctx, margin, w, h, xTicks, yTicks, v => v.slice(5), v => v >= 1000 ? Math.round(v/1000)+"K" : v);
+
+  const linePoints = {};
+  allModels.forEach(model => {
+    const pts = filledData[model].map((d, i) => ({
+      x: margin.left + (i / (allDates.length - 1)) * plotW,
+      y: h - margin.bottom - (d.cumulative / maxCumul) * plotH,
+      date: d.date,
+      cumulative: d.cumulative,
+      model
+    }));
+    linePoints[model] = pts;
+    ctx.strokeStyle = modelColorMap[model];
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    pts.forEach((p, i) => i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y));
+    ctx.stroke();
+    pts.forEach(p => {
+      ctx.fillStyle = modelColorMap[model];
+      ctx.beginPath(); ctx.arc(p.x, p.y, 4, 0, Math.PI * 2); ctx.fill();
+    });
+  });
+
+  canvas.addEventListener("mousemove", e => {
+    const rect = canvas.getBoundingClientRect();
+    const mx = e.clientX - rect.left;
+    const closestIdx = allDates.reduce((best, _, i) => {
+      const x = margin.left + (i / (allDates.length - 1)) * plotW;
+      return Math.abs(mx - x) < Math.abs(mx - (margin.left + (best / (allDates.length - 1)) * plotW)) ? i : best;
+    }, 0);
+    const date = allDates[closestIdx];
+    let html = `<span class="tt-label">Date:</span> <span class="tt-value">${date}</span><br>`;
+    allModels.forEach(m => {
+      const pt = linePoints[m][closestIdx];
+      html += `<span style="color:${modelColorMap[m]}">●</span> <span class="tt-label">${m}:</span> <span class="tt-value">${pt.cumulative.toLocaleString()}</span><br>`;
+    });
+    showTooltip(e, html);
+  });
+  canvas.addEventListener("mouseleave", hideTooltip);
+  buildLegend("multiline-legend", allModels);
+})();
+</script>
+
+</body>
+</html>

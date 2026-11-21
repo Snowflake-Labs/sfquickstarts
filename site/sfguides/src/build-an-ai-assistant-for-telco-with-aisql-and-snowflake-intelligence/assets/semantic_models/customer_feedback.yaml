@@ -1,0 +1,474 @@
+name: customer_feedback
+description: Semantic model combining structured customer feedback summaries with unstructured data from call transcripts and complaint documents. Focuses on customer experience analysis.
+
+tables:
+  - name: CUSTOMER_FEEDBACK_SUMMARY
+    base_table:
+      database: TELCO_OPERATIONS_AI
+      schema: DEFAULT_SCHEMA
+      table: CUSTOMER_FEEDBACK_SUMMARY
+    
+    dimensions:
+      - name: REGION
+        expr: REGION
+        data_type: VARCHAR(50)
+        description: Geographic region where feedback was received
+        sample_values:
+          - Northeast
+          - Southeast
+          - Southwest
+          - Northwest
+        synonyms:
+          - geographical_region
+          - area
+          - territory
+      
+      - name: FEEDBACK_TYPE
+        expr: FEEDBACK_TYPE
+        data_type: VARCHAR(50)
+        description: Type of customer feedback channel
+        sample_values:
+          - Call
+          - Email
+          - Social
+          - Survey
+        synonyms:
+          - channel
+          - feedback_channel
+          - communication_type
+    
+    time_dimensions:
+      - name: FEEDBACK_DATE
+        expr: FEEDBACK_DATE
+        data_type: DATE
+        description: Date when feedback was received
+        sample_values:
+          - '2025-01-01'
+          - '2025-01-02'
+        synonyms:
+          - date
+          - feedback_day
+          - submission_date
+    
+    facts:
+      - name: TOTAL_FEEDBACK_COUNT
+        expr: TOTAL_FEEDBACK_COUNT
+        data_type: INT
+        description: Total number of feedback items received
+        sample_values:
+          - '150'
+          - '120'
+          - '100'
+        synonyms:
+          - feedback_volume
+          - total_responses
+          - feedback_count
+      
+      - name: COMPLAINT_COUNT
+        expr: COMPLAINT_COUNT
+        data_type: INT
+        description: Number of complaints received
+        sample_values:
+          - '85'
+          - '95'
+          - '55'
+        synonyms:
+          - complaints
+          - negative_feedback
+          - issues_reported
+      
+      - name: COMPLIMENT_COUNT
+        expr: COMPLIMENT_COUNT
+        data_type: INT
+        description: Number of compliments or positive feedback received
+        sample_values:
+          - '25'
+          - '10'
+          - '30'
+        synonyms:
+          - positive_feedback
+          - praise
+          - compliments
+      
+      - name: INQUIRY_COUNT
+        expr: INQUIRY_COUNT
+        data_type: INT
+        description: Number of inquiries or questions
+        sample_values:
+          - '40'
+          - '15'
+          - '15'
+        synonyms:
+          - questions
+          - inquiries
+          - requests
+      
+      - name: AVG_SENTIMENT_SCORE
+        expr: AVG_SENTIMENT_SCORE
+        data_type: FLOAT
+        description: Average sentiment score based on customer feedback
+        sample_values:
+          - '0.15'
+          - '-0.22'
+          - '-0.35'
+        synonyms:
+          - sentiment
+          - customer_sentiment
+          - sentiment_rating
+          - feedback_sentiment
+      
+      - name: NEGATIVE_SENTIMENT_COUNT
+        expr: NEGATIVE_SENTIMENT_COUNT
+        data_type: INT
+        description: Number of feedback items with negative sentiment
+        sample_values:
+          - '80'
+          - '90'
+          - '50'
+        synonyms:
+          - negative_count
+          - unhappy_customers
+      
+      - name: NEUTRAL_SENTIMENT_COUNT
+        expr: NEUTRAL_SENTIMENT_COUNT
+        data_type: INT
+        description: Number of feedback items with neutral sentiment
+        sample_values:
+          - '45'
+          - '20'
+          - '30'
+        synonyms:
+          - neutral_count
+      
+      - name: POSITIVE_SENTIMENT_COUNT
+        expr: POSITIVE_SENTIMENT_COUNT
+        data_type: INT
+        description: Number of feedback items with positive sentiment
+        sample_values:
+          - '25'
+          - '10'
+          - '20'
+        synonyms:
+          - positive_count
+          - happy_customers
+      
+      - name: NETWORK_ISSUE_COUNT
+        expr: NETWORK_ISSUE_COUNT
+        data_type: INT
+        description: Number of feedback items related to network issues
+        sample_values:
+          - '70'
+          - '82'
+          - '45'
+        synonyms:
+          - network_complaints
+          - connectivity_issues
+          - network_problems
+      
+      - name: BILLING_ISSUE_COUNT
+        expr: BILLING_ISSUE_COUNT
+        data_type: INT
+        description: Number of feedback items related to billing issues
+        sample_values:
+          - '10'
+          - '8'
+          - '7'
+        synonyms:
+          - billing_complaints
+          - payment_issues
+      
+      - name: SERVICE_ISSUE_COUNT
+        expr: SERVICE_ISSUE_COUNT
+        data_type: INT
+        description: Number of feedback items related to customer service issues
+        sample_values:
+          - '3'
+          - '3'
+          - '2'
+        synonyms:
+          - service_complaints
+          - support_issues
+      
+      - name: OTHER_ISSUE_COUNT
+        expr: OTHER_ISSUE_COUNT
+        data_type: INT
+        description: Number of feedback items for miscellaneous issues
+        sample_values:
+          - '2'
+          - '2'
+          - '1'
+        synonyms:
+          - misc_issues
+          - other_complaints
+    
+    description: Aggregated customer feedback metrics by region and type, including sentiment and issue categorization
+
+  - name: CUSTOMER_DETAILS
+    base_table:
+      database: TELCO_OPERATIONS_AI
+      schema: DEFAULT_SCHEMA
+      table: CUSTOMER_DETAILS
+    
+    dimensions:
+      - name: CUSTOMER_ID
+        expr: CUSTOMER_ID
+        data_type: VARCHAR(50)
+        description: Unique customer identifier
+        sample_values:
+          - CUST_001
+          - CUST_002
+        synonyms:
+          - customer_identifier
+          - subscriber_id
+      
+      - name: CUSTOMER_SEGMENT
+        expr: CUSTOMER_SEGMENT
+        data_type: VARCHAR(50)
+        description: Customer segment classification
+        sample_values:
+          - Consumer
+          - Business
+          - Enterprise
+        synonyms:
+          - segment
+          - customer_type
+      
+      - name: REGION
+        expr: REGION
+        data_type: VARCHAR(50)
+        description: Customer's region
+        sample_values:
+          - Northeast
+          - Southeast
+        synonyms:
+          - area
+          - territory
+      
+      - name: PLAN_TYPE
+        expr: PLAN_TYPE
+        data_type: VARCHAR(50)
+        description: Type of service plan
+        sample_values:
+          - Premium 5G
+          - Standard 4G
+          - Business Plan
+        synonyms:
+          - service_plan
+          - subscription_type
+      
+      - name: IS_CHURNED
+        expr: IS_CHURNED
+        data_type: BOOLEAN
+        description: Whether the customer has churned
+        sample_values:
+          - 'TRUE'
+          - 'FALSE'
+        synonyms:
+          - churned
+          - cancelled
+          - left
+      
+      - name: CHURN_REASON
+        expr: CHURN_REASON
+        data_type: VARCHAR(200)
+        description: Reason for customer churn
+        sample_values:
+          - Network Issues
+          - Pricing Concerns
+        synonyms:
+          - cancellation_reason
+          - why_churned
+    
+    time_dimensions:
+      - name: SIGNUP_DATE
+        expr: SIGNUP_DATE
+        data_type: DATE
+        description: Date when customer signed up
+        sample_values:
+          - '2022-06-15'
+          - '2023-01-20'
+        synonyms:
+          - registration_date
+          - start_date
+      
+      - name: CHURN_DATE
+        expr: CHURN_DATE
+        data_type: DATE
+        description: Date when customer churned
+        sample_values:
+          - '2024-12-15'
+          - '2024-11-30'
+        synonyms:
+          - cancellation_date
+          - end_date
+    
+    facts:
+      - name: MONTHLY_REVENUE
+        expr: MONTHLY_REVENUE
+        data_type: FLOAT
+        description: Monthly revenue from customer
+        sample_values:
+          - '89.99'
+          - '49.99'
+          - '299.99'
+        synonyms:
+          - monthly_spend
+          - revenue
+          - arpu
+      
+      - name: TENURE_MONTHS
+        expr: TENURE_MONTHS
+        data_type: INT
+        description: Customer tenure in months
+        sample_values:
+          - '30'
+          - '24'
+          - '40'
+        synonyms:
+          - months_subscribed
+          - customer_age
+    
+    description: Customer demographic and subscription information
+    
+    primary_key:
+      columns:
+        - CUSTOMER_ID
+
+  - name: CUSTOMER_CALL_TRANSCRIPTS
+    base_table:
+      database: TELCO_OPERATIONS_AI
+      schema: DEFAULT_SCHEMA
+      table: CUSTOMER_CALL_TRANSCRIPTS
+    
+    dimensions:
+      - name: CALL_ID
+        expr: CALL_ID
+        data_type: VARCHAR(50)
+        description: Unique identifier for customer support call
+        synonyms:
+          - call_identifier
+          - support_call_id
+      
+      - name: CUSTOMER_ID
+        expr: CUSTOMER_ID
+        data_type: VARCHAR(50)
+        description: Customer who made the call
+        synonyms:
+          - caller_id
+          - account_id
+      
+      - name: CALL_REASON
+        expr: CALL_REASON
+        data_type: VARCHAR(100)
+        description: Category of the call (Network Issue, Billing Issue, etc.)
+        sample_values:
+          - Network Issue
+          - Billing Issue
+          - Technical Support
+        synonyms:
+          - call_type
+          - issue_category
+          - reason_for_call
+      
+      - name: RESOLUTION_STATUS
+        expr: RESOLUTION_STATUS
+        data_type: VARCHAR(50)
+        description: Status of issue resolution
+        sample_values:
+          - Processed
+          - Resolved
+          - Escalated
+        synonyms:
+          - status
+          - resolution
+      
+      - name: AGENT_NAME
+        expr: AGENT_NAME
+        data_type: VARCHAR(100)
+        description: Name of support agent who handled the call
+        synonyms:
+          - agent
+          - support_agent
+    
+    time_dimensions:
+      - name: CALL_DATE
+        expr: CALL_DATE
+        data_type: TIMESTAMP
+        description: Date and time of the call
+        synonyms:
+          - call_time
+          - call_timestamp
+    
+    facts:
+      - name: CALL_DURATION_SECONDS
+        expr: CALL_DURATION_SECONDS
+        data_type: INT
+        description: Duration of the call in seconds
+        synonyms:
+          - call_length
+          - duration
+      
+      - name: TRANSCRIPT_TEXT
+        expr: TRANSCRIPT_TEXT
+        data_type: TEXT
+        description: Full transcript of the customer support call
+        synonyms:
+          - transcript
+          - call_transcript
+          - conversation
+      
+      - name: SUMMARY
+        expr: SUMMARY
+        data_type: TEXT
+        description: AI-generated summary of the call
+        synonyms:
+          - call_summary
+          - summary_text
+    
+    description: Customer support call transcripts with AI analysis
+    
+    primary_key:
+      columns:
+        - CALL_ID
+
+relationships:
+  - name: customer_feedback_join
+    join_type: inner
+    relationship_type: many_to_one
+    left_table: CUSTOMER_FEEDBACK_SUMMARY
+    relationship_columns:
+      - left_column: REGION
+        right_column: REGION
+    right_table: CUSTOMER_DETAILS
+  
+  - name: call_transcript_to_customer
+    join_type: inner
+    relationship_type: many_to_one
+    left_table: CUSTOMER_CALL_TRANSCRIPTS
+    relationship_columns:
+      - left_column: CUSTOMER_ID
+        right_column: CUSTOMER_ID
+    right_table: CUSTOMER_DETAILS
+
+verified_queries:
+  - name: Regions with high complaints
+    question: Which regions have the most customer complaints?
+    sql: SELECT region, SUM(complaint_count) as total_complaints FROM customer_feedback_summary WHERE feedback_date >= DATEADD(day, -30, CURRENT_DATE()) GROUP BY region ORDER BY total_complaints DESC
+    verified_by: System
+    verified_at: 1747000000
+  
+  - name: Sentiment trend
+    question: What is the trend in customer sentiment over the past month?
+    sql: SELECT feedback_date, AVG(avg_sentiment_score) as daily_sentiment FROM customer_feedback_summary WHERE feedback_date >= DATEADD(day, -30, CURRENT_DATE()) GROUP BY feedback_date ORDER BY feedback_date
+    verified_by: System
+    verified_at: 1747000000
+  
+  - name: Churn analysis
+    question: What are the top reasons for customer churn?
+    sql: SELECT churn_reason, COUNT(*) as churn_count FROM customer_details WHERE is_churned = TRUE GROUP BY churn_reason ORDER BY churn_count DESC
+    verified_by: System
+    verified_at: 1747000000
+
+custom_instructions: For customer experience analysis, prioritize identifying patterns in complaints, sentiment trends, and correlations with churn. Focus on actionable insights that can improve customer satisfaction.
+
+

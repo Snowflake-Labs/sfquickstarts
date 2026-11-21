@@ -50,7 +50,6 @@ In this quickstart, you'll build a [Retrieval-Augmented Generation](https://www.
 This phase prepares your environment and creates the dedicated database and warehouse. If you are not working in a Snowflake trial account and do not have ACCOUNTADMIN privileges, ensure that the user role has the following roles granted ():
 
 - SNOWFLAKE.CORTEX_USER database role
-- SNOWFLAKE.AI_OBSERVABILITY_EVENTS_LOOKUP application role
 - CREATE EXTERNAL AGENT privilege on the schema
 
 For more information, see [Required Privileges for AI Observability](https://docs.snowflake.com/en/user-guide/snowflake-cortex/ai-observability/reference#label-ai-observability-required-privileges).

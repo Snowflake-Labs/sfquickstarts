@@ -1,0 +1,51 @@
+TICKET_TEXT,EXPECTED_SENTIMENT
+"The appointment reminder arrived after my appointment ended. That is useless and I am very annoyed.",negative
+"I paid for a printable report but received a blank page. This was a complete waste of money.",negative
+"Your booking system erased the room reservation I spent twenty minutes arranging. I am extremely frustrated.",negative
+"The replacement charger stopped working on its second use. I am disappointed with the quality.",negative
+"I selected monthly billing but was billed for a full year. This is unacceptable.",negative
+"The captions drift so far behind the video that the training is impossible to follow. Terrible experience.",negative
+"Every saved recipe now displays the wrong measurements. I no longer trust this application.",negative
+"The promised pickup never happened and nobody notified me. I am angry about the wasted afternoon.",negative
+"Your latest release hides the accessibility settings behind an unreadable menu. This is a serious disappointment.",negative
+"The package contained only one of the four parts I ordered. I am tired of chasing incomplete deliveries.",negative
+"I followed the recovery instructions and ended up losing my saved templates. This is deeply frustrating.",negative
+"The event registration fee appeared only after I confirmed payment. I feel deceived.",negative
+"Your inventory screen keeps showing items we already sold. The repeated errors are costing us time and I am fed up.",negative
+"The alarm stayed silent during the test even though the setup screen said it was ready. I am very concerned and dissatisfied.",negative
+"I bought the offline option specifically for travel and it refused to open without internet. What a letdown.",negative
+"The document editor replaces my custom formatting whenever I reopen a file. I regret paying for this tool.",negative
+"What file types can I attach to a service request?",neutral
+"Please send the instructions for transferring a workspace to a different owner.",neutral
+"Does the calendar display appointment times in the viewer's time zone or the organizer's time zone?",neutral
+"I would like to change the contact person listed on our maintenance agreement.",neutral
+"Can two administrators approve the same purchase request?",neutral
+"Where do I enter a purchase order reference before submitting payment?",neutral
+"Please confirm the storage limit included with the team subscription.",neutral
+"We plan to hold a training session next month. Is there a limit on the number of attendees?",neutral
+"How can I download a list of devices currently associated with my workspace?",neutral
+"Is the audit report available in both CSV and PDF formats?",neutral
+"Our office will be closed during the scheduled delivery window. What are the rescheduling options?",neutral
+"Please explain the difference between pausing a subscription and closing an account.",neutral
+"Can I assign a different notification address to each project?",neutral
+"I am checking whether the desktop application supports keyboard-only navigation.",neutral
+"What information do you need to transfer a license to another computer?",neutral
+"Please provide the steps for setting a default currency on new estimates.",neutral
+"Does the equipment rental include a carrying case or is that a separate item?",neutral
+"I need a list of the permissions associated with the reviewer role.",neutral
+"The guided import caught my duplicate entries before saving them. That thoughtful feature saved me a lot of work.",positive
+"The technician explained every maintenance step clearly and left the equipment working beautifully. Excellent service.",positive
+"I used the appointment rescheduling link and finished in seconds. Such a convenient experience.",positive
+"The adjustable text size makes the instructions comfortable to read. I really appreciate the attention to accessibility.",positive
+"Our first batch of certificates printed perfectly with no manual adjustments. I am delighted.",positive
+"The automatic draft recovery restored my entire note after a power outage. That was a huge relief.",positive
+"The packaging kept every glass component secure during transit. Everything arrived in perfect condition.",positive
+"Your comparison page made choosing a subscription straightforward. I felt confident about my decision.",positive
+"The new reminder controls let me reduce interruptions without missing deadlines. They work exactly as I hoped.",positive
+"I expected the equipment exchange to take several visits but you completed it in one. Wonderful service.",positive
+"The shared checklist helped our volunteers coordinate without extra meetings. We love how practical it is.",positive
+"The searchable training transcript made it easy to revisit a detail I had missed. Very useful.",positive
+"Your support specialist spotted a setting I had overlooked and explained the fix kindly. I felt well supported.",positive
+"The reusable estimate templates have made my weekly paperwork much quicker. I am very happy with the improvement.",positive
+"The delivery updates were accurate throughout the journey and the parcel arrived in excellent shape. Great experience.",positive
+"The preview showed exactly how my invitation would look on a phone. The final result was lovely.",positive

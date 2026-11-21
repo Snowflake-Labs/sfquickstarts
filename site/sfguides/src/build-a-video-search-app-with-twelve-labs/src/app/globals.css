@@ -1,0 +1,179 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+/* dark: utilities follow the .dark class (the app always runs dark) */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/*
+ * THEMING — Snowflake x Twelve Labs
+ * TL masterbrand: Charcoal #1D1C1B, Shadow #45423F, Ash #8F8984, Chalk #F4F3F3,
+ * gradient Green #60E21B → Orange #FABA17 → Peach #FFB592 → Pink #FFB0CD.
+ * Product colors: Marengo/Embed Blue #6CD5FD, Pegasus/Generate Orange #FABA17.
+ * Snowflake: #29B5E8.
+ */
+
+@layer base {
+  :root,
+  .dark {
+    --tl-charcoal: #1d1c1b;
+    --tl-shadow: #45423f;
+    --tl-ash: #8f8984;
+    --tl-chalk: #f4f3f3;
+    --tl-green: #60e21b;
+    --tl-orange: #faba17;
+    --tl-peach: #ffb592;
+    --tl-pink: #ffb0cd;
+    --marengo: #6cd5fd;
+    --marengo-deep: #366b7f;
+    --pegasus: #faba17;
+    --pegasus-deep: #7a5a0b;
+    --snowflake: #29b5e8;
+
+    --brand-primary: var(--marengo);
+    --brand-primary-foreground: #0d0c0c;
+
+    --background: #121111;
+    --foreground: var(--tl-chalk);
+    --card: #1d1c1b;
+    --card-foreground: var(--tl-chalk);
+    --popover: #232120;
+    --popover-foreground: var(--tl-chalk);
+    --primary: var(--brand-primary);
+    --primary-foreground: var(--brand-primary-foreground);
+    --secondary: #2a2827;
+    --secondary-foreground: var(--tl-chalk);
+    --muted: #262423;
+    --muted-foreground: #a8a29d;
+    --accent: #2a2827;
+    --accent-foreground: var(--tl-chalk);
+    --destructive: oklch(0.65 0.22 25);
+    --destructive-foreground: #ffffff;
+    --border: #34312f;
+    --input: #34312f;
+    --ring: var(--brand-primary);
+    --radius: 0.875rem;
+
+    --success: var(--tl-green);
+    --warning: var(--tl-orange);
+    --chart-1: var(--marengo);
+    --chart-2: var(--tl-orange);
+    --chart-3: var(--tl-pink);
+    --chart-4: var(--tl-green);
+    --chart-5: var(--tl-peach);
+    --chart-grid: #2a2827;
+    --chart-axis: #8f8984;
+
+    --tl-gradient: linear-gradient(90deg, #60e21b 0%, #faba17 35%, #ffb592 68%, #ffb0cd 100%);
+  }
+
+  /* Per-tab accent: everything keyed off --accent-tab. */
+  [data-tab="marengo"] {
+    --accent-tab: var(--marengo);
+    --accent-tab-deep: var(--marengo-deep);
+    --brand-primary: var(--marengo);
+  }
+  [data-tab="pegasus"] {
+    --accent-tab: var(--pegasus);
+    --accent-tab-deep: var(--pegasus-deep);
+    --brand-primary: var(--pegasus);
+  }
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-marengo: var(--marengo);
+  --color-pegasus: var(--pegasus);
+  --color-snowflake: var(--snowflake);
+  --color-tab: var(--accent-tab);
+  --color-ash: var(--tl-ash);
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground font-sans;
+    -webkit-font-smoothing: antialiased;
+  }
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+}
+
+@layer components {
+  .tl-hairline {
+    height: 1px;
+    background: var(--tl-gradient);
+  }
+  .tl-gradient-text {
+    background: var(--tl-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .tl-pill {
+    @apply inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium tracking-wide;
+  }
+  .tl-glow {
+    background:
+      radial-gradient(60% 50% at 15% 0%, color-mix(in oklab, var(--accent-tab) 18%, transparent), transparent 70%),
+      radial-gradient(40% 40% at 90% 10%, color-mix(in oklab, var(--snowflake) 12%, transparent), transparent 70%);
+  }
+  .tl-panel {
+    @apply rounded-2xl border bg-card/80 backdrop-blur;
+  }
+  .prose-agent :where(p) {
+    @apply my-2 leading-relaxed;
+  }
+  .prose-agent :where(ul, ol) {
+    @apply my-2 space-y-1 pl-5;
+  }
+  .prose-agent :where(ul) {
+    list-style: disc;
+  }
+  .prose-agent :where(ol) {
+    list-style: decimal;
+  }
+  .prose-agent :where(strong) {
+    @apply font-semibold text-foreground;
+  }
+  .prose-agent :where(code) {
+    @apply rounded bg-muted px-1 py-0.5 font-mono text-[0.85em];
+  }
+  .prose-agent :where(h1, h2, h3) {
+    @apply mt-4 mb-2 font-semibold text-foreground;
+  }
+}

@@ -1,0 +1,41 @@
+[
+  {
+    "log_id": "ML-004",
+    "vehicle_id": "VH-0045",
+    "log_timestamp": "2025-01-18T08:45:00",
+    "event_type": "engine_diagnostic",
+    "severity": "critical",
+    "description": "Check engine light P0300 — random misfire detected. Replaced spark plugs and ignition coil pack.",
+    "mileage_at_service": 89200,
+    "technician": "Dave L.",
+    "parts_replaced": ["spark_plugs_set", "ignition_coil_pack"],
+    "total_cost": 487.50,
+    "next_service_due": "2025-03-18"
+  },
+  {
+    "log_id": "ML-005",
+    "vehicle_id": "VH-0008",
+    "log_timestamp": "2025-01-19T10:30:00",
+    "event_type": "battery_replacement",
+    "severity": "warning",
+    "description": "Battery voltage dropping below 11.5V under load. Replaced with new AGM battery.",
+    "mileage_at_service": 52400,
+    "technician": "Sarah K.",
+    "parts_replaced": ["agm_battery_group65"],
+    "total_cost": 215.00,
+    "next_service_due": "2028-01-19"
+  },
+  {
+    "log_id": "ML-006",
+    "vehicle_id": "VH-0091",
+    "log_timestamp": "2025-01-20T13:00:00",
+    "event_type": "transmission_service",
+    "severity": "routine",
+    "description": "Transmission fluid flush and filter replacement at recommended 60k interval.",
+    "mileage_at_service": 60100,
+    "technician": "Mike R.",
+    "parts_replaced": ["transmission_filter", "atf_fluid_12qt"],
+    "total_cost": 329.00,
+    "next_service_due": "2026-07-20"
+  }
+]

@@ -11,6 +11,9 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 # Extracting Insights from Unstructured Data with Document AI
 <!-- ------------------------ -->
 
+>**Note:
+>The Document AI feature referenced in this guide has been deprecated. Please see [this guide](https://www.snowflake.com/en/developers/guides/create-a-document-processing-pipeline-with-ai-extract/) to learn more about the successor feature AI_EXTRACT.**<br> 
+
 ## Overview
 ![assets/docaiheader.png](assets/docaiheader.png)
 
@@ -323,7 +326,7 @@ ORDER BY truck_id;
 
 ### Related Resources
 - [Source Code on GitHub](https://github.com/Snowflake-Labs/sfguide-tasty-bytes-extract-insights-from-unstructured-data-using-document-ai)
-- [Powered by Tasty Bytes - Quickstarts Table of Contents](/en/developers/guides/tasty-bytes-introduction/)
+- [Powered by Tasty Bytes - Quickstarts Table of Contents](https://www.snowflake.com/en/developers/guides/zero-to-snowflake/)
 - [Document AI](https://docs.snowflake.com/en/user-guide/snowflake-cortex/document-ai/overview)
 - [Snowflake's Artic-TILT LLM for Document AI Documentation]((/blog/arctic-tilt-compact-llm-advanced-document-ai/))
 

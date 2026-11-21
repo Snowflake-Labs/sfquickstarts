@@ -534,4 +534,4 @@ To get more comfortable with this solution, implement new endpoints pointing to 
 - How to run and test the API on your machine
 
 ### Resources
-Code for this project is available at [https://github.com/sfc-gh-bhess/lab_data_api_python](https://github.com/sfc-gh-bhess/lab_data_api_python).
+Code for this project is available at [https://github.com/Snowflake-Labs/sfguide-build-a-custom-api-in-python-flask](https://github.com/Snowflake-Labs/sfguide-build-a-custom-api-in-python-flask).

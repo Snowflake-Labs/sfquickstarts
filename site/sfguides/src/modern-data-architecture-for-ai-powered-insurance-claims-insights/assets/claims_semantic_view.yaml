@@ -1,0 +1,607 @@
+name: INSURANCE_CLAIMS_ANALYTICS
+description: >
+  Semantic model for analyzing insurance claims data including fraud detection,
+  claim processing, and policy analytics. This model enables natural language
+  queries about claims, fraud risk assessment, and operational metrics.
+
+tables:
+  - name: CLAIMS_PROCESSED_FEATURES
+    description: >
+      Processed insurance claims with enriched features for analytics and fraud detection.
+      Contains claim details, policy information, vehicle data, investigation status,
+      and ML-generated fraud risk scores.
+    base_table:
+      database: INSURANCE_CLAIMS_DB
+      schema: CLAIMS_ANALYTICS
+      table: CLAIMS_PROCESSED_FEATURES
+
+    dimensions:
+      - name: CLAIM_ID
+        description: Unique identifier for each insurance claim
+        expr: CLAIM_ID
+        data_type: VARCHAR
+        unique: true
+        synonyms:
+          - claim number
+          - claim reference
+          - case id
+
+      - name: POLICY_NUMBER
+        description: Policy number associated with the claim
+        expr: POLICY_NUMBER
+        data_type: VARCHAR
+        synonyms:
+          - policy id
+          - policy reference
+
+      - name: DATE_OF_LOSS
+        description: Date when the loss or incident occurred
+        expr: DATE_OF_LOSS
+        data_type: DATE
+        synonyms:
+          - loss date
+          - incident date
+          - accident date
+
+      - name: DATE_REPORTED
+        description: Date when the claim was reported to the insurance company
+        expr: DATE_REPORTED
+        data_type: DATE
+        synonyms:
+          - report date
+          - filing date
+
+      - name: PROCESSED_AT
+        description: Timestamp when the claim was processed by the analytics pipeline
+        expr: PROCESSED_AT
+        data_type: TIMESTAMP
+
+      - name: LOSS_TYPE
+        description: Type of loss event such as Collision, Hit and Run, Vandalism, Theft, Weather, Fire
+        expr: LOSS_TYPE
+        data_type: VARCHAR
+        synonyms:
+          - incident type
+          - claim type
+          - damage type
+        sample_values:
+          - Collision
+          - Hit and Run
+          - Vandalism
+          - Theft
+          - Weather
+          - Fire
+
+      - name: LOSS_TYPE_CATEGORY
+        description: Risk categorization of loss type - Standard Risk, Medium Risk, or High Risk
+        expr: LOSS_TYPE_CATEGORY
+        data_type: VARCHAR
+        synonyms:
+          - risk category
+          - loss category
+        sample_values:
+          - Standard Risk
+          - Medium Risk
+          - High Risk
+
+      - name: CLAIMANT_NAME
+        description: Full name of the person filing the claim
+        expr: CLAIMANT_NAME
+        data_type: VARCHAR
+        synonyms:
+          - customer name
+          - policyholder name
+          - insured name
+
+      - name: LOSS_LOCATION_CITY
+        description: City where the loss occurred
+        expr: LOSS_LOCATION_CITY
+        data_type: VARCHAR
+        synonyms:
+          - city
+          - incident city
+
+      - name: LOSS_LOCATION_STATE
+        description: State where the loss occurred as 2-letter code
+        expr: LOSS_LOCATION_STATE
+        data_type: VARCHAR
+        synonyms:
+          - state
+          - incident state
+
+      - name: VEHICLE_YEAR
+        description: Model year of the insured vehicle
+        expr: VEHICLE_YEAR
+        data_type: NUMBER
+        synonyms:
+          - car year
+          - model year
+
+      - name: VEHICLE_MAKE
+        description: Manufacturer of the insured vehicle such as Toyota, Ford, BMW
+        expr: VEHICLE_MAKE
+        data_type: VARCHAR
+        synonyms:
+          - car make
+          - manufacturer
+          - brand
+
+      - name: VEHICLE_MODEL
+        description: Model name of the insured vehicle
+        expr: VEHICLE_MODEL
+        data_type: VARCHAR
+        synonyms:
+          - car model
+
+      - name: INJURIES_REPORTED
+        description: Whether injuries were reported in the claim
+        expr: INJURIES_REPORTED
+        data_type: BOOLEAN
+        synonyms:
+          - has injuries
+          - injury claim
+
+      - name: POLICE_REPORT_FILED
+        description: Whether a police report was filed for the incident
+        expr: POLICE_REPORT_FILED
+        data_type: BOOLEAN
+        synonyms:
+          - has police report
+
+      - name: OTHER_PARTY_INVOLVED
+        description: Whether another party was involved in the incident
+        expr: OTHER_PARTY_INVOLVED
+        data_type: BOOLEAN
+        synonyms:
+          - third party
+          - other driver
+
+      - name: TOW_REQUIRED
+        description: Whether the vehicle required towing
+        expr: TOW_REQUIRED
+        data_type: BOOLEAN
+        synonyms:
+          - needed tow
+          - towed
+
+      - name: ESTIMATE_STATUS
+        description: Current status of the claim estimate - Approved, In Review, Pending Investigation, Total Loss
+        expr: ESTIMATE_STATUS
+        data_type: VARCHAR
+        synonyms:
+          - claim status
+          - approval status
+        sample_values:
+          - Approved
+          - In Review
+          - Pending Investigation
+          - Total Loss
+
+      - name: REPORTING_DELAY_CATEGORY
+        description: Category of reporting delay such as Same Day or Next Day
+        expr: REPORTING_DELAY_CATEGORY
+        data_type: VARCHAR
+        synonyms:
+          - delay category
+        sample_values:
+          - Same Day
+          - Next Day
+
+      - name: HAS_ATTORNEY_MENTION
+        description: Whether an attorney is mentioned in claim notes
+        expr: HAS_ATTORNEY_MENTION
+        data_type: BOOLEAN
+        synonyms:
+          - attorney involved
+          - lawyer mentioned
+
+      - name: HAS_FRAUD_KEYWORDS
+        description: Whether fraud-related keywords were detected in notes
+        expr: HAS_FRAUD_KEYWORDS
+        data_type: BOOLEAN
+        synonyms:
+          - fraud keywords detected
+
+      - name: POLICY_TYPE
+        description: Type of insurance policy such as Personal Auto
+        expr: POLICY_TYPE
+        data_type: VARCHAR
+
+      - name: RISK_TIER
+        description: Policy risk tier classification - Preferred Plus, Preferred, Standard, Non-Standard
+        expr: RISK_TIER
+        data_type: VARCHAR
+        synonyms:
+          - customer tier
+          - policy tier
+        sample_values:
+          - Preferred Plus
+          - Preferred
+          - Standard
+          - Non-Standard
+
+      - name: COVERAGE_LIABILITY_LIMIT
+        description: Liability coverage limits such as 100000/300000
+        expr: COVERAGE_LIABILITY_LIMIT
+        data_type: VARCHAR
+        synonyms:
+          - coverage limit
+          - liability limit
+
+      - name: DISCOUNT_GOOD_DRIVER
+        description: Whether good driver discount is applied - Yes or No
+        expr: DISCOUNT_GOOD_DRIVER
+        data_type: VARCHAR
+
+      - name: DISCOUNT_MULTI_POLICY
+        description: Whether multi-policy discount is applied - Yes or No
+        expr: DISCOUNT_MULTI_POLICY
+        data_type: VARCHAR
+
+      - name: HAS_SIU_REFERRAL
+        description: Whether claim was referred to Special Investigations Unit
+        expr: HAS_SIU_REFERRAL
+        data_type: BOOLEAN
+        synonyms:
+          - siu referral
+          - under investigation
+
+      - name: SIU_CASE_NUMBER
+        description: SIU case reference number if referred
+        expr: SIU_CASE_NUMBER
+        data_type: VARCHAR
+        synonyms:
+          - investigation number
+
+      - name: INVESTIGATION_STATUS
+        description: Current investigation status - Open, Closed, Monitoring, or None
+        expr: INVESTIGATION_STATUS
+        data_type: VARCHAR
+        sample_values:
+          - Open
+          - Closed
+          - Monitoring
+
+      - name: INVESTIGATION_OUTCOME
+        description: Final outcome of investigation - Legitimate Claim, Pending, or N/A
+        expr: INVESTIGATION_OUTCOME
+        data_type: VARCHAR
+        sample_values:
+          - Legitimate Claim
+          - Pending
+          - N/A
+
+      - name: FRAUD_RISK_CATEGORY
+        description: ML-determined fraud risk category - Minimal Risk, Low Risk, Medium Risk, High Risk
+        expr: FRAUD_RISK_CATEGORY
+        data_type: VARCHAR
+        synonyms:
+          - risk level
+          - fraud category
+        sample_values:
+          - Minimal Risk
+          - Low Risk
+          - Medium Risk
+          - High Risk
+
+    facts:
+      - name: ESTIMATE_AMOUNT
+        description: Total estimated claim amount in USD
+        expr: ESTIMATE_AMOUNT
+        data_type: NUMBER
+        synonyms:
+          - claim amount
+          - estimated cost
+          - damage estimate
+
+      - name: NET_PAYABLE
+        description: Net amount payable after deductible in USD
+        expr: NET_PAYABLE
+        data_type: NUMBER
+        synonyms:
+          - payment amount
+          - payout
+          - net amount
+
+      - name: LABOR_HOURS
+        description: Estimated labor hours for repair
+        expr: LABOR_HOURS
+        data_type: NUMBER
+
+      - name: PARTS_TOTAL
+        description: Total cost of parts in USD
+        expr: PARTS_TOTAL
+        data_type: NUMBER
+        synonyms:
+          - parts cost
+
+      - name: DAYS_TO_REPORT
+        description: Number of days between loss and claim report
+        expr: DAYS_TO_REPORT
+        data_type: NUMBER
+        synonyms:
+          - reporting delay
+          - days to file
+
+      - name: DAYS_SINCE_LOSS
+        description: Number of days since the loss occurred
+        expr: DAYS_SINCE_LOSS
+        data_type: NUMBER
+
+      - name: DAYS_TO_ESTIMATE
+        description: Number of days to complete the estimate
+        expr: DAYS_TO_ESTIMATE
+        data_type: NUMBER
+
+      - name: TOTAL_NOTES_COUNT
+        description: Total number of notes attached to the claim
+        expr: TOTAL_NOTES_COUNT
+        data_type: NUMBER
+
+      - name: SIU_NOTES_COUNT
+        description: Number of SIU-related notes
+        expr: SIU_NOTES_COUNT
+        data_type: NUMBER
+
+      - name: MEDICAL_NOTES_COUNT
+        description: Number of medical-related notes
+        expr: MEDICAL_NOTES_COUNT
+        data_type: NUMBER
+
+      - name: NOTES_WORD_COUNT
+        description: Total word count across all notes
+        expr: NOTES_WORD_COUNT
+        data_type: NUMBER
+
+      - name: POLICY_AGE_AT_LOSS
+        description: Age of policy in days when loss occurred
+        expr: POLICY_AGE_AT_LOSS
+        data_type: NUMBER
+        synonyms:
+          - policy tenure
+
+      - name: POLICY_DAYS_REMAINING
+        description: Days remaining on policy at time of loss
+        expr: POLICY_DAYS_REMAINING
+        data_type: NUMBER
+
+      - name: ANNUAL_PREMIUM
+        description: Annual premium amount in USD
+        expr: ANNUAL_PREMIUM
+        data_type: NUMBER
+        synonyms:
+          - premium
+          - yearly premium
+
+      - name: RISK_TIER_NUMERIC
+        description: Numeric representation of risk tier where 1 is best and 4 is worst
+        expr: RISK_TIER_NUMERIC
+        data_type: NUMBER
+
+      - name: UNDERWRITING_SCORE
+        description: Underwriting risk score where higher is better
+        expr: UNDERWRITING_SCORE
+        data_type: NUMBER
+
+      - name: PRIOR_CLAIMS_3YR
+        description: Number of prior claims in the last 3 years
+        expr: PRIOR_CLAIMS_3YR
+        data_type: NUMBER
+        synonyms:
+          - previous claims
+          - claim history
+
+      - name: FRAUD_RISK_SCORE_HISTORICAL
+        description: Historical fraud risk score from 0-100 where higher means more risk
+        expr: FRAUD_RISK_SCORE_HISTORICAL
+        data_type: NUMBER
+        synonyms:
+          - historical risk score
+
+      - name: ESTIMATE_TO_PREMIUM_RATIO
+        description: Ratio of estimate amount to annual premium
+        expr: ESTIMATE_TO_PREMIUM_RATIO
+        data_type: NUMBER
+        synonyms:
+          - claim to premium ratio
+
+      - name: COMPLEXITY_SCORE
+        description: Claim complexity score based on multiple factors
+        expr: COMPLEXITY_SCORE
+        data_type: NUMBER
+
+      - name: ML_FRAUD_RISK_SCORE
+        description: Machine learning fraud risk score from 0-100 where higher indicates higher fraud probability
+        expr: ML_FRAUD_RISK_SCORE
+        data_type: NUMBER
+        synonyms:
+          - fraud score
+          - ml risk score
+          - fraud probability
+
+    metrics:
+      - name: TOTAL_CLAIMS
+        description: Total number of claims
+        expr: COUNT(CLAIM_ID)
+        synonyms:
+          - claim count
+          - number of claims
+
+      - name: HIGH_RISK_CLAIMS
+        description: Number of claims in High Risk fraud category
+        expr: COUNT_IF(FRAUD_RISK_CATEGORY = 'High Risk')
+        synonyms:
+          - high risk count
+
+      - name: SIU_REFERRAL_COUNT
+        description: Number of claims referred to Special Investigations Unit
+        expr: COUNT_IF(HAS_SIU_REFERRAL = TRUE)
+        synonyms:
+          - investigation count
+
+      - name: TOTAL_ESTIMATE_AMOUNT
+        description: Sum of all claim estimate amounts
+        expr: SUM(ESTIMATE_AMOUNT)
+        synonyms:
+          - total claims value
+          - total estimated
+
+      - name: TOTAL_NET_PAYABLE
+        description: Sum of all net payable amounts
+        expr: SUM(NET_PAYABLE)
+        synonyms:
+          - total payout
+          - total payments
+
+      - name: AVERAGE_CLAIM_AMOUNT
+        description: Average claim estimate amount
+        expr: AVG(ESTIMATE_AMOUNT)
+        synonyms:
+          - avg claim
+          - mean claim amount
+
+      - name: AVERAGE_PAYOUT
+        description: Average net payable amount per claim
+        expr: AVG(NET_PAYABLE)
+        synonyms:
+          - avg payout
+
+      - name: MAX_CLAIM_AMOUNT
+        description: Highest single claim estimate
+        expr: MAX(ESTIMATE_AMOUNT)
+        synonyms:
+          - largest claim
+          - highest claim
+
+      - name: AVERAGE_FRAUD_SCORE
+        description: Average ML fraud risk score across claims
+        expr: AVG(ML_FRAUD_RISK_SCORE)
+        synonyms:
+          - avg fraud score
+          - mean fraud risk
+
+      - name: HIGH_FRAUD_SCORE_COUNT
+        description: Number of claims with ML fraud score above 70
+        expr: COUNT_IF(ML_FRAUD_RISK_SCORE > 70)
+
+      - name: CLAIMS_WITH_INJURIES
+        description: Number of claims reporting injuries
+        expr: COUNT_IF(INJURIES_REPORTED = TRUE)
+        synonyms:
+          - injury claims
+
+      - name: AVERAGE_DAYS_TO_REPORT
+        description: Average number of days to report a claim
+        expr: AVG(DAYS_TO_REPORT)
+
+      - name: AVERAGE_COMPLEXITY
+        description: Average claim complexity score
+        expr: AVG(COMPLEXITY_SCORE)
+
+    filters:
+      - name: HIGH_RISK_FILTER
+        description: Filter for high risk fraud category claims only
+        expr: FRAUD_RISK_CATEGORY = 'High Risk'
+        synonyms:
+          - high risk only
+
+      - name: SIU_REFERRED_FILTER
+        description: Filter for claims referred to Special Investigations Unit
+        expr: HAS_SIU_REFERRAL = TRUE
+        synonyms:
+          - under investigation
+
+      - name: APPROVED_CLAIMS_FILTER
+        description: Filter for approved claims only
+        expr: ESTIMATE_STATUS = 'Approved'
+        synonyms:
+          - approved only
+
+      - name: TOTAL_LOSS_FILTER
+        description: Filter for total loss claims
+        expr: ESTIMATE_STATUS = 'Total Loss'
+
+      - name: PENDING_INVESTIGATION_FILTER
+        description: Filter for claims pending investigation
+        expr: ESTIMATE_STATUS = 'Pending Investigation'
+
+      - name: COLLISION_CLAIMS_FILTER
+        description: Filter for collision-type claims
+        expr: LOSS_TYPE = 'Collision'
+
+      - name: THEFT_CLAIMS_FILTER
+        description: Filter for theft claims
+        expr: LOSS_TYPE = 'Theft'
+
+custom_instructions: >
+  This semantic model contains insurance claims data with fraud detection features.
+  Key concepts: FRAUD_RISK_CATEGORY indicates ML-assessed fraud risk (Minimal, Low, Medium, High).
+  ML_FRAUD_RISK_SCORE is a 0-100 score where higher means more fraud risk.
+  HAS_SIU_REFERRAL indicates claims sent to Special Investigations Unit.
+  For suspicious claims or fraud queries, use FRAUD_RISK_CATEGORY = 'High Risk' or ML_FRAUD_RISK_SCORE > 70.
+  For investigations, use HAS_SIU_REFERRAL = TRUE.
+  For large claims, consider ESTIMATE_AMOUNT > 10000.
+  For total loss, use ESTIMATE_STATUS = 'Total Loss'.
+
+verified_queries:
+  - name: High Risk Claims Summary
+    question: Show me all high risk fraud claims
+    sql: |
+      SELECT 
+        CLAIM_ID,
+        CLAIMANT_NAME,
+        LOSS_TYPE,
+        ESTIMATE_AMOUNT,
+        ML_FRAUD_RISK_SCORE,
+        FRAUD_RISK_CATEGORY
+      FROM INSURANCE_CLAIMS_DB.CLAIMS_ANALYTICS.CLAIMS_PROCESSED_FEATURES
+      WHERE FRAUD_RISK_CATEGORY = 'High Risk'
+      ORDER BY ML_FRAUD_RISK_SCORE DESC
+    verified_at: 1709424000
+    verified_by: system
+
+  - name: Claims by Loss Type
+    question: What is the total claim amount by loss type?
+    sql: |
+      SELECT 
+        LOSS_TYPE,
+        COUNT(*) as CLAIM_COUNT,
+        SUM(ESTIMATE_AMOUNT) as TOTAL_ESTIMATE,
+        AVG(ML_FRAUD_RISK_SCORE) as AVG_FRAUD_SCORE
+      FROM INSURANCE_CLAIMS_DB.CLAIMS_ANALYTICS.CLAIMS_PROCESSED_FEATURES
+      GROUP BY LOSS_TYPE
+      ORDER BY TOTAL_ESTIMATE DESC
+    verified_at: 1709424000
+    verified_by: system
+
+  - name: SIU Investigation Summary
+    question: Show claims under SIU investigation
+    sql: |
+      SELECT 
+        CLAIM_ID,
+        SIU_CASE_NUMBER,
+        CLAIMANT_NAME,
+        LOSS_TYPE,
+        ESTIMATE_AMOUNT,
+        INVESTIGATION_STATUS,
+        INVESTIGATION_OUTCOME
+      FROM INSURANCE_CLAIMS_DB.CLAIMS_ANALYTICS.CLAIMS_PROCESSED_FEATURES
+      WHERE HAS_SIU_REFERRAL = TRUE
+      ORDER BY ESTIMATE_AMOUNT DESC
+    verified_at: 1709424000
+    verified_by: system
+
+  - name: Claims Overview
+    question: Give me a summary of all claims
+    sql: |
+      SELECT 
+        COUNT(*) as TOTAL_CLAIMS,
+        SUM(ESTIMATE_AMOUNT) as TOTAL_ESTIMATE_AMOUNT,
+        SUM(NET_PAYABLE) as TOTAL_NET_PAYABLE,
+        AVG(ESTIMATE_AMOUNT) as AVG_CLAIM_AMOUNT,
+        AVG(ML_FRAUD_RISK_SCORE) as AVG_FRAUD_SCORE,
+        COUNT_IF(FRAUD_RISK_CATEGORY = 'High Risk') as HIGH_RISK_COUNT,
+        COUNT_IF(HAS_SIU_REFERRAL = TRUE) as SIU_REFERRAL_COUNT
+      FROM INSURANCE_CLAIMS_DB.CLAIMS_ANALYTICS.CLAIMS_PROCESSED_FEATURES
+    verified_at: 1709424000
+    verified_by: system

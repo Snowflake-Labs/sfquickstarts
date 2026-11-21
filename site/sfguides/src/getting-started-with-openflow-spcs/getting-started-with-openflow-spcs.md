@@ -166,35 +166,11 @@ GRANT BIND SERVICE ENDPOINT ON ACCOUNT TO ROLE OPENFLOW_ADMIN;
 
 -- Grant role to current user and ACCOUNTADMIN
 GRANT ROLE OPENFLOW_ADMIN TO ROLE ACCOUNTADMIN;
-GRANT ROLE OPENFLOW_ADMIN TO USER IDENTIFIER(CURRENT_USER());
+SET id = CURRENT_USER();
+GRANT ROLE OPENFLOW_ADMIN TO USER IDENTIFIER($id);
 ```
 
 This creates the admin role and grants it the necessary permissions to create and manage Openflow deployments.
-
-### Enable BCR Bundle 2025_06 for Integration-level Network Policy
-
-> **CHECK FIRST:** This step is **only required** if you plan to use Database CDC, SaaS, Streaming, or Slack connectors. If you're unsure which connectors you'll use, check the bundle status first. You can always enable it later if needed.
-
-**Step 1: Check if BCR Bundle 2025_06 is already enabled**
-
-```sql
--- Check the bundle status
-USE ROLE ACCOUNTADMIN;
-CALL SYSTEM$BEHAVIOR_CHANGE_BUNDLE_STATUS('2025_06');
-```
-
-**Step 2: Enable the bundle if status shows `DISABLED`**
-
-If the result shows `DISABLED`, enable the bundle:
-
-```sql
--- Enable BCR Bundle 2025_06
-CALL SYSTEM$ENABLE_BEHAVIOR_CHANGE_BUNDLE('2025_06');
-```
-
-> **WHY THIS IS NEEDED:**
->
-> BCR Bundle 2025_06 enables integration-level network policies required for Database CDC, SaaS, Streaming, and Slack connectors to connect to Snowpipe Streaming. For more details, see [Enable BCR Bundle documentation](https://docs.snowflake.com/en/user-guide/data-integration/openflow/setup-openflow-spcs-sf#enable-bcr-bundle-2025-06-for-integration-level-network-policy).
 
 ### Verify Setup
 

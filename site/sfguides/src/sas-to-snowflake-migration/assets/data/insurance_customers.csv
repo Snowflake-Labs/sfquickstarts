@@ -1,0 +1,1001 @@
+customer_id,first_name,last_name,birth_date,city,state,policy_start_date,policy_type,annual_premium,risk_score
+C00001,Danielle,Johnson,1968-04-30,East Donald,NY,2021-06-26,Auto,1788.68,13
+C00002,Erica,Mcclain,1955-07-13,Johnsonland,NC,2022-06-22,Home,2506.08,27
+C00003,Jesse,Guzman,1987-10-22,Lake Debra,CA,2025-04-01,Auto,2431.67,85
+C00004,Robert,Cole,1968-07-18,Port Lindachester,MI,2023-07-05,Auto,1582.95,37
+C00005,Joshua,Lewis,2001-07-27,Curtisfurt,NC,2021-06-08,Auto,2039.91,81
+C00006,Michael,Cooper,1967-08-13,Lake Stephenville,IL,2023-11-01,Umbrella,768.97,38
+C00007,Christian,Carter,1992-05-23,Barbaraland,PA,2021-01-01,Auto,2010.37,30
+C00008,Donna,Mejia,1955-01-17,Port Craig,PA,2022-12-23,Life,981.14,29
+C00009,Shawn,Flowers,1960-09-06,Michaelview,PA,2021-03-21,Auto,1547.76,21
+C00010,Chelsea,Jackson,1999-03-26,East Steven,CA,2022-11-28,Life,1473.81,87
+C00011,Veronica,Bowman,1987-07-08,Lake Mark,OH,2021-02-01,Umbrella,789.77,78
+C00012,Jeremy,Johnson,1971-01-30,Adamsborough,MI,2025-06-09,Auto,2171.29,80
+C00013,Nancy,Edwards,1994-03-21,Fostermouth,TX,2021-10-29,Life,1368.26,83
+C00014,Joseph,Wright,1987-10-25,Juliechester,TX,2025-07-29,Auto,2237.03,39
+C00015,Reginald,Robinson,1959-01-11,Daviston,GA,2021-07-18,Home,1950.94,22
+C00016,Eric,Moore,1995-12-03,Carlsonfurt,NY,2023-11-10,Life,1101.49,30
+C00017,Caitlin,Mcdonald,1966-09-21,Lake Jenniferside,FL,2022-11-18,Life,1167.52,19
+C00018,Kayla,Peterson,1969-08-02,Mooretown,IL,2022-11-08,Home,2190.99,30
+C00019,Teresa,Gill,1984-02-29,Port Colleenhaven,CA,2022-04-21,Home,3148.34,51
+C00020,Eric,Farmer,1986-04-27,New Mariotown,OH,2021-07-25,Home,2331.64,14
+C00021,Sarah,Koch,2006-03-18,Johnbury,MI,2025-06-09,Life,894.62,18
+C00022,Stacey,Miller,1982-09-08,Port Amandaberg,OH,2021-09-14,Life,1379.65,37
+C00023,Donna,Arroyo,1960-11-07,Allisonchester,NY,2022-06-01,Umbrella,630.67,28
+C00024,Sarah,Campos,1996-07-23,Lake Larry,MI,2023-10-16,Life,1619.06,84
+C00025,Samuel,Holmes,1957-11-06,East Caleb,FL,2020-10-16,Umbrella,743.75,56
+C00026,Brianna,Hall,1964-08-07,North Jeanton,TX,2022-07-24,Umbrella,804.07,21
+C00027,Carlos,Johnson,1972-02-06,New Johnfort,OH,2022-06-08,Home,2599.16,90
+C00028,Amber,Cummings,1988-06-22,Sanchezfort,GA,2024-01-28,Auto,2036.09,59
+C00029,James,Davis,1978-12-12,Rodneymouth,CA,2021-01-27,Life,2019.67,80
+C00030,Emily,Joyce,1956-04-24,South Jessicaville,PA,2022-09-23,Auto,2831.51,78
+C00031,James,Herrera,1959-02-26,Whitemouth,GA,2022-09-27,Auto,1948.05,47
+C00032,Nancy,Jones,2004-08-07,North Deniseside,FL,2020-09-26,Auto,2540.23,43
+C00033,Tanya,House,2007-05-15,East Richard,NC,2024-09-15,Auto,2300.32,90
+C00034,Jason,Morales,1953-08-09,South Aaron,FL,2023-12-07,Home,2054.47,29
+C00035,Joseph,Bowers,1980-07-30,Rodneyside,CA,2024-10-02,Auto,2292.06,86
+C00036,Eric,Phillips,1953-08-05,Lake Leeton,IL,2025-07-31,Auto,2649.08,56
+C00037,Thomas,Calhoun,1985-10-04,North Susan,MI,2021-04-17,Home,1699.91,17
+C00038,Melissa,Jones,1954-03-29,South David,TX,2025-06-16,Auto,1889.76,20
+C00039,John,Wheeler,1991-10-06,South Dianeshire,NC,2025-01-22,Home,2384.85,26
+C00040,Leslie,Green,1995-03-11,Johnfurt,MI,2021-09-22,Home,2508.3,43
+C00041,Emily,Evans,1971-02-17,North Stephenshire,NY,2021-06-18,Umbrella,993.41,37
+C00042,Charles,Lewis,1967-08-30,West Nicole,PA,2022-09-09,Life,1927.63,61
+C00043,Mike,Moore,2006-05-08,Cherylhaven,NY,2020-09-05,Umbrella,982.12,76
+C00044,Elizabeth,Spencer,1994-10-04,East Josephville,MI,2025-04-26,Home,1834.89,18
+C00045,Eric,Campbell,1963-12-13,Jamesview,TX,2024-11-29,Home,2647.77,85
+C00046,Tracy,Whitehead,2007-03-12,North Cynthiaview,CA,2020-12-26,Auto,1413.1,39
+C00047,Adam,Wise,1992-12-20,Evanmouth,IL,2025-04-22,Life,1104.23,19
+C00048,Janice,Hoffman,1957-03-24,Lake Rebeccaside,MI,2020-12-01,Umbrella,806.56,37
+C00049,Mary,Aguilar,1959-09-10,Andersonport,OH,2023-09-18,Umbrella,951.21,41
+C00050,Rachel,Flynn,1952-04-30,Jasonbury,OH,2021-06-27,Home,1588.17,22
+C00051,Michael,Castro,1977-04-08,East Michelle,CA,2022-02-13,Life,1427.16,64
+C00052,Nicole,Johnson,1999-09-27,Kimberlychester,PA,2022-09-22,Auto,1518.9,17
+C00053,Joseph,Cobb,1956-12-20,Brennanfort,NC,2022-07-04,Auto,1580.52,41
+C00054,James,Sellers,1973-05-29,Loribury,IL,2022-07-05,Umbrella,695.53,27
+C00055,Andrew,Lee,1971-12-14,Michelleview,TX,2023-08-07,Umbrella,995.56,41
+C00056,Darlene,Ross,2007-01-10,Sheilaville,NC,2022-11-01,Umbrella,781.68,80
+C00057,Gregory,Estes,1967-09-06,North Candacestad,NY,2023-04-13,Auto,2103.16,21
+C00058,Samuel,Joyce,1957-06-26,Lamborough,NY,2022-10-12,Home,2770.08,62
+C00059,Bradley,Graham,1984-12-29,West Ryan,CA,2023-06-03,Umbrella,535.42,17
+C00060,Cindy,Alvarado,1958-02-04,Williamchester,GA,2023-05-22,Umbrella,1035.72,43
+C00061,Richard,Phillips,1958-04-11,South Elizabeth,NC,2023-11-02,Life,1689.35,64
+C00062,Erica,Orr,1991-07-02,Richardtown,NY,2023-03-14,Umbrella,601.74,29
+C00063,Justin,Jordan,1989-01-30,Stevenmouth,CA,2022-06-06,Auto,2903.56,84
+C00064,William,Leon,2003-10-14,Lake Christopher,GA,2024-12-30,Life,781.65,17
+C00065,Elizabeth,Harvey,1955-12-21,Lake Lance,TX,2022-04-22,Home,2584.32,17
+C00066,Dylan,Williams,1981-12-12,South Robertshire,NY,2022-04-08,Home,2153.25,18
+C00067,Jennifer,Cruz,1976-10-23,East Diana,MI,2020-08-29,Umbrella,911.95,25
+C00068,Patricia,Dalton,1956-11-13,Robinsonhaven,MI,2024-07-25,Home,3356.61,84
+C00069,Brent,Wright,2007-05-06,South Dennismouth,MI,2025-02-17,Auto,2464.88,63
+C00070,Vanessa,Larson,2001-01-03,Salazarhaven,PA,2024-03-29,Life,1078.77,43
+C00071,Maria,Kelley,1960-06-11,Colebury,IL,2022-12-21,Home,2310.27,43
+C00072,Katie,Boyd,1992-04-06,West Scott,TX,2023-01-16,Umbrella,1087.73,50
+C00073,Jimmy,Rogers,1986-05-16,East Edwardfurt,MI,2021-11-29,Auto,2489.38,68
+C00074,Jasmine,Brown,1977-05-08,Amychester,NC,2021-02-21,Auto,1679.82,19
+C00075,Jamie,Fisher,2001-12-31,Port Nicoleshire,TX,2023-11-06,Life,1464.91,26
+C00076,Thomas,Bender,1969-12-08,Castanedachester,GA,2025-03-11,Home,2353.8,57
+C00077,Julie,Payne,1990-08-31,South Jeffrey,NC,2024-04-27,Life,2239.0,88
+C00078,Todd,Price,1995-02-17,Ramseymouth,TX,2021-09-12,Auto,2180.66,80
+C00079,Tina,Ferguson,1976-06-05,North Dawnberg,TX,2024-07-16,Home,1889.32,43
+C00080,Hunter,Green,1971-11-22,South Mark,NY,2023-11-02,Home,2154.02,44
+C00081,Joshua,Bean,1978-04-21,Maryfort,IL,2020-10-11,Life,1394.0,36
+C00082,Kaitlyn,Williams,1973-06-06,Lake Casey,CA,2020-12-15,Umbrella,1017.95,42
+C00083,Karen,Herring,1963-03-08,New Elijahberg,CA,2024-08-22,Auto,2716.91,64
+C00084,Elizabeth,Elliott,1964-06-12,Lyonsstad,IL,2022-01-15,Auto,2443.77,52
+C00085,Catherine,Stuart,1998-07-01,Port Loriport,OH,2021-07-13,Home,2953.58,66
+C00086,Beth,Hickman,1988-10-18,Sandersborough,FL,2021-04-05,Auto,1268.77,24
+C00087,Brittany,Rivas,1966-02-21,Lake Kendraville,FL,2025-06-05,Auto,2275.41,57
+C00088,Kimberly,Reed,1978-10-07,Caseymouth,PA,2020-09-20,Umbrella,522.45,26
+C00089,Melissa,Short,1956-10-18,Yumouth,NY,2021-11-30,Auto,1761.52,55
+C00090,Ryan,Gross,1993-11-17,Christinaside,OH,2024-09-22,Auto,2503.71,55
+C00091,Steven,Petersen,1989-12-07,Marcusbury,FL,2021-05-08,Home,2950.97,40
+C00092,Joshua,Hayes,2000-09-07,Hudsonfurt,PA,2023-06-23,Umbrella,522.94,13
+C00093,Anthony,Rosales,1961-12-27,Lewisview,TX,2023-07-05,Umbrella,695.67,41
+C00094,Joshua,Carlson,1968-05-31,New Stacyland,NY,2022-08-31,Umbrella,798.58,14
+C00095,Jennifer,Freeman,2001-03-17,Lake Thomas,NY,2024-10-14,Home,2632.8,68
+C00096,Shane,Smith,1969-08-21,South Heather,OH,2023-03-21,Home,2139.13,13
+C00097,Elizabeth,Wood,1987-04-12,Ronaldside,IL,2023-06-05,Life,1629.85,45
+C00098,Michael,Chavez,1970-06-25,Jerryborough,NC,2023-04-19,Life,1511.68,75
+C00099,David,Herrera,2001-06-25,East Javier,IL,2024-09-24,Life,796.19,13
+C00100,Joshua,Lawrence,2001-05-07,Tinaborough,IL,2023-02-18,Home,4067.62,84
+C00101,Jeremy,White,1950-07-30,West Brandon,PA,2021-01-28,Auto,1797.18,23
+C00102,Angela,Terry,1958-03-17,Garciatown,NC,2025-06-30,Life,1616.14,65
+C00103,Justin,Mendoza,1972-10-19,North Johnny,NY,2024-09-04,Auto,2727.78,59
+C00104,Danny,Jones,1983-01-29,New Crystalton,CA,2021-11-26,Life,1192.46,15
+C00105,Edward,Hart,1970-04-16,East Davidchester,PA,2022-07-14,Home,2578.47,56
+C00106,Kimberly,James,1979-09-28,Michellechester,IL,2023-03-18,Life,1303.83,25
+C00107,Ashley,Brown,1999-12-24,Port Jaredborough,IL,2022-11-12,Life,1332.71,62
+C00108,Donna,Moore,1961-06-11,East Aaronmouth,OH,2024-08-10,Home,2199.57,34
+C00109,Kelly,Hall,1997-09-21,Jacquelinemouth,OH,2021-03-21,Home,3379.41,88
+C00110,Grace,Bradshaw,2003-03-24,South Danny,OH,2022-07-11,Auto,1777.49,48
+C00111,Deborah,Kerr,2005-11-13,North Brian,NY,2023-03-25,Life,1499.71,69
+C00112,Brooke,Holloway,1969-04-03,Martinezport,IL,2024-01-14,Umbrella,826.08,31
+C00113,Sherri,Mason,1983-03-21,Millerton,NY,2024-04-15,Life,1328.96,21
+C00114,Jessica,Munoz,1951-05-17,East Suzanneshire,FL,2025-08-10,Life,1506.51,38
+C00115,Stephanie,Key,1995-05-13,Barbaraburgh,GA,2024-08-12,Auto,1340.52,15
+C00116,April,Ramos,1968-07-17,New Ryan,MI,2024-10-17,Auto,2197.66,68
+C00117,Tanya,Harrison,1977-05-27,Manuelville,NY,2021-12-24,Home,2733.36,59
+C00118,Mark,Steele,1969-03-24,Cervantesside,TX,2020-12-04,Home,2351.02,10
+C00119,Shawn,Edwards,1971-08-13,Port Richardhaven,NC,2020-08-15,Umbrella,636.95,38
+C00120,Diane,Daniels,1977-09-26,East Aprilfort,TX,2024-05-16,Umbrella,690.31,16
+C00121,Kathleen,Harris,1986-12-27,West Samuel,NC,2024-09-25,Umbrella,864.23,27
+C00122,David,Dudley,1991-01-18,Lake Eric,NC,2025-04-19,Life,1631.92,66
+C00123,Alexander,Russell,1964-11-26,South Staceyberg,FL,2024-11-07,Umbrella,1000.93,80
+C00124,Sarah,Carter,1997-08-14,Robertfort,NY,2024-08-18,Umbrella,819.5,67
+C00125,John,Arnold,1975-09-20,New William,NY,2021-10-10,Life,1604.02,76
+C00126,Michelle,Hill,2003-05-17,Morganhaven,IL,2022-11-20,Life,1134.43,66
+C00127,Lori,Campbell,1969-12-06,Grimesmouth,NC,2025-03-12,Home,2235.8,44
+C00128,Todd,Cook,2001-07-12,Gibsonmouth,OH,2022-03-21,Auto,1380.11,27
+C00129,Tina,Allen,1975-09-04,Port Kimberly,OH,2020-12-25,Home,1736.39,37
+C00130,Louis,Kennedy,2004-10-30,Hughesberg,CA,2024-10-28,Life,1612.64,79
+C00131,Tammie,Martinez,1989-10-11,Mollymouth,MI,2021-06-17,Home,2622.59,63
+C00132,Alicia,Bryant,1998-10-11,South Monica,CA,2021-12-04,Auto,2341.52,83
+C00133,Charles,Harrington,1967-08-26,Cindyfurt,OH,2021-04-18,Life,1571.68,48
+C00134,Melissa,Phelps,1985-12-05,Finleyfort,OH,2025-03-19,Home,2460.28,72
+C00135,Barry,Jones,1992-07-25,Wendyland,OH,2024-04-21,Umbrella,605.79,13
+C00136,Tiffany,Hodges,1997-07-07,South Garrettport,MI,2020-11-09,Home,3659.73,69
+C00137,Brandon,Flynn,1969-07-30,Nicholasberg,CA,2022-09-09,Auto,2331.5,60
+C00138,Amanda,Knight,2003-07-19,East Gregory,GA,2023-11-13,Auto,1761.34,64
+C00139,Christine,Allen,1989-04-19,East Steven,PA,2022-10-10,Home,1708.87,16
+C00140,Steve,Estrada,2004-05-15,Santanaside,OH,2021-12-15,Home,2592.56,68
+C00141,Charles,Landry,1989-08-07,Daniellechester,TX,2022-09-28,Life,1273.47,63
+C00142,Stephen,Turner,1975-10-17,Rodriguezfurt,CA,2025-06-23,Umbrella,741.62,12
+C00143,Michael,Phillips,1997-03-14,Andrewfurt,CA,2022-12-12,Life,1385.63,38
+C00144,Alan,Grimes,2002-07-31,New Julieport,CA,2022-07-27,Auto,1589.72,41
+C00145,Catherine,Gomez,1992-12-08,New John,TX,2021-10-10,Home,1865.54,40
+C00146,Courtney,Berger,1993-08-06,West Kristinaton,PA,2025-07-17,Home,3269.2,69
+C00147,Michael,Anderson,1969-09-12,Julieburgh,TX,2022-04-27,Home,3436.33,87
+C00148,David,Ryan,1974-07-06,Mariaview,CA,2024-09-17,Home,1957.12,49
+C00149,Tammy,Phillips,1972-08-30,South Sydneyberg,OH,2022-07-13,Life,1865.35,83
+C00150,Michelle,Ramsey,1976-08-28,Christopherfurt,NY,2020-09-24,Umbrella,575.91,35
+C00151,Joseph,Martinez,1974-09-12,Brendastad,MI,2021-07-14,Auto,2477.88,48
+C00152,Emily,Ruiz,1991-10-10,Rosebury,PA,2021-02-24,Auto,2943.69,82
+C00153,Cynthia,Marshall,1997-04-28,Debraville,PA,2021-10-20,Umbrella,665.89,57
+C00154,Brandon,Johnson,1983-02-20,North Jimmyside,TX,2021-10-07,Auto,2690.74,63
+C00155,Paul,Watson,2000-03-08,Matthewsberg,GA,2024-02-22,Umbrella,971.03,56
+C00156,Diana,Bass,1991-07-06,Crosbyview,NC,2020-11-21,Home,2285.16,65
+C00157,Hannah,Robinson,1979-11-16,Port Michael,NC,2023-09-27,Life,2054.07,88
+C00158,Amy,Levine,1974-01-08,South Joshuaville,MI,2024-06-24,Umbrella,933.64,69
+C00159,Christopher,Lewis,1993-02-17,North Kristinbury,TX,2021-09-07,Life,1686.61,51
+C00160,Kristin,Harris,2006-01-31,New Jason,GA,2022-08-05,Life,1296.86,67
+C00161,Mark,Hernandez,1990-03-04,West Micheleberg,PA,2021-09-19,Umbrella,627.37,53
+C00162,Amber,Lindsey,1957-02-04,East Alexisbury,IL,2023-05-14,Home,2447.09,72
+C00163,Alfred,Baker,1958-03-29,Foxland,IL,2024-08-30,Life,1642.82,45
+C00164,Shane,Cox,1990-01-05,South Williamton,TX,2025-01-18,Auto,3091.22,76
+C00165,Kevin,Schneider,1951-09-26,South Melaniechester,NY,2021-07-13,Home,2775.07,62
+C00166,Tracy,Browning,1954-08-13,West Charleneland,CA,2021-09-08,Umbrella,957.8,72
+C00167,Joshua,Schultz,1986-12-06,Oscarhaven,NY,2023-02-14,Auto,1684.83,47
+C00168,Shawn,Jacobs,1956-05-13,Port Dianaside,NC,2022-06-11,Life,1557.84,84
+C00169,Russell,Beasley,1977-10-10,Mariafurt,NC,2024-02-25,Life,1964.91,64
+C00170,Jessica,Edwards,1970-11-18,Nicholasberg,IL,2024-08-24,Life,1602.08,55
+C00171,Carlos,Decker,1955-12-17,Davisstad,NY,2021-09-20,Life,1092.12,42
+C00172,Angela,Willis,1987-10-31,Elizabethchester,FL,2023-08-15,Life,1320.02,25
+C00173,Morgan,Pugh,1978-05-25,West Carolinestad,IL,2021-06-29,Home,2706.48,37
+C00174,Becky,Lewis,1994-04-22,Walkerville,IL,2023-08-04,Life,1349.65,22
+C00175,Megan,Richardson,2001-07-05,Audreychester,CA,2025-05-20,Home,2165.93,56
+C00176,Terri,Cardenas,1991-05-15,New Sarahview,CA,2020-11-09,Home,1809.3,45
+C00177,Henry,Park,1970-08-22,Michaelburgh,GA,2021-10-31,Life,1256.48,26
+C00178,Ashley,Morales,1959-04-09,North Julieborough,GA,2023-10-24,Auto,1600.86,11
+C00179,Robert,Peterson,1974-10-18,Jennifershire,CA,2021-05-02,Umbrella,861.95,66
+C00180,Nicole,Moore,2000-12-14,Lake Christophermouth,TX,2024-03-21,Life,1203.65,71
+C00181,Todd,Ramos,1968-03-15,Port William,CA,2023-07-20,Umbrella,732.6,72
+C00182,Russell,Campbell,1995-10-14,Roseport,IL,2020-12-31,Home,2646.69,29
+C00183,Jeffrey,Joyce,1953-05-05,East Kevinborough,OH,2021-10-12,Auto,1493.89,41
+C00184,Kathryn,Roberts,1957-10-12,South Julieburgh,GA,2021-09-17,Home,2814.94,76
+C00185,Omar,Padilla,1983-08-29,Charleston,IL,2024-04-28,Life,2209.67,85
+C00186,Andrew,Morse,1970-12-02,Berrychester,TX,2023-01-28,Auto,3321.0,88
+C00187,Darius,Smith,1971-09-19,Port Stacey,TX,2024-07-11,Home,2701.0,90
+C00188,Marilyn,Gillespie,1955-08-12,Richardbury,TX,2024-04-26,Home,1935.51,40
+C00189,Brianna,Warren,1976-07-18,Juliebury,MI,2023-06-12,Home,1791.84,10
+C00190,Kimberly,Jones,1992-09-14,New Williamstad,IL,2023-08-07,Umbrella,604.79,47
+C00191,Jessica,Fuentes,2005-01-28,East Curtis,NY,2022-10-16,Life,1142.17,68
+C00192,James,Morrison,2001-05-07,East Stephaniefort,NY,2024-07-23,Life,1843.54,90
+C00193,Karen,Wolf,1980-02-29,Michellemouth,FL,2021-11-24,Umbrella,732.34,24
+C00194,Scott,Harrison,1992-07-31,Laurashire,FL,2021-02-02,Life,870.39,28
+C00195,Michael,Jones,1981-01-13,Johnsonstad,MI,2023-01-20,Life,1970.51,86
+C00196,Chase,Lin,1955-10-05,Fordside,IL,2020-12-17,Life,1178.0,66
+C00197,Shannon,Pacheco,1993-12-21,West Cassidy,GA,2024-11-16,Umbrella,828.24,44
+C00198,Edward,Brown,1956-08-28,Toniland,OH,2024-11-26,Umbrella,731.18,20
+C00199,Debbie,Williams,1997-10-08,Ritterhaven,TX,2025-01-22,Life,1458.99,87
+C00200,Chelsea,Cox,1968-11-12,Ortizmouth,CA,2021-01-21,Home,3324.16,83
+C00201,Kristina,Holland,1954-02-06,Codyfurt,FL,2023-01-11,Life,1212.43,83
+C00202,Johnathan,York,1990-08-18,West Christopher,IL,2021-10-25,Umbrella,1105.33,76
+C00203,Sabrina,Collins,1994-04-05,Andersonland,GA,2023-03-31,Home,3050.13,84
+C00204,Angelica,Schneider,1971-12-20,Lake Jacqueline,PA,2025-02-02,Auto,2128.89,70
+C00205,Clarence,Santiago,1984-03-20,Andrewport,PA,2022-02-23,Life,1378.01,23
+C00206,Stephanie,Peterson,2001-10-01,Leeberg,OH,2021-12-06,Umbrella,866.52,73
+C00207,Chris,Richard,1956-06-30,Lake Matthewberg,IL,2023-10-26,Auto,1737.07,68
+C00208,Eric,White,1996-10-05,Lake Samuel,OH,2024-02-09,Life,1467.3,24
+C00209,Michael,Ball,1979-11-04,Karenmouth,CA,2022-08-09,Auto,2413.03,79
+C00210,Amanda,Collins,2004-08-22,Mckeeborough,GA,2023-09-28,Home,2780.57,76
+C00211,Erika,Hudson,1979-08-07,Hammondfurt,NC,2024-11-21,Umbrella,546.64,16
+C00212,Allison,Burch,2005-03-15,Port Cassandra,GA,2022-09-27,Home,2423.63,46
+C00213,Brett,Castillo,1974-11-16,Lake Meghanville,MI,2023-01-14,Auto,2008.51,13
+C00214,Christopher,Martin,1980-03-10,Port Samuel,CA,2022-07-02,Home,1984.17,30
+C00215,Lisa,Wilkerson,1951-06-06,Brownhaven,TX,2023-10-17,Umbrella,579.16,21
+C00216,Joe,Vang,1975-02-16,North Lucas,FL,2021-06-15,Umbrella,783.37,25
+C00217,Mary,Santos,2003-06-20,East Benjamin,IL,2024-08-18,Umbrella,849.81,47
+C00218,Heather,Taylor,1997-08-17,Westtown,NY,2021-04-15,Umbrella,1270.68,71
+C00219,Andrew,Lewis,1959-10-16,Rodriguezport,NY,2022-08-20,Umbrella,811.12,80
+C00220,Kevin,Williams,1978-03-08,Brownfort,OH,2025-03-04,Home,1758.27,18
+C00221,Allen,Robertson,1966-01-29,West Ruben,CA,2023-08-13,Life,1373.93,74
+C00222,John,Butler,1994-10-29,New Theresaland,MI,2025-02-01,Life,1641.3,48
+C00223,Amy,Hartman,1984-02-28,South Morganton,GA,2023-11-26,Umbrella,717.62,29
+C00224,Tina,King,1950-09-20,Kristinastad,NC,2022-08-31,Life,1442.59,52
+C00225,Jessica,Fuller,2002-02-11,Dennisstad,NY,2025-04-04,Umbrella,1220.52,68
+C00226,Matthew,Day,2006-02-14,Pollardfort,OH,2022-03-01,Home,2931.88,83
+C00227,Lisa,Brown,2002-06-08,Johnsonborough,OH,2020-12-26,Auto,2378.33,50
+C00228,Kylie,Blackwell,1971-02-03,Zacharyside,CA,2024-08-21,Umbrella,739.64,29
+C00229,Jon,Mullins,1962-08-14,Michaelton,PA,2023-06-09,Home,3851.7,74
+C00230,Joshua,Lloyd,1979-05-08,Paulfurt,GA,2023-07-01,Auto,1732.64,66
+C00231,Terri,Crawford,1983-06-22,Sandrahaven,FL,2022-11-18,Auto,1669.61,28
+C00232,Laurie,Acosta,1954-12-26,Morrisonburgh,IL,2025-04-02,Auto,2748.02,70
+C00233,Kelly,Garcia,1971-12-06,Kirkchester,TX,2022-01-11,Life,1942.76,89
+C00234,Hannah,Bell,1952-06-30,Christinachester,PA,2022-12-13,Life,1517.99,78
+C00235,Danielle,Moody,1953-07-08,Lake Danastad,TX,2024-12-23,Umbrella,738.49,79
+C00236,Laurie,Shelton,1951-09-26,Port Cathy,IL,2024-05-04,Home,3645.38,90
+C00237,Austin,Jones,2002-08-05,Michaelshire,TX,2020-11-20,Home,2003.36,21
+C00238,Cassie,Shelton,1974-11-10,Scottland,IL,2025-06-30,Auto,1825.58,66
+C00239,Devin,Richardson,1971-01-04,Johnville,CA,2020-10-31,Auto,1417.35,15
+C00240,Jill,Porter,1975-12-13,West Kimberlymouth,FL,2022-06-09,Life,1317.36,55
+C00241,Wendy,Mitchell,1983-01-15,North Derek,FL,2021-03-30,Home,2889.8,77
+C00242,Shannon,Roach,1979-11-27,Port Evelynmouth,OH,2023-07-27,Home,1693.45,32
+C00243,Jenna,Pierce,1969-05-16,Melissaburgh,FL,2023-09-09,Home,3734.15,73
+C00244,William,Martinez,1963-04-17,East Kristy,GA,2020-11-01,Home,3159.96,69
+C00245,Michael,Armstrong,1981-06-03,New Nicole,GA,2021-03-04,Life,1269.16,11
+C00246,Kyle,Key,1998-07-14,Foxchester,GA,2025-07-03,Life,1303.95,79
+C00247,Charles,Compton,1993-04-29,South Stevenhaven,OH,2023-07-18,Life,1493.92,85
+C00248,David,Calderon,1987-02-17,Port Tammy,NY,2024-04-17,Life,1870.46,68
+C00249,Wesley,Oneill,2006-03-11,New Ericburgh,OH,2021-12-28,Umbrella,747.83,71
+C00250,Marcus,Fletcher,1973-02-28,Meghanview,IL,2022-04-13,Life,1474.41,83
+C00251,Cynthia,Pierce,1958-02-18,Christinaland,MI,2024-11-20,Auto,1904.9,60
+C00252,Danielle,Vargas,1989-02-16,East Donna,IL,2023-06-26,Auto,2965.72,87
+C00253,Megan,Elliott,2005-10-09,North Brandonshire,NY,2022-11-12,Home,3818.59,87
+C00254,Debra,Wang,1977-12-18,South Pamelaside,FL,2023-01-28,Home,2765.37,89
+C00255,Dawn,Turner,1966-04-12,Evansland,IL,2021-02-14,Auto,2855.56,90
+C00256,Eric,Perry,1981-03-21,West Catherine,FL,2023-04-10,Umbrella,687.25,14
+C00257,Michelle,Flores,1973-02-12,Andersonstad,OH,2024-12-28,Auto,1814.63,47
+C00258,Anna,Flores,1981-05-11,West Shannonberg,NC,2021-06-08,Home,1807.34,35
+C00259,Brent,Dougherty,1991-06-29,Wrightburgh,IL,2023-05-26,Life,1630.18,77
+C00260,Sarah,Griffith,1962-07-14,South Wendy,GA,2024-08-01,Home,3066.85,42
+C00261,Victor,Parker,1951-03-12,South Williambury,GA,2022-06-11,Life,1668.27,53
+C00262,Brandy,Williams,1968-10-05,Harperfort,NY,2023-01-16,Auto,2039.66,28
+C00263,Amanda,Boone,1978-12-09,West Jessica,OH,2024-01-16,Umbrella,955.72,81
+C00264,Michael,Morales,1988-06-03,West Angela,GA,2021-03-28,Auto,2017.33,43
+C00265,Paul,Cole,1987-01-12,Marciaville,PA,2021-09-15,Life,1383.32,43
+C00266,Theresa,Long,2003-09-16,Angelastad,MI,2021-11-03,Auto,1884.9,39
+C00267,James,Hicks,1983-08-24,North Benjaminmouth,TX,2024-08-22,Life,1436.26,88
+C00268,April,Hernandez,1984-09-10,West Sarah,TX,2023-04-28,Umbrella,928.31,48
+C00269,Francisco,Ewing,1999-12-04,Brittneyhaven,IL,2024-12-12,Home,2522.61,15
+C00270,Amanda,Erickson,1970-01-06,Cabrerastad,NC,2023-06-07,Umbrella,538.18,24
+C00271,Emily,Whitney,1989-05-02,Lauratown,NC,2024-08-25,Home,2665.36,59
+C00272,Joseph,Rios,2002-06-07,Lake Brett,FL,2024-09-12,Umbrella,1220.62,85
+C00273,George,Fuller,1991-10-15,Hernandezbury,MI,2020-11-18,Umbrella,843.99,22
+C00274,Ashley,Graves,1962-08-06,South Leeberg,PA,2024-02-16,Umbrella,596.6,45
+C00275,Hannah,Jenkins,2002-05-09,Salaston,NY,2021-10-15,Home,2767.1,66
+C00276,April,Hoffman,1994-09-05,Foxmouth,PA,2022-02-01,Life,1450.97,22
+C00277,Steve,Patel,1986-10-15,Ericaview,NY,2024-09-24,Life,1009.66,17
+C00278,James,Wright,1987-08-05,Jeffreyport,NY,2023-01-26,Auto,1742.17,68
+C00279,Janet,Vaughn,1982-11-22,Timothyside,NY,2022-12-09,Auto,1880.25,16
+C00280,Keith,Berry,1986-07-31,Huangfurt,NC,2023-07-20,Home,2576.15,82
+C00281,Stephanie,Ballard,1969-05-19,West Stephanieland,NY,2023-07-24,Home,2639.49,85
+C00282,Sandra,Douglas,2000-06-21,Lewisside,MI,2022-12-02,Life,1384.5,28
+C00283,Sarah,Horton,1958-12-15,New Joycebury,FL,2022-09-04,Auto,2437.54,45
+C00284,Brent,Stein,1964-12-21,North Craig,FL,2023-06-04,Home,2619.1,79
+C00285,Jennifer,Garcia,2002-01-24,North Tamara,PA,2021-12-15,Auto,1209.91,13
+C00286,Richard,Donovan,1981-12-26,Santosport,FL,2023-05-06,Home,2848.93,85
+C00287,Justin,Brown,2001-12-04,Lake Audreyside,OH,2020-12-05,Life,824.74,16
+C00288,Robin,Thompson,2006-08-12,North Wendy,PA,2023-12-28,Auto,1604.86,18
+C00289,Kristin,Lopez,2000-08-01,Nancytown,MI,2023-02-25,Auto,2309.98,67
+C00290,Ashley,Rodriguez,1972-05-31,Shawnside,CA,2025-01-27,Auto,2135.53,76
+C00291,Troy,Mays,2007-07-13,Nelsonville,OH,2023-06-05,Auto,2858.66,71
+C00292,Francisco,Stevens,1967-02-14,North Jill,GA,2023-02-14,Auto,2680.48,72
+C00293,Ashley,Todd,1961-07-22,Wilcoxhaven,FL,2023-05-27,Auto,1476.69,20
+C00294,Christopher,Caldwell,1962-03-10,South Marcus,MI,2022-09-21,Auto,1500.68,26
+C00295,Adam,Reyes,1980-01-06,Stephanieport,NC,2025-07-26,Life,1891.25,58
+C00296,Jennifer,Smith,1994-02-05,Heatherton,OH,2021-08-14,Life,1550.82,68
+C00297,Steven,Moore,1996-04-20,Hannahport,NC,2023-09-27,Auto,2078.67,24
+C00298,Christina,Robinson,1958-09-14,Hernandezstad,NY,2024-02-24,Home,2762.32,65
+C00299,Jacqueline,Durham,2001-02-25,Port John,OH,2021-04-23,Umbrella,1055.08,53
+C00300,Alicia,Rice,1974-03-27,New Danielside,PA,2024-11-29,Umbrella,621.46,22
+C00301,James,Herrera,1960-10-23,Melissamouth,GA,2021-08-08,Life,1843.2,57
+C00302,Erin,Love,1982-11-17,New Seanton,TX,2024-06-20,Auto,2007.01,21
+C00303,David,Perry,1987-12-28,New Stevenport,PA,2020-10-18,Umbrella,805.94,22
+C00304,Randy,Velasquez,2000-05-14,New Charles,NC,2024-03-20,Home,2285.99,81
+C00305,Melvin,Brown,1953-09-18,South Anthonychester,OH,2022-02-22,Life,1087.57,25
+C00306,Kayla,Cannon,1999-03-30,Brooksfurt,PA,2024-06-05,Auto,2137.94,46
+C00307,Molly,Knox,1975-03-06,Lake Tamaraside,FL,2021-09-29,Auto,2536.79,83
+C00308,Desiree,Bailey,1961-10-04,Ricebury,PA,2020-08-22,Umbrella,961.23,38
+C00309,Katelyn,Good,1981-02-14,Patelbury,MI,2022-09-19,Life,1323.15,24
+C00310,Steven,Moore,1962-06-10,North Lisachester,MI,2020-09-29,Home,3423.36,64
+C00311,John,Jones,1990-01-12,South Carlaton,IL,2022-09-11,Auto,3254.61,87
+C00312,Joy,Morales,1965-07-24,Port Michelle,IL,2021-02-03,Auto,1582.1,33
+C00313,Donald,Holder,1965-07-20,Barbaramouth,FL,2022-08-18,Life,990.87,54
+C00314,Kevin,Thomas,1994-07-17,South Kevin,CA,2021-02-17,Umbrella,530.59,18
+C00315,Angela,Vargas,1999-08-24,Lake Erika,OH,2025-05-04,Auto,2019.06,77
+C00316,Tyler,Compton,1993-05-23,Floydmouth,IL,2024-02-26,Umbrella,696.29,53
+C00317,Ricky,Evans,1962-02-16,Allenbury,CA,2023-03-04,Life,1772.47,82
+C00318,Meredith,Thomas,1981-02-14,New Robertchester,CA,2025-05-09,Home,2589.8,30
+C00319,Alyssa,Price,1966-12-19,West Deborah,OH,2024-06-09,Auto,1918.39,44
+C00320,Melanie,Davis,1998-12-03,North Joseph,IL,2020-12-12,Umbrella,1037.32,87
+C00321,Morgan,Lopez,2001-06-13,South Jason,OH,2023-06-12,Home,2309.14,75
+C00322,Kevin,Stout,1964-01-11,Lake David,MI,2024-09-07,Auto,2233.37,46
+C00323,Robin,Dominguez,1997-07-04,South Rose,CA,2025-04-23,Umbrella,1121.29,77
+C00324,Marc,Campbell,1981-05-05,Kylestad,CA,2024-12-22,Home,3573.87,60
+C00325,Nicole,Owens,2004-03-31,Gillmouth,NY,2022-05-05,Auto,1649.94,36
+C00326,Nathan,Gutierrez,1987-11-23,Lake Dustin,TX,2022-10-31,Home,2135.57,42
+C00327,Angela,Silva,1998-08-11,Phillipsborough,FL,2023-06-02,Auto,2746.36,73
+C00328,Jerry,Hudson,1966-05-03,Piercemouth,NY,2022-10-20,Home,2779.55,58
+C00329,Kathryn,Burns,1998-11-08,Murraystad,CA,2022-01-19,Life,1026.21,19
+C00330,Donald,Payne,1962-02-20,New Arthurland,TX,2021-01-09,Umbrella,628.22,12
+C00331,Kathy,Gutierrez,2006-12-13,North Jasmine,OH,2020-09-09,Life,1611.13,83
+C00332,Jeffery,Bryant,1953-09-23,Hopkinstown,CA,2020-09-01,Umbrella,647.26,47
+C00333,Amanda,Jenkins,1950-10-02,Amandaport,MI,2020-10-04,Life,1426.25,31
+C00334,Wayne,Wolfe,1978-11-30,North Samantha,TX,2025-01-27,Umbrella,672.12,56
+C00335,Eduardo,Lee,1985-06-10,Lisaview,NC,2023-12-28,Home,3000.22,65
+C00336,Christian,Chung,1980-11-06,Lake Jeremiah,PA,2021-04-19,Auto,2705.98,60
+C00337,Desiree,Garrison,2001-04-21,North Richardfurt,TX,2025-04-25,Home,3067.47,52
+C00338,Thomas,Walsh,1997-06-11,North Vincent,PA,2024-04-21,Auto,2457.4,77
+C00339,Deanna,Rivera,1956-02-08,East Jasonshire,FL,2024-08-28,Life,988.56,28
+C00340,Joseph,Glass,1996-03-10,Rachelshire,FL,2020-11-22,Life,995.17,35
+C00341,Harry,Jefferson,1950-09-06,New Douglas,GA,2024-01-01,Auto,2321.99,32
+C00342,Sarah,Evans,1987-12-29,New Mary,GA,2023-12-04,Umbrella,1212.04,82
+C00343,Erica,Fernandez,1975-09-26,Port Vanessa,GA,2021-04-12,Life,1552.37,90
+C00344,Vincent,Mccann,1953-04-08,South Jesseland,IL,2023-07-06,Auto,2263.47,70
+C00345,Cassie,Austin,1990-02-22,Novakmouth,NC,2020-11-12,Life,1242.19,85
+C00346,Cynthia,Bowers,1980-04-10,Perezside,CA,2023-10-22,Auto,2008.32,49
+C00347,Ryan,Frazier,1994-07-29,Millerport,TX,2022-09-16,Auto,2604.04,57
+C00348,Jennifer,Miller,1960-02-10,Dawsonberg,OH,2023-12-05,Auto,2742.97,88
+C00349,Levi,Rodriguez,1949-12-20,Seanview,CA,2021-06-25,Umbrella,1092.98,84
+C00350,David,Lopez,1980-02-28,Garcialand,PA,2023-08-16,Umbrella,1149.5,83
+C00351,Angela,Carlson,2002-12-30,Michelletown,CA,2023-02-04,Umbrella,787.87,74
+C00352,Robert,Maxwell,1998-12-10,New Adriana,PA,2023-11-07,Umbrella,841.12,23
+C00353,Gavin,Adams,1967-11-18,Thomasburgh,CA,2024-04-23,Auto,2614.78,74
+C00354,Joshua,Evans,2002-11-16,West Johnathanbury,NC,2024-10-30,Home,3719.29,66
+C00355,Brittney,Gonzalez,1956-11-22,West Adam,IL,2023-12-24,Home,2482.73,56
+C00356,Martin,Oliver,2004-05-01,Scottchester,MI,2021-10-08,Umbrella,1087.12,62
+C00357,Kevin,Morrison,1996-12-05,South Leon,TX,2024-01-01,Auto,2857.1,90
+C00358,Tanya,Carter,1996-11-27,Faulknerbury,OH,2023-05-21,Life,1162.0,22
+C00359,Nicholas,Velasquez,1976-05-09,Danielshire,MI,2022-04-24,Life,1484.31,42
+C00360,Brittany,Gardner,1996-01-03,Lake Stevenborough,FL,2024-05-05,Home,1954.08,52
+C00361,Lauren,Guerra,1954-04-27,Chambersberg,OH,2023-03-10,Life,1761.05,49
+C00362,John,Hopkins,1998-04-15,Mccormickland,TX,2024-06-07,Home,3616.35,86
+C00363,Vicki,Mendoza,1976-11-21,Stephensstad,PA,2025-03-07,Life,1540.2,81
+C00364,Brittney,Rocha,1957-01-21,Lake Elizabeth,OH,2022-01-10,Home,2297.68,77
+C00365,Deborah,Williams,1993-07-05,Rasmussenmouth,FL,2024-04-10,Life,944.22,12
+C00366,Daniel,Garcia,1964-09-20,South Neil,GA,2024-07-20,Home,3358.43,53
+C00367,Kelsey,Chapman,1983-09-03,West Whitney,FL,2024-09-19,Home,3104.97,38
+C00368,Dan,Perry,1955-06-16,Port Sheliaberg,TX,2023-07-30,Auto,2453.9,47
+C00369,Larry,Gibson,1963-09-10,Baileyville,MI,2024-05-04,Auto,2595.14,53
+C00370,Jennifer,Chavez,1954-03-09,Bradleyville,FL,2020-10-21,Home,2967.73,86
+C00371,Melinda,Wong,1995-09-11,Lake John,FL,2022-02-05,Home,3873.55,89
+C00372,Andrea,Rivera,1978-08-18,Hallfurt,NY,2022-03-08,Umbrella,625.37,15
+C00373,Jacob,Sandoval,1976-07-14,Lake Christinaborough,GA,2024-06-08,Umbrella,939.48,88
+C00374,Brittany,Price,1997-07-28,East Joshua,GA,2021-02-22,Home,2583.01,78
+C00375,Barbara,Lloyd,1986-02-24,West Mark,MI,2024-07-03,Home,3002.19,57
+C00376,Daniel,Lambert,1982-12-04,Candicefurt,OH,2025-08-09,Umbrella,1131.12,69
+C00377,Danny,Bell,1980-10-09,Port Emily,MI,2023-02-22,Umbrella,891.69,30
+C00378,Samantha,Lawrence,1995-05-09,West David,GA,2023-03-18,Home,1781.8,42
+C00379,Daryl,Brooks,1959-03-27,Barnesberg,NC,2025-07-02,Life,2093.77,80
+C00380,Patrick,Lopez,1992-11-10,New Garrett,FL,2023-01-26,Auto,1504.46,46
+C00381,Donald,Edwards,1980-04-21,Port Michaeltown,FL,2024-09-25,Life,1915.44,67
+C00382,Derrick,Ochoa,1987-10-31,Ortizfort,NY,2024-02-24,Umbrella,884.81,21
+C00383,Jennifer,Wallace,1960-12-30,New Anthonybury,OH,2023-02-05,Umbrella,1117.52,54
+C00384,Antonio,Walker,1969-04-04,Port Stephen,NY,2024-10-28,Auto,2210.7,60
+C00385,Andrea,Wilson,1957-05-21,Kimberlystad,CA,2025-03-23,Umbrella,637.46,20
+C00386,Lynn,Williams,1998-07-17,Paynechester,PA,2021-06-26,Life,1354.13,22
+C00387,Jill,Valdez,1966-06-17,Nancyton,GA,2024-06-09,Home,1575.08,27
+C00388,Jose,Atkins,1955-07-14,Grimesville,CA,2022-08-18,Home,2840.75,70
+C00389,Jason,Rojas,1996-07-05,Michellechester,FL,2022-01-09,Auto,1315.97,12
+C00390,Christina,Glover,2004-12-22,Port Brian,NY,2023-08-06,Umbrella,832.86,24
+C00391,Amanda,Carlson,1961-01-27,Tiffanyport,OH,2023-01-27,Life,833.42,25
+C00392,Ashley,Farley,1984-08-14,East Sydneychester,GA,2021-02-12,Umbrella,517.78,18
+C00393,Victoria,Camacho,1958-04-01,East Dustin,NY,2023-05-09,Auto,2646.54,90
+C00394,Maria,Juarez,1995-08-19,Burnsshire,MI,2022-11-24,Home,2426.53,47
+C00395,Courtney,Brooks,1954-10-02,South Zacharyview,FL,2023-10-02,Life,1343.4,40
+C00396,Shawn,Freeman,1989-03-20,Port Kimland,TX,2024-07-06,Auto,3148.32,77
+C00397,Cynthia,Terry,2007-06-19,Port Amandaborough,CA,2024-04-07,Auto,2692.82,59
+C00398,Mallory,Simpson,1971-08-02,Matthewshire,CA,2021-09-21,Umbrella,767.38,57
+C00399,Ashlee,Washington,1973-01-02,North Corymouth,TX,2020-10-01,Life,983.05,18
+C00400,David,Mathews,1979-08-24,Smithchester,NC,2022-05-02,Life,844.33,27
+C00401,Wendy,Blankenship,1993-11-05,Erikview,GA,2021-05-28,Life,1458.62,32
+C00402,Diamond,Wright,1974-12-02,North Randy,FL,2023-03-19,Umbrella,881.21,90
+C00403,Jessica,Fischer,1978-10-28,Lake Codyborough,NY,2024-09-01,Auto,1664.99,68
+C00404,Christian,Wheeler,1984-12-17,Smithmouth,PA,2021-08-21,Auto,2300.49,35
+C00405,Vanessa,Henderson,1958-08-11,Jonesfurt,NC,2021-05-16,Life,1510.26,75
+C00406,Jessica,Garcia,1970-12-09,Nicoleberg,NY,2023-11-14,Umbrella,586.2,42
+C00407,Kiara,Mullins,1958-09-04,North Alyssa,CA,2020-09-07,Life,1740.34,55
+C00408,Chelsey,Martin,1973-07-06,Lake Kaitlin,PA,2024-02-12,Life,1021.98,44
+C00409,Christina,Ramos,1964-05-25,North Donaldville,OH,2023-11-18,Umbrella,1062.85,61
+C00410,Michael,Jordan,2003-06-13,East Joshua,GA,2021-04-30,Life,1220.77,33
+C00411,John,Burke,1998-09-10,Kimberlytown,TX,2023-03-07,Life,1389.28,76
+C00412,Jamie,Lawson,1962-06-14,Phillipston,FL,2022-08-25,Umbrella,660.86,20
+C00413,Troy,Rodriguez,1983-08-12,New Pamelatown,PA,2023-09-07,Life,1053.16,51
+C00414,Sarah,Anderson,2006-09-15,Diazburgh,OH,2024-08-14,Life,1325.67,49
+C00415,Stephanie,Townsend,1950-10-01,North Joseton,CA,2021-02-15,Home,2604.75,66
+C00416,Stacy,Sanders,1969-02-09,Hendersonfurt,IL,2021-04-25,Life,2254.05,88
+C00417,Danielle,Medina,1960-01-02,Christopherland,OH,2024-12-17,Auto,1813.32,19
+C00418,Samantha,Mccann,1960-03-09,Peterland,FL,2023-04-02,Life,1905.07,75
+C00419,Holly,Blair,2007-03-21,North John,GA,2024-04-22,Auto,2141.29,28
+C00420,Darren,Salazar,1953-05-11,Elizabethburgh,PA,2021-08-18,Auto,1280.76,26
+C00421,Alexander,Taylor,1950-05-22,South Stephanie,CA,2025-01-22,Life,1863.01,59
+C00422,Zachary,Carson,1967-04-04,West David,PA,2022-11-25,Home,3667.76,67
+C00423,Jessica,Wilson,1951-08-12,Lindsayview,NC,2025-01-25,Umbrella,715.04,19
+C00424,Caleb,Joseph,1988-11-08,South Spencerstad,IL,2021-01-31,Life,1305.69,60
+C00425,Victor,Bradley,1974-08-20,West Kerri,FL,2025-06-30,Home,1521.74,24
+C00426,Emily,Wilson,2000-01-10,North Micheletown,NC,2022-09-10,Umbrella,942.38,76
+C00427,Brandon,Cox,1959-10-30,Port Austin,GA,2024-03-06,Auto,2303.69,43
+C00428,Jeffrey,Wright,1998-08-18,Josephland,GA,2025-06-22,Home,2819.73,88
+C00429,Nathan,Shaw,1953-03-14,East Linda,TX,2021-01-01,Home,1678.14,25
+C00430,Stephanie,Jones,1981-04-06,Kiaraport,GA,2023-05-25,Umbrella,943.19,32
+C00431,Christopher,Bryant,1974-09-20,West Anne,TX,2023-03-14,Auto,2281.48,50
+C00432,Jodi,Sanchez,1974-09-04,Cuevasborough,FL,2025-04-06,Life,1652.81,48
+C00433,Kathleen,Sanchez,1950-01-18,Johnsonside,NY,2023-07-24,Life,1339.76,75
+C00434,Cynthia,Steele,1950-04-08,Aaronfurt,CA,2023-03-25,Home,2841.85,40
+C00435,Dalton,Moreno,1965-10-27,Vasquezton,GA,2021-10-28,Life,1728.86,80
+C00436,Jennifer,Davis,1965-05-14,Haynesstad,TX,2024-07-06,Home,4001.5,88
+C00437,Terri,Miller,1956-02-13,Lake Lori,GA,2021-04-01,Life,1919.64,60
+C00438,Brittany,Brown,1994-09-11,East Kelly,TX,2023-04-17,Umbrella,1114.83,62
+C00439,Sara,Long,2006-03-23,Louisview,GA,2022-08-07,Home,2811.68,50
+C00440,Charles,Harris,2002-09-09,East Danielmouth,NC,2024-07-29,Umbrella,916.22,76
+C00441,Lee,Martinez,1973-12-30,South Kyle,CA,2022-11-13,Home,2084.35,26
+C00442,Melissa,Davis,2004-07-27,Margaretton,FL,2022-06-11,Auto,1915.82,76
+C00443,Mary,Murphy,1955-10-28,West Randy,NY,2021-01-11,Home,3294.03,51
+C00444,Erica,Green,1961-06-12,South Melissaside,TX,2025-04-17,Life,2008.44,76
+C00445,John,Murray,2004-04-26,North Alexander,NC,2022-07-03,Life,1344.1,35
+C00446,David,Colon,1974-12-12,New Brendaland,MI,2020-10-18,Life,1247.42,26
+C00447,Wendy,Gonzalez,1993-07-29,Lambland,MI,2023-06-08,Auto,2607.27,74
+C00448,David,Dunlap,1953-01-22,New Ryan,MI,2023-12-22,Home,2478.09,31
+C00449,Tyler,Reyes,1978-08-25,West Jason,CA,2022-03-16,Life,1206.79,82
+C00450,Joshua,Griffin,1959-09-24,New Christinebury,MI,2023-02-14,Auto,2020.3,15
+C00451,Victor,Andrade,1982-03-19,North Joshuaberg,OH,2024-03-06,Life,1454.52,36
+C00452,James,Wilkerson,1985-05-25,Lake Virginia,NC,2025-03-28,Auto,2952.69,73
+C00453,Laura,Mayo,2002-10-28,Timothyfort,OH,2023-07-16,Life,1347.46,48
+C00454,Roberta,Shaw,1976-01-17,Hectormouth,CA,2022-06-23,Life,1143.85,68
+C00455,Anthony,Cochran,1968-09-24,Port Victoriahaven,GA,2023-08-27,Home,2716.43,66
+C00456,Katie,Key,1960-06-23,East Dianeview,PA,2025-02-25,Home,2810.6,53
+C00457,Lisa,Stark,1953-06-02,New Meghan,FL,2023-12-01,Life,1826.76,54
+C00458,Michael,Combs,2007-02-18,East Joel,PA,2023-04-27,Life,1670.42,75
+C00459,Linda,Wolfe,1989-11-14,Lake Jackieshire,GA,2025-05-29,Home,2245.42,69
+C00460,Douglas,Vaughan,2006-07-21,Weaverburgh,IL,2024-10-13,Home,1666.11,28
+C00461,Benjamin,Brown,1990-07-23,North Alisha,FL,2020-08-14,Umbrella,1027.13,88
+C00462,Martin,Mendez,2004-06-29,West Jennifer,NY,2023-05-14,Life,1910.21,83
+C00463,Brian,Hernandez,1997-07-27,Port Daniel,GA,2025-02-02,Home,3885.18,73
+C00464,Michelle,Yu,1975-01-14,Willismouth,TX,2023-03-07,Umbrella,855.38,49
+C00465,Marcus,Daugherty,1999-06-14,Connerfort,NY,2023-04-24,Umbrella,974.45,74
+C00466,Grant,Novak,1996-10-23,Jeffreyshire,CA,2022-02-07,Home,2889.79,84
+C00467,Nicholas,Gross,1969-08-28,East Jessica,GA,2025-06-26,Life,1686.08,73
+C00468,Peter,Gamble,1988-03-25,East Carriebury,TX,2025-06-04,Life,1147.35,78
+C00469,Dalton,Crawford,1972-02-25,East Michaelmouth,PA,2022-01-15,Umbrella,900.25,27
+C00470,Daisy,Mccarty,2005-07-12,Seanview,CA,2022-05-25,Umbrella,648.7,56
+C00471,John,Jones,1967-01-30,Lake Aaronfurt,TX,2024-05-04,Home,2778.18,56
+C00472,Jessica,Costa,1977-10-15,Maciasstad,NC,2025-04-04,Umbrella,970.27,74
+C00473,Nicholas,Poole,2003-04-15,East Shannon,TX,2020-11-23,Life,1929.73,89
+C00474,Kenneth,Flores,1956-09-27,West Georgefurt,PA,2021-12-24,Home,1968.59,22
+C00475,Jessica,Payne,1955-12-14,Brookefort,NC,2020-11-16,Life,961.88,28
+C00476,Ryan,Valdez,1990-12-10,Mooreville,CA,2023-06-06,Umbrella,720.52,74
+C00477,Jamie,Lee,1997-01-21,Donnaport,NC,2022-08-20,Home,3107.13,52
+C00478,Cody,Long,1987-01-07,Hernandezstad,NC,2020-08-23,Umbrella,789.73,29
+C00479,Ronald,Phillips,1994-08-31,Gonzaleztown,PA,2022-05-16,Home,3288.69,51
+C00480,George,Carter,1955-03-11,Anthonyport,IL,2023-12-29,Home,3584.23,60
+C00481,Thomas,Jacobson,1967-08-25,Lake Amyburgh,NC,2023-10-08,Life,1920.69,74
+C00482,Nicole,Wood,1979-12-13,West Scottview,CA,2022-07-15,Umbrella,918.97,82
+C00483,Mary,Elliott,1959-11-25,North Elizabethside,OH,2024-02-19,Life,1546.34,52
+C00484,Tara,Lawrence,1987-04-15,Port Paulhaven,GA,2024-03-04,Life,1244.35,90
+C00485,Tammy,Mcdaniel,1981-12-04,South Kent,CA,2023-12-21,Life,1772.79,84
+C00486,Raven,Klein,1983-10-13,North Stacy,MI,2024-06-07,Umbrella,764.36,31
+C00487,Gerald,Joyce,1964-01-13,East Brad,NY,2021-04-12,Umbrella,880.1,28
+C00488,Vanessa,Graham,2005-08-03,Port Brooke,TX,2023-05-02,Auto,3214.38,83
+C00489,Renee,Sloan,1954-03-05,South Angelaside,OH,2023-05-22,Home,1862.66,12
+C00490,Melissa,Stone,1950-06-16,Rodriguezberg,OH,2021-11-15,Home,3118.54,62
+C00491,Ashley,Aguilar,1956-06-07,New Kimberlyport,NC,2025-03-03,Umbrella,757.01,17
+C00492,Nicole,Humphrey,1967-08-04,Penashire,GA,2024-08-20,Home,2789.76,81
+C00493,Benjamin,Hill,1959-05-28,Williamsmouth,GA,2022-08-20,Umbrella,1102.26,50
+C00494,Brandon,Alvarez,1967-11-22,Andrewport,IL,2023-04-05,Life,1500.74,79
+C00495,Juan,Vasquez,1996-12-27,Port Jeremyport,IL,2024-05-19,Umbrella,984.99,34
+C00496,Kim,Flores,1999-03-18,Jacobsland,IL,2022-03-18,Life,1610.78,38
+C00497,Scott,Mcintyre,1977-04-28,Malonestad,GA,2021-02-02,Life,1396.09,36
+C00498,Zachary,Moore,1970-10-15,Taylorhaven,IL,2025-06-13,Life,1428.41,71
+C00499,Anthony,Lee,2006-04-18,Port Brian,NC,2020-11-22,Life,1201.43,25
+C00500,Stephen,Hull,1997-07-25,West Micheal,FL,2024-07-24,Umbrella,1098.29,60
+C00501,William,Reid,1958-01-16,East Nathanmouth,TX,2022-02-14,Life,921.23,15
+C00502,Susan,Wells,1987-02-18,Maxview,GA,2021-05-19,Life,1672.19,66
+C00503,Justin,Hughes,1960-09-13,Port Jeffrey,IL,2022-07-12,Home,2793.62,35
+C00504,Erica,Adams,1977-06-25,Port Kimberlytown,MI,2024-08-23,Life,890.48,27
+C00505,Rhonda,Holland,1990-07-10,East Johnnyport,NC,2022-12-15,Home,1767.16,41
+C00506,Rodney,Bennett,1973-05-06,Kingmouth,OH,2023-03-08,Home,1744.61,39
+C00507,Erica,Holloway,1976-08-22,North Williamstad,FL,2025-05-22,Life,1183.72,70
+C00508,Deborah,Lynch,1969-12-04,South Calebview,FL,2023-05-19,Auto,3206.6,80
+C00509,Michelle,Green,1998-01-02,Jacobhaven,NY,2022-08-28,Umbrella,964.08,70
+C00510,Rachel,Trujillo,2004-03-19,Guerreroberg,CA,2020-10-30,Life,1207.75,51
+C00511,Diana,Bright,1967-04-09,Sullivanton,CA,2025-07-28,Auto,2113.77,83
+C00512,Jean,Armstrong,1962-07-16,Jessicabury,FL,2025-02-28,Home,3465.96,63
+C00513,Danielle,Alvarez,1995-05-03,Williamburgh,FL,2025-05-12,Auto,2595.02,60
+C00514,Howard,Davis,1958-04-28,Jessicaside,MI,2022-03-03,Life,735.52,14
+C00515,Stacey,Lam,1994-02-24,East Michaelport,NC,2024-03-10,Auto,1822.53,52
+C00516,Kristin,Rivera,1967-05-07,Stevenville,GA,2024-08-12,Umbrella,886.3,27
+C00517,Brian,Walters,1989-02-07,South Pamelahaven,PA,2021-08-19,Life,1464.53,34
+C00518,Mikayla,James,1969-12-01,Brownberg,FL,2021-10-12,Home,3159.58,68
+C00519,Victoria,Cooper,1988-05-12,Thomasburgh,MI,2021-04-20,Auto,2485.09,53
+C00520,Tony,Welch,1961-08-24,Cynthiatown,OH,2024-06-16,Home,2430.78,32
+C00521,Joshua,Juarez,1961-02-01,South Kristen,OH,2021-05-12,Umbrella,900.86,75
+C00522,David,Hamilton,1978-11-02,Pattersonfort,GA,2023-11-15,Auto,2373.54,33
+C00523,Adam,Ferguson,1999-05-03,Stephaniemouth,OH,2025-02-16,Life,907.79,41
+C00524,James,Rhodes,1992-04-05,East Heather,PA,2023-07-17,Home,3325.71,67
+C00525,Larry,Garcia,1983-11-13,Garyton,CA,2023-02-24,Life,1922.46,84
+C00526,Stacy,Bryant,1985-01-07,Ryanberg,CA,2023-07-12,Life,1603.6,56
+C00527,Wendy,Henry,2000-08-29,East Stacy,OH,2024-01-17,Auto,2057.94,69
+C00528,Andrew,Walker,1958-07-18,Lake Andrew,IL,2024-11-26,Life,1247.1,25
+C00529,Gary,Richardson,1993-11-19,South Nancyview,FL,2025-02-28,Life,1435.71,88
+C00530,Cindy,Wheeler,1952-11-17,Lake Maryton,MI,2021-08-06,Umbrella,721.42,29
+C00531,Robert,James,1986-11-09,Thomasberg,GA,2022-05-12,Life,1683.93,63
+C00532,Heather,Mccoy,1970-02-08,Stanleyhaven,MI,2022-11-28,Home,2699.25,41
+C00533,Cindy,Haynes,1978-02-11,New Jenniferville,PA,2023-01-07,Auto,2363.42,77
+C00534,Daniel,Rodriguez,1963-02-18,Port Jose,NC,2025-01-23,Auto,1918.74,82
+C00535,Teresa,Howard,1977-07-01,Ethanside,FL,2024-11-01,Home,3227.19,83
+C00536,Renee,Watts,1982-04-28,Jimmytown,NY,2021-05-15,Life,1561.88,76
+C00537,Rebecca,Conley,1995-02-21,Hernandezland,GA,2024-12-18,Umbrella,864.68,21
+C00538,Charles,Cummings,1967-01-11,South Vanessa,OH,2023-02-17,Auto,1799.0,68
+C00539,Joseph,Williams,2004-12-13,Port Benjamin,GA,2023-01-31,Umbrella,764.78,82
+C00540,Michael,Rhodes,1978-08-09,North Melissaton,CA,2020-09-11,Life,965.14,12
+C00541,Melissa,Alvarado,1961-03-21,Michaelmouth,OH,2022-11-23,Home,2349.09,84
+C00542,Natalie,Davis,2005-01-27,Ianfurt,CA,2024-01-07,Life,1112.8,18
+C00543,Suzanne,Nelson,1975-11-12,Marshburgh,OH,2021-07-29,Auto,1677.32,70
+C00544,David,Barber,2007-01-27,North Robert,OH,2024-09-19,Home,2545.23,27
+C00545,Leah,Gregory,1961-12-13,Maxwelltown,OH,2021-09-21,Life,1408.07,58
+C00546,Timothy,Freeman,1977-08-08,Williamsview,NC,2023-04-15,Umbrella,766.75,20
+C00547,Alexander,Oneill,1985-04-30,Lake Morgan,NC,2025-01-10,Home,2039.83,54
+C00548,Alexandra,Haynes,1956-02-05,Stanleybury,NY,2024-09-17,Umbrella,786.89,77
+C00549,Michael,Rhodes,1975-10-22,Port Margaret,GA,2021-01-28,Auto,1995.76,12
+C00550,Alexander,Michael,1984-01-07,Christianburgh,NY,2021-04-01,Umbrella,948.29,78
+C00551,Karen,Flores,1972-02-18,Brentbury,IL,2025-04-18,Home,2626.63,68
+C00552,Dawn,Powell,1965-08-09,South Seanshire,OH,2024-06-04,Home,1529.95,24
+C00553,Christopher,Jimenez,1971-02-14,South Julietown,TX,2021-06-26,Auto,1586.35,40
+C00554,Richard,Johnson,1986-12-24,Port Christopherport,CA,2024-12-08,Auto,2441.77,67
+C00555,Anna,Pena,1980-08-29,Michaelton,NY,2022-07-05,Home,1865.74,15
+C00556,Megan,Rivera,2001-11-02,Moranstad,IL,2024-06-17,Home,1576.16,17
+C00557,Daniel,Malone,1964-09-14,West Michaelport,MI,2025-04-09,Home,2808.77,83
+C00558,Alejandra,Park,1952-09-23,South Donald,FL,2024-02-04,Life,1132.58,40
+C00559,Daniel,Carr,1962-05-18,Port Philipmouth,CA,2022-03-27,Home,2455.15,62
+C00560,Jennifer,Rodriguez,1977-10-26,Lake Maryshire,NC,2021-08-29,Home,3634.11,90
+C00561,Kelsey,Hayes,1994-06-04,South Adam,OH,2021-01-09,Umbrella,858.75,16
+C00562,Angela,Reynolds,1989-06-07,Glassburgh,IL,2025-07-14,Life,1415.86,63
+C00563,Glenn,Ochoa,1956-08-29,Sandovalmouth,GA,2024-11-25,Umbrella,883.18,33
+C00564,Nicole,Barnes,1991-01-21,West Raymond,FL,2023-07-13,Home,2091.77,38
+C00565,Tara,Chavez,1958-09-09,South Carrie,OH,2024-12-20,Umbrella,698.3,17
+C00566,Kent,Miles,1970-12-23,East Jason,NY,2023-01-31,Home,2313.45,59
+C00567,Glenda,Morse,1958-08-23,New Amy,PA,2023-05-10,Life,1387.74,20
+C00568,Jennifer,Hodges,1987-11-17,Aguilarchester,NY,2025-02-25,Auto,2792.2,78
+C00569,Justin,Boone,2004-08-14,New Danielfurt,MI,2021-11-06,Auto,1838.62,44
+C00570,Brian,Brown,1967-10-13,West Frances,MI,2021-11-09,Auto,1330.49,19
+C00571,Mary,Vaughn,1969-09-12,Port Amber,PA,2023-08-31,Home,2427.06,71
+C00572,Lisa,Garcia,1995-08-02,Lake Deborah,NY,2023-12-03,Life,842.06,11
+C00573,John,Mueller,2003-12-22,Heatherton,MI,2023-11-10,Auto,2955.1,71
+C00574,Paul,Frye,1996-03-28,Tammyton,NC,2020-09-21,Home,3457.41,60
+C00575,Julia,Harris,2002-10-03,Greerstad,NC,2025-04-06,Life,1245.63,46
+C00576,Joanna,Gonzalez,1998-12-11,West Shane,NC,2021-03-31,Life,1171.85,49
+C00577,Jacob,Thompson,1984-07-31,South Billyview,GA,2025-05-07,Umbrella,734.33,69
+C00578,Joseph,Martin,2007-03-09,Adammouth,OH,2021-12-05,Life,1152.73,36
+C00579,Bill,Mcfarland,1990-03-26,Port Sarahport,FL,2024-10-14,Auto,3068.21,82
+C00580,Kristy,Pierce,1954-07-29,Aliciaburgh,MI,2025-01-15,Auto,2037.44,43
+C00581,Carlos,Wagner,1977-12-02,Davisbury,PA,2022-06-05,Umbrella,666.42,47
+C00582,Elizabeth,Rivera,1969-08-04,Port Christine,NY,2024-08-26,Home,2841.28,58
+C00583,Wendy,Colon,1993-10-19,North Elizabethmouth,PA,2022-08-28,Umbrella,1132.4,80
+C00584,Rebecca,Austin,1991-11-19,North Felicia,GA,2023-05-06,Life,2031.74,72
+C00585,Patrick,Hogan,1957-04-30,Scottport,PA,2020-10-27,Umbrella,859.98,31
+C00586,Rhonda,Short,1975-02-17,Tuckerport,GA,2022-04-02,Home,2484.54,27
+C00587,Luke,Miller,1956-02-23,Port Amanda,CA,2020-09-03,Home,4009.31,79
+C00588,Courtney,Clark,1992-06-14,Port Gina,CA,2021-06-30,Auto,2087.21,19
+C00589,Jamie,Poole,2000-01-24,Lucasland,NY,2021-12-02,Auto,1742.3,62
+C00590,Andrew,Love,1952-03-11,North Brianview,NC,2025-05-11,Auto,1248.31,29
+C00591,Chad,Underwood,1967-03-20,Hughesfurt,MI,2024-04-18,Umbrella,661.22,57
+C00592,Leslie,Price,1957-08-31,Lake Jenniferland,NC,2025-08-05,Umbrella,697.47,72
+C00593,Brandon,Charles,1973-12-15,West Kristinport,IL,2021-05-07,Umbrella,450.5,11
+C00594,Juan,Mcintosh,1975-07-28,Shorttown,OH,2024-08-23,Life,1031.79,12
+C00595,Eric,Robinson,2000-06-06,Roblesside,NC,2023-02-14,Home,2661.66,23
+C00596,Susan,Thomas,1995-09-15,Susantown,NC,2025-04-27,Home,1962.14,40
+C00597,Nancy,Thomas,1952-06-16,New Candiceside,OH,2025-04-09,Life,1224.04,55
+C00598,Stacey,Torres,2000-07-15,Jasonhaven,GA,2021-10-28,Auto,2772.32,57
+C00599,Eugene,Walker,2006-06-02,Jamesburgh,TX,2025-06-09,Home,2090.66,38
+C00600,Melissa,York,1986-12-18,Newmanland,OH,2023-02-01,Auto,1573.52,21
+C00601,Emily,King,1963-01-18,Lynnstad,FL,2021-09-14,Umbrella,728.75,17
+C00602,Emily,Young,1969-01-07,East Louismouth,PA,2023-05-29,Auto,2889.23,73
+C00603,Christina,Torres,1989-05-14,New Ashley,NY,2023-04-21,Auto,3065.8,77
+C00604,Susan,Jackson,1970-12-05,Port Jeffrey,CA,2024-04-27,Home,3092.68,82
+C00605,Joshua,Ward,1995-11-11,Nataliemouth,MI,2024-05-26,Auto,2487.36,45
+C00606,Michael,Torres,1987-02-26,East Debbieland,PA,2022-12-31,Auto,2297.02,32
+C00607,Michele,Taylor,1986-04-08,West Jessica,OH,2021-04-06,Auto,1976.23,36
+C00608,Jessica,Mcclain,2007-06-06,Port Bonniefurt,NY,2022-06-04,Auto,1622.76,48
+C00609,Rebecca,Arnold,1986-08-07,Valdezberg,FL,2023-09-22,Umbrella,923.83,79
+C00610,Philip,Vance,1989-09-26,Dennishaven,PA,2024-12-14,Auto,2759.96,74
+C00611,Christopher,Cox,1950-05-03,Port Tamara,TX,2022-01-09,Auto,1619.13,22
+C00612,Katherine,Taylor,1960-06-13,New Stacy,MI,2021-11-09,Life,2002.1,87
+C00613,Jill,Webb,1974-01-11,East Kathleenbury,IL,2021-02-23,Umbrella,619.66,51
+C00614,Joseph,Young,1995-02-10,New Rebecca,NC,2023-09-08,Umbrella,825.34,72
+C00615,Paul,Hardin,1952-10-10,Lake Mariohaven,MI,2022-12-09,Umbrella,767.26,65
+C00616,Mary,Baker,1986-08-28,South Desiree,IL,2023-09-20,Umbrella,804.31,20
+C00617,Briana,Villanueva,1954-11-29,Nicholasbury,FL,2025-01-02,Home,1530.51,19
+C00618,Richard,Roth,1973-02-03,Sparkstown,PA,2024-11-18,Umbrella,849.95,29
+C00619,Nicole,Gonzales,1965-04-07,New Dawnborough,IL,2021-11-21,Life,850.24,23
+C00620,Jacob,Cox,1998-06-05,Lake Jerrymouth,TX,2021-07-30,Umbrella,1039.7,56
+C00621,Timothy,Mendoza,1963-12-15,Lake Martha,GA,2020-10-20,Home,1690.08,21
+C00622,John,Anderson,1989-12-03,East Crystal,PA,2020-12-11,Umbrella,503.31,23
+C00623,Patricia,Thomas,1960-12-07,Sandrahaven,PA,2024-01-23,Auto,2719.98,86
+C00624,Carol,Elliott,1950-11-18,Staceyborough,OH,2024-06-07,Umbrella,557.38,11
+C00625,Catherine,Ruiz,1982-05-23,East Maria,NY,2021-10-29,Auto,3113.88,81
+C00626,Laura,Hoover,1961-12-28,Garymouth,IL,2024-06-20,Home,2177.2,58
+C00627,Candace,Jones,1975-05-09,Andersontown,TX,2022-05-02,Life,1319.26,44
+C00628,Alexandra,Blankenship,1996-03-09,Serranoville,IL,2022-02-14,Home,2458.1,65
+C00629,Thomas,Mendez,1952-04-09,North Timothyberg,NY,2025-03-14,Umbrella,626.41,19
+C00630,Maria,Prince,2002-05-06,Boydstad,GA,2020-12-24,Umbrella,1145.45,86
+C00631,Heidi,Patterson,2004-03-18,Clarkefurt,OH,2023-08-06,Auto,1544.21,27
+C00632,Brianna,Figueroa,2001-06-09,South Dennisfort,PA,2022-08-04,Life,1611.68,89
+C00633,Renee,Miller,1990-04-30,Scotttown,MI,2020-09-03,Umbrella,837.09,52
+C00634,Becky,Wilson,1950-02-07,Penamouth,NY,2024-02-03,Home,2274.31,48
+C00635,Michael,Moore,1993-12-15,Joseside,OH,2024-03-19,Umbrella,693.26,50
+C00636,Annette,Carr,1995-12-06,Fischerchester,GA,2025-04-23,Life,1545.75,47
+C00637,Kristen,Olson,1974-10-22,Kingport,OH,2025-07-11,Home,2408.24,51
+C00638,Maxwell,Thornton,1999-09-07,Port Michelle,NY,2021-08-16,Life,1440.83,24
+C00639,Julie,Griffin,1997-03-15,North Jason,GA,2024-01-08,Home,2210.87,80
+C00640,Kristi,Owen,1991-05-26,East Paultown,TX,2021-05-22,Home,3382.37,66
+C00641,Madeline,Ruiz,1990-06-18,Davisview,IL,2022-07-02,Umbrella,776.27,73
+C00642,Nathan,Lynch,1998-12-01,Ariasfurt,OH,2025-01-16,Home,2686.07,42
+C00643,Justin,Stuart,1953-07-11,Lake Troy,MI,2020-09-14,Umbrella,663.04,19
+C00644,James,Sandoval,2004-04-27,Jameshaven,NC,2024-12-31,Umbrella,994.12,84
+C00645,Holly,Gilbert,1995-06-25,West Johntown,PA,2021-12-14,Umbrella,739.03,79
+C00646,Christopher,Hill,1976-10-17,Elizabethfurt,PA,2025-08-06,Auto,1975.28,23
+C00647,James,Smith,1997-06-30,North Andreaside,OH,2025-07-28,Home,2343.44,88
+C00648,Michael,Richmond,1968-06-06,New Sylvia,TX,2024-06-24,Life,1153.89,65
+C00649,Sarah,Andrews,1967-05-20,South William,NC,2025-05-13,Life,1277.85,38
+C00650,Charles,Phillips,1957-07-30,Nancyshire,GA,2022-09-28,Home,2660.02,67
+C00651,Heather,Church,1987-12-09,Carrillomouth,GA,2024-07-07,Home,3461.29,54
+C00652,Erin,Mosley,1951-06-23,Wilsonland,TX,2023-11-13,Auto,1924.85,47
+C00653,Cynthia,Gamble,1995-09-05,Port Leslie,PA,2023-08-14,Auto,1603.32,28
+C00654,Zachary,Smith,2006-03-30,Johnland,PA,2024-01-03,Umbrella,792.05,36
+C00655,Emily,Nicholson,1954-10-15,South Lee,GA,2022-06-22,Umbrella,675.1,22
+C00656,Patricia,Adams,2000-05-22,South Jillian,TX,2022-08-11,Life,953.61,18
+C00657,Jill,Salas,1963-09-08,East Mary,FL,2023-08-23,Auto,2301.57,53
+C00658,Eric,Rodriguez,1954-12-15,Austinside,FL,2020-12-21,Home,2434.39,76
+C00659,Melanie,Watson,1971-01-29,Villanuevashire,GA,2022-12-13,Life,1590.57,81
+C00660,Travis,Joyce,1984-05-25,Raymondshire,FL,2021-09-14,Home,2996.61,61
+C00661,Brian,Lloyd,1982-03-01,New Michaelburgh,MI,2024-07-02,Umbrella,656.35,60
+C00662,Tiffany,Wolfe,1980-12-03,Hannahtown,OH,2022-05-28,Home,3042.43,67
+C00663,Nicolas,Garcia,1974-03-22,Jacobview,TX,2022-08-18,Auto,1552.02,37
+C00664,Joseph,Mullen,1972-12-17,Ivanchester,PA,2022-05-28,Auto,1988.34,78
+C00665,Robert,Goodwin,1974-06-17,Ramirezburgh,GA,2025-06-22,Home,2217.02,68
+C00666,David,Johnston,1965-03-03,Lake Josephbury,OH,2025-05-03,Life,1595.21,86
+C00667,Ryan,James,1959-07-16,South Linda,GA,2022-02-11,Auto,1933.73,54
+C00668,Robert,Taylor,2007-06-01,Kristenport,MI,2022-09-30,Home,3203.63,48
+C00669,Anna,Bradley,1976-09-22,Lake Frankborough,NY,2022-10-11,Auto,1553.31,27
+C00670,Thomas,Soto,1980-03-24,Jordanstad,FL,2025-05-18,Life,920.71,24
+C00671,Angela,Patrick,1973-01-12,South Davidborough,MI,2025-07-09,Umbrella,992.26,63
+C00672,Barbara,Banks,1961-06-29,Michaelhaven,NC,2024-10-04,Umbrella,762.62,64
+C00673,Kim,Griffin,1954-12-13,Austinmouth,IL,2021-11-05,Home,2489.13,81
+C00674,Miranda,Davidson,1972-07-28,Welchshire,GA,2024-01-21,Home,2035.31,33
+C00675,Melinda,Jones,1960-08-21,Jeremymouth,GA,2023-02-03,Auto,2727.3,55
+C00676,Jennifer,Jacobs,1976-07-11,Pamstad,NC,2025-08-09,Home,2755.01,34
+C00677,Abigail,Cole,1960-12-31,Port Andrew,OH,2022-08-10,Umbrella,1036.22,62
+C00678,Ebony,Shepard,1997-04-18,East Garrettville,MI,2021-06-04,Umbrella,788.69,72
+C00679,Caleb,Johns,1986-12-08,North Kellihaven,IL,2021-04-27,Auto,1663.39,38
+C00680,Dalton,Montgomery,1955-05-09,Parkerbury,GA,2023-01-11,Home,2675.52,78
+C00681,Scott,Martinez,1985-06-17,North Austin,MI,2023-08-25,Umbrella,1041.81,80
+C00682,Michelle,Nguyen,1982-01-06,Proctorside,PA,2022-12-06,Auto,2319.98,44
+C00683,Amy,Taylor,1997-02-01,New Carla,OH,2025-05-30,Auto,2355.44,66
+C00684,Ryan,Bowman,1985-12-09,Reginafort,CA,2025-03-15,Auto,1706.21,41
+C00685,Jeremy,Davis,1970-07-26,Robertberg,TX,2023-03-13,Umbrella,746.46,43
+C00686,Alex,Mills,2001-03-20,West Justin,NY,2025-03-01,Umbrella,839.34,25
+C00687,Alan,Weeks,2001-01-09,Evanschester,MI,2023-02-08,Home,3558.64,85
+C00688,Carla,Robles,1986-12-02,Jacobside,NY,2024-05-01,Umbrella,806.51,31
+C00689,Ralph,Martin,1999-10-11,Claytonbury,NC,2022-11-07,Home,2104.34,17
+C00690,Christian,Garrett,1984-10-08,Justinside,PA,2022-11-25,Life,1751.58,86
+C00691,Robert,Castaneda,1962-01-10,West Daniel,NC,2024-06-26,Life,1412.28,47
+C00692,Christine,Nelson,1991-12-29,Lopeztown,OH,2021-11-27,Auto,2246.29,27
+C00693,Brandon,Nichols,1962-04-08,West Josephmouth,FL,2020-09-06,Auto,2448.06,45
+C00694,Jesse,Hernandez,1983-03-15,West Robert,PA,2024-11-07,Home,1908.51,41
+C00695,Whitney,Ford,2003-06-21,West Christopherberg,MI,2021-02-02,Home,2742.29,60
+C00696,Joseph,Long,1986-07-31,Whiteview,GA,2023-11-10,Life,1656.74,90
+C00697,Maria,Martinez,2001-11-20,South Kelsey,IL,2024-05-19,Auto,1571.06,21
+C00698,John,Vang,1963-03-03,Mossville,PA,2025-01-17,Life,1969.2,68
+C00699,Elizabeth,Clark,1976-02-04,Sharonburgh,GA,2020-12-21,Auto,1904.52,21
+C00700,Julie,Dunn,1957-12-04,Timothyport,OH,2022-04-21,Life,1280.98,18
+C00701,Michael,Williams,1994-12-25,North Joel,GA,2024-04-21,Home,3388.39,64
+C00702,Mark,Jackson,1968-05-27,South Kristinatown,PA,2020-12-20,Life,1666.85,51
+C00703,Bianca,Vazquez,1996-06-17,West Kelli,PA,2022-09-23,Home,3812.98,82
+C00704,Eric,Davis,1991-09-18,Sarahton,GA,2021-02-13,Auto,1200.19,15
+C00705,Michael,Moore,1986-02-11,East Tonymouth,FL,2025-05-12,Auto,2175.9,25
+C00706,Kristina,Sherman,2004-06-06,Quinntown,OH,2023-10-29,Umbrella,672.4,68
+C00707,Michael,Taylor,1952-04-20,Mannside,IL,2023-02-13,Home,2679.08,26
+C00708,Amy,Henry,1988-03-06,New Michael,PA,2024-08-06,Home,1882.11,45
+C00709,Joshua,Guerra,1987-05-08,North Amanda,FL,2024-06-08,Life,1017.88,20
+C00710,Kenneth,Baker,1974-08-06,Smithhaven,NY,2023-11-02,Auto,2376.81,60
+C00711,Jessica,Andrade,1991-10-15,Kimberlybury,CA,2023-05-05,Umbrella,782.02,21
+C00712,Jennifer,Barrett,1986-04-16,Leefort,MI,2025-04-21,Home,2191.94,71
+C00713,Eric,Campbell,1977-07-02,Danielhaven,CA,2021-03-07,Home,3368.61,76
+C00714,Bradley,Pace,1961-10-09,East Danielborough,OH,2021-06-14,Auto,2518.95,53
+C00715,Anthony,May,1976-01-22,Foxshire,OH,2022-10-16,Home,2179.17,71
+C00716,Brandon,Walker,1998-06-19,North Sarahborough,PA,2024-10-16,Auto,1287.43,23
+C00717,Sarah,Collier,1981-06-19,West Angelachester,FL,2023-10-02,Life,1084.99,27
+C00718,Laura,Brown,1991-08-06,Allisonland,CA,2023-03-14,Home,2073.3,18
+C00719,Christian,Lewis,1984-12-18,North Jessicaside,NY,2023-11-22,Home,2604.12,66
+C00720,Jake,Fox,1966-07-18,New Kara,GA,2024-02-22,Home,2991.95,62
+C00721,Julie,Miranda,1988-11-06,Emilychester,FL,2021-07-01,Home,2591.12,21
+C00722,Garrett,White,1976-12-09,Dianeside,PA,2024-05-19,Auto,2910.43,85
+C00723,Sarah,Orr,1987-01-18,Meganchester,NY,2024-04-10,Umbrella,1015.32,50
+C00724,Margaret,Morris,1965-12-30,South Katie,MI,2022-10-10,Life,934.77,20
+C00725,Michael,Chavez,1976-08-20,Lake Austinport,IL,2020-10-01,Life,1259.75,13
+C00726,Zachary,Holder,1970-02-26,West Traceyborough,NY,2023-04-17,Home,3233.6,76
+C00727,Andrew,Short,1996-07-20,Samanthahaven,NY,2025-05-06,Umbrella,920.45,47
+C00728,Ashley,Duncan,1956-01-12,South Michaelberg,GA,2022-11-13,Umbrella,698.74,59
+C00729,Michael,Perkins,1965-06-21,Lisaland,CA,2025-06-19,Auto,3020.56,77
+C00730,Ricardo,Hardin,1999-08-01,Lake Markfort,MI,2022-01-31,Life,1070.87,50
+C00731,Tracy,Nolan,1997-06-11,New Dawnton,FL,2025-07-07,Umbrella,922.31,56
+C00732,Patrick,Deleon,2002-01-27,Michaelchester,TX,2024-02-27,Umbrella,482.95,19
+C00733,Sarah,Martinez,2002-01-15,Lake Denise,CA,2020-09-16,Auto,1631.95,43
+C00734,Cynthia,Chen,1953-04-19,Alicemouth,NC,2025-03-16,Umbrella,870.47,74
+C00735,Annette,Murphy,1997-02-05,East Brent,TX,2023-12-15,Umbrella,1058.84,64
+C00736,Tasha,Mullins,1988-10-05,East Ryanfurt,TX,2021-11-14,Home,1867.28,45
+C00737,David,Miller,1988-07-02,New Raymondland,OH,2024-01-02,Home,2274.54,29
+C00738,Warren,Ayala,1958-06-27,South Anita,NY,2024-10-05,Auto,2304.86,49
+C00739,Randall,Duncan,1987-10-20,East Charles,OH,2024-04-09,Auto,1455.71,41
+C00740,Marcus,Glass,1955-09-17,Lake Robertstad,CA,2023-07-30,Auto,2476.87,68
+C00741,James,Cooper,1994-03-20,Port Kevinstad,FL,2024-05-16,Life,933.09,32
+C00742,Cindy,Alexander,2005-04-16,East Gina,PA,2021-12-09,Auto,1790.08,30
+C00743,Katherine,Farrell,1957-04-06,East Stacyberg,IL,2023-01-22,Life,1111.2,31
+C00744,Alexander,Benson,1957-03-09,Shannontown,OH,2023-06-09,Auto,1402.79,13
+C00745,Jason,Medina,1963-06-26,Anaberg,MI,2020-10-08,Life,1196.11,77
+C00746,Nicholas,Escobar,1985-06-18,West Georgeport,PA,2022-04-27,Auto,2322.29,73
+C00747,Kristina,Williamson,1953-03-24,Penatown,FL,2021-03-06,Auto,2909.62,73
+C00748,Paul,Nelson,2007-08-07,Michelletown,TX,2023-02-06,Life,1017.72,30
+C00749,Michelle,Banks,1965-05-06,Romeroville,CA,2023-04-19,Auto,2199.33,39
+C00750,Todd,Harper,1955-08-09,East Vincent,GA,2024-07-04,Auto,1293.62,11
+C00751,Ann,Marquez,1952-04-27,New Kevin,FL,2024-10-12,Life,1836.97,59
+C00752,Phillip,Moore,1973-03-19,Michaelport,OH,2022-08-15,Auto,2942.31,80
+C00753,Wendy,Irwin,1968-05-21,Lake Jonathanfurt,PA,2020-11-11,Home,2205.62,51
+C00754,Sherry,Avery,1964-12-18,West Penny,TX,2021-10-12,Life,1142.47,19
+C00755,Christopher,Reyes,1995-10-02,South John,NC,2021-11-29,Auto,1514.67,32
+C00756,Ronald,Edwards,1990-10-23,Shaneberg,GA,2022-05-16,Auto,1638.82,61
+C00757,Denise,Carpenter,1996-03-01,Port Devin,NC,2025-01-25,Life,1226.7,49
+C00758,Renee,Jordan,2002-01-06,Lake Sarah,IL,2021-12-16,Umbrella,587.33,11
+C00759,Lonnie,Grant,1998-07-28,East Lonnieberg,PA,2020-11-11,Life,1466.35,89
+C00760,Kathy,Beard,1977-10-16,Turnerview,NC,2021-11-27,Umbrella,886.09,35
+C00761,Kimberly,Rodriguez,1962-03-09,Port Valerieview,OH,2025-06-08,Home,1556.64,29
+C00762,Cheryl,Carlson,1965-04-30,West Christopherfort,CA,2021-10-02,Auto,1966.71,39
+C00763,Wayne,Jacobs,1998-01-25,Jackfurt,OH,2024-10-16,Life,1171.5,10
+C00764,Thomas,Martin,1965-01-05,South Kathytown,NY,2022-11-28,Life,928.54,23
+C00765,Stephanie,Walker,1995-04-20,Port James,FL,2022-02-13,Umbrella,1266.63,72
+C00766,Sara,Duke,1991-08-10,Wattsmouth,NY,2022-09-17,Life,804.15,21
+C00767,Ronald,Parsons,1990-12-26,Cortezfurt,TX,2025-06-23,Umbrella,879.92,57
+C00768,Brittney,Fox,1997-07-12,New Danielmouth,OH,2020-12-21,Auto,1865.54,74
+C00769,Natalie,Sanchez,1986-03-20,Terrellton,OH,2025-05-10,Auto,2658.39,85
+C00770,Paul,Hubbard,1952-12-20,West Scott,PA,2023-03-16,Home,2108.76,40
+C00771,Kim,Mitchell,1960-12-11,Phillipston,IL,2025-01-04,Umbrella,772.09,51
+C00772,Rebecca,Ford,1993-07-31,Davishaven,FL,2021-07-29,Home,2606.97,19
+C00773,Hector,Richards,1996-12-26,South Robert,GA,2024-06-12,Auto,1352.89,29
+C00774,Angel,Chavez,1998-02-09,South Christopher,NC,2023-05-15,Umbrella,813.42,50
+C00775,Heather,Meadows,2003-10-25,Lake Jessica,GA,2021-05-22,Life,1214.58,36
+C00776,Danny,Cole,1974-04-25,New Jasminehaven,IL,2021-12-21,Life,863.29,25
+C00777,Nicholas,James,2001-11-23,West Ariana,PA,2021-11-21,Auto,2277.18,37
+C00778,Fernando,Thomas,2001-12-15,South Kylemouth,PA,2023-01-26,Home,2355.53,21
+C00779,Courtney,Wilson,1958-07-27,North Cindy,IL,2022-10-07,Umbrella,729.98,75
+C00780,Alexander,Jimenez,1983-07-19,New Nicolebury,OH,2022-06-16,Life,867.78,32
+C00781,Brianna,Alvarez,1977-07-11,Millertown,NY,2022-09-11,Umbrella,1197.91,81
+C00782,Nicole,Ramirez,1992-05-23,North Jack,FL,2021-01-30,Auto,1767.07,69
+C00783,Denise,Johnson,1951-10-28,Markland,NY,2021-01-11,Auto,1123.1,11
+C00784,Daniel,Chaney,1960-08-05,Cherylshire,PA,2025-05-24,Home,2787.56,35
+C00785,Gregory,Gibson,1989-01-05,Sarahland,TX,2023-02-27,Auto,2672.31,84
+C00786,Marcus,Merritt,2005-06-07,Port Ronaldside,GA,2021-03-01,Auto,1328.81,18
+C00787,Kelly,Taylor,1996-11-18,Markchester,PA,2025-01-28,Home,2601.9,21
+C00788,Jason,Clark,1953-07-29,New Jessicahaven,CA,2021-05-11,Auto,2014.24,15
+C00789,Timothy,Barker,2003-04-02,Ronaldmouth,OH,2022-10-27,Home,3028.31,83
+C00790,Alicia,Carney,1973-09-11,New Anna,OH,2025-01-12,Umbrella,603.37,13
+C00791,Jessica,Jimenez,2004-08-06,New Jesse,FL,2023-01-31,Home,2209.45,55
+C00792,Tiffany,Smith,1951-04-01,Garrettville,FL,2022-05-18,Life,1290.16,45
+C00793,Lauren,Duarte,1977-10-16,West Michaelborough,NY,2020-09-16,Auto,2782.6,88
+C00794,Danielle,Vaughn,1966-12-05,West Kevinside,NC,2023-05-15,Life,1506.34,73
+C00795,Katie,Wilson,1972-04-17,Randyshire,OH,2020-11-10,Umbrella,503.92,17
+C00796,Marilyn,Lee,2006-05-10,Sandrafort,NC,2024-08-25,Home,2297.37,63
+C00797,Laura,Brewer,1982-05-19,Lake Steven,NC,2025-03-07,Home,4263.2,90
+C00798,Paula,Ford,2005-01-07,Reillyton,PA,2025-01-16,Auto,2554.56,58
+C00799,Kevin,Hardy,1971-01-31,East Barbaramouth,PA,2023-08-15,Umbrella,1205.57,79
+C00800,Carl,Hernandez,2006-10-29,West Tonyaside,CA,2022-01-09,Life,1258.4,59
+C00801,Ashley,Price,1990-02-12,Port Kimberlyport,IL,2023-04-16,Life,1418.53,86
+C00802,Jennifer,Nelson,1955-07-10,Wileystad,MI,2024-06-16,Auto,2388.03,70
+C00803,Maria,Turner,1985-05-07,Gregorystad,NY,2020-12-06,Home,1696.68,30
+C00804,Kimberly,Gentry,1979-10-25,Port Timothyhaven,CA,2021-12-03,Life,1952.87,78
+C00805,James,Mclean,1999-06-16,Kimberlyberg,OH,2021-06-13,Home,3822.56,83
+C00806,Lynn,Hurley,1995-08-31,East Jenny,MI,2024-07-09,Life,974.97,32
+C00807,Paul,Hancock,1957-07-01,West Sarahland,CA,2023-06-13,Life,1785.33,55
+C00808,Steven,Williams,1985-01-15,Andrewport,MI,2022-05-25,Life,1739.23,82
+C00809,Manuel,Lee,1968-06-10,Kendraville,FL,2022-12-07,Home,3060.77,73
+C00810,Edward,Hill,1950-08-27,East Amyside,NY,2023-04-28,Umbrella,492.01,14
+C00811,Joseph,Harding,2004-04-29,Audreyburgh,CA,2021-03-21,Home,1963.1,12
+C00812,Larry,Mcclain,1986-05-27,Williamstown,FL,2024-08-13,Life,1415.3,88
+C00813,Rebecca,Williams,1975-09-20,North Ronaldburgh,PA,2024-05-28,Life,1523.96,32
+C00814,Christina,Edwards,2005-03-29,Lake Katherine,FL,2025-02-24,Auto,1214.17,12
+C00815,Christian,Livingston,2001-08-19,Bradleyland,TX,2024-08-05,Auto,2978.84,77
+C00816,Colton,Collins,1993-06-20,Ruizbury,PA,2021-11-01,Life,1549.07,60
+C00817,Michelle,Jensen,1974-05-07,Whitemouth,FL,2023-05-17,Life,1081.78,51
+C00818,Shawn,Johnson,1981-12-17,West Timothyburgh,FL,2023-01-05,Umbrella,1078.81,72
+C00819,Katrina,Munoz,1958-04-14,South Lisaville,FL,2023-05-21,Life,1397.52,38
+C00820,Angela,Jones,1970-03-05,Moraleschester,IL,2022-08-23,Umbrella,978.78,49
+C00821,Christine,Kelley,1982-06-10,Jonesborough,MI,2024-04-12,Home,2594.16,32
+C00822,Kristen,Graham,2003-03-12,Amybury,MI,2022-01-31,Umbrella,748.63,82
+C00823,Elaine,Miller,1998-01-22,Wilsonmouth,MI,2023-05-19,Life,1435.76,88
+C00824,Angela,Short,1961-08-08,Stephanieland,TX,2021-07-15,Auto,1865.18,73
+C00825,Gina,Carlson,2005-05-28,Murphyton,FL,2021-05-20,Home,3436.51,54
+C00826,Jeff,Taylor,1989-02-19,Port Dwayneberg,IL,2024-06-19,Auto,2029.46,52
+C00827,Amanda,Price,1988-12-10,Gonzalezmouth,PA,2023-03-01,Home,2718.25,41
+C00828,Ashley,Gentry,1970-05-04,Robbinsstad,CA,2021-05-16,Life,1283.42,23
+C00829,Brandi,Carr,1984-05-07,Abbottport,FL,2021-02-21,Umbrella,1089.63,66
+C00830,Mike,Dunn,1953-03-25,Lake Annstad,PA,2021-07-18,Umbrella,1225.91,73
+C00831,Michelle,Glenn,1965-08-15,Parkfurt,MI,2023-04-27,Umbrella,841.9,22
+C00832,Jennifer,Sullivan,1979-03-25,Lake Glenn,CA,2021-10-18,Home,2176.01,30
+C00833,Jacob,Cruz,1974-02-18,Mooreberg,TX,2021-10-03,Life,916.7,12
+C00834,Alexander,Wong,1959-06-01,Barrettberg,OH,2021-05-02,Auto,1687.42,53
+C00835,Derrick,Shaffer,1980-08-24,Hansonmouth,TX,2024-12-11,Home,2111.53,19
+C00836,Roger,Wilkins,1975-10-18,Jeremiahchester,GA,2020-09-04,Life,2216.66,86
+C00837,Becky,Bradford,1965-09-22,Robertside,FL,2025-07-07,Auto,2890.22,65
+C00838,Michael,Good,1988-04-11,Bushville,PA,2025-07-19,Umbrella,544.37,30
+C00839,Timothy,Vaughn,1959-04-14,Stevenland,NC,2025-01-24,Home,2183.86,34
+C00840,Pamela,Davis,1981-10-06,Lake Cynthiashire,TX,2023-04-09,Life,1177.55,46
+C00841,Chloe,Berger,1986-01-09,South Shawnfort,GA,2025-06-30,Auto,2304.46,60
+C00842,Jessica,Fisher,2003-12-07,Keithton,OH,2023-03-14,Home,1831.49,16
+C00843,Jessica,Elliott,1953-10-17,Laneshire,MI,2021-01-19,Auto,2428.55,47
+C00844,Diana,Carter,1999-10-17,West Toddberg,NY,2024-11-29,Umbrella,585.83,35
+C00845,Chase,Bowers,1966-10-07,New Juan,GA,2022-10-19,Home,3272.09,47
+C00846,Alexis,Rodriguez,1961-07-01,Lake Sean,GA,2022-02-07,Auto,2412.75,49
+C00847,Jose,Haynes,1982-08-12,Port Alison,NC,2020-11-22,Umbrella,617.61,43
+C00848,Matthew,Miller,1959-06-27,Port Tyler,OH,2024-02-15,Umbrella,704.71,33
+C00849,Kaylee,Young,1979-07-27,East Becky,IL,2023-07-20,Life,1183.21,33
+C00850,Brian,Baker,2005-05-20,North Garyfurt,IL,2024-08-30,Umbrella,831.8,69
+C00851,Kevin,Reese,2000-10-25,South Frances,TX,2023-12-06,Auto,2053.52,29
+C00852,Thomas,Thomas,1979-03-14,West Saramouth,OH,2023-11-11,Auto,2523.86,54
+C00853,Erika,Nixon,1996-01-31,North Samanthastad,OH,2024-04-14,Home,2275.26,80
+C00854,Cheryl,Pearson,1968-03-01,Josephville,GA,2022-10-14,Umbrella,1140.04,78
+C00855,Destiny,Myers,2002-03-24,Lake Emily,OH,2022-04-09,Home,2573.45,70
+C00856,April,Byrd,1961-11-09,Amytown,NC,2021-03-11,Auto,2505.3,74
+C00857,Alexander,Davis,1956-09-07,Bellport,GA,2022-10-03,Home,2745.9,25
+C00858,James,Johnson,1955-11-15,New Dianeborough,NY,2021-08-25,Home,2909.21,31
+C00859,Jean,Wilson,1990-10-06,South Diana,OH,2025-06-05,Home,1891.23,15
+C00860,Linda,Lopez,1957-02-27,West Kenneth,MI,2021-04-04,Home,2575.02,90
+C00861,Danielle,Livingston,1968-06-03,Schwartzmouth,TX,2022-10-20,Life,1725.08,50
+C00862,Fernando,Jones,2002-07-01,South Paulton,NC,2022-10-23,Auto,2269.48,59
+C00863,Stephanie,Baker,1979-08-06,South Tiffanyborough,CA,2023-12-14,Life,1349.99,45
+C00864,Gregory,Vasquez,1959-05-28,Robinsonville,FL,2024-05-14,Umbrella,675.87,24
+C00865,Jennifer,Garcia,1954-07-30,New Jessicamouth,TX,2020-10-09,Auto,1762.16,23
+C00866,Peggy,Hernandez,1993-03-10,North Elizabethview,OH,2021-11-26,Life,2016.52,78
+C00867,Isabel,Conway,1988-09-19,New Jasminefort,MI,2024-09-05,Life,1600.62,59
+C00868,Ryan,Anthony,2002-10-04,New Jeremiahfurt,OH,2024-09-17,Umbrella,524.71,14
+C00869,David,Nichols,1974-01-14,Evelynfurt,OH,2021-01-30,Home,3475.88,89
+C00870,Cynthia,Benjamin,1955-10-14,Amandamouth,PA,2021-04-18,Auto,2731.59,60
+C00871,Maureen,Hodges,1969-05-06,East Angela,IL,2023-11-18,Home,2300.32,16
+C00872,Donna,Evans,1976-02-29,Lake Haleyfort,IL,2021-05-02,Life,928.71,12
+C00873,Nicole,Kim,1962-07-05,North James,TX,2022-08-22,Life,1612.39,45
+C00874,Tracy,Brown,1986-05-26,Victormouth,GA,2020-10-02,Home,1924.69,27
+C00875,Benjamin,Brown,2003-03-23,South Davidhaven,MI,2024-07-06,Life,1509.3,44
+C00876,Shelby,Berg,1986-02-16,Lake Beth,OH,2021-03-23,Auto,1783.6,34
+C00877,Benjamin,Thomas,1994-02-09,South Rebeccaton,CA,2022-09-04,Umbrella,1238.19,76
+C00878,Jacqueline,Anderson,1961-05-03,West Loriville,NC,2024-06-29,Home,1801.48,18
+C00879,Cheryl,Conley,1953-12-19,North Tylerbury,NC,2021-02-24,Umbrella,854.94,27
+C00880,Linda,Simmons,2004-11-02,Nguyenshire,NY,2025-04-04,Auto,1480.94,32
+C00881,Derrick,Copeland,2003-08-02,Port Brandon,CA,2022-02-01,Auto,1392.77,41
+C00882,Matthew,Martinez,1959-03-24,Jacksonstad,GA,2025-04-27,Life,1071.13,35
+C00883,Frederick,Sanchez,1989-03-21,East Craigfurt,NY,2021-12-15,Umbrella,798.01,25
+C00884,Alexis,Tucker,1950-01-17,East Sarashire,FL,2023-01-10,Life,1672.98,72
+C00885,Robert,Aguirre,2002-03-10,Schwartzborough,PA,2021-10-30,Umbrella,1096.99,85
+C00886,Danielle,Mills,1977-08-27,East Cheryl,TX,2020-12-06,Home,2840.57,43
+C00887,Caitlyn,Love,1991-04-07,Lake Margaretport,FL,2023-07-28,Life,967.82,13
+C00888,Robert,Grant,1962-09-03,New Tiffanystad,NY,2025-03-15,Home,2594.05,38
+C00889,William,Marshall,1992-03-30,West Brian,CA,2021-07-28,Life,1502.45,62
+C00890,Laura,Jennings,1981-11-24,Thompsonton,MI,2021-01-26,Umbrella,789.49,26
+C00891,Deanna,Mitchell,1979-03-12,Matthewmouth,IL,2020-12-24,Auto,1617.37,38
+C00892,Dan,Williams,1986-03-08,East Kristen,PA,2024-09-27,Life,1872.01,64
+C00893,Zachary,Jones,1965-08-17,Watkinsmouth,IL,2024-03-05,Umbrella,676.45,42
+C00894,James,Rhodes,1971-10-11,Port Daniel,NC,2022-07-20,Umbrella,801.89,84
+C00895,Corey,Rojas,1963-03-22,Vanceland,MI,2024-08-14,Life,1814.55,81
+C00896,Brenda,Brown,1979-04-11,East Sarah,GA,2024-06-25,Life,1514.44,48
+C00897,Gregory,Brooks,1980-10-06,Lake Michael,PA,2022-11-27,Auto,2739.04,53
+C00898,James,Martinez,1996-09-19,West Derekmouth,IL,2024-07-06,Life,1440.62,43
+C00899,Robert,Wolf,1964-07-29,Cassandraburgh,NY,2025-07-13,Home,2248.67,29
+C00900,Tara,Wyatt,1955-07-02,Vincentfort,PA,2022-06-15,Auto,2416.96,86
+C00901,Brittany,Hood,1968-08-11,Lake Ronniebury,IL,2022-09-20,Home,2133.63,13
+C00902,Mark,Riley,1989-11-19,New Rachel,CA,2024-03-01,Life,1412.52,63
+C00903,Tina,Williams,1981-08-23,South Amandafort,NY,2021-06-12,Home,3003.2,53
+C00904,Shaun,Allen,1987-08-15,Lake Jessicaborough,FL,2021-09-28,Umbrella,895.22,55
+C00905,Michael,Allen,1955-10-16,South Elizabethburgh,FL,2024-07-08,Home,1914.65,47
+C00906,Michaela,Burgess,1951-04-11,Fordberg,FL,2024-01-23,Life,1931.69,81
+C00907,Jackson,Savage,1992-04-08,Padillatown,NY,2021-03-19,Life,925.0,21
+C00908,Paul,Vazquez,1985-09-29,West Ronaldview,PA,2025-03-24,Life,1762.57,63
+C00909,Barbara,Clark,1996-03-16,New Nicoleton,GA,2024-12-28,Life,1384.13,43
+C00910,Sierra,Leonard,1953-02-14,South Michaelton,MI,2023-09-21,Auto,1708.65,70
+C00911,Michael,Wong,1997-07-31,New Jennaborough,NC,2021-10-16,Auto,2902.1,70
+C00912,Tina,Allen,1957-05-05,Mclaughlinshire,OH,2022-05-25,Auto,2220.0,58
+C00913,Karen,Hodges,1971-06-04,Rachaelhaven,NY,2024-03-17,Auto,1387.25,29
+C00914,Joshua,Brown,1973-02-08,Tuckerhaven,GA,2021-08-28,Life,1932.38,62
+C00915,Theodore,Patel,2005-10-12,Shannonstad,FL,2021-03-03,Home,3158.27,50
+C00916,Jacob,Henson,1955-07-23,South Rachaelport,FL,2021-04-08,Auto,2131.78,72
+C00917,Daniel,Hill,1997-01-19,South Edward,IL,2022-05-08,Life,751.89,17
+C00918,Abigail,Burton,1969-07-25,Montesside,FL,2021-09-26,Home,2364.67,31
+C00919,Thomas,Fisher,1999-10-25,West Jaimetown,OH,2022-08-03,Umbrella,538.8,21
+C00920,Mary,Stone,1972-06-21,Lanemouth,GA,2024-09-30,Umbrella,885.76,61
+C00921,Brittney,Terry,2006-11-27,Ellisshire,NY,2021-09-25,Umbrella,454.52,10
+C00922,Rachel,Parker,2003-04-29,Jeremystad,NC,2023-01-24,Life,1264.87,11
+C00923,Kayla,Williams,1973-08-23,Stephenburgh,NY,2021-12-24,Home,2139.86,12
+C00924,Jennifer,Mitchell,1961-07-19,East John,TX,2020-12-17,Home,2352.65,54
+C00925,Victoria,Andrews,1979-08-14,Mikeborough,FL,2025-05-25,Umbrella,1054.5,74
+C00926,Jasmine,Wade,1973-01-05,West Shane,IL,2021-12-30,Auto,1392.06,15
+C00927,Amanda,Martinez,1951-04-24,Velazquezberg,PA,2024-07-05,Umbrella,1071.36,76
+C00928,Sarah,Moore,1999-11-14,Deborahport,GA,2024-08-23,Umbrella,660.34,27
+C00929,Paula,Montes,2000-12-07,Port Annette,OH,2024-05-16,Life,981.33,34
+C00930,Matthew,Rodriguez,1982-03-18,East Ericaville,FL,2023-03-27,Auto,1596.32,39
+C00931,Angel,Williamson,1964-08-11,Howardmouth,FL,2021-01-29,Home,2037.48,12
+C00932,Cathy,Lee,1985-06-09,Port Shari,CA,2022-12-23,Auto,2429.44,56
+C00933,James,Miller,2007-06-03,Rhodesland,MI,2024-12-19,Umbrella,951.31,42
+C00934,Preston,Henry,1990-08-29,Lake Michaelberg,TX,2024-04-01,Auto,3339.69,86
+C00935,Mike,Watson,1968-12-26,Michaelmouth,OH,2025-05-21,Auto,1785.69,16
+C00936,Christopher,Luna,1979-11-05,Laraport,IL,2022-01-02,Umbrella,700.35,58
+C00937,Linda,Waller,1978-06-16,Taylorshire,CA,2021-05-06,Umbrella,608.78,29
+C00938,Douglas,Turner,1985-05-12,Carlshire,NC,2023-10-23,Life,1647.17,63
+C00939,Christopher,Ortiz,1968-03-19,Thompsonmouth,FL,2025-06-11,Life,1850.6,89
+C00940,Karina,Taylor,1962-04-10,Robertsfort,MI,2020-12-21,Umbrella,712.24,23
+C00941,Mackenzie,Turner,1989-06-09,Troymouth,TX,2022-07-10,Auto,1541.42,46
+C00942,Anthony,Smith,1967-06-28,Stephaniefort,IL,2021-09-01,Umbrella,827.75,35
+C00943,Desiree,Stafford,1978-01-01,South Rebecca,IL,2022-09-11,Home,3004.84,55
+C00944,Anthony,Hubbard,1983-03-02,New Julieshire,NY,2024-09-12,Home,2041.88,15
+C00945,Ariana,Oneill,1992-05-07,Mccannville,CA,2023-10-15,Umbrella,732.76,52
+C00946,William,Johnston,2007-02-19,Franciscoton,GA,2021-11-09,Auto,2060.38,24
+C00947,Luis,Johns,1958-11-01,Frankview,TX,2023-09-08,Home,2442.39,21
+C00948,Robert,Barr,1973-11-03,West Kellyland,GA,2024-12-25,Auto,2131.76,42
+C00949,James,Burton,2001-08-26,New Karenside,TX,2023-05-11,Life,1286.99,43
+C00950,Monique,Serrano,1996-03-23,Josephstad,PA,2021-06-05,Home,2409.09,15
+C00951,Amanda,Bell,1959-05-25,East Aprilstad,TX,2024-09-26,Life,1727.88,64
+C00952,Robert,Mccall,1960-09-16,East Ericbury,FL,2022-03-20,Auto,1860.0,11
+C00953,Laura,Hansen,1996-07-18,South Stevenland,MI,2021-08-09,Life,1768.45,55
+C00954,Lori,Mclean,1982-03-31,Larrystad,PA,2021-10-17,Life,1026.89,21
+C00955,Lisa,Preston,1990-04-14,Geraldport,GA,2020-11-09,Home,2009.81,24
+C00956,Julie,Wilson,1958-05-17,Lake Jeremy,GA,2021-09-05,Life,1631.89,59
+C00957,Jason,Zavala,1978-07-10,North Andrewfort,CA,2024-04-12,Umbrella,575.84,31
+C00958,Brad,Rodriguez,2003-08-01,South Davidview,MI,2020-12-24,Home,2013.3,23
+C00959,Carl,Contreras,2000-12-17,Port Davidborough,FL,2025-08-11,Umbrella,1160.14,82
+C00960,Rachel,Lopez,1973-07-15,North Dustinview,FL,2025-07-18,Umbrella,951.66,55
+C00961,Michael,Martin,1983-09-07,New Ashley,OH,2021-06-15,Umbrella,755.99,72
+C00962,Lori,Hines,1985-08-08,Lake James,PA,2023-01-04,Umbrella,485.49,15
+C00963,George,Webster,1949-11-28,East Samanthafort,MI,2023-09-24,Auto,2840.36,77
+C00964,Helen,Lopez,1995-06-13,East Maryfurt,MI,2024-03-21,Home,2669.93,53
+C00965,Jason,Perez,1957-04-17,Davidville,NY,2025-01-12,Auto,2501.13,65
+C00966,Derek,Farmer,1997-07-28,Angelaton,OH,2021-04-24,Umbrella,973.74,54
+C00967,Mark,Wilson,1968-11-30,Burkeport,MI,2024-05-22,Home,3867.36,81
+C00968,Jeremiah,Russell,1978-09-27,Port Chad,FL,2024-08-28,Auto,1665.5,11
+C00969,Sheila,Richardson,1950-06-26,Powersfurt,TX,2024-05-03,Umbrella,1218.43,73
+C00970,Alexandra,Rhodes,1957-09-23,South Richard,IL,2021-06-24,Umbrella,731.31,51
+C00971,Judith,Stafford,1961-02-04,West Theresamouth,OH,2022-04-26,Auto,1995.91,74
+C00972,Brooke,Ewing,1957-12-20,Port Roger,GA,2024-11-09,Umbrella,598.63,40
+C00973,Joshua,Reeves,1989-03-19,Katelynfurt,GA,2023-08-23,Umbrella,846.77,21
+C00974,Thomas,Morrison,1977-02-19,Dixonberg,CA,2024-06-24,Life,1486.47,25
+C00975,Daniel,King,1983-06-15,Lake Sherri,NC,2020-11-12,Auto,2103.25,61
+C00976,Cory,Brown,1954-04-04,Gregoryburgh,MI,2023-11-13,Auto,1966.37,21
+C00977,Cassandra,Murphy,1970-03-20,Port Charleshaven,GA,2024-10-19,Life,1671.09,75
+C00978,Laura,Harris,1994-09-02,Henryview,NY,2025-03-24,Life,1719.39,56
+C00979,Matthew,Heath,1986-10-24,Port Anthonychester,MI,2021-08-17,Umbrella,906.0,52
+C00980,Patrick,Edwards,1975-03-23,Stevenston,TX,2022-02-12,Umbrella,1014.89,56
+C00981,Angela,Dalton,1970-03-28,South Ryan,PA,2023-04-09,Auto,1327.35,38
+C00982,Jennifer,Freeman,1957-01-21,Kellerside,TX,2025-06-24,Life,1678.16,80
+C00983,Terry,Hart,1960-04-02,South Joseshire,OH,2023-10-29,Auto,1799.46,31
+C00984,Christina,Gomez,1968-12-20,Bryanshire,NY,2020-12-30,Auto,2091.82,42
+C00985,David,Richardson,2004-09-14,Port Patriciamouth,NY,2023-11-07,Auto,1825.75,60
+C00986,Connor,Reed,1973-12-07,Bellbury,CA,2022-09-20,Life,1308.72,23
+C00987,Jimmy,Collins,1955-05-25,Port Kevinmouth,MI,2022-01-21,Auto,2244.82,67
+C00988,Andrew,Nguyen,1980-12-23,Bradleychester,CA,2022-11-18,Home,2083.88,73
+C00989,Andrew,Harrison,1951-02-16,Nicholasfurt,NC,2023-05-10,Umbrella,1047.01,84
+C00990,Ashley,Stokes,1956-06-03,West Tyler,FL,2023-07-02,Home,2543.49,84
+C00991,Garrett,Evans,1979-04-14,South Cynthia,MI,2021-04-03,Auto,2404.59,59
+C00992,Mary,Herrera,1969-03-03,Brandonshire,OH,2024-01-13,Life,1972.43,74
+C00993,Linda,Weber,1955-11-15,New Matthewland,PA,2025-06-06,Home,2345.76,45
+C00994,Laurie,Alvarez,1963-11-21,Lauraport,FL,2024-11-26,Life,1821.45,67
+C00995,Linda,Reynolds,1986-05-11,Jamesfurt,NC,2022-10-01,Umbrella,1206.16,87
+C00996,Colleen,Chavez,2001-07-26,North Courtney,NC,2025-01-01,Life,2019.59,80
+C00997,Michelle,Ray,1964-02-08,Adamsside,IL,2024-04-20,Home,1917.27,35
+C00998,Sarah,Barber,1953-09-09,West Steven,FL,2022-08-28,Life,1498.83,26
+C00999,Edward,Jennings,1970-01-18,Jenkinsland,NC,2022-05-06,Life,1321.88,24
+C01000,Meghan,Adams,1969-02-23,West Gloria,OH,2022-08-15,Umbrella,1103.49,84

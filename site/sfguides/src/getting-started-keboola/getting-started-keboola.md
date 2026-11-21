@@ -419,6 +419,5 @@ Congratulations! You've successfully built a complete data pipeline from ingesti
 ### Related Resources
 
   - [Keboola documentation](https://help.keboola.com/)
-  - [Github Streamlit source code](https://github.com/sfc-gh-aalteirac/streamlit_keboola_vhol_pc)
   - [Keboola Streamlit Component](https://pypi.org/project/streamlit-keboola-api/)
 

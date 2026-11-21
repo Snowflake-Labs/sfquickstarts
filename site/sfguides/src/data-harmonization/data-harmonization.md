@@ -58,7 +58,7 @@ The solution processes 1,000+ product records from two different retailers and p
 
 ### Download the Source Files
 
-> The 3 source files (2 streamlit apps and 1 notebook) can be found [here](https://github.com/sfc-gh-jrauh/sfdataharmonization).
+> The 3 source files (2 streamlit apps and 1 notebook) can be found [here](https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/data-harmonization/assets/streamlit_apps) and [here](https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/data-harmonization/assets/notebooks).
 
 ### Note on the Datasets Used
 
@@ -71,7 +71,7 @@ The solution processes 1,000+ product records from two different retailers and p
 
 In this section, you'll prepare your Snowflake environment by creating the necessary database objects and loading the sample datasets. We'll be working with three CSV files containing product data from ABT and Best Buy, plus a ground truth mapping file for validation.
 
-> If you didn't download the source files from the previous step, plese do so [here](https://github.com/sfc-gh-jrauh/sfentityresolution).
+> If you didn't download the source files from the previous step, plese do so [here](https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/data-harmonization/assets/streamlit_apps) and [here](https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/data-harmonization/assets/notebooks).
 
 ### Step 1: Create Database and Schema
 

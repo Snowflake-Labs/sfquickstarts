@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 450" width="900" height="450">
+  <!-- Background -->
+  <rect width="900" height="450" fill="#0f172a"/>
+  
+  <!-- Title -->
+  <text x="450" y="35" fill="#f8fafc" font-family="system-ui, -apple-system, sans-serif" font-size="20" font-weight="700" text-anchor="middle">Intelligent Jidoka: AI Agent in Action</text>
+  <text x="450" y="58" fill="#94a3b8" font-family="system-ui, sans-serif" font-size="13" text-anchor="middle">Cortex Agent autonomously orchestrates multi-tool reasoning for proactive recommendations</text>
+  
+  <!-- Agent Flow Diagram -->
+  <!-- Step 1: Detect Anomaly -->
+  <rect x="30" y="90" width="200" height="120" rx="10" fill="#1e293b" stroke="#29b5e8" stroke-width="2"/>
+  <circle cx="55" cy="115" r="15" fill="#29b5e8"/>
+  <text x="55" y="120" fill="#0f172a" font-family="system-ui, sans-serif" font-size="14" font-weight="700" text-anchor="middle">1</text>
+  <text x="155" y="115" fill="#29b5e8" font-family="system-ui, sans-serif" font-size="12" font-weight="600" text-anchor="middle">DETECT ANOMALY</text>
+  <text x="50" y="145" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="11">"OPE dropped 25%</text>
+  <text x="50" y="162" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="11">on Line 4 today"</text>
+  <rect x="50" y="175" width="160" height="20" rx="4" fill="#29b5e820"/>
+  <text x="130" y="189" fill="#29b5e8" font-family="system-ui, sans-serif" font-size="10" text-anchor="middle">Cortex Analyst</text>
+  
+  <!-- Arrow 1 -->
+  <path d="M235 150 L265 150" stroke="#64748b" stroke-width="2" marker-end="url(#arrowhead2)"/>
+  <defs>
+    <marker id="arrowhead2" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#64748b"/>
+    </marker>
+  </defs>
+  
+  <!-- Step 2: Query Metrics -->
+  <rect x="270" y="90" width="200" height="120" rx="10" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+  <circle cx="295" cy="115" r="15" fill="#10b981"/>
+  <text x="295" y="120" fill="#0f172a" font-family="system-ui, sans-serif" font-size="14" font-weight="700" text-anchor="middle">2</text>
+  <text x="395" y="115" fill="#10b981" font-family="system-ui, sans-serif" font-size="12" font-weight="600" text-anchor="middle">QUERY METRICS</text>
+  <text x="290" y="145" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="11">AGV-ERR-99 count: 47</text>
+  <text x="290" y="162" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="11">Dust: 35 µg/m³ (HIGH)</text>
+  <rect x="290" y="175" width="160" height="20" rx="4" fill="#10b98120"/>
+  <text x="370" y="189" fill="#10b981" font-family="system-ui, sans-serif" font-size="10" text-anchor="middle">Semantic Model</text>
+  
+  <!-- Arrow 2 -->
+  <path d="M475 150 L505 150" stroke="#64748b" stroke-width="2" marker-end="url(#arrowhead2)"/>
+  
+  <!-- Step 3: Check Prediction -->
+  <rect x="510" y="90" width="200" height="120" rx="10" fill="#1e293b" stroke="#f59e0b" stroke-width="2"/>
+  <circle cx="535" cy="115" r="15" fill="#f59e0b"/>
+  <text x="535" y="120" fill="#0f172a" font-family="system-ui, sans-serif" font-size="14" font-weight="700" text-anchor="middle">3</text>
+  <text x="630" y="115" fill="#f59e0b" font-family="system-ui, sans-serif" font-size="12" font-weight="600" text-anchor="middle">CHECK PREDICTION</text>
+  <text x="530" y="145" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="11">Failure prob: 87%</text>
+  <text x="530" y="162" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="11">Cause: Dust on sensors</text>
+  <rect x="530" y="175" width="160" height="20" rx="4" fill="#f59e0b20"/>
+  <text x="610" y="189" fill="#f59e0b" font-family="system-ui, sans-serif" font-size="10" text-anchor="middle">XGBoost Model</text>
+  
+  <!-- Arrow 3 -->
+  <path d="M715 150 L745 150" stroke="#64748b" stroke-width="2" marker-end="url(#arrowhead2)"/>
+  
+  <!-- Step 4: Search Manuals -->
+  <rect x="750" y="90" width="140" height="120" rx="10" fill="#1e293b" stroke="#a855f7" stroke-width="2"/>
+  <circle cx="775" cy="115" r="15" fill="#a855f7"/>
+  <text x="775" y="120" fill="#0f172a" font-family="system-ui, sans-serif" font-size="14" font-weight="700" text-anchor="middle">4</text>
+  <text x="840" y="115" fill="#a855f7" font-family="system-ui, sans-serif" font-size="11" font-weight="600" text-anchor="middle">SEARCH</text>
+  <text x="770" y="145" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="10">Find protocol</text>
+  <text x="770" y="162" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="10">for dust error</text>
+  <rect x="770" y="175" width="100" height="20" rx="4" fill="#a855f720"/>
+  <text x="820" y="189" fill="#a855f7" font-family="system-ui, sans-serif" font-size="9" text-anchor="middle">Cortex Search</text>
+  
+  <!-- Recommendation Box -->
+  <rect x="30" y="240" width="840" height="200" rx="12" fill="#10b98115" stroke="#10b981" stroke-width="2"/>
+  
+  <!-- Header -->
+  <rect x="30" y="240" width="840" height="45" rx="12" fill="#10b981"/>
+  <rect x="30" y="265" width="840" height="20" fill="#10b981"/>
+  <text x="450" y="272" fill="#ffffff" font-family="system-ui, sans-serif" font-size="16" font-weight="700" text-anchor="middle">AI RECOMMENDATION</text>
+  
+  <!-- Recommendation Content -->
+  <text x="60" y="320" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="14" font-weight="600">Recommended Action: Dust Mitigation Cycle</text>
+  
+  <text x="60" y="350" fill="#94a3b8" font-family="system-ui, sans-serif" font-size="12">Based on analysis of environmental conditions (humidity 25%, dust 35 µg/m³) and AGV failure patterns,</text>
+  <text x="60" y="370" fill="#94a3b8" font-family="system-ui, sans-serif" font-size="12">initiating a preventive cleaning cycle will reduce sensor errors by an estimated 85%.</text>
+  
+  <!-- Action Buttons -->
+  <rect x="60" y="390" width="120" height="35" rx="6" fill="#10b981"/>
+  <text x="120" y="412" fill="#ffffff" font-family="system-ui, sans-serif" font-size="12" font-weight="600" text-anchor="middle">✓ Approve</text>
+  
+  <rect x="195" y="390" width="120" height="35" rx="6" fill="transparent" stroke="#64748b" stroke-width="1"/>
+  <text x="255" y="412" fill="#94a3b8" font-family="system-ui, sans-serif" font-size="12" text-anchor="middle">Modify</text>
+  
+  <rect x="330" y="390" width="120" height="35" rx="6" fill="transparent" stroke="#64748b" stroke-width="1"/>
+  <text x="390" y="412" fill="#94a3b8" font-family="system-ui, sans-serif" font-size="12" text-anchor="middle">Defer</text>
+  
+  <!-- Right side: Protocol excerpt -->
+  <rect x="520" y="300" width="330" height="110" rx="6" fill="#1e293b" stroke="#475569" stroke-width="1"/>
+  <text x="540" y="325" fill="#a855f7" font-family="system-ui, sans-serif" font-size="11" font-weight="600">From: AGV Maintenance Manual v2.3</text>
+  <text x="540" y="350" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="11">"AGV-ERR-99: Optical Sensor Obscured</text>
+  <text x="540" y="368" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="11">1. Initiate compressed air cleaning</text>
+  <text x="540" y="386" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="11">2. Verify humidity > 35%</text>
+  <text x="540" y="404" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="11">3. Resume operations after 5-min..."</text>
+</svg>
+

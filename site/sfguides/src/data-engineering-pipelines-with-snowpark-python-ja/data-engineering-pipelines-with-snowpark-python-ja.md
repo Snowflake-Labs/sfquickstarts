@@ -22,10 +22,6 @@ Snowpark Pythonの機能を活用してデータエンジニアリングパイ�
 ![assets/data_pipeline_overview.png](assets/data_pipeline_overview.png)
 では、準備をはじめましょう。
 
-> 
-> 
-> **注意** - 2023年2月1日現在、[Snowflake Visual Studio Code拡張機能](https://marketplace.visualstudio.com/items?itemName=snowflake.snowflake-vsc)と[SnowCLIツール](https://github.com/Snowflake-Labs/snowcli)は両方ともまだプレビュー中です。
-
 ### 前提条件
 
 * Pythonに精通していること
@@ -48,8 +44,8 @@ Snowpark Pythonの機能を活用してデータエンジニアリングパイ�
 * Snowpark DataFrame API
 * Snowpark Pythonプログラマビリティ
 * ウェアハウスの伸縮性（動的スケーリング）
-* Visual Studio Code Snowflakeネイティブ拡張（PuPr、Git統合）
-* SnowCLI（PuPr）
+* Visual Studio Code Snowflakeネイティブ拡張
+* SnowCLI
 * タスク（ストリームトリガーを使用）
 * タスクの監視
 * GitHubアクション（CI/CD）の統合
@@ -409,10 +405,6 @@ SnowCLIは、次のSnowflakeオブジェクトの開発と展開を簡素化し�
 * Snowflake関数またはストアドプロシージャオブジェクトを作成する
 
 これにより、対応するSnowflakeデータベースオブジェクトでラップすることを心配せずに、Pythonアプリケーションを開発してテストすることもできるようになります。
-
-> 
-> 
-> **注意** - 2023年2月1日現在、SnowCLIツールはまだプレビュー中です。
 
 ### Snowpark Python UDFの詳細
 
@@ -873,8 +865,8 @@ GitHubのフォークしたレポジトリに変更をプッシュすると、�
 * Snowpark DataFrame API
 * Snowpark Pythonプログラマビリティ
 * ウェアハウスの伸縮性（動的スケーリング）
-* Visual Studio Code Snowflakeネイティブ拡張（PuPr、Git統合）
-* SnowCLI（PuPr）
+* Visual Studio Code Snowflakeネイティブ拡張
+* SnowCLI
 * タスク（ストリームトリガーを使用）
 * タスクの監視
 * GitHubアクション（CI/CD）の統合

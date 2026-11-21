@@ -1,0 +1,50 @@
+[
+  {
+    "log_id": "LOG-2026-001-001",
+    "vehicle_id": "VH-0012",
+    "log_timestamp": "2026-01-15T08:30:00",
+    "event_type": "SCHEDULED_MAINTENANCE",
+    "severity": "LOW",
+    "description": "Routine oil change and filter replacement. All fluid levels checked and topped off.",
+    "technician": "Mike Rodriguez",
+    "service_center": "Seattle Fleet Center",
+    "parts_replaced": ["oil filter", "engine oil 5W-30"],
+    "diagnostic_codes": [],
+    "labor_hours": 1.5,
+    "total_cost": 125.50,
+    "odometer_reading": 45230,
+    "next_service_date": "2026-04-15"
+  },
+  {
+    "log_id": "LOG-2026-001-002",
+    "vehicle_id": "VH-0034",
+    "log_timestamp": "2026-01-15T10:45:00",
+    "event_type": "TIRE_SERVICE",
+    "severity": "MEDIUM",
+    "description": "Front left tire replaced due to excessive wear. Alignment adjusted.",
+    "technician": "Sarah Chen",
+    "service_center": "Seattle Fleet Center",
+    "parts_replaced": ["tire - front left", "valve stem"],
+    "diagnostic_codes": [],
+    "labor_hours": 2.0,
+    "total_cost": 285.00,
+    "odometer_reading": 67890,
+    "next_service_date": "2026-02-15"
+  },
+  {
+    "log_id": "LOG-2026-001-003",
+    "vehicle_id": "VH-0056",
+    "log_timestamp": "2026-01-15T14:20:00",
+    "event_type": "ENGINE_DIAGNOSTIC",
+    "severity": "HIGH",
+    "description": "Check engine light investigation. Found faulty oxygen sensor causing poor fuel economy.",
+    "technician": "James Wilson",
+    "service_center": "Portland Service Hub",
+    "parts_replaced": ["oxygen sensor - bank 1"],
+    "diagnostic_codes": ["P0131", "P0137"],
+    "labor_hours": 3.5,
+    "total_cost": 425.00,
+    "odometer_reading": 89450,
+    "next_service_date": "2026-02-01"
+  }
+]
