@@ -12,11 +12,17 @@ fork repo link: https://github.com/zozo123/sandboxed-shell
 <!-- ------------------------ -->
 ## Overview
 
-CoCo CLI runs shell commands on your machine, with your files and your credentials within
-reach. This guide moves those commands into a sandbox. You install a plugin that sends each
-shell command CoCo issues to a local [OpenShell](https://docs.nvidia.com/openshell/latest/)
-sandbox holding a copy of your project. Then you go one step further and run CoCo itself
-inside an OpenShell sandbox whose network policy allows only your Snowflake account.
+By default, CoCo CLI runs shell commands directly on your machine. It has two sandbox
+options of its own: [`/sandbox`](https://docs.snowflake.com/en/user-guide/cortex-code/sandbox)
+restricts commands with your operating system's sandbox and still runs them on your machine,
+and [`cortex --cloud`](https://docs.snowflake.com/en/user-guide/cortex-code/cloud-sandbox)
+runs them in a Snowflake-managed container on a mounted Snowflake workspace, not your local
+files. This guide shows a third option, for teams that use
+[NVIDIA OpenShell](https://docs.nvidia.com/openshell/latest/): a plugin that sends each
+shell command CoCo issues to an OpenShell sandbox holding a copy of your local project; if
+no sandbox can be reached, the command does not run. Then you go one step further and run
+CoCo itself inside an OpenShell sandbox whose network policy allows only your Snowflake
+account.
 
 ### Prerequisites
 - CoCo CLI installed and connected to your Snowflake account
@@ -136,6 +142,8 @@ into the body of the sign-in request, and nowhere else, as declared in
 <!-- ------------------------ -->
 ## Know the Limits
 
+- Use either this plugin or CoCo's `/sandbox` in a session. Running both together is not
+  tested.
 - If the plugin's hook does not answer within its time limit (60 seconds), CoCo runs the
   original command on your machine. The hook normally answers in about 50 milliseconds.
 - CoCo checks permission rules written for specific commands, such as `bash(git *)`,
