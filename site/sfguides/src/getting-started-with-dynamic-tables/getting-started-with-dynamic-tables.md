@@ -4,7 +4,7 @@ categories: snowflake-site:taxonomy/solution-center/certification/quickstart, sn
 language: en
 summary: Getting Started with Snowflake Dynamic Tables 
 environments: web
-status: Published 
+status: Archived
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 # Getting Started with Snowflake Dynamic Tables
