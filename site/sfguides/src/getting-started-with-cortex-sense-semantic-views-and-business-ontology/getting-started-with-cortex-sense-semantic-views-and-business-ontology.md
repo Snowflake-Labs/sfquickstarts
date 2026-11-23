@@ -303,7 +303,7 @@ A Cortex Sense context is built from a **scope**, the list of sources it reads:
 | `query_history` | How people actually use the tables: which joins and filters they run |
 | `business_ontology` | The approved terms in the Procurement and Logistics domains |
 
-From those sources it writes a document per table, metric and term, and serves them to agents through one lookup. Approved ontology terms come back as their own documents, so an agent can tell an approved definition from what Cortex Sense inferred.
+From those sources it writes a document per table, metric and term, and serves them to agents through one lookup. It also infers business concepts of its own, such as a Vendor entity for the vendor master. A document built from an approved ontology term names its source, for example `Source: business ontology (domain=Procurement, ...)`, so an agent can tell an approved definition from one Cortex Sense inferred.
 
 This lab shows discovery from metadata, the semantic view and the ontology. Your lab tables are brand new, so there's almost no query history to learn from. In an account where people have queried the data for months, query history is where Cortex Sense learns the joins and filters people actually use.
 
@@ -331,8 +331,8 @@ For *"How many suppliers do we have?"* you should see something like this. The o
 |---|---|---|---|
 | 1 | table_entity | SENSE_ONTOLOGY_QS.SAP.LFA1 | The vendor master, also called suppliers and vendors |
 | 2 | table_entity | SENSE_ONTOLOGY_QS.SAP.T077K | The account group code table |
-| 3 | ontology_node | `<id>` | Supplier (approved, Procurement) |
-| 4 | ontology_node | `<id>` | Supplier Count (approved, Procurement) |
+| 3 | ontology_node | `<id>` | Supplier, from the approved Procurement term |
+| 4 | ontology_node | `<id>` | Supplier Count from the approved term, or Vendor, a concept Cortex Sense inferred |
 | 5 | datamart | SENSE_ONTOLOGY_QS.SAP.PROCUREMENT_SV | The semantic view |
 | 6 | datamart | `<domain key>` | The Procurement domain |
 
