@@ -128,7 +128,8 @@ Then create the workspace:
 3. Optional: rename the workspace, for example to `sense-and-ontology`.
 4. In the **API Integration** menu, select `GITHUB_SENSE_ONTOLOGY_LAB`.
 5. Select **Public repository**.
-6. Select **Create**.
+6. The dialog asks for a database. Use the option on the same screen to create a new database, and name it `SENSE_ONTOLOGY_GIT`. Don't use `SENSE_ONTOLOGY_QS`: `setup.sql` replaces that database, and `teardown.sql` drops it.
+7. Select **Create**.
 
 The workspace opens with the repo's files in the file explorer on the left:
 
@@ -438,7 +439,13 @@ Ontology domains are account-level objects, so dropping the database doesn't rem
    - deletes the `PROCUREMENT` context
    - empties the Procurement and Logistics domains (representations, then relationships, then nodes) and deletes them. It deletes a domain only if its description carries this lab's `[sense-ontology-qs]` marker, and reports any other domain with those names as left in place.
    - switches to `ACCOUNTADMIN` and drops `SENSE_ONTOLOGY_QS` (including the semantic view and any agents), `SENSE_ONTOLOGY_WH`, `SENSE_ONTOLOGY_ROLE`, and the `GITHUB_SENSE_ONTOLOGY_LAB` API integration
-2. In **Projects** » **Workspaces**, delete your lab workspace. Then delete the SQL file in **My Workspace** that you used for the API integration.
+2. In **Projects** » **Workspaces**, delete your lab workspace.
+3. Open the SQL file in **My Workspace** that you used for the API integration, replace its contents with the statements below, and select **Run all**. This drops the database you created for the workspace. Then delete the SQL file.
+
+```sql
+USE ROLE ACCOUNTADMIN;
+DROP DATABASE IF EXISTS SENSE_ONTOLOGY_GIT;
+```
 
 > **Note:** Run `teardown.sql` once. It drops `SENSE_ONTOLOGY_ROLE` at the end, so a second run stops at its first `USE ROLE` statement. That error means the clean up already finished.
 
