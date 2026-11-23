@@ -440,6 +440,8 @@ Ontology domains are account-level objects, so dropping the database doesn't rem
    - switches to `ACCOUNTADMIN` and drops `SENSE_ONTOLOGY_QS` (including the semantic view and any agents), `SENSE_ONTOLOGY_WH`, `SENSE_ONTOLOGY_ROLE`, and the `GITHUB_SENSE_ONTOLOGY_LAB` API integration
 2. In **Projects** » **Workspaces**, delete your lab workspace. Then delete the SQL file in **My Workspace** that you used for the API integration.
 
+> **Note:** Run `teardown.sql` once. It drops `SENSE_ONTOLOGY_ROLE` at the end, so a second run stops at its first `USE ROLE` statement. That error means the clean up already finished.
+
 <!-- ------------------------ -->
 ## Conclusion and Resources
 
