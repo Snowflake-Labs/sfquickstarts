@@ -14,7 +14,7 @@ fork repo link: https://github.com/Snowflake-Labs/sfguide-intro-to-online-featur
 <!-- ------------------------ -->
 ## Overview
 
-The Snowflake Online Feature Store with Postgres (Public Preview) provides low-letency feature retrieval for real-time ML inference. This guide demonstrates how to build a real-time fraud detection system using the Online Feature Store — covering online feature retrieval, time-windowed aggregations, streaming ingestion, and REST API usage.
+The Snowflake Online Feature Store with Postgres provides low-letency feature retrieval for real-time ML inference. This guide demonstrates how to build a real-time fraud detection system using the Online Feature Store — covering online feature retrieval, time-windowed aggregations, streaming ingestion, and REST API usage.
 
 You'll learn how to register batch, aggregation, and stream Feature Views backed by a managed Postgres serving layer, and how to query and ingest data through the REST API endpoints.
 
