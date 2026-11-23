@@ -68,6 +68,74 @@ A Snowflake account with Snowflake Openflow and Snowpark Container Services acce
 >
 > Please note that Openflow on SPCS is not available on Snowflake's free [trial account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides). Please input credit card details to work through this quickstart or use your own Snowflake accounts.
 
+<!-- ------------------------ -->
+## Automate With Cortex Code
+
+Duration: 5
+
+Once your SQL Server database has Change Tracking enabled and your Openflow deployment and runtime are provisioned, you can use [Cortex Code](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code) — Snowflake's AI coding assistant built into the CLI — to automate the connector deployment workflow. The built-in `openflow` skill handles EAI setup, network validation, connector deployment, JDBC driver upload, parameter configuration, controller setup, and pipeline start.
+
+**No installation required.** The `openflow` skill ships with Cortex Code out of the box.
+
+> **Before starting Cortex Code, ensure the following are complete:**
+> - SQL Server setup done with Change Tracking enabled ([SQL Server Setup](#sql-server-setup))
+> - Openflow deployment and runtime already provisioned in Snowflake
+> - Destination database and connector role created in Snowflake
+
+### What Cortex Code Automates
+
+Starting from a working Openflow runtime, the skill handles all steps in the **Configure Openflow** and **SQL Server Connector** sections:
+
+| Step | What Cortex Code Does |
+|---|---|
+| Configure Network Access (EAI) | Creates External Access Integration for SQL Server host connectivity |
+| Validate Network Connectivity | Tests TCP connectivity to SQL Server host:1433 before deploying |
+| Deploy the Connector Flow | Deploys the `sqlserver` connector flow from the catalog |
+| Upload JDBC Driver | Downloads and uploads the Microsoft SQL Server JDBC driver |
+| Configure Source Parameters | Sets JDBC connection URL, credentials, and tables to replicate |
+| Configure Snowflake Destination | Sets destination database, role, warehouse, and authentication |
+| Configure Ingestion Parameters | Sets table inclusion rules and identifier resolution |
+| Verify Controllers | Runs `verify_config` before enabling controller services |
+| Enable Controllers | Enables all controller services and checks for errors |
+| Verify Processors | Runs `verify_config` after controllers are enabled |
+| Start the Connector | Starts the pipeline and confirms changes are streaming |
+| Validate Data Flow | Checks flow status and confirms rows are appearing in Snowflake |
+| Reconcile Source vs Destination | Connects to SQL Server to query source row counts, compares against Snowflake destination across all replicated tables, and flags mismatches |
+
+> **Note:** Creating the Openflow deployment and runtime, SQL Server prerequisites (AWS RDS setup, SSMS, Northwind database, Change Tracking enablement), and Snowflake account prerequisites (destination database, connector role) must all be completed before invoking Cortex Code.
+
+### Beyond Initial Setup
+
+Cortex Code also helps with **Day 2 operations** after your pipeline is running:
+
+| Operation | What Cortex Code Does |
+|---|---|
+| Add tables to a running pipeline | Updates inclusion parameters and monitors new tables through snapshot into incremental replication |
+| Data reconciliation | Connects to SQL Server, queries source row counts, compares against Snowflake destination across all replicated tables, and flags mismatches |
+| Incremental replication | Configures skip-snapshot mode for tables you've already bulk-loaded via other methods |
+| Troubleshooting | Reads NiFi bulletins, diagnoses Change Tracking retention expiry, and guides FAILED state recovery |
+| Journal table cleanup | Identifies stale journal tables for removed tables and guides safe cleanup |
+
+### Get Started
+
+Open a Cortex Code session in your terminal and run:
+
+```
+set up openflow for sql server cdc
+```
+
+The skill will confirm your intent, ask for your SQL Server connection details and Snowflake target, then walk through each step.
+
+### More Example Prompts
+
+```
+deploy sql server cdc connector in openflow
+```
+
+```
+configure openflow connector for sql server
+```
+
 <!------------------>
 
 ## SQL Server Setup

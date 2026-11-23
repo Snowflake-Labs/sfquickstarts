@@ -1,4 +1,4 @@
-author: David Hrncir
+author: David Hrncir, Martin Knazovicky (Version 2, updated October 13, 2026)
 id: fivetran-vineyard-assistant-chatbot
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/partner-solution, snowflake-site:taxonomy/solution-center/includes/architecture, snowflake-site:taxonomy/product/ai
 language: en
@@ -9,6 +9,7 @@ feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 
 # Build a RAG-based, GenAI chatbot using Structured Data with Snowflake and Fivetran
+
 <!-- ------------------------ -->
 ## Overview
 
@@ -18,9 +19,13 @@ First, where is your valuable data?  Typically, your valuable data is in places 
 
 And if we are going to build a GenAI app, why not make it a fun one? Today you are going to build a RAG-based, GenAI application that will serve as a wine assistant to help guide you through 700+ real wineries in the California wine region.  You will be able to build a wine region trip for different California wine regions, compare wineries and their attributes...you name it.  And don't worry, we'll give you some example prompts to try.
 
-Fivetran can replicate all of your data from over [600+ data sources](https://www.fivetran.com/connectors) directly into Snowflake, or an Iceberg data lake.  Fivetran does this in a fast, secure, SaaS-based, automated, no-code manner where most connectors take less than 5 minutes to set up allowing you to perform all your Snowflake data workloads, in this case GenAI, just as if you were connected to all your source systems.  The sky is the limit!
+Fivetran can replicate data from [700+ pre-built connectors](https://www.fivetran.com/connectors) into Snowflake, or into an Apache Iceberg-based data lake through Fivetran Managed Data Lake Service.  As a fully managed, secure, SaaS-based platform, Fivetran automates data movement, schema drift handling, and ongoing syncs with minimal manual effort.  Most connectors can be set up in just a few minutes, giving you fast access to fresh, governed data for analytics, AI, and operational workloads in Snowflake or across your broader data architecture.  In this lab, that means GenAI on your Snowflake data, just as if you were connected to all your source systems.
 
-Snowflake Cortex will be used to handle all of the GenAI needs with ease making this daunting task seem simple.  Most GenAI applications utilize unstructured data.  We are going to be using structured data from a PostgreSQL database.  That's right...no stagnant PDFs or HTML files...database data.  So let’s get started!
+Snowflake Cortex will be used to handle all of the GenAI needs with ease making this daunting task seem simple.  Most GenAI applications utilize unstructured data.  We are going to be using structured data that Fivetran replicates from a JSON file in Amazon S3 or from a PostgreSQL database.  That's right...no stagnant PDFs or HTML files...database data.  So let’s get started!
+
+> 
+> **Prefer to let an AI agent do the work?**  You can hand this lab to any AI agent that can read a markdown file and call tools (for example through the Fivetran API, a Snowflake MCP server or the Snowflake CLI).  The [agent runbook](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/fivetran-vineyard-assistant-chatbot/_agent/vineyard-assistant-agent-runbook.md) walks an agent through the same steps with a check after each one, pauses for you to approve anything sensitive, and never asks for your passwords.  It comes with a [preflight script](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/fivetran-vineyard-assistant-chatbot/_agent/preflight_check.py) that checks the Fivetran API still matches before the agent starts.  The rest of this guide is the same lab done by hand.
+>
 
 ### Prerequisites
 - Existing Snowflake account, or a [new Snowflake trial account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides), with 'AccountAdmin' role.  If 'AccountAdmin' is not available, you will need to get a user with AccountAdmin privileges to grant access to Cortex features described below.  
@@ -30,7 +35,7 @@ Snowflake Cortex will be used to handle all of the GenAI needs with ease making 
 
 ### What you'll learn in the lab
 - How to leverage Snowflake Partner Connect to create a Fivetran account
-- How to create/configure a Fivetran Postgres database connector
+- How to create/configure a Fivetran Amazon S3 connector, or a Fivetran PostgreSQL database connector
 - How to utilize Snowflake Cortex functions to prepare the data
 - How to create the chatbot via Snowflake Streamlit
 
@@ -40,7 +45,7 @@ Snowflake Cortex will be used to handle all of the GenAI needs with ease making 
 ### What you'll build 
 - A GenAI, RAG-based wine assistant chatbot in Snowflake for over 700+ real wineries in California!
 
-All in less than 30 minutes!
+All in less than an hour!
 
 
 ## Accounts - Snowflake and Fivetran
@@ -49,120 +54,100 @@ The outcome of this step is to:
 - Have a Snowflake account with all the objects needed for Fivetran to ingest data (account, user, role, warehouse, database)
 - Have a Fivetran account with a Snowflake destination setup ready to receive data
 
-The easiest option to get started with Fivetran and Snowflake is to use Snowflake Partner Connect.  Partner connect allows you to quickly create a Fivetran trial account and configures the default Snowflake destination within Fivetran in one easy step.
+The easiest option to get started with Fivetran and Snowflake is to use Snowflake Partner Connect.  Partner Connect allows you to quickly create a Fivetran trial account and configures the default Snowflake destination within Fivetran in one easy step.
 
 ### Partner Connect Option
-Ensure you are in the Snowflake UI as an `ACCOUNTADMIN`.  Expand `Data Products`, click `Partner Connect`, enter 'fivetran' in the search box, and click the Fivetran tile.
+Ensure you are in Snowsight as an `ACCOUNTADMIN`.  Partner Connect is under `Admin`, and the Fivetran listing is also available from `Marketplace` under `Work with data`.
 
-![Partner Connect](assets/sfpc/s_0010.png)
+![Admin menu with Partner Connect](assets/sfpc-s-0010.png)
 
+Click `Marketplace`, enter 'fivetran' in the search box, and open the `Fivetran Platform` data product.
 
-Once the tile is clicked you will be presented with the Fivetran account creation screen as shown below.  Click the `Connect` button.
+![Marketplace search for Fivetran](assets/sfpc-s-0020.png)
 
-![Partner Connect Fivetran Configuration](assets/sfpc/s_0020.png)
+On the `Fivetran Platform` listing, click `Start free trial`.  Connecting creates the Snowflake objects Fivetran needs and a 14 day Fivetran trial account.
 
- Click `Activate`.  You will be prompted to enter a Fivetran password.  Record this password.  This will be your password into the Fivetran UI.  That's it!  This process will will create the free 14 day Fivetran trial account, automatically build your default Snowflake destination within Fivetran, and configure the Snowflake objects/environment needed to ingest data via Fivetran.  
+![Fivetran Platform listing](assets/sfpc-s-0030.png)
 
-![Partner Connect Fivetran Configuration](assets/sfpc/s_0030.png)
+Review the objects that will be created (`PC_FIVETRAN_DB`, `PC_FIVETRAN_WH`, `PC_FIVETRAN_USER` and `PC_FIVETRAN_ROLE`), then click `Connect to Fivetran`.
+
+![Connect to Fivetran to start your trial](assets/sfpc-s-0040.png)
+
+You are then taken to the Fivetran site to finish activating your account.  Follow the prompts there.  If you are asked to choose a password, record it, because it will be your password into the Fivetran UI.  The default Snowflake destination is configured in Fivetran for you.
 
 ### Non-Partner Connect Option
-If you do not have a Fivetran account and you are unable to use `Partner Connect` (possibly because this process was done before), please go to the [Fivetran trial account sign up](https://fivetran.com/signup), and sign up for a free 14 day trial.  Post Fivetran account creation, you simply follow [these instructions](https://fivetran.com/docs/destinations/snowflake/setup-guide) to setup your Snowflake destination in Fivetran.
+If you do not have a Fivetran account and you are unable to use `Partner Connect` (possibly because this process was done before), please go to the [Fivetran trial account sign up](https://fivetran.com/signup), and sign up for a free 14 day trial.  Post Fivetran account creation, create a Snowflake destination as described below.
 
-In the case where you have Snowflake and Fivetran accounts already, you may use a current Snowflake destination in Fivetran or simply follow the [Snowflake destination setup guide](https://fivetran.com/docs/destinations/snowflake/setup-guide) to create a new Snowflake destination in Fivetran.
+In the case where you have Snowflake and Fivetran accounts already, you may use a current Snowflake destination in Fivetran or create a new one with the steps below.
 
-## Option 1 PostgreSQL Source
+**Step 1.** Follow the [Snowflake destination setup guide](https://fivetran.com/docs/destinations/snowflake/setup-guide) to create the Snowflake role, user, warehouse and database that Fivetran will use.  The examples in this lab use the names `PC_FIVETRAN_ROLE`, `PC_FIVETRAN_USER`, `PC_FIVETRAN_WH` and `PC_FIVETRAN_DB`, which are the names Partner Connect creates.
 
-Ok, let's replicate our structured data from a PostgreSQL database into Snowflake via the quickest, easiest, and most reliable method available in the world today...Fivetran!  Ensure you are logged into your Fivetran account.
+**Step 2.** Fivetran connects with key pair authentication.  Generate a key pair on your machine.  The private key stays with you and goes into Fivetran.  The public key goes into Snowflake.
 
-> 
-> Note: If for some reason you are unable to connect to the database, you may use <a href="#3" target="_self">Option 2 Amazon S3 Source</a>.
->
+``` bash
+openssl genrsa 2048 | openssl pkcs8 -topk8 -inform PEM -out fivetran_rsa_key.p8 -nocrypt
+openssl rsa -in fivetran_rsa_key.p8 -pubout -out fivetran_rsa_key.pub
+```
 
-**Step 1.** With the `Connectors` item selected in the nav panel, click `Add connector` in the upper right corner.
+Copy the contents of `fivetran_rsa_key.pub` without the `-----BEGIN PUBLIC KEY-----` and `-----END PUBLIC KEY-----` lines, and assign it to the Fivetran user in a Snowsight SQL file.  **Never paste the private key into Snowflake.**
 
-![Fivetran Connector 1](assets/fivetran/f_0010.png)
+``` sql
+USE ROLE ACCOUNTADMIN;
+ALTER USER PC_FIVETRAN_USER SET RSA_PUBLIC_KEY='<contents of the .pub file on one line>';
+```
 
-**Step 2.** Enter `postgres` in the search box.  Ensure you scroll down to the postgres connector shown (Note: You must use the one shown.), highlight the item with your mouse, and click `Set up`.
+**Step 3.** In Fivetran, click `Destinations` in the nav panel, then `Add destination`, choose `Snowflake`, and enter a destination name.  On the next screen fill in the host (your Snowflake account URL, for example `<account_identifier>.snowflakecomputing.com`), port `443`, user, database, `KEY_PAIR` as the Auth, the contents of `fivetran_rsa_key.p8` as the Private Key, and the role.
 
-![Fivetran Connector 2](assets/fivetran/f_0020.png)
+![Fivetran Destination 1](assets/fivetran-f-0005.png)
 
-**Step 3.** Next on the connector configuration screen, ensure you enter your last name + `_genai` as the Destination Schema Prefix.  Next enter the credentials given below into their respective fields.  Note that the Destination Schema Prefix must be unique to the database.  Fivetran will prepend this name to all schemas copied from the postgres database into Snowflake.
-- Destination Schema Prefix: yourlastname_genai
-- Host:  34.94.122.157
-- Port:  5432
-- User:  fivetran
-- Password:  2PcnxqFrHh64WKbfsYDU
-- Database:  industry
+Scroll down.  Set **Table Type** to `Snowflake Native Tables` (the default is `Lakehouse Tables`, which this lab does not use).  Click `Load Virtual Warehouses`, pick your warehouse as the Default Virtual Warehouse, and click `Save & Test`.  When all the tests pass, click `Save`.
 
-![Fivetran Connector 3](assets/fivetran/f_0030.png)
+![Fivetran Destination 2](assets/fivetran-f-0006.png)
 
-Scroll down and you will see the remainder of the configuration fields.  Set the parameters to the values shown below, and click `Save & Test`.
-- Connection Method:  Connect directly
-- Update Method:  Detect Changes Via Fivetran Teleport Sync
+## Option 1 Amazon S3 Source
 
-![Fivetran Connector 4](assets/fivetran/f_0040.png)
-
-**Step 4.** Since we are connecting directly over the internet, Fivetran requires TLS.  Click the radio button next to the certificate, and click `Confirm`.  Once all connector tests complete, click `Continue`.
-
-![Fivetran Connector 5](assets/fivetran/f_0050.png)
-
-![Fivetran Connector 6](assets/fivetran/f_0053.png)
-
-**Step 5.** Next you will select the schemas and tables to replicate.  Since we only need one schema, let's first disable all schemas by unchecking the box next to the schema number shown.  Then click the `collapse all` button on the right to get a better view of all the schemas for which we have access.
-
-![Fivetran Connector 7](assets/fivetran/f_0060.png)
-
-Find the `Agriculture` schema in the list, click on the toggle on the right side to enable the schema, expand the schema by clicking the black arrow next to the schema, and check the box next to the number of tables to select all tables in the schema.  Then click `Save & Continue`.
-
-![Fivetran Connector 8](assets/fivetran/f_0070.png)
-
-**Step 6.** By default, Fivetran will automatically replicate all schema changes to Snowflake so that any change in the source schema automatically appears in Snowflake.  Leave `Allow all` selected, and click `Continue`.
-
-![Fivetran Connector 9](assets/fivetran/f_0080.png)
-
-**Step 7.** With that, we are ready to go!  Let's sync data.  Click `Start Initial Sync`, and let Fivetran seamlessly replicate our database data into Snowflake.  This should only take a minute or two at most.  This process will perform an initial sync of all of the data in the schema and tables selected, and automatically schedule itself to run again in 6 hours.  The sync frequency can be adjusted, but for this lab, there is no CDC occurring behind the scenes; so we will leave it at 6 hours.  If this data was changing, Fivetran would only replicate the changes/delta from the previous run into Snowflake ensuring your Snowflake data is always up to date with your source!
-
-![Fivetran Connector 10](assets/fivetran/f_0090.png)
+This is the quickest path. The wine dataset is a JSON file in a public Amazon S3 bucket owned by Fivetran, so you do not need a database or a cloud account. Fivetran reads the file and lands it in Snowflake as a table.
 
 > 
-> This is the power of Fivetran.  No allocating resources.  No development.  No code.  No column mapping.  No pre-building schemas or tables in the destination.  A fully automated, production data pipeline in a few steps!
+> Want to see how Fivetran replicates from a database instead? Skip this section and use <a href="#3" target="_self">Option 2 PostgreSQL Source</a>, where you load the same file into your own PostgreSQL database first.
 >
+
+**Step 1.** With the `Connections` item selected in the nav panel, click `Add connection` in the upper right corner.
+
+**Step 2.** Enter `s3` in the search box, select `Amazon S3`, and click `Set up`.
+
+![Fivetran Connector 11](assets/fivetran-f-0100.png)
+
+**Step 3.** Next on the connection configuration screen, enter `yourlastname_genai` as the Destination schema and `wine` as the Table group name.  Note that the Destination schema must be unique to the database.  Fivetran will create this schema in Snowflake and the connection will be named `yourlastname_genai.wine`.  Next copy and paste the parameters given below into their respective fields.  **Do not alter any other fields except the ones listed.**
+- Bucket:  ft-s3-lab-bkt
+- Access approach:  Public Bucket (the default is `IAM Role`, so change it)
+- Base folder path:  winedata
+- File Type:  json
+- JSON Delivery Mode:  Unpacked (the default is `Packed`, so change it)
+
+![Fivetran Connector 12](assets/fivetran-f-0120.png)
+
+Scroll down to `Configure files`.  Leave File mapping on `Define per table`, click `Add files`, and enter `california_wine_country_visits` as the Table name and `.*\.json` as the File pattern.  Click `Save`, and then click `Save & Test`.
+
+![Fivetran Connector 13](assets/fivetran-f-0130.png)
+
+**Step 4.** Fivetran will perform connection tests to the bucket as well as verify the files in the folder.  Once all connection tests complete, click `Continue`.
+
+![Fivetran Connector 14](assets/fivetran-f-0140.png)
+
+**Step 5.**  With that, we are ready to go!  On the `Before you sync` screen leave `Start syncing all my data now` selected and click `Start initial sync`.  Fivetran seamlessly replicates our S3 file data into Snowflake.  This should only take a minute or two at most.  This process will perform an initial sync of all of the data files in the bucket/folder, and automatically schedule itself to run again in 6 hours.  The sync frequency can be adjusted, but for this lab, there is no CDC occurring behind the scenes; so we will leave it at 6 hours.  If this data was changing, Fivetran would only replicate the changes/delta from the previous run into Snowflake ensuring your Snowflake data is always up to date with your source!  When the sync finishes you will see `Successful initial sync` with 743 loaded rows.
+
+![Fivetran Connector 15](assets/fivetran-f-0150.png)
 
 Continue to <a href="#4" target="_self">Transform the Wine Structured Dataset</a>.
 
-## Option 2 Amazon S3 Source
+## Option 2 PostgreSQL Source
 
-If by some chance the PostgreSQL database is unavailable or inaccessible, you may use the below dataset that was copied from the PostgreSQL database to JSON residing in Amazon S3.
+In this option you create your own PostgreSQL database in AWS, Google Cloud, or Azure, load the same wine dataset into it, and then let Fivetran replicate it into Snowflake.  This is the same pattern you would use for a production database, just with a small lab database.  Allow an extra 15 to 20 minutes, and remember to delete the database when you are done so you stop paying for it.
 
-**Step 1.** With the `Connectors` item selected in the nav panel, click `Add connector` in the upper right corner.
+You need an account with one of these cloud providers.  If you do not have one, use <a href="#2" target="_self">Option 1 Amazon S3 Source</a> instead.
 
-![Fivetran Connector 11](assets/fivetran/f_0100.png)
-
-**Step 2.** Enter `s3` in the search box.  Scroll down to the S3 connector, highlight the item with your mouse, and click `Set up`.
-
-![Fivetran Connector 12](assets/fivetran/f_0110.png)
-
-**Step 3.** Next on the connector configuration screen, enter `yourlastname_genai` as the Destination Schema Prefix.  Next copy and paste the parameters given below into their respective fields.  Note that the Destination Schema Prefix must be unique to the database.  Fivetran will prepend this name to all schemas copied from the postgres database into Snowflake.  **Do not alter any other fields except the ones listed.**
-- Destination table:  california_wine_country_visits
-- Bucket:  ft-s3-lab-bkt
-- Access approach:  Public
-
-![Fivetran Connector 13](assets/fivetran/f_0120.png)
-
-Scroll down and you will see the remainder of the configuration fields.  Set the parameters to the values shown below, and click `Save & Test`.
-- Folder Path:  winedata
-- File Type:  json
-- JSON Delivery Mode:  Unpacked
-
-![Fivetran Connector 14](assets/fivetran/f_0130.png)
-
-**Step 4.** Fivetran will perform connection tests to the bucket as well as verify the files in the folder.  Once all connector tests complete, click `Continue`.
-
-![Fivetran Connector 15](assets/fivetran/f_0140.png)
-
-**Step 5.**  With that, we are ready to go!  Let's sync data.  Click `Start Initial Sync`, and let Fivetran seamlessly replicate our S3 file data into Snowflake.  This should only take a minute or two at most.  This process will perform an initial sync of all of the data files in the bucket/folder, and automatically schedule itself to run again in 6 hours.  The sync frequency can be adjusted, but for this lab, there is no CDC occurring behind the scenes; so we will leave it at 6 hours.  If this data was changing, Fivetran would only replicate the changes/delta from the previous run into Snowflake ensuring your Snowflake data is always up to date with your source!
-
-![Fivetran Connector 16](assets/fivetran/f_0150.png)
+Follow the [PostgreSQL source setup page](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/fivetran-vineyard-assistant-chatbot/_postgres/postgresql-source.md).  It covers creating the database, allowing Fivetran to connect to it, loading the wine dataset, and creating the Fivetran connector.  When the initial sync has finished, return here and continue to <a href="#4" target="_self">Transform the Wine Structured Dataset</a>.
 
 ## Transform the Wine Structured Dataset
 
@@ -170,19 +155,21 @@ Now that Fivetran landed the structured dataset into tables in Snowflake, it's t
 
 **Security Note:  The role you are using will need to be granted the SNOWFLAKE.CORTEX_USER database role.  This role provides access to the Cortex functions we are going to use today.**
 
-**Step 1.** Let's review our data in Snowflake.  Select `Data/Databases` and then select your database, schema, and finally the `CALIFORNIA_WINE_COUNTRY_VISITS` table.  We will transform this table to be used as RAG context for our chatbot.  Select the various tabs such as `Columns` and `Data Preview` to review the table.
+**Step 1.** Let's review our data in Snowflake.  Select `Catalog`, then `Explorer`, and then select your database, schema, and finally the `CALIFORNIA_WINE_COUNTRY_VISITS` table.  The table should have 743 rows.  We will transform this table to be used as RAG context for our chatbot.  Select the various tabs such as `Columns` and `Data Preview` to review the table.
 
-![Fivetran Snowflake 1](assets/snowflake/s_0010.png)
+![Fivetran Snowflake 1](assets/snowflake-s-0010.png)
 
-**Step 2.** Next we will create a new worksheet to run our transform SQL.  Select `Projects/Worksheets` and then click the plus sign in the upper right corner.  Ensure the worksheet type is `SQL`.
+**Step 2.** Next we will create a new SQL file to run our transform SQL.  Select `Projects`, then `Workspaces`.  Click `Add new` and select `SQL file`, enter a name, and press Return.
 
-![Fivetran Snowflake 2](assets/snowflake/s_0020.png)
+![Fivetran Snowflake 2](assets/snowflake-s-0020.png)
 
-**Step 3.** In the new worksheet, expand your database and schema in the left nav panel.  Click the ellipses next to the schema Fivetran created and select `Set worksheet context`.  This will default the database and schema context for our new worksheet (shown in the box below) so that all SQL will run under your database and schema.  This saves us from having to fully qualify each SQL statement.
+**Step 3.** Set the database and schema context for the SQL file so that all SQL runs under your database and schema.  This saves us from having to fully qualify each SQL statement.  Replace the placeholders with the database and the schema Fivetran created (the Destination schema you entered, for example `YOURLASTNAME_GENAI`; with the PostgreSQL option it is that name plus `_AGRICULTURE`, for example `YOURLASTNAME_GENAI_PG_AGRICULTURE`), and run the statement by pressing `Cmd+Return` (`Ctrl+Enter` on Windows).
 
-![Fivetran Snowflake 3](assets/snowflake/s_0030.png)
+``` sql
+USE SCHEMA <YOUR_DATABASE>.<YOUR_SCHEMA>;
+```
 
-**Step 4.** Copy and paste the below SQL into the worksheet.
+**Step 4.** Copy and paste the below SQL into the SQL file.
 
 ``` SQL
 /** Create each winery and vineyard review as a single field vs multiple fields **/
@@ -224,44 +211,71 @@ Now that Fivetran landed the structured dataset into tables in Snowflake, it's t
 
 ```
 
-Highlight all of the SQL and click the run button in the upper right corner.
+Run both statements.  Click the arrow next to the `Run` button and select `Run all` (or press `Cmd+Shift+Return`).  The second statement takes several seconds because it calls Cortex to create an embedding for each of the 743 records.  When it finishes you will see `Table VINEYARD_DATA_VECTORS successfully created.`
 
-![Fivetran Snowflake 4](assets/snowflake/s_0040.png)
+![Fivetran Snowflake 4](assets/snowflake-s-0040.png)
 
-You may then preview the data by refreshing the left nav panel (click the `refresh` icon).  You will see that two new tables were created.  You may select the tables and click the preview icon if you wish to view the transformations.
+You may then preview the data by going back to `Catalog` and `Explorer` and refreshing your schema.  You will see that two new tables were created next to the table Fivetran loaded.  You may select the tables and open `Data Preview` if you wish to view the transformations.
 
-![Fivetran Snowflake 5](assets/snowflake/s_0050.png)
+![Fivetran Snowflake 5](assets/snowflake-s-0050.png)
 
 That's it for transforming the data...now we are ready to build our Streamlit app!
 
 ## Build the Chatbot as a Streamlit Application
 We are now ready to build our Streamlit application.  Snowflake's Streamlit feature makes creating and sharing applications easy.
 
-**Step 1.** Click the Projects icon in the left menu and select `Streamlit`.
+Streamlit in Snowflake makes creating and sharing data applications easy.  You will build the chatbot entirely inside Snowsight, with no local setup.
 
-![Fivetran Snowflake 6](assets/snowflake/s_0060.png)
+> 
+> **Why SQL instead of the `Create new app` button?**  New Streamlit apps created from the Snowsight screens run on a *container runtime* backed by a shared compute pool, which needs a `pyproject.toml` file, takes about a minute to start and may not have capacity.  Creating the app with SQL lets you choose the **warehouse runtime**, which runs on the warehouse you already use and needs no compute pool.
+>
 
-**Step 2.** Click the `+Streamlit App` in the upper right corner of the screen.
+> 
+> Snowflake Cortex model availability depends on the region of your Snowflake account and changes over time.  The code below lists the models this lab was tested with.  If a model returns an error, pick another from the list, or edit the `MODELS` list to match what is available in your account (see the [Cortex LLM function docs](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions)).
+>
 
-![Fivetran Snowflake 7](assets/snowflake/s_0070.png)
+**Step 1.** Open a SQL file with your Fivetran schema as the context.  You can reuse the SQL file from the Transform step.  If you start a new one, click `Add new` and select `SQL file`, and set the database and schema to the ones that contain the `VINEYARD_DATA_VECTORS` table.  **VERY IMPORTANT: The app reads that table from the schema it is created in, so create the app in the same database and schema.**
 
-Type a name for your chat app.  **VERY IMPORTANT: Ensure you choose the database and schema containing your data.**  Once the fields are set, click `Create`.
+``` sql
+USE SCHEMA <YOUR_DATABASE>.<YOUR_SCHEMA>;
+```
 
-![Fivetran Snowflake 8](assets/snowflake/s_0080.png)
+**Step 2.** Create the app on the warehouse runtime.  Replace `<YOUR_WAREHOUSE>` with the name of your warehouse and run both statements.
 
-**Step 3.** Get used to the interface and remove the default Streamlit code.
+``` sql
+/** Create the chatbot app on the warehouse runtime (no compute pool needed) **/
+CREATE OR REPLACE STREAMLIT WINE_ASSISTANT
+  RUNTIME_NAME = 'SYSTEM$WAREHOUSE_RUNTIME'
+  QUERY_WAREHOUSE = <YOUR_WAREHOUSE>
+  MAIN_FILE = 'streamlit_app.py';
 
-Let's first understand how this screen operates. 
+/** Make the app editable in Snowsight **/
+ALTER STREAMLIT WINE_ASSISTANT ADD LIVE VERSION FROM LAST;
+```
 
-The top right contains application controls.  To change the application settings, click the vertical three dots (ex. changing warehouse).  The two main features of this area are the `Run` button and the `Edit` button.  You will notice below that the `Edit` button is not shown.  That is because we are in edit mode.  The next time you go to the Streamlit section and select your application, it will be in "Run" mode, and `Edit` will appear to allow you to edit your application later.
+> 
+> The second statement creates the app's *live version*, which is what Snowsight saves your edits into.  Without it, saving code fails with `The provided location is not writable. Please specify a live version.`  Run both statements with the same role you use to edit the app so the app is owned by that role.
+>
 
-The second portion of the screen is the bottom left panel controls.  There are three that can be toggled on and off.  The first expands/collapses the left nav panel (which you really do not need for this lab).  The second expands/collapses the code panel.  The third expands/collapses the running application panel.  Get to know how these three buttons work by turning them off and on.  When developing/editing, it seems to be easier having the left nav panel and the right application panel off allowing the code panel to have the full screen.
+**Step 3.** Open the app.  Click `Projects` in the left menu and select `Streamlit`, then click `WINE_ASSISTANT`.  If the app opens in run mode, click `Edit` in the upper right corner.
 
-![Fivetran Snowflake 9](assets/snowflake/s_0090.png)
+![Fivetran Snowflake 6](assets/snowflake-s-0060.png)
 
-Once you are comfortable with the screen navigation, make the code panel enabled and place your cursor in the code, **highlight all the code and delete it**.  This is simply the default code for a new application.
+**Step 4.** Get familiar with the editor and remove the default code.
 
-**Step 4.** Add the wine assistant chatbot code below to the empty code editor.
+The upper right area contains the application controls.  The vertical three dots open settings such as changing the warehouse.  The main features are the `Run` button and the `Edit` button.  The `Edit` button is not shown while you are in edit mode.  The next time you open the app it starts in run mode, and `Edit` appears so you can change the app later.
+
+The bottom left area has three toggles.  The first expands or collapses the left nav panel (which you do not need for this lab).  The second expands or collapses the code panel.  The third expands or collapses the running application panel.  When editing, it is easiest to hide the left nav panel and the application panel so the code panel has the full screen.
+
+![Fivetran Snowflake 9](assets/snowflake-s-0090.png)
+
+Once you are comfortable with the screen, make sure the code panel is visible, place your cursor in the code, **highlight all the code and delete it**.  This is only the default code for a new application.
+
+**Step 5.** Add the wine assistant chatbot code below to the empty code editor.
+
+> 
+> No additional packages are needed.  You do not need to use the `Packages` menu at the top of the editor.
+>
 
 ``` python
 #
@@ -276,17 +290,14 @@ import time
 
 # Change this list as needed to add/remove model capabilities.
 MODELS = [
-    "llama3.2-3b",
-    "claude-3-5-sonnet",
+    "claude-sonnet-4-5",
+    "claude-haiku-4-5",
+    "openai-gpt-5-mini",
+    "llama3.3-70b",
     "mistral-large2",
-    "llama3.1-8b",
-    "llama3.1-405b",
     "llama3.1-70b",
-    "mistral-7b",
-    "jamba-1.5-large",
-    "mixtral-8x7b",
-    "reka-flash",
-    "gemma-7b"
+    "llama3.1-8b",
+    "mistral-7b"
 ]
 
 # Change this value to control the number of tokens you allow the user to change to control RAG context. In
@@ -301,7 +312,7 @@ def build_layout():
 
     # Setup the state variables.
     # Resets text input ID to enable it to be cleared since currently there is no native clear.
-    if 'reset_key' not in st.session_state: 
+    if 'reset_key' not in st.session_state:
         st.session_state.reset_key = 0
     # Holds the list of responses so the user can see changes while selecting other models and settings.
     if 'conversation_state' not in st.session_state:
@@ -313,37 +324,41 @@ def build_layout():
     #
     st.set_page_config(layout="wide")
     st.title(":wine_glass: California Wine Country Visit Assistant :wine_glass:")
-    st.write("""I'm an interactive California Wine Country Visit Assistant. A bit about me...I'm a RAG-based, Gen AI app **built 
+    st.write("""I'm an interactive California Wine Country Visit Assistant. A bit about me...I'm a RAG-based, Gen AI app **built
       with and powered by Fivetran, Snowflake, Streamlit, and Cortex** and I use a custom, structured dataset!""")
-    st.caption("""Let me help plan your trip to California wine country. Using the dataset you just moved into the Snowflake Data 
-      Cloud with Fivetran, I'll assist you with winery and vineyard information and provide visit recommendations from numerous 
-      models available in Snowflake Cortex (including Claude 3.5 Sonnet). You can even pick the model you want to use or try out 
-      all the models. The dataset includes over **700 wineries and vineyards** across all CA wine-producing regions including the 
+    st.caption("""Let me help plan your trip to California wine country. Using the dataset you just moved into the Snowflake Data
+      Cloud with Fivetran, I'll assist you with winery and vineyard information and provide visit recommendations from numerous
+      models available in Snowflake Cortex (including Claude Sonnet 4.5). You can even pick the model you want to use or try out
+      all the models. The dataset includes over **700 wineries and vineyards** across all CA wine-producing regions including the
       North Coast, Central Coast, Central Valley, South Coast and various AVAs sub-AVAs. Let's get started!""")
     user_question_placeholder = "Message your personal CA Wine Country Visit Assistant..."
-    st.sidebar.selectbox("Select a Snowflake Cortex model:", MODELS, key="model_name", index=3)
-    st.sidebar.checkbox('Use your Fivetran dataset as context?', key="dataset_context", help="""This turns on RAG where the 
+    st.sidebar.selectbox("Select a Snowflake Cortex model:", MODELS, key="model_name", index=0)
+    st.sidebar.checkbox('Use your Fivetran dataset as context?', key="dataset_context", help="""This turns on RAG where the
     data replicated by Fivetran and curated in Snowflake will be used to add to the context of the LLM prompt.""")
     if st.button('Reset conversation', key='reset_conversation_button'):
         st.session_state.conversation_state = []
         st.session_state.reset_key += 1
-        st.rerun()
+        # Streamlit 1.22 (default on the warehouse runtime) only has experimental_rerun
+        if hasattr(st, "rerun"):
+            st.rerun()
+        else:
+            st.experimental_rerun()
     processing_placeholder = st.empty()
-    question = st.text_input("", placeholder=user_question_placeholder, key=f"text_input_{st.session_state.reset_key}", 
+    question = st.text_input("", placeholder=user_question_placeholder, key=f"text_input_{st.session_state.reset_key}",
                              label_visibility="collapsed")
     if st.session_state.dataset_context:
-        st.caption("""Please note that :green[**_I am_**] using your Fivetran dataset as context. All models are very 
+        st.caption("""Please note that :green[**_I am_**] using your Fivetran dataset as context. All models are very
           creative and can make mistakes. Consider checking important information before heading out to wine country.""")
     else:
-        st.caption("""Please note that :red[**_I am NOT_**] using your Fivetran dataset as context. All models are very 
+        st.caption("""Please note that :red[**_I am NOT_**] using your Fivetran dataset as context. All models are very
           creative and can make mistakes. Consider checking important information before heading out to wine country.""")
     with st.sidebar.expander("Advanced Options"):
-        st.selectbox("Select number of context chunks:", CHUNK_NUMBER, key="num_retrieved_chunks", help="""Adjust based on the 
+        st.selectbox("Select number of context chunks:", CHUNK_NUMBER, key="num_retrieved_chunks", help="""Adjust based on the
         expected number of records/chunks of your data to be sent with the prompt before Cortext calls the LLM.""", index=1)
-    st.sidebar.caption("""I use **Snowflake Cortex** which provides instant access to industry-leading large language models (LLMs), 
-      including Claude, Llama, and Snowflake Arctic that have been trained by researchers at companies like Anthropic, Meta, Mistral, Google, Reka, and Snowflake.\n\nCortex 
-      also offers models that Snowflake has fine-tuned for specific use cases. Since these LLMs are fully hosted and managed by 
-      Snowflake, using them requires no setup. My data stays within Snowflake, giving me the performance, scalability, and governance 
+    st.sidebar.caption("""I use **Snowflake Cortex** which provides instant access to industry-leading large language models (LLMs),
+      including Claude, Llama, and Snowflake Arctic that have been trained by researchers at companies like Anthropic, Meta, Mistral, Google, Reka, and Snowflake.\n\nCortex
+      also offers models that Snowflake has fine-tuned for specific use cases. Since these LLMs are fully hosted and managed by
+      Snowflake, using them requires no setup. My data stays within Snowflake, giving me the performance, scalability, and governance
       you expect.""")
     for _ in range(6):
         st.sidebar.write("")
@@ -374,11 +389,11 @@ def build_prompt (question):
           having v_sim > 0
           order by v_sim desc
           limit ?)
-          select winery_or_vineyard, winery_chunk from context_cte 
+          select winery_or_vineyard, winery_chunk from context_cte
           """
         chunk_limit = st.session_state.num_retrieved_chunks
         context_df = session.sql(context_cmd, params=[question, chunk_limit]).to_pandas()
-        context_len = len(context_df) -1
+        context_len = len(context_df)
         # Add the vineyard names to a list to be displayed later.
         chunks_used = context_df['WINERY_OR_VINEYARD'].tolist()
         # Build the additional prompt context using the wine dataset.
@@ -388,22 +403,22 @@ def build_prompt (question):
         rag_context = rag_context.replace("'", "''")
         # Construct the prompt.
         new_prompt = f"""
-          Act as a California winery visit expert for visitors to California wine country who want an incredible visit and 
-          tasting experience. You are a personal visit assistant named Snowflake CA Wine Country Visit Assistant. Provide 
-          the most accurate information on California wineries based only on the context provided. Only provide information 
-          if there is an exact match below.  Do not go outside the context provided.  
+          Act as a California winery visit expert for visitors to California wine country who want an incredible visit and
+          tasting experience. You are a personal visit assistant named Snowflake CA Wine Country Visit Assistant. Provide
+          the most accurate information on California wineries based only on the context provided. Only provide information
+          if there is an exact match below.  Do not go outside the context provided.
           Context: {rag_context}
-          Question: {question} 
-          Answer: 
+          Question: {question}
+          Answer:
           """
     else:
         # Construct the generic version of the prompt without RAG to only go against what the LLM was trained.
         new_prompt = f"""
-          Act as a California winery visit expert for visitors to California wine country who want an incredible visit and 
-          tasting experience. You are a personal visit assistant named Snowflake CA Wine Country Visit Assistant. Provide 
+          Act as a California winery visit expert for visitors to California wine country who want an incredible visit and
+          tasting experience. You are a personal visit assistant named Snowflake CA Wine Country Visit Assistant. Provide
           the most accurate information on California wineries.
-          Question: {question} 
-          Answer: 
+          Question: {question}
+          Answer:
           """
 
     return new_prompt, chunks_used
@@ -412,14 +427,14 @@ def get_model_token_count(prompt_or_response) -> int:
     #
     # Calculate and return the token count for the model and prompt or response.
     #
-    token_count = 0
+    token_count = None
     try:
         token_cmd = f"""select SNOWFLAKE.CORTEX.COUNT_TOKENS(?, ?) as token_count;"""
         tc_data = session.sql(token_cmd, params=[st.session_state.model_name, prompt_or_response]).collect()
         token_count = tc_data[0][0]
     except Exception:
-        # Negative value just denoting that tokens could not be counted for some reason.
-        token_count = -9999
+        # None means COUNT_TOKENS does not support this model (for example, the Claude and OpenAI models).
+        token_count = None
 
     return token_count
 
@@ -432,10 +447,10 @@ def calc_times(start_time, first_token_time, end_time, token_count):
     time_to_first_token = first_token_time - start_time  # Time to the first token
     total_duration = end_time - start_time  # Total time to generate all tokens
     time_for_remaining_tokens = total_duration - time_to_first_token  # Time for the remaining tokens
-    
+
     # Calculate tokens per second rate
-    tokens_per_second = token_count / total_duration if total_duration > 0 else 1
-    
+    tokens_per_second = token_count / total_duration if token_count is not None and total_duration > 0 else None
+
     # Ensure that time to first token is realistically non-zero
     if time_to_first_token < 0.01:  # Adjust the threshold as needed
         time_to_first_token = total_duration / 2  # A rough estimate if it's too small
@@ -451,14 +466,14 @@ def run_prompt(question):
     start_time = time.time()
     cortex_cmd = f"""
              select SNOWFLAKE.CORTEX.COMPLETE(?,?) as response
-           """    
+           """
     sql_resp = session.sql(cortex_cmd, params=[st.session_state.model_name, formatted_prompt])
-    first_token_time = time.time() 
+    first_token_time = time.time()
     answer_df = sql_resp.collect()
     end_time = time.time()
     time_to_first_token, time_for_remaining_tokens, tokens_per_second = calc_times(start_time, first_token_time, end_time, token_count)
 
-    return answer_df, time_to_first_token, time_for_remaining_tokens, tokens_per_second, int(token_count), chunks_used
+    return answer_df, time_to_first_token, time_for_remaining_tokens, tokens_per_second, token_count, chunks_used
 
 def main():
     #
@@ -474,17 +489,26 @@ def main():
                 response = data[0][0]
                 # Add the response token count to the token total so we get a better prediction of the costs.
                 if response:
-                    token_count += get_model_token_count(response)
+                    response_token_count = get_model_token_count(response)
+                    if token_count is not None and response_token_count is not None:
+                        token_count += response_token_count
+                    else:
+                        token_count = None
+                    if token_count is None:
+                        token_summary = "token count not available for this model"
+                    else:
+                        token_summary = f"{token_count} tokens • {tokens_per_second:.2f} tokens/s"
+
                     # Conditionally append the token count line based on the checkbox
                     rag_delim = ", "
                     st.session_state.conversation_state.append(
                         (f":information_source: RAG Chunks/Records Used:",
-                         f"""<span style='color:#808080;'> {(rag_delim.join([str(ele) for ele in chunks_used])) if chunks_used else 'none'} 
+                         f"""<span style='color:#808080;'> {(rag_delim.join([str(ele) for ele in chunks_used])) if chunks_used else 'none'}
                          </span><br/><br/>""")
                     )
                     st.session_state.conversation_state.append(
-                        (f":1234: Token Count for '{st.session_state.model_name}':", 
-                         f"""<span style='color:#808080;'>{token_count} tokens • {tokens_per_second:.2f} tokens/s • 
+                        (f":1234: Token Count for '{st.session_state.model_name}':",
+                         f"""<span style='color:#808080;'>{token_summary} •
                          {time_to_first_token:.2f}s to first token + {time_for_remaining_tokens:.2f}s.</span>""")
                     )
                     # Append the new results.
@@ -492,7 +516,7 @@ def main():
                     st.session_state.conversation_state.append(("You:", question))
             except Exception as e:
                 st.warning(f"An error occurred while processing your question: {e}")
-        
+
         # Display the results in a stacked format.
         if st.session_state.conversation_state:
             for i in reversed(range(len(st.session_state.conversation_state))):
@@ -510,12 +534,11 @@ if __name__ == "__main__":
     # App startup method.
     #
     session = get_active_session()
-    
-    main()
 
+    main()
 ```
 
-**Step 5.** Let's break down the code before we run the application just so we understand how it all comes together.
+**Step 6.** Let's break down the code before we run the application just so we understand how it all comes together.
 
 > 
 > Note: There are no additional packages needed to run the lab.  So we do not need to use the `packages` import functionality at the top of the code editor.
@@ -527,7 +550,7 @@ Now we can breakdown the Python functions in the code relatively easy.  The firs
 
 The `build_prompt` function builds much of the "persona" for you as well as builds the RAG or non-RAG prompt depending if you check the box to use your data.  It is suggested that you try both to see the differences in responses.  The rest of the prompt structure such as content, task, format, and possibly example are added by you...where truly, those are not needed to get results.  But, a better prompt structure typically means better results, and each model will render those results based on the model's training.  We give some pretty fun examples in the following sections, but you can see that they do not conform to any single format.
 
-The `get_model_token_count` function calculates what Snowflake will use to run the prompt against the LLM.  This calculation helps understand the cost implications of using Cortex.  See the [Cost Considerations](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions#cost-considerations) in the docs.  By default, the lab will generate the token count for the prompt, plus the RAG data is used, as well as the response from the LLM chosen.
+The `get_model_token_count` function calculates what Snowflake will use to run the prompt against the LLM.  This calculation helps understand the cost implications of using Cortex.  See the [Cost Considerations](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions#cost-considerations) in the docs.  By default, the lab will generate the token count for the prompt, plus the RAG data is used, as well as the response from the LLM chosen.  `COUNT_TOKENS` does not support every model (the Claude and OpenAI models are not supported), so for those the app shows "token count not available for this model" and only the timings.
 
 The `calc_times` function performs some additional insight into how fast various Cortex calls take to help benchmark LLM efficiency.
 
@@ -541,14 +564,14 @@ Ok, you are close to the end.  Click the Run button in the upper right corner to
 
 Let's quickly run through the interface controls.
 
-![Fivetran Snowflake 11](assets/snowflake/s_0110.png)
+![Fivetran Snowflake 11](assets/snowflake-s-0110.png)
 
-**Content Area:** The content area (purple box) has two controls.
+**Content Area:** The content area on the right has two controls.
 - Prompt input textbox.  Type in your prompt, click enter/return and the prompt executes.  
-- The `reset` button clears the prompt and response history, but leaves the side panel settings alone allowing you to start a new prompt to test with the same settings.
-- Also note that next to the `run` button you will see the status drop down list.  You will notice that the status will start spinning when a prompt is running.  If you wonder if your prompt is executing, just see if the status is spinning.
+- The `Reset conversation` button clears the prompt and response history, but leaves the side panel settings alone allowing you to start a new prompt to test with the same settings.
+- Also note that next to the `Run` or `Edit` button you will see the status drop down list.  You will notice that the status will start spinning when a prompt is running.  If you wonder if your prompt is executing, just see if the status is spinning.
 
-**Side Panel:** The side panel (green box) contains features that alter the functionality of the chatbot.  Refresh occurs automatically meaning if you change any setting in the side panel, the current prompt automatically runs allowing you to compare results from different feature settings.
+**Side Panel:** The side panel on the left contains features that alter the functionality of the chatbot.  Refresh occurs automatically meaning if you change any setting in the side panel, the current prompt automatically runs allowing you to compare results from different feature settings.
 - The `models` drop down list contains the list of models defined at the top of the application code block.  Try different models to see how each responds to the prompts, and see which one may fit your use case better.
 - Next is the `use your dataset` checkbox which enables RAG.  When this checkbox is checked or unchecked, you will see the message below the prompt change alerting you of what to expect in your results.  Try a prompt with the checkbox checked and then uncheck to see the response change and see why RAG enables your chatbot to provide insight on "your" data (use at least one control record so that you know RAG is being performed since the control records/wineries/vineyards do not exist in reality).
 - Under `advanced options`, the `number of chunks` list sets the limit on the number of records/chunks to add to the current context for the LLM.  This is the core of RAG functionality.  As noted before, there are limits to the number of chunks (translated into tokens) for each model.  So keep that in mind.  The current list of numbers in the chunks drop down list should not cause any harm in running in any current LLM in the list.
@@ -563,13 +586,13 @@ Let's quickly run through the interface controls.
 
 **The Response:** Review the response for each prompt.  Remember, the newest response will bubble to the top; so you may need to scroll up to see it.
 
-![Fivetran Snowflake 12](assets/snowflake/s_0120.png)
+![Fivetran Snowflake 12](assets/snowflake-s-0120.png)
 
 There are two additional pieces of information added to the bottom of each response.
 - The first is the token count for the prompt and response along with some timings.  This helps you understand the efficiency and costs of the model run.
 - The second is the RAG data, in this case the vineyard/winery names from your table, that was added to the context sent to the LLM.  If no RAG items are sent to the model, you will see a 'none' for the RAG data.  Just the names are displayed here where the entire unstructured record (winery_information column) was added to the actual LLM call.
 
-![Fivetran Snowflake 13](assets/snowflake/s_0130.png)
+![Fivetran Snowflake 13](assets/snowflake-s-0130.png)
 
 ## Chatbot Tests
 
@@ -658,7 +681,7 @@ You may have noticed that you did not need to build a chunking function to split
 This lab demonstrates the ease at which you can utilize "structured datasets" for GenAI provided by Fivetran's fully automated data integration pipelines allowing you to build value-add applications in Snowflake and ask questions about "your" data without having to worry about data freshness!
 
 ### What You Learned
-- Created a production-ready data pipeline from PostgreSQL to Snowflake via Fivetran in a few clicks!
+- Created a production-ready data pipeline from Amazon S3 or PostgreSQL to Snowflake via Fivetran in a few clicks!
 - Utilized Cortex to take a structured dataset and convert it into an unstructured vector dataset!
 - Created a Streamlit chatbot application!
 - Had fun creating wine trips through the California countryside including places only found in your data!

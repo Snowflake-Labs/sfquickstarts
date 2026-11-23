@@ -485,8 +485,8 @@ DROP ROLE tasty_bytes_data_ml_app_demo;
 
 ### 다음 단계
 
-위치 추천 ML 모델에 대한 상세 정보는 [Tasty Bytes - 데이터 사이언스를 위한 Snowpark 101](/en/developers/guides/tasty-bytes-snowpark-101-for-data-science-kr/) Quickstart를 참조하십시오.
+위치 추천 ML 모델에 대한 상세 정보는 [Tasty Bytes - 데이터 사이언스를 위한 Snowpark 101](https://www.snowflake.com/ko/developers/guides/tasty-bytes-snowpark-101-for-data-science-kr/) Quickstart를 참조하십시오.
 
 Snowflake 데이터 클라우드에서의 여정을 계속하려면 아래 링크를 방문하여 사용 가능한 더 많은 Tasty Bytes - Quickstart를 확인하십시오.
 
-- ### [Tasty Bytes 사용 - Quickstarts 목차](/en/developers/guides/tasty-bytes-introduction-kr/)
+- ### [Tasty Bytes 사용 - Quickstarts 목차](https://www.snowflake.com/ko/developers/guides/tasty-bytes-introduction-kr/)

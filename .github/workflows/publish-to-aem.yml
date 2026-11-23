@@ -1,0 +1,111 @@
+name: Publish Quickstart to AEM
+
+# Called by publish-on-approval after a push to master, and runs with production AEM
+# credentials. Every input reaches Python through env: and is validated before it is
+# used to build a path or a URL; nothing is interpolated into a shell.
+on:
+  workflow_call:
+    inputs:
+      quickstart_name:
+        description: 'Name of the quickstart folder'
+        required: true
+        type: string
+      language:
+        description: 'Language code (en, es, it, fr, de, ja, ko, pt_br)'
+        required: true
+        type: string
+      commit_sha:
+        description: 'Commit SHA for reference'
+        required: true
+        type: string
+      source_path:
+        description: 'Path to the source folder containing the markdown (e.g., site/sfguides/src/my-guide or journeys/waf/my-guide)'
+        required: false
+        type: string
+        default: ''
+      page_base_path:
+        description: 'Base page path to clone from when creating new pages'
+        required: false
+        type: string
+        default: ''
+      aws_secret_name:
+        description: 'AWS Secrets Manager secret name containing AEM credentials'
+        required: true
+        type: string
+
+permissions: {}
+
+jobs:
+  publish_quickstart:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    # Names what this job actually is, and gives the IAM trust policy an
+    # environment claim to scope the role to.
+    environment:
+      name: production
+    permissions:
+      contents: read
+      # Required to assume the AEM role by OIDC. GitHub only mints a token
+      # carrying environment:production for a job that declares that environment.
+      id-token: write
+    env:
+      PYTHONPATH: scripts
+    steps:
+      # commit_sha comes from github.sha in the calling workflow, so this pins the
+      # checkout to trusted code that is already on master. It must also come first:
+      # checkout clears the workspace, discarding anything an earlier step wrote.
+      - name: Checkout repository
+        uses: actions/checkout@v7.0.0
+        with:
+          ref: ${{ inputs.commit_sha }}
+          sparse-checkout: |
+            ${{ inputs.source_path || format('site/sfguides/src/{0}', inputs.quickstart_name) }}
+            scripts/lib
+            scripts/publish
+            scripts/deploy
+            scripts/aem-staging
+          sparse-checkout-cone-mode: true
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@7474bc4690e29a8392af63c5b98e7449536d5c3a # v4
+        with:
+          role-to-assume: arn:aws:iam::886692307588:role/github-sfquickstarts-prod-aem-iam-role
+          aws-region: us-west-1
+
+      # The blank alias before the comma drops the secret-name prefix, so the JSON
+      # keys land as AEM_USERNAME, AEM_PASSWORD and AEM_AUTHOR_URL. The action masks
+      # each value itself, which is why nothing is written to $GITHUB_ENV by hand.
+      - name: Fetch AEM secrets
+        uses: aws-actions/aws-secretsmanager-get-secrets@2cb1a461cbd4865ac4299648312e4704c646cd53 # v3
+        with:
+          secret-ids: ",${{ inputs.aws_secret_name }}"
+          parse-json-secrets: true
+
+      - name: Setup Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+          cache-dependency-path: scripts/requirements.txt
+
+      # The one credentialed job that is not dependency-free. publish_quickstart.py
+      # is stdlib-only, but it shells out to parse_markdown.py, which needs PyYAML
+      # to read frontmatter and otherwise falls back to a hand-rolled parser --
+      # silently publishing differently-parsed content. --require-hashes is what
+      # makes installing here acceptable: the pin admits no substitution.
+      - name: Install dependencies
+        run: pip install --require-hashes -r scripts/requirements.txt
+
+      - name: Publish quickstart
+        env:
+          QUICKSTART_NAME: ${{ inputs.quickstart_name }}
+          LANGUAGE: ${{ inputs.language }}
+          COMMIT_SHA: ${{ inputs.commit_sha }}
+          # Read here rather than taken as an input: the calling job cannot declare
+          # an environment, so an environment-scoped variable only resolves in this
+          # job, which does.
+          BASE_IMAGE_URL: ${{ vars.AEM_BASE_IMAGE_URL }}
+          SOURCE_PATH: ${{ inputs.source_path }}
+          PAGE_BASE_PATH: ${{ inputs.page_base_path }}
+          AWS_SECRET_NAME: ${{ inputs.aws_secret_name }}
+        run: python3 scripts/publish/publish_quickstart.py

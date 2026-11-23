@@ -2,10 +2,13 @@ bazel-*
 .DS_Store
 .drone.sec.yml
 .idea/
+.vscode/
 *.iml
 debug.test
 *pb.go
 node_modules
+__pycache__/
+*.py[cod]
 site/.firebaserc
 site/.firebase/**
 package-lock.json
@@ -13,3 +16,6 @@ package-lock.json
 site/sfguides/src/visual_analytics_powered_by_snowflake_and_tableau/assets/2022
 site/sfguides/src/visual_analytics_powered_by_snowflake_and_tableau/scripts/random.sql
 site/package-lock.json
+__pycache__/
+*.pyc
+plans/

@@ -2,14 +2,14 @@ author: Doris Lee, Dureti Shemsi
 language: en
 id: intro-to-online-feature-store-in-snowflake
 summary: Build real-time ML predictions using Snowflake Online Feature Store for low-latency feature serving 
-categories: snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/model-development, snowflake-site:taxonomy/snowflake-feature/applied-analytics, snowflake-site:taxonomy/snowflake-feature/snowflake-ml-functions, snowflake-site:taxonomy/snowflake-feature/snowpark, snowflake-site:taxonomy/snowflake-feature/snowpark-container-services, snowflake-site:taxonomy/snowflake-feature/dynamic-tables,snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/solution-center/certification/certified-solution
+categories: snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/model-development, snowflake-site:taxonomy/snowflake-feature/applied-analytics, snowflake-site:taxonomy/snowflake-feature/snowflake-ml-functions, snowflake-site:taxonomy/snowflake-feature/snowpark, snowflake-site:taxonomy/snowflake-feature/snowpark-container-services, snowflake-site:taxonomy/snowflake-feature/dynamic-tables,snowflake-site:taxonomy/solution-center/certification/quickstart
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 fork repo link: https://github.com/Snowflake-Labs/sfguide-intro-to-online-feature-store-in-snowflake
 
 
-# Introduction to Online Feature Store in Snowflake
+# Introduction to Online Feature Store with Hybrid Table in Snowflake
 
 <!-- ------------------------ -->
 ## Overview
@@ -655,9 +655,12 @@ Congratulations! You've successfully built an end-to-end ML workflow using Snowf
 
 - [GitHub Repository - Complete Code and Notebooks](https://github.com/Snowflake-Labs/sfguide-intro-to-online-feature-store-in-snowflake)
 - [Snowflake Feature Store Documentation](https://docs.snowflake.com/en/developer-guide/snowflake-ml/feature-store/overview)
-- [Snowflake ML for Python](https://docs.snowflake.com/en/developer-guide/snowpark-ml/index)
+- [Snowflake ML Docs](https://docs.snowflake.com/en/developer-guide/snowpark-ml/index)
+- [Snowflake ML Resources](http://www.snowflake.com/ml)
+- [Best Practices for Production ML](https://www.snowflake.com/en/engineering-blog/best-practices-for-production-ml/)
+- [Agentic Machine Learning Best Practices with Cortex Code](https://www.snowflake.com/en/engineering-blog/agentic-ml-best-practices-cortex-code/)
 - [Online Feature Tables Documentation](https://docs.snowflake.com/en/developer-guide/snowflake-ml/feature-store/create-and-serve-online-features-python)
-- [Snowpark ML Model Registry](https://docs.snowflake.com/en/developer-guide/snowflake-ml/model-registry/overview)
+- [More ML Quickstarts](https://docs.snowflake.com/en/developer-guide/snowflake-ml/quickstart)
 
 ### Next Steps
 

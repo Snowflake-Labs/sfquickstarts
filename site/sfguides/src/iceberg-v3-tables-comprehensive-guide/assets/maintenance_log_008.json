@@ -1,0 +1,34 @@
+[
+  {
+    "log_id": "LOG-2026-008-001",
+    "vehicle_id": "VH-0055",
+    "log_timestamp": "2026-01-22T08:30:00",
+    "event_type": "TRANSMISSION_SERVICE",
+    "severity": "CRITICAL",
+    "description": "Transmission slipping. Full transmission rebuild required. Vehicle down for 3 days.",
+    "technician": "Jason Williams",
+    "service_center": "Denver Mountain Fleet",
+    "parts_replaced": ["transmission rebuild kit", "torque converter", "transmission fluid"],
+    "diagnostic_codes": ["P0700", "P0715", "P0720"],
+    "labor_hours": 20.0,
+    "total_cost": 3500.00,
+    "odometer_reading": 189000,
+    "next_service_date": "2026-02-22"
+  },
+  {
+    "log_id": "LOG-2026-008-002",
+    "vehicle_id": "VH-0028",
+    "log_timestamp": "2026-01-22T14:00:00",
+    "event_type": "SCHEDULED_MAINTENANCE",
+    "severity": "LOW",
+    "description": "15,000 mile service. Oil change, tire rotation, multi-point inspection.",
+    "technician": "Laura Martinez",
+    "service_center": "Salt Lake City Hub",
+    "parts_replaced": ["oil filter", "engine oil 5W-30"],
+    "diagnostic_codes": [],
+    "labor_hours": 1.5,
+    "total_cost": 125.00,
+    "odometer_reading": 15230,
+    "next_service_date": "2026-04-22"
+  }
+]

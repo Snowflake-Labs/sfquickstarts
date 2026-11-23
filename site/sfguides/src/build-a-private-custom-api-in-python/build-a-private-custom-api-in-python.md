@@ -79,9 +79,9 @@ GRANT ROLE DATA_API_ROLE TO ROLE ACCOUNTADMIN;
 <!-- ------------------------ -->
 ## Setting up your Development Environment
 
-The code used in this guide is hosted in GitHub. You will need a new codespace from [this GitHub repository](https://github.com/sfc-gh-bculberson/lab_data_api_python).
+The code used in this guide is hosted in GitHub. You will need a new codespace from [this GitHub repository](https://github.com/Snowflake-Labs/lab_data_api_python).
 
-To create a new codespace, browse to this GitHub [repository](https://github.com/sfc-gh-bculberson/lab_data_api_python) in a browser. You will need to login to GitHub if you are not already logged in to access codespaces. After logging in, click on the green "<> Code" button and "create codespace on main" button.
+To create a new codespace, browse to this GitHub [repository](https://github.com/Snowflake-Labs/lab_data_api_python) in a browser. You will need to login to GitHub if you are not already logged in to access codespaces. After logging in, click on the green "<> Code" button and "create codespace on main" button.
 
 You will then be redirected into codespaces where your development environment will load and all code from the GitHub repository will be loaded in the project.
 
@@ -138,9 +138,9 @@ def customers_top10():
         abort(500, "Error reading from Snowflake. Check the logs for details.")
 ```
 
-You can also review the other endpoints in [connector.py](https://github.com/sfc-gh-bculberson/lab_data_api_python/blob/main/src/connector.py) to see how simple it is to host multiple endpoints.
+You can also review the other endpoints in [connector.py](https://github.com/Snowflake-Labs/lab_data_api_python/blob/main/src/connector.py) to see how simple it is to host multiple endpoints.
 
-If you would also like to see how to build endpoints using the Snowflake Snowpark API, review [snowpark.py](https://github.com/sfc-gh-bculberson/lab_data_api_python/blob/main/src/snowpark.py).
+If you would also like to see how to build endpoints using the Snowflake Snowpark API, review [snowpark.py](https://github.com/Snowflake-Labs/lab_data_api_python/blob/main/src/snowpark.py).
 
 <!-- ------------------------ -->
 ## Building the Application Container
@@ -459,7 +459,7 @@ Finally, you learned how to manage and clean up the deployed services.
 
 ### Related Resources
 
-- [Code for the project on GitHub](https://github.com/sfc-gh-bculberson/lab_data_api_python)
+- [Code for the project on GitHub](https://github.com/Snowflake-Labs/lab_data_api_python)
 - [Snowpark for Python Developer Guide](https://docs.snowflake.com/en/developer-guide/snowpark/python/index.html)
 - [Ockam Documentation](https://docs.ockam.io/)
 - [Snowpark for Python API Reference](https://docs.snowflake.com/en/developer-guide/snowpark/reference/python/index.html)

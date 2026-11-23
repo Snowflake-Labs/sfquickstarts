@@ -1,0 +1,15 @@
+[theme]
+base = "dark"
+backgroundColor = "#0e1117"
+secondaryBackgroundColor = "#111827"
+primaryColor = "#3b82f6"
+textColor = "#f9fafb"
+font = "sans serif"
+
+[browser]
+gatherUsageStats = false
+
+[client]
+# App uses a single entry (streamlit_app.py) with its own sidebar dispatch.
+# pages/ is an import package, NOT native multipage — hide the auto nav.
+showSidebarNavigation = false

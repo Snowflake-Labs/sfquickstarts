@@ -37,15 +37,13 @@ Learn more about [Snowpark](/snowpark/).
 
 ### What is Snowflake ML?
 
-Snowflake ML is the integrated set of capabilities for end-to-end machine learning in a single platform on top of your governed data. Snowflake ML can be used for fully custom and out-of-the-box workflows. For ready-to-use ML, analysts can use ML Functions to shorten development time or democratize ML across your organization with SQL from Studio, our no-code user interface. For custom ML, data scientists and ML engineers can easily and securely develop and productionize scalable features and models without any data movement, silos or governance tradeoffs.
+Snowflake ML is the integrated set of capabilities for end-to-end [machine learning](http://www.snowflake.com/ml) in a single platform on top of your governed data. This is a unified environment for ML development and productionization that is optimized for large-scale distributed feature engineering, model training and inference on CPU and GPU compute without manual tuning or configuration.
 
-To get started with Snowflake ML, developers can use the Python APIs from the [Snowpark ML library](https://docs.snowflake.com/en/developer-guide/snowpark-ml/index), directly from Snowflake Notebooks (public preview) or downloaded and installed into any IDE of choice, including Jupyter or Hex.
-
-![Snowpark](assets/snowflake_ml.png)
+![Snowpark](assets/new-snowflake-ml-architecture.png)
 
 This quickstart will focus on
 
-- Snowpark ML Modeling API, which enables the use of popular Python ML frameworks, such as scikit-learn and XGBoost, for feature engineering and model training without the need to move data out of Snowflake.
+- Snowpark ML Modeling API, which enables the use of popular Python ML frameworks, such as scikit-learn and XGBoost, for feature engineering and model training without the need to move data out of Snowflake. Note: this feature is now outdated. To learn more about how to build scalable ML models with fully managed CPUs and GPUs in a pre-configured environment for large-scale ML training, check out the [Container Runtime docs](https://docs.snowflake.com/en/developer-guide/snowflake-ml/container-runtime-ml) and try one of our [newer ML quickstarts](https://docs.snowflake.com/en/developer-guide/snowflake-ml/quickstart).
 
 - Snowflake Model Registry, which provides scalable and secure model management of ML models in Snowflake, regardless of origin.
 Using these features, you can build and operationalize a complete ML workflow, taking advantage of Snowflake's scale and security features.
@@ -71,7 +69,7 @@ Learn more about [Streamlit](/en/data-cloud/overview/streamlit-in-snowflake/).
 - How to analyze data and perform data engineering tasks using Snowpark DataFrames and APIs
 - How to use open-source Python libraries from curated Snowflake Anaconda channel
 - How to create Snowflake Tasks to automate data pipelines
-- How to train ML model using Snowpark ML in Snowflake
+- How to train ML model using Snowpark ML in Snowflake (Note: Snowpark ML is now outdated. To learn more about how to build scalable ML models with fully managed CPUs and GPUs in a pre-configured environment for large-scale ML training, check out the [Container Runtime docs](https://docs.snowflake.com/en/developer-guide/snowflake-ml/container-runtime-ml) and try one of our [newer ML quickstarts](https://docs.snowflake.com/en/developer-guide/snowflake-ml/quickstart))
 - How to register ML model and use it for inference from Snowpark ML Model Registry
 - How to create Streamlit application that uses the ML Model for inference based on user input
 
@@ -474,8 +472,10 @@ We would love your feedback on this QuickStart Guide! Please submit your feedbac
 - [Source Code on GitHub](https://github.com/Snowflake-Labs/sfguide-getting-started-dataengineering-ml-snowpark-python)
 - [Snowpark for Python Developer Guide](https://docs.snowflake.com/en/developer-guide/snowpark/python/index.html)
 - [Snowpark for Python API Reference](https://docs.snowflake.com/en/developer-guide/snowpark/reference/python/index.html)
-- [Snowpark ML Modeling](https://docs.snowflake.com/developer-guide/snowpark-ml/modeling)
-- [Snowpark ML Model Registry](https://docs.snowflake.com/developer-guide/snowpark-ml/model-registry/overview)
+- [Snowflake ML Resources](http://www.snowflake.com/ml)
+- [Best Practices for Production ML](https://www.snowflake.com/en/engineering-blog/best-practices-for-production-ml/)
+- [Agentic Machine Learning Best Practices with Cortex Code](https://www.snowflake.com/en/engineering-blog/agentic-ml-best-practices-cortex-code/)
+- [More ML Quickstarts](https://docs.snowflake.com/en/developer-guide/snowflake-ml/quickstart)
 - [Download Reference Architecture](/content/dam/snowflake-site/developers/2024/01/FCTO-Polaris-Causal-inference-for-Ad-Measurement-reference-architecture.pdf)
 - [Read the Blog](https://medium.com/snowflake/advertising-campaign-measurement-with-causal-inference-and-snowflake-data-clean-rooms-313121d8d76a)
 - [Watch the Demo](https://youtu.be/Lva9klc3zu0?list=TLGGkDfQ83vJ4M4yMDA5MjAyNQ)

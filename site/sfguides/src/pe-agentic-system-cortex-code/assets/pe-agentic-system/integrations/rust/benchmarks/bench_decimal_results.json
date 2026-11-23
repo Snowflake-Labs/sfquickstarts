@@ -1,0 +1,54 @@
+{
+  "environment": {
+    "platform": "macOS-26.6.2-arm64-arm-64bit",
+    "python": "3.11.6",
+    "numpy": "2.4.2",
+    "decimal_precision": 28
+  },
+  "workload": {
+    "initial_revenue": "100000000",
+    "growth_rate": "0.10",
+    "ebitda_margin": "0.25",
+    "tax_rate": "0.25",
+    "wacc": "0.12",
+    "terminal_growth": "0.03",
+    "capex_pct_revenue": "0.05",
+    "nwc_pct_revenue": "0.10",
+    "projection_years": 5,
+    "grid": 40,
+    "total_dcfs": 1600
+  },
+  "repetitions": 5,
+  "speed": {
+    "python_decimal": {
+      "median_s": 0.008917833009036258,
+      "min_s": 0.008057416998781264,
+      "max_s": 0.009049375003087334,
+      "runs": 5
+    },
+    "python_float": {
+      "median_s": 0.0014008330035721883,
+      "min_s": 0.0013701660063816234,
+      "max_s": 0.0014999170089140534,
+      "runs": 5
+    },
+    "numpy_vectorized": {
+      "median_s": 4.916700709145516e-05,
+      "min_s": 4.516699118539691e-05,
+      "max_s": 0.00021941600425634533,
+      "runs": 5
+    },
+    "rust_decimal": {
+      "median_s": 0.0012539159943116829,
+      "min_s": 0.0011008750007022172,
+      "max_s": 0.004033375007566065,
+      "runs": 5
+    }
+  },
+  "precision": {
+    "worst_abs_divergence_decimal_vs_float": "0.3889025882768278052",
+    "worst_relative_error": 1.0158358971667228e-09,
+    "worst_abs_divergence_decimal_vs_numpy": "0.3889025882768278052"
+  },
+  "rust_available": true
+}

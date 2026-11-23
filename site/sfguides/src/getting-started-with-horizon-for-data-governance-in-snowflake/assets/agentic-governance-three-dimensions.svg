@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 630" font-family="-apple-system, Segoe UI, Helvetica, Arial, sans-serif">
+  <rect width="820" height="630" rx="16" fill="#ffffff"/>
+
+  <!-- Title -->
+  <text x="410" y="44" text-anchor="middle" font-size="24" font-weight="700" fill="#11567f">Three dimensions of agentic governance</text>
+  <text x="410" y="70" text-anchor="middle" font-size="13.5" fill="#5b6b77">Three independent inputs; effective AI authority is where all three intersect</text>
+
+  <!-- Three overlapping circles -->
+  <circle cx="300" cy="250" r="170" fill="#29B5E8" fill-opacity="0.16" stroke="#29B5E8" stroke-width="2.5"/>
+  <circle cx="520" cy="250" r="170" fill="#7D44CF" fill-opacity="0.16" stroke="#7D44CF" stroke-width="2.5"/>
+  <circle cx="410" cy="440" r="170" fill="#e0962a" fill-opacity="0.16" stroke="#e0962a" stroke-width="2.5"/>
+
+  <!-- DATA -->
+  <text x="225" y="176" text-anchor="middle" font-size="17" font-weight="700" fill="#0c3f5c">Data</text>
+  <text x="225" y="198" text-anchor="middle" font-size="17" font-weight="700" fill="#0c3f5c">Governance</text>
+  <text x="225" y="228" text-anchor="middle" font-size="13" fill="#0c3f5c">RBAC</text>
+  <text x="225" y="250" text-anchor="middle" font-size="13" fill="#0c3f5c">Classification</text>
+  <text x="225" y="272" text-anchor="middle" font-size="13" fill="#0c3f5c">Masking</text>
+  <text x="225" y="294" text-anchor="middle" font-size="13" fill="#0c3f5c">Row / aggregation</text>
+  <text x="225" y="312" text-anchor="middle" font-size="13" fill="#0c3f5c">/ projection</text>
+
+  <!-- CAPABILITY -->
+  <text x="595" y="176" text-anchor="middle" font-size="17" font-weight="700" fill="#3a1d6e">Capability</text>
+  <text x="595" y="198" text-anchor="middle" font-size="17" font-weight="700" fill="#3a1d6e">Governance</text>
+  <text x="595" y="228" text-anchor="middle" font-size="13" fill="#3a1d6e">Approved models</text>
+  <text x="595" y="250" text-anchor="middle" font-size="13" fill="#3a1d6e">Approved agents</text>
+  <text x="595" y="272" text-anchor="middle" font-size="13" fill="#3a1d6e">Tools</text>
+
+  <!-- CONTEXT -->
+  <text x="410" y="500" text-anchor="middle" font-size="17" font-weight="700" fill="#8a5a12">Context Governance</text>
+  <text x="410" y="526" text-anchor="middle" font-size="13" fill="#8a5a12">Agent Identity</text>
+  <text x="410" y="548" text-anchor="middle" font-size="13" fill="#8a5a12">Restricted Session Scope</text>
+  <text x="410" y="570" text-anchor="middle" font-size="13" fill="#8a5a12">Data movement channel</text>
+
+  <!-- INTERSECTION -->
+  <text x="410" y="296" text-anchor="middle" font-size="12.5" font-weight="700" fill="#11567f">Effective</text>
+  <text x="410" y="312" text-anchor="middle" font-size="12.5" font-weight="700" fill="#11567f">AI</text>
+  <text x="410" y="328" text-anchor="middle" font-size="12.5" font-weight="700" fill="#11567f">authority</text>
+</svg>

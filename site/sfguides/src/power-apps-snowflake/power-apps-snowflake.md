@@ -30,7 +30,7 @@ Snowflake is a cloud-based data platform that allows organizations to store, pro
 ### What You’ll Need 
 - Signup for free [Snowflake Account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides)
 - Signup for [Power Apps Account](https://www.microsoft.com/en-us/power-platform/products/power-apps/) or use an account with premium Power Apps license 
-- Use your existing Company Entra ID, or [sign-up](https://azure.microsoft.com/en-us/pricing/purchase-options/azure-account?icid=free-services&ref=azure.microsoft.com&hasfullconsent=true)  
+- Signup for free Azure Entra [Azure Services](https://aka.ms/msazuretrial) or use existing school or work account.
 
 
 ### What You’ll Build 

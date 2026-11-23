@@ -1,10 +1,10 @@
 author: Carlos Suarez
 id: data-engineering-snowpark-streamlit-inegi
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering, snowflake-site:taxonomy/snowflake-feature/transformation
-language: en
+language: es
 summary: End-to-End from local to cloud using Snowapark Python Streamlit
 environments: web
-status: Hidden 
+status: Archived 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 # Ingenieria de Datos con Snowpark y visualización con Streamlit
@@ -50,10 +50,10 @@ Base de datos (lista):
 
 <h4>Código fuente</h4>
 Descargar el repositorio que contiene el código necesario
-[github repo](https://github.com/sfc-gh-csuarez/snowpark_inegi.git)
+[github repo](https://github.com/)
 
 ```shell
-git clone https://github.com/sfc-gh-csuarez/snowpark_inegi.git 
+git clone https://github.com/ 
 ```
 Después de la descarga ingresar a la carpeta **snowpark_inegi-main** y abrir con Visual Studio Code o el editor de preferencia que soporte archivos Jupyter Notebook  
 
@@ -110,7 +110,7 @@ A partir de este punto y en adelante se usará el rol "inegi_role"
 
 <h4>Configuración config.py</h4> 
 
-En la URL Snowflake <b>https://<id_cuenta>.<zona_region_cuenta>.snowflakecomputing.com</b> ejemplo: <b>https://ly14496.south-central-us.azure.snowflakecomputing.com</b>  los valores correspondientes son:
+En la URL Snowflake <b>https://<id_cuenta>.<zona_region_cuenta>.snowflakecomputing.com</b> ejemplo: <b>nn</b>  los valores correspondientes son:
 <p>
 id_cuenta = <b>ly14496</b><br>
 zona_region_cuenta = <b>south-central-us.azure</b>
@@ -121,7 +121,7 @@ En este archivo config.py ingresar los valores para cada propiedad  con la infor
 connection_parameters = {
     "account": "<id_cuenta>.<zona_region_cuenta>",
     "user": "<tu_usuario_snowflake>",
-    "password": "<tu_contraseñan_snowflake>",
+    "password": "<XXXXX>",
     "warehouse": "INEGI_WH",
     "role": "INEGI_ROLE",
     "database": "INEGI",
@@ -129,7 +129,7 @@ connection_parameters = {
 }
 ```
 
-Detalle en repositorio [github repo](https://github.com/sfc-gh-csuarez/snowpark_inegi.git)
+Detalle en repositorio [github repo](https://github.com/)
 
 
 ## Extraer y Transformar 
@@ -290,6 +290,6 @@ Con Snowpark y Streamlit es posible de forma directa hacer aplicaciones End-to-E
 - Modelo y Carga de datos en Snowflake
 - Visualización de datos con Streamlit
 
-[Demo Completo en Snowflake Demo Hub](https://developers.snowflake.com/demos/visualizacion-de-datos-demograficos-es/)
+[Demo Completo en Snowflake Demo Hub](https://developers.snowflake.com/)
 
-Repositorio [github repo](https://github.com/sfc-gh-csuarez/snowpark_inegi.git)
+Repositorio [github repo](https://github.com/)

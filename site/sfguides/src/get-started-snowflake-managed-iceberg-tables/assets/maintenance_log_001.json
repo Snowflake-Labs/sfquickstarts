@@ -1,0 +1,41 @@
+[
+  {
+    "log_id": "ML-001",
+    "vehicle_id": "VH-0012",
+    "log_timestamp": "2025-01-15T09:30:00",
+    "event_type": "oil_change",
+    "severity": "routine",
+    "description": "Scheduled oil change and filter replacement",
+    "mileage_at_service": 45230,
+    "technician": "Mike R.",
+    "parts_replaced": ["oil_filter", "engine_oil_5w30"],
+    "total_cost": 89.99,
+    "next_service_due": "2025-04-15"
+  },
+  {
+    "log_id": "ML-002",
+    "vehicle_id": "VH-0003",
+    "log_timestamp": "2025-01-16T14:15:00",
+    "event_type": "tire_rotation",
+    "severity": "routine",
+    "description": "Tire rotation and pressure check. Front-left tire showing uneven wear.",
+    "mileage_at_service": 32100,
+    "technician": "Sarah K.",
+    "parts_replaced": [],
+    "total_cost": 45.00,
+    "next_service_due": "2025-04-16"
+  },
+  {
+    "log_id": "ML-003",
+    "vehicle_id": "VH-0027",
+    "log_timestamp": "2025-01-17T11:00:00",
+    "event_type": "brake_inspection",
+    "severity": "warning",
+    "description": "Front brake pads worn to 15%. Replacement recommended within 5000 miles.",
+    "mileage_at_service": 67800,
+    "technician": "Tom H.",
+    "parts_replaced": [],
+    "total_cost": 0.00,
+    "next_service_due": "2025-02-28"
+  }
+]

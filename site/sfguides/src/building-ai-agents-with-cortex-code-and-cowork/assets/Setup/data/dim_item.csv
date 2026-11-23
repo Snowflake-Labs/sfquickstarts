@@ -1,0 +1,101 @@
+ITEM_NAME,CATEGORY,UNIT_PRICE,COST_PRICE,CALORIES,IS_SPICY
+Classic Hot Dog,Hot Dogs,5.64,1.86,345,False
+Chili Cheese Dog,Hot Dogs,9.36,3.76,289,False
+Jalapeño Dog,Hot Dogs,8.9,3.16,574,True
+Bacon Wrapped Dog,Hot Dogs,4.71,2.16,423,False
+Veggie Dog,Hot Dogs,8.55,3.05,455,False
+Pepperoni Pizza Slice,Pizza,8.69,3.61,651,False
+Cheese Pizza Slice,Pizza,8.91,3.47,645,False
+Supreme Pizza Slice,Pizza,4.75,1.95,706,False
+BBQ Chicken Pizza Slice,Pizza,5.01,2.44,343,False
+Margherita Pizza Slice,Pizza,9.84,3.42,542,False
+Buffalo Chicken Wrap,Wraps & Burritos,3.86,1.76,194,True
+Grilled Chicken Wrap,Wraps & Burritos,4.54,1.79,540,False
+Spicy Bean Burrito,Wraps & Burritos,5.08,2.2,305,True
+Beef Burrito,Wraps & Burritos,5.95,1.83,664,False
+Chicken Quesadilla,Wraps & Burritos,9.71,3.56,252,False
+Crispy Chicken Tenders,Chicken,8.98,3.48,688,False
+Spicy Chicken Tenders,Chicken,9.27,2.81,297,True
+Popcorn Chicken,Chicken,5.27,2.27,308,False
+Chicken Wings (6pc),Chicken,2.59,1.18,421,False
+Boneless Wings (6pc),Chicken,4.7,2.06,232,False
+Cheeseburger Slider,Chicken,8.8,4.14,696,False
+Bacon Cheeseburger Slider,Chicken,5.03,1.83,649,False
+Mushroom Swiss Slider,Chicken,8.97,2.76,220,False
+BBQ Pulled Pork Slider,Chicken,3.87,1.69,444,False
+Veggie Slider,Chicken,9.97,4.48,594,False
+Mac & Cheese Cup,Sliders & Burgers,9.82,4.44,252,False
+Loaded Mac & Cheese,Sliders & Burgers,5.54,2.43,179,False
+Chili Con Carne Cup,Sliders & Burgers,2.36,1.08,450,False
+Beef Stew Cup,Sliders & Burgers,4.86,1.88,400,False
+Chicken Noodle Soup Cup,Sliders & Burgers,6.24,2.58,334,False
+Mozzarella Sticks (4pc),Soups & Bowls,3.35,1.06,541,False
+Jalapeño Poppers (4pc),Soups & Bowls,6.95,2.42,747,True
+Onion Rings (6pc),Soups & Bowls,3.13,1.23,410,False
+Loaded Fries,Soups & Bowls,5.67,2.46,626,False
+Cheese Fries,Soups & Bowls,9.2,4.01,311,False
+Breakfast Sausage Biscuit,Fried Snacks,2.58,1.26,751,False
+Egg & Cheese Biscuit,Fried Snacks,4.38,2.16,406,False
+Bacon Egg & Cheese Croissant,Fried Snacks,5.64,2.03,543,False
+Ham & Cheese Croissant,Fried Snacks,8.82,2.83,540,False
+Breakfast Burrito,Fried Snacks,6.57,2.73,452,False
+Corn Dog,Breakfast,2.17,1.01,555,False
+Mini Corn Dogs (6pc),Breakfast,4.19,1.73,200,False
+Pretzel Dog,Breakfast,9.27,4.16,443,False
+Tornado (Pepperoni),Breakfast,8.2,2.84,510,False
+Tornado (Buffalo Chicken),Breakfast,3.74,1.26,406,True
+Fried Chicken Sandwich,Corn Dogs & Tornados,7.41,3.29,290,False
+Spicy Chicken Sandwich,Corn Dogs & Tornados,7.02,3.37,190,True
+Fish Sandwich,Corn Dogs & Tornados,4.46,1.73,743,False
+Philly Cheesesteak,Corn Dogs & Tornados,4.91,1.6,452,False
+Meatball Sub,Corn Dogs & Tornados,4.6,1.76,355,False
+Taquitos (Beef 3pc),Sandwiches,3.05,1.24,524,False
+Taquitos (Chicken 3pc),Sandwiches,6.24,3.01,318,False
+Egg Rolls (2pc),Sandwiches,4.05,1.88,643,False
+Spring Rolls (2pc),Sandwiches,9.73,3.49,496,False
+Samosa (2pc),Sandwiches,8.42,3.31,227,False
+Stuffed Breadstick,International,3.12,1.54,556,False
+Garlic Knots (4pc),International,9.73,4.48,524,False
+Cheesy Bread,International,2.71,1.03,420,False
+Pizza Rolls (8pc),International,6.28,2.46,418,False
+Calzone,International,6.67,3.1,530,False
+Chicken Pot Pie,Breads & Dough,2.86,0.99,175,False
+Beef Pot Pie,Breads & Dough,6.95,3.4,485,False
+Sausage Roll,Breads & Dough,9.31,3.21,214,False
+Meat Pie,Breads & Dough,7.07,2.78,459,False
+Empanada (Beef),Breads & Dough,7.18,2.32,196,False
+Empanada (Chicken),Pies & Pastries,9.56,3.45,654,False
+Empanada (Cheese),Pies & Pastries,2.92,1.01,700,False
+Jamaican Beef Patty,Pies & Pastries,3.08,1.2,703,False
+Curry Chicken Patty,Pies & Pastries,5.34,2.39,308,False
+Spinach Feta Wrap,Pies & Pastries,9.07,3.91,651,False
+Grilled Cheese Sandwich,Empanadas & Patties,6.92,3.38,436,False
+BLT Sandwich,Empanadas & Patties,2.25,0.84,604,False
+Turkey Club Sandwich,Empanadas & Patties,5.55,1.93,521,False
+Italian Sub,Empanadas & Patties,2.78,1.22,707,False
+Cuban Sandwich,Empanadas & Patties,9.2,3.95,212,False
+Nashville Hot Chicken Bites,Deli Sandwiches,5.18,1.75,275,True
+Teriyaki Chicken Bowl,Deli Sandwiches,9.58,4.45,243,False
+Orange Chicken Bowl,Deli Sandwiches,7.29,3.12,761,False
+Fried Rice Bowl,Deli Sandwiches,9.76,3.03,491,False
+Lo Mein Bowl,Deli Sandwiches,3.94,1.28,728,False
+Cheese Quesadilla,Asian Bowls,3.63,1.69,717,False
+Steak Quesadilla,Asian Bowls,3.65,1.25,388,False
+Nachos Grande,Asian Bowls,4.62,1.52,760,False
+Loaded Nachos,Asian Bowls,2.01,0.95,298,False
+Chips & Queso,Asian Bowls,9.89,4.04,328,False
+Soup & Bread Bowl (Tomato),Mexican,2.87,1.36,284,False
+Soup & Bread Bowl (Broccoli),Mexican,2.11,0.97,393,False
+Clam Chowder Cup,Mexican,6.7,2.03,421,False
+French Onion Soup Cup,Mexican,2.41,1.08,688,False
+Chicken Tortilla Soup Cup,Mexican,2.9,0.91,609,False
+Waffle Fries,Soups,8.21,3.31,261,False
+Sweet Potato Fries,Soups,5.61,1.93,779,False
+Tater Tots,Soups,2.34,1.07,683,False
+Hash Brown Patty,Soups,4.4,1.89,181,False
+Loaded Potato Wedges,Soups,2.48,0.98,561,False
+Soft Pretzel,Sides,5.4,1.74,604,False
+Soft Pretzel Bites,Sides,2.58,0.82,772,False
+Churros (3pc),Sides,3.18,1.03,789,False
+Cinnamon Twists,Sides,7.05,2.89,482,False
+Funnel Cake Sticks,Sides,5.04,2.11,451,False

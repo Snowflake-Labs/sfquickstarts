@@ -1,6 +1,6 @@
 id: getting-started-with-snowpark-in-snowflake-python-worksheets-es
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/data-engineering
-language: en
+language: es
 summary: Introducción a la ingeniería de datos y al ML con Snowpark para Python
 environments: web
 status: Published

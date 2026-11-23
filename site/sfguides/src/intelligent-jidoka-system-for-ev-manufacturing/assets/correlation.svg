@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 400" width="900" height="400">
+  <!-- Background -->
+  <rect width="900" height="400" fill="#0f172a"/>
+  
+  <!-- Title -->
+  <text x="450" y="35" fill="#f8fafc" font-family="system-ui, -apple-system, sans-serif" font-size="20" font-weight="700" text-anchor="middle">Environmental Correlation: The Hidden Causal Chain</text>
+  <text x="450" y="58" fill="#94a3b8" font-family="system-ui, sans-serif" font-size="13" text-anchor="middle">ML analysis reveals environmental factors as leading predictors of AGV failures</text>
+  
+  <!-- Causal Chain Flow -->
+  <rect x="30" y="85" width="840" height="80" rx="8" fill="#1e293b"/>
+  
+  <!-- Chain nodes -->
+  <!-- Node 1: Low Humidity -->
+  <rect x="50" y="100" width="140" height="50" rx="8" fill="#f59e0b20" stroke="#f59e0b" stroke-width="2"/>
+  <text x="120" y="122" fill="#f59e0b" font-family="system-ui, sans-serif" font-size="11" font-weight="600" text-anchor="middle">LOW HUMIDITY</text>
+  <text x="120" y="140" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="14" font-weight="700" text-anchor="middle">25%</text>
+  
+  <!-- Arrow 1 -->
+  <path d="M195 125 L220 125" stroke="#64748b" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#64748b"/>
+    </marker>
+  </defs>
+  
+  <!-- Node 2: High Dust -->
+  <rect x="225" y="100" width="140" height="50" rx="8" fill="#ef444420" stroke="#ef4444" stroke-width="2"/>
+  <text x="295" y="122" fill="#ef4444" font-family="system-ui, sans-serif" font-size="11" font-weight="600" text-anchor="middle">HIGH DUST (PM2.5)</text>
+  <text x="295" y="140" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="14" font-weight="700" text-anchor="middle">35 µg/m³</text>
+  
+  <!-- Arrow 2 -->
+  <path d="M370 125 L395 125" stroke="#64748b" stroke-width="2" marker-end="url(#arrowhead)"/>
+  
+  <!-- Node 3: Sensor Errors -->
+  <rect x="400" y="100" width="140" height="50" rx="8" fill="#ef444420" stroke="#ef4444" stroke-width="2"/>
+  <text x="470" y="122" fill="#ef4444" font-family="system-ui, sans-serif" font-size="11" font-weight="600" text-anchor="middle">AGV-ERR-99</text>
+  <text x="470" y="140" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="14" font-weight="700" text-anchor="middle">Sensor Obscured</text>
+  
+  <!-- Arrow 3 -->
+  <path d="M545 125 L570 125" stroke="#64748b" stroke-width="2" marker-end="url(#arrowhead)"/>
+  
+  <!-- Node 4: Starvation -->
+  <rect x="575" y="100" width="140" height="50" rx="8" fill="#ef444420" stroke="#ef4444" stroke-width="2"/>
+  <text x="645" y="122" fill="#ef4444" font-family="system-ui, sans-serif" font-size="11" font-weight="600" text-anchor="middle">STARVATION</text>
+  <text x="645" y="140" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="14" font-weight="700" text-anchor="middle">Line Stops</text>
+  
+  <!-- Arrow 4 -->
+  <path d="M720 125 L745 125" stroke="#64748b" stroke-width="2" marker-end="url(#arrowhead)"/>
+  
+  <!-- Node 5: OPE Drop -->
+  <rect x="750" y="100" width="110" height="50" rx="8" fill="#ef444420" stroke="#ef4444" stroke-width="2"/>
+  <text x="805" y="122" fill="#ef4444" font-family="system-ui, sans-serif" font-size="11" font-weight="600" text-anchor="middle">OPE DROP</text>
+  <text x="805" y="140" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="14" font-weight="700" text-anchor="middle">60%</text>
+  
+  <!-- Feature Importance Chart -->
+  <rect x="30" y="185" width="410" height="195" rx="8" fill="#1e293b"/>
+  <text x="235" y="210" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="14" font-weight="600" text-anchor="middle">Feature Importance (XGBoost)</text>
+  
+  <!-- Feature bars -->
+  <text x="50" y="240" fill="#94a3b8" font-family="system-ui, sans-serif" font-size="11">AVG_DUST_PM25</text>
+  <rect x="160" y="228" width="250" height="18" rx="3" fill="#ef4444"/>
+  <text x="420" y="242" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="11" font-weight="600">0.42</text>
+  
+  <text x="50" y="270" fill="#94a3b8" font-family="system-ui, sans-serif" font-size="11">MIN_HUMIDITY</text>
+  <rect x="160" y="258" width="190" height="18" rx="3" fill="#f59e0b"/>
+  <text x="360" y="272" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="11" font-weight="600">0.31</text>
+  
+  <text x="50" y="300" fill="#94a3b8" font-family="system-ui, sans-serif" font-size="11">MAX_DUST_PM25</text>
+  <rect x="160" y="288" width="95" height="18" rx="3" fill="#f59e0b"/>
+  <text x="265" y="302" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="11" font-weight="600">0.15</text>
+  
+  <text x="50" y="330" fill="#94a3b8" font-family="system-ui, sans-serif" font-size="11">AVG_HUMIDITY</text>
+  <rect x="160" y="318" width="55" height="18" rx="3" fill="#3b82f6"/>
+  <text x="225" y="332" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="11" font-weight="600">0.08</text>
+  
+  <text x="50" y="360" fill="#94a3b8" font-family="system-ui, sans-serif" font-size="11">AVG_TEMPERATURE</text>
+  <rect x="160" y="348" width="30" height="18" rx="3" fill="#64748b"/>
+  <text x="200" y="362" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="11" font-weight="600">0.04</text>
+  
+  <!-- Model Performance -->
+  <rect x="460" y="185" width="410" height="195" rx="8" fill="#1e293b"/>
+  <text x="665" y="210" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="14" font-weight="600" text-anchor="middle">Model Performance</text>
+  
+  <!-- Performance metrics -->
+  <rect x="485" y="230" width="160" height="65" rx="6" fill="#10b98120" stroke="#10b981" stroke-width="1"/>
+  <text x="565" y="255" fill="#10b981" font-family="system-ui, sans-serif" font-size="11" font-weight="600" text-anchor="middle">ROC-AUC SCORE</text>
+  <text x="565" y="282" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="24" font-weight="700" text-anchor="middle">0.92</text>
+  
+  <rect x="665" y="230" width="180" height="65" rx="6" fill="#3b82f620" stroke="#3b82f6" stroke-width="1"/>
+  <text x="755" y="255" fill="#3b82f6" font-family="system-ui, sans-serif" font-size="11" font-weight="600" text-anchor="middle">PRECISION/RECALL</text>
+  <text x="755" y="282" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="24" font-weight="700" text-anchor="middle">0.87 / 0.84</text>
+  
+  <!-- Insight callout -->
+  <rect x="485" y="310" width="360" height="55" rx="6" fill="#f59e0b20" stroke="#f59e0b" stroke-width="1"/>
+  <text x="665" y="335" fill="#f59e0b" font-family="system-ui, sans-serif" font-size="12" font-weight="600" text-anchor="middle">KEY INSIGHT</text>
+  <text x="665" y="355" fill="#f8fafc" font-family="system-ui, sans-serif" font-size="11" text-anchor="middle">Dust + Humidity explain 73% of failure prediction variance</text>
+</svg>
+

@@ -1,0 +1,25 @@
+# Template only. Replace placeholders with verified deployed identifiers.
+# No generic SQL execution tool, evaluator answer key, or mutation tool.
+tools:
+  - name: review_distribution_reconciliation
+    title: Review synthetic distribution reconciliation
+    type: GENERIC
+    identifier: "<DATABASE>.<SCHEMA>.REVIEW_RECONCILIATION"
+    description: >-
+      Review one synthetic distribution case for completeness and conservation.
+      Returns recorded amounts, discrepancy and blocking status. Does not verify
+      contractual entitlements or authorize payments. Accepts BALANCED, SHORTFALL,
+      OVERALLOCATED, MISSING or INCOMPLETE; unknown cases are blocked by the function.
+    config:
+      type: function
+      warehouse: "<WAREHOUSE>"
+      query_timeout: 30
+      input_schema:
+        type: object
+        properties:
+          P_CASE_ID:
+            type: string
+            description: Synthetic case identifier to review.
+        required:
+          - P_CASE_ID
+        additionalProperties: false
