@@ -97,10 +97,10 @@ Given the data in `CALL_TRANSCRIPTS` table, let’s see how we can use task spec
 Run the following statements in the same or a new SQL worksheet.
 
 ### Translate
-Using Snowflake Cortex function **snowflake.cortex.translate** we can easily translate any text from one language to another. Let’s see how easy it is to use this function.
+Using Snowflake Cortex AI function **AI_TRANSLATE** we can easily translate any text from one language to another. Let’s see how easy it is to use this function.
 
 ```sql
-select snowflake.cortex.translate('wie geht es dir heute?','de_DE','en_XX');
+select AI_TRANSLATE('wie geht es dir heute?','de','en');
 ```
 
 Executing the above SQL should generate ***"How are you today?"***
@@ -110,31 +110,31 @@ Executing the above SQL should generate ***"How are you today?"***
 Now let’s see how you can translate call transcripts from German to English in batch mode using just SQL.
 
 ```sql
-select transcript,snowflake.cortex.translate(transcript,'de_DE','en_XX') from call_transcripts where language = 'German';
+select transcript,AI_TRANSLATE(transcript,'de','en') from call_transcripts where language = 'German';
 ```
 
-See the list of [supported languages](https://docs.snowflake.com/en/sql-reference/functions/translate-snowflake-cortex#usage-notes).
+See the list of [supported languages](https://docs.snowflake.com/en/sql-reference/functions/ai_translate#usage-notes).
 
-### Sentiment Score
-Now let’s see how we can use **snowflake.cortex.sentiment** function to generate sentiment scores on call transcripts. 
+### Sentiment
+Now let’s see how we can use the **AI_SENTIMENT** function to classify the sentiment of call transcripts.
 
-*Note: Score is between -1 and 1; -1 = most negative, 1 = positive, 0 = neutral*
+*Note: AI_SENTIMENT returns a label (positive, negative, neutral, mixed or unknown) for the overall text.*
 
 ```sql
-select transcript, snowflake.cortex.sentiment(transcript) from call_transcripts where language = 'English';
+select transcript, AI_SENTIMENT(transcript):categories[0]:sentiment::string as sentiment from call_transcripts where language = 'English';
 ```
 
 ### Summarize
-Now that we know how to translate call transcripts in English, it would be great to have the model pull out the most important details from each transcript so we don’t have to read the whole thing. Let’s see how **snowflake.cortex.summarize** function can do this and try it on one record.
+Now that we know how to translate call transcripts in English, it would be great to have the model pull out the most important details from each transcript so we don’t have to read the whole thing. Let’s see how the **AI_SUMMARIZE** function can do this and try it on one record.
 
 ```sql
-select transcript,snowflake.cortex.summarize(transcript) as summary from call_transcripts where language = 'English' limit 1;
+select transcript,AI_SUMMARIZE(transcript) as summary from call_transcripts where language = 'English' limit 1;
 ```
 
 #### Summary with tokens count
 
 ```sql
-select transcript,snowflake.cortex.summarize(transcript) as summary,snowflake.cortex.count_tokens('summarize',transcript) as number_of_tokens from call_transcripts where language = 'English' limit 1;
+select transcript,AI_SUMMARIZE(transcript) as summary,AI_COUNT_TOKENS('ai_summarize',transcript) as number_of_tokens from call_transcripts where language = 'English' limit 1;
 ```
 
 > 
@@ -146,7 +146,7 @@ select transcript,snowflake.cortex.summarize(transcript) as summary,snowflake.co
 
 Being able to pull out the summary is good, but it would be great if we specifically pull out the product name, what part of the product was defective, and limit the summary to 200 words. 
 
-Let’s see how we can accomplish this using the **snowflake.cortex.complete** function.
+Let’s see how we can accomplish this using the **AI_COMPLETE** function.
 
 ```sql
 ALTER ACCOUNT SET CORTEX_ENABLED_CROSS_REGION = 'ANY_REGION';
@@ -157,7 +157,7 @@ Summarize this transcript in less than 200 words.
 Put the product name, defect and summary in JSON format. 
 ###';
 
-select snowflake.cortex.complete('claude-4-sonnet',concat('[INST]',$prompt,transcript,'[/INST]')) as summary
+select AI_COMPLETE('claude-4-sonnet',concat('[INST]',$prompt,transcript,'[/INST]')) as summary
 from call_transcripts where language = 'English' limit 1;
 ```
 
@@ -211,7 +211,7 @@ def summarize():
             entered_text = entered_text.replace("'", "\\'")
             prompt = f"Summarize this transcript in less than 200 words. Put the product name, defect if any, and summary in JSON format: {entered_text}"
             cortex_prompt = "'[INST] " + prompt + " [/INST]'"
-            cortex_response = session.sql(f"select snowflake.cortex.complete('claude-4-sonnet', {cortex_prompt}) as response").to_pandas().iloc[0]['RESPONSE']
+            cortex_response = session.sql(f"select AI_COMPLETE('claude-4-sonnet', {cortex_prompt}) as response").to_pandas().iloc[0]['RESPONSE']
             st.write(cortex_response)
 
 def translate():
@@ -227,7 +227,7 @@ def translate():
         btn_translate = st.button("Translate",type="primary")
         if entered_text and btn_translate:
           entered_text = entered_text.replace("'", "\\'")
-          cortex_response = session.sql(f"select snowflake.cortex.translate('{entered_text}','{supported_languages[from_language]}','{supported_languages[to_language]}') as response").to_pandas().iloc[0]['RESPONSE']
+          cortex_response = session.sql(f"select AI_TRANSLATE('{entered_text}','{supported_languages[from_language]}','{supported_languages[to_language]}') as response").to_pandas().iloc[0]['RESPONSE']
           st.write(cortex_response)
 
 def sentiment_analysis():
@@ -237,9 +237,9 @@ def sentiment_analysis():
         btn_sentiment = st.button("Sentiment Score",type="primary")
         if entered_text and btn_sentiment:
           entered_text = entered_text.replace("'", "\\'")
-          cortex_response = session.sql(f"select snowflake.cortex.sentiment('{entered_text}') as sentiment").to_pandas().iloc[0]['SENTIMENT']
-          st.text(f"Sentiment score: {cortex_response}")
-          st.caption("Note: Score is between -1 and 1; -1 = Most negative, 1 = Positive, 0 = Neutral")  
+          cortex_response = session.sql(f"select AI_SENTIMENT('{entered_text}'):categories[0]:sentiment::string as sentiment").to_pandas().iloc[0]['SENTIMENT']
+          st.text(f"Sentiment: {cortex_response}")
+          st.caption("Note: positive, negative, neutral, mixed or unknown")
 
 page_names_to_funcs = {
     "JSON Summary": summarize,
@@ -271,7 +271,7 @@ Customer: Thank you.
 
 ### Update LLM
 
-Let's try using one of the [other supported LLMs in Snowflake](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions#availability) with `snowflake.cortex.complete` function and see how it might perform given the same prompt/instructions.
+Let's try using one of the [other supported LLMs in Snowflake](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions#availability) with the `AI_COMPLETE` function and see how it might perform given the same prompt/instructions.
 
 1) On line 16, or, search for `claude-4-sonnet` in the Streamlit app code and repalce it with `llama3.1-70b`. *Note: If that model is not available in your region, pick another one that you can use.*
 2) Click on **Run** at the top right.
