@@ -526,7 +526,7 @@ EXECUTE DCM PROJECT DCM_DEMO.PROJECTS.DCM_DT_PROJECT_DEV PURGE;
 DROP DCM PROJECT IF EXISTS DCM_DEMO.PROJECTS.DCM_DT_PROJECT_DEV;
 ```
 
-If PURGE ever fails, the script's comments show how to suspend the task and the dynamic table first, so nothing keeps consuming credits while you investigate.
+If PURGE ever fails, the script's comments show how to suspend the dynamic table and the alert first, so nothing keeps consuming credits while you investigate.
 
 <!-- ------------------------ -->
 ## Conclusion and Resources
