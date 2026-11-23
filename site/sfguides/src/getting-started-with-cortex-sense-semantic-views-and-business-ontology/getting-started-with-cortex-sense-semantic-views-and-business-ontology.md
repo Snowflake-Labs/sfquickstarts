@@ -1,12 +1,12 @@
 author: Chanin Nantasenamat, James Cha-Earley
-id: getting-started-with-cortex-sense-and-business-ontology
+id: getting-started-with-cortex-sense-semantic-views-and-business-ontology
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/product/platform
 language: en
 summary: Give AI agents a shared understanding of your business. Use Cortex Sense to discover context, a semantic view to calculate metrics once, and Business Ontology to define and approve what your terms mean, then ask CoCo questions in plain English.
 environments: web
-status: Published
+status: Hidden
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-fork repo link: https://github.com/sfc-gh-JCHAEARLEY/sfguide-getting-started-with-cortex-sense-and-business-ontology
+fork repo link: https://github.com/sfc-gh-JCHAEARLEY/sfguide-getting-started-with-cortex-sense-semantic-views-and-business-ontology
 
 # Getting Started with Cortex Sense, Semantic Views, and Business Ontology
 <!-- ------------------------ -->
@@ -44,7 +44,7 @@ This guide focuses on how the three features work together in a 45-minute lab, i
 ### What You'll Need
 - A Snowflake account where Business Ontology and Cortex Sense are available, with access to CoCo in Snowsight. To check Business Ontology, run `SELECT SYSTEM$GET_ONTOLOGY_SUMMARY();` in a SQL file: an error means it isn't enabled on your account yet.
 - The `ACCOUNTADMIN` role for setup and clean up. Setup creates a lab role, `SENSE_ONTOLOGY_ROLE`, that you use for everything after that.
-- The companion GitHub repo, which you'll open as a workspace: [sfc-gh-JCHAEARLEY/sfguide-getting-started-with-cortex-sense-and-business-ontology](https://github.com/sfc-gh-JCHAEARLEY/sfguide-getting-started-with-cortex-sense-and-business-ontology)
+- The companion GitHub repo, which you'll open as a workspace: [sfc-gh-JCHAEARLEY/sfguide-getting-started-with-cortex-sense-semantic-views-and-business-ontology](https://github.com/sfc-gh-JCHAEARLEY/sfguide-getting-started-with-cortex-sense-semantic-views-and-business-ontology)
 - Nothing to install. Everything runs in your browser.
 
 > **Using a trial account?** AI features, including CoCo, are disabled by default on self-service trial accounts. To turn them on, go to **Admin** » **Billing**, open the **Snowflake billing** tab, and add a credit card. Adding a card doesn't upgrade the trial to a paid account or end the trial period.
@@ -124,7 +124,7 @@ CREATE API INTEGRATION IF NOT EXISTS GITHUB_SENSE_ONTOLOGY_LAB
 Then create the workspace:
 
 1. In the **Workspaces** menu, select **From Git repository**.
-2. For **Repository URL**, enter `https://github.com/sfc-gh-JCHAEARLEY/sfguide-getting-started-with-cortex-sense-and-business-ontology`.
+2. For **Repository URL**, enter `https://github.com/sfc-gh-JCHAEARLEY/sfguide-getting-started-with-cortex-sense-semantic-views-and-business-ontology`.
 3. Optional: rename the workspace, for example to `sense-and-ontology`.
 4. In the **API Integration** menu, select `GITHUB_SENSE_ONTOLOGY_LAB`.
 5. Select **Public repository**.
@@ -455,7 +455,7 @@ You started with two teams, 17 tables with cryptic names, and two numbers that e
 ### Related Resources
 
 Code:
-- [Companion repo: sfguide-getting-started-with-cortex-sense-and-business-ontology](https://github.com/sfc-gh-JCHAEARLEY/sfguide-getting-started-with-cortex-sense-and-business-ontology)
+- [Companion repo: sfguide-getting-started-with-cortex-sense-semantic-views-and-business-ontology](https://github.com/sfc-gh-JCHAEARLEY/sfguide-getting-started-with-cortex-sense-semantic-views-and-business-ontology)
 
 Guides:
 - [Getting Started with Business Ontology](https://www.snowflake.com/en/developers/guides/getting-started-with-business-ontology/)
