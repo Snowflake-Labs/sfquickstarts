@@ -84,6 +84,10 @@ class AemError(RuntimeError):
     """An AEM request failed."""
 
 
+class _TransientAemError(AemError):
+    """An AEM transport failure that is safe to retry."""
+
+
 def author_url() -> str:
     """The AEM author instance to write to.
 
@@ -156,9 +160,31 @@ class Client:
                 return response.status, response.read()
         except urllib.error.HTTPError as exc:
             return exc.code, exc.read()
-        except urllib.error.URLError as exc:
-            msg = f"{method} {url} failed: {exc.reason}"
-            raise AemError(msg) from exc
+        except (TimeoutError, urllib.error.URLError) as exc:
+            reason = exc.reason if isinstance(exc, urllib.error.URLError) else str(exc)
+            msg = f"{method} {url} failed: {reason}"
+            raise _TransientAemError(msg) from exc
+
+    def _send_upload_request(
+        self,
+        method: str,
+        url: str,
+        body: bytes | None,
+        content_type: str = FORM_CONTENT_TYPE,
+    ) -> tuple[int, bytes]:
+        """Send one upload request, retrying bounded transient transport failures."""
+        for attempt in range(1, self.attempts + 1):
+            try:
+                return self._send(method, url, body, content_type)
+            except _TransientAemError as exc:
+                if attempt == self.attempts:
+                    msg = f"upload request failed after {self.attempts} attempts: {exc}"
+                    raise AemError(msg) from exc
+                wait = self.delay * attempt * 2
+                print(f"{exc}; retrying in {wait}s ({attempt}/{self.attempts})")
+                time.sleep(wait)
+        msg = f"upload request failed after {self.attempts} attempts"
+        raise AemError(msg)
 
     def status(self, path: str) -> int:
         """Return the status of a single unretried GET, for existence checks."""
@@ -312,11 +338,12 @@ class Client:
         content_type = asset_content_type(path.name)
         body = path.read_bytes()
 
-        creating = self.status(f"{dam_folder}/{encoded}") != HTTP_OK
+        status, _ = self._send_upload_request("GET", f"{self.base_url}{dam_folder}/{encoded}", None)
+        creating = status != HTTP_OK
         attempt = 1
         while attempt <= self.attempts:
             method = "POST" if creating else "PUT"
-            status, response = self._send(method, url, body, content_type)
+            status, response = self._send_upload_request(method, url, body, content_type)
             if HTTP_OK <= status < HTTP_REDIRECT:
                 print(f"Uploaded {path.name} ({method}, HTTP {status})")
                 return creating
