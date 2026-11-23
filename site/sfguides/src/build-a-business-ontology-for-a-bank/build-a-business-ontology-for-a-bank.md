@@ -5,7 +5,7 @@ summary: Build a Business Ontology for a synthetic retail bank on Snowflake, bin
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/ai, snowflake-site:taxonomy/industry/financial-services, snowflake-site:taxonomy/snowflake-feature/horizon, snowflake-site:taxonomy/snowflake-feature/compliance-security-discovery-governance, snowflake-site:taxonomy/snowflake-feature/snowflake-intelligence
 environments: web
 status: Published
-feedback link: https://github.com/Snowflake-Labs/sfquickstarts/issues
+feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 fork repo link: https://github.com/Snowflake-Labs/sfquickstarts/raw/master/site/sfguides/src/build-a-business-ontology-for-a-bank/assets/bank-ontology-demo.zip
 
 # Build a Business Ontology for a Bank, from Definitions to Agent
@@ -51,6 +51,7 @@ The rest of the guide shows each of these on the demo bank, and how an agent use
 
 - Familiarity with SQL and Snowsight worksheets
 - A basic understanding of [Semantic Views](https://docs.snowflake.com/en/user-guide/views-semantic/overview) and [Cortex Agents](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents)
+- If you'd like a shorter introduction to the feature first, see [Getting Started with Business Ontology](https://www.snowflake.com/en/developers/guides/getting-started-with-business-ontology/)
 
 <!-- ------------------------ -->
 ## What Is a Business Ontology?
@@ -126,10 +127,10 @@ Download [bank-ontology-demo.zip](https://github.com/Snowflake-Labs/sfquickstart
 
 The data generator is deterministic, and the figures in this guide depend on it. If a verification row says FAIL, re-run the scripts unchanged rather than editing the expected values.
 
-> **Note:** The ontology search index can take up to about six hours to reflect new approvals. The agent in this guide works before that, because it falls back to reading the approved list directly. To check the index, run `cortex search object "NPL ratio" --types=business-ontology` in Cortex Code: once it returns the node, search is up to date.
+> **Note:** The ontology search index can take up to about six hours to reflect new approvals. The agent in this guide works before that, because it falls back to reading the approved list directly. To check the index, run `cortex search object "NPL ratio" --types=business-ontology` in CoCo: once it returns the node, search is up to date.
 
 <!-- ------------------------ -->
-## Step 1: Start From the Data
+## Start From the Data
 
 The bank has customers from a CRM, current accounts and loans from a core banking platform, and interactions from the mobile app, online banking, branches and the contact centre. The data lands in eight conformed **Silver** tables in `BANK_DEMO.SILVER`.
 
@@ -158,7 +159,7 @@ Please note one design choice. The two snapshot tables are read through small in
 The Semantic View is built on Silver so teams can work on each data product without waiting for a Gold layer. If your platform only exposes Gold, build it on Gold: the rest of the guide is the same.
 
 <!-- ------------------------ -->
-## Step 2: Design Domains Around the Teams That Own the Meaning
+## Design the Domains
 
 A domain is a group of nodes owned by one team. It's also the unit you grant access on, and where approval happens. For that reason, it's worth mapping each domain to the team that is accountable for its definitions, rather than to a source system or a schema.
 
@@ -186,7 +187,7 @@ The `[bank-ontology-demo]` marker at the end of each description lets the teardo
 Please note that in this preview a domain can't be renamed, so it's worth agreeing on domain names before you start.
 
 <!-- ------------------------ -->
-## Step 3: Write the Definitions
+## Write the Definitions
 
 Definitions are written for people first. Let's have a look at one that matters for risk reporting:
 
@@ -216,10 +217,10 @@ A few practices that helped in this build:
 - **Write down the pitfalls.** *Total Deposits* says "never sum balances across dates". *Customer Identifier* says "the CRM Account Id must not be used to join across systems". This information isn't visible in the tables.
 - **Put everyday words in synonyms** rather than in agent prompts. *Balances*, *Loan Portfolio* and *Visits* are synonyms here, so every agent and every search can use them.
 
-One node is left in draft on purpose: *Net Interest Margin*. Finance hasn't reviewed it yet, and the bank has no interest data. You'll approve it in Step 8.
+One node is left in draft on purpose: *Net Interest Margin*. Finance hasn't reviewed it yet, and the bank has no interest data. You'll approve it later, in the Add a Data Product section.
 
 <!-- ------------------------ -->
-## Step 4: Connect the Concepts
+## Connect the Concepts
 
 Relationships record how concepts depend on each other, including across teams. Each one reads as a sentence:
 
@@ -248,7 +249,7 @@ In this bank, *NPL Ratio* is owned by Regulatory Reporting, but its inputs are o
 You can explore it in Snowsight under **Catalog** » **Business Ontology** » **Graph**. Select *NPL Ratio* to see its inputs from Consumer Loan.
 
 <!-- ------------------------ -->
-## Step 5: Bind Each Concept to the Data
+## Bind Concepts to Data
 
 A representation links a node to a table, a column, or a metric or dimension of a Semantic View:
 
@@ -274,7 +275,7 @@ Together, the layers fit as follows:
 Please note that the formula on the node and the expression in the Semantic View are two separate texts, and nothing checks yet that they match. It's worth including this check in the approval process.
 
 <!-- ------------------------ -->
-## Step 6: Control Who Can Propose, Approve and See
+## Control Access to Definitions
 
 There are two separate access checks, and granting one doesn't grant the other.
 
@@ -300,7 +301,7 @@ With `SUGGEST` for analysts and `MODIFY` for stewards, a proposal has to be appr
 Both personas can read every definition, and each sees only the data their role allows. The agent and the files it generates follow the same rules, because every query runs as the person asking.
 
 <!-- ------------------------ -->
-## Step 7: Build an Agent That Reads the Definitions First
+## Build the Agent
 
 ### The Two Agents
 
@@ -369,7 +370,7 @@ In CoWork, the trace shows each step: the ontology search, the definition it rea
 
 ### Same Question, Two People
 
-To switch persona, run `sql/persona_switch.sql`, which sets your default role to `BANK_RM` or `BANK_HEAD_OF_LENDING`. Sign out of CoWork and back in, start a new chat, and ask *"Which customers have balances over £120k?"*
+To switch persona, run `sql/persona_switch.sql` from [bank-ontology-demo.zip](https://github.com/Snowflake-Labs/sfquickstarts/raw/master/site/sfguides/src/build-a-business-ontology-for-a-bank/assets/bank-ontology-demo.zip), which sets your default role to `BANK_RM` or `BANK_HEAD_OF_LENDING`. Sign out of CoWork and back in, start a new chat, and ask *"Which customers have balances over £120k?"*
 
 ![The same question in CoWork as the Head of Lending (left) and the relationship manager (right)](assets/personas-side-by-side.png)
 
@@ -388,20 +389,20 @@ The agent also has the code execution tool, so in CoWork it can generate an HTML
 ![CoWork: an HTML report of channel activity](assets/html-report.png)
 
 <!-- ------------------------ -->
-## Step 8: Add a Data Product
+## Add a Data Product
 
-In this step, you add one new data product, interest accruals, and take *Net Interest Margin* from refused to answered. Each layer is changed once, by its owner. In Cortex Code, connected to your account, use the prompts in `live/COCO_PROMPTS.md` from the zip. Each step also has a script (`live/10` to `12`) if you prefer to run it directly.
+In this section, you add one new data product, interest accruals, and take *Net Interest Margin* from refused to answered. Each layer is changed once, by its owner. In CoCo, connected to your account, use the prompts in `live/COCO_PROMPTS.md` from the zip. Each step also has a script (`live/10` to `12`) if you prefer to run it directly.
 
 1. **Data engineering loads the table.** `INTEREST_ACCRUAL_MONTHLY` lands in Silver with the same row access policy as the other tables.
 2. **The technical steward extends the Semantic View** with interest income, interest expense, earning assets and `NET_INTEREST_MARGIN`. If you ask the agent at this point, it still declines: the metric exists, but its definition isn't approved.
-3. **Finance approves the definition.** With the business-ontology skill in Cortex Code, the steward updates the draft to match the new metric, approves it, adds `DERIVES` relationships from *Outstanding Principal*, *Total Deposits* and *Non-Performing Loan*, and binds it to the metric and the table.
+3. **Finance approves the definition.** With the business-ontology skill in CoCo, the steward updates the draft to match the new metric, approves it, adds `DERIVES` relationships from *Outstanding Principal*, *Total Deposits* and *Non-Performing Loan*, and binds it to the metric and the table.
 4. **Ask again.** The agent answers **3.40%** at 30 September 2026, down from 3.61% in August, and explains the change from its inputs: more loans reached 90 days past due and stopped accruing interest (non-performing principal went from £75,029 to £265,008), the loan book decreased, and more deposits sat in the lower-yielding 4% central bank reserve.
 
 ![Net Interest Margin before approval (declined) and after (answered)](assets/nim-before-after.png)
 
 The agent itself wasn't changed. It read the newly approved node directly, without waiting for the search index.
 
-When you've finished, run `reset/90_reset_live.sql` to put Net Interest Margin back in draft, then `sql/06_verify.sql`: every row should say PASS.
+When you've finished, run `reset/90_reset_live.sql` (also in the zip) to put Net Interest Margin back in draft, then `sql/06_verify.sql`: every row should say PASS.
 
 <!-- ------------------------ -->
 ## Limits to Plan Around
@@ -422,7 +423,7 @@ A Business Ontology is probably not needed with one team, one data product and o
 <!-- ------------------------ -->
 ## Clean Up
 
-Run `reset/99_teardown.sql` as `ACCOUNTADMIN`. It:
+Run `reset/99_teardown.sql` as `ACCOUNTADMIN`. It's in [bank-ontology-demo.zip](https://github.com/Snowflake-Labs/sfquickstarts/raw/master/site/sfguides/src/build-a-business-ontology-for-a-bank/assets/bank-ontology-demo.zip), so if you installed with `INSTALL.sql`, please download the zip for this step. It:
 
 - deletes the five ontology domains, only if their description carries the `[bank-ontology-demo]` marker, and reports any domain with the same name that it left in place
 - detaches the agent from CoWork
@@ -445,13 +446,14 @@ In this guide, you built a Business Ontology for a small bank: five domains with
 ### Apply It to Your Own Data
 
 - **Start with one metric** whose inputs are owned by another team. A ratio is a good candidate.
-- **Map domains to stewards**, then import the definitions you already have with the business-ontology skill in Cortex Code.
+- **Map domains to stewards**, then import the definitions you already have with the business-ontology skill in CoCo.
 - **Write the pitfalls into the definitions**, and put everyday words in synonyms.
 - **Bind the nodes to the Semantic Views you already have.** Approve the stable metrics and keep the ones still under discussion in draft.
 - **Test with real roles**: a number, a definition, an unknown term, an unapproved draft, and the same question asked by two different people.
 
 ### Related Resources
 
+- [Getting Started with Business Ontology](https://www.snowflake.com/en/developers/guides/getting-started-with-business-ontology/), a shorter introduction to the same private preview feature
 - [Business Ontology documentation](https://docs.snowflake.com/en/LIMITEDACCESS/snowflake-horizon/business-ontology) (private preview), including [access control](https://docs.snowflake.com/en/LIMITEDACCESS/snowflake-horizon/business-ontology-access-control) and [use with Cortex Agents](https://docs.snowflake.com/en/LIMITEDACCESS/snowflake-horizon/business-ontology-agents)
 - [Overview of Semantic Views](https://docs.snowflake.com/en/user-guide/views-semantic/overview)
 - [Cortex Agents documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents)
