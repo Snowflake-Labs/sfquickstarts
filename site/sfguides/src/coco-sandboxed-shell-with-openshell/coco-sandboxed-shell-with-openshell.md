@@ -6,7 +6,7 @@ categories: snowflake-site:taxonomy/solution-center/certification/quickstart, sn
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
-fork repo link: https://github.com/zozo123/sandboxed-shell
+fork repo link: https://github.com/Snowflake-Labs/coco-skills/tree/main/plugins/sandboxed-shell
 
 # Run CoCo CLI Shell Commands in an OpenShell Sandbox
 <!-- ------------------------ -->
@@ -58,17 +58,17 @@ time CoCo runs a shell command there.
 <!-- ------------------------ -->
 ## Install the Plugin
 
-Install the plugin from its repository and check it:
+Install the plugin from the Snowflake-Labs coco-skills repository and check it:
 
 ```bash
-cortex plugin install zozo123/sandboxed-shell/plugins/sandboxed-shell
+cortex plugin install Snowflake-Labs/coco-skills/plugins/sandboxed-shell
 cortex plugin validate sandboxed-shell
 ```
 
 The second command prints `Plugin 'sandboxed-shell' is valid.`
 
 <!-- ------------------------ -->
-## Run a Command in the Sandbox
+## Run a Sandboxed Command
 
 Start CoCo in a project directory and ask it to run a command:
 
@@ -92,7 +92,7 @@ at the end. Subagents and background commands go through the same path, and `kil
 and time limits stop the command inside the sandbox.
 
 <!-- ------------------------ -->
-## Give a Team No Other Shell
+## Enforce the Sandbox
 
 A user can switch a plugin off. To leave the agent no shell except the sandbox, an
 administrator denies the built-in shell tool in CoCo's managed settings and deploys the
@@ -111,11 +111,11 @@ launched from.
 ## Run CoCo Inside OpenShell
 
 The plugin moves shell commands. To move everything CoCo does into the sandbox, run CoCo
-itself there. The repository has two scripts for this:
+itself there. The plugin has two scripts for this:
 
 ```bash
-git clone https://github.com/zozo123/sandboxed-shell
-cd sandboxed-shell
+git clone https://github.com/Snowflake-Labs/coco-skills
+cd coco-skills/plugins/sandboxed-shell
 ```
 
 Once, store your token in the OpenShell gateway rather than in any sandbox:
@@ -167,6 +167,6 @@ direction, and ran CoCo itself in a sandbox that can reach only your Snowflake a
 - How to keep your token out of a sandbox with an OpenShell provider
 
 ### Related Resources
-- [sandboxed-shell repository](https://github.com/zozo123/sandboxed-shell)
+- [sandboxed-shell plugin](https://github.com/Snowflake-Labs/coco-skills/tree/main/plugins/sandboxed-shell)
 - [OpenShell documentation](https://docs.nvidia.com/openshell/latest/)
 - [CoCo CLI extensibility](https://docs.snowflake.com/en/user-guide/cortex-code/extensibility)
