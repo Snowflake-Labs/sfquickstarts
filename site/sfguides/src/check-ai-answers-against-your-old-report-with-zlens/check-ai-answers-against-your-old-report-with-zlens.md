@@ -151,9 +151,7 @@ Once it has the database, ZLens reads every schema in it that the app can see an
 
 ![The review panel: four tables to answer from and three joins, each marked Passed](assets/zlens-review-drafted-models.png)
 
-After you save, **Modeling** shows the four models and the joins between them.
-
-![The Modeling map after saving: Order, Customer, Nation and Region](assets/zlens-modeling-map.png)
+After you save, **Modeling** shows the four models (Order, Customer, Nation and Region) and the joins between them.
 
 <!-- ------------------------ -->
 ## Ask a Question
@@ -179,7 +177,7 @@ Now ask a question the granted tables cannot answer:
 
 ZLens says **Not in this data** and runs no query. The answer's steps show that nothing ran on the warehouse.
 
-![Not in this data: no query was run, and the steps show nothing ran on the warehouse](assets/zlens-not-in-this-data.png)
+![Not in this data: no query was run, and ZLens says why](assets/zlens-not-in-this-data.png)
 
 <!-- ------------------------ -->
 ## Compare and Certify
@@ -201,7 +199,7 @@ ZLens already keeps every AI answer as an automatic draft for review. Saving it 
 2. In **Compare with the old report**, choose `old-report.csv` and select **Compare**. ZLens says **Matches: 5 of 5 rows, every value**.
 3. Select **Certify**. Because AI wrote this saved query, ZLens first asks you to confirm you reviewed what AI wrote: check its SQL and its result, then select **I reviewed it — certify**.
 
-![Compare with the old report: Matches: 5 of 5 rows, every value, with the Certify button](assets/zlens-compare-old-report.png)
+![Compare with the old report: Matches: 5 of 5 rows, every value](assets/zlens-compare-old-report.png)
 
 ZLens matches the file's columns to the answer's by name, ignoring case, spaces and underscores. Claude wrote the answer's SQL, so its columns can be named differently; if they are, change the file's first line to match. When the old report disagrees, ZLens says **Differs** and names the row, the column and both values.
 
