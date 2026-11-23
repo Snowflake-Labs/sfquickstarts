@@ -1,125 +1,123 @@
 ---
-author: Wondi Wolde
-id: snowflake-ai-governance-system
+authors: Wondi Wolde
+id: snowflake-ai-governance
 language: en
-summary: Learn to build a production-grade autonomous governance system in Snowflake
+summary: Learn to build a production-grade autonomous governance system in Snowflake using stored procedures, tasks, and Streamlit.
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+fork repo link: https://github.com/wondisha/snowflake-ai-governance
+open in snowflake:
 ---
 
-## 📚 Lab Overview
+# Build an Autonomous AI Governance System in Snowflake
 
-This hands-on lab walks you through building a complete Snowflake governance system from scratch. By the end, you'll have:
+## Overview
 
-✅ 5 autonomous agents managing governance  
-✅ Real-time monitoring dashboard  
-✅ Automatic user lifecycle management  
-✅ Complete audit logging and compliance  
-✅ Production-ready system  
+This hands-on guide walks you through building a complete, production-grade governance system in Snowflake from scratch. You will implement automated user lifecycle management, scheduled cleanup tasks, comprehensive audit logging, and a real-time Streamlit monitoring dashboard.
 
-**Estimated Duration:** 4-6 hours  
-**Difficulty Level:** Intermediate (SQL, Python basics helpful)  
-**Prerequisites:** Snowflake account with ACCOUNTADMIN role
+**Estimated Duration:** 4–6 hours  
+**Difficulty Level:** Intermediate  
 
----
+### Prerequisites
+* A Snowflake account with `ACCOUNTADMIN` role privileges
+* Basic familiarity with SQL and Python
+* Familiarity with Snowsight
 
-## 🎯 Learning Objectives
+### What You'll Learn
+* How to design relational database schemas for Snowflake governance and compliance
+* How to implement Snowflake Scripting stored procedures for automated user lifecycle management
+* How to schedule and monitor autonomous workflows using Snowflake Tasks and CRON
+* How to maintain complete audit trails and archived user records
+* How to deploy a multi-page Streamlit in Snowflake dashboard for real-time governance monitoring
 
-By completing this lab, you will:
+### What You'll Need
+* Snowsight access with an active warehouse (e.g., `COMPUTE_WH`)
+* Git installed locally to clone the source repository
+* Python 3.8+ (optional, for running local deployment scripts)
 
-1. **Understand** Snowflake's autonomous task scheduling
-2. **Design** database schemas for governance
-3. **Implement** stored procedures for automation
-4. **Build** real-time monitoring dashboards
-5. **Deploy** agents for security, performance, cost, and health
-6. **Manage** user lifecycles automatically
-7. **Monitor** system activity with audit logs
+### What You'll Build
+* A dedicated `GOVERNANCE` database and schema with 20+ governance, policy, and audit tables
+* Four modular Snowflake SQL stored procedures (`IDENTIFY_INACTIVE_USERS`, `REVOKE_INACTIVE_USER_ROLES`, `DISABLE_INACTIVE_USER`, and `REMOVE_INACTIVE_USER_COMPLETE`)
+* An automated weekly Snowflake Task (`INACTIVE_USER_CLEANUP_TASK_AUTO`) to enforce inactivity policies
+* An 8-page Streamlit in Snowflake dashboard for real-time observability and manual governance actions
 
----
+## Environment Setup
 
-## 📋 Lab Prerequisites
+Before building the governance system, verify your Snowflake permissions and clone the companion repository containing the table DDL and Streamlit dashboard code.
 
 ### Step 1: Verify Your Snowflake Access
 
+Open a SQL worksheet in Snowsight and run the following query to confirm your active user, role, and warehouse:
+
 ```sql
--- In Snowsight, run this to verify access
 SELECT CURRENT_USER(), CURRENT_ROLE(), CURRENT_WAREHOUSE();
 ```
 
 **Expected output:**
-- User: Your admin user
-- Role: ACCOUNTADMIN
-- Warehouse: Any warehouse (e.g., COMPUTE_WH)
+* **User:** Your admin username
+* **Role:** `ACCOUNTADMIN`
+* **Warehouse:** Any active warehouse (e.g., `COMPUTE_WH`)
 
-### Step 2: Prepare Your Environment
+### Step 2: Clone the Repository
 
-**You'll need:**
-- [ ] Snowsight access
-- [ ] ACCOUNTADMIN role
-- [ ] A warehouse (or create one)
-- [ ] Python 3.8+ (for deployment script)
-- [ ] Git (to clone the repository)
-
-### Step 3: Clone the Repository
+Clone the [Snowflake AI Governance repository](https://github.com/wondisha/snowflake-ai-governance) to access the schema definitions and dashboard source code:
 
 ```bash
 git clone https://github.com/wondisha/snowflake-ai-governance.git
 cd snowflake-ai-governance
 ```
 
----
+## Database Schema Foundation
 
-## 🚀 Lab Modules
+In this step, you will create the `GOVERNANCE` database and schema and deploy the core tables required to track policies, user activity, incidents, and audit events.
 
-### **Module 1: Database Schema Foundation** (30 minutes)
+### Exercise 1.1: Create Database and Schema
 
-**Objective:** Create the governance database structure
-
-#### Exercise 1.1: Create Database and Schema
+Run the following SQL in Snowsight to initialize your governance environment:
 
 ```sql
--- Run in Snowsight
 CREATE DATABASE IF NOT EXISTS GOVERNANCE;
 USE DATABASE GOVERNANCE;
 
 CREATE SCHEMA IF NOT EXISTS GOVERNANCE;
 USE SCHEMA GOVERNANCE;
 
--- Verify
-SELECT DATABASE_NAME, SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA 
+-- Verify database and schema creation
+SELECT DATABASE_NAME, SCHEMA_NAME 
+FROM INFORMATION_SCHEMA.SCHEMATA 
 WHERE DATABASE_NAME = 'GOVERNANCE';
 ```
 
-**✅ Checkpoint:** You should see GOVERNANCE database with GOVERNANCE schema
+**Checkpoint:** Confirm that the query returns the `GOVERNANCE` database and `GOVERNANCE` schema.
 
-#### Exercise 1.2: Deploy Tables
+### Exercise 1.2: Deploy Governance Tables
 
-Run the SQL from `src/database/schema.sql` to create 20+ governance tables.
+Execute the DDL script located at [`src/database/schema.sql`](https://github.com/wondisha/snowflake-ai-governance/blob/main/src/database/schema.sql) in Snowsight to create the 20+ governance tables.
 
-**Key tables to understand:**
-- `POLICIES` - Governance rules
-- `AUDIT_LOGS` - System activity tracking
-- `USER_ACTIVITY_LOG` - User lifecycle tracking
-- `ARCHIVED_USERS` - Removed user history
-- `INCIDENTS` - Governance violations
+**Key tables created:**
+* `POLICIES` – Stores active governance rules and thresholds
+* `AUDIT_LOGS` – Tracks all automated and manual system actions
+* `USER_ACTIVITY_LOG` – Tracks user login timestamps, inactivity duration, and lifecycle status
+* `ARCHIVED_USERS` – Retains historical records of removed users for compliance
+* `INCIDENTS` – Logs detected governance violations
 
-**✅ Checkpoint:** Verify with:
+Verify that all tables were created:
+
 ```sql
 SHOW TABLES IN GOVERNANCE.GOVERNANCE;
--- Should see 20+ tables
 ```
 
----
+**Checkpoint:** You should see 20+ tables listed in `GOVERNANCE.GOVERNANCE`.
 
-### **Module 2: Stored Procedures** (60 minutes)
+## Stored Procedures
 
-**Objective:** Build the automation engine
+Next, you will build the core automation engine using Snowflake Scripting stored procedures to detect, disable, revoke access from, and archive inactive users.
 
-#### Exercise 2.1: Create IDENTIFY_INACTIVE_USERS Procedure
+### Exercise 2.1: Create IDENTIFY_INACTIVE_USERS Procedure
 
-This procedure scans for users inactive 90+ days.
+This procedure scans `INFORMATION_SCHEMA.USERS`, calculates days since each user's last login (or creation date if they have never logged in), and upserts the results into `USER_ACTIVITY_LOG`:
 
 ```sql
 USE DATABASE GOVERNANCE;
@@ -141,7 +139,7 @@ BEGIN
       DATEDIFF(DAY,
         CASE WHEN LAST_LOGIN IS NULL THEN CREATED_ON ELSE LAST_LOGIN END,
         CURRENT_TIMESTAMP()
-      ) as DAYS_INACTIVE
+      ) AS DAYS_INACTIVE
     FROM INFORMATION_SCHEMA.USERS
     WHERE DELETED_ON IS NULL
   ) source
@@ -175,17 +173,18 @@ BEGIN
 END;
 ```
 
-**Test it:**
+Test the procedure and inspect the populated log:
+
 ```sql
 CALL IDENTIFY_INACTIVE_USERS();
 SELECT USER_NAME, DAYS_INACTIVE FROM USER_ACTIVITY_LOG LIMIT 10;
 ```
 
-**✅ Checkpoint:** Procedure runs without errors and USER_ACTIVITY_LOG is populated
+**Checkpoint:** The procedure completes without errors and `USER_ACTIVITY_LOG` is populated.
 
-#### Exercise 2.2: Create REVOKE_INACTIVE_USER_ROLES Procedure
+### Exercise 2.2: Create REVOKE_INACTIVE_USER_ROLES Procedure
 
-**⚠️ Key Learning:** Notice the `:PARAM_NAME` syntax for parameters!
+This procedure iterates through all roles granted to a target user, revokes them dynamically, and writes an entry to `AUDIT_LOGS`. Note the `:PARAM_NAME` bind syntax required for Snowflake Scripting variables:
 
 ```sql
 CREATE OR REPLACE PROCEDURE REVOKE_INACTIVE_USER_ROLES(USER_NAME_TO_REVOKE VARCHAR)
@@ -234,9 +233,11 @@ BEGIN
 END;
 ```
 
-**✅ Checkpoint:** Procedure created successfully (no "invalid identifier" errors)
+**Checkpoint:** The procedure compiles cleanly with no invalid identifier errors.
 
-#### Exercise 2.3: Create DISABLE_INACTIVE_USER Procedure
+### Exercise 2.3: Create DISABLE_INACTIVE_USER Procedure
+
+This procedure marks a user's status as `disabled` in `USER_ACTIVITY_LOG`. Note that `"STATUS"` is enclosed in double quotes because `STATUS` is a reserved keyword in Snowflake:
 
 ```sql
 CREATE OR REPLACE PROCEDURE DISABLE_INACTIVE_USER(USR VARCHAR, REASON VARCHAR)
@@ -253,14 +254,17 @@ BEGIN
 END;
 ```
 
-**⚠️ Learning Point:** Notice `"STATUS"` is quoted because STATUS is a reserved keyword!
+Test the procedure:
 
-**✅ Checkpoint:** Test with:
 ```sql
 CALL DISABLE_INACTIVE_USER('TEST_USER', 'Lab test');
 ```
 
-#### Exercise 2.4: Create REMOVE_INACTIVE_USER_COMPLETE Procedure
+**Checkpoint:** The procedure returns `Disabled: TEST_USER`.
+
+### Exercise 2.4: Create REMOVE_INACTIVE_USER_COMPLETE Procedure
+
+This orchestrator procedure executes the full offboarding workflow: revoking roles, updating the user's status to `removed`, copying the record into `ARCHIVED_USERS`, and recording the completion event in `AUDIT_LOGS`:
 
 ```sql
 CREATE OR REPLACE PROCEDURE REMOVE_INACTIVE_USER_COMPLETE(USR VARCHAR)
@@ -308,15 +312,15 @@ BEGIN
 END;
 ```
 
-**✅ Checkpoint:** All 4 procedures created successfully
+**Checkpoint:** All four stored procedures are created in `GOVERNANCE.GOVERNANCE`.
 
----
+## Task Scheduling
 
-### **Module 3: Task Scheduling** (20 minutes)
+In this step, you will automate the inactive user cleanup workflow using a scheduled Snowflake Task.
 
-**Objective:** Set up automatic task execution
+### Exercise 3.1: Create the Automatic Cleanup Task
 
-#### Exercise 3.1: Create the Automatic Cleanup Task
+Create a task scheduled to run every Monday at midnight UTC (`0 0 * * 1 UTC`) that identifies inactive users and automatically removes any user inactive for 90 or more days:
 
 ```sql
 USE DATABASE GOVERNANCE;
@@ -330,7 +334,7 @@ BEGIN
   -- Identify inactive users
   CALL IDENTIFY_INACTIVE_USERS();
 
-  -- Remove each user
+  -- Remove each qualifying user
   FOR record IN (
     SELECT USER_NAME, DAYS_INACTIVE
     FROM USER_ACTIVITY_LOG
@@ -350,26 +354,23 @@ END;
 ALTER TASK INACTIVE_USER_CLEANUP_TASK_AUTO RESUME;
 ```
 
-**Verify task status:**
+Verify the task state and next scheduled run time:
+
 ```sql
-SELECT NAME, "STATE", SCHEDULE, NEXT_SCHEDULED_TIME
-FROM TABLE(INFORMATION_SCHEMA.TASK_HISTORY())
-WHERE NAME = 'INACTIVE_USER_CLEANUP_TASK_AUTO'
-LIMIT 1;
+SHOW TASKS LIKE 'INACTIVE_USER_CLEANUP_TASK_AUTO' IN SCHEMA GOVERNANCE.GOVERNANCE;
 ```
 
-**✅ Checkpoint:** Task is in RESUMED state
+**Checkpoint:** Confirm that the task `state` column displays `started`.
 
----
+## Testing and Validation
 
-### **Module 4: Testing & Validation** (45 minutes)
+Before deploying the dashboard, validate the end-to-end lifecycle workflow using synthetic test records.
 
-**Objective:** Test the system end-to-end
+### Exercise 4.1: Create Test Users
 
-#### Exercise 4.1: Create Test Users
+Insert three simulated inactive users into `USER_ACTIVITY_LOG`:
 
 ```sql
--- Insert test users with >89 days inactive
 INSERT INTO USER_ACTIVITY_LOG (
   ACTIVITY_ID, USER_NAME, USER_EMAIL, LAST_LOGIN, 
   DAYS_INACTIVE, STATUS, CREATED_AT
@@ -384,50 +385,57 @@ VALUES
   (SUBSTRING(UUID_STRING(), 0, 36), 'LAB_TEST_USER_3', 'lab3@test.com', 
    DATEADD(day, -95, CURRENT_TIMESTAMP()), 95, 'active', CURRENT_TIMESTAMP());
 
--- Verify
-SELECT USER_NAME, DAYS_INACTIVE, "STATUS" FROM USER_ACTIVITY_LOG 
+-- Verify insertion
+SELECT USER_NAME, DAYS_INACTIVE, "STATUS" 
+FROM USER_ACTIVITY_LOG 
 WHERE USER_NAME LIKE 'LAB_TEST_%'
 ORDER BY DAYS_INACTIVE DESC;
 ```
 
-**Expected:** 3 rows with status = 'active'
+**Expected output:** 3 rows returned, all with `STATUS = 'active'`.
 
-#### Exercise 4.2: Run Procedures Manually
+### Exercise 4.2: Run Procedures Manually
+
+Execute the full offboarding sequence on `LAB_TEST_USER_1`:
 
 ```sql
--- Test each procedure
 CALL IDENTIFY_INACTIVE_USERS();
 CALL DISABLE_INACTIVE_USER('LAB_TEST_USER_1', 'Lab testing');
 CALL REVOKE_INACTIVE_USER_ROLES('LAB_TEST_USER_1');
 CALL REMOVE_INACTIVE_USER_COMPLETE('LAB_TEST_USER_1');
 
--- Verify results
-SELECT USER_NAME, "STATUS" FROM USER_ACTIVITY_LOG 
+-- Verify status transitions
+SELECT USER_NAME, "STATUS" 
+FROM USER_ACTIVITY_LOG 
 WHERE USER_NAME LIKE 'LAB_TEST_%'
 ORDER BY USER_NAME;
 ```
 
-**Expected:**
-- LAB_TEST_USER_1 → status = 'removed'
-- LAB_TEST_USER_2 → status = 'active'
-- LAB_TEST_USER_3 → status = 'active'
+**Expected output:**
+* `LAB_TEST_USER_1` → `removed`
+* `LAB_TEST_USER_2` → `active`
+* `LAB_TEST_USER_3` → `active`
 
-#### Exercise 4.3: Check Audit Trail
+### Exercise 4.3: Check Audit Trail
+
+Verify that each lifecycle action generated an audit record:
 
 ```sql
 SELECT 
   EVENT_TYPE, 
   RESOURCE_NAME, 
   ACTION_DESCRIPTION, 
-  EVENT_TIMESTAMP
+  CREATED_AT
 FROM AUDIT_LOGS
 WHERE RESOURCE_NAME LIKE 'LAB_TEST_%'
-ORDER BY EVENT_TIMESTAMP DESC;
+ORDER BY CREATED_AT DESC;
 ```
 
-**Expected:** Multiple entries showing disable, role revocation, removal actions
+**Expected output:** Multiple audit log entries showing role revocation and user removal completion.
 
-#### Exercise 4.4: Verify Archived Users
+### Exercise 4.4: Verify Archived Users
+
+Confirm that `LAB_TEST_USER_1` was written to `ARCHIVED_USERS`:
 
 ```sql
 SELECT USER_NAME, ARCHIVED_ON 
@@ -435,74 +443,60 @@ FROM ARCHIVED_USERS
 WHERE USER_NAME LIKE 'LAB_TEST_%';
 ```
 
-**Expected:** LAB_TEST_USER_1 in archived users
+**Checkpoint:** `LAB_TEST_USER_1` appears in `ARCHIVED_USERS` with a complete audit trail in `AUDIT_LOGS`.
 
-**✅ Checkpoint:** Complete audit trail from active → disabled → removed → archived
+## Deploy Monitoring Dashboard
 
----
+In this step, you will deploy the 8-page Streamlit in Snowflake application to visualize governance metrics and trigger manual actions.
 
-### **Module 5: Deploy Dashboard** (30 minutes)
+### Exercise 5.1: Deploy Streamlit Dashboard
 
-**Objective:** Set up real-time monitoring
+1. In Snowsight, navigate to **Projects** → **Streamlit** and click **+ Streamlit App**.
+2. Name the app **Governance Dashboard**, select the `GOVERNANCE` database and `GOVERNANCE` schema, and choose your warehouse (e.g., `COMPUTE_WH`).
+3. Copy the entire contents of [`streamlit_governance_dashboard.py`](https://github.com/wondisha/snowflake-ai-governance/blob/main/streamlit_governance_dashboard.py) from the cloned repository and paste it into the Snowsight Streamlit editor.
+4. Click **Run** in the upper-right corner.
 
-#### Exercise 5.1: Deploy Streamlit Dashboard
+**Checkpoint:** The Streamlit dashboard loads without errors and displays all 8 navigation pages.
 
-1. In Snowsight: Click "+ Create" → "Streamlit app"
-2. Name it: "Governance Dashboard"
-3. Copy entire content from `streamlit_governance_dashboard.py`
-4. Paste into Snowsight editor
-5. Click "Run" at top right
+### Exercise 5.2: Navigate Dashboard Pages
 
-**✅ Checkpoint:** Dashboard loads without errors and shows 8 pages
+Explore the core views in your deployed application:
+* **Overview Page:** Review top-level system health metrics and recent `AUDIT_LOGS` entries, including your test user removals.
+* **Inactive Users Page:** View `LAB_TEST_USER_2` and `LAB_TEST_USER_3`, and test interactive governance actions (**Disable**, **Revoke Roles**, **Archive & Remove**).
+* **Agents Page:** Inspect the operational status of the 5 autonomous governance agents.
 
-#### Exercise 5.2: Navigate Dashboard Pages
+**Checkpoint:** All 8 dashboard pages render live data from `GOVERNANCE.GOVERNANCE`.
 
-**Overview Page:**
-- Check system metrics
-- View recent audit logs
-- Should show your test user removals
+## Scale and Customize
 
-**Inactive Users Page:**
-- See remaining test users
-- Try action buttons (Disable, Revoke Roles, Archive & Remove)
+Adapt the governance framework to match your organization's compliance policies and operational schedules.
 
-**Agents Page:**
-- View 5 agent statuses
-- All should show "idle"
+### Exercise 6.1: Change Task Schedule
 
-**✅ Checkpoint:** All 8 pages load successfully with your data
-
----
-
-### **Module 6: Scale & Customize** (45 minutes)
-
-**Objective:** Adapt for production
-
-#### Exercise 6.1: Change Task Schedule
-
-Change to run **tomorrow at 2 PM UTC** (8 AM Central):
+To modify a Snowflake Task schedule, you must first suspend the task, apply the new CRON expression, and resume it. For example, to run every Tuesday at 2:00 PM UTC:
 
 ```sql
 ALTER TASK INACTIVE_USER_CLEANUP_TASK_AUTO SUSPEND;
 
 ALTER TASK INACTIVE_USER_CLEANUP_TASK_AUTO 
-SET SCHEDULE = 'USING CRON 0 14 * * 2 UTC';  -- Tuesday 2 PM UTC
+SET SCHEDULE = 'USING CRON 0 14 * * 2 UTC';
 
 ALTER TASK INACTIVE_USER_CLEANUP_TASK_AUTO RESUME;
 ```
 
-#### Exercise 6.2: Customize Inactivity Threshold
+### Exercise 6.2: Customize Inactivity Threshold
 
-Modify procedure to use 60 days instead of 90:
+Update the task definition to enforce a stricter 60-day inactivity policy instead of 90 days by modifying the `WHERE` filter:
 
 ```sql
--- Edit the task WHERE clause:
-WHERE DAYS_INACTIVE >= 60  -- Changed from 90
+-- Update inside INACTIVE_USER_CLEANUP_TASK_AUTO
+WHERE DAYS_INACTIVE >= 60
+  AND "STATUS" IN ('active', 'flagged')
 ```
 
-#### Exercise 6.3: Enable Email Notifications
+### Exercise 6.3: Enable Email Notifications
 
-Set up alerts by updating deployment_config.json:
+Configure alert notifications by updating [`deployment_config.json`](https://github.com/wondisha/snowflake-ai-governance/blob/main/deployment_config.json) in your repository:
 
 ```json
 {
@@ -511,21 +505,23 @@ Set up alerts by updating deployment_config.json:
 }
 ```
 
-**✅ Checkpoint:** System customized for your environment
+**Checkpoint:** Your task schedule, inactivity threshold, and alert settings reflect your target production configuration.
 
----
+## Monitoring and Troubleshooting
 
-## 📊 Lab Monitoring Queries
+Use the following operational queries and troubleshooting tips to maintain your governance system in production.
 
-**Use these to track your progress:**
+### Operational Monitoring Queries
+
+Run these queries in Snowsight to monitor overall system health, task execution history, and agent activity:
 
 ```sql
--- Overall system health
+-- Overall system health summary
 SELECT 
-  (SELECT COUNT(*) FROM USER_ACTIVITY_LOG) as total_users,
-  (SELECT COUNT(*) FROM USER_ACTIVITY_LOG WHERE DAYS_INACTIVE >= 90) as inactive_90plus,
-  (SELECT COUNT(*) FROM ARCHIVED_USERS) as removed_users,
-  (SELECT COUNT(*) FROM AUDIT_LOGS) as total_events;
+  (SELECT COUNT(*) FROM USER_ACTIVITY_LOG) AS total_users,
+  (SELECT COUNT(*) FROM USER_ACTIVITY_LOG WHERE DAYS_INACTIVE >= 90) AS inactive_90plus,
+  (SELECT COUNT(*) FROM ARCHIVED_USERS) AS removed_users,
+  (SELECT COUNT(*) FROM AUDIT_LOGS) AS total_events;
 
 -- Task execution history
 SELECT NAME, COMPLETED_TIME, RETURN_VALUE, ERROR_MESSAGE
@@ -534,119 +530,43 @@ WHERE NAME = 'INACTIVE_USER_CLEANUP_TASK_AUTO'
 ORDER BY COMPLETED_TIME DESC
 LIMIT 10;
 
--- Agent activity
+-- Audit event breakdown
 SELECT 
   EVENT_TYPE, 
-  COUNT(*) as count,
-  MAX(EVENT_TIMESTAMP) as last_event
+  COUNT(*) AS event_count,
+  MAX(CREATED_AT) AS last_event
 FROM AUDIT_LOGS
 GROUP BY EVENT_TYPE
 ORDER BY last_event DESC;
 ```
 
----
+### Common Troubleshooting Issues
 
-## 🔍 Troubleshooting Guide
+* **Error: `Invalid identifier 'USR'` inside stored procedures**
+  * **Cause:** Omitting the `:` prefix when referencing Snowflake Scripting input parameters or local variables inside SQL statements.
+  * **Fix:** Always prefix parameter names with a colon (e.g., `WHERE USER_NAME = :USR;`).
+* **Error: Syntax error referencing `STATUS` or `STATE`**
+  * **Cause:** `STATUS` and `STATE` are reserved keywords in Snowflake SQL.
+  * **Fix:** Enclose reserved identifiers in double quotes (e.g., `SET "STATUS" = 'removed';`).
+* **Issue: Scheduled task is not executing**
+  * **Cause:** Newly created or altered tasks default to the `SUSPENDED` state.
+  * **Fix:** Run `ALTER TASK INACTIVE_USER_CLEANUP_TASK_AUTO RESUME;` and verify via `SHOW TASKS`.
 
-### Issue: "Invalid identifier 'USR'"
+## Conclusion And Resources
 
-**Cause:** Not using `:` prefix for parameters
+Congratulations! You have built and validated an autonomous governance system in Snowflake capable of tracking user activity, enforcing inactivity policies on a schedule, maintaining immutable audit trails, and surfacing real-time insights in Streamlit.
 
-**Fix:** Always use `:PARAM_NAME`:
-```sql
-WHERE USER_NAME = :USR;  -- Correct
-WHERE USER_NAME = USR;   -- Wrong
-```
+Explore the full source code—including Slack integrations, daily email reporting, approval workflows, and additional governance agents—in the [Snowflake AI Governance GitHub Repository](https://github.com/wondisha/snowflake-ai-governance).
 
-### Issue: "STATUS is a reserved keyword"
+### What You Learned
+* How to structure a Snowflake governance schema for user lifecycle tracking and compliance auditing
+* How to write parameterized Snowflake Scripting stored procedures using `:PARAM` bind syntax and `MERGE` statements
+* How to automate governance enforcement using CRON-scheduled Snowflake Tasks
+* How to build and deploy a multi-page Streamlit in Snowflake monitoring application
 
-**Cause:** Not quoting reserved words
-
-**Fix:** Quote with double quotes:
-```sql
-SET "STATUS" = 'removed';  -- Correct
-SET STATUS = 'removed';    -- Wrong
-```
-
-### Issue: Task not running
-
-**Cause:** Task not resumed or schedule not set
-
-**Fix:**
-```sql
--- Check status
-SELECT STATE FROM TABLE(INFORMATION_SCHEMA.TASK_HISTORY())
-WHERE NAME = 'INACTIVE_USER_CLEANUP_TASK_AUTO' LIMIT 1;
-
--- Resume if needed
-ALTER TASK INACTIVE_USER_CLEANUP_TASK_AUTO RESUME;
-```
-
----
-
-## ✅ Lab Completion Checklist
-
-- [ ] Module 1: Database schema created (20+ tables)
-- [ ] Module 2: All 4 procedures created successfully
-- [ ] Module 3: Task scheduled and enabled
-- [ ] Module 4: Test users removed successfully
-- [ ] Module 4: Audit trail complete
-- [ ] Module 5: Dashboard deployed and accessible
-- [ ] Module 5: All 8 dashboard pages working
-- [ ] Module 6: Task schedule customized
-- [ ] Module 6: Tested end-to-end workflow
-
----
-
-## 🎓 Key Learning Takeaways
-
-1. **Snowflake Stored Procedures** - Use `:PARAM` syntax for parameters
-2. **MERGE Statements** - Efficient upsert operations
-3. **Task Scheduling** - CRON syntax for automation
-4. **Audit Logging** - Complete traceability
-5. **Real-time Dashboards** - Streamlit for monitoring
-6. **Reserved Keywords** - Always quote them (`"STATUS"`, `"STATE"`)
-
----
-
-## 📚 Next Steps
-
-After completing this lab:
-
-1. **Add Slack Alerts** - See slack_integration.sql
-2. **Enable Email Reports** - See daily_reports.sql
-3. **Add Approval Workflows** - See approval_workflow.sql
-4. **Deploy Other Agents** - See agent_procedures_production.sql
-5. **Set up Airflow** - See governance_agents_dag.py
-
----
-
-## 💡 Lab Tips
-
-- **Save queries** - Save commonly used monitoring queries for reuse
-- **Take notes** - Document what you learn about Snowflake procedures
-- **Test thoroughly** - Always verify each step before moving to next
-- **Read error messages** - They're usually very specific
-- **Check git repository** - All code is on GitHub with examples
-
----
-
-## 🎉 Congratulations!
-
-You've built a production-grade Snowflake governance system! 
-
-**Your system now:**
-- ✅ Monitors user activity automatically
-- ✅ Removes inactive users on schedule
-- ✅ Maintains complete audit trails
-- ✅ Provides real-time dashboards
-- ✅ Scales to any Snowflake environment
-
-**Ready to deploy to production!** 🚀
-
----
-
-**Lab Version:** 1.0  
-**Updated:** November 2026  
-**Total Estimated Time:** 4-6 hours  
-**Difficulty:** Intermediate
+### Related Resources
+* [Snowflake AI Governance GitHub Repository](https://github.com/wondisha/snowflake-ai-governance)
+* [Snowflake Scripting Developer Guide](https://docs.snowflake.com/en/developer-guide/snowflake-scripting/index)
+* [Introduction to Snowflake Tasks](https://docs.snowflake.com/en/user-guide/tasks-intro)
+* [Streamlit in Snowflake Documentation](https://docs.snowflake.com/en/developer-guide/streamlit/about-streamlit)
+* [Snowflake Information Schema Reference](https://docs.snowflake.com/en/sql-reference/info-schema)
