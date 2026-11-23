@@ -1,10 +1,10 @@
-# Γ¥ä∩╕Å Snowflake AI Governance System
+# Snowflake AI Governance System
 
 **Complete autonomous governance, security, performance, and health management for Snowflake**
 
 ---
 
-## ≡ƒÄ» Overview
+## Overview
 
 An **enterprise-grade autonomous governance system** for Snowflake that automatically:
 
@@ -15,11 +15,11 @@ An **enterprise-grade autonomous governance system** for Snowflake that automati
 Γ£à Cleans Up Users - Auto-remove inactive users (90+ days)  
 Γ£à Alerts & Reports - Slack alerts, daily email reports, approval workflows  
 
-**Zero manual intervention required!** ≡ƒñû
+**Zero manual intervention required!** 
 
 ---
 
-## ≡ƒôè Features
+##  Features
 
 ### 5 Autonomous Agents
 
@@ -58,7 +58,7 @@ An **enterprise-grade autonomous governance system** for Snowflake that automati
 
 ---
 
-## ≡ƒº¬ Learn with Hands-On Lab (NEW!)
+##  Learn with Hands-On Lab (NEW!)
 
 **Want to learn how to build this system?** ≡ƒôÜ
 
@@ -73,7 +73,7 @@ Start with our **Hands-On Lab Guide**: `HANDS_ON_LAB.md`
 
 ---
 
-## ≡ƒÜÇ Quick Start (5 Minutes)
+##  Quick Start (5 Minutes)
 
 ### Step 1: Prerequisites
 
@@ -123,7 +123,7 @@ In Snowsight: Create App ΓåÆ Streamlit ΓåÆ Upload streamlit_governance_das
 
 ---
 
-## ≡ƒôï Full Deployment Steps
+##  Full Deployment Steps
 
 ### 1. Pre-Deployment Check
 
@@ -275,7 +275,7 @@ python populate_sample_data.py
 
 ---
 
-## ≡ƒôè Dashboard Pages
+##  Dashboard Pages
 
 **Overview** - System metrics & audit logs  
 **Security** - PII detection, security events  
@@ -291,7 +291,7 @@ python populate_sample_data.py
 
 ---
 
-## ≡ƒöÉ User Lifecycle Management
+##  User Lifecycle Management
 
 ### Automatic Detection (Weekly Monday Midnight)
 
@@ -315,7 +315,7 @@ Each Monday: Scan ΓåÆ Revoke Roles ΓåÆ Disable ΓåÆ Archive ΓåÆ Log
 
 ---
 
-## ≡ƒöù Integration & Setup Guides
+##  Integration & Setup Guides
 
 - **Airflow:** See AIRFLOW_INTEGRATION_GUIDE.md
 - **dbt Cloud:** See DBT_CLOUD_INTEGRATION_GUIDE.md
@@ -325,7 +325,7 @@ Each Monday: Scan ΓåÆ Revoke Roles ΓåÆ Disable ΓåÆ Archive ΓåÆ Log
 
 ---
 
-## ≡ƒôê Monitoring
+##  Monitoring
 
 ### Check Agent Status
 
@@ -352,7 +352,7 @@ ORDER BY QUERY_START_TIME DESC;
 
 ---
 
-## ≡ƒôü File Structure
+##  File Structure
 
 ```
 deploy.py                           # Main deployment
@@ -379,22 +379,22 @@ README.md
 
 ---
 
-## Γ£à What You Get
+##  What You Get
 
-Γ£à 5 Autonomous Agents  
-Γ£à 8-Page Real-Time Dashboard  
-Γ£à Slack Alerts  
-Γ£à Daily Email Reports  
-Γ£à Approval Workflows  
-Γ£à Automatic User Removal  
-Γ£à Complete RBAC  
-Γ£à Multi-Environment Support  
-Γ£à Full Audit Logging  
-Γ£à Production-Ready  
+ 5 Autonomous Agents  
+ 8-Page Real-Time Dashboard  
+ Slack Alerts  
+ Daily Email Reports  
+ Approval Workflows  
+ Automatic User Removal  
+ Complete RBAC  
+ Multi-Environment Support  
+ Full Audit Logging  
+ Production-Ready  
 
 ---
 
-## ≡ƒÜÇ Deployment Timeline
+##  Deployment Timeline
 
 | Stage | Time | What Happens |
 |-------|------|--------------|
