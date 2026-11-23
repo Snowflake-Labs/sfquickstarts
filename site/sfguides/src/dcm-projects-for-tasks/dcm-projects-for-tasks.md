@@ -362,7 +362,7 @@ The insert skips readings that are already there, so running the script again do
 
 Section 5 reads the task history for this graph. The GRAPH_VERSION column tells you which committed version each task ran. **Take note of it**: every task in this run used version 1.
 
-| <span style="white-space: nowrap">GRAPH_VERSION</span> | NAME | STATE | RETURN_VALUE |
+| GRAPH_VERSION | NAME | STATE | RETURN_VALUE |
 |---|---|---|---|
 | 1 | LOAD_WEATHER | SUCCEEDED | 6 rows loaded |
 | 1 | BUILD_DAILY_SUMMARY | SUCCEEDED | NULL |
@@ -391,7 +391,7 @@ Section 1 sends the graph a sensor glitch: a reading with an average temperature
 
 Section 2 runs the graph and waits three minutes: a minute or so for the run, and the rest because task events reach the event table a minute or two after the run ends. The history of that run shows the root task loading the bad row, the summary task failing, and the finalizer still running, as finalizers do:
 
-| <span style="white-space: nowrap">GRAPH_VERSION</span> | NAME | STATE | RETURN_VALUE | ERROR_MESSAGE |
+| GRAPH_VERSION | NAME | STATE | RETURN_VALUE | ERROR_MESSAGE |
 |---|---|---|---|---|
 | 1 | LOAD_WEATHER | SUCCEEDED | 1 rows loaded | NULL |
 | 1 | BUILD_DAILY_SUMMARY | FAILED | NULL | Number out of representable range: type FIXED[SB8](10,1){nullable}, value 1000000000.000000 |
@@ -527,7 +527,7 @@ SHOW COMMITTED TASKS shows version 2, and the new task is part of it. Every memb
 
 Sections 3 and 4 add two more hot days, run the graph again and show every run side by side. The first two runs used version 1 and three tasks, including the run you broke on purpose; the last used version 2, and BUILD_HEAT_WARNINGS ran in it:
 
-| <span style="white-space: nowrap">GRAPH_VERSION</span> | NAME | STATE | RETURN_VALUE |
+| GRAPH_VERSION | NAME | STATE | RETURN_VALUE |
 |---|---|---|---|
 | 1 | LOAD_WEATHER | SUCCEEDED | 6 rows loaded |
 | 1 | BUILD_DAILY_SUMMARY | SUCCEEDED | NULL |
