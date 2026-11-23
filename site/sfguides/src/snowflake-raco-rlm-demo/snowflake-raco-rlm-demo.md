@@ -6,8 +6,7 @@ categories: snowflake-site:taxonomy/solution-center/certification/quickstart, sn
 tags: Cortex, Cortex AI, Cortex Training, RL, Reinforcement Learning, Miles, Weight-Space Programming, DSPy, RLM, AI_COMPLETE, Cortex Search, Cortex Agents, Notebooks, Container Runtime, Computer Vision, RaCo
 environments: web
 status: Published
-feedback link: https://github.com/Snowflake-Labs/sfquickstarts/issues
-fork repo link: https://github.com/Snowflake-Labs/sfquickstarts
+feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 # Propose, Verify, Then Trust: Weight-Space Programming, Miles, DSPy RLM and RaCo on Snowflake
 
@@ -52,7 +51,7 @@ All screenshots are from Snowsight Workspace notebook runs. Their numbers come f
 
 ### What You'll Need
 
-- The companion notebooks and helpers from this guide's folder:
+- The companion notebooks and helpers in this guide's `assets/` folder:
   - `weight_space_programming.ipynb`, `weight_space.py`, `weight_space_xor.py`, `miles_verifier.py`
   - `support_rlm.ipynb`, `support.py`, `snowflake_lm.py`, `tech_support_dataset.csv`, `setup.sql`, `search.sql`
   - `vision_raco_kornia.ipynb`, `vision.py`
@@ -62,20 +61,20 @@ All screenshots are from Snowsight Workspace notebook runs. Their numbers come f
 <!-- ------------------------ -->
 ## Set Up the Workspace
 
-1. Put the notebooks and their helpers in one Workspace folder on Container Runtime:
+1. Download the notebooks and helpers from `assets/` and put them together in one Workspace folder on Container Runtime (keep the Python helpers and CSV alongside the notebooks):
    - weight space: `weight_space.py`, plus `weight_space_xor.py` and `miles_verifier.py` for the Miles hook
    - support: `support.py`, `snowflake_lm.py`, `tech_support_dataset.csv`
    - vision: `vision.py`
 2. Use a CPU pool for the weight-space and support notebooks and a GPU pool for vision.
 3. The weight-space notebook needs no tables and no installs beyond NumPy. The support notebook needs DSPy with the `deno` extra (`dspy[deno]>=3.5`), which provides `dspy.RLM` and `dspy.PythonInterpreter`. Supply packages through the Snowflake artifact repository or an approved external access integration.
-4. Run `setup.sql` only for the support publishing path, under a write-enabled demo role. It creates `RACO_RLM_DEMO.PUBLIC` and synthetic-only objects.
+4. Run [`assets/setup.sql`](assets/setup.sql) only for the support publishing path, under a write-enabled demo role. It creates `RACO_RLM_DEMO.PUBLIC` and synthetic-only objects.
 
 > **Note:** each paid section is off by default (`RUN_MODEL`, `RUN_BASELINE`, `SAVE_RESULT`). Run every notebook top to bottom once for the free path before you enable model calls.
 
 <!-- ------------------------ -->
-## Repair Weights with an AI_COMPLETE Writer
+## Repair Network Weights
 
-Open `weight_space_programming.ipynb`. A frontier **writer** LM repairs a small trained network by editing its weights directly, with no gradients and no training. The method comes from *Sparks of Weight-Space Programming* (Takehi, Teoh, Zhang, Khattab, MIT CSAIL, 2026), which `dspy-wsp` packages as a DSPy optimizer.
+Open [`assets/weight_space_programming.ipynb`](assets/weight_space_programming.ipynb). A frontier **writer** LM repairs a small trained network by editing its weights directly, with no gradients and no training. The method comes from *Sparks of Weight-Space Programming* (Takehi, Teoh, Zhang, Khattab, MIT CSAIL, 2026), which `dspy-wsp` packages as a DSPy optimizer.
 
 **The student** is a NumPy MLP (10 → 32 → 32 → 3), trained in the notebook to route tickets to billing, technical or account. Three of its ten features (`caps_ratio`, `emoji_count`, `ticket_length`) never affect the labels. The harness then **plants a failure**: a rank-1 shortcut in `block1` that turns one of those features into a push toward one class. The writer isn't told this.
 
@@ -131,7 +130,7 @@ Set `RUN_MODEL = True` and run the writer cell. Each turn makes one `AI_COMPLETE
 dspy-wsp gives the writer a real kernel over real weights, which needs a sandbox and takes hours. This notebook keeps the protocol and replaces the kernel with a closed JSON action set. That makes it safe to run inside a Snowflake notebook and cheap enough to iterate on, at the cost of expressiveness: the writer can't write analysis code it wasn't given an action for.
 
 <!-- ------------------------ -->
-## Build a Miles Reward for a Repair Policy
+## Build Miles Rewards
 
 The writer above is a frontier model used **at inference time**. [Miles](https://github.com/radixark/miles) instead trains an **open-weight policy** with RL so that it gets better at proposing edits. The policy's weights change; the student networks are rebuilt per task and never trained.
 
@@ -188,9 +187,9 @@ Put `miles_verifier.py`, `weight_space.py` and `weight_space_xor.py` on the work
 > **Note:** the screenshots above show the Miles **inputs** (datasets) and the **reward** applied to a zero-shot policy, both inside Snowflake. They don't show a Miles RL run: rollouts, policy updates, or a trained checkpoint's held-out reward. That runs as a separate job on GPU workers. An `AI_COMPLETE` model isn't a Miles-trainable checkpoint. Report a trained policy's held-out reward on `wsp_miles_heldout.jsonl` against the three rows above; rising training reward alone isn't evidence. The task family is narrow (three nuisance features, one shortcut type), so a gain on it wouldn't show general weight-space reasoning.
 
 <!-- ------------------------ -->
-## Classify Support Tickets with DSPy RLM
+## Classify Support Tickets
 
-Open `support_rlm.ipynb`. Here the proposer is a DSPy **RLM**, and it proposes a ticket classification plus evidence. Its generated code runs only in `dspy.PythonInterpreter` (Deno/Pyodide), which has no Snowflake session. Model calls go through `SnowflakeCompleteEngine`, which issues parameterized `AI_COMPLETE` queries over the active session, so no PAT or model HTTP endpoint is needed.
+Open [`assets/support_rlm.ipynb`](assets/support_rlm.ipynb). Here the proposer is a DSPy **RLM**, and it proposes a ticket classification plus evidence. Its generated code runs only in `dspy.PythonInterpreter` (Deno/Pyodide), which has no Snowflake session. Model calls go through `SnowflakeCompleteEngine`, which issues parameterized `AI_COMPLETE` queries over the active session, so no PAT or model HTTP endpoint is needed.
 
 ### Configure the sandbox and engine
 
@@ -214,7 +213,7 @@ Open `support_rlm.ipynb`. Here the proposer is a DSPy **RLM**, and it proposes a
 
 ### Optional: Search, agent and evaluation
 
-Run `search.sql` only after a validated issue exists. Then deploy `support_agent.agent.yaml` and run the managed evaluation in `agent_eval.yaml`. Search, the agent and the evaluation each incur cost.
+Run [`assets/search.sql`](assets/search.sql) only after a validated issue exists. Then deploy [`assets/support_agent.agent.yaml`](assets/support_agent.agent.yaml) and run the managed evaluation in [`assets/agent_eval.yaml`](assets/agent_eval.yaml). Search, the agent and the evaluation each incur cost.
 
 ### Compare the three approaches
 
@@ -229,7 +228,7 @@ Run `search.sql` only after a validated issue exists. Then deploy `support_agent
 | **What gets persisted** | Validated issues, Search chunks | Optional run record in `WEIGHT_EDIT_RUNS` | Run folder, patch, checkpoint |
 
 <!-- ------------------------ -->
-## Scope a Cortex Sense Context (Optional)
+## Scope Cortex Sense
 
 This section is a review checklist for extending the support agent with Cortex Sense. It is **not** a persisted `scope.yaml` or a ready-to-run SQL script. Use the `/cortex-sense` setup or refine workflow to discover existing contexts, propose a scope and present it for review. Don't create a second context if one already covers this domain. The intended namespace is `RACO_RLM_DEMO.PUBLIC`, but check that it exists and that you have grants first. Choose the context name, storage location, role and warehouse through that workflow; this guide doesn't hardcode any of them.
 
@@ -305,7 +304,7 @@ Nothing in this guide creates an ontology draft, approval, association or bindin
 <!-- ------------------------ -->
 ## Verify RaCo Keypoints with Kornia
 
-Open `vision_raco_kornia.ipynb` on a GPU pool.
+Open [`assets/vision_raco_kornia.ipynb`](assets/vision_raco_kornia.ipynb) on a GPU pool.
 
 ![RaCo, ALIKED and LightGlue initialized; RaCo weights loaded from a local checkpoint](assets/raco-checkpoint.png)
 
@@ -321,10 +320,33 @@ Open `vision_raco_kornia.ipynb` on a GPU pool.
 - **Public CSV:** `tech_support_dataset.csv` comes from the [Tech Support Conversations Dataset](https://www.kaggle.com/datasets/steve1215rogg/tech-support-conversations-dataset), under Apache-2.0. It was downloaded on 2026-11-18, and the extracted CSV's SHA-256 is `188d443ea67f93d8e07e0a479685493498b2dcd31e2e3e769f19b087aa0f66c2`. It has 1,896 rows, each one an issue plus a suggested response, **not** a conversation. Status counts are Resolved 505, Resolved after follow-up 472, Pending 478 and Escalated 441. A publisher `Resolved` label doesn't prove a fix worked. Keep this attribution if you redistribute the file.
 - **Untrusted output:** model output stays untrusted until the track's verifier accepts it. Never run model-emitted Python outside the RLM sandbox. Never apply a proposed edit to RaCo, which has a different architecture.
 - **Not included:** real Slack exports, customer images, public S3 and external Bedrock aren't part of this guide.
-- **Costs:** container pools, warehouses, `AI_COMPLETE`, Search, agents and evaluations are billed separately, and RLM cost multiplies with recursion. Shut down idle notebooks and suspend the Search service when you're done.
+- **Costs:** container pools, warehouses, `AI_COMPLETE`, Search, agents and evaluations are billed separately, and RLM cost multiplies with recursion. Follow the cleanup steps below when done.
 
 <!-- ------------------------ -->
-## Conclusion and Resources
+## Clean Up
+
+First suspend each Workspace notebook service you started: in its **Connected** menu, hover over the service and select **Suspend**. This disconnects notebooks sharing that service. If using a legacy Container Runtime notebook, choose **End session** instead. Allow the compute pool to auto-suspend once its services are idle; if you provisioned a **dedicated** pool for this demo, its owner can suspend it after verifying no other workload uses it. Do **not** suspend or drop shared `SYSTEM_COMPUTE_POOL_CPU` or `SYSTEM_COMPUTE_POOL_GPU`; other users and workloads may depend on them. Stop any separately provisioned Miles workers using that deployment's own controls.
+
+The following SQL removes the optional agent, Search service, seven tables and stage created for this guide. Run it only after checking their names and ownership in the isolated `RACO_RLM_DEMO.PUBLIC` namespace; it deletes any data subsequently written there. The Search service drop has no `IF EXISTS`, so skip that statement if you never created it. Use a role with the necessary object privileges. Do not drop an agent with the same short name in another database.
+
+```sql
+DROP AGENT IF EXISTS RACO_RLM_DEMO.PUBLIC.SUPPORT_AGENT;
+-- Run only if assets/search.sql created this service.
+DROP CORTEX SEARCH SERVICE RACO_RLM_DEMO.PUBLIC.SUPPORT_SEARCH;
+DROP TABLE IF EXISTS RACO_RLM_DEMO.PUBLIC.SUPPORT_MESSAGES;
+DROP TABLE IF EXISTS RACO_RLM_DEMO.PUBLIC.THREAD_RESULTS;
+DROP TABLE IF EXISTS RACO_RLM_DEMO.PUBLIC.VALIDATED_ISSUES;
+DROP TABLE IF EXISTS RACO_RLM_DEMO.PUBLIC.ISSUE_CHUNKS;
+DROP TABLE IF EXISTS RACO_RLM_DEMO.PUBLIC.VISION_KEYPOINTS;
+DROP TABLE IF EXISTS RACO_RLM_DEMO.PUBLIC.WEIGHT_EDIT_RUNS;
+DROP TABLE IF EXISTS RACO_RLM_DEMO.PUBLIC.EVAL_QUESTIONS;
+DROP STAGE IF EXISTS RACO_RLM_DEMO.PUBLIC.MODEL_ASSETS;
+```
+
+If you ran the optional managed Agent Evaluation, inspect its dataset and evaluation artifacts separately before deleting them; this SQL only removes objects declared in `setup.sql` and the optional Search/agent deployment. **Only if the entire database was created exclusively for this demo and contains nothing else**, its owner may then run `DROP DATABASE RACO_RLM_DEMO RESTRICT;` after reviewing the remaining objects. Otherwise leave the database and all unrelated contents intact. Remove the imported Workspace notebooks/files separately if no longer needed.
+
+<!-- ------------------------ -->
+## Conclusion And Resources
 
 You repaired a planted failure in a network's weights with an `AI_COMPLETE` writer, then checked the result on a hidden validation split and with a hash-checked patch. You turned the same verifier into a Miles reward over a task family that one memorized answer can't solve, and you measured a zero-shot baseline for a trained policy to beat. You also gated DSPy RLM classifications and RaCo keypoints behind deterministic checks. In every track, a proposal only became useful after a verifier accepted it.
 
