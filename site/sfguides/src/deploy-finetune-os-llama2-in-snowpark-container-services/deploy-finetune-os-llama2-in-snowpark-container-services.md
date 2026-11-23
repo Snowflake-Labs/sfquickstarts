@@ -168,7 +168,9 @@ spec:
     public: true
   volume:
   - name: llm-workspace
-    source: "@llm_workspace"
+    source: stage
+    stageConfig:
+      name: "@llm_workspace"
     uid: 0
     gid: 0
 ```

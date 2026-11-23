@@ -287,7 +287,9 @@ spec:
       public: true
   volumes:
     - name: jupyter-home
-      source: "@volumes/jupyter-snowpark"
+      source: stage
+      stageConfig:
+        name: "@volumes/jupyter-snowpark"
       uid: 1000
       gid: 1000
 
