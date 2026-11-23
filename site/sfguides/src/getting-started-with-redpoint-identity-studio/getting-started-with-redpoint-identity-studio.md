@@ -221,7 +221,7 @@ Congratulations! You've successfully installed Redpoint Identity Studio, mapped 
 - [Redpoint Identity Studio documentation](https://docs.redpointglobal.com/ris)
 - [Redpoint Identity Studio getting started guide] (https://docs.redpointglobal.com/ris/getting-started-guide)
 - [Read the blog] (https://medium.com/snowflake/identity-resolution-that-shows-its-work-e64db4dd2004)
-- [Reference Architecture](assets/redpoint-identity-studio-snowflake-reference-architecture.pdf)
+- [Reference Architecture](https://cdn.redpointglobal.com/redpoint-identity-studio/redpoint-identity-studio-snowflake-reference-architecture.pdf)
 
 <!-- ------------------------ -->
 
