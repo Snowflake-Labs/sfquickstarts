@@ -28,7 +28,7 @@ Once both are running, you will go through a moment every pipeline meets sooner 
 - How to split infrastructure into separate DCM Projects with different owners
 - How to give each team its own warehouse, database and role from one Jinja loop
 - How to build silver and gold dynamic tables on top of another project's tables
-- How to attach data quality expectations and run them with TEST ALL
+- How to attach data quality expectations and check them on demand
 - How to declare a semantic view in the same project as the tables it describes
 
 ### What You'll Need
@@ -650,16 +650,18 @@ In the Database Explorer, open TRADING_ANALYTICS and select the **Lineage** tab 
 ### Run the expectations
 
 ```sql
-EXECUTE DCM PROJECT DCM_DEMO_2_FINANCE_DEV.PROJECTS.FINANCE_PIPELINE TEST ALL;
+SELECT EXPECTATION_NAME, VALUE, EXPECTATION_EXPRESSION, EXPECTATION_VIOLATED
+FROM TABLE(SYSTEM$EVALUATE_DATA_QUALITY_EXPECTATIONS(
+    REF_ENTITY_NAME => 'DCM_DEMO_2_FINANCE_DEV.SILVER.TRADES_ENRICHED'));
 ```
 
-TEST ALL evaluates every expectation the project defines and returns one JSON document. Its status is FAILED:
+SYSTEM$EVALUATE_DATA_QUALITY_EXPECTATIONS runs the data metric functions attached to the table now, instead of waiting for the next refresh, and reports each expectation. One is violated:
 
 | EXPECTATION_NAME | VALUE | EXPECTATION_EXPRESSION | EXPECTATION_VIOLATED |
 |---|---|---|---|
-| EVERY_TRADE_HAS_A_CUSTOMER | 1 | value = 0 | true |
-| NO_DUPLICATE_TRADES | 0 | value = 0 | false |
-| QUANTITY_IS_POSITIVE | 10 | value > 0 | false |
+| EVERY_TRADE_HAS_A_CUSTOMER | 1 | value = 0 | TRUE |
+| NO_DUPLICATE_TRADES | 0 | value = 0 | FALSE |
+| QUANTITY_IS_POSITIVE | 10 | value > 0 | FALSE |
 
 The pipeline deployed cleanly and refreshed without an error, and it is still wrong. That gap is what expectations are for.
 
@@ -699,10 +701,12 @@ USE ROLE DCM_DEMO_2_FINANCE_DEV_ADMIN;
 ALTER DYNAMIC TABLE DCM_DEMO_2_FINANCE_DEV.GOLD.DAILY_TRADING,
                     DCM_DEMO_2_FINANCE_DEV.GOLD.CUSTOMER_TRADING REFRESH;
 
-EXECUTE DCM PROJECT DCM_DEMO_2_FINANCE_DEV.PROJECTS.FINANCE_PIPELINE TEST ALL;
+SELECT EXPECTATION_NAME, VALUE, EXPECTATION_EXPRESSION, EXPECTATION_VIOLATED
+FROM TABLE(SYSTEM$EVALUATE_DATA_QUALITY_EXPECTATIONS(
+    REF_ENTITY_NAME => 'DCM_DEMO_2_FINANCE_DEV.SILVER.TRADES_ENRICHED'));
 ```
 
-The status is now SUCCESSFUL, and EVERY_TRADE_HAS_A_CUSTOMER reports value 0. Trade 2018 now belongs to Ravi Mehta, and the anonymous row is gone from CUSTOMER_TRADING.
+No expectation is violated now, and EVERY_TRADE_HAS_A_CUSTOMER reports value 0. Trade 2018 now belongs to Ravi Mehta, and the anonymous row is gone from CUSTOMER_TRADING.
 
 <!-- ------------------------ -->
 ## Cleanup
@@ -750,7 +754,7 @@ In this guide, you:
 - **Split infrastructure across two DCM Projects** with different owners: a platform project that owns shared raw data, compute and roles, and a team project that builds on it
 - **Gave each team the same footprint** from one Jinja loop and one macro, sized differently per environment
 - **Built silver and gold dynamic tables** that read another project's tables, with the freshness declared once at the gold layer
-- **Caught bad data with expectations** and TEST ALL, fixed it, and proved the fix
+- **Caught bad data with expectations**, fixed it, and proved the fix
 - **Declared a semantic view** next to the tables it describes, so the business vocabulary is versioned with the pipeline
 
 ### What's Next
