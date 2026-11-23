@@ -157,7 +157,7 @@ It runs as DCM_DEVELOPER, so the role owns the integration, and ownership covers
 
 On line 27 of DCM_Projects_Tasks/manifest.yml, set alert_email to the verified email address of your Snowflake user.
 
-After these two scripts, nothing in the guide needs more than DCM_DEVELOPER. The guide was verified with secondary roles turned off, so DCM_DEVELOPER didn't borrow privileges from ACCOUNTADMIN or any other role granted to the user. You don't need to turn yours off.
+After these two scripts, nothing in the guide needs more than DCM_DEVELOPER.
 
 <!-- ------------------------ -->
 ## Explore the Project Files
@@ -278,7 +278,7 @@ DEFINE ALERT DCM_DEMO_4{{env_suffix}}.PIPELINE.TASK_ERROR_RATE
 
 TEMPLATE_PARAMS fills in the template:
 
-- **ERROR_RATE_THRESHOLD, SCOPE_ACTIVE and SCOPE_DATABASE** make it fire when more than 10% of the task status events in this project's database are failures. The template counts the events from the alert's last successful scheduled run, or from one hour back if it has none, up to a minute before the current run. 0.1 is sized from a measured run of this demo; a real pipeline uses a higher threshold, and the template default is 0.15.
+- **ERROR_RATE_THRESHOLD, SCOPE_ACTIVE and SCOPE_DATABASE** make it fire when more than 10% of the task status events in this project's database are failures. The template counts the events from the alert's last successful scheduled run, or from one hour back if it has none, up to a minute before the current run. 0.1 suits this small demo; a real pipeline uses a higher threshold, and the template default is 0.15.
 - **NOTIFICATION_MODE and EMAIL_NOTIFICATION_INTEGRATION** send the notification by email through the integration from 02_guide_setup.sql.
 - **notification_config.email_config.toAddress** is the recipient, your alert_email from the manifest. Recipients aren't a template variable, and both the integration variable and toAddress are needed: with the integration only in notification_config, the alert emails the user who created it instead; with no toAddress, the send fails with "No recipients specified".
 
@@ -397,7 +397,7 @@ Section 2 runs the graph and waits three minutes: a minute or so for the run, an
 | 1 | BUILD_DAILY_SUMMARY | FAILED | NULL | Number out of representable range: type FIXED[SB8](10,1){nullable}, value 1000000000.000000 |
 | 1 | LOG_RUN | SUCCEEDED | 7 raw rows | NULL |
 
-Section 3 first counts what the alert is about to count: the task status events in DCM_DEMO_4_DEV over the last hour. In the verified run, 1 of 6 events was a failure, an error rate of 0.167, above the 0.1 threshold:
+Section 3 first counts what the alert is about to count: the task status events in DCM_DEMO_4_DEV over the last hour. With the run you broke, 1 of 6 events is a failure, an error rate of 0.167, above the 0.1 threshold:
 
 | FAILED_EVENTS | ALL_STATUS_EVENTS | ERROR_RATE |
 |---|---|---|
