@@ -5,7 +5,7 @@ language: en
 summary: Train an R QSAR model for aromatase inhibition, serve it with R Plumber on Snowpark Container Services, and expose it through Streamlit, MCP, and Cortex Agents.
 environments: web
 status: Published
-feedback link: https://github.com/Snowflake-Labs/sfquickstarts/issues
+feedback link: https://github.com/Snowflake-Labs/sfguides/issues
 
 # Build R and Python Powered Drug Discovery Apps and Agents on Snowflake
 
@@ -60,7 +60,7 @@ The four-lane architecture diagram below maps every data handoff and calling rou
 3. **Explore Results.** Notebook 02 writes scored tables (`PREDICTIONS + DESCRIPTORS`) and exports stage summaries (`dashboard_eda.csv`, `dashboard_ro5.csv`, `dashboard_predictions.csv`, `top_features.csv`, and `training_metrics.json`) to `@QSAR_STAGE`. The Streamlit in Snowflake app (`QSAR_AROMATASE_APP`) reads `@QSAR_STAGE` for the Dashboard and About pages and calls `/predict` on `QSAR_PLUMBER_SVC` for Single and Batch Prediction.
 4. **Research Q&A + Candidate Triage.** `AROMATASE_AGENT` orchestrates Cortex Analyst (`AROMATASE_SV`), Cortex Search (`ASSAY_SEARCH`), the candidate triage procedure (`TRIAGE_COMPOUNDS`, capped at 20 SMILES), and the shared SQL functions to power conversational Q&A and candidate prioritization (`ASK AN AGENT`). Solid arrows denote steps within a lane, while dashed arrows denote cross-lane artifact and service calls.
 
-Now that you have a clear map of the architecture, you can clone the companion repository and provision the Snowflake environment.
+Now that you have a clear map of the architecture, you can create the project files and provision the Snowflake environment.
 
 ## Setup
 
@@ -68,9 +68,9 @@ Before running any notebooks or container builds, you need a local copy of the p
 
 ### Create Working Directory
 
-The setup script creates all 38 project files (`data/`, `docker/`, `streamlit/`, `notebooks/`, `native_app/`, `scripts/`, `sql/`, `agent/`, and `docs/`) directly on your computer inside `bioinformatics/r-python-drug-discovery`. All file contents (including the bundled `.rds` model and `CHEMBL1978` snapshot) are included in the script, so folder setup works offline without cloning a separate repository.
+The setup script creates all 38 project files (`data/`, `docker/`, `streamlit/`, `notebooks/`, `native_app/`, `scripts/`, `sql/`, `agent/`, and `docs/`) directly on your computer inside `bioinformatics/r-python-drug-discovery`. The script embeds the source files and the pre-trained `.rds` model, and downloads the two training-data CSVs (`chembl1978_cleaned.csv` and `train_fingerprints.csv`) from this guide's [`assets/data/`](https://github.com/Snowflake-Labs/sfquickstarts/tree/master/site/sfguides/src/build-r-python-drug-discovery-apps-and-agents/assets/data) folder, verifying each SHA-256 checksum, so you don't need to clone a separate repository. `curl` and an internet connection are required.
 
-Open [setup_r_python_drug_discovery.sh](https://github.com/sfc-gh-cnantasenamat/sfguide-build-r-python-drug-discovery-apps-and-agents/blob/main/quickstart/build-r-python-drug-discovery-apps-and-agents/src/setup_r_python_drug_discovery.sh) and use GitHub's **Download raw file** button to save it in your chosen local working directory. The script is bundled in this guide's `src/` folder, alongside `assets/`. If you already downloaded the guide files, copy `src/setup_r_python_drug_discovery.sh` into your chosen working directory instead.
+Open [setup_r_python_drug_discovery.sh](https://raw.githubusercontent.com/Snowflake-Labs/sfquickstarts/master/site/sfguides/src/build-r-python-drug-discovery-apps-and-agents/src/setup_r_python_drug_discovery.sh) and save it (for example, with your browser's **Save Page As** command) in your chosen local working directory. The script is bundled in this guide's `src/` folder, alongside `assets/`. If you already downloaded the guide files, copy `src/setup_r_python_drug_discovery.sh` into your chosen working directory instead.
 
 **Run this step:** Open a terminal in the directory containing `setup_r_python_drug_discovery.sh` and run the setup script, then change into `bioinformatics/r-python-drug-discovery`.
 
@@ -155,11 +155,11 @@ You should see eight rows in this filtered result: `BIND SERVICE ENDPOINT` on th
 
 With the Snowflake role, pools, stage, and external access integrations ready, you can now curate the experimental ChEMBL bioactivity records that ground the R model.
 
-## 1. Data Preparation + Model Training
+## Data Preparation + Model Training
 
 This stage curates raw ChEMBL bioactivity records for human aromatase into a clean modeling table and trains the 500-tree `ranger` quantile random forest in R.
 
-### 1.1. Prepare Training Data
+### Prepare Training Data
 
 Before training any model, you must decide which experimental measurements count and standardize them into a single, non-redundant table. An `IC50` value is the concentration associated with 50% inhibition in an assay, whereas a model prediction is an estimate rather than a new measurement.
 
@@ -187,7 +187,7 @@ USE SCHEMA QSAR_DB.PUBLIC;
 CREATE STAGE IF NOT EXISTS NB_PROJECT_STAGE;
 ```
 
-**Run this step:** From the cloned repository root in your local terminal, upload both notebooks to `@QSAR_DB.PUBLIC.NB_PROJECT_STAGE` (`PUT` reads local files, so run it from the terminal rather than a Snowsight worksheet).
+**Run this step:** From the project root (`bioinformatics/r-python-drug-discovery`) in your local terminal, upload both notebooks to `@QSAR_DB.PUBLIC.NB_PROJECT_STAGE` (`PUT` reads local files, so run it from the terminal rather than a Snowsight worksheet).
 
 ```bash
 snow sql -q "PUT file://notebooks/*.ipynb @QSAR_DB.PUBLIC.NB_PROJECT_STAGE AUTO_COMPRESS=FALSE OVERWRITE=TRUE"
@@ -233,11 +233,11 @@ RAW_RECORDS  COMPOUNDS  ACTIVE  ASSAYS  PUBLICATIONS
        3960       2751    1061     313           198
 ```
 
-Notebook 01 also computes Lipinski Rule-of-Five physicochemical properties (`MW <= 500 Da`, `LogP <= 5`, `HBD <= 5`, `HBA <= 10`) using RDKit and exports `dashboard_eda.csv` and `dashboard_ro5.csv` to `@QSAR_STAGE` so the Streamlit Dashboard (in Section 3) can render the activity and descriptor distributions without re-querying ChEMBL.
+Notebook 01 also computes Lipinski Rule-of-Five physicochemical properties (`MW <= 500 Da`, `LogP <= 5`, `HBD <= 5`, `HBA <= 10`) using RDKit and exports `dashboard_eda.csv` and `dashboard_ro5.csv` to `@QSAR_STAGE` so the Streamlit Dashboard (in Explore Results) can render the activity and descriptor distributions without re-querying ChEMBL.
 
 With `2,751` curated aromatase compounds and `chembl1978_cleaned.csv` staged in Snowflake, you are ready to encode the molecular structures and train the quantile random forest in R.
 
-### 1.2. Train the R Model
+### Train the R Model
 
 A random forest cannot consume raw SMILES text directly. In this section, you inspect how `docker/train_rcdk.R` converts each molecule into a binary fingerprint, splits the dataset before feature selection to avoid test-set leakage, and fits a 500-tree `ranger` quantile random forest.
 
@@ -314,7 +314,7 @@ Now let us run the training script inside the same Docker image used for serving
 
 #### Run Training in Docker
 
-**Run this step:** From the repository root, build the local R Plumber image and execute `docker/train_rcdk.R` inside a container with `data/`, `output/`, and `docker/` mounted.
+**Run this step:** From the project root, build the local R Plumber image and execute `docker/train_rcdk.R` inside a container with `data/`, `output/`, and `docker/` mounted.
 
 ```bash
 docker build --platform linux/amd64 -f docker/Dockerfile.plumber -t r-qsar-plumber:local docker
@@ -324,33 +324,37 @@ docker run --rm --platform linux/amd64 \
   r-qsar-plumber:local Rscript /work/train_rcdk.R
 ```
 
-**Check:** Inspect `output/training_metrics.json` after the container finishes. When trained on the repository's `data/chembl1978_cleaned.csv` snapshot with the split-first `nearZeroVar()` filter, the script retains `180` bits and writes the following metrics to **output/training_metrics.json**:
+**Check:** Inspect `output/training_metrics.json` after the container finishes. For comparison, the bundled `docker/training_metrics.json` that the R Plumber service ships with records the run that produced the `178`-bit model:
 
 ```json
 {
-  "oob_r2": 0.6505,
-  "test_r2": 0.6843,
-  "test_rmse": 0.7721,
+  "oob_r2": 0.649,
+  "test_r2": 0.6855,
+  "test_rmse": 0.7708,
   "n_compounds": 2751,
   "n_active": 1061,
   "n_train": 2203,
   "n_test": 548,
-  "n_bits": 180,
+  "n_bits": 178,
   "n_trees": 500,
   "fingerprint": "CDK ECFP4 (rcdk 3.8.2)",
   "model": "ranger quantile RF"
 }
 ```
 
-> **Note:** Always deploy `qsar_aromatase_model.rds` and `kept_bits.csv` as a matched pair, never mixing a model file from one run with the bit list from another. The repository's pre-bundled `docker/` artifacts (`178` bits, `test_r2: 0.6855`, `test_rmse: 0.7708`) are already in place and match the exact expected predictions (`7.89` for letrozole) used across Sections 2, 3, and 4, including the 15-question agent evaluation in Section 4.3. Keep the pre-bundled `docker/` files for this walkthrough, or if you later want to promote your freshly trained `output/` artifacts into `docker/`, copy all five files together (`cp output/qsar_aromatase_model_rcdk.rds docker/qsar_aromatase_model.rds && cp output/kept_bits_rcdk.csv docker/kept_bits.csv && cp output/top_features_rcdk.csv output/training_metrics.json output/train_fingerprints.csv docker/`).
+Your run writes the same fields with different values. Because the 80/20 split is drawn by row position and the split-first `nearZeroVar()` filter selects bits from training molecules only, expect a different kept-bit count and different metrics, as Review Model Limitations describes.
+
+> **Note:** Always deploy `qsar_aromatase_model.rds` and `kept_bits.csv` as a matched pair, never mixing a model file from one run with the bit list from another. The repository's pre-bundled `docker/` artifacts (`178` bits, `test_r2: 0.6855`, `test_rmse: 0.7708`) are already in place and match the exact expected predictions (`7.89` for letrozole) used in Serve Model + Score Compounds, Explore Results, and Research Q&A + Candidate Triage, including the 15-question agent evaluation in Evaluate the Agent. Keep the pre-bundled `docker/` files for this walkthrough, or if you later want to promote your freshly trained `output/` artifacts into `docker/`, copy all five files together (`cp output/qsar_aromatase_model_rcdk.rds docker/qsar_aromatase_model.rds && cp output/kept_bits_rcdk.csv docker/kept_bits.csv && cp output/top_features_rcdk.csv output/training_metrics.json output/train_fingerprints.csv docker/`).
+
+> **Note:** The setup script embeds `docker/qsar_aromatase_model.rds` as a base64 block because it is a binary file. To regenerate it rather than trust the bundled binary, run the training container above on `data/chembl1978_cleaned.csv` (the same snapshot published in this guide's `assets/data/` folder) and promote the five `output/` files into `docker/` with the `cp` command above. A retrained model will not match the bundled `178`-bit artifacts bit for bit, and its predictions will differ, so every expected value in this guide and in `agent/eval_questions.sql` applies to the bundled model only. Keep the bundled artifacts unless you are ready to regenerate those expectations.
 
 Having trained the quantile random forest and inspected how it pairs with its ordered bit list, you can now package and serve the R model as an API on Snowpark Container Services.
 
-## 2. Serve Model + Score Compounds
+## Serve Model + Score Compounds
 
 With the trained model artifacts in `docker/`, this stage packages the R model into an R Plumber service on Snowpark Container Services, connects external AI assistants via MCP, and batch-scores all `2,751` curated compounds through shared SQL functions.
 
-### 2.1. Serve With R Plumber
+### Serve With R Plumber
 
 To make the saved R model callable by colleagues, SQL queries, apps, and AI assistants without requiring anyone to install R or Java locally, `docker/plumber_api.R` wraps the model in an HTTP service on Snowpark Container Services.
 
@@ -439,7 +443,7 @@ spec:
     MAX_INSTANCES = 1;
 ```
 
-> **Note:** Baking the 4 MB `.rds` model and `kept_bits.csv` into the image is the simplest setup. If you later retrain and want to swap model versions without rebuilding the Docker image, Snowpark Container Services also supports mounting a versioned internal stage folder (such as `@QSAR_DB.PUBLIC.QSAR_STAGE/v180/`) at `/model` in the service specification, which masks the baked-in `/model` directory on container startup.
+> **Note:** Baking the 4 MB `.rds` model and `kept_bits.csv` into the image is the simplest setup. If you later retrain and want to swap model versions without rebuilding the Docker image, Snowpark Container Services also supports mounting a versioned internal stage folder (such as `@QSAR_DB.PUBLIC.QSAR_STAGE/v2/`) at `/model` in the service specification, which masks the baked-in `/model` directory on container startup.
 
 **Check:** Wait for the container status to report `READY` and retrieve the public `ingress_url`.
 
@@ -449,7 +453,7 @@ SHOW SERVICE CONTAINERS IN SERVICE QSAR_DB.PUBLIC.QSAR_PLUMBER_SVC;
 SHOW ENDPOINTS IN SERVICE QSAR_DB.PUBLIC.QSAR_PLUMBER_SVC;
 ```
 
-**Check:** Inspect the container startup logs to confirm that the `ranger` model, feature list (`178` features for the bundled artifacts or `180` if you copied retrained artifacts), and `rcdk` JVM loaded cleanly.
+**Check:** Inspect the container startup logs to confirm that the `ranger` model, feature list (`178` features for the bundled artifacts, or a different count if you copied retrained artifacts), and `rcdk` JVM loaded cleanly.
 
 ```sql
 USE ROLE QSAR_ROLE;
@@ -505,7 +509,7 @@ Letrozole (`N#Cc1ccc(cc1)C(n1cncn1)c1ccc(C#N)cc1`) returns `7.89` (`Active`, qua
 
 Now that `QSAR_PLUMBER_SVC` is running, you can connect external MCP clients to `/mcp` using the same ingress URL and PAT, then create the shared SQL functions and batch-score the cohort.
 
-### 2.2. Connect MCP to AI Assistants
+### Connect MCP to AI Assistants
 
 Alongside `/predict` and `/sf/*`, `QSAR_PLUMBER_SVC` exposes a standalone MCP server at `/mcp` over JSON-RPC 2.0 so AI assistants (such as Cortex Code or Claude Desktop) can invoke R model tools directly from natural-language prompts.
 
@@ -561,9 +565,9 @@ pIC50:  7.89  (Active)
 IC50 ~  12.9 nM
 ```
 
-See `docs/mcp-walkthrough.md` in the companion repository for additional client examples and an optional Snowflake Native App packaging pattern (`native_app/`). Next, expose `QSAR_PLUMBER_SVC` through shared SQL functions and batch-score the `2,751` curated compounds.
+See `docs/mcp-walkthrough.md` in the project files the setup script created for additional client examples and an optional Snowflake Native App packaging pattern (`native_app/`). Next, expose `QSAR_PLUMBER_SVC` through shared SQL functions and batch-score the `2,751` curated compounds.
 
-### 2.3. Score Compounds
+### Score Compounds
 
 While `/mcp` serves interactive AI clients, Snowflake SQL service functions let notebooks, SQL queries, and Cortex Agents call the same R container inside Snowflake and batch-score the entire `CHEMBL1978_COMPOUNDS` cohort.
 
@@ -640,11 +644,11 @@ SCORED  FAILED  RMSE_ALL  FINGERPRINTS  RO5_PASS
 
 Now that `CHEMBL1978_PREDICTIONS`, `CHEMBL1978_FINGERPRINTS`, and `CHEMBL1978_DESCRIPTORS` are populated, you can stage the remaining dashboard files and deploy `QSAR_AROMATASE_APP` so bench scientists can explore the results interactively.
 
-## 3. Explore Results
+## Explore Results
 
 The Streamlit app (`QSAR_AROMATASE_APP`) gives lab colleagues a browser interface where they can explore the curated and scored ChEMBL cohort first and then submit single or batch SMILES strings on demand without running R scripts locally.
 
-### 3.1. Stage Dashboard Files
+### Stage Dashboard Files
 
 Notebooks 01 and 02 already exported `dashboard_eda.csv`, `dashboard_ro5.csv`, and `dashboard_predictions.csv` to `@QSAR_STAGE`. Upload the remaining model artifacts so the Dashboard and About pages can display feature importances and held-out training metrics alongside the scored predictions.
 
@@ -660,9 +664,9 @@ snow sql -q "PUT file://docker/training_metrics.json @QSAR_DB.PUBLIC.QSAR_STAGE 
 
 With `@QSAR_STAGE` populated, review how the Streamlit application connects stage summaries and live R predictions.
 
-### 3.2. Review the App
+### Review the App
 
-> **Note:** The Streamlit application files in `streamlit/` are already included in the cloned repository. Review how the app separates prepared stage summaries from live R predictions before deploying it.
+> **Note:** The Streamlit application files in `streamlit/` are already included in the project files the setup script created. Review how the app separates prepared stage summaries from live R predictions before deploying it.
 
 The `streamlit/` directory contains a multipage app designed to run in Streamlit in Snowflake on the container runtime:
 
@@ -691,7 +695,7 @@ _, pic50, activity, ci_lo, ci_hi = rows[0]
 
 When running in Snowflake, `streamlit/_shared.py` discovers the service's internal DNS name automatically via `SHOW SERVICES`, so no hardcoded URL is needed. Next, deploy the Streamlit application.
 
-### 3.3. Deploy the App
+### Deploy the App
 
 Review the runtime configuration in **streamlit/snowflake.yml** below (no action required) to see how the app specifies the container runtime, `QSAR_ST_POOL`, and `QSAR_APP_EAI`:
 
@@ -740,13 +744,13 @@ cd ..
 
 With the Streamlit app running, you can now deploy the Cortex Agent that powers conversational research Q&A and multi-compound triage.
 
-## 4. Research Q&A + Candidate Triage
+## Research Q&A + Candidate Triage
 
 > **Note:** This section builds on the Snowflake tables created by **both** Notebook 01 (`CHEMBL1978_RAW_ACTIVITIES`, `CHEMBL1978_COMPOUNDS`, `CHEMBL1978_ASSAYS`, and `CHEMBL1978_DOCUMENTS`) and Notebook 02 (`CHEMBL1978_PREDICTIONS`, `CHEMBL1978_FINGERPRINTS`, and `CHEMBL1978_DESCRIPTORS`), plus `sql/functions.sql`. Generating dashboard CSVs from a laptop alone does not create these tables.
 
 When a model score raises follow-up questions such as "How many compounds in the cohort were measured active?", "What assay conditions were used to measure letrozole (`CHEMBL1444`)?", or "Rank letrozole, caffeine, and aspirin for review", an in-platform Cortex Agent (`AROMATASE_AGENT`) can route each question to the right evidence source rather than mixing predictions with measurements.
 
-### 4.1. Create Agent Tools
+### Create Agent Tools
 
 `sql/agent.sql` builds three governed capabilities that complement the R-backed SQL functions:
 
@@ -772,9 +776,9 @@ SELECT * FROM SEMANTIC_VIEW(QSAR_DB.PUBLIC.AROMATASE_SV
 
 With the semantic view, search index, and triage procedure ready, deploy the Cortex Agent.
 
-### 4.2. Deploy the Agent
+### Deploy the Agent
 
-**Run this step:** From the repository root in your terminal, run `scripts/deploy_agent.py` to create `QSAR_DB.PUBLIC.AROMATASE_AGENT` from `agent/aromatase_agent.yaml` and register it with Snowflake Intelligence (pass `--connection <your_connection>` with a connection name from `~/.snowflake/config.toml`, or omit `--connection` to use your `default_connection_name`).
+**Run this step:** From the project root in your terminal, run `scripts/deploy_agent.py` to create `QSAR_DB.PUBLIC.AROMATASE_AGENT` from `agent/aromatase_agent.yaml` and register it with Snowflake CoWork (pass `--connection <your_connection>` with a connection name from `~/.snowflake/config.toml`, or omit `--connection` to use your `default_connection_name`).
 
 ```bash
 python scripts/deploy_agent.py --connection <your_connection>
@@ -788,7 +792,7 @@ The screenshot below shows the **Ask an Agent** page answering the measured acti
 
 You can also test candidate triage by asking the agent to rank letrozole (`7.89 Active`, similarity `1.00` to `CHEMBL1444`, passes Rule of Five), caffeine (`5.96 Inactive`, similarity `0.24`, flagged for low similarity), and aspirin (`5.21 Inactive`, similarity `0.35`, flagged for low similarity). Next, run the 15-case evaluation suite to measure the agent's routing and answer quality.
 
-### 4.3. Evaluate the Agent
+### Evaluate the Agent
 
 To evaluate `AROMATASE_AGENT` systematically, the repository provides 15 benchmark questions in `agent/eval_questions.sql` and an evaluation configuration in `agent/eval_config.yaml` (note that the expected prediction numbers in `agent/eval_questions.sql` match the bundled model, so adjust them if you trained on Notebook 01's row order).
 
@@ -851,7 +855,7 @@ A demo only needs to succeed once, whereas a system that other scientists depend
 
 Disclose these modeling caveats wherever predictions are displayed or shared:
 
-- **Paired model and feature contract:** The `docker/train_rcdk.R` script splits the dataset 80/20 before running `nearZeroVar()` on training molecules only (retaining `180` bits on `data/chembl1978_cleaned.csv` with held-out `test_r2: 0.6843` and `test_rmse: 0.7721`). The pre-bundled `docker/` model was trained with `nearZeroVar()` before the split (`178` bits, `test_r2: 0.6855`, `test_rmse: 0.7708`). Never mix a `.rds` model file from one run with the `kept_bits.csv` list from another.
+- **Paired model and feature contract:** Fingerprint bits are computed from SMILES at training time, not stored in the dataset. Running `docker/train_rcdk.R` on `data/chembl1978_cleaned.csv` splits the compounds 80/20 and then applies `nearZeroVar()` to the training molecules only; one such run kept `180` of the 1,024 bits (held-out `test_r2: 0.6843`, `test_rmse: 0.7721`). The pre-bundled `docker/` model was built with `nearZeroVar()` applied before the split and kept `178` bits (`test_r2: 0.6855`, `test_rmse: 0.7708`). Because the kept-bit list is an output of training, never mix a `.rds` model file from one run with the `kept_bits.csv` list from another.
 - **Single row-order-dependent split:** The 80/20 split is drawn by row position with a fixed seed (`42`). The same `2,751` compounds ordered by Notebook 01 produce `test_r2: 0.6537` and `test_rmse: 0.7949`. A single random split does not validate generalization to new chemical scaffolds; use scaffold splitting and cross-validation for release-grade evaluation.
 - **Reported R2 is squared correlation:** `test_r2` is computed as `cor(pred, y)^2`, not the conventional coefficient of determination `1 - SSE/SST`.
 - **Uncalibrated model quantiles:** The 5th to 95th percentile range from the quantile forest (labeled `90% CI` in the API response) reflects empirical tree spread and has not been calibrated for statistical coverage on held-out molecules.
@@ -876,7 +880,7 @@ Once you finish exploring the application and its evaluation checks, tear down t
 
 Compute pools bill while they have active nodes. Run the statements below to remove all objects created in this guide.
 
-**Run this step:** First remove `AROMATASE_AGENT` from Snowflake Intelligence and drop the agent, search service, and evaluation objects.
+**Run this step:** First remove `AROMATASE_AGENT` from Snowflake CoWork (formerly Snowflake Intelligence; the SQL still uses the `SNOWFLAKE INTELLIGENCE` keyword and the `SNOWFLAKE_INTELLIGENCE_OBJECT_DEFAULT` object name) and drop the agent, search service, and evaluation objects.
 
 ```sql
 USE ROLE QSAR_ROLE;
@@ -922,12 +926,11 @@ Congratulations! You've successfully taken an R-based drug discovery model from 
 - How to surface the same containerized R pipeline through SQL service functions, a multipage Streamlit app, a conversational MCP endpoint, and a Cortex Agent that separates measured cohort data, retrieved assay literature, and model predictions
 - How to apply a repeatable production blueprint for regulated domains: keeping proprietary chemistry in-house, monitoring model and pipeline health, controlling compute cost, and disclosing statistical limitations so R pipelines remain reproducible, auditable, and trusted
 
-Next, explore the companion source code, Snowflake documentation, and published aromatase QSAR literature below to build on this workflow.
+Next, explore the Snowflake documentation, and published aromatase QSAR literature below to build on this workflow.
 
 ### Related Resources
 
 **Project and Biological Data**
-- [Companion GitHub Repository: bioinformatics/r-python-drug-discovery](https://github.com/sfc-gh-cnantasenamat/bioinformatics/tree/main/r-python-drug-discovery)
 - [ChEMBL Bioactivity Database (Target CHEMBL1978)](https://www.ebi.ac.uk/chembl/)
 - [RCSB Protein Data Bank Structure 3EQM: Human Placental Aromatase](https://www.rcsb.org/structure/3EQM)
 
