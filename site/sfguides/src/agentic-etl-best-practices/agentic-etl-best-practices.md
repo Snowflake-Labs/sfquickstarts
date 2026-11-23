@@ -307,4 +307,4 @@ The key to success with agentic ETL in Snowflake is to start with a focused stag
 - [Start your 30-day Cortex Code trial in Snowsight](https://signup.snowflake.com/cortex-code)  
 - [Getting Started with Dynamic Tables](https://www.snowflake.com/en/developers/guides/comprehensive-guide-to-dynamic-tables/)  
 - [Getting Started with Task Graphs](https://www.snowflake.com/en/developers/guides/getting-started-with-task-graphs/)  
-- [Best Practices for Cortex Code CLI](https://www.snowflake.com/en/developers/guides/best-practices-cortex-code-cli/)
+- [Best Practices for Cortex Code CLI](https://www.snowflake.com/en/developers/guides/best-practices-coco-cli/)

@@ -17,6 +17,8 @@ The worked path is SQL Server, spec **v2**, storage mode **compatible**, and loa
 
 This guide creates a new table from a relational source. Adopting an existing Iceberg table, `storageMode` values other than `compatible`, and incremental sync are outside this guide.
 
+> **Heads up:** this quick start uses **SQL Server** as the source, but you're not limited to it! Iceberg migrations also support **Amazon Redshift**, **Teradata**, **Azure Synapse**, **Oracle**, and **Google BigQuery**, so you can bring Iceberg to more of your data platforms. Check out [Migrating and validating Apache Iceberg™ tables](https://docs.snowflake.com/en/migrations/aim-for-datawarehouses/data-migration-validation/iceberg) to see the extraction strategies for each one.
+
 ### Prerequisites
 
 - Familiarity with Snowflake SQL.
@@ -317,6 +319,7 @@ You loaded a relational SQL Server table into a new Snowflake-managed Iceberg ta
 
 ### Related Resources
 
+- [Migrating and validating Apache Iceberg™ tables (spec v2 and v3)](https://docs.snowflake.com/en/migrations/aim-for-datawarehouses/data-migration-validation/iceberg)
 - [SnowConvert AI CLI](https://docs.snowflake.com/en/migrations/snowconvert-docs/general/user-guide/snowconvert/command-line-interface/README)
 - [Cortex Code CLI](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-cli)
 - [CREATE EXTERNAL VOLUME](https://docs.snowflake.com/en/sql-reference/sql/create-external-volume)
