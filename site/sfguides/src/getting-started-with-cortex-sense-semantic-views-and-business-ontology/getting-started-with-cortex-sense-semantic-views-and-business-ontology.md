@@ -124,7 +124,12 @@ CREATE API INTEGRATION IF NOT EXISTS GITHUB_SENSE_ONTOLOGY_LAB
 Then create the workspace:
 
 1. In the **Workspaces** menu, select **From Git repository**.
-2. For **Repository URL**, enter `https://github.com/sfc-gh-JCHAEARLEY/sfguide-getting-started-with-cortex-sense-semantic-views-and-business-ontology`.
+2. For **Repository URL**, paste the URL below. Don't add anything after it: a trailing period or space makes the clone fail with "Operation 'clone' is not authorized".
+
+   ```
+   https://github.com/sfc-gh-JCHAEARLEY/sfguide-getting-started-with-cortex-sense-semantic-views-and-business-ontology
+   ```
+
 3. Optional: rename the workspace, for example to `sense-and-ontology`.
 4. In the **API Integration** menu, select `GITHUB_SENSE_ONTOLOGY_LAB`.
 5. Select **Public repository**.
