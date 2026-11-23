@@ -34,7 +34,7 @@ User Query → Supervisor (Plan) → Agent → Supervisor (Route) → Agent → 
 
 [LangGraph](https://github.com/langchain-ai/langgraph) provides low-level supporting infrastructure for any long-running, stateful workflow or agent. LangGraph is great for building durable, stateful agents across multiple systems.
 
-If you're not building with LangGraph, try this [guide](https://www.snowflake.com/en/developers/guides/multi-agent-orchestration-snowflake-intelligence/) to build a multi-agent system entirely native to Snowflake.
+If you're not building with LangGraph, try this [guide](https://www.snowflake.com/en/developers/guides/multi-agent-orchestration-cowork/) to build a multi-agent system entirely native to Snowflake.
 
 ### Architecture Overview
 
