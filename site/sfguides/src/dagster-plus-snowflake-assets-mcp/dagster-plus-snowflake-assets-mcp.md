@@ -37,7 +37,7 @@ Python, SQL, and a terminal. No prior Dagster experience.
 
 ### What You'll Build
 
-One table, `DEMO.PUBLIC.DAILY_ROW`, created by a Dagster asset and materialized with `dg launch`.
+One table, `DAGSTER_DEMO.PUBLIC.DAILY_ROW`, created by a Dagster asset and materialized with `dg launch`.
 
 ## Set Up Snowflake
 
@@ -52,13 +52,13 @@ CREATE WAREHOUSE IF NOT EXISTS DAGSTER_WH
   AUTO_RESUME = TRUE
   INITIALLY_SUSPENDED = TRUE;
 
-CREATE DATABASE IF NOT EXISTS DEMO;
+CREATE DATABASE IF NOT EXISTS DAGSTER_DEMO;
 
 CREATE ROLE IF NOT EXISTS DAGSTER_ROLE;
 GRANT USAGE ON WAREHOUSE DAGSTER_WH TO ROLE DAGSTER_ROLE;
-GRANT USAGE ON DATABASE DEMO TO ROLE DAGSTER_ROLE;
-GRANT USAGE ON SCHEMA DEMO.PUBLIC TO ROLE DAGSTER_ROLE;
-GRANT CREATE TABLE ON SCHEMA DEMO.PUBLIC TO ROLE DAGSTER_ROLE;
+GRANT USAGE ON DATABASE DAGSTER_DEMO TO ROLE DAGSTER_ROLE;
+GRANT USAGE ON SCHEMA DAGSTER_DEMO.PUBLIC TO ROLE DAGSTER_ROLE;
+GRANT CREATE TABLE ON SCHEMA DAGSTER_DEMO.PUBLIC TO ROLE DAGSTER_ROLE;
 
 CREATE USER IF NOT EXISTS DAGSTER_USER
   DEFAULT_ROLE = DAGSTER_ROLE
@@ -119,10 +119,10 @@ from dagster_snowflake import SnowflakeResource
 def daily_row(snowflake: SnowflakeResource) -> dg.MaterializeResult:
     with snowflake.get_connection() as conn:
         conn.cursor().execute(
-            "CREATE OR REPLACE TABLE DEMO.PUBLIC.DAILY_ROW AS "
+            "CREATE OR REPLACE TABLE DAGSTER_DEMO.PUBLIC.DAILY_ROW AS "
             "SELECT CURRENT_DATE() AS RUN_DATE, 1 AS ROW_COUNT"
         )
-    return dg.MaterializeResult(metadata={"table": "DEMO.PUBLIC.DAILY_ROW"})
+    return dg.MaterializeResult(metadata={"table": "DAGSTER_DEMO.PUBLIC.DAILY_ROW"})
 
 
 @dg.definitions
@@ -136,7 +136,7 @@ def resources() -> dg.Definitions:
                 private_key_password=dg.EnvVar("SNOWFLAKE_PK_PASSWORD"),
                 role="DAGSTER_ROLE",
                 warehouse="DAGSTER_WH",
-                database="DEMO",
+                database="DAGSTER_DEMO",
                 schema="PUBLIC",
             )
         }
@@ -168,16 +168,16 @@ A successful run ends with the run id and a success status. Read the table back 
 ```sql
 USE ROLE DAGSTER_ROLE;
 USE WAREHOUSE DAGSTER_WH;
-SELECT * FROM DEMO.PUBLIC.DAILY_ROW;
+SELECT * FROM DAGSTER_DEMO.PUBLIC.DAILY_ROW;
 ```
 
 The result is one row, today's date, and `ROW_COUNT` of 1.
 
-## Ask the Dagster+ MCP server what ran
+## Query Runs with MCP
 
 The remaining steps need Dagster+ Pro. The MCP server is in beta. It can list runs, read run logs, and launch a run. It cannot edit or delete an asset. Its permissions are the permissions of the user whose token you pass.
 
-The server URL is `https://mcp.agent.dagster.cloud/mcp` for a US organization and `https://mcp.agent.eu.dagster.cloud/mcp` for an EU organization. Add it with a [user token](https://docs.dagster.io/dagster-plus/account/authentication/user-tokens) and the organization name.
+The server URL is `https://mcp.agent.dagster.cloud/mcp` for a US organization and `https://mcp.agent.eu.dagster.cloud/mcp` for an EU organization. Add it with a [user token](https://docs.dagster.io/deployment/dagster-plus/management/tokens/user-tokens) and the organization name.
 
 ```bash
 claude mcp add --transport http dagster-plus https://mcp.agent.dagster.cloud/mcp \
@@ -195,7 +195,7 @@ The answer lists the run you just launched. To have the agent materialize it aga
 
 If the client is Codex, the command is `codex mcp add dagster-plus --url https://mcp.agent.dagster.cloud/mcp`, and Codex runs the OAuth flow itself.
 
-## Grant the role that includes the usage views
+## Grant Usage Views
 
 Dagster+ Insights reads `SNOWFLAKE.ACCOUNT_USAGE` to attribute Snowflake usage to an asset. The Insights docs say the credentials need access to `snowflake.account_usage.query_history`. A `SELECT` grant on that view is rejected. `SNOWFLAKE.GOVERNANCE_VIEWER` is the narrowest database role that includes `QUERY_HISTORY` and `QUERY_ATTRIBUTION_HISTORY`. The Insights docs do not name this role.
 
@@ -224,13 +224,13 @@ Account Usage lags about 45 minutes, and this view is retained for a year. Dagst
 USE ROLE ACCOUNTADMIN;
 DROP USER IF EXISTS DAGSTER_USER;
 DROP ROLE IF EXISTS DAGSTER_ROLE;
-DROP DATABASE IF EXISTS DEMO;
+DROP DATABASE IF EXISTS DAGSTER_DEMO;
 DROP WAREHOUSE IF EXISTS DAGSTER_WH;
 ```
 
 Delete `rsa_key.p8` and `rsa_key.pub` from the project directory.
 
-## Conclusion
+## Conclusion And Resources
 
 The project has one asset, an encrypted key pair instead of a password, and a table you can select. The MCP server answers questions about the run that created it, and `CREDITS_ATTRIBUTED_COMPUTE` is the warehouse credit column for those queries.
 
@@ -242,7 +242,7 @@ The project has one asset, an encrypted key pair instead of a password, and a ta
 - The Dagster+ MCP server can list runs and launch one, and it cannot edit or delete an asset
 - `GRANT DATABASE ROLE SNOWFLAKE.GOVERNANCE_VIEWER` is the narrowest grant that includes the views a `SELECT` on `query_history` cannot reach
 
-## Resources
+### Resources
 
 - [Using Snowflake with Dagster](https://docs.dagster.io/integrations/libraries/snowflake/using-snowflake-with-dagster)
 - [dagster-snowflake integration reference](https://docs.dagster.io/integrations/libraries/snowflake/reference)
