@@ -720,9 +720,9 @@ streamlit run dashboard.py
 
 Your browser opens at `localhost:8501`. You'll see 320 available seats and an empty metrics panel. Leave it open and the page refreshes itself. The seat map re-queries every 10 seconds, and the metrics every 30 seconds. The refresh interval controls how often the page asks, not how fresh the data is. The metrics can only change when the Gold table refreshes. The dashboard shows timestamps in US Central time.
 
-<!-- VIDEO: add the YouTube link of the live demo here once published, using the embed syntax the Snowflake guides use. -->
+Watch a recording of the complete live run: [Real-Time Ticketing Pipeline demo on YouTube](https://youtu.be/f23Ejo2bU30)
 
-> NOTE: The video above is a recording of a complete live run. The architecture diagram shown in it is an earlier version. Where it differs from this guide, such as the phase names or the refresh rates, the guide is current.
+> NOTE: The architecture diagram shown in the video is an earlier version. Where it differs from this guide, such as the phase names or the refresh rates, the guide is current.
 
 <!-- ------------------------ -->
 ## Run the Producer
