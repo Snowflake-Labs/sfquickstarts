@@ -39,7 +39,7 @@ This guide is **prompt-driven**. You won't write any HTML. Instead, each step gi
 - To share reports: a role with `MANAGE ACCESS ON REPORT ARTIFACTS`
 
 <!-- ------------------------ -->
-## Choose the Right Tool: Dashboards, Streamlit, or HTML Reports
+## Choose the Right Tool
 
 CoCo can build three kinds of visual data products in Snowflake. They coexist; each one is the best fit for a different job. Pick the tool before you write the prompt, because the right prompt looks different for each.
 
@@ -175,7 +175,7 @@ FROM VALUES
 > Query results are **embedded** in the published report. Anyone who can view the report sees that data, even without access to the source tables. Use sample or appropriately scoped data when you share.
 
 <!-- ------------------------ -->
-## The Anatomy of a Dashboard Prompt
+## Anatomy of a Prompt
 
 CoCo already knows the sandbox rules and the approved libraries through its `html-authoring` skill. It builds responsive, light/dark-aware reports by default. Your job is to describe **what** to show and **how it should behave**. The most reliable prompts cover six ingredients:
 
@@ -292,7 +292,7 @@ the sort direction.
 You can also edit directly: open the report, select **Edit**, and choose **Preview** (edit text in the rendered page), **No JavaScript** (edit content that scripts would otherwise replace), or **Code** (edit HTML/CSS/JS). Saving updates the workspace file only. Published viewers see changes after you publish again.
 
 <!-- ------------------------ -->
-## Turn Findings into a Slide Deck
+## Build a Slide Deck
 
 HTML reports can click through like slides, which works well for async executive updates.
 
@@ -328,7 +328,7 @@ Behavior:
 - **"crossfade over about 300ms"**: the transition. Leave it out and slides switch instantly.
 
 <!-- ------------------------ -->
-## Build a Designed Spec with a Prototype
+## Build a Spec Prototype
 
 Replace a wall-of-text doc with a designed page that reviewers can click through.
 
@@ -358,7 +358,7 @@ On narrow screens, stack the prototype under the text.
 - **"knob sliding… panel expanding"**: CSS transitions on state changes.
 
 <!-- ------------------------ -->
-## The Realm of Possible: Charts
+## Interactive Charts
 
 The next three steps are a gallery. Each prompt targets one library and one interaction pattern. All of them run inside the same sandbox as your published reports, with no network calls at view time. All data is embedded.
 
@@ -420,7 +420,7 @@ Add one line of instructions above the charts.
 **Why it works:** "brush… filters" is the exact pattern Vega-Lite's selections are designed for. Naming the library steers CoCo to it.
 
 <!-- ------------------------ -->
-## The Realm of Possible: Networks, 3D, and Diagrams
+## Networks, 3D, and Diagrams
 
 ### D3: draggable force-directed network
 
@@ -494,7 +494,7 @@ Match the diagram colors to light or dark mode, and re-render if the mode change
 **Why it works:** Mermaid diagrams are plain text, so spelling out each arrow in the prompt gets you exactly the diagram you want. Mermaid can't follow CSS light/dark colors on its own, so asking it to "re-render if the mode changes" keeps the diagram readable when a viewer switches themes.
 
 <!-- ------------------------ -->
-## The Realm of Possible: Live Math and Markdown
+## Live Math and Markdown
 
 These patterns are useful in analytical, scientific, or documentation-style reports.
 
@@ -664,17 +664,7 @@ Reports run in a strict sandbox. Scripts load only from Snowflake's vendored `/l
 | An external link doesn't open | Links to Snowflake sites open in a new tab directly. Other `https://` links ask **Open external link?** first. `javascript:`, `data:`, `//`-prefixed, and `user@host` links are disabled. |
 
 <!-- ------------------------ -->
-## Conclusion and Resources
-
-You built a meeting report, a slide deck, a clickable spec, a gallery of interactive and animated visuals, and a full showcase page, all from prompts. Along the way you learned a prompt vocabulary: **data + structure + visual + interaction + motion + polish**, plus the specific verbs that unlock sliders, brushing, orbiting, count-ups, and transitions.
-
-### What You Learned
-- How to structure a prompt so CoCo builds the report you have in mind
-- Which phrases produce which interactions and animations, and which library CoCo will reach for
-- How to iterate with **Reference in CoCo**, then publish, share, refresh, and update a Report artifact
-- What the sandbox blocks and how to prompt around it
-
-### Clean up
+## Clean Up
 
 Run `teardown.sql` from the companion repo, or:
 
@@ -683,6 +673,17 @@ DROP DATABASE IF EXISTS HTML_REPORTS_QS;
 ```
 
 Published reports are separate artifacts and keep working after you drop the database, because their data is embedded. Delete any you no longer need from the **Share** dialog.
+
+<!-- ------------------------ -->
+## Conclusion And Resources
+
+You built a meeting report, a slide deck, a clickable spec, a gallery of interactive and animated visuals, and a full showcase page, all from prompts. Along the way you learned a prompt vocabulary: **data + structure + visual + interaction + motion + polish**, plus the specific verbs that unlock sliders, brushing, orbiting, count-ups, and transitions.
+
+### What You Learned
+- How to structure a prompt so CoCo builds the report you have in mind
+- Which phrases produce which interactions and animations, and which library CoCo will reach for
+- How to iterate with **Reference in CoCo**, then publish, share, refresh, and update a Report artifact
+- What the sandbox blocks and how to prompt around it
 
 ### Related Resources
 - [HTML reports (Preview)](https://docs.snowflake.com/en/user-guide/ui-snowsight/reports)
