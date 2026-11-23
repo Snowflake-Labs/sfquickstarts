@@ -128,7 +128,7 @@ Then create the workspace:
 3. Optional: rename the workspace, for example to `sense-and-ontology`.
 4. In the **API Integration** menu, select `GITHUB_SENSE_ONTOLOGY_LAB`.
 5. Select **Public repository**.
-6. The dialog asks for a database. Use the option on the same screen to create a new database, and name it `SENSE_ONTOLOGY_GIT`. Don't use `SENSE_ONTOLOGY_QS`: `setup.sql` replaces that database, and `teardown.sql` drops it.
+6. The dialog asks for a database. Select **+ Database**, and name the new database `SENSE_ONTOLOGY_GIT`. Don't use `SENSE_ONTOLOGY_QS`: `setup.sql` replaces that database, and `teardown.sql` drops it.
 7. Select **Create**.
 
 The workspace opens with the repo's files in the file explorer on the left:
