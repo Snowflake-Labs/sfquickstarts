@@ -100,7 +100,10 @@ CREATE API INTEGRATION IF NOT EXISTS GITHUB_MERGER_LAB
 
 Then create the workspace:
 
-1. In the **Workspaces** menu, select **From Git repository**.
+1. At the top of the file explorer, next to the **Workspaces** and **Databases** tabs, select **+**. Under **Create new**, select **Git workspace**.
+
+   ![Create new menu showing Git workspace](assets/create-git-workspace.png)
+
 2. For **Repository URL**, enter `https://github.com/sfc-gh-JCHAEARLEY/sfguide-merge-two-order-systems-with-cortex-code`.
 3. Optional: rename the workspace, for example to `the-merger`.
 4. In the **API Integration** menu, select `GITHUB_MERGER_LAB`.
