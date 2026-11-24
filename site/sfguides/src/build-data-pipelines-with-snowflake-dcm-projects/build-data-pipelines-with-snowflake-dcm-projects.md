@@ -607,7 +607,7 @@ The plan creates what the definition files declare:
 
 When the changeset matches what you expected, deploy it.
 
-**In Snowsight:** in the DCM control panel, set the operation to **Deploy** instead of **Plan**, add a deployment alias such as initial-finance, and run it.
+**In Snowsight:** in the DCM control panel, set the operation to **Deploy** instead of **Plan**, add a deployment alias such as initial-finance, and run it. The dialog shows the Finance role, the project owner, rather than DCM_DEVELOPER.
 
 **With the Snowflake CLI:**
 
@@ -682,6 +682,10 @@ ORDER BY TRADE_DATE;
 | 2 | 9101.50 | ... |
 
 You asked for two metrics by one dimension, by name; the semantic view supplied the aggregation. The last row is today's two trades.
+
+In the Database Explorer, open TRADING_ANALYTICS and select the **Lineage** tab to see the whole chain across both projects: the Platform's raw tables, the silver and gold dynamic tables, and the semantic view.
+
+![Lineage of TRADING_ANALYTICS from the three raw tables through TRADES_ENRICHED and the two gold tables](assets/lineage.png)
 
 ### Run the expectations
 
@@ -1020,7 +1024,7 @@ The plan creates what the definition files declare:
 
 When the changeset matches what you expected, deploy it.
 
-**In Snowsight:** in the DCM control panel, set the operation to **Deploy** instead of **Plan**, add a deployment alias such as initial-marketing, and run it.
+**In Snowsight:** in the DCM control panel, set the operation to **Deploy** instead of **Plan**, add a deployment alias such as initial-marketing, and run it. The dialog shows the Marketing role, the project owner.
 
 **With the Snowflake CLI:**
 
@@ -1242,7 +1246,7 @@ The plan creates what the two definition files declare: the SECURITY schema, the
 
 ### Deploy
 
-**In Snowsight:** set the operation to **Deploy**, add a deployment alias such as initial-infosec, and run it.
+**In Snowsight:** set the operation to **Deploy**, add a deployment alias such as initial-infosec, and run it. The dialog shows the InfoSec role, the project owner.
 
 **With the Snowflake CLI:**
 
