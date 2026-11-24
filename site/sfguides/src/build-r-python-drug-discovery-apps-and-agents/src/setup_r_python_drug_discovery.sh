@@ -151,7 +151,7 @@ The developer guide walks through each step in detail.
    ```bash
    python scripts/deploy_agent.py --connection <your_connection>
    ```
-   This grants `QSAR_ROLE` invocation access and adds `AROMATASE_AGENT` to Snowflake CoWork (formerly Snowflake Intelligence). The Streamlit **Ask an Agent** page appears when the app's Snowflake session can see the agent. It uses Analyst for measured data, Search for assay/publication text, and the R-backed functions for prediction, similarity, and explanation. A triage call accepts at most 20 SMILES, one per line. Similarity searches all measured compounds, including held-out rows, so it is not a validated applicability-domain estimate. Explanations use global regression impurity importance for bits present in a SMILES, not causal or local attributions.
+   This grants `QSAR_ROLE` invocation access and adds `AROMATASE_AGENT` to Snowflake CoWork. The Streamlit **Ask an Agent** page appears when the app's Snowflake session can see the agent. It uses Analyst for measured data, Search for assay/publication text, and the R-backed functions for prediction, similarity, and explanation. A triage call accepts at most 20 SMILES, one per line. Similarity searches all measured compounds, including held-out rows, so it is not a validated applicability-domain estimate. Explanations use global regression impurity importance for bits present in a SMILES, not causal or local attributions.
 
    The 15-question evaluation fixtures and YAML are in `agent/eval_questions.sql` and `agent/eval_config.yaml`. Their expected predictions refer to the **bundled model**, so update the ground truth after retraining on notebook output. Run the SQL, stage the YAML, then start and inspect a Cortex Agent evaluation with `EXECUTE_AI_EVALUATION`. For repeat runs on the same dataset, remove the `dataset` block from the staged YAML and choose a new run name. In the isolated prototype, all 15 cases completed with mean answer correctness 0.956, logical consistency 0.956, and tool selection 0.967; those scores are not predictive-model accuracy. The guide contains the commands for running and checking the evaluation.
 
@@ -70801,7 +70801,7 @@ END;
 $$;
 
 -- Create the agent from agent/aromatase_agent.yaml after the SQL above with
--- scripts/deploy_agent.py. The script also lists it in Snowflake CoWork (formerly Snowflake Intelligence).
+-- scripts/deploy_agent.py. The script also lists it in Snowflake CoWork.
 QSAR_FILE_25_EOF
 
 cat > 'sql/functions.sql' <<'QSAR_FILE_26_EOF'

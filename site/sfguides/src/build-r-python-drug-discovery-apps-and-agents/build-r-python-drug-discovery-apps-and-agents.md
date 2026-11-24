@@ -21,6 +21,15 @@ In most labs, a working R model stays trapped on a laptop reading local CSV file
 
 In practice, you curate 7,040 raw ChEMBL activity records down to 2,751 unique compounds and trace letrozole (`CHEMBL1444`, measured `pIC50` of `9.15`) from its Simplified Molecular Input Line Entry System (SMILES) string to a live R prediction (`7.89`, with uncalibrated 5th to 95th percentile model quantiles of `5.79` to `9.22`) across SQL, Streamlit, MCP, and Cortex Agents. The next section summarizes the specific skills you will gain along this journey.
 
+### Prerequisites
+- Access to a [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) with `ACCOUNTADMIN` access for the one-time setup
+- [Docker](https://www.docker.com/) with `linux/amd64` build support
+- [Snowflake CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli/index) configured with a connection to your account
+- Python 3.11 or later with `requests`, `pandas`, `pyyaml`, `toml`, `rdkit`, and `snowflake-connector-python`
+- Basic familiarity with R, Python, and SQL
+
+With those prerequisites in place, review the skills this tutorial covers.
+
 ### What You'll Learn
 - How to curate and standardize ChEMBL bioactivity records for human aromatase in a Snowflake Notebook
 - How to encode SMILES strings as 1,024-bit ECFP4 circular fingerprints with `rcdk` and train a quantile random forest with `ranger` in R
@@ -30,16 +39,7 @@ In practice, you curate 7,040 raw ChEMBL activity records down to 2,751 unique c
 - How to connect the R service to SQL service functions, a multipage Streamlit in Snowflake app, an external MCP client, and a Cortex Agent
 - Which statistical, operational, and governance limitations to check before another scientist depends on the service
 
-Now that you know the skills covered in this tutorial, review the prerequisites required to run the workflow in your own environment.
-
-### What You'll Need
-- Access to a [Snowflake account](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) with `ACCOUNTADMIN` access for the one-time setup
-- [Docker](https://www.docker.com/) with `linux/amd64` build support
-- [Snowflake CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli/index) configured with a connection to your account
-- Python 3.11 or later with `requests`, `pandas`, `pyyaml`, `toml`, `rdkit`, and `snowflake-connector-python`
-- Basic familiarity with R, Python, and SQL
-
-With those prerequisites in place, let us look at the architecture and components you will assemble.
+Now that you know the skills covered in this tutorial, let us look at the architecture and components you will assemble.
 
 ### What You'll Build
 You will build an end-to-end R and Python drug discovery application for predicting human aromatase inhibition:
@@ -880,7 +880,7 @@ Once you finish exploring the application and its evaluation checks, tear down t
 
 Compute pools bill while they have active nodes. Run the statements below to remove all objects created in this guide.
 
-**Run this step:** First remove `AROMATASE_AGENT` from Snowflake CoWork (formerly Snowflake Intelligence; the SQL still uses the `SNOWFLAKE INTELLIGENCE` keyword and the `SNOWFLAKE_INTELLIGENCE_OBJECT_DEFAULT` object name) and drop the agent, search service, and evaluation objects.
+**Run this step:** First remove `AROMATASE_AGENT` from Snowflake CoWork and drop the agent, search service, and evaluation objects. The DDL below still uses the legacy `SNOWFLAKE INTELLIGENCE` keyword and the `SNOWFLAKE_INTELLIGENCE_OBJECT_DEFAULT` object name.
 
 ```sql
 USE ROLE QSAR_ROLE;
