@@ -257,7 +257,7 @@ Documentation:
 - [Model Context Protocol (MCP)](https://docs.snowflake.com/en/user-guide/cortex-code/extensibility.html#extensibility-mcp)
 
 Guides:
-- [Best Practices for Snowflake CoCo CLI](https://www.snowflake.com/en/developers/guides/best-practices-cortex-code-cli/)
+- [Best Practices for Snowflake CoCo CLI](https://www.snowflake.com/en/developers/guides/best-practices-coco-cli/)
 - [Getting Started with MCP Connectors](https://www.snowflake.com/en/developers/guides/sfguide-getting-started-with-mcp-connectors/)
 - [Getting Started with Snowflake CoCo Desktop](https://www.snowflake.com/en/developers/guides/getting-started-with-coco-desktop/)
 

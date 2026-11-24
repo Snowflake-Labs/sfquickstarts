@@ -18,7 +18,7 @@ Within this Tasty Bytes Introduction Quickstart you will first be learning about
 
 After learning about the Tasty Bytes Organization, we will complete the process of setting up the Tasty Bytes Foundational Data Model, Workload Specific Roles + Warehouses and all necessary Role Based Access Control (RBAC). 
 
-Upon finishing this Quickstart, you will have deployed the foundation required to run the Quickstarts seen in our [Powered by Tasty Bytes - Quickstarts](/en/developers/guides/tasty-bytes-introduction/) section.
+Upon finishing this Quickstart, you will have deployed the foundation required to run the Quickstarts seen in our [Powered by Tasty Bytes - Quickstarts](https://www.snowflake.com/en/developers/guides/zero-to-snowflake/) section.
 
 ### Who is Tasty Bytes?
 ![assets/who_is_tasty_bytes.png](assets/who_is_tasty_bytes.png)

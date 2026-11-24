@@ -43,7 +43,7 @@ You'll build a small customer dataset containing PII, define its governance obje
 
 If you want to work in Snowsight rather than locally, create a Snowsight Workspace linked to the sample repository on GitHub.
 
-1. Navigate to **Projects > Workspaces** in Snowsight.
+1. Navigate to **Workspaces > Workspaces** in Snowsight.
 2. Click **Create** (+) and select **Git repository**.
 3. Enter the repository URL: https://github.com/Snowflake-Labs/snowflake-dcm-projects
 4. Select an API Integration for GitHub ([create one if needed](https://docs.snowflake.com/en/user-guide/ui-snowsight/workspaces-git#label-create-a-git-workspace)).
@@ -378,8 +378,6 @@ Chloe now appears, and her email is still masked: the row access policy changed,
 
 <!-- ------------------------ -->
 ## Clean Up
-
-Before tearing anything down, know that there is a gentler option. DROP DCM PROJECT on its own, without a PURGE first, removes the project and its deployment history and leaves every entity, grant and attachment in place as an ordinary unmanaged object. To release a single entity, call SYSTEM$UNMANAGE_ENTITY_FROM_DCM_PROJECT with its type and name; to release grants or attachments, pass the rendered statements to SYSTEM$UNMANAGE_FROM_DCM_PROJECT. Then remove the matching statements from your definitions, or the next deploy takes them back.
 
 When you're done, open scripts/05_cleanup.sql and run it as DCM_DEVELOPER. In order, it:
 

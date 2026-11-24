@@ -15,7 +15,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-from lib import md, validate
+from lib import dedupe, md, validate
 
 QUICKSTART_PREFIX = "site/sfguides/src/"
 JOURNEY_PREFIX = "journeys/"
@@ -62,6 +62,16 @@ LANGUAGE_SUFFIXES = {
 # The publisher activates a page only when status is exactly "Published", so any
 # other spelling silently leaves the guide unpublished.
 STATUSES = ("Published", "Draft", "Hidden", "Archived")
+# Above this estimated overlap two guides are the same content under two URLs, which
+# splits search ranking between them. The gap in the corpus is wide: the closest
+# unrelated same-language pair sits near 0.59, so the threshold is not marginal.
+DUPLICATE_BLOCK = 0.80
+# The repository as checked out beside the pull request's files: the base commit's
+# guides, which the changed guides are compared against.
+CORPUS_ROOT = Path()
+# Pairs whose overlap is intended and has been reviewed. Keep this short: each entry
+# is a standing exemption from a blocking check, so give every one a reason.
+ALLOWED_DUPLICATES: dict[str, str] = {}
 STATUS_FIXES = {"pubblicato": "Published", "pubblished": "Published", "public": "Published"}
 NON_MARKDOWN_ROOT_RE = re.compile(r"^site/sfguides/src/[^/]+/[^/]+$")
 
@@ -325,6 +335,142 @@ def check_frontmatter(content: Content) -> dict[str, Any] | None:
             issues.append({"file": display(prefixed), "errors": errors})
 
     return {"issues": issues} if issues else None
+
+
+def corpus_markdown(root: Path) -> list[tuple[str, Path]]:
+    """Return (name, path) for every guide and journey topic in the checked-out repo."""
+    found = []
+    quickstarts = root / QUICKSTART_PREFIX
+    if quickstarts.is_dir():
+        for folder in sorted(quickstarts.iterdir()):
+            if not folder.is_dir() or folder.name.startswith("_"):
+                continue
+            markdown = folder / f"{folder.name}.md"
+            if markdown.is_file():
+                found.append((folder.name, markdown))
+
+    journeys = root / JOURNEY_PREFIX
+    if journeys.is_dir():
+        for markdown in sorted(journeys.glob("*/*/*.md")):
+            if markdown.name.lower() != "readme.md":
+                found.append((f"{JOURNEY_PREFIX}{markdown.parent.name}", markdown))
+
+    return found
+
+
+def _guide_name(prefixed: str) -> str:
+    """Return the comparison name for a changed path: its folder, or journeys/<topic>."""
+    shown = display(prefixed)
+    parent = Path(shown).parent
+    return f"{JOURNEY_PREFIX}{parent.name}" if shown.startswith(JOURNEY_PREFIX) else parent.name
+
+
+@dataclass
+class Candidate:
+    """A guide being checked, reduced to what the comparison needs."""
+
+    name: str
+    language: str
+    file: str
+    sketch: tuple[int, ...]
+
+
+def _candidates(content: Content) -> list[Candidate]:
+    found = []
+    for prefixed in guide_markdown(content):
+        text = content.text(prefixed)
+        if text is None:
+            continue
+        fingerprint = dedupe.sketch(text)
+        if not fingerprint:
+            continue
+        found.append(
+            Candidate(
+                name=_guide_name(prefixed),
+                language=(read_language(text) or "en").strip().lower(),
+                file=display(prefixed),
+                sketch=fingerprint,
+            )
+        )
+    return found
+
+
+def check_duplicate_content(
+    content: Content,
+    root: Path | None = None,
+    allowed: dict[str, str] | None = None,
+) -> dict[str, Any] | None:
+    """Fail when a changed guide's body closely matches a guide already in the repository.
+
+    Comparison is within a language, so a translation never matches its original, and a
+    guide is never compared against itself.
+    """
+    candidates = _candidates(content)
+    if not candidates:
+        return None
+
+    permitted = allowed if allowed is not None else ALLOWED_DUPLICATES
+    changed = {candidate.name for candidate in candidates}
+    corpus = [
+        Candidate(name=name, language="", file=str(path), sketch=())
+        for name, path in corpus_markdown(root if root is not None else CORPUS_ROOT)
+        if name not in changed
+    ]
+
+    issues = []
+    for candidate in candidates:
+        # Other guides from this same pull request are compared too: two copies added
+        # together are not in the base checkout and would otherwise miss each other.
+        others = [other for other in candidates if other.name != candidate.name]
+        matches = _duplicate_matches(candidate, others, permitted)
+        matches += _corpus_matches(candidate, corpus, permitted)
+        matches.sort(reverse=True)
+        blocking = [match for match in matches if match[0] >= DUPLICATE_BLOCK * 100]
+        if blocking:
+            issues.append(
+                {
+                    "file": candidate.file,
+                    "errors": [
+                        f"body is {percent}% the same as '{other}'"
+                        for percent, other in blocking[:3]
+                    ],
+                }
+            )
+
+    return {"issues": issues} if issues else None
+
+
+def _permits(allowed: dict[str, str], left: str, right: str) -> bool:
+    return bool(allowed.get(f"{min(left, right)}|{max(left, right)}"))
+
+
+def _duplicate_matches(
+    candidate: Candidate, others: list[Candidate], allowed: dict[str, str]
+) -> list[tuple[int, str]]:
+    matches = []
+    for other in others:
+        if other.language != candidate.language or _permits(allowed, candidate.name, other.name):
+            continue
+        score = dedupe.similarity(candidate.sketch, other.sketch)
+        if score >= DUPLICATE_BLOCK:
+            matches.append((round(score * 100), other.name))
+    return matches
+
+
+def _corpus_matches(
+    candidate: Candidate, corpus: list[Candidate], allowed: dict[str, str]
+) -> list[tuple[int, str]]:
+    matches = []
+    for other in corpus:
+        if _permits(allowed, candidate.name, other.name):
+            continue
+        text = md.read(Path(other.file))
+        if (read_language(text) or "en").strip().lower() != candidate.language:
+            continue
+        score = dedupe.similarity(candidate.sketch, dedupe.sketch(text))
+        if score >= DUPLICATE_BLOCK:
+            matches.append((round(score * 100), other.name))
+    return matches
 
 
 def check_sidebars(content: Content) -> dict[str, Any] | None:

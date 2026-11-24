@@ -32,12 +32,18 @@ jobs:
         with:
           fetch-depth: 1
           ref: ${{ github.event.pull_request.base.sha }}
+          # Guide markdown is checked out too, so the duplicate-content check can
+          # compare against the guides already in the repository. Markdown only:
+          # the full content tree is ~4 GB of images, the markdown is ~22 MB.
           sparse-checkout: |
-            scripts/lib/
-            scripts/validate/
-            scripts/aem-staging/
-            scripts/data/
-          sparse-checkout-cone-mode: true
+            /scripts/lib/
+            /scripts/validate/
+            /scripts/aem-staging/
+            /scripts/data/
+            /scripts/requirements.txt
+            /site/sfguides/src/*/*.md
+            /journeys/*/*/*.md
+          sparse-checkout-cone-mode: false
 
       - name: Setup Python
         uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
@@ -86,6 +92,7 @@ jobs:
             large-files-error.json
             categories-error.json
             frontmatter-error.json
+            duplicate-content-error.json
             sidebar-error.json
             validation-error.json
             profanity-report.json
