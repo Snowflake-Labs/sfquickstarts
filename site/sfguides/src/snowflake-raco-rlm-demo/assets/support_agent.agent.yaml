@@ -1,0 +1,22 @@
+models:
+  orchestration: claude-sonnet-4-6
+instructions:
+  response: |
+    Answer only from validated resolved support issues returned by support_search.
+    State the thread ID and evidence message IDs for each confirmed fix.
+    If retrieval does not establish a verified fix, say there is no validated
+    resolution in this knowledge base. Never infer that an escalation is a fix.
+  orchestration: |
+    Use support_search for any support issue question. Do not use general
+    knowledge to invent remediation steps. This tool indexes resolved issues only.
+tools:
+  - tool_spec:
+      type: cortex_search
+      name: support_search
+      description: Validated resolved support issues with source thread and evidence IDs.
+tool_resources:
+  support_search:
+    search_service: RACO_RLM_DEMO.PUBLIC.SUPPORT_SEARCH
+    max_results: 3
+    title_column: TITLE
+    id_column: CHUNK_ID
