@@ -508,7 +508,7 @@ ATTACH DATA METRIC FUNCTION SNOWFLAKE.CORE.NULL_COUNT
     ON_VIOLATION_ACTION = (TYPE = 'SKIP_DOWNSTREAM_DYNAMIC_TABLE_REFRESH');
 ```
 
-They are gates too, but nothing is downstream of gold yet, so a failing gold check holds no refresh today. It starts holding refreshes as soon as a dynamic table is built on top of a gold table, with no change to this file. TEST ALL evaluates them with the others, but the alert below watches only the SILVER schema.
+They are gates too, but nothing is downstream of gold yet, so a failing gold check holds no refresh today. It starts holding refreshes as soon as a dynamic table is built on top of a gold table, with no change to this file. Step 4 of 03 evaluates them with the others, but the alert below watches only the SILVER schema.
 
 #### Semantic view
 
@@ -686,10 +686,20 @@ You asked for two metrics by one dimension, by name; the semantic view supplied 
 ### Run the expectations
 
 ```sql
-EXECUTE DCM PROJECT DCM_DEMO_2_DEV.DCM.FINANCE_PIPELINE TEST ALL;
+SELECT 'TRADES_ENRICHED' AS TABLE_NAME, EXPECTATION_NAME, VALUE, EXPECTATION_EXPRESSION, EXPECTATION_VIOLATED
+FROM TABLE(SYSTEM$EVALUATE_DATA_QUALITY_EXPECTATIONS(
+    REF_ENTITY_NAME => 'DCM_DEMO_2_FINANCE_DEV.SILVER.TRADES_ENRICHED'))
+UNION ALL
+SELECT 'DAILY_TRADING', EXPECTATION_NAME, VALUE, EXPECTATION_EXPRESSION, EXPECTATION_VIOLATED
+FROM TABLE(SYSTEM$EVALUATE_DATA_QUALITY_EXPECTATIONS(
+    REF_ENTITY_NAME => 'DCM_DEMO_2_FINANCE_DEV.GOLD.DAILY_TRADING'))
+UNION ALL
+SELECT 'CUSTOMER_TRADING', EXPECTATION_NAME, VALUE, EXPECTATION_EXPRESSION, EXPECTATION_VIOLATED
+FROM TABLE(SYSTEM$EVALUATE_DATA_QUALITY_EXPECTATIONS(
+    REF_ENTITY_NAME => 'DCM_DEMO_2_FINANCE_DEV.GOLD.CUSTOMER_TRADING'));
 ```
 
-TEST ALL evaluates every expectation the project defines and returns one JSON document. Its status is SUCCESSFUL: all five expectations pass on the sample data.
+SYSTEM$EVALUATE_DATA_QUALITY_EXPECTATIONS evaluates the expectations on one table now and returns a row for each. All five pass on the sample data, so EXPECTATION_VIOLATED is false on every row.
 
 ### See the gates
 
