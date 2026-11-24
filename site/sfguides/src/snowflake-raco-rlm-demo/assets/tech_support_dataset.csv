@@ -1,0 +1,1897 @@
+Conversation_ID,Customer_Issue,Tech_Response,Resolution_Time,Issue_Category,Issue_Status
+CONV-0001,Cannot connect to Wi-Fi,Clear cache and remove unnecessary programs.,92 minutes,Software,Pending
+CONV-0002,Software installation failure,Reinstall the printer drivers.,76 minutes,Account,Pending
+CONV-0003,Cannot connect to Wi-Fi,Clear cache and remove unnecessary programs.,50 minutes,Network,Resolved
+CONV-0004,Forgot password,Reset your password using the link provided.,97 minutes,Performance,Pending
+CONV-0005,Software installation failure,Follow the software installation guide.,110 minutes,Performance,Pending
+CONV-0006,Unable to access email,Follow the software installation guide.,22 minutes,Performance,Resolved after follow-up
+CONV-0007,Unable to access email,Run a system diagnostic tool.,12 minutes,Hardware,Resolved after follow-up
+CONV-0008,Unable to access email,Reinstall the printer drivers.,10 minutes,Hardware,Escalated
+CONV-0009,Blue screen error,Run a system diagnostic tool.,120 minutes,Software,Pending
+CONV-0010,Printer not responding,Reinstall the printer drivers.,94 minutes,Hardware,Pending
+CONV-0011,Software installation failure,Verify your email settings.,45 minutes,Account,Escalated
+CONV-0012,Blue screen error,Reset your password using the link provided.,9 minutes,Network,Resolved
+CONV-0013,Slow system performance,Clear cache and remove unnecessary programs.,79 minutes,Account,Pending
+CONV-0014,Blue screen error,Restart your router.,76 minutes,Software,Resolved after follow-up
+CONV-0015,Blue screen error,Reset your password using the link provided.,35 minutes,Software,Escalated
+CONV-0016,Slow system performance,Restart your router.,48 minutes,Hardware,Resolved
+CONV-0017,Forgot password,Reinstall the printer drivers.,69 minutes,Network,Resolved after follow-up
+CONV-0018,Unable to access email,Run a system diagnostic tool.,91 minutes,Software,Resolved after follow-up
+CONV-0019,Printer not responding,Restart your router.,30 minutes,Account,Resolved after follow-up
+CONV-0020,Software installation failure,Reset your password using the link provided.,97 minutes,Performance,Escalated
+CONV-0021,Unable to access email,Verify your email settings.,99 minutes,Software,Resolved after follow-up
+CONV-0022,Cannot connect to Wi-Fi,Verify your email settings.,15 minutes,Network,Escalated
+CONV-0023,Forgot password,Run a system diagnostic tool.,93 minutes,Hardware,Pending
+CONV-0024,Printer not responding,Run a system diagnostic tool.,54 minutes,Account,Resolved after follow-up
+CONV-0025,Blue screen error,Clear cache and remove unnecessary programs.,58 minutes,Network,Pending
+CONV-0026,Slow system performance,Run a system diagnostic tool.,99 minutes,Performance,Resolved
+CONV-0027,Software installation failure,Follow the software installation guide.,13 minutes,Software,Pending
+CONV-0028,Forgot password,Restart your router.,60 minutes,Software,Resolved after follow-up
+CONV-0029,Unable to access email,Clear cache and remove unnecessary programs.,23 minutes,Software,Resolved after follow-up
+CONV-0030,Software installation failure,Restart your router.,87 minutes,Hardware,Resolved after follow-up
+CONV-0031,Software installation failure,Follow the software installation guide.,65 minutes,Network,Resolved after follow-up
+CONV-0032,Printer not responding,Reinstall the printer drivers.,56 minutes,Hardware,Resolved
+CONV-0033,Slow system performance,Reinstall the printer drivers.,48 minutes,Hardware,Resolved
+CONV-0034,Slow system performance,Reset your password using the link provided.,5 minutes,Performance,Escalated
+CONV-0035,Unable to access email,Follow the software installation guide.,113 minutes,Network,Resolved
+CONV-0036,Blue screen error,Reinstall the printer drivers.,52 minutes,Hardware,Resolved
+CONV-0037,Blue screen error,Restart your router.,9 minutes,Performance,Resolved after follow-up
+CONV-0038,Forgot password,Follow the software installation guide.,37 minutes,Software,Resolved
+CONV-0039,Blue screen error,Clear cache and remove unnecessary programs.,86 minutes,Network,Escalated
+CONV-0040,Software installation failure,Run a system diagnostic tool.,5 minutes,Performance,Pending
+CONV-0041,Cannot connect to Wi-Fi,Follow the software installation guide.,67 minutes,Performance,Resolved
+CONV-0042,Printer not responding,Restart your router.,73 minutes,Account,Escalated
+CONV-0043,Slow system performance,Reset your password using the link provided.,66 minutes,Software,Resolved
+CONV-0044,Software installation failure,Follow the software installation guide.,58 minutes,Hardware,Resolved after follow-up
+CONV-0045,Printer not responding,Reset your password using the link provided.,120 minutes,Software,Escalated
+CONV-0046,Forgot password,Clear cache and remove unnecessary programs.,55 minutes,Performance,Pending
+CONV-0047,Forgot password,Follow the software installation guide.,120 minutes,Software,Resolved
+CONV-0048,Software installation failure,Clear cache and remove unnecessary programs.,66 minutes,Network,Pending
+CONV-0049,Slow system performance,Reset your password using the link provided.,25 minutes,Hardware,Resolved
+CONV-0050,Software installation failure,Restart your router.,119 minutes,Performance,Escalated
+CONV-0051,Unable to access email,Clear cache and remove unnecessary programs.,71 minutes,Performance,Escalated
+CONV-0052,Unable to access email,Follow the software installation guide.,58 minutes,Software,Resolved
+CONV-0053,Forgot password,Run a system diagnostic tool.,107 minutes,Performance,Escalated
+CONV-0054,Slow system performance,Verify your email settings.,91 minutes,Software,Escalated
+CONV-0055,Software installation failure,Reinstall the printer drivers.,83 minutes,Software,Escalated
+CONV-0056,Printer not responding,Verify your email settings.,73 minutes,Performance,Escalated
+CONV-0057,Printer not responding,Run a system diagnostic tool.,51 minutes,Hardware,Resolved
+CONV-0058,Unable to access email,Clear cache and remove unnecessary programs.,14 minutes,Account,Resolved
+CONV-0059,Blue screen error,Verify your email settings.,109 minutes,Network,Resolved after follow-up
+CONV-0060,Slow system performance,Clear cache and remove unnecessary programs.,29 minutes,Performance,Resolved after follow-up
+CONV-0061,Forgot password,Follow the software installation guide.,33 minutes,Hardware,Pending
+CONV-0062,Unable to access email,Follow the software installation guide.,56 minutes,Software,Resolved after follow-up
+CONV-0063,Software installation failure,Verify your email settings.,7 minutes,Performance,Resolved after follow-up
+CONV-0064,Slow system performance,Clear cache and remove unnecessary programs.,105 minutes,Performance,Pending
+CONV-0065,Slow system performance,Reset your password using the link provided.,56 minutes,Network,Resolved
+CONV-0066,Cannot connect to Wi-Fi,Reset your password using the link provided.,90 minutes,Performance,Pending
+CONV-0067,Printer not responding,Reset your password using the link provided.,21 minutes,Hardware,Pending
+CONV-0068,Unable to access email,Run a system diagnostic tool.,66 minutes,Performance,Resolved after follow-up
+CONV-0069,Blue screen error,Reinstall the printer drivers.,14 minutes,Account,Resolved after follow-up
+CONV-0070,Forgot password,Follow the software installation guide.,49 minutes,Software,Resolved after follow-up
+CONV-0071,Blue screen error,Reinstall the printer drivers.,31 minutes,Software,Pending
+CONV-0072,Software installation failure,Follow the software installation guide.,79 minutes,Network,Pending
+CONV-0073,Unable to access email,Restart your router.,6 minutes,Network,Resolved after follow-up
+CONV-0074,Printer not responding,Clear cache and remove unnecessary programs.,101 minutes,Account,Resolved after follow-up
+CONV-0075,Unable to access email,Verify your email settings.,73 minutes,Network,Resolved
+CONV-0076,Unable to access email,Follow the software installation guide.,68 minutes,Network,Resolved
+CONV-0077,Software installation failure,Run a system diagnostic tool.,38 minutes,Account,Resolved
+CONV-0078,Printer not responding,Verify your email settings.,63 minutes,Account,Resolved
+CONV-0079,Printer not responding,Clear cache and remove unnecessary programs.,103 minutes,Network,Resolved
+CONV-0080,Slow system performance,Reset your password using the link provided.,55 minutes,Hardware,Resolved after follow-up
+CONV-0081,Cannot connect to Wi-Fi,Follow the software installation guide.,36 minutes,Software,Escalated
+CONV-0082,Unable to access email,Clear cache and remove unnecessary programs.,103 minutes,Account,Resolved
+CONV-0083,Cannot connect to Wi-Fi,Reinstall the printer drivers.,26 minutes,Account,Escalated
+CONV-0084,Blue screen error,Reinstall the printer drivers.,12 minutes,Account,Resolved after follow-up
+CONV-0085,Slow system performance,Follow the software installation guide.,118 minutes,Performance,Resolved after follow-up
+CONV-0086,Software installation failure,Clear cache and remove unnecessary programs.,28 minutes,Account,Resolved
+CONV-0087,Blue screen error,Reinstall the printer drivers.,111 minutes,Hardware,Escalated
+CONV-0088,Slow system performance,Reset your password using the link provided.,40 minutes,Hardware,Resolved
+CONV-0089,Cannot connect to Wi-Fi,Restart your router.,5 minutes,Network,Escalated
+CONV-0090,Printer not responding,Follow the software installation guide.,19 minutes,Hardware,Resolved
+CONV-0091,Printer not responding,Reset your password using the link provided.,103 minutes,Software,Escalated
+CONV-0092,Printer not responding,Run a system diagnostic tool.,81 minutes,Performance,Resolved
+CONV-0093,Cannot connect to Wi-Fi,Clear cache and remove unnecessary programs.,67 minutes,Network,Resolved after follow-up
+CONV-0094,Blue screen error,Follow the software installation guide.,62 minutes,Account,Pending
+CONV-0095,Software installation failure,Follow the software installation guide.,71 minutes,Software,Pending
+CONV-0096,Cannot connect to Wi-Fi,Restart your router.,19 minutes,Network,Escalated
+CONV-0097,Printer not responding,Reinstall the printer drivers.,93 minutes,Account,Escalated
+CONV-0098,Printer not responding,Reinstall the printer drivers.,20 minutes,Hardware,Escalated
+CONV-0099,Blue screen error,Reset your password using the link provided.,48 minutes,Hardware,Escalated
+CONV-0100,Slow system performance,Reinstall the printer drivers.,14 minutes,Performance,Pending
+CONV-0101,Printer not responding,Follow the software installation guide.,20 minutes,Hardware,Pending
+CONV-0102,Unable to access email,Clear cache and remove unnecessary programs.,52 minutes,Hardware,Resolved after follow-up
+CONV-0103,Blue screen error,Reinstall the printer drivers.,84 minutes,Account,Resolved after follow-up
+CONV-0104,Slow system performance,Reinstall the printer drivers.,80 minutes,Performance,Escalated
+CONV-0105,Software installation failure,Clear cache and remove unnecessary programs.,72 minutes,Account,Resolved after follow-up
+CONV-0106,Printer not responding,Verify your email settings.,39 minutes,Performance,Resolved
+CONV-0107,Slow system performance,Follow the software installation guide.,16 minutes,Performance,Escalated
+CONV-0108,Cannot connect to Wi-Fi,Verify your email settings.,57 minutes,Account,Pending
+CONV-0109,Software installation failure,Reset your password using the link provided.,41 minutes,Performance,Escalated
+CONV-0110,Blue screen error,Follow the software installation guide.,23 minutes,Hardware,Resolved
+CONV-0111,Cannot connect to Wi-Fi,Run a system diagnostic tool.,110 minutes,Performance,Resolved
+CONV-0112,Printer not responding,Run a system diagnostic tool.,110 minutes,Hardware,Resolved after follow-up
+CONV-0113,Cannot connect to Wi-Fi,Verify your email settings.,38 minutes,Account,Resolved after follow-up
+CONV-0114,Forgot password,Clear cache and remove unnecessary programs.,102 minutes,Network,Pending
+CONV-0115,Slow system performance,Reinstall the printer drivers.,26 minutes,Performance,Resolved after follow-up
+CONV-0116,Blue screen error,Clear cache and remove unnecessary programs.,78 minutes,Account,Escalated
+CONV-0117,Software installation failure,Clear cache and remove unnecessary programs.,69 minutes,Software,Escalated
+CONV-0118,Forgot password,Verify your email settings.,17 minutes,Network,Pending
+CONV-0119,Cannot connect to Wi-Fi,Clear cache and remove unnecessary programs.,90 minutes,Account,Escalated
+CONV-0120,Forgot password,Restart your router.,89 minutes,Performance,Pending
+CONV-0121,Software installation failure,Clear cache and remove unnecessary programs.,28 minutes,Account,Resolved
+CONV-0122,Printer not responding,Reinstall the printer drivers.,14 minutes,Network,Resolved after follow-up
+CONV-0123,Cannot connect to Wi-Fi,Reset your password using the link provided.,20 minutes,Software,Pending
+CONV-0124,Cannot connect to Wi-Fi,Restart your router.,100 minutes,Account,Pending
+CONV-0125,Unable to access email,Run a system diagnostic tool.,67 minutes,Account,Resolved after follow-up
+CONV-0126,Printer not responding,Verify your email settings.,25 minutes,Software,Escalated
+CONV-0127,Forgot password,Clear cache and remove unnecessary programs.,90 minutes,Account,Escalated
+CONV-0128,Unable to access email,Run a system diagnostic tool.,61 minutes,Hardware,Pending
+CONV-0129,Forgot password,Follow the software installation guide.,120 minutes,Network,Resolved
+CONV-0130,Slow system performance,Run a system diagnostic tool.,56 minutes,Performance,Escalated
+CONV-0131,Software installation failure,Verify your email settings.,119 minutes,Account,Resolved after follow-up
+CONV-0132,Forgot password,Run a system diagnostic tool.,56 minutes,Account,Escalated
+CONV-0133,Printer not responding,Verify your email settings.,19 minutes,Network,Pending
+CONV-0134,Software installation failure,Restart your router.,106 minutes,Performance,Pending
+CONV-0135,Software installation failure,Clear cache and remove unnecessary programs.,37 minutes,Network,Escalated
+CONV-0136,Blue screen error,Reset your password using the link provided.,57 minutes,Hardware,Escalated
+CONV-0137,Cannot connect to Wi-Fi,Restart your router.,60 minutes,Network,Resolved
+CONV-0138,Printer not responding,Reset your password using the link provided.,70 minutes,Account,Resolved
+CONV-0139,Cannot connect to Wi-Fi,Run a system diagnostic tool.,41 minutes,Hardware,Resolved
+CONV-0140,Unable to access email,Follow the software installation guide.,87 minutes,Account,Pending
+CONV-0141,Forgot password,Restart your router.,111 minutes,Software,Resolved after follow-up
+CONV-0142,Software installation failure,Reinstall the printer drivers.,5 minutes,Software,Resolved
+CONV-0143,Cannot connect to Wi-Fi,Reinstall the printer drivers.,44 minutes,Hardware,Pending
+CONV-0144,Blue screen error,Reset your password using the link provided.,120 minutes,Performance,Pending
+CONV-0145,Unable to access email,Clear cache and remove unnecessary programs.,85 minutes,Hardware,Resolved after follow-up
+CONV-0146,Unable to access email,Verify your email settings.,22 minutes,Hardware,Escalated
+CONV-0147,Software installation failure,Restart your router.,89 minutes,Network,Pending
+CONV-0148,Forgot password,Follow the software installation guide.,45 minutes,Account,Resolved
+CONV-0149,Unable to access email,Follow the software installation guide.,108 minutes,Performance,Pending
+CONV-0150,Printer not responding,Verify your email settings.,116 minutes,Software,Resolved after follow-up
+CONV-0151,Unable to access email,Verify your email settings.,109 minutes,Software,Resolved after follow-up
+CONV-0152,Cannot connect to Wi-Fi,Clear cache and remove unnecessary programs.,48 minutes,Performance,Resolved
+CONV-0153,Printer not responding,Restart your router.,85 minutes,Software,Resolved after follow-up
+CONV-0154,Cannot connect to Wi-Fi,Verify your email settings.,73 minutes,Performance,Resolved
+CONV-0155,Forgot password,Follow the software installation guide.,21 minutes,Account,Pending
+CONV-0156,Slow system performance,Reset your password using the link provided.,14 minutes,Performance,Escalated
+CONV-0157,Printer not responding,Run a system diagnostic tool.,100 minutes,Network,Resolved
+CONV-0158,Cannot connect to Wi-Fi,Reset your password using the link provided.,63 minutes,Hardware,Resolved
+CONV-0159,Printer not responding,Clear cache and remove unnecessary programs.,94 minutes,Account,Resolved
+CONV-0160,Blue screen error,Clear cache and remove unnecessary programs.,91 minutes,Account,Escalated
+CONV-0161,Software installation failure,Reinstall the printer drivers.,119 minutes,Account,Resolved after follow-up
+CONV-0162,Blue screen error,Clear cache and remove unnecessary programs.,68 minutes,Network,Escalated
+CONV-0163,Cannot connect to Wi-Fi,Clear cache and remove unnecessary programs.,98 minutes,Hardware,Escalated
+CONV-0164,Forgot password,Clear cache and remove unnecessary programs.,30 minutes,Network,Resolved
+CONV-0165,Forgot password,Verify your email settings.,77 minutes,Account,Pending
+CONV-0166,Printer not responding,Reinstall the printer drivers.,15 minutes,Software,Escalated
+CONV-0167,Slow system performance,Reset your password using the link provided.,80 minutes,Performance,Escalated
+CONV-0168,Slow system performance,Clear cache and remove unnecessary programs.,98 minutes,Hardware,Resolved after follow-up
+CONV-0169,Printer not responding,Reinstall the printer drivers.,91 minutes,Performance,Resolved after follow-up
+CONV-0170,Software installation failure,Clear cache and remove unnecessary programs.,27 minutes,Account,Resolved
+CONV-0171,Printer not responding,Clear cache and remove unnecessary programs.,71 minutes,Hardware,Pending
+CONV-0172,Forgot password,Clear cache and remove unnecessary programs.,88 minutes,Account,Resolved after follow-up
+CONV-0173,Software installation failure,Reset your password using the link provided.,21 minutes,Software,Escalated
+CONV-0174,Blue screen error,Restart your router.,7 minutes,Software,Escalated
+CONV-0175,Cannot connect to Wi-Fi,Follow the software installation guide.,45 minutes,Hardware,Escalated
+CONV-0176,Printer not responding,Follow the software installation guide.,33 minutes,Performance,Pending
+CONV-0177,Slow system performance,Follow the software installation guide.,37 minutes,Account,Resolved
+CONV-0178,Forgot password,Reinstall the printer drivers.,115 minutes,Software,Escalated
+CONV-0179,Cannot connect to Wi-Fi,Reset your password using the link provided.,83 minutes,Hardware,Pending
+CONV-0180,Printer not responding,Follow the software installation guide.,70 minutes,Performance,Pending
+CONV-0181,Software installation failure,Verify your email settings.,83 minutes,Performance,Resolved
+CONV-0182,Slow system performance,Clear cache and remove unnecessary programs.,9 minutes,Performance,Resolved
+CONV-0183,Printer not responding,Restart your router.,74 minutes,Hardware,Escalated
+CONV-0184,Unable to access email,Reinstall the printer drivers.,83 minutes,Hardware,Resolved
+CONV-0185,Slow system performance,Verify your email settings.,25 minutes,Hardware,Escalated
+CONV-0186,Forgot password,Verify your email settings.,98 minutes,Account,Resolved
+CONV-0187,Unable to access email,Clear cache and remove unnecessary programs.,7 minutes,Hardware,Resolved
+CONV-0188,Unable to access email,Run a system diagnostic tool.,12 minutes,Performance,Resolved after follow-up
+CONV-0189,Software installation failure,Run a system diagnostic tool.,96 minutes,Network,Resolved
+CONV-0190,Software installation failure,Reset your password using the link provided.,34 minutes,Hardware,Pending
+CONV-0191,Blue screen error,Reset your password using the link provided.,115 minutes,Hardware,Escalated
+CONV-0192,Printer not responding,Follow the software installation guide.,89 minutes,Network,Resolved after follow-up
+CONV-0193,Forgot password,Run a system diagnostic tool.,83 minutes,Hardware,Escalated
+CONV-0194,Cannot connect to Wi-Fi,Reset your password using the link provided.,15 minutes,Performance,Escalated
+CONV-0195,Printer not responding,Clear cache and remove unnecessary programs.,74 minutes,Performance,Escalated
+CONV-0196,Slow system performance,Run a system diagnostic tool.,45 minutes,Network,Resolved
+CONV-0197,Printer not responding,Clear cache and remove unnecessary programs.,59 minutes,Software,Resolved
+CONV-0198,Software installation failure,Reinstall the printer drivers.,108 minutes,Software,Resolved
+CONV-0199,Cannot connect to Wi-Fi,Clear cache and remove unnecessary programs.,13 minutes,Account,Resolved after follow-up
+CONV-0200,Unable to access email,Verify your email settings.,39 minutes,Network,Pending
+CONV-0201,Software installation failure,Reset your password using the link provided.,18 minutes,Account,Escalated
+CONV-0202,Cannot connect to Wi-Fi,Follow the software installation guide.,73 minutes,Performance,Resolved after follow-up
+CONV-0203,Printer not responding,Follow the software installation guide.,67 minutes,Network,Resolved after follow-up
+CONV-0204,Forgot password,Follow the software installation guide.,79 minutes,Account,Resolved after follow-up
+CONV-0205,Cannot connect to Wi-Fi,Reset your password using the link provided.,13 minutes,Network,Escalated
+CONV-0206,Blue screen error,Clear cache and remove unnecessary programs.,81 minutes,Hardware,Escalated
+CONV-0207,Blue screen error,Run a system diagnostic tool.,63 minutes,Hardware,Pending
+CONV-0208,Software installation failure,Reset your password using the link provided.,22 minutes,Hardware,Pending
+CONV-0209,Cannot connect to Wi-Fi,Run a system diagnostic tool.,82 minutes,Software,Pending
+CONV-0210,Blue screen error,Verify your email settings.,5 minutes,Software,Resolved after follow-up
+CONV-0211,Cannot connect to Wi-Fi,Follow the software installation guide.,108 minutes,Hardware,Escalated
+CONV-0212,Blue screen error,Run a system diagnostic tool.,82 minutes,Software,Escalated
+CONV-0213,Printer not responding,Clear cache and remove unnecessary programs.,102 minutes,Hardware,Escalated
+CONV-0214,Cannot connect to Wi-Fi,Reset your password using the link provided.,16 minutes,Hardware,Escalated
+CONV-0215,Printer not responding,Follow the software installation guide.,37 minutes,Network,Pending
+CONV-0216,Printer not responding,Restart your router.,6 minutes,Performance,Resolved after follow-up
+CONV-0217,Slow system performance,Follow the software installation guide.,118 minutes,Network,Pending
+CONV-0218,Software installation failure,Run a system diagnostic tool.,75 minutes,Account,Escalated
+CONV-0219,Software installation failure,Verify your email settings.,48 minutes,Account,Escalated
+CONV-0220,Slow system performance,Restart your router.,35 minutes,Software,Resolved after follow-up
+CONV-0221,Blue screen error,Verify your email settings.,48 minutes,Software,Pending
+CONV-0222,Blue screen error,Reset your password using the link provided.,95 minutes,Account,Resolved after follow-up
+CONV-0223,Forgot password,Restart your router.,94 minutes,Performance,Resolved
+CONV-0224,Cannot connect to Wi-Fi,Reset your password using the link provided.,46 minutes,Software,Pending
+CONV-0225,Software installation failure,Reinstall the printer drivers.,45 minutes,Account,Pending
+CONV-0226,Printer not responding,Reinstall the printer drivers.,97 minutes,Hardware,Pending
+CONV-0227,Blue screen error,Reinstall the printer drivers.,34 minutes,Performance,Pending
+CONV-0228,Software installation failure,Reinstall the printer drivers.,38 minutes,Account,Resolved after follow-up
+CONV-0229,Unable to access email,Clear cache and remove unnecessary programs.,11 minutes,Hardware,Resolved after follow-up
+CONV-0230,Forgot password,Verify your email settings.,16 minutes,Software,Escalated
+CONV-0231,Slow system performance,Run a system diagnostic tool.,39 minutes,Hardware,Resolved
+CONV-0232,Software installation failure,Clear cache and remove unnecessary programs.,92 minutes,Hardware,Resolved after follow-up
+CONV-0233,Printer not responding,Follow the software installation guide.,9 minutes,Software,Resolved after follow-up
+CONV-0234,Software installation failure,Run a system diagnostic tool.,102 minutes,Hardware,Resolved after follow-up
+CONV-0235,Cannot connect to Wi-Fi,Verify your email settings.,60 minutes,Account,Pending
+CONV-0236,Software installation failure,Restart your router.,70 minutes,Software,Resolved
+CONV-0237,Software installation failure,Verify your email settings.,30 minutes,Network,Resolved
+CONV-0238,Unable to access email,Verify your email settings.,6 minutes,Account,Resolved
+CONV-0239,Forgot password,Run a system diagnostic tool.,22 minutes,Performance,Resolved
+CONV-0240,Software installation failure,Clear cache and remove unnecessary programs.,45 minutes,Performance,Pending
+CONV-0241,Forgot password,Restart your router.,92 minutes,Hardware,Escalated
+CONV-0242,Unable to access email,Reset your password using the link provided.,25 minutes,Network,Resolved
+CONV-0243,Slow system performance,Clear cache and remove unnecessary programs.,27 minutes,Network,Resolved
+CONV-0244,Cannot connect to Wi-Fi,Reinstall the printer drivers.,86 minutes,Hardware,Pending
+CONV-0245,Blue screen error,Follow the software installation guide.,99 minutes,Hardware,Resolved after follow-up
+CONV-0246,Cannot connect to Wi-Fi,Run a system diagnostic tool.,19 minutes,Account,Pending
+CONV-0247,Printer not responding,Follow the software installation guide.,18 minutes,Software,Escalated
+CONV-0248,Blue screen error,Clear cache and remove unnecessary programs.,78 minutes,Software,Resolved
+CONV-0249,Software installation failure,Restart your router.,97 minutes,Account,Resolved
+CONV-0250,Software installation failure,Restart your router.,64 minutes,Account,Pending
+CONV-0251,Slow system performance,Clear cache and remove unnecessary programs.,45 minutes,Software,Resolved after follow-up
+CONV-0252,Blue screen error,Reset your password using the link provided.,18 minutes,Performance,Resolved
+CONV-0253,Unable to access email,Reinstall the printer drivers.,37 minutes,Hardware,Escalated
+CONV-0254,Cannot connect to Wi-Fi,Follow the software installation guide.,54 minutes,Performance,Escalated
+CONV-0255,Cannot connect to Wi-Fi,Follow the software installation guide.,120 minutes,Performance,Resolved
+CONV-0256,Slow system performance,Restart your router.,102 minutes,Software,Escalated
+CONV-0257,Software installation failure,Reset your password using the link provided.,21 minutes,Network,Resolved
+CONV-0258,Slow system performance,Restart your router.,70 minutes,Software,Resolved after follow-up
+CONV-0259,Forgot password,Restart your router.,21 minutes,Account,Pending
+CONV-0260,Cannot connect to Wi-Fi,Follow the software installation guide.,38 minutes,Performance,Escalated
+CONV-0261,Unable to access email,Follow the software installation guide.,85 minutes,Performance,Pending
+CONV-0262,Printer not responding,Run a system diagnostic tool.,14 minutes,Account,Resolved after follow-up
+CONV-0263,Forgot password,Reset your password using the link provided.,55 minutes,Hardware,Pending
+CONV-0264,Printer not responding,Reinstall the printer drivers.,46 minutes,Performance,Resolved
+CONV-0265,Printer not responding,Verify your email settings.,115 minutes,Network,Pending
+CONV-0266,Printer not responding,Follow the software installation guide.,53 minutes,Network,Resolved
+CONV-0267,Printer not responding,Restart your router.,84 minutes,Account,Resolved
+CONV-0268,Software installation failure,Run a system diagnostic tool.,14 minutes,Performance,Resolved
+CONV-0269,Cannot connect to Wi-Fi,Follow the software installation guide.,40 minutes,Performance,Escalated
+CONV-0270,Slow system performance,Run a system diagnostic tool.,18 minutes,Performance,Pending
+CONV-0271,Unable to access email,Run a system diagnostic tool.,119 minutes,Hardware,Pending
+CONV-0272,Forgot password,Verify your email settings.,114 minutes,Network,Pending
+CONV-0273,Cannot connect to Wi-Fi,Follow the software installation guide.,106 minutes,Hardware,Resolved after follow-up
+CONV-0274,Cannot connect to Wi-Fi,Restart your router.,117 minutes,Performance,Escalated
+CONV-0275,Blue screen error,Follow the software installation guide.,93 minutes,Network,Escalated
+CONV-0276,Cannot connect to Wi-Fi,Follow the software installation guide.,39 minutes,Performance,Resolved after follow-up
+CONV-0277,Software installation failure,Clear cache and remove unnecessary programs.,7 minutes,Performance,Escalated
+CONV-0278,Forgot password,Restart your router.,19 minutes,Performance,Resolved
+CONV-0279,Slow system performance,Reset your password using the link provided.,62 minutes,Performance,Resolved after follow-up
+CONV-0280,Software installation failure,Verify your email settings.,12 minutes,Hardware,Escalated
+CONV-0281,Unable to access email,Restart your router.,29 minutes,Account,Escalated
+CONV-0282,Slow system performance,Run a system diagnostic tool.,27 minutes,Performance,Resolved
+CONV-0283,Slow system performance,Restart your router.,44 minutes,Software,Resolved after follow-up
+CONV-0284,Slow system performance,Run a system diagnostic tool.,81 minutes,Network,Pending
+CONV-0285,Software installation failure,Run a system diagnostic tool.,52 minutes,Performance,Resolved
+CONV-0286,Slow system performance,Verify your email settings.,98 minutes,Performance,Escalated
+CONV-0287,Printer not responding,Follow the software installation guide.,43 minutes,Software,Escalated
+CONV-0288,Blue screen error,Restart your router.,29 minutes,Hardware,Pending
+CONV-0289,Unable to access email,Reset your password using the link provided.,98 minutes,Performance,Resolved
+CONV-0290,Printer not responding,Reinstall the printer drivers.,19 minutes,Performance,Escalated
+CONV-0291,Printer not responding,Follow the software installation guide.,93 minutes,Network,Escalated
+CONV-0292,Forgot password,Reinstall the printer drivers.,17 minutes,Account,Pending
+CONV-0293,Software installation failure,Verify your email settings.,16 minutes,Account,Escalated
+CONV-0294,Printer not responding,Restart your router.,52 minutes,Hardware,Resolved
+CONV-0295,Blue screen error,Clear cache and remove unnecessary programs.,97 minutes,Software,Pending
+CONV-0296,Unable to access email,Clear cache and remove unnecessary programs.,66 minutes,Performance,Pending
+CONV-0297,Unable to access email,Clear cache and remove unnecessary programs.,43 minutes,Software,Pending
+CONV-0298,Printer not responding,Clear cache and remove unnecessary programs.,31 minutes,Account,Pending
+CONV-0299,Slow system performance,Follow the software installation guide.,75 minutes,Hardware,Resolved
+CONV-0300,Slow system performance,Follow the software installation guide.,99 minutes,Performance,Resolved
+CONV-0301,Cannot connect to Wi-Fi,Verify your email settings.,66 minutes,Network,Escalated
+CONV-0302,Slow system performance,Reset your password using the link provided.,119 minutes,Hardware,Resolved
+CONV-0303,Unable to access email,Clear cache and remove unnecessary programs.,43 minutes,Performance,Pending
+CONV-0304,Cannot connect to Wi-Fi,Reset your password using the link provided.,11 minutes,Hardware,Escalated
+CONV-0305,Printer not responding,Follow the software installation guide.,30 minutes,Software,Resolved after follow-up
+CONV-0306,Blue screen error,Run a system diagnostic tool.,110 minutes,Account,Pending
+CONV-0307,Forgot password,Follow the software installation guide.,70 minutes,Performance,Resolved
+CONV-0308,Forgot password,Reset your password using the link provided.,32 minutes,Software,Resolved after follow-up
+CONV-0309,Unable to access email,Reset your password using the link provided.,97 minutes,Hardware,Resolved after follow-up
+CONV-0310,Unable to access email,Verify your email settings.,69 minutes,Performance,Resolved after follow-up
+CONV-0311,Blue screen error,Reset your password using the link provided.,89 minutes,Performance,Escalated
+CONV-0312,Printer not responding,Verify your email settings.,98 minutes,Performance,Resolved
+CONV-0313,Software installation failure,Run a system diagnostic tool.,100 minutes,Performance,Pending
+CONV-0314,Blue screen error,Reset your password using the link provided.,73 minutes,Software,Resolved after follow-up
+CONV-0315,Slow system performance,Run a system diagnostic tool.,103 minutes,Network,Pending
+CONV-0316,Forgot password,Clear cache and remove unnecessary programs.,114 minutes,Account,Resolved after follow-up
+CONV-0317,Blue screen error,Restart your router.,80 minutes,Account,Resolved
+CONV-0318,Unable to access email,Reinstall the printer drivers.,40 minutes,Account,Resolved
+CONV-0319,Cannot connect to Wi-Fi,Clear cache and remove unnecessary programs.,40 minutes,Software,Resolved after follow-up
+CONV-0320,Cannot connect to Wi-Fi,Reinstall the printer drivers.,38 minutes,Software,Resolved after follow-up
+CONV-0321,Forgot password,Restart your router.,17 minutes,Software,Escalated
+CONV-0322,Slow system performance,Follow the software installation guide.,95 minutes,Performance,Resolved
+CONV-0323,Slow system performance,Follow the software installation guide.,5 minutes,Software,Resolved after follow-up
+CONV-0324,Unable to access email,Run a system diagnostic tool.,32 minutes,Network,Pending
+CONV-0325,Printer not responding,Clear cache and remove unnecessary programs.,80 minutes,Network,Resolved
+CONV-0326,Forgot password,Verify your email settings.,114 minutes,Performance,Resolved
+CONV-0327,Software installation failure,Clear cache and remove unnecessary programs.,59 minutes,Network,Escalated
+CONV-0328,Software installation failure,Clear cache and remove unnecessary programs.,77 minutes,Hardware,Pending
+CONV-0329,Cannot connect to Wi-Fi,Run a system diagnostic tool.,79 minutes,Account,Resolved after follow-up
+CONV-0330,Slow system performance,Run a system diagnostic tool.,64 minutes,Account,Resolved
+CONV-0331,Slow system performance,Restart your router.,96 minutes,Hardware,Resolved after follow-up
+CONV-0332,Software installation failure,Restart your router.,94 minutes,Software,Escalated
+CONV-0333,Cannot connect to Wi-Fi,Restart your router.,64 minutes,Performance,Resolved after follow-up
+CONV-0334,Software installation failure,Run a system diagnostic tool.,104 minutes,Performance,Resolved after follow-up
+CONV-0335,Software installation failure,Run a system diagnostic tool.,31 minutes,Network,Escalated
+CONV-0336,Slow system performance,Restart your router.,62 minutes,Performance,Resolved after follow-up
+CONV-0337,Forgot password,Run a system diagnostic tool.,22 minutes,Network,Pending
+CONV-0338,Blue screen error,Reset your password using the link provided.,44 minutes,Hardware,Resolved after follow-up
+CONV-0339,Software installation failure,Verify your email settings.,45 minutes,Software,Resolved
+CONV-0340,Cannot connect to Wi-Fi,Reinstall the printer drivers.,111 minutes,Software,Resolved
+CONV-0341,Unable to access email,Restart your router.,52 minutes,Network,Resolved after follow-up
+CONV-0342,Slow system performance,Reset your password using the link provided.,86 minutes,Network,Pending
+CONV-0343,Cannot connect to Wi-Fi,Verify your email settings.,102 minutes,Hardware,Resolved
+CONV-0344,Cannot connect to Wi-Fi,Restart your router.,46 minutes,Performance,Resolved
+CONV-0345,Slow system performance,Reset your password using the link provided.,15 minutes,Software,Resolved after follow-up
+CONV-0346,Forgot password,Verify your email settings.,5 minutes,Hardware,Resolved after follow-up
+CONV-0347,Slow system performance,Reset your password using the link provided.,27 minutes,Account,Pending
+CONV-0348,Printer not responding,Reinstall the printer drivers.,21 minutes,Software,Pending
+CONV-0349,Slow system performance,Restart your router.,101 minutes,Performance,Resolved after follow-up
+CONV-0350,Blue screen error,Run a system diagnostic tool.,63 minutes,Performance,Resolved after follow-up
+CONV-0351,Unable to access email,Reset your password using the link provided.,68 minutes,Hardware,Resolved
+CONV-0352,Blue screen error,Verify your email settings.,62 minutes,Performance,Pending
+CONV-0353,Slow system performance,Clear cache and remove unnecessary programs.,37 minutes,Software,Resolved
+CONV-0354,Printer not responding,Reinstall the printer drivers.,111 minutes,Account,Resolved after follow-up
+CONV-0355,Forgot password,Run a system diagnostic tool.,96 minutes,Network,Resolved after follow-up
+CONV-0356,Cannot connect to Wi-Fi,Clear cache and remove unnecessary programs.,90 minutes,Network,Resolved after follow-up
+CONV-0357,Printer not responding,Reinstall the printer drivers.,17 minutes,Network,Resolved
+CONV-0358,Printer not responding,Run a system diagnostic tool.,71 minutes,Network,Pending
+CONV-0359,Printer not responding,Clear cache and remove unnecessary programs.,39 minutes,Performance,Pending
+CONV-0360,Unable to access email,Follow the software installation guide.,96 minutes,Hardware,Resolved
+CONV-0361,Unable to access email,Clear cache and remove unnecessary programs.,86 minutes,Hardware,Pending
+CONV-0362,Slow system performance,Reinstall the printer drivers.,50 minutes,Performance,Resolved
+CONV-0363,Printer not responding,Verify your email settings.,38 minutes,Hardware,Resolved
+CONV-0364,Software installation failure,Reset your password using the link provided.,110 minutes,Account,Escalated
+CONV-0365,Printer not responding,Verify your email settings.,98 minutes,Hardware,Pending
+CONV-0366,Blue screen error,Verify your email settings.,23 minutes,Performance,Pending
+CONV-0367,Forgot password,Reinstall the printer drivers.,78 minutes,Hardware,Pending
+CONV-0368,Software installation failure,Run a system diagnostic tool.,88 minutes,Hardware,Pending
+CONV-0369,Printer not responding,Restart your router.,27 minutes,Network,Escalated
+CONV-0370,Cannot connect to Wi-Fi,Run a system diagnostic tool.,8 minutes,Performance,Pending
+CONV-0371,Unable to access email,Verify your email settings.,34 minutes,Account,Resolved
+CONV-0372,Unable to access email,Reinstall the printer drivers.,105 minutes,Account,Escalated
+CONV-0373,Slow system performance,Reset your password using the link provided.,15 minutes,Performance,Escalated
+CONV-0374,Printer not responding,Follow the software installation guide.,73 minutes,Hardware,Pending
+CONV-0375,Slow system performance,Reset your password using the link provided.,69 minutes,Account,Escalated
+CONV-0376,Blue screen error,Clear cache and remove unnecessary programs.,70 minutes,Account,Resolved after follow-up
+CONV-0377,Cannot connect to Wi-Fi,Reinstall the printer drivers.,55 minutes,Hardware,Resolved
+CONV-0378,Slow system performance,Restart your router.,22 minutes,Performance,Resolved
+CONV-0379,Cannot connect to Wi-Fi,Verify your email settings.,80 minutes,Software,Pending
+CONV-0380,Blue screen error,Reset your password using the link provided.,63 minutes,Account,Resolved
+CONV-0381,Slow system performance,Reset your password using the link provided.,86 minutes,Performance,Resolved
+CONV-0382,Slow system performance,Clear cache and remove unnecessary programs.,80 minutes,Account,Resolved after follow-up
+CONV-0383,Printer not responding,Clear cache and remove unnecessary programs.,22 minutes,Software,Escalated
+CONV-0384,Blue screen error,Reset your password using the link provided.,69 minutes,Software,Resolved
+CONV-0385,Cannot connect to Wi-Fi,Run a system diagnostic tool.,6 minutes,Network,Escalated
+CONV-0386,Unable to access email,Reset your password using the link provided.,95 minutes,Network,Pending
+CONV-0387,Slow system performance,Reinstall the printer drivers.,37 minutes,Performance,Resolved
+CONV-0388,Printer not responding,Reinstall the printer drivers.,112 minutes,Network,Pending
+CONV-0389,Printer not responding,Verify your email settings.,107 minutes,Network,Resolved after follow-up
+CONV-0390,Forgot password,Verify your email settings.,10 minutes,Hardware,Resolved after follow-up
+CONV-0391,Blue screen error,Clear cache and remove unnecessary programs.,19 minutes,Performance,Resolved
+CONV-0392,Blue screen error,Run a system diagnostic tool.,107 minutes,Network,Resolved
+CONV-0393,Forgot password,Reset your password using the link provided.,75 minutes,Hardware,Resolved after follow-up
+CONV-0394,Blue screen error,Run a system diagnostic tool.,27 minutes,Hardware,Resolved
+CONV-0395,Blue screen error,Follow the software installation guide.,78 minutes,Network,Escalated
+CONV-0396,Software installation failure,Run a system diagnostic tool.,74 minutes,Account,Resolved after follow-up
+CONV-0397,Blue screen error,Restart your router.,118 minutes,Account,Escalated
+CONV-0398,Blue screen error,Restart your router.,78 minutes,Account,Resolved
+CONV-0399,Printer not responding,Verify your email settings.,67 minutes,Hardware,Resolved
+CONV-0400,Forgot password,Restart your router.,18 minutes,Hardware,Pending
+CONV-0401,Unable to access email,Run a system diagnostic tool.,68 minutes,Network,Resolved after follow-up
+CONV-0402,Unable to access email,Run a system diagnostic tool.,93 minutes,Software,Resolved after follow-up
+CONV-0403,Software installation failure,Reinstall the printer drivers.,58 minutes,Software,Escalated
+CONV-0404,Unable to access email,Reinstall the printer drivers.,113 minutes,Software,Escalated
+CONV-0405,Slow system performance,Restart your router.,55 minutes,Software,Escalated
+CONV-0406,Printer not responding,Verify your email settings.,109 minutes,Account,Resolved after follow-up
+CONV-0407,Forgot password,Clear cache and remove unnecessary programs.,90 minutes,Network,Escalated
+CONV-0408,Slow system performance,Reset your password using the link provided.,92 minutes,Software,Resolved
+CONV-0409,Forgot password,Follow the software installation guide.,88 minutes,Network,Escalated
+CONV-0410,Blue screen error,Restart your router.,29 minutes,Software,Resolved after follow-up
+CONV-0411,Blue screen error,Verify your email settings.,37 minutes,Network,Resolved after follow-up
+CONV-0412,Blue screen error,Clear cache and remove unnecessary programs.,98 minutes,Network,Resolved after follow-up
+CONV-0413,Cannot connect to Wi-Fi,Run a system diagnostic tool.,59 minutes,Account,Escalated
+CONV-0414,Software installation failure,Verify your email settings.,46 minutes,Network,Resolved
+CONV-0415,Slow system performance,Follow the software installation guide.,56 minutes,Performance,Escalated
+CONV-0416,Printer not responding,Reset your password using the link provided.,94 minutes,Performance,Resolved
+CONV-0417,Unable to access email,Reset your password using the link provided.,86 minutes,Software,Pending
+CONV-0418,Software installation failure,Clear cache and remove unnecessary programs.,7 minutes,Network,Escalated
+CONV-0419,Cannot connect to Wi-Fi,Clear cache and remove unnecessary programs.,83 minutes,Hardware,Resolved
+CONV-0420,Printer not responding,Restart your router.,69 minutes,Performance,Resolved after follow-up
+CONV-0421,Cannot connect to Wi-Fi,Reset your password using the link provided.,79 minutes,Software,Resolved
+CONV-0422,Forgot password,Verify your email settings.,76 minutes,Hardware,Escalated
+CONV-0423,Unable to access email,Reinstall the printer drivers.,58 minutes,Account,Pending
+CONV-0424,Software installation failure,Run a system diagnostic tool.,71 minutes,Performance,Pending
+CONV-0425,Blue screen error,Restart your router.,41 minutes,Account,Resolved after follow-up
+CONV-0426,Blue screen error,Verify your email settings.,34 minutes,Hardware,Resolved
+CONV-0427,Unable to access email,Reset your password using the link provided.,66 minutes,Performance,Pending
+CONV-0428,Unable to access email,Follow the software installation guide.,66 minutes,Software,Resolved after follow-up
+CONV-0429,Printer not responding,Restart your router.,55 minutes,Network,Resolved
+CONV-0430,Cannot connect to Wi-Fi,Reinstall the printer drivers.,15 minutes,Hardware,Resolved after follow-up
+CONV-0431,Slow system performance,Run a system diagnostic tool.,9 minutes,Hardware,Resolved after follow-up
+CONV-0432,Cannot connect to Wi-Fi,Follow the software installation guide.,57 minutes,Network,Escalated
+CONV-0433,Unable to access email,Reset your password using the link provided.,73 minutes,Software,Resolved
+CONV-0434,Blue screen error,Follow the software installation guide.,105 minutes,Performance,Pending
+CONV-0435,Unable to access email,Follow the software installation guide.,118 minutes,Account,Escalated
+CONV-0436,Software installation failure,Clear cache and remove unnecessary programs.,95 minutes,Account,Resolved
+CONV-0437,Software installation failure,Reset your password using the link provided.,109 minutes,Hardware,Resolved after follow-up
+CONV-0438,Unable to access email,Follow the software installation guide.,56 minutes,Performance,Resolved
+CONV-0439,Printer not responding,Restart your router.,51 minutes,Account,Pending
+CONV-0440,Unable to access email,Verify your email settings.,100 minutes,Hardware,Pending
+CONV-0441,Cannot connect to Wi-Fi,Restart your router.,22 minutes,Software,Resolved
+CONV-0442,Unable to access email,Reset your password using the link provided.,97 minutes,Hardware,Resolved
+CONV-0443,Printer not responding,Reinstall the printer drivers.,38 minutes,Performance,Pending
+CONV-0444,Blue screen error,Verify your email settings.,21 minutes,Account,Resolved
+CONV-0445,Blue screen error,Run a system diagnostic tool.,104 minutes,Network,Resolved after follow-up
+CONV-0446,Cannot connect to Wi-Fi,Reset your password using the link provided.,114 minutes,Hardware,Resolved
+CONV-0447,Software installation failure,Reset your password using the link provided.,12 minutes,Network,Escalated
+CONV-0448,Printer not responding,Clear cache and remove unnecessary programs.,110 minutes,Network,Resolved after follow-up
+CONV-0449,Printer not responding,Run a system diagnostic tool.,74 minutes,Software,Escalated
+CONV-0450,Cannot connect to Wi-Fi,Verify your email settings.,12 minutes,Account,Pending
+CONV-0451,Printer not responding,Verify your email settings.,105 minutes,Software,Resolved
+CONV-0452,Slow system performance,Reinstall the printer drivers.,33 minutes,Software,Escalated
+CONV-0453,Slow system performance,Reset your password using the link provided.,72 minutes,Account,Pending
+CONV-0454,Cannot connect to Wi-Fi,Follow the software installation guide.,56 minutes,Network,Pending
+CONV-0455,Software installation failure,Reset your password using the link provided.,116 minutes,Network,Resolved after follow-up
+CONV-0456,Software installation failure,Reinstall the printer drivers.,120 minutes,Performance,Resolved
+CONV-0457,Software installation failure,Clear cache and remove unnecessary programs.,79 minutes,Software,Resolved after follow-up
+CONV-0458,Cannot connect to Wi-Fi,Run a system diagnostic tool.,96 minutes,Hardware,Pending
+CONV-0459,Slow system performance,Reset your password using the link provided.,31 minutes,Performance,Resolved
+CONV-0460,Software installation failure,Follow the software installation guide.,85 minutes,Hardware,Pending
+CONV-0461,Printer not responding,Reinstall the printer drivers.,53 minutes,Hardware,Escalated
+CONV-0462,Printer not responding,Reset your password using the link provided.,14 minutes,Hardware,Resolved
+CONV-0463,Forgot password,Restart your router.,77 minutes,Network,Resolved
+CONV-0464,Cannot connect to Wi-Fi,Run a system diagnostic tool.,51 minutes,Software,Pending
+CONV-0465,Cannot connect to Wi-Fi,Reset your password using the link provided.,84 minutes,Hardware,Resolved after follow-up
+CONV-0466,Software installation failure,Reinstall the printer drivers.,108 minutes,Hardware,Pending
+CONV-0467,Forgot password,Reinstall the printer drivers.,108 minutes,Hardware,Escalated
+CONV-0468,Forgot password,Clear cache and remove unnecessary programs.,77 minutes,Account,Pending
+CONV-0469,Unable to access email,Reset your password using the link provided.,23 minutes,Performance,Resolved
+CONV-0470,Slow system performance,Reinstall the printer drivers.,118 minutes,Performance,Resolved after follow-up
+CONV-0471,Slow system performance,Verify your email settings.,8 minutes,Account,Resolved after follow-up
+CONV-0472,Printer not responding,Restart your router.,94 minutes,Hardware,Resolved
+CONV-0473,Forgot password,Restart your router.,65 minutes,Software,Resolved after follow-up
+CONV-0474,Printer not responding,Follow the software installation guide.,96 minutes,Account,Pending
+CONV-0475,Forgot password,Restart your router.,58 minutes,Hardware,Resolved
+CONV-0476,Unable to access email,Reset your password using the link provided.,110 minutes,Hardware,Pending
+CONV-0477,Printer not responding,Follow the software installation guide.,9 minutes,Network,Resolved
+CONV-0478,Software installation failure,Reset your password using the link provided.,64 minutes,Hardware,Pending
+CONV-0479,Software installation failure,Run a system diagnostic tool.,120 minutes,Network,Pending
+CONV-0480,Forgot password,Run a system diagnostic tool.,28 minutes,Performance,Resolved after follow-up
+CONV-0481,Slow system performance,Reset your password using the link provided.,106 minutes,Network,Escalated
+CONV-0482,Slow system performance,Restart your router.,111 minutes,Network,Resolved
+CONV-0483,Printer not responding,Restart your router.,52 minutes,Software,Pending
+CONV-0484,Slow system performance,Follow the software installation guide.,98 minutes,Network,Resolved
+CONV-0485,Cannot connect to Wi-Fi,Clear cache and remove unnecessary programs.,22 minutes,Account,Escalated
+CONV-0486,Blue screen error,Verify your email settings.,25 minutes,Network,Resolved after follow-up
+CONV-0487,Unable to access email,Reinstall the printer drivers.,17 minutes,Network,Resolved
+CONV-0488,Software installation failure,Restart your router.,76 minutes,Software,Resolved
+CONV-0489,Cannot connect to Wi-Fi,Clear cache and remove unnecessary programs.,101 minutes,Software,Pending
+CONV-0490,Slow system performance,Reinstall the printer drivers.,46 minutes,Network,Resolved after follow-up
+CONV-0491,Cannot connect to Wi-Fi,Run a system diagnostic tool.,11 minutes,Account,Resolved after follow-up
+CONV-0492,Cannot connect to Wi-Fi,Reset your password using the link provided.,84 minutes,Hardware,Resolved after follow-up
+CONV-0493,Forgot password,Verify your email settings.,13 minutes,Hardware,Escalated
+CONV-0494,Blue screen error,Restart your router.,9 minutes,Performance,Pending
+CONV-0495,Cannot connect to Wi-Fi,Run a system diagnostic tool.,111 minutes,Account,Resolved after follow-up
+CONV-0496,Slow system performance,Reinstall the printer drivers.,113 minutes,Account,Escalated
+CONV-0497,Slow system performance,Run a system diagnostic tool.,76 minutes,Network,Escalated
+CONV-0498,Slow system performance,Reinstall the printer drivers.,37 minutes,Network,Resolved
+CONV-0499,Printer not responding,Restart your router.,42 minutes,Account,Escalated
+CONV-0500,Slow system performance,Follow the software installation guide.,92 minutes,Network,Escalated
+CONV-0501,Software installation failure,Follow the software installation guide.,115 minutes,Hardware,Resolved after follow-up
+CONV-0502,Printer not responding,Run a system diagnostic tool.,23 minutes,Network,Escalated
+CONV-0503,Cannot connect to Wi-Fi,Follow the software installation guide.,76 minutes,Account,Pending
+CONV-0504,Printer not responding,Follow the software installation guide.,66 minutes,Network,Pending
+CONV-0505,Software installation failure,Verify your email settings.,61 minutes,Software,Resolved
+CONV-0506,Forgot password,Verify your email settings.,9 minutes,Account,Resolved
+CONV-0507,Software installation failure,Clear cache and remove unnecessary programs.,32 minutes,Hardware,Resolved after follow-up
+CONV-0508,Unable to access email,Run a system diagnostic tool.,50 minutes,Hardware,Pending
+CONV-0509,Slow system performance,Verify your email settings.,48 minutes,Software,Resolved after follow-up
+CONV-0510,Blue screen error,Restart your router.,89 minutes,Network,Resolved
+CONV-0511,Slow system performance,Verify your email settings.,67 minutes,Network,Resolved after follow-up
+CONV-0512,Blue screen error,Verify your email settings.,62 minutes,Performance,Pending
+CONV-0513,Slow system performance,Reinstall the printer drivers.,14 minutes,Software,Resolved after follow-up
+CONV-0514,Slow system performance,Run a system diagnostic tool.,33 minutes,Performance,Resolved after follow-up
+CONV-0515,Printer not responding,Verify your email settings.,117 minutes,Software,Pending
+CONV-0516,Slow system performance,Restart your router.,84 minutes,Software,Resolved after follow-up
+CONV-0517,Printer not responding,Reinstall the printer drivers.,93 minutes,Network,Resolved after follow-up
+CONV-0518,Printer not responding,Clear cache and remove unnecessary programs.,101 minutes,Account,Escalated
+CONV-0519,Blue screen error,Verify your email settings.,69 minutes,Performance,Resolved
+CONV-0520,Unable to access email,Reset your password using the link provided.,18 minutes,Performance,Escalated
+CONV-0521,Forgot password,Reset your password using the link provided.,55 minutes,Performance,Pending
+CONV-0522,Unable to access email,Follow the software installation guide.,46 minutes,Network,Resolved
+CONV-0523,Printer not responding,Run a system diagnostic tool.,73 minutes,Network,Pending
+CONV-0524,Blue screen error,Restart your router.,96 minutes,Performance,Escalated
+CONV-0525,Cannot connect to Wi-Fi,Reset your password using the link provided.,84 minutes,Hardware,Escalated
+CONV-0526,Software installation failure,Reset your password using the link provided.,48 minutes,Hardware,Escalated
+CONV-0527,Software installation failure,Verify your email settings.,12 minutes,Software,Resolved
+CONV-0528,Blue screen error,Restart your router.,15 minutes,Network,Resolved after follow-up
+CONV-0529,Forgot password,Clear cache and remove unnecessary programs.,105 minutes,Software,Resolved after follow-up
+CONV-0530,Cannot connect to Wi-Fi,Verify your email settings.,101 minutes,Network,Resolved after follow-up
+CONV-0531,Unable to access email,Run a system diagnostic tool.,78 minutes,Hardware,Resolved after follow-up
+CONV-0532,Unable to access email,Verify your email settings.,88 minutes,Software,Pending
+CONV-0533,Forgot password,Verify your email settings.,91 minutes,Software,Resolved
+CONV-0534,Software installation failure,Run a system diagnostic tool.,11 minutes,Network,Resolved after follow-up
+CONV-0535,Blue screen error,Clear cache and remove unnecessary programs.,22 minutes,Network,Resolved
+CONV-0536,Blue screen error,Restart your router.,109 minutes,Network,Escalated
+CONV-0537,Software installation failure,Reinstall the printer drivers.,100 minutes,Hardware,Escalated
+CONV-0538,Blue screen error,Clear cache and remove unnecessary programs.,112 minutes,Network,Resolved after follow-up
+CONV-0539,Printer not responding,Reset your password using the link provided.,19 minutes,Software,Resolved
+CONV-0540,Cannot connect to Wi-Fi,Clear cache and remove unnecessary programs.,83 minutes,Software,Escalated
+CONV-0541,Printer not responding,Clear cache and remove unnecessary programs.,12 minutes,Software,Pending
+CONV-0542,Cannot connect to Wi-Fi,Reset your password using the link provided.,87 minutes,Hardware,Pending
+CONV-0543,Blue screen error,Reset your password using the link provided.,38 minutes,Software,Escalated
+CONV-0544,Cannot connect to Wi-Fi,Clear cache and remove unnecessary programs.,32 minutes,Hardware,Resolved after follow-up
+CONV-0545,Cannot connect to Wi-Fi,Verify your email settings.,60 minutes,Account,Resolved after follow-up
+CONV-0546,Software installation failure,Reset your password using the link provided.,25 minutes,Account,Escalated
+CONV-0547,Unable to access email,Clear cache and remove unnecessary programs.,98 minutes,Hardware,Resolved after follow-up
+CONV-0548,Printer not responding,Reset your password using the link provided.,53 minutes,Performance,Resolved after follow-up
+CONV-0549,Forgot password,Run a system diagnostic tool.,81 minutes,Software,Resolved after follow-up
+CONV-0550,Slow system performance,Clear cache and remove unnecessary programs.,30 minutes,Hardware,Pending
+CONV-0551,Cannot connect to Wi-Fi,Verify your email settings.,88 minutes,Performance,Pending
+CONV-0552,Forgot password,Reset your password using the link provided.,95 minutes,Account,Pending
+CONV-0553,Unable to access email,Reinstall the printer drivers.,17 minutes,Hardware,Escalated
+CONV-0554,Forgot password,Reinstall the printer drivers.,109 minutes,Software,Pending
+CONV-0555,Slow system performance,Restart your router.,31 minutes,Network,Pending
+CONV-0556,Cannot connect to Wi-Fi,Reset your password using the link provided.,72 minutes,Software,Resolved after follow-up
+CONV-0557,Blue screen error,Run a system diagnostic tool.,68 minutes,Software,Pending
+CONV-0558,Cannot connect to Wi-Fi,Clear cache and remove unnecessary programs.,20 minutes,Hardware,Resolved
+CONV-0559,Slow system performance,Follow the software installation guide.,12 minutes,Hardware,Resolved after follow-up
+CONV-0560,Printer not responding,Follow the software installation guide.,106 minutes,Performance,Resolved after follow-up
+CONV-0561,Software installation failure,Restart your router.,34 minutes,Account,Escalated
+CONV-0562,Printer not responding,Reset your password using the link provided.,80 minutes,Network,Resolved
+CONV-0563,Forgot password,Run a system diagnostic tool.,71 minutes,Network,Escalated
+CONV-0564,Cannot connect to Wi-Fi,Follow the software installation guide.,17 minutes,Performance,Resolved
+CONV-0565,Software installation failure,Verify your email settings.,38 minutes,Hardware,Pending
+CONV-0566,Software installation failure,Clear cache and remove unnecessary programs.,53 minutes,Software,Resolved after follow-up
+CONV-0567,Unable to access email,Clear cache and remove unnecessary programs.,18 minutes,Network,Pending
+CONV-0568,Blue screen error,Restart your router.,22 minutes,Software,Resolved
+CONV-0569,Blue screen error,Reset your password using the link provided.,17 minutes,Account,Resolved after follow-up
+CONV-0570,Cannot connect to Wi-Fi,Run a system diagnostic tool.,59 minutes,Network,Resolved after follow-up
+CONV-0571,Unable to access email,Clear cache and remove unnecessary programs.,16 minutes,Network,Pending
+CONV-0572,Blue screen error,Verify your email settings.,118 minutes,Performance,Resolved
+CONV-0573,Software installation failure,Verify your email settings.,41 minutes,Account,Escalated
+CONV-0574,Unable to access email,Reinstall the printer drivers.,19 minutes,Software,Pending
+CONV-0575,Slow system performance,Restart your router.,81 minutes,Network,Resolved after follow-up
+CONV-0576,Unable to access email,Clear cache and remove unnecessary programs.,49 minutes,Performance,Resolved
+CONV-0577,Blue screen error,Verify your email settings.,13 minutes,Software,Pending
+CONV-0578,Cannot connect to Wi-Fi,Run a system diagnostic tool.,31 minutes,Hardware,Resolved
+CONV-0579,Slow system performance,Restart your router.,118 minutes,Performance,Escalated
+CONV-0580,Printer not responding,Run a system diagnostic tool.,101 minutes,Performance,Resolved
+CONV-0581,Slow system performance,Reset your password using the link provided.,51 minutes,Hardware,Resolved
+CONV-0582,Printer not responding,Run a system diagnostic tool.,19 minutes,Hardware,Escalated
+CONV-0583,Software installation failure,Follow the software installation guide.,113 minutes,Software,Escalated
+CONV-0584,Slow system performance,Reset your password using the link provided.,20 minutes,Network,Escalated
+CONV-0585,Forgot password,Clear cache and remove unnecessary programs.,67 minutes,Performance,Resolved
+CONV-0586,Software installation failure,Verify your email settings.,25 minutes,Performance,Escalated
+CONV-0587,Printer not responding,Run a system diagnostic tool.,72 minutes,Hardware,Resolved after follow-up
+CONV-0588,Cannot connect to Wi-Fi,Verify your email settings.,90 minutes,Hardware,Resolved
+CONV-0589,Blue screen error,Restart your router.,36 minutes,Software,Pending
+CONV-0590,Printer not responding,Follow the software installation guide.,99 minutes,Hardware,Resolved after follow-up
+CONV-0591,Forgot password,Restart your router.,39 minutes,Software,Resolved
+CONV-0592,Forgot password,Run a system diagnostic tool.,84 minutes,Performance,Escalated
+CONV-0593,Forgot password,Reset your password using the link provided.,23 minutes,Network,Resolved
+CONV-0594,Slow system performance,Reset your password using the link provided.,97 minutes,Account,Resolved after follow-up
+CONV-0595,Slow system performance,Follow the software installation guide.,101 minutes,Account,Resolved
+CONV-0596,Blue screen error,Verify your email settings.,98 minutes,Network,Escalated
+CONV-0597,Printer not responding,Clear cache and remove unnecessary programs.,60 minutes,Hardware,Resolved
+CONV-0598,Printer not responding,Clear cache and remove unnecessary programs.,55 minutes,Hardware,Resolved after follow-up
+CONV-0599,Software installation failure,Clear cache and remove unnecessary programs.,59 minutes,Hardware,Resolved after follow-up
+CONV-0600,Slow system performance,Restart your router.,91 minutes,Performance,Pending
+CONV-0601,Printer not responding,Run a system diagnostic tool.,13 minutes,Network,Resolved
+CONV-0602,Unable to access email,Follow the software installation guide.,56 minutes,Software,Pending
+CONV-0603,Blue screen error,Reinstall the printer drivers.,85 minutes,Software,Resolved
+CONV-0604,Unable to access email,Reinstall the printer drivers.,11 minutes,Performance,Resolved after follow-up
+CONV-0605,Blue screen error,Restart your router.,114 minutes,Hardware,Resolved
+CONV-0606,Blue screen error,Run a system diagnostic tool.,75 minutes,Network,Escalated
+CONV-0607,Printer not responding,Verify your email settings.,28 minutes,Performance,Pending
+CONV-0608,Forgot password,Clear cache and remove unnecessary programs.,47 minutes,Performance,Pending
+CONV-0609,Cannot connect to Wi-Fi,Follow the software installation guide.,66 minutes,Account,Escalated
+CONV-0610,Software installation failure,Run a system diagnostic tool.,14 minutes,Software,Resolved
+CONV-0611,Slow system performance,Reset your password using the link provided.,107 minutes,Performance,Escalated
+CONV-0612,Slow system performance,Run a system diagnostic tool.,111 minutes,Network,Resolved after follow-up
+CONV-0613,Software installation failure,Run a system diagnostic tool.,11 minutes,Software,Pending
+CONV-0614,Cannot connect to Wi-Fi,Reinstall the printer drivers.,56 minutes,Software,Resolved after follow-up
+CONV-0615,Forgot password,Reset your password using the link provided.,20 minutes,Software,Resolved
+CONV-0616,Printer not responding,Verify your email settings.,27 minutes,Software,Resolved after follow-up
+CONV-0617,Slow system performance,Reinstall the printer drivers.,52 minutes,Software,Resolved after follow-up
+CONV-0618,Software installation failure,Clear cache and remove unnecessary programs.,14 minutes,Hardware,Pending
+CONV-0619,Software installation failure,Clear cache and remove unnecessary programs.,64 minutes,Software,Pending
+CONV-0620,Printer not responding,Verify your email settings.,112 minutes,Software,Escalated
+CONV-0621,Printer not responding,Clear cache and remove unnecessary programs.,18 minutes,Performance,Escalated
+CONV-0622,Cannot connect to Wi-Fi,Restart your router.,66 minutes,Account,Resolved after follow-up
+CONV-0623,Slow system performance,Restart your router.,42 minutes,Account,Resolved after follow-up
+CONV-0624,Forgot password,Restart your router.,88 minutes,Software,Resolved after follow-up
+CONV-0625,Blue screen error,Clear cache and remove unnecessary programs.,34 minutes,Account,Escalated
+CONV-0626,Blue screen error,Follow the software installation guide.,21 minutes,Hardware,Escalated
+CONV-0627,Unable to access email,Clear cache and remove unnecessary programs.,110 minutes,Network,Resolved after follow-up
+CONV-0628,Forgot password,Verify your email settings.,27 minutes,Account,Pending
+CONV-0629,Printer not responding,Clear cache and remove unnecessary programs.,14 minutes,Software,Escalated
+CONV-0630,Forgot password,Verify your email settings.,64 minutes,Software,Resolved after follow-up
+CONV-0631,Slow system performance,Clear cache and remove unnecessary programs.,47 minutes,Network,Resolved after follow-up
+CONV-0632,Cannot connect to Wi-Fi,Verify your email settings.,57 minutes,Hardware,Resolved after follow-up
+CONV-0633,Forgot password,Run a system diagnostic tool.,67 minutes,Performance,Resolved after follow-up
+CONV-0634,Blue screen error,Run a system diagnostic tool.,15 minutes,Hardware,Resolved
+CONV-0635,Printer not responding,Run a system diagnostic tool.,49 minutes,Hardware,Pending
+CONV-0636,Forgot password,Verify your email settings.,62 minutes,Software,Resolved
+CONV-0637,Blue screen error,Follow the software installation guide.,74 minutes,Hardware,Resolved after follow-up
+CONV-0638,Cannot connect to Wi-Fi,Restart your router.,75 minutes,Hardware,Escalated
+CONV-0639,Cannot connect to Wi-Fi,Run a system diagnostic tool.,111 minutes,Software,Pending
+CONV-0640,Cannot connect to Wi-Fi,Reset your password using the link provided.,109 minutes,Hardware,Resolved
+CONV-0641,Slow system performance,Verify your email settings.,46 minutes,Network,Resolved after follow-up
+CONV-0642,Forgot password,Reinstall the printer drivers.,62 minutes,Performance,Pending
+CONV-0643,Cannot connect to Wi-Fi,Reinstall the printer drivers.,5 minutes,Performance,Resolved after follow-up
+CONV-0644,Unable to access email,Clear cache and remove unnecessary programs.,82 minutes,Account,Resolved
+CONV-0645,Software installation failure,Reset your password using the link provided.,21 minutes,Network,Resolved
+CONV-0646,Unable to access email,Run a system diagnostic tool.,56 minutes,Software,Resolved after follow-up
+CONV-0647,Forgot password,Run a system diagnostic tool.,46 minutes,Hardware,Resolved
+CONV-0648,Printer not responding,Restart your router.,119 minutes,Network,Escalated
+CONV-0649,Cannot connect to Wi-Fi,Reinstall the printer drivers.,47 minutes,Software,Resolved after follow-up
+CONV-0650,Slow system performance,Follow the software installation guide.,100 minutes,Performance,Resolved
+CONV-0651,Unable to access email,Follow the software installation guide.,100 minutes,Performance,Resolved
+CONV-0652,Software installation failure,Restart your router.,67 minutes,Software,Escalated
+CONV-0653,Slow system performance,Verify your email settings.,68 minutes,Hardware,Pending
+CONV-0654,Cannot connect to Wi-Fi,Restart your router.,32 minutes,Account,Resolved
+CONV-0655,Software installation failure,Reinstall the printer drivers.,8 minutes,Performance,Escalated
+CONV-0656,Forgot password,Clear cache and remove unnecessary programs.,89 minutes,Account,Pending
+CONV-0657,Printer not responding,Reset your password using the link provided.,80 minutes,Performance,Pending
+CONV-0658,Blue screen error,Verify your email settings.,77 minutes,Network,Escalated
+CONV-0659,Slow system performance,Verify your email settings.,18 minutes,Software,Resolved
+CONV-0660,Software installation failure,Reset your password using the link provided.,18 minutes,Network,Resolved after follow-up
+CONV-0661,Software installation failure,Clear cache and remove unnecessary programs.,110 minutes,Account,Pending
+CONV-0662,Printer not responding,Run a system diagnostic tool.,78 minutes,Software,Pending
+CONV-0663,Printer not responding,Run a system diagnostic tool.,45 minutes,Performance,Pending
+CONV-0664,Blue screen error,Follow the software installation guide.,75 minutes,Performance,Escalated
+CONV-0665,Slow system performance,Follow the software installation guide.,9 minutes,Software,Resolved
+CONV-0666,Slow system performance,Run a system diagnostic tool.,30 minutes,Performance,Escalated
+CONV-0667,Software installation failure,Restart your router.,74 minutes,Network,Resolved after follow-up
+CONV-0668,Software installation failure,Follow the software installation guide.,12 minutes,Software,Resolved
+CONV-0669,Unable to access email,Restart your router.,94 minutes,Account,Pending
+CONV-0670,Cannot connect to Wi-Fi,Restart your router.,13 minutes,Network,Resolved
+CONV-0671,Unable to access email,Restart your router.,13 minutes,Software,Escalated
+CONV-0672,Software installation failure,Run a system diagnostic tool.,112 minutes,Hardware,Resolved
+CONV-0673,Forgot password,Follow the software installation guide.,88 minutes,Network,Escalated
+CONV-0674,Forgot password,Restart your router.,22 minutes,Hardware,Resolved after follow-up
+CONV-0675,Blue screen error,Restart your router.,119 minutes,Performance,Resolved
+CONV-0676,Unable to access email,Run a system diagnostic tool.,87 minutes,Hardware,Resolved after follow-up
+CONV-0677,Software installation failure,Reset your password using the link provided.,102 minutes,Performance,Pending
+CONV-0678,Software installation failure,Clear cache and remove unnecessary programs.,8 minutes,Hardware,Escalated
+CONV-0679,Slow system performance,Verify your email settings.,17 minutes,Performance,Resolved
+CONV-0680,Blue screen error,Verify your email settings.,9 minutes,Software,Escalated
+CONV-0681,Software installation failure,Verify your email settings.,95 minutes,Account,Escalated
+CONV-0682,Printer not responding,Reset your password using the link provided.,91 minutes,Hardware,Resolved
+CONV-0683,Software installation failure,Restart your router.,82 minutes,Software,Resolved after follow-up
+CONV-0684,Cannot connect to Wi-Fi,Reinstall the printer drivers.,99 minutes,Software,Resolved after follow-up
+CONV-0685,Forgot password,Run a system diagnostic tool.,85 minutes,Network,Pending
+CONV-0686,Cannot connect to Wi-Fi,Reset your password using the link provided.,109 minutes,Hardware,Escalated
+CONV-0687,Blue screen error,Restart your router.,93 minutes,Hardware,Resolved
+CONV-0688,Printer not responding,Follow the software installation guide.,93 minutes,Network,Resolved
+CONV-0689,Software installation failure,Run a system diagnostic tool.,52 minutes,Software,Pending
+CONV-0690,Cannot connect to Wi-Fi,Clear cache and remove unnecessary programs.,72 minutes,Performance,Escalated
+CONV-0691,Slow system performance,Verify your email settings.,7 minutes,Account,Escalated
+CONV-0692,Slow system performance,Follow the software installation guide.,47 minutes,Account,Resolved
+CONV-0693,Software installation failure,Reset your password using the link provided.,8 minutes,Software,Pending
+CONV-0694,Blue screen error,Clear cache and remove unnecessary programs.,22 minutes,Hardware,Escalated
+CONV-0695,Printer not responding,Restart your router.,21 minutes,Software,Resolved
+CONV-0696,Software installation failure,Reinstall the printer drivers.,102 minutes,Hardware,Resolved
+CONV-0697,Forgot password,Verify your email settings.,93 minutes,Network,Pending
+CONV-0698,Forgot password,Follow the software installation guide.,82 minutes,Account,Pending
+CONV-0699,Cannot connect to Wi-Fi,Reset your password using the link provided.,76 minutes,Performance,Resolved after follow-up
+CONV-0700,Forgot password,Reinstall the printer drivers.,56 minutes,Performance,Escalated
+CONV-0701,Blue screen error,Reset your password using the link provided.,64 minutes,Software,Resolved
+CONV-0702,Slow system performance,Reset your password using the link provided.,93 minutes,Hardware,Resolved after follow-up
+CONV-0703,Cannot connect to Wi-Fi,Clear cache and remove unnecessary programs.,77 minutes,Performance,Resolved
+CONV-0704,Unable to access email,Run a system diagnostic tool.,30 minutes,Performance,Resolved
+CONV-0705,Printer not responding,Restart your router.,115 minutes,Hardware,Resolved
+CONV-0706,Software installation failure,Follow the software installation guide.,65 minutes,Software,Pending
+CONV-0707,Blue screen error,Restart your router.,46 minutes,Hardware,Pending
+CONV-0708,Printer not responding,Reinstall the printer drivers.,80 minutes,Software,Resolved after follow-up
+CONV-0709,Printer not responding,Restart your router.,28 minutes,Hardware,Escalated
+CONV-0710,Unable to access email,Restart your router.,118 minutes,Hardware,Resolved after follow-up
+CONV-0711,Slow system performance,Follow the software installation guide.,54 minutes,Software,Resolved after follow-up
+CONV-0712,Unable to access email,Follow the software installation guide.,102 minutes,Software,Resolved after follow-up
+CONV-0713,Cannot connect to Wi-Fi,Reinstall the printer drivers.,32 minutes,Performance,Resolved after follow-up
+CONV-0714,Cannot connect to Wi-Fi,Reset your password using the link provided.,45 minutes,Account,Resolved after follow-up
+CONV-0715,Slow system performance,Run a system diagnostic tool.,12 minutes,Performance,Resolved after follow-up
+CONV-0716,Cannot connect to Wi-Fi,Restart your router.,68 minutes,Software,Pending
+CONV-0717,Blue screen error,Run a system diagnostic tool.,6 minutes,Account,Pending
+CONV-0718,Unable to access email,Restart your router.,98 minutes,Network,Resolved after follow-up
+CONV-0719,Slow system performance,Follow the software installation guide.,118 minutes,Account,Resolved after follow-up
+CONV-0720,Blue screen error,Restart your router.,53 minutes,Software,Escalated
+CONV-0721,Cannot connect to Wi-Fi,Run a system diagnostic tool.,102 minutes,Software,Escalated
+CONV-0722,Forgot password,Follow the software installation guide.,44 minutes,Account,Escalated
+CONV-0723,Printer not responding,Run a system diagnostic tool.,37 minutes,Software,Resolved after follow-up
+CONV-0724,Blue screen error,Verify your email settings.,7 minutes,Account,Escalated
+CONV-0725,Cannot connect to Wi-Fi,Follow the software installation guide.,92 minutes,Hardware,Escalated
+CONV-0726,Cannot connect to Wi-Fi,Reinstall the printer drivers.,39 minutes,Software,Resolved
+CONV-0727,Printer not responding,Reset your password using the link provided.,73 minutes,Software,Pending
+CONV-0728,Cannot connect to Wi-Fi,Verify your email settings.,28 minutes,Software,Resolved after follow-up
+CONV-0729,Unable to access email,Verify your email settings.,119 minutes,Hardware,Resolved
+CONV-0730,Forgot password,Run a system diagnostic tool.,55 minutes,Performance,Resolved after follow-up
+CONV-0731,Cannot connect to Wi-Fi,Verify your email settings.,81 minutes,Network,Resolved after follow-up
+CONV-0732,Cannot connect to Wi-Fi,Run a system diagnostic tool.,103 minutes,Performance,Pending
+CONV-0733,Software installation failure,Clear cache and remove unnecessary programs.,60 minutes,Account,Pending
+CONV-0734,Forgot password,Clear cache and remove unnecessary programs.,37 minutes,Hardware,Pending
+CONV-0735,Forgot password,Reinstall the printer drivers.,85 minutes,Hardware,Escalated
+CONV-0736,Printer not responding,Clear cache and remove unnecessary programs.,87 minutes,Hardware,Escalated
+CONV-0737,Printer not responding,Clear cache and remove unnecessary programs.,90 minutes,Software,Resolved
+CONV-0738,Slow system performance,Follow the software installation guide.,109 minutes,Software,Pending
+CONV-0739,Printer not responding,Reset your password using the link provided.,93 minutes,Performance,Resolved after follow-up
+CONV-0740,Forgot password,Run a system diagnostic tool.,60 minutes,Hardware,Resolved after follow-up
+CONV-0741,Forgot password,Restart your router.,95 minutes,Account,Resolved after follow-up
+CONV-0742,Slow system performance,Restart your router.,72 minutes,Account,Resolved
+CONV-0743,Slow system performance,Run a system diagnostic tool.,86 minutes,Performance,Resolved
+CONV-0744,Software installation failure,Verify your email settings.,90 minutes,Performance,Pending
+CONV-0745,Slow system performance,Run a system diagnostic tool.,62 minutes,Hardware,Resolved
+CONV-0746,Printer not responding,Restart your router.,103 minutes,Hardware,Pending
+CONV-0747,Software installation failure,Restart your router.,21 minutes,Hardware,Resolved after follow-up
+CONV-0748,Slow system performance,Follow the software installation guide.,54 minutes,Network,Pending
+CONV-0749,Printer not responding,Reinstall the printer drivers.,99 minutes,Account,Pending
+CONV-0750,Slow system performance,Verify your email settings.,119 minutes,Software,Pending
+CONV-0751,Blue screen error,Restart your router.,120 minutes,Account,Escalated
+CONV-0752,Unable to access email,Verify your email settings.,103 minutes,Network,Escalated
+CONV-0753,Forgot password,Verify your email settings.,102 minutes,Account,Pending
+CONV-0754,Slow system performance,Reset your password using the link provided.,100 minutes,Performance,Pending
+CONV-0755,Cannot connect to Wi-Fi,Verify your email settings.,49 minutes,Account,Resolved
+CONV-0756,Forgot password,Run a system diagnostic tool.,63 minutes,Software,Resolved
+CONV-0757,Blue screen error,Run a system diagnostic tool.,66 minutes,Software,Escalated
+CONV-0758,Forgot password,Reset your password using the link provided.,90 minutes,Account,Pending
+CONV-0759,Cannot connect to Wi-Fi,Reinstall the printer drivers.,31 minutes,Software,Pending
+CONV-0760,Blue screen error,Verify your email settings.,67 minutes,Performance,Escalated
+CONV-0761,Forgot password,Follow the software installation guide.,11 minutes,Network,Escalated
+CONV-0762,Unable to access email,Run a system diagnostic tool.,103 minutes,Performance,Pending
+CONV-0763,Forgot password,Reset your password using the link provided.,43 minutes,Hardware,Escalated
+CONV-0764,Blue screen error,Reset your password using the link provided.,9 minutes,Hardware,Escalated
+CONV-0765,Software installation failure,Clear cache and remove unnecessary programs.,71 minutes,Software,Pending
+CONV-0766,Software installation failure,Follow the software installation guide.,95 minutes,Performance,Pending
+CONV-0767,Forgot password,Restart your router.,35 minutes,Account,Pending
+CONV-0768,Unable to access email,Verify your email settings.,97 minutes,Hardware,Pending
+CONV-0769,Forgot password,Reinstall the printer drivers.,37 minutes,Performance,Escalated
+CONV-0770,Unable to access email,Follow the software installation guide.,104 minutes,Account,Resolved
+CONV-0771,Software installation failure,Verify your email settings.,40 minutes,Hardware,Resolved
+CONV-0772,Blue screen error,Clear cache and remove unnecessary programs.,90 minutes,Network,Escalated
+CONV-0773,Printer not responding,Restart your router.,103 minutes,Account,Resolved after follow-up
+CONV-0774,Slow system performance,Reinstall the printer drivers.,35 minutes,Account,Resolved
+CONV-0775,Cannot connect to Wi-Fi,Clear cache and remove unnecessary programs.,114 minutes,Software,Resolved
+CONV-0776,Slow system performance,Restart your router.,38 minutes,Performance,Resolved after follow-up
+CONV-0777,Software installation failure,Reset your password using the link provided.,59 minutes,Account,Resolved
+CONV-0778,Slow system performance,Clear cache and remove unnecessary programs.,19 minutes,Hardware,Resolved
+CONV-0779,Cannot connect to Wi-Fi,Reinstall the printer drivers.,99 minutes,Performance,Escalated
+CONV-0780,Cannot connect to Wi-Fi,Restart your router.,30 minutes,Network,Escalated
+CONV-0781,Cannot connect to Wi-Fi,Follow the software installation guide.,19 minutes,Performance,Escalated
+CONV-0782,Forgot password,Follow the software installation guide.,74 minutes,Performance,Escalated
+CONV-0783,Blue screen error,Reinstall the printer drivers.,72 minutes,Hardware,Escalated
+CONV-0784,Software installation failure,Restart your router.,73 minutes,Hardware,Resolved after follow-up
+CONV-0785,Software installation failure,Run a system diagnostic tool.,35 minutes,Hardware,Resolved after follow-up
+CONV-0786,Printer not responding,Verify your email settings.,70 minutes,Account,Pending
+CONV-0787,Cannot connect to Wi-Fi,Restart your router.,86 minutes,Software,Resolved
+CONV-0788,Slow system performance,Restart your router.,109 minutes,Performance,Pending
+CONV-0789,Printer not responding,Follow the software installation guide.,101 minutes,Performance,Pending
+CONV-0790,Unable to access email,Run a system diagnostic tool.,17 minutes,Account,Pending
+CONV-0791,Blue screen error,Follow the software installation guide.,106 minutes,Performance,Escalated
+CONV-0792,Forgot password,Restart your router.,22 minutes,Account,Pending
+CONV-0793,Slow system performance,Follow the software installation guide.,96 minutes,Network,Pending
+CONV-0794,Software installation failure,Clear cache and remove unnecessary programs.,74 minutes,Account,Resolved after follow-up
+CONV-0795,Slow system performance,Restart your router.,69 minutes,Performance,Escalated
+CONV-0796,Slow system performance,Run a system diagnostic tool.,120 minutes,Network,Resolved after follow-up
+CONV-0797,Software installation failure,Verify your email settings.,7 minutes,Network,Pending
+CONV-0798,Forgot password,Run a system diagnostic tool.,70 minutes,Account,Resolved
+CONV-0799,Slow system performance,Follow the software installation guide.,93 minutes,Network,Resolved after follow-up
+CONV-0800,Forgot password,Clear cache and remove unnecessary programs.,15 minutes,Software,Resolved after follow-up
+CONV-0801,Software installation failure,Verify your email settings.,18 minutes,Performance,Escalated
+CONV-0802,Unable to access email,Reinstall the printer drivers.,102 minutes,Network,Resolved
+CONV-0803,Unable to access email,Run a system diagnostic tool.,60 minutes,Hardware,Resolved
+CONV-0804,Printer not responding,Run a system diagnostic tool.,116 minutes,Performance,Resolved after follow-up
+CONV-0805,Slow system performance,Clear cache and remove unnecessary programs.,23 minutes,Performance,Pending
+CONV-0806,Cannot connect to Wi-Fi,Reset your password using the link provided.,53 minutes,Hardware,Pending
+CONV-0807,Unable to access email,Verify your email settings.,94 minutes,Account,Resolved
+CONV-0808,Cannot connect to Wi-Fi,Clear cache and remove unnecessary programs.,119 minutes,Network,Resolved after follow-up
+CONV-0809,Cannot connect to Wi-Fi,Follow the software installation guide.,7 minutes,Network,Resolved
+CONV-0810,Forgot password,Reset your password using the link provided.,13 minutes,Account,Pending
+CONV-0811,Software installation failure,Reinstall the printer drivers.,40 minutes,Software,Pending
+CONV-0812,Slow system performance,Reinstall the printer drivers.,50 minutes,Network,Escalated
+CONV-0813,Cannot connect to Wi-Fi,Restart your router.,12 minutes,Software,Escalated
+CONV-0814,Unable to access email,Clear cache and remove unnecessary programs.,104 minutes,Account,Escalated
+CONV-0815,Unable to access email,Restart your router.,52 minutes,Software,Pending
+CONV-0816,Unable to access email,Verify your email settings.,77 minutes,Account,Pending
+CONV-0817,Blue screen error,Run a system diagnostic tool.,30 minutes,Performance,Escalated
+CONV-0818,Forgot password,Reinstall the printer drivers.,80 minutes,Network,Resolved
+CONV-0819,Blue screen error,Restart your router.,50 minutes,Account,Resolved
+CONV-0820,Blue screen error,Clear cache and remove unnecessary programs.,29 minutes,Account,Resolved after follow-up
+CONV-0821,Forgot password,Reinstall the printer drivers.,13 minutes,Performance,Escalated
+CONV-0822,Forgot password,Reinstall the printer drivers.,21 minutes,Hardware,Pending
+CONV-0823,Software installation failure,Run a system diagnostic tool.,18 minutes,Network,Resolved after follow-up
+CONV-0824,Unable to access email,Clear cache and remove unnecessary programs.,115 minutes,Account,Resolved
+CONV-0825,Printer not responding,Clear cache and remove unnecessary programs.,56 minutes,Performance,Escalated
+CONV-0826,Printer not responding,Reset your password using the link provided.,102 minutes,Network,Escalated
+CONV-0827,Slow system performance,Reinstall the printer drivers.,119 minutes,Performance,Resolved
+CONV-0828,Software installation failure,Reset your password using the link provided.,119 minutes,Account,Pending
+CONV-0829,Blue screen error,Follow the software installation guide.,104 minutes,Network,Pending
+CONV-0830,Unable to access email,Reset your password using the link provided.,72 minutes,Hardware,Resolved
+CONV-0831,Cannot connect to Wi-Fi,Verify your email settings.,112 minutes,Software,Resolved
+CONV-0832,Unable to access email,Clear cache and remove unnecessary programs.,61 minutes,Hardware,Resolved after follow-up
+CONV-0833,Printer not responding,Restart your router.,57 minutes,Account,Escalated
+CONV-0834,Software installation failure,Clear cache and remove unnecessary programs.,30 minutes,Performance,Escalated
+CONV-0835,Software installation failure,Follow the software installation guide.,11 minutes,Network,Escalated
+CONV-0836,Forgot password,Clear cache and remove unnecessary programs.,51 minutes,Software,Pending
+CONV-0837,Printer not responding,Follow the software installation guide.,105 minutes,Network,Pending
+CONV-0838,Cannot connect to Wi-Fi,Reset your password using the link provided.,38 minutes,Performance,Escalated
+CONV-0839,Software installation failure,Verify your email settings.,10 minutes,Account,Resolved after follow-up
+CONV-0840,Unable to access email,Restart your router.,77 minutes,Software,Resolved after follow-up
+CONV-0841,Software installation failure,Reinstall the printer drivers.,26 minutes,Hardware,Pending
+CONV-0842,Unable to access email,Run a system diagnostic tool.,19 minutes,Performance,Resolved
+CONV-0843,Unable to access email,Restart your router.,24 minutes,Account,Pending
+CONV-0844,Printer not responding,Reset your password using the link provided.,7 minutes,Software,Resolved
+CONV-0845,Forgot password,Clear cache and remove unnecessary programs.,71 minutes,Software,Pending
+CONV-0846,Printer not responding,Clear cache and remove unnecessary programs.,110 minutes,Performance,Resolved after follow-up
+CONV-0847,Forgot password,Restart your router.,30 minutes,Network,Escalated
+CONV-0848,Cannot connect to Wi-Fi,Follow the software installation guide.,73 minutes,Hardware,Pending
+CONV-0849,Cannot connect to Wi-Fi,Restart your router.,99 minutes,Network,Escalated
+CONV-0850,Printer not responding,Follow the software installation guide.,119 minutes,Account,Resolved
+CONV-0851,Forgot password,Reinstall the printer drivers.,105 minutes,Performance,Resolved
+CONV-0852,Cannot connect to Wi-Fi,Clear cache and remove unnecessary programs.,72 minutes,Account,Resolved
+CONV-0853,Cannot connect to Wi-Fi,Restart your router.,38 minutes,Account,Resolved
+CONV-0854,Printer not responding,Reinstall the printer drivers.,107 minutes,Account,Escalated
+CONV-0855,Forgot password,Clear cache and remove unnecessary programs.,38 minutes,Network,Pending
+CONV-0856,Printer not responding,Restart your router.,114 minutes,Network,Resolved
+CONV-0857,Printer not responding,Follow the software installation guide.,29 minutes,Software,Resolved
+CONV-0858,Unable to access email,Reinstall the printer drivers.,73 minutes,Performance,Resolved after follow-up
+CONV-0859,Software installation failure,Verify your email settings.,58 minutes,Network,Escalated
+CONV-0860,Slow system performance,Restart your router.,108 minutes,Hardware,Pending
+CONV-0861,Unable to access email,Clear cache and remove unnecessary programs.,34 minutes,Hardware,Resolved after follow-up
+CONV-0862,Cannot connect to Wi-Fi,Restart your router.,57 minutes,Software,Pending
+CONV-0863,Software installation failure,Restart your router.,36 minutes,Performance,Escalated
+CONV-0864,Cannot connect to Wi-Fi,Restart your router.,49 minutes,Hardware,Escalated
+CONV-0865,Forgot password,Run a system diagnostic tool.,115 minutes,Network,Pending
+CONV-0866,Blue screen error,Restart your router.,26 minutes,Network,Resolved
+CONV-0867,Cannot connect to Wi-Fi,Run a system diagnostic tool.,51 minutes,Account,Resolved after follow-up
+CONV-0868,Blue screen error,Reset your password using the link provided.,112 minutes,Network,Pending
+CONV-0869,Software installation failure,Reinstall the printer drivers.,55 minutes,Network,Resolved after follow-up
+CONV-0870,Printer not responding,Reinstall the printer drivers.,101 minutes,Performance,Resolved after follow-up
+CONV-0871,Blue screen error,Run a system diagnostic tool.,96 minutes,Software,Pending
+CONV-0872,Software installation failure,Restart your router.,108 minutes,Account,Escalated
+CONV-0873,Blue screen error,Verify your email settings.,13 minutes,Software,Resolved after follow-up
+CONV-0874,Blue screen error,Follow the software installation guide.,11 minutes,Software,Pending
+CONV-0875,Printer not responding,Verify your email settings.,26 minutes,Performance,Escalated
+CONV-0876,Unable to access email,Run a system diagnostic tool.,64 minutes,Software,Resolved
+CONV-0877,Software installation failure,Run a system diagnostic tool.,48 minutes,Account,Pending
+CONV-0878,Slow system performance,Verify your email settings.,62 minutes,Hardware,Escalated
+CONV-0879,Software installation failure,Reset your password using the link provided.,67 minutes,Account,Resolved after follow-up
+CONV-0880,Forgot password,Reinstall the printer drivers.,50 minutes,Software,Pending
+CONV-0881,Unable to access email,Verify your email settings.,11 minutes,Hardware,Escalated
+CONV-0882,Unable to access email,Restart your router.,56 minutes,Software,Pending
+CONV-0883,Unable to access email,Run a system diagnostic tool.,106 minutes,Account,Resolved
+CONV-0884,Unable to access email,Reset your password using the link provided.,86 minutes,Software,Resolved after follow-up
+CONV-0885,Forgot password,Follow the software installation guide.,107 minutes,Account,Resolved
+CONV-0886,Blue screen error,Verify your email settings.,80 minutes,Hardware,Pending
+CONV-0887,Printer not responding,Restart your router.,99 minutes,Software,Resolved
+CONV-0888,Slow system performance,Restart your router.,28 minutes,Performance,Resolved after follow-up
+CONV-0889,Unable to access email,Follow the software installation guide.,53 minutes,Hardware,Resolved after follow-up
+CONV-0890,Blue screen error,Restart your router.,5 minutes,Account,Resolved
+CONV-0891,Printer not responding,Verify your email settings.,77 minutes,Network,Resolved
+CONV-0892,Unable to access email,Follow the software installation guide.,112 minutes,Network,Resolved
+CONV-0893,Printer not responding,Clear cache and remove unnecessary programs.,45 minutes,Account,Pending
+CONV-0894,Unable to access email,Reset your password using the link provided.,32 minutes,Performance,Resolved
+CONV-0895,Blue screen error,Run a system diagnostic tool.,103 minutes,Network,Pending
+CONV-0896,Forgot password,Run a system diagnostic tool.,112 minutes,Performance,Pending
+CONV-0897,Software installation failure,Run a system diagnostic tool.,48 minutes,Network,Resolved after follow-up
+CONV-0898,Slow system performance,Run a system diagnostic tool.,101 minutes,Account,Resolved after follow-up
+CONV-0899,Software installation failure,Run a system diagnostic tool.,53 minutes,Software,Resolved
+CONV-0900,Software installation failure,Reinstall the printer drivers.,105 minutes,Software,Pending
+CONV-0901,Slow system performance,Restart your router.,95 minutes,Hardware,Escalated
+CONV-0902,Slow system performance,Clear cache and remove unnecessary programs.,17 minutes,Performance,Resolved after follow-up
+CONV-0903,Forgot password,Restart your router.,31 minutes,Software,Resolved
+CONV-0904,Unable to access email,Reinstall the printer drivers.,78 minutes,Account,Escalated
+CONV-0905,Blue screen error,Restart your router.,10 minutes,Account,Resolved
+CONV-0906,Software installation failure,Verify your email settings.,20 minutes,Network,Resolved
+CONV-0907,Forgot password,Verify your email settings.,73 minutes,Performance,Resolved after follow-up
+CONV-0908,Cannot connect to Wi-Fi,Follow the software installation guide.,28 minutes,Performance,Escalated
+CONV-0909,Forgot password,Verify your email settings.,112 minutes,Network,Resolved
+CONV-0910,Forgot password,Verify your email settings.,42 minutes,Performance,Pending
+CONV-0911,Blue screen error,Reset your password using the link provided.,12 minutes,Account,Resolved
+CONV-0912,Slow system performance,Follow the software installation guide.,66 minutes,Software,Escalated
+CONV-0913,Forgot password,Clear cache and remove unnecessary programs.,7 minutes,Network,Escalated
+CONV-0914,Blue screen error,Reinstall the printer drivers.,83 minutes,Performance,Resolved
+CONV-0915,Printer not responding,Reinstall the printer drivers.,79 minutes,Hardware,Pending
+CONV-0916,Slow system performance,Clear cache and remove unnecessary programs.,7 minutes,Software,Resolved after follow-up
+CONV-0917,Forgot password,Reinstall the printer drivers.,90 minutes,Network,Escalated
+CONV-0918,Slow system performance,Reset your password using the link provided.,36 minutes,Account,Resolved after follow-up
+CONV-0919,Unable to access email,Restart your router.,16 minutes,Hardware,Escalated
+CONV-0920,Unable to access email,Restart your router.,110 minutes,Hardware,Resolved after follow-up
+CONV-0921,Cannot connect to Wi-Fi,Clear cache and remove unnecessary programs.,25 minutes,Performance,Pending
+CONV-0922,Printer not responding,Clear cache and remove unnecessary programs.,43 minutes,Software,Resolved after follow-up
+CONV-0923,Slow system performance,Run a system diagnostic tool.,66 minutes,Hardware,Pending
+CONV-0924,Printer not responding,Run a system diagnostic tool.,77 minutes,Network,Resolved after follow-up
+CONV-0925,Blue screen error,Clear cache and remove unnecessary programs.,59 minutes,Account,Escalated
+CONV-0926,Forgot password,Restart your router.,72 minutes,Performance,Pending
+CONV-0927,Slow system performance,Reinstall the printer drivers.,27 minutes,Performance,Escalated
+CONV-0928,Cannot connect to Wi-Fi,Reset your password using the link provided.,62 minutes,Account,Resolved after follow-up
+CONV-0929,Unable to access email,Reinstall the printer drivers.,34 minutes,Network,Resolved after follow-up
+CONV-0930,Blue screen error,Follow the software installation guide.,101 minutes,Hardware,Pending
+CONV-0931,Unable to access email,Reset your password using the link provided.,10 minutes,Hardware,Resolved
+CONV-0932,Cannot connect to Wi-Fi,Run a system diagnostic tool.,40 minutes,Account,Resolved after follow-up
+CONV-0933,Forgot password,Verify your email settings.,68 minutes,Account,Resolved after follow-up
+CONV-0934,Blue screen error,Reinstall the printer drivers.,95 minutes,Hardware,Resolved
+CONV-0935,Forgot password,Run a system diagnostic tool.,82 minutes,Performance,Pending
+CONV-0936,Software installation failure,Verify your email settings.,106 minutes,Software,Resolved after follow-up
+CONV-0937,Slow system performance,Reset your password using the link provided.,78 minutes,Hardware,Pending
+CONV-0938,Slow system performance,Run a system diagnostic tool.,95 minutes,Performance,Pending
+CONV-0939,Cannot connect to Wi-Fi,Run a system diagnostic tool.,52 minutes,Account,Resolved after follow-up
+CONV-0940,Printer not responding,Verify your email settings.,66 minutes,Network,Escalated
+CONV-0941,Forgot password,Clear cache and remove unnecessary programs.,41 minutes,Performance,Escalated
+CONV-0942,Forgot password,Reinstall the printer drivers.,6 minutes,Account,Escalated
+CONV-0943,Forgot password,Clear cache and remove unnecessary programs.,114 minutes,Network,Escalated
+CONV-0944,Unable to access email,Clear cache and remove unnecessary programs.,103 minutes,Software,Resolved
+CONV-0945,Cannot connect to Wi-Fi,Run a system diagnostic tool.,96 minutes,Account,Escalated
+CONV-0946,Unable to access email,Follow the software installation guide.,76 minutes,Hardware,Pending
+CONV-0947,Blue screen error,Verify your email settings.,41 minutes,Performance,Resolved after follow-up
+CONV-0948,Cannot connect to Wi-Fi,Run a system diagnostic tool.,41 minutes,Hardware,Pending
+CONV-0949,Slow system performance,Restart your router.,42 minutes,Hardware,Pending
+CONV-0950,Unable to access email,Restart your router.,46 minutes,Hardware,Resolved
+CONV-0951,Cannot connect to Wi-Fi,Reset your password using the link provided.,17 minutes,Hardware,Resolved
+CONV-0952,Cannot connect to Wi-Fi,Reset your password using the link provided.,93 minutes,Performance,Resolved after follow-up
+CONV-0953,Forgot password,Reset your password using the link provided.,33 minutes,Software,Resolved
+CONV-0954,Blue screen error,Reset your password using the link provided.,32 minutes,Software,Resolved after follow-up
+CONV-0955,Software installation failure,Restart your router.,70 minutes,Network,Escalated
+CONV-0956,Software installation failure,Verify your email settings.,104 minutes,Network,Resolved after follow-up
+CONV-0957,Unable to access email,Restart your router.,7 minutes,Software,Resolved after follow-up
+CONV-0958,Slow system performance,Clear cache and remove unnecessary programs.,113 minutes,Account,Resolved
+CONV-0959,Slow system performance,Run a system diagnostic tool.,110 minutes,Network,Pending
+CONV-0960,Unable to access email,Verify your email settings.,15 minutes,Network,Resolved after follow-up
+CONV-0961,Slow system performance,Restart your router.,55 minutes,Software,Resolved after follow-up
+CONV-0962,Cannot connect to Wi-Fi,Run a system diagnostic tool.,15 minutes,Performance,Escalated
+CONV-0963,Cannot connect to Wi-Fi,Follow the software installation guide.,53 minutes,Account,Pending
+CONV-0964,Slow system performance,Follow the software installation guide.,92 minutes,Hardware,Resolved
+CONV-0965,Software installation failure,Follow the software installation guide.,106 minutes,Account,Pending
+CONV-0966,Blue screen error,Reset your password using the link provided.,18 minutes,Software,Resolved after follow-up
+CONV-0967,Printer not responding,Follow the software installation guide.,62 minutes,Network,Resolved
+CONV-0968,Software installation failure,Follow the software installation guide.,69 minutes,Performance,Resolved
+CONV-0969,Unable to access email,Reset your password using the link provided.,93 minutes,Hardware,Pending
+CONV-0970,Forgot password,Restart your router.,50 minutes,Software,Resolved
+CONV-0971,Forgot password,Restart your router.,18 minutes,Account,Escalated
+CONV-0972,Unable to access email,Reset your password using the link provided.,34 minutes,Account,Resolved
+CONV-0973,Software installation failure,Verify your email settings.,84 minutes,Network,Escalated
+CONV-0974,Unable to access email,Restart your router.,103 minutes,Performance,Pending
+CONV-0975,Unable to access email,Restart your router.,12 minutes,Account,Pending
+CONV-0976,Software installation failure,Reset your password using the link provided.,100 minutes,Hardware,Pending
+CONV-0977,Software installation failure,Follow the software installation guide.,113 minutes,Software,Resolved
+CONV-0978,Cannot connect to Wi-Fi,Reset your password using the link provided.,26 minutes,Performance,Pending
+CONV-0979,Cannot connect to Wi-Fi,Restart your router.,80 minutes,Account,Resolved after follow-up
+CONV-0980,Software installation failure,Reinstall the printer drivers.,33 minutes,Software,Resolved
+CONV-0981,Cannot connect to Wi-Fi,Clear cache and remove unnecessary programs.,22 minutes,Network,Escalated
+CONV-0982,Blue screen error,Follow the software installation guide.,93 minutes,Software,Escalated
+CONV-0983,Unable to access email,Verify your email settings.,115 minutes,Account,Resolved
+CONV-0984,Cannot connect to Wi-Fi,Follow the software installation guide.,88 minutes,Hardware,Resolved after follow-up
+CONV-0985,Forgot password,Verify your email settings.,77 minutes,Hardware,Resolved
+CONV-0986,Unable to access email,Reinstall the printer drivers.,23 minutes,Network,Resolved
+CONV-0987,Printer not responding,Reset your password using the link provided.,56 minutes,Software,Escalated
+CONV-0988,Slow system performance,Clear cache and remove unnecessary programs.,82 minutes,Account,Pending
+CONV-0989,Software installation failure,Verify your email settings.,71 minutes,Network,Resolved after follow-up
+CONV-0990,Slow system performance,Clear cache and remove unnecessary programs.,118 minutes,Network,Resolved
+CONV-0991,Blue screen error,Follow the software installation guide.,72 minutes,Network,Pending
+CONV-0992,Slow system performance,Reset your password using the link provided.,14 minutes,Software,Resolved after follow-up
+CONV-0993,Printer not responding,Clear cache and remove unnecessary programs.,16 minutes,Hardware,Resolved
+CONV-0994,Unable to access email,Run a system diagnostic tool.,109 minutes,Hardware,Resolved after follow-up
+CONV-0995,Software installation failure,Follow the software installation guide.,57 minutes,Hardware,Pending
+CONV-0996,Cannot connect to Wi-Fi,Verify your email settings.,30 minutes,Performance,Escalated
+CONV-0997,Forgot password,Reset your password using the link provided.,79 minutes,Hardware,Escalated
+CONV-0998,Unable to access email,Clear cache and remove unnecessary programs.,115 minutes,Software,Resolved after follow-up
+CONV-0999,Blue screen error,Verify your email settings.,68 minutes,Software,Pending
+CONV-1000,Forgot password,Follow the software installation guide.,28 minutes,Network,Pending
+CONV-1001,Printer not responding,Reinstall the printer drivers.,15 minutes,Software,Resolved
+CONV-1002,Printer not responding,Reinstall the printer drivers.,16 minutes,Hardware,Pending
+CONV-1003,Unable to access email,Reinstall the printer drivers.,30 minutes,Account,Resolved
+CONV-1004,Blue screen error,Restart your router.,98 minutes,Hardware,Escalated
+CONV-1005,Forgot password,Reinstall the printer drivers.,41 minutes,Account,Pending
+CONV-1006,Software installation failure,Follow the software installation guide.,119 minutes,Hardware,Escalated
+CONV-1007,Unable to access email,Clear cache and remove unnecessary programs.,71 minutes,Hardware,Resolved
+CONV-1008,Software installation failure,Clear cache and remove unnecessary programs.,45 minutes,Software,Pending
+CONV-1009,Software installation failure,Verify your email settings.,108 minutes,Network,Pending
+CONV-1010,Slow system performance,Reinstall the printer drivers.,116 minutes,Software,Escalated
+CONV-1011,Blue screen error,Clear cache and remove unnecessary programs.,28 minutes,Network,Pending
+CONV-1012,Blue screen error,Reinstall the printer drivers.,61 minutes,Network,Pending
+CONV-1013,Software installation failure,Verify your email settings.,40 minutes,Software,Pending
+CONV-1014,Software installation failure,Reinstall the printer drivers.,18 minutes,Performance,Escalated
+CONV-1015,Forgot password,Follow the software installation guide.,85 minutes,Account,Resolved
+CONV-1016,Unable to access email,Reset your password using the link provided.,77 minutes,Hardware,Escalated
+CONV-1017,Slow system performance,Follow the software installation guide.,88 minutes,Software,Resolved
+CONV-1018,Forgot password,Run a system diagnostic tool.,65 minutes,Hardware,Escalated
+CONV-1019,Unable to access email,Reinstall the printer drivers.,68 minutes,Network,Resolved after follow-up
+CONV-1020,Unable to access email,Run a system diagnostic tool.,92 minutes,Network,Resolved after follow-up
+CONV-1021,Software installation failure,Clear cache and remove unnecessary programs.,77 minutes,Hardware,Resolved after follow-up
+CONV-1022,Slow system performance,Restart your router.,86 minutes,Network,Resolved
+CONV-1023,Printer not responding,Clear cache and remove unnecessary programs.,71 minutes,Account,Resolved after follow-up
+CONV-1024,Slow system performance,Follow the software installation guide.,45 minutes,Hardware,Escalated
+CONV-1025,Cannot connect to Wi-Fi,Follow the software installation guide.,22 minutes,Account,Pending
+CONV-1026,Slow system performance,Run a system diagnostic tool.,51 minutes,Performance,Resolved after follow-up
+CONV-1027,Slow system performance,Run a system diagnostic tool.,64 minutes,Software,Pending
+CONV-1028,Printer not responding,Reinstall the printer drivers.,40 minutes,Software,Resolved
+CONV-1029,Software installation failure,Reinstall the printer drivers.,95 minutes,Account,Resolved
+CONV-1030,Forgot password,Reinstall the printer drivers.,53 minutes,Network,Resolved
+CONV-1031,Unable to access email,Reset your password using the link provided.,108 minutes,Network,Resolved
+CONV-1032,Software installation failure,Reinstall the printer drivers.,94 minutes,Account,Pending
+CONV-1033,Cannot connect to Wi-Fi,Reinstall the printer drivers.,112 minutes,Account,Resolved after follow-up
+CONV-1034,Printer not responding,Reinstall the printer drivers.,68 minutes,Network,Pending
+CONV-1035,Slow system performance,Verify your email settings.,31 minutes,Network,Pending
+CONV-1036,Slow system performance,Run a system diagnostic tool.,8 minutes,Performance,Resolved after follow-up
+CONV-1037,Slow system performance,Follow the software installation guide.,72 minutes,Software,Resolved
+CONV-1038,Slow system performance,Reinstall the printer drivers.,8 minutes,Network,Pending
+CONV-1039,Cannot connect to Wi-Fi,Run a system diagnostic tool.,118 minutes,Account,Resolved
+CONV-1040,Software installation failure,Restart your router.,15 minutes,Performance,Resolved
+CONV-1041,Software installation failure,Follow the software installation guide.,62 minutes,Account,Resolved after follow-up
+CONV-1042,Unable to access email,Verify your email settings.,50 minutes,Performance,Resolved after follow-up
+CONV-1043,Forgot password,Reset your password using the link provided.,43 minutes,Hardware,Resolved
+CONV-1044,Blue screen error,Restart your router.,16 minutes,Account,Escalated
+CONV-1045,Software installation failure,Reset your password using the link provided.,12 minutes,Account,Resolved after follow-up
+CONV-1046,Cannot connect to Wi-Fi,Reset your password using the link provided.,11 minutes,Software,Resolved after follow-up
+CONV-1047,Software installation failure,Verify your email settings.,49 minutes,Network,Resolved
+CONV-1048,Unable to access email,Restart your router.,110 minutes,Network,Resolved
+CONV-1049,Cannot connect to Wi-Fi,Verify your email settings.,58 minutes,Account,Resolved
+CONV-1050,Forgot password,Reset your password using the link provided.,92 minutes,Network,Pending
+CONV-1051,Software installation failure,Restart your router.,60 minutes,Hardware,Resolved
+CONV-1052,Software installation failure,Reset your password using the link provided.,81 minutes,Network,Escalated
+CONV-1053,Software installation failure,Follow the software installation guide.,99 minutes,Account,Resolved after follow-up
+CONV-1054,Cannot connect to Wi-Fi,Clear cache and remove unnecessary programs.,8 minutes,Account,Resolved
+CONV-1055,Printer not responding,Reinstall the printer drivers.,115 minutes,Hardware,Escalated
+CONV-1056,Printer not responding,Clear cache and remove unnecessary programs.,36 minutes,Performance,Resolved after follow-up
+CONV-1057,Printer not responding,Follow the software installation guide.,16 minutes,Network,Resolved after follow-up
+CONV-1058,Unable to access email,Reset your password using the link provided.,32 minutes,Hardware,Pending
+CONV-1059,Blue screen error,Verify your email settings.,100 minutes,Network,Pending
+CONV-1060,Cannot connect to Wi-Fi,Reset your password using the link provided.,62 minutes,Account,Resolved after follow-up
+CONV-1061,Unable to access email,Restart your router.,98 minutes,Network,Pending
+CONV-1062,Software installation failure,Clear cache and remove unnecessary programs.,109 minutes,Software,Escalated
+CONV-1063,Forgot password,Verify your email settings.,11 minutes,Network,Escalated
+CONV-1064,Printer not responding,Reset your password using the link provided.,85 minutes,Hardware,Resolved after follow-up
+CONV-1065,Slow system performance,Reset your password using the link provided.,119 minutes,Account,Resolved
+CONV-1066,Software installation failure,Clear cache and remove unnecessary programs.,49 minutes,Software,Pending
+CONV-1067,Blue screen error,Clear cache and remove unnecessary programs.,110 minutes,Hardware,Resolved
+CONV-1068,Forgot password,Run a system diagnostic tool.,13 minutes,Hardware,Escalated
+CONV-1069,Slow system performance,Follow the software installation guide.,73 minutes,Software,Resolved
+CONV-1070,Software installation failure,Clear cache and remove unnecessary programs.,53 minutes,Hardware,Escalated
+CONV-1071,Software installation failure,Follow the software installation guide.,109 minutes,Account,Resolved
+CONV-1072,Printer not responding,Clear cache and remove unnecessary programs.,86 minutes,Hardware,Escalated
+CONV-1073,Software installation failure,Follow the software installation guide.,31 minutes,Hardware,Resolved after follow-up
+CONV-1074,Cannot connect to Wi-Fi,Follow the software installation guide.,47 minutes,Software,Pending
+CONV-1075,Printer not responding,Reset your password using the link provided.,68 minutes,Account,Escalated
+CONV-1076,Printer not responding,Reinstall the printer drivers.,91 minutes,Hardware,Pending
+CONV-1077,Cannot connect to Wi-Fi,Run a system diagnostic tool.,35 minutes,Performance,Escalated
+CONV-1078,Unable to access email,Run a system diagnostic tool.,114 minutes,Account,Escalated
+CONV-1079,Software installation failure,Follow the software installation guide.,12 minutes,Hardware,Pending
+CONV-1080,Slow system performance,Run a system diagnostic tool.,80 minutes,Network,Pending
+CONV-1081,Software installation failure,Run a system diagnostic tool.,9 minutes,Software,Resolved after follow-up
+CONV-1082,Cannot connect to Wi-Fi,Reinstall the printer drivers.,16 minutes,Performance,Escalated
+CONV-1083,Unable to access email,Reset your password using the link provided.,79 minutes,Performance,Escalated
+CONV-1084,Unable to access email,Reinstall the printer drivers.,41 minutes,Account,Pending
+CONV-1085,Unable to access email,Follow the software installation guide.,78 minutes,Software,Pending
+CONV-1086,Blue screen error,Verify your email settings.,99 minutes,Network,Resolved after follow-up
+CONV-1087,Printer not responding,Restart your router.,53 minutes,Hardware,Resolved
+CONV-1088,Cannot connect to Wi-Fi,Reinstall the printer drivers.,14 minutes,Hardware,Escalated
+CONV-1089,Unable to access email,Verify your email settings.,47 minutes,Performance,Resolved
+CONV-1090,Cannot connect to Wi-Fi,Run a system diagnostic tool.,18 minutes,Software,Resolved after follow-up
+CONV-1091,Forgot password,Reinstall the printer drivers.,18 minutes,Network,Resolved after follow-up
+CONV-1092,Blue screen error,Follow the software installation guide.,90 minutes,Software,Escalated
+CONV-1093,Unable to access email,Verify your email settings.,100 minutes,Hardware,Escalated
+CONV-1094,Unable to access email,Restart your router.,111 minutes,Account,Pending
+CONV-1095,Cannot connect to Wi-Fi,Follow the software installation guide.,33 minutes,Software,Resolved
+CONV-1096,Printer not responding,Run a system diagnostic tool.,25 minutes,Network,Resolved
+CONV-1097,Software installation failure,Restart your router.,64 minutes,Network,Pending
+CONV-1098,Cannot connect to Wi-Fi,Verify your email settings.,38 minutes,Software,Resolved
+CONV-1099,Forgot password,Run a system diagnostic tool.,23 minutes,Account,Resolved
+CONV-1100,Forgot password,Verify your email settings.,22 minutes,Account,Escalated
+CONV-1101,Unable to access email,Verify your email settings.,16 minutes,Network,Resolved after follow-up
+CONV-1102,Slow system performance,Verify your email settings.,95 minutes,Account,Escalated
+CONV-1103,Forgot password,Reset your password using the link provided.,43 minutes,Account,Escalated
+CONV-1104,Unable to access email,Follow the software installation guide.,103 minutes,Network,Resolved
+CONV-1105,Cannot connect to Wi-Fi,Restart your router.,49 minutes,Software,Pending
+CONV-1106,Printer not responding,Reset your password using the link provided.,117 minutes,Software,Resolved after follow-up
+CONV-1107,Forgot password,Clear cache and remove unnecessary programs.,19 minutes,Hardware,Resolved after follow-up
+CONV-1108,Software installation failure,Run a system diagnostic tool.,37 minutes,Account,Escalated
+CONV-1109,Forgot password,Reset your password using the link provided.,89 minutes,Network,Resolved after follow-up
+CONV-1110,Software installation failure,Reinstall the printer drivers.,91 minutes,Software,Resolved after follow-up
+CONV-1111,Blue screen error,Reinstall the printer drivers.,18 minutes,Software,Escalated
+CONV-1112,Forgot password,Verify your email settings.,117 minutes,Network,Pending
+CONV-1113,Software installation failure,Restart your router.,92 minutes,Performance,Escalated
+CONV-1114,Software installation failure,Reset your password using the link provided.,19 minutes,Account,Pending
+CONV-1115,Cannot connect to Wi-Fi,Reset your password using the link provided.,23 minutes,Hardware,Pending
+CONV-1116,Unable to access email,Run a system diagnostic tool.,60 minutes,Performance,Pending
+CONV-1117,Blue screen error,Verify your email settings.,37 minutes,Software,Resolved
+CONV-1118,Forgot password,Follow the software installation guide.,56 minutes,Network,Resolved
+CONV-1119,Forgot password,Reset your password using the link provided.,11 minutes,Performance,Resolved after follow-up
+CONV-1120,Printer not responding,Clear cache and remove unnecessary programs.,93 minutes,Hardware,Resolved
+CONV-1121,Forgot password,Clear cache and remove unnecessary programs.,25 minutes,Network,Pending
+CONV-1122,Cannot connect to Wi-Fi,Clear cache and remove unnecessary programs.,102 minutes,Hardware,Resolved
+CONV-1123,Printer not responding,Run a system diagnostic tool.,57 minutes,Software,Escalated
+CONV-1124,Slow system performance,Verify your email settings.,104 minutes,Account,Resolved
+CONV-1125,Software installation failure,Restart your router.,106 minutes,Performance,Pending
+CONV-1126,Unable to access email,Follow the software installation guide.,109 minutes,Network,Resolved after follow-up
+CONV-1127,Blue screen error,Reset your password using the link provided.,104 minutes,Hardware,Escalated
+CONV-1128,Software installation failure,Restart your router.,41 minutes,Hardware,Resolved
+CONV-1129,Software installation failure,Reset your password using the link provided.,84 minutes,Performance,Pending
+CONV-1130,Unable to access email,Follow the software installation guide.,13 minutes,Hardware,Resolved
+CONV-1131,Slow system performance,Follow the software installation guide.,91 minutes,Performance,Pending
+CONV-1132,Software installation failure,Restart your router.,104 minutes,Performance,Resolved
+CONV-1133,Printer not responding,Verify your email settings.,42 minutes,Account,Pending
+CONV-1134,Cannot connect to Wi-Fi,Verify your email settings.,17 minutes,Hardware,Resolved after follow-up
+CONV-1135,Cannot connect to Wi-Fi,Run a system diagnostic tool.,33 minutes,Hardware,Resolved after follow-up
+CONV-1136,Software installation failure,Reset your password using the link provided.,15 minutes,Network,Pending
+CONV-1137,Unable to access email,Clear cache and remove unnecessary programs.,31 minutes,Hardware,Resolved after follow-up
+CONV-1138,Slow system performance,Restart your router.,6 minutes,Software,Escalated
+CONV-1139,Blue screen error,Clear cache and remove unnecessary programs.,96 minutes,Performance,Resolved
+CONV-1140,Software installation failure,Reset your password using the link provided.,46 minutes,Account,Resolved
+CONV-1141,Forgot password,Follow the software installation guide.,111 minutes,Hardware,Resolved
+CONV-1142,Cannot connect to Wi-Fi,Follow the software installation guide.,97 minutes,Performance,Pending
+CONV-1143,Software installation failure,Restart your router.,40 minutes,Hardware,Resolved
+CONV-1144,Unable to access email,Verify your email settings.,19 minutes,Account,Resolved
+CONV-1145,Cannot connect to Wi-Fi,Verify your email settings.,109 minutes,Software,Pending
+CONV-1146,Software installation failure,Restart your router.,107 minutes,Performance,Resolved
+CONV-1147,Software installation failure,Follow the software installation guide.,77 minutes,Software,Escalated
+CONV-1148,Printer not responding,Restart your router.,7 minutes,Account,Resolved after follow-up
+CONV-1149,Unable to access email,Restart your router.,7 minutes,Software,Resolved after follow-up
+CONV-1150,Unable to access email,Reset your password using the link provided.,47 minutes,Network,Resolved
+CONV-1151,Cannot connect to Wi-Fi,Reinstall the printer drivers.,109 minutes,Network,Resolved
+CONV-1152,Blue screen error,Follow the software installation guide.,118 minutes,Hardware,Resolved
+CONV-1153,Software installation failure,Reinstall the printer drivers.,86 minutes,Hardware,Resolved after follow-up
+CONV-1154,Unable to access email,Run a system diagnostic tool.,120 minutes,Account,Resolved after follow-up
+CONV-1155,Slow system performance,Run a system diagnostic tool.,91 minutes,Account,Pending
+CONV-1156,Cannot connect to Wi-Fi,Restart your router.,5 minutes,Account,Pending
+CONV-1157,Printer not responding,Run a system diagnostic tool.,31 minutes,Performance,Resolved after follow-up
+CONV-1158,Cannot connect to Wi-Fi,Reinstall the printer drivers.,14 minutes,Performance,Resolved after follow-up
+CONV-1159,Software installation failure,Run a system diagnostic tool.,63 minutes,Performance,Pending
+CONV-1160,Blue screen error,Restart your router.,81 minutes,Network,Resolved
+CONV-1161,Software installation failure,Reset your password using the link provided.,5 minutes,Hardware,Resolved after follow-up
+CONV-1162,Forgot password,Run a system diagnostic tool.,100 minutes,Hardware,Pending
+CONV-1163,Forgot password,Verify your email settings.,58 minutes,Software,Pending
+CONV-1164,Slow system performance,Clear cache and remove unnecessary programs.,113 minutes,Hardware,Pending
+CONV-1165,Forgot password,Run a system diagnostic tool.,90 minutes,Network,Resolved after follow-up
+CONV-1166,Cannot connect to Wi-Fi,Run a system diagnostic tool.,52 minutes,Hardware,Escalated
+CONV-1167,Blue screen error,Follow the software installation guide.,101 minutes,Hardware,Resolved
+CONV-1168,Slow system performance,Reset your password using the link provided.,29 minutes,Network,Pending
+CONV-1169,Blue screen error,Verify your email settings.,9 minutes,Hardware,Pending
+CONV-1170,Unable to access email,Reset your password using the link provided.,103 minutes,Account,Pending
+CONV-1171,Cannot connect to Wi-Fi,Restart your router.,115 minutes,Account,Resolved
+CONV-1172,Printer not responding,Follow the software installation guide.,22 minutes,Hardware,Pending
+CONV-1173,Printer not responding,Reset your password using the link provided.,42 minutes,Account,Pending
+CONV-1174,Blue screen error,Verify your email settings.,38 minutes,Performance,Resolved after follow-up
+CONV-1175,Unable to access email,Clear cache and remove unnecessary programs.,26 minutes,Account,Escalated
+CONV-1176,Slow system performance,Reset your password using the link provided.,69 minutes,Network,Resolved
+CONV-1177,Slow system performance,Restart your router.,32 minutes,Performance,Resolved after follow-up
+CONV-1178,Cannot connect to Wi-Fi,Run a system diagnostic tool.,65 minutes,Network,Pending
+CONV-1179,Slow system performance,Reset your password using the link provided.,87 minutes,Hardware,Resolved
+CONV-1180,Unable to access email,Verify your email settings.,40 minutes,Software,Resolved after follow-up
+CONV-1181,Forgot password,Reset your password using the link provided.,38 minutes,Network,Resolved after follow-up
+CONV-1182,Forgot password,Run a system diagnostic tool.,118 minutes,Network,Pending
+CONV-1183,Cannot connect to Wi-Fi,Reinstall the printer drivers.,48 minutes,Account,Pending
+CONV-1184,Unable to access email,Restart your router.,13 minutes,Performance,Resolved
+CONV-1185,Unable to access email,Reinstall the printer drivers.,90 minutes,Account,Escalated
+CONV-1186,Cannot connect to Wi-Fi,Reinstall the printer drivers.,38 minutes,Software,Resolved
+CONV-1187,Printer not responding,Restart your router.,71 minutes,Performance,Resolved after follow-up
+CONV-1188,Blue screen error,Reinstall the printer drivers.,107 minutes,Account,Pending
+CONV-1189,Printer not responding,Reinstall the printer drivers.,53 minutes,Network,Resolved
+CONV-1190,Software installation failure,Run a system diagnostic tool.,91 minutes,Network,Escalated
+CONV-1191,Cannot connect to Wi-Fi,Restart your router.,97 minutes,Performance,Escalated
+CONV-1192,Blue screen error,Clear cache and remove unnecessary programs.,88 minutes,Performance,Escalated
+CONV-1193,Forgot password,Verify your email settings.,95 minutes,Hardware,Escalated
+CONV-1194,Blue screen error,Reinstall the printer drivers.,105 minutes,Software,Resolved
+CONV-1195,Unable to access email,Verify your email settings.,20 minutes,Account,Resolved
+CONV-1196,Unable to access email,Reset your password using the link provided.,18 minutes,Network,Resolved after follow-up
+CONV-1197,Unable to access email,Run a system diagnostic tool.,8 minutes,Software,Resolved after follow-up
+CONV-1198,Software installation failure,Run a system diagnostic tool.,100 minutes,Performance,Pending
+CONV-1199,Software installation failure,Run a system diagnostic tool.,97 minutes,Account,Resolved
+CONV-1200,Cannot connect to Wi-Fi,Run a system diagnostic tool.,29 minutes,Performance,Resolved
+CONV-1201,Forgot password,Follow the software installation guide.,110 minutes,Account,Escalated
+CONV-1202,Software installation failure,Reset your password using the link provided.,69 minutes,Hardware,Resolved after follow-up
+CONV-1203,Unable to access email,Restart your router.,44 minutes,Hardware,Escalated
+CONV-1204,Forgot password,Verify your email settings.,102 minutes,Software,Escalated
+CONV-1205,Printer not responding,Reset your password using the link provided.,54 minutes,Hardware,Escalated
+CONV-1206,Blue screen error,Reset your password using the link provided.,46 minutes,Network,Escalated
+CONV-1207,Forgot password,Reset your password using the link provided.,76 minutes,Network,Resolved
+CONV-1208,Slow system performance,Run a system diagnostic tool.,31 minutes,Account,Resolved
+CONV-1209,Slow system performance,Follow the software installation guide.,92 minutes,Hardware,Resolved after follow-up
+CONV-1210,Forgot password,Verify your email settings.,120 minutes,Software,Pending
+CONV-1211,Unable to access email,Restart your router.,74 minutes,Hardware,Resolved
+CONV-1212,Cannot connect to Wi-Fi,Clear cache and remove unnecessary programs.,60 minutes,Account,Resolved
+CONV-1213,Unable to access email,Reinstall the printer drivers.,37 minutes,Hardware,Resolved after follow-up
+CONV-1214,Forgot password,Run a system diagnostic tool.,83 minutes,Network,Resolved after follow-up
+CONV-1215,Cannot connect to Wi-Fi,Run a system diagnostic tool.,33 minutes,Performance,Resolved after follow-up
+CONV-1216,Printer not responding,Clear cache and remove unnecessary programs.,48 minutes,Network,Resolved
+CONV-1217,Blue screen error,Restart your router.,83 minutes,Software,Escalated
+CONV-1218,Software installation failure,Follow the software installation guide.,34 minutes,Network,Resolved after follow-up
+CONV-1219,Blue screen error,Verify your email settings.,109 minutes,Software,Escalated
+CONV-1220,Cannot connect to Wi-Fi,Clear cache and remove unnecessary programs.,70 minutes,Performance,Resolved
+CONV-1221,Cannot connect to Wi-Fi,Restart your router.,87 minutes,Performance,Escalated
+CONV-1222,Software installation failure,Run a system diagnostic tool.,96 minutes,Account,Resolved
+CONV-1223,Printer not responding,Verify your email settings.,46 minutes,Software,Pending
+CONV-1224,Forgot password,Reinstall the printer drivers.,103 minutes,Software,Pending
+CONV-1225,Printer not responding,Clear cache and remove unnecessary programs.,104 minutes,Hardware,Resolved
+CONV-1226,Slow system performance,Restart your router.,85 minutes,Network,Escalated
+CONV-1227,Cannot connect to Wi-Fi,Verify your email settings.,119 minutes,Hardware,Pending
+CONV-1228,Cannot connect to Wi-Fi,Reinstall the printer drivers.,18 minutes,Network,Pending
+CONV-1229,Cannot connect to Wi-Fi,Restart your router.,11 minutes,Network,Escalated
+CONV-1230,Forgot password,Reset your password using the link provided.,68 minutes,Performance,Resolved after follow-up
+CONV-1231,Slow system performance,Clear cache and remove unnecessary programs.,79 minutes,Account,Escalated
+CONV-1232,Unable to access email,Clear cache and remove unnecessary programs.,100 minutes,Software,Pending
+CONV-1233,Slow system performance,Clear cache and remove unnecessary programs.,8 minutes,Network,Resolved after follow-up
+CONV-1234,Printer not responding,Run a system diagnostic tool.,116 minutes,Account,Pending
+CONV-1235,Slow system performance,Reinstall the printer drivers.,74 minutes,Software,Resolved after follow-up
+CONV-1236,Slow system performance,Follow the software installation guide.,24 minutes,Software,Escalated
+CONV-1237,Slow system performance,Run a system diagnostic tool.,84 minutes,Software,Resolved
+CONV-1238,Forgot password,Follow the software installation guide.,55 minutes,Account,Resolved
+CONV-1239,Slow system performance,Restart your router.,22 minutes,Hardware,Resolved
+CONV-1240,Cannot connect to Wi-Fi,Run a system diagnostic tool.,30 minutes,Account,Resolved
+CONV-1241,Printer not responding,Verify your email settings.,116 minutes,Network,Resolved
+CONV-1242,Slow system performance,Reinstall the printer drivers.,115 minutes,Performance,Pending
+CONV-1243,Software installation failure,Follow the software installation guide.,49 minutes,Account,Resolved
+CONV-1244,Blue screen error,Verify your email settings.,60 minutes,Hardware,Resolved after follow-up
+CONV-1245,Printer not responding,Reinstall the printer drivers.,45 minutes,Account,Resolved after follow-up
+CONV-1246,Cannot connect to Wi-Fi,Verify your email settings.,20 minutes,Performance,Escalated
+CONV-1247,Slow system performance,Reinstall the printer drivers.,39 minutes,Network,Resolved after follow-up
+CONV-1248,Software installation failure,Reinstall the printer drivers.,79 minutes,Software,Resolved
+CONV-1249,Blue screen error,Verify your email settings.,91 minutes,Hardware,Escalated
+CONV-1250,Slow system performance,Follow the software installation guide.,107 minutes,Network,Resolved after follow-up
+CONV-1251,Software installation failure,Run a system diagnostic tool.,51 minutes,Performance,Escalated
+CONV-1252,Software installation failure,Clear cache and remove unnecessary programs.,5 minutes,Hardware,Resolved
+CONV-1253,Software installation failure,Clear cache and remove unnecessary programs.,69 minutes,Account,Escalated
+CONV-1254,Software installation failure,Follow the software installation guide.,68 minutes,Hardware,Resolved after follow-up
+CONV-1255,Forgot password,Reinstall the printer drivers.,34 minutes,Software,Resolved
+CONV-1256,Blue screen error,Run a system diagnostic tool.,74 minutes,Account,Resolved
+CONV-1257,Cannot connect to Wi-Fi,Reset your password using the link provided.,68 minutes,Hardware,Pending
+CONV-1258,Software installation failure,Reset your password using the link provided.,101 minutes,Software,Resolved
+CONV-1259,Forgot password,Clear cache and remove unnecessary programs.,26 minutes,Software,Escalated
+CONV-1260,Software installation failure,Verify your email settings.,67 minutes,Account,Escalated
+CONV-1261,Blue screen error,Reinstall the printer drivers.,63 minutes,Software,Pending
+CONV-1262,Printer not responding,Run a system diagnostic tool.,9 minutes,Performance,Pending
+CONV-1263,Blue screen error,Run a system diagnostic tool.,113 minutes,Performance,Pending
+CONV-1264,Blue screen error,Reset your password using the link provided.,51 minutes,Hardware,Escalated
+CONV-1265,Software installation failure,Clear cache and remove unnecessary programs.,66 minutes,Performance,Resolved after follow-up
+CONV-1266,Unable to access email,Verify your email settings.,34 minutes,Hardware,Resolved
+CONV-1267,Unable to access email,Follow the software installation guide.,20 minutes,Network,Resolved
+CONV-1268,Slow system performance,Verify your email settings.,105 minutes,Hardware,Resolved after follow-up
+CONV-1269,Unable to access email,Run a system diagnostic tool.,42 minutes,Hardware,Resolved
+CONV-1270,Forgot password,Follow the software installation guide.,111 minutes,Network,Resolved
+CONV-1271,Forgot password,Verify your email settings.,50 minutes,Software,Pending
+CONV-1272,Blue screen error,Verify your email settings.,73 minutes,Account,Pending
+CONV-1273,Cannot connect to Wi-Fi,Verify your email settings.,11 minutes,Account,Resolved
+CONV-1274,Unable to access email,Verify your email settings.,22 minutes,Performance,Pending
+CONV-1275,Printer not responding,Clear cache and remove unnecessary programs.,62 minutes,Account,Pending
+CONV-1276,Slow system performance,Verify your email settings.,79 minutes,Hardware,Pending
+CONV-1277,Printer not responding,Run a system diagnostic tool.,35 minutes,Hardware,Escalated
+CONV-1278,Slow system performance,Reset your password using the link provided.,31 minutes,Performance,Pending
+CONV-1279,Printer not responding,Reset your password using the link provided.,93 minutes,Account,Escalated
+CONV-1280,Software installation failure,Verify your email settings.,87 minutes,Performance,Resolved
+CONV-1281,Blue screen error,Reinstall the printer drivers.,108 minutes,Performance,Resolved
+CONV-1282,Cannot connect to Wi-Fi,Clear cache and remove unnecessary programs.,13 minutes,Hardware,Escalated
+CONV-1283,Unable to access email,Reinstall the printer drivers.,28 minutes,Hardware,Escalated
+CONV-1284,Cannot connect to Wi-Fi,Clear cache and remove unnecessary programs.,39 minutes,Performance,Resolved after follow-up
+CONV-1285,Slow system performance,Clear cache and remove unnecessary programs.,48 minutes,Performance,Resolved after follow-up
+CONV-1286,Cannot connect to Wi-Fi,Verify your email settings.,96 minutes,Software,Pending
+CONV-1287,Unable to access email,Verify your email settings.,11 minutes,Software,Resolved after follow-up
+CONV-1288,Blue screen error,Run a system diagnostic tool.,39 minutes,Network,Resolved after follow-up
+CONV-1289,Software installation failure,Run a system diagnostic tool.,51 minutes,Software,Resolved
+CONV-1290,Unable to access email,Restart your router.,99 minutes,Account,Resolved after follow-up
+CONV-1291,Slow system performance,Follow the software installation guide.,90 minutes,Performance,Resolved after follow-up
+CONV-1292,Cannot connect to Wi-Fi,Verify your email settings.,98 minutes,Software,Pending
+CONV-1293,Forgot password,Restart your router.,90 minutes,Performance,Pending
+CONV-1294,Slow system performance,Run a system diagnostic tool.,45 minutes,Software,Resolved after follow-up
+CONV-1295,Software installation failure,Run a system diagnostic tool.,100 minutes,Performance,Resolved
+CONV-1296,Slow system performance,Clear cache and remove unnecessary programs.,35 minutes,Account,Resolved
+CONV-1297,Forgot password,Restart your router.,115 minutes,Hardware,Resolved after follow-up
+CONV-1298,Slow system performance,Run a system diagnostic tool.,104 minutes,Network,Resolved after follow-up
+CONV-1299,Unable to access email,Verify your email settings.,96 minutes,Network,Resolved after follow-up
+CONV-1300,Printer not responding,Verify your email settings.,84 minutes,Network,Pending
+CONV-1301,Slow system performance,Clear cache and remove unnecessary programs.,72 minutes,Account,Escalated
+CONV-1302,Forgot password,Follow the software installation guide.,97 minutes,Account,Escalated
+CONV-1303,Printer not responding,Restart your router.,41 minutes,Network,Pending
+CONV-1304,Software installation failure,Reset your password using the link provided.,56 minutes,Account,Resolved
+CONV-1305,Slow system performance,Follow the software installation guide.,32 minutes,Hardware,Resolved
+CONV-1306,Printer not responding,Follow the software installation guide.,8 minutes,Software,Escalated
+CONV-1307,Software installation failure,Reinstall the printer drivers.,43 minutes,Network,Resolved
+CONV-1308,Cannot connect to Wi-Fi,Verify your email settings.,101 minutes,Software,Resolved after follow-up
+CONV-1309,Blue screen error,Reinstall the printer drivers.,117 minutes,Hardware,Escalated
+CONV-1310,Printer not responding,Restart your router.,89 minutes,Performance,Pending
+CONV-1311,Blue screen error,Restart your router.,41 minutes,Performance,Escalated
+CONV-1312,Unable to access email,Reinstall the printer drivers.,37 minutes,Account,Resolved
+CONV-1313,Slow system performance,Verify your email settings.,102 minutes,Network,Pending
+CONV-1314,Forgot password,Run a system diagnostic tool.,11 minutes,Account,Escalated
+CONV-1315,Unable to access email,Clear cache and remove unnecessary programs.,115 minutes,Account,Pending
+CONV-1316,Cannot connect to Wi-Fi,Follow the software installation guide.,82 minutes,Performance,Resolved after follow-up
+CONV-1317,Software installation failure,Verify your email settings.,37 minutes,Performance,Resolved
+CONV-1318,Software installation failure,Run a system diagnostic tool.,49 minutes,Hardware,Resolved
+CONV-1319,Slow system performance,Restart your router.,98 minutes,Hardware,Resolved after follow-up
+CONV-1320,Printer not responding,Reset your password using the link provided.,10 minutes,Performance,Resolved
+CONV-1321,Software installation failure,Follow the software installation guide.,78 minutes,Performance,Pending
+CONV-1322,Blue screen error,Clear cache and remove unnecessary programs.,105 minutes,Account,Resolved after follow-up
+CONV-1323,Printer not responding,Follow the software installation guide.,33 minutes,Network,Pending
+CONV-1324,Forgot password,Restart your router.,43 minutes,Software,Resolved
+CONV-1325,Software installation failure,Reinstall the printer drivers.,95 minutes,Network,Escalated
+CONV-1326,Unable to access email,Clear cache and remove unnecessary programs.,74 minutes,Account,Escalated
+CONV-1327,Cannot connect to Wi-Fi,Restart your router.,88 minutes,Hardware,Escalated
+CONV-1328,Slow system performance,Reset your password using the link provided.,78 minutes,Software,Escalated
+CONV-1329,Printer not responding,Verify your email settings.,114 minutes,Software,Resolved after follow-up
+CONV-1330,Blue screen error,Run a system diagnostic tool.,9 minutes,Performance,Escalated
+CONV-1331,Printer not responding,Follow the software installation guide.,24 minutes,Performance,Pending
+CONV-1332,Unable to access email,Run a system diagnostic tool.,45 minutes,Network,Resolved after follow-up
+CONV-1333,Cannot connect to Wi-Fi,Verify your email settings.,72 minutes,Performance,Resolved
+CONV-1334,Blue screen error,Reset your password using the link provided.,63 minutes,Software,Resolved
+CONV-1335,Blue screen error,Run a system diagnostic tool.,89 minutes,Software,Escalated
+CONV-1336,Printer not responding,Restart your router.,78 minutes,Network,Resolved after follow-up
+CONV-1337,Slow system performance,Restart your router.,47 minutes,Account,Escalated
+CONV-1338,Cannot connect to Wi-Fi,Restart your router.,54 minutes,Account,Resolved after follow-up
+CONV-1339,Software installation failure,Reinstall the printer drivers.,9 minutes,Performance,Pending
+CONV-1340,Slow system performance,Clear cache and remove unnecessary programs.,78 minutes,Software,Pending
+CONV-1341,Slow system performance,Reinstall the printer drivers.,95 minutes,Software,Resolved after follow-up
+CONV-1342,Slow system performance,Reset your password using the link provided.,71 minutes,Performance,Pending
+CONV-1343,Printer not responding,Clear cache and remove unnecessary programs.,47 minutes,Account,Pending
+CONV-1344,Cannot connect to Wi-Fi,Follow the software installation guide.,16 minutes,Account,Escalated
+CONV-1345,Slow system performance,Verify your email settings.,41 minutes,Hardware,Pending
+CONV-1346,Blue screen error,Clear cache and remove unnecessary programs.,98 minutes,Hardware,Pending
+CONV-1347,Software installation failure,Verify your email settings.,102 minutes,Network,Resolved after follow-up
+CONV-1348,Printer not responding,Reinstall the printer drivers.,58 minutes,Software,Resolved after follow-up
+CONV-1349,Forgot password,Run a system diagnostic tool.,60 minutes,Network,Pending
+CONV-1350,Slow system performance,Clear cache and remove unnecessary programs.,12 minutes,Hardware,Resolved
+CONV-1351,Printer not responding,Reset your password using the link provided.,78 minutes,Network,Resolved after follow-up
+CONV-1352,Slow system performance,Follow the software installation guide.,23 minutes,Software,Resolved
+CONV-1353,Slow system performance,Reset your password using the link provided.,95 minutes,Network,Resolved after follow-up
+CONV-1354,Slow system performance,Follow the software installation guide.,20 minutes,Performance,Resolved
+CONV-1355,Software installation failure,Clear cache and remove unnecessary programs.,60 minutes,Software,Resolved
+CONV-1356,Forgot password,Reinstall the printer drivers.,103 minutes,Performance,Resolved
+CONV-1357,Cannot connect to Wi-Fi,Reset your password using the link provided.,65 minutes,Network,Pending
+CONV-1358,Cannot connect to Wi-Fi,Follow the software installation guide.,72 minutes,Account,Pending
+CONV-1359,Cannot connect to Wi-Fi,Follow the software installation guide.,117 minutes,Network,Pending
+CONV-1360,Blue screen error,Restart your router.,76 minutes,Performance,Escalated
+CONV-1361,Slow system performance,Restart your router.,90 minutes,Performance,Escalated
+CONV-1362,Printer not responding,Clear cache and remove unnecessary programs.,15 minutes,Performance,Resolved after follow-up
+CONV-1363,Unable to access email,Run a system diagnostic tool.,50 minutes,Software,Escalated
+CONV-1364,Software installation failure,Run a system diagnostic tool.,25 minutes,Hardware,Resolved after follow-up
+CONV-1365,Unable to access email,Verify your email settings.,113 minutes,Network,Resolved
+CONV-1366,Blue screen error,Run a system diagnostic tool.,50 minutes,Hardware,Escalated
+CONV-1367,Forgot password,Clear cache and remove unnecessary programs.,85 minutes,Performance,Resolved after follow-up
+CONV-1368,Blue screen error,Follow the software installation guide.,45 minutes,Network,Resolved after follow-up
+CONV-1369,Forgot password,Clear cache and remove unnecessary programs.,77 minutes,Software,Resolved after follow-up
+CONV-1370,Forgot password,Verify your email settings.,79 minutes,Hardware,Resolved after follow-up
+CONV-1371,Unable to access email,Restart your router.,104 minutes,Hardware,Escalated
+CONV-1372,Printer not responding,Verify your email settings.,80 minutes,Account,Pending
+CONV-1373,Software installation failure,Verify your email settings.,19 minutes,Account,Pending
+CONV-1374,Cannot connect to Wi-Fi,Run a system diagnostic tool.,94 minutes,Performance,Escalated
+CONV-1375,Printer not responding,Run a system diagnostic tool.,45 minutes,Performance,Escalated
+CONV-1376,Blue screen error,Verify your email settings.,46 minutes,Software,Pending
+CONV-1377,Printer not responding,Restart your router.,81 minutes,Performance,Pending
+CONV-1378,Blue screen error,Restart your router.,86 minutes,Performance,Resolved after follow-up
+CONV-1379,Forgot password,Reset your password using the link provided.,8 minutes,Performance,Pending
+CONV-1380,Blue screen error,Follow the software installation guide.,15 minutes,Performance,Pending
+CONV-1381,Printer not responding,Verify your email settings.,15 minutes,Hardware,Resolved
+CONV-1382,Slow system performance,Verify your email settings.,60 minutes,Performance,Resolved after follow-up
+CONV-1383,Software installation failure,Clear cache and remove unnecessary programs.,103 minutes,Hardware,Pending
+CONV-1384,Unable to access email,Verify your email settings.,85 minutes,Performance,Pending
+CONV-1385,Cannot connect to Wi-Fi,Verify your email settings.,71 minutes,Hardware,Escalated
+CONV-1386,Slow system performance,Reset your password using the link provided.,17 minutes,Hardware,Pending
+CONV-1387,Software installation failure,Verify your email settings.,53 minutes,Software,Escalated
+CONV-1388,Slow system performance,Restart your router.,41 minutes,Account,Resolved
+CONV-1389,Cannot connect to Wi-Fi,Clear cache and remove unnecessary programs.,24 minutes,Network,Resolved after follow-up
+CONV-1390,Cannot connect to Wi-Fi,Verify your email settings.,28 minutes,Hardware,Escalated
+CONV-1391,Slow system performance,Reinstall the printer drivers.,107 minutes,Performance,Pending
+CONV-1392,Slow system performance,Restart your router.,75 minutes,Hardware,Escalated
+CONV-1393,Printer not responding,Follow the software installation guide.,104 minutes,Network,Resolved
+CONV-1394,Printer not responding,Clear cache and remove unnecessary programs.,7 minutes,Network,Resolved after follow-up
+CONV-1395,Blue screen error,Restart your router.,33 minutes,Account,Resolved
+CONV-1396,Forgot password,Restart your router.,64 minutes,Hardware,Resolved
+CONV-1397,Slow system performance,Reinstall the printer drivers.,117 minutes,Performance,Resolved after follow-up
+CONV-1398,Forgot password,Clear cache and remove unnecessary programs.,106 minutes,Performance,Escalated
+CONV-1399,Blue screen error,Clear cache and remove unnecessary programs.,30 minutes,Performance,Resolved after follow-up
+CONV-1400,Blue screen error,Verify your email settings.,56 minutes,Hardware,Pending
+CONV-1401,Blue screen error,Run a system diagnostic tool.,116 minutes,Network,Resolved
+CONV-1402,Printer not responding,Verify your email settings.,36 minutes,Performance,Escalated
+CONV-1403,Forgot password,Restart your router.,42 minutes,Hardware,Pending
+CONV-1404,Printer not responding,Reset your password using the link provided.,53 minutes,Account,Pending
+CONV-1405,Cannot connect to Wi-Fi,Run a system diagnostic tool.,98 minutes,Network,Pending
+CONV-1406,Software installation failure,Follow the software installation guide.,72 minutes,Network,Resolved after follow-up
+CONV-1407,Slow system performance,Restart your router.,97 minutes,Performance,Resolved
+CONV-1408,Slow system performance,Reset your password using the link provided.,116 minutes,Account,Pending
+CONV-1409,Cannot connect to Wi-Fi,Restart your router.,52 minutes,Hardware,Resolved
+CONV-1410,Unable to access email,Follow the software installation guide.,56 minutes,Software,Escalated
+CONV-1411,Unable to access email,Restart your router.,34 minutes,Account,Resolved after follow-up
+CONV-1412,Slow system performance,Reset your password using the link provided.,82 minutes,Performance,Pending
+CONV-1413,Unable to access email,Run a system diagnostic tool.,84 minutes,Performance,Resolved
+CONV-1414,Cannot connect to Wi-Fi,Follow the software installation guide.,89 minutes,Performance,Pending
+CONV-1415,Unable to access email,Reinstall the printer drivers.,11 minutes,Hardware,Pending
+CONV-1416,Cannot connect to Wi-Fi,Reset your password using the link provided.,43 minutes,Performance,Pending
+CONV-1417,Blue screen error,Follow the software installation guide.,86 minutes,Performance,Resolved after follow-up
+CONV-1418,Cannot connect to Wi-Fi,Verify your email settings.,56 minutes,Software,Escalated
+CONV-1419,Forgot password,Run a system diagnostic tool.,79 minutes,Account,Pending
+CONV-1420,Cannot connect to Wi-Fi,Verify your email settings.,114 minutes,Performance,Pending
+CONV-1421,Cannot connect to Wi-Fi,Run a system diagnostic tool.,50 minutes,Hardware,Escalated
+CONV-1422,Forgot password,Clear cache and remove unnecessary programs.,73 minutes,Software,Pending
+CONV-1423,Printer not responding,Run a system diagnostic tool.,72 minutes,Network,Resolved
+CONV-1424,Unable to access email,Reset your password using the link provided.,99 minutes,Hardware,Resolved
+CONV-1425,Software installation failure,Reinstall the printer drivers.,43 minutes,Performance,Pending
+CONV-1426,Printer not responding,Reset your password using the link provided.,59 minutes,Software,Resolved
+CONV-1427,Slow system performance,Run a system diagnostic tool.,12 minutes,Hardware,Escalated
+CONV-1428,Blue screen error,Reset your password using the link provided.,107 minutes,Account,Pending
+CONV-1429,Blue screen error,Reinstall the printer drivers.,46 minutes,Hardware,Pending
+CONV-1430,Forgot password,Follow the software installation guide.,74 minutes,Software,Resolved after follow-up
+CONV-1431,Printer not responding,Clear cache and remove unnecessary programs.,17 minutes,Software,Resolved
+CONV-1432,Forgot password,Reinstall the printer drivers.,13 minutes,Network,Escalated
+CONV-1433,Blue screen error,Follow the software installation guide.,62 minutes,Performance,Resolved after follow-up
+CONV-1434,Unable to access email,Verify your email settings.,70 minutes,Performance,Pending
+CONV-1435,Blue screen error,Run a system diagnostic tool.,96 minutes,Hardware,Escalated
+CONV-1436,Printer not responding,Reset your password using the link provided.,20 minutes,Software,Pending
+CONV-1437,Software installation failure,Reset your password using the link provided.,55 minutes,Performance,Pending
+CONV-1438,Cannot connect to Wi-Fi,Follow the software installation guide.,110 minutes,Software,Escalated
+CONV-1439,Forgot password,Clear cache and remove unnecessary programs.,27 minutes,Network,Resolved
+CONV-1440,Slow system performance,Run a system diagnostic tool.,92 minutes,Network,Resolved after follow-up
+CONV-1441,Printer not responding,Run a system diagnostic tool.,105 minutes,Hardware,Pending
+CONV-1442,Printer not responding,Reset your password using the link provided.,50 minutes,Account,Escalated
+CONV-1443,Printer not responding,Clear cache and remove unnecessary programs.,94 minutes,Account,Resolved
+CONV-1444,Forgot password,Run a system diagnostic tool.,24 minutes,Performance,Pending
+CONV-1445,Cannot connect to Wi-Fi,Clear cache and remove unnecessary programs.,15 minutes,Network,Resolved after follow-up
+CONV-1446,Forgot password,Clear cache and remove unnecessary programs.,107 minutes,Network,Pending
+CONV-1447,Printer not responding,Reinstall the printer drivers.,35 minutes,Network,Pending
+CONV-1448,Software installation failure,Verify your email settings.,54 minutes,Software,Pending
+CONV-1449,Software installation failure,Reinstall the printer drivers.,69 minutes,Performance,Resolved
+CONV-1450,Forgot password,Verify your email settings.,33 minutes,Account,Pending
+CONV-1451,Cannot connect to Wi-Fi,Reset your password using the link provided.,91 minutes,Account,Resolved after follow-up
+CONV-1452,Unable to access email,Run a system diagnostic tool.,50 minutes,Account,Escalated
+CONV-1453,Slow system performance,Reinstall the printer drivers.,29 minutes,Account,Escalated
+CONV-1454,Blue screen error,Restart your router.,81 minutes,Network,Resolved
+CONV-1455,Unable to access email,Reset your password using the link provided.,77 minutes,Network,Pending
+CONV-1456,Printer not responding,Reinstall the printer drivers.,8 minutes,Hardware,Resolved
+CONV-1457,Forgot password,Reset your password using the link provided.,63 minutes,Network,Resolved
+CONV-1458,Forgot password,Clear cache and remove unnecessary programs.,77 minutes,Hardware,Pending
+CONV-1459,Printer not responding,Restart your router.,107 minutes,Account,Resolved
+CONV-1460,Forgot password,Follow the software installation guide.,109 minutes,Account,Escalated
+CONV-1461,Unable to access email,Verify your email settings.,76 minutes,Account,Resolved
+CONV-1462,Blue screen error,Reinstall the printer drivers.,49 minutes,Software,Escalated
+CONV-1463,Slow system performance,Run a system diagnostic tool.,78 minutes,Account,Resolved after follow-up
+CONV-1464,Printer not responding,Reset your password using the link provided.,97 minutes,Network,Pending
+CONV-1465,Unable to access email,Clear cache and remove unnecessary programs.,98 minutes,Hardware,Pending
+CONV-1466,Software installation failure,Verify your email settings.,83 minutes,Performance,Resolved
+CONV-1467,Blue screen error,Verify your email settings.,58 minutes,Network,Pending
+CONV-1468,Cannot connect to Wi-Fi,Reinstall the printer drivers.,47 minutes,Performance,Pending
+CONV-1469,Forgot password,Restart your router.,82 minutes,Network,Escalated
+CONV-1470,Slow system performance,Reset your password using the link provided.,108 minutes,Software,Escalated
+CONV-1471,Blue screen error,Clear cache and remove unnecessary programs.,37 minutes,Performance,Resolved after follow-up
+CONV-1472,Software installation failure,Follow the software installation guide.,63 minutes,Software,Pending
+CONV-1473,Slow system performance,Verify your email settings.,12 minutes,Software,Resolved after follow-up
+CONV-1474,Printer not responding,Clear cache and remove unnecessary programs.,53 minutes,Performance,Resolved
+CONV-1475,Slow system performance,Follow the software installation guide.,105 minutes,Hardware,Resolved
+CONV-1476,Unable to access email,Run a system diagnostic tool.,12 minutes,Software,Resolved after follow-up
+CONV-1477,Printer not responding,Run a system diagnostic tool.,109 minutes,Network,Resolved
+CONV-1478,Forgot password,Reset your password using the link provided.,94 minutes,Hardware,Resolved
+CONV-1479,Slow system performance,Clear cache and remove unnecessary programs.,80 minutes,Network,Escalated
+CONV-1480,Forgot password,Clear cache and remove unnecessary programs.,70 minutes,Network,Escalated
+CONV-1481,Cannot connect to Wi-Fi,Reinstall the printer drivers.,41 minutes,Hardware,Pending
+CONV-1482,Software installation failure,Clear cache and remove unnecessary programs.,18 minutes,Network,Pending
+CONV-1483,Software installation failure,Restart your router.,77 minutes,Account,Resolved
+CONV-1484,Slow system performance,Reinstall the printer drivers.,5 minutes,Account,Resolved
+CONV-1485,Unable to access email,Run a system diagnostic tool.,51 minutes,Account,Pending
+CONV-1486,Unable to access email,Reset your password using the link provided.,83 minutes,Performance,Pending
+CONV-1487,Slow system performance,Run a system diagnostic tool.,43 minutes,Performance,Resolved
+CONV-1488,Cannot connect to Wi-Fi,Run a system diagnostic tool.,74 minutes,Hardware,Escalated
+CONV-1489,Printer not responding,Verify your email settings.,78 minutes,Hardware,Resolved after follow-up
+CONV-1490,Forgot password,Restart your router.,45 minutes,Software,Resolved after follow-up
+CONV-1491,Printer not responding,Verify your email settings.,113 minutes,Network,Resolved after follow-up
+CONV-1492,Cannot connect to Wi-Fi,Reinstall the printer drivers.,49 minutes,Hardware,Resolved after follow-up
+CONV-1493,Cannot connect to Wi-Fi,Clear cache and remove unnecessary programs.,113 minutes,Hardware,Pending
+CONV-1494,Slow system performance,Restart your router.,83 minutes,Hardware,Pending
+CONV-1495,Unable to access email,Verify your email settings.,73 minutes,Software,Resolved
+CONV-1496,Slow system performance,Run a system diagnostic tool.,22 minutes,Software,Escalated
+CONV-1497,Cannot connect to Wi-Fi,Clear cache and remove unnecessary programs.,41 minutes,Performance,Escalated
+CONV-1498,Slow system performance,Verify your email settings.,75 minutes,Performance,Resolved after follow-up
+CONV-1499,Slow system performance,Clear cache and remove unnecessary programs.,48 minutes,Account,Pending
+CONV-1500,Forgot password,Follow the software installation guide.,116 minutes,Account,Resolved after follow-up
+CONV-1501,Slow system performance,Reinstall the printer drivers.,26 minutes,Network,Resolved after follow-up
+CONV-1502,Slow system performance,Reset your password using the link provided.,60 minutes,Network,Resolved after follow-up
+CONV-1503,Blue screen error,Clear cache and remove unnecessary programs.,27 minutes,Account,Resolved
+CONV-1504,Slow system performance,Run a system diagnostic tool.,41 minutes,Performance,Resolved
+CONV-1505,Forgot password,Reset your password using the link provided.,100 minutes,Performance,Resolved after follow-up
+CONV-1506,Blue screen error,Clear cache and remove unnecessary programs.,98 minutes,Network,Resolved
+CONV-1507,Slow system performance,Restart your router.,54 minutes,Software,Pending
+CONV-1508,Printer not responding,Run a system diagnostic tool.,41 minutes,Network,Resolved
+CONV-1509,Software installation failure,Verify your email settings.,92 minutes,Account,Escalated
+CONV-1510,Cannot connect to Wi-Fi,Verify your email settings.,77 minutes,Account,Pending
+CONV-1511,Software installation failure,Restart your router.,111 minutes,Software,Resolved after follow-up
+CONV-1512,Forgot password,Reset your password using the link provided.,65 minutes,Network,Pending
+CONV-1513,Unable to access email,Reinstall the printer drivers.,95 minutes,Hardware,Pending
+CONV-1514,Slow system performance,Reset your password using the link provided.,85 minutes,Network,Escalated
+CONV-1515,Slow system performance,Clear cache and remove unnecessary programs.,73 minutes,Hardware,Pending
+CONV-1516,Cannot connect to Wi-Fi,Restart your router.,63 minutes,Software,Escalated
+CONV-1517,Software installation failure,Reinstall the printer drivers.,88 minutes,Performance,Resolved after follow-up
+CONV-1518,Printer not responding,Follow the software installation guide.,107 minutes,Performance,Pending
+CONV-1519,Slow system performance,Verify your email settings.,92 minutes,Performance,Resolved after follow-up
+CONV-1520,Slow system performance,Reset your password using the link provided.,86 minutes,Hardware,Resolved after follow-up
+CONV-1521,Software installation failure,Verify your email settings.,66 minutes,Account,Resolved
+CONV-1522,Unable to access email,Reinstall the printer drivers.,106 minutes,Account,Resolved after follow-up
+CONV-1523,Slow system performance,Follow the software installation guide.,49 minutes,Network,Resolved after follow-up
+CONV-1524,Slow system performance,Run a system diagnostic tool.,116 minutes,Performance,Escalated
+CONV-1525,Unable to access email,Restart your router.,105 minutes,Network,Resolved after follow-up
+CONV-1526,Software installation failure,Clear cache and remove unnecessary programs.,59 minutes,Performance,Resolved after follow-up
+CONV-1527,Cannot connect to Wi-Fi,Reinstall the printer drivers.,99 minutes,Network,Resolved
+CONV-1528,Software installation failure,Restart your router.,95 minutes,Account,Resolved after follow-up
+CONV-1529,Blue screen error,Reset your password using the link provided.,56 minutes,Performance,Pending
+CONV-1530,Cannot connect to Wi-Fi,Run a system diagnostic tool.,89 minutes,Network,Resolved after follow-up
+CONV-1531,Software installation failure,Follow the software installation guide.,61 minutes,Account,Pending
+CONV-1532,Unable to access email,Reset your password using the link provided.,72 minutes,Network,Escalated
+CONV-1533,Blue screen error,Follow the software installation guide.,117 minutes,Performance,Resolved
+CONV-1534,Slow system performance,Verify your email settings.,37 minutes,Performance,Resolved after follow-up
+CONV-1535,Blue screen error,Follow the software installation guide.,114 minutes,Hardware,Resolved after follow-up
+CONV-1536,Unable to access email,Clear cache and remove unnecessary programs.,73 minutes,Network,Escalated
+CONV-1537,Cannot connect to Wi-Fi,Clear cache and remove unnecessary programs.,43 minutes,Hardware,Pending
+CONV-1538,Slow system performance,Verify your email settings.,110 minutes,Software,Pending
+CONV-1539,Forgot password,Restart your router.,47 minutes,Hardware,Escalated
+CONV-1540,Blue screen error,Restart your router.,19 minutes,Performance,Pending
+CONV-1541,Cannot connect to Wi-Fi,Run a system diagnostic tool.,12 minutes,Account,Resolved
+CONV-1542,Software installation failure,Restart your router.,24 minutes,Software,Resolved after follow-up
+CONV-1543,Unable to access email,Verify your email settings.,43 minutes,Hardware,Pending
+CONV-1544,Printer not responding,Reset your password using the link provided.,111 minutes,Network,Pending
+CONV-1545,Slow system performance,Run a system diagnostic tool.,31 minutes,Network,Resolved after follow-up
+CONV-1546,Software installation failure,Clear cache and remove unnecessary programs.,91 minutes,Software,Resolved after follow-up
+CONV-1547,Blue screen error,Clear cache and remove unnecessary programs.,113 minutes,Software,Resolved
+CONV-1548,Printer not responding,Verify your email settings.,68 minutes,Account,Pending
+CONV-1549,Forgot password,Verify your email settings.,106 minutes,Account,Pending
+CONV-1550,Slow system performance,Restart your router.,65 minutes,Account,Resolved
+CONV-1551,Cannot connect to Wi-Fi,Reset your password using the link provided.,21 minutes,Hardware,Resolved
+CONV-1552,Printer not responding,Reinstall the printer drivers.,109 minutes,Account,Resolved
+CONV-1553,Blue screen error,Reinstall the printer drivers.,118 minutes,Account,Resolved
+CONV-1554,Unable to access email,Run a system diagnostic tool.,16 minutes,Hardware,Resolved
+CONV-1555,Printer not responding,Reset your password using the link provided.,69 minutes,Software,Resolved
+CONV-1556,Software installation failure,Reset your password using the link provided.,40 minutes,Network,Escalated
+CONV-1557,Cannot connect to Wi-Fi,Verify your email settings.,36 minutes,Performance,Resolved
+CONV-1558,Cannot connect to Wi-Fi,Reset your password using the link provided.,71 minutes,Software,Escalated
+CONV-1559,Blue screen error,Verify your email settings.,38 minutes,Network,Escalated
+CONV-1560,Software installation failure,Reset your password using the link provided.,94 minutes,Performance,Resolved
+CONV-1561,Slow system performance,Verify your email settings.,82 minutes,Software,Resolved
+CONV-1562,Unable to access email,Clear cache and remove unnecessary programs.,119 minutes,Hardware,Resolved after follow-up
+CONV-1563,Software installation failure,Run a system diagnostic tool.,44 minutes,Performance,Escalated
+CONV-1564,Slow system performance,Reinstall the printer drivers.,39 minutes,Hardware,Pending
+CONV-1565,Unable to access email,Reinstall the printer drivers.,31 minutes,Software,Resolved after follow-up
+CONV-1566,Blue screen error,Restart your router.,88 minutes,Software,Escalated
+CONV-1567,Blue screen error,Reset your password using the link provided.,115 minutes,Software,Pending
+CONV-1568,Printer not responding,Clear cache and remove unnecessary programs.,115 minutes,Hardware,Resolved after follow-up
+CONV-1569,Unable to access email,Run a system diagnostic tool.,51 minutes,Network,Resolved after follow-up
+CONV-1570,Unable to access email,Verify your email settings.,50 minutes,Hardware,Pending
+CONV-1571,Cannot connect to Wi-Fi,Clear cache and remove unnecessary programs.,93 minutes,Performance,Resolved
+CONV-1572,Printer not responding,Reset your password using the link provided.,40 minutes,Network,Resolved after follow-up
+CONV-1573,Slow system performance,Verify your email settings.,52 minutes,Hardware,Pending
+CONV-1574,Cannot connect to Wi-Fi,Verify your email settings.,82 minutes,Software,Resolved after follow-up
+CONV-1575,Forgot password,Clear cache and remove unnecessary programs.,117 minutes,Software,Resolved after follow-up
+CONV-1576,Printer not responding,Run a system diagnostic tool.,44 minutes,Network,Pending
+CONV-1577,Blue screen error,Clear cache and remove unnecessary programs.,63 minutes,Software,Resolved after follow-up
+CONV-1578,Software installation failure,Reset your password using the link provided.,8 minutes,Network,Resolved
+CONV-1579,Cannot connect to Wi-Fi,Clear cache and remove unnecessary programs.,74 minutes,Network,Escalated
+CONV-1580,Printer not responding,Reset your password using the link provided.,68 minutes,Performance,Resolved after follow-up
+CONV-1581,Software installation failure,Restart your router.,5 minutes,Hardware,Resolved after follow-up
+CONV-1582,Cannot connect to Wi-Fi,Run a system diagnostic tool.,37 minutes,Network,Pending
+CONV-1583,Blue screen error,Follow the software installation guide.,26 minutes,Hardware,Pending
+CONV-1584,Unable to access email,Verify your email settings.,47 minutes,Account,Resolved after follow-up
+CONV-1585,Slow system performance,Restart your router.,91 minutes,Account,Escalated
+CONV-1586,Cannot connect to Wi-Fi,Verify your email settings.,85 minutes,Hardware,Pending
+CONV-1587,Slow system performance,Reinstall the printer drivers.,69 minutes,Performance,Escalated
+CONV-1588,Printer not responding,Run a system diagnostic tool.,8 minutes,Software,Escalated
+CONV-1589,Unable to access email,Restart your router.,115 minutes,Account,Resolved after follow-up
+CONV-1590,Unable to access email,Reinstall the printer drivers.,14 minutes,Network,Resolved
+CONV-1591,Cannot connect to Wi-Fi,Verify your email settings.,102 minutes,Network,Escalated
+CONV-1592,Printer not responding,Verify your email settings.,7 minutes,Account,Pending
+CONV-1593,Slow system performance,Run a system diagnostic tool.,28 minutes,Network,Escalated
+CONV-1594,Software installation failure,Run a system diagnostic tool.,107 minutes,Performance,Resolved after follow-up
+CONV-1595,Software installation failure,Clear cache and remove unnecessary programs.,30 minutes,Hardware,Resolved after follow-up
+CONV-1596,Cannot connect to Wi-Fi,Run a system diagnostic tool.,42 minutes,Account,Escalated
+CONV-1597,Slow system performance,Verify your email settings.,29 minutes,Account,Escalated
+CONV-1598,Forgot password,Reset your password using the link provided.,117 minutes,Hardware,Resolved
+CONV-1599,Blue screen error,Reset your password using the link provided.,14 minutes,Hardware,Escalated
+CONV-1600,Slow system performance,Reinstall the printer drivers.,56 minutes,Network,Resolved after follow-up
+CONV-1601,Blue screen error,Restart your router.,15 minutes,Hardware,Escalated
+CONV-1602,Slow system performance,Clear cache and remove unnecessary programs.,103 minutes,Network,Resolved
+CONV-1603,Unable to access email,Reset your password using the link provided.,5 minutes,Performance,Resolved
+CONV-1604,Blue screen error,Reset your password using the link provided.,93 minutes,Hardware,Escalated
+CONV-1605,Blue screen error,Reinstall the printer drivers.,99 minutes,Hardware,Resolved after follow-up
+CONV-1606,Printer not responding,Clear cache and remove unnecessary programs.,19 minutes,Account,Resolved after follow-up
+CONV-1607,Blue screen error,Restart your router.,7 minutes,Network,Pending
+CONV-1608,Cannot connect to Wi-Fi,Reset your password using the link provided.,56 minutes,Software,Pending
+CONV-1609,Printer not responding,Clear cache and remove unnecessary programs.,20 minutes,Hardware,Escalated
+CONV-1610,Cannot connect to Wi-Fi,Reset your password using the link provided.,91 minutes,Account,Pending
+CONV-1611,Blue screen error,Reset your password using the link provided.,102 minutes,Account,Resolved
+CONV-1612,Forgot password,Clear cache and remove unnecessary programs.,66 minutes,Hardware,Pending
+CONV-1613,Unable to access email,Clear cache and remove unnecessary programs.,46 minutes,Account,Escalated
+CONV-1614,Forgot password,Verify your email settings.,26 minutes,Account,Resolved after follow-up
+CONV-1615,Cannot connect to Wi-Fi,Verify your email settings.,30 minutes,Software,Resolved
+CONV-1616,Software installation failure,Verify your email settings.,35 minutes,Network,Escalated
+CONV-1617,Unable to access email,Verify your email settings.,99 minutes,Performance,Pending
+CONV-1618,Unable to access email,Reset your password using the link provided.,74 minutes,Network,Escalated
+CONV-1619,Slow system performance,Follow the software installation guide.,51 minutes,Hardware,Escalated
+CONV-1620,Unable to access email,Reset your password using the link provided.,86 minutes,Performance,Resolved
+CONV-1621,Printer not responding,Reset your password using the link provided.,79 minutes,Account,Pending
+CONV-1622,Cannot connect to Wi-Fi,Clear cache and remove unnecessary programs.,83 minutes,Performance,Escalated
+CONV-1623,Unable to access email,Restart your router.,95 minutes,Software,Escalated
+CONV-1624,Forgot password,Reinstall the printer drivers.,46 minutes,Hardware,Escalated
+CONV-1625,Software installation failure,Restart your router.,27 minutes,Performance,Resolved
+CONV-1626,Printer not responding,Follow the software installation guide.,94 minutes,Software,Resolved after follow-up
+CONV-1627,Printer not responding,Clear cache and remove unnecessary programs.,90 minutes,Software,Escalated
+CONV-1628,Blue screen error,Run a system diagnostic tool.,120 minutes,Software,Resolved
+CONV-1629,Blue screen error,Clear cache and remove unnecessary programs.,31 minutes,Network,Pending
+CONV-1630,Printer not responding,Follow the software installation guide.,43 minutes,Hardware,Escalated
+CONV-1631,Printer not responding,Reset your password using the link provided.,91 minutes,Hardware,Resolved
+CONV-1632,Printer not responding,Follow the software installation guide.,23 minutes,Network,Pending
+CONV-1633,Unable to access email,Clear cache and remove unnecessary programs.,117 minutes,Software,Pending
+CONV-1634,Cannot connect to Wi-Fi,Follow the software installation guide.,120 minutes,Account,Pending
+CONV-1635,Printer not responding,Clear cache and remove unnecessary programs.,56 minutes,Software,Pending
+CONV-1636,Blue screen error,Reset your password using the link provided.,58 minutes,Network,Escalated
+CONV-1637,Software installation failure,Follow the software installation guide.,78 minutes,Hardware,Pending
+CONV-1638,Blue screen error,Verify your email settings.,108 minutes,Performance,Pending
+CONV-1639,Blue screen error,Clear cache and remove unnecessary programs.,113 minutes,Software,Resolved after follow-up
+CONV-1640,Software installation failure,Clear cache and remove unnecessary programs.,84 minutes,Network,Resolved after follow-up
+CONV-1641,Printer not responding,Reinstall the printer drivers.,20 minutes,Software,Pending
+CONV-1642,Blue screen error,Reinstall the printer drivers.,28 minutes,Network,Escalated
+CONV-1643,Printer not responding,Follow the software installation guide.,62 minutes,Account,Resolved after follow-up
+CONV-1644,Slow system performance,Reinstall the printer drivers.,91 minutes,Account,Resolved after follow-up
+CONV-1645,Printer not responding,Follow the software installation guide.,110 minutes,Network,Resolved after follow-up
+CONV-1646,Printer not responding,Run a system diagnostic tool.,13 minutes,Account,Resolved after follow-up
+CONV-1647,Forgot password,Follow the software installation guide.,117 minutes,Hardware,Escalated
+CONV-1648,Software installation failure,Follow the software installation guide.,57 minutes,Network,Resolved
+CONV-1649,Blue screen error,Reset your password using the link provided.,28 minutes,Hardware,Resolved
+CONV-1650,Blue screen error,Restart your router.,103 minutes,Hardware,Resolved
+CONV-1651,Unable to access email,Reset your password using the link provided.,87 minutes,Hardware,Escalated
+CONV-1652,Printer not responding,Run a system diagnostic tool.,91 minutes,Performance,Escalated
+CONV-1653,Printer not responding,Reinstall the printer drivers.,98 minutes,Network,Resolved after follow-up
+CONV-1654,Slow system performance,Reinstall the printer drivers.,13 minutes,Software,Resolved
+CONV-1655,Blue screen error,Run a system diagnostic tool.,86 minutes,Hardware,Resolved
+CONV-1656,Unable to access email,Reinstall the printer drivers.,39 minutes,Software,Resolved
+CONV-1657,Slow system performance,Clear cache and remove unnecessary programs.,74 minutes,Software,Resolved after follow-up
+CONV-1658,Unable to access email,Reinstall the printer drivers.,10 minutes,Network,Escalated
+CONV-1659,Blue screen error,Run a system diagnostic tool.,112 minutes,Performance,Resolved after follow-up
+CONV-1660,Forgot password,Restart your router.,44 minutes,Hardware,Escalated
+CONV-1661,Forgot password,Clear cache and remove unnecessary programs.,52 minutes,Network,Resolved after follow-up
+CONV-1662,Blue screen error,Restart your router.,52 minutes,Hardware,Pending
+CONV-1663,Forgot password,Follow the software installation guide.,96 minutes,Software,Escalated
+CONV-1664,Unable to access email,Follow the software installation guide.,65 minutes,Account,Pending
+CONV-1665,Blue screen error,Restart your router.,44 minutes,Network,Escalated
+CONV-1666,Slow system performance,Reset your password using the link provided.,60 minutes,Hardware,Resolved after follow-up
+CONV-1667,Forgot password,Follow the software installation guide.,33 minutes,Account,Resolved after follow-up
+CONV-1668,Slow system performance,Reinstall the printer drivers.,83 minutes,Performance,Escalated
+CONV-1669,Blue screen error,Reinstall the printer drivers.,58 minutes,Account,Pending
+CONV-1670,Unable to access email,Clear cache and remove unnecessary programs.,43 minutes,Performance,Escalated
+CONV-1671,Blue screen error,Restart your router.,81 minutes,Performance,Pending
+CONV-1672,Cannot connect to Wi-Fi,Reset your password using the link provided.,52 minutes,Software,Escalated
+CONV-1673,Software installation failure,Follow the software installation guide.,103 minutes,Hardware,Resolved
+CONV-1674,Printer not responding,Follow the software installation guide.,113 minutes,Performance,Resolved after follow-up
+CONV-1675,Unable to access email,Reinstall the printer drivers.,15 minutes,Performance,Resolved after follow-up
+CONV-1676,Cannot connect to Wi-Fi,Verify your email settings.,95 minutes,Account,Resolved
+CONV-1677,Software installation failure,Clear cache and remove unnecessary programs.,39 minutes,Hardware,Resolved after follow-up
+CONV-1678,Slow system performance,Run a system diagnostic tool.,74 minutes,Software,Resolved
+CONV-1679,Cannot connect to Wi-Fi,Verify your email settings.,88 minutes,Account,Pending
+CONV-1680,Forgot password,Reinstall the printer drivers.,33 minutes,Software,Resolved
+CONV-1681,Slow system performance,Clear cache and remove unnecessary programs.,32 minutes,Performance,Resolved after follow-up
+CONV-1682,Blue screen error,Clear cache and remove unnecessary programs.,111 minutes,Performance,Resolved
+CONV-1683,Cannot connect to Wi-Fi,Clear cache and remove unnecessary programs.,36 minutes,Performance,Resolved after follow-up
+CONV-1684,Printer not responding,Verify your email settings.,30 minutes,Hardware,Resolved
+CONV-1685,Slow system performance,Restart your router.,63 minutes,Hardware,Resolved
+CONV-1686,Blue screen error,Verify your email settings.,66 minutes,Software,Resolved after follow-up
+CONV-1687,Cannot connect to Wi-Fi,Reinstall the printer drivers.,59 minutes,Hardware,Resolved after follow-up
+CONV-1688,Printer not responding,Follow the software installation guide.,64 minutes,Network,Escalated
+CONV-1689,Forgot password,Clear cache and remove unnecessary programs.,105 minutes,Software,Pending
+CONV-1690,Slow system performance,Restart your router.,39 minutes,Software,Pending
+CONV-1691,Slow system performance,Clear cache and remove unnecessary programs.,29 minutes,Account,Resolved after follow-up
+CONV-1692,Printer not responding,Verify your email settings.,95 minutes,Performance,Pending
+CONV-1693,Slow system performance,Reinstall the printer drivers.,93 minutes,Account,Escalated
+CONV-1694,Unable to access email,Reinstall the printer drivers.,89 minutes,Network,Resolved after follow-up
+CONV-1695,Blue screen error,Restart your router.,5 minutes,Account,Resolved
+CONV-1696,Printer not responding,Follow the software installation guide.,18 minutes,Network,Resolved
+CONV-1697,Slow system performance,Restart your router.,85 minutes,Hardware,Resolved after follow-up
+CONV-1698,Blue screen error,Clear cache and remove unnecessary programs.,16 minutes,Hardware,Resolved after follow-up
+CONV-1699,Forgot password,Reset your password using the link provided.,48 minutes,Account,Escalated
+CONV-1700,Printer not responding,Reset your password using the link provided.,119 minutes,Network,Escalated
+CONV-1701,Unable to access email,Reinstall the printer drivers.,74 minutes,Performance,Resolved after follow-up
+CONV-1702,Slow system performance,Restart your router.,39 minutes,Hardware,Pending
+CONV-1703,Software installation failure,Reset your password using the link provided.,8 minutes,Software,Escalated
+CONV-1704,Slow system performance,Verify your email settings.,100 minutes,Software,Resolved after follow-up
+CONV-1705,Printer not responding,Clear cache and remove unnecessary programs.,42 minutes,Network,Resolved after follow-up
+CONV-1706,Printer not responding,Reinstall the printer drivers.,59 minutes,Account,Resolved after follow-up
+CONV-1707,Slow system performance,Reset your password using the link provided.,33 minutes,Account,Resolved after follow-up
+CONV-1708,Software installation failure,Verify your email settings.,10 minutes,Software,Resolved after follow-up
+CONV-1709,Printer not responding,Follow the software installation guide.,81 minutes,Network,Pending
+CONV-1710,Forgot password,Restart your router.,82 minutes,Performance,Escalated
+CONV-1711,Unable to access email,Run a system diagnostic tool.,67 minutes,Performance,Escalated
+CONV-1712,Printer not responding,Reinstall the printer drivers.,71 minutes,Software,Escalated
+CONV-1713,Printer not responding,Reinstall the printer drivers.,109 minutes,Performance,Escalated
+CONV-1714,Unable to access email,Run a system diagnostic tool.,94 minutes,Software,Escalated
+CONV-1715,Blue screen error,Follow the software installation guide.,6 minutes,Network,Escalated
+CONV-1716,Blue screen error,Run a system diagnostic tool.,8 minutes,Account,Resolved
+CONV-1717,Forgot password,Follow the software installation guide.,55 minutes,Account,Resolved
+CONV-1718,Forgot password,Restart your router.,9 minutes,Performance,Resolved
+CONV-1719,Blue screen error,Run a system diagnostic tool.,15 minutes,Performance,Resolved after follow-up
+CONV-1720,Slow system performance,Clear cache and remove unnecessary programs.,67 minutes,Software,Resolved
+CONV-1721,Software installation failure,Clear cache and remove unnecessary programs.,60 minutes,Account,Pending
+CONV-1722,Cannot connect to Wi-Fi,Verify your email settings.,51 minutes,Software,Escalated
+CONV-1723,Unable to access email,Reinstall the printer drivers.,107 minutes,Hardware,Escalated
+CONV-1724,Printer not responding,Verify your email settings.,54 minutes,Hardware,Resolved after follow-up
+CONV-1725,Slow system performance,Verify your email settings.,67 minutes,Network,Resolved after follow-up
+CONV-1726,Printer not responding,Reinstall the printer drivers.,116 minutes,Performance,Resolved
+CONV-1727,Forgot password,Reinstall the printer drivers.,16 minutes,Hardware,Pending
+CONV-1728,Cannot connect to Wi-Fi,Verify your email settings.,98 minutes,Network,Resolved
+CONV-1729,Cannot connect to Wi-Fi,Reset your password using the link provided.,83 minutes,Performance,Resolved after follow-up
+CONV-1730,Unable to access email,Follow the software installation guide.,108 minutes,Performance,Escalated
+CONV-1731,Unable to access email,Reinstall the printer drivers.,72 minutes,Performance,Pending
+CONV-1732,Blue screen error,Reset your password using the link provided.,10 minutes,Performance,Resolved
+CONV-1733,Unable to access email,Restart your router.,16 minutes,Software,Pending
+CONV-1734,Slow system performance,Reset your password using the link provided.,97 minutes,Network,Resolved after follow-up
+CONV-1735,Software installation failure,Run a system diagnostic tool.,54 minutes,Account,Pending
+CONV-1736,Slow system performance,Run a system diagnostic tool.,26 minutes,Account,Resolved
+CONV-1737,Forgot password,Clear cache and remove unnecessary programs.,47 minutes,Hardware,Resolved after follow-up
+CONV-1738,Blue screen error,Clear cache and remove unnecessary programs.,100 minutes,Account,Resolved
+CONV-1739,Printer not responding,Restart your router.,97 minutes,Performance,Escalated
+CONV-1740,Printer not responding,Verify your email settings.,32 minutes,Network,Resolved
+CONV-1741,Cannot connect to Wi-Fi,Clear cache and remove unnecessary programs.,57 minutes,Account,Resolved after follow-up
+CONV-1742,Forgot password,Run a system diagnostic tool.,20 minutes,Network,Escalated
+CONV-1743,Blue screen error,Follow the software installation guide.,13 minutes,Software,Pending
+CONV-1744,Printer not responding,Clear cache and remove unnecessary programs.,108 minutes,Network,Escalated
+CONV-1745,Forgot password,Reset your password using the link provided.,74 minutes,Software,Escalated
+CONV-1746,Unable to access email,Reinstall the printer drivers.,60 minutes,Hardware,Escalated
+CONV-1747,Cannot connect to Wi-Fi,Reinstall the printer drivers.,56 minutes,Performance,Escalated
+CONV-1748,Unable to access email,Run a system diagnostic tool.,9 minutes,Performance,Resolved after follow-up
+CONV-1749,Software installation failure,Follow the software installation guide.,79 minutes,Network,Pending
+CONV-1750,Software installation failure,Reinstall the printer drivers.,29 minutes,Network,Resolved
+CONV-1751,Software installation failure,Follow the software installation guide.,18 minutes,Software,Resolved
+CONV-1752,Slow system performance,Verify your email settings.,36 minutes,Account,Resolved after follow-up
+CONV-1753,Blue screen error,Clear cache and remove unnecessary programs.,77 minutes,Software,Resolved
+CONV-1754,Unable to access email,Reset your password using the link provided.,84 minutes,Software,Resolved after follow-up
+CONV-1755,Software installation failure,Run a system diagnostic tool.,61 minutes,Software,Resolved after follow-up
+CONV-1756,Unable to access email,Clear cache and remove unnecessary programs.,94 minutes,Network,Resolved after follow-up
+CONV-1757,Slow system performance,Restart your router.,71 minutes,Software,Resolved
+CONV-1758,Cannot connect to Wi-Fi,Run a system diagnostic tool.,44 minutes,Performance,Resolved
+CONV-1759,Cannot connect to Wi-Fi,Clear cache and remove unnecessary programs.,39 minutes,Account,Resolved
+CONV-1760,Printer not responding,Reinstall the printer drivers.,87 minutes,Hardware,Pending
+CONV-1761,Forgot password,Clear cache and remove unnecessary programs.,7 minutes,Hardware,Escalated
+CONV-1762,Blue screen error,Restart your router.,6 minutes,Performance,Resolved after follow-up
+CONV-1763,Cannot connect to Wi-Fi,Restart your router.,44 minutes,Software,Escalated
+CONV-1764,Software installation failure,Reinstall the printer drivers.,101 minutes,Software,Resolved after follow-up
+CONV-1765,Slow system performance,Restart your router.,96 minutes,Network,Resolved
+CONV-1766,Cannot connect to Wi-Fi,Run a system diagnostic tool.,82 minutes,Performance,Resolved after follow-up
+CONV-1767,Forgot password,Reinstall the printer drivers.,17 minutes,Performance,Pending
+CONV-1768,Forgot password,Reinstall the printer drivers.,84 minutes,Network,Pending
+CONV-1769,Blue screen error,Reset your password using the link provided.,12 minutes,Hardware,Resolved
+CONV-1770,Cannot connect to Wi-Fi,Restart your router.,99 minutes,Hardware,Resolved
+CONV-1771,Slow system performance,Restart your router.,76 minutes,Hardware,Resolved
+CONV-1772,Cannot connect to Wi-Fi,Clear cache and remove unnecessary programs.,111 minutes,Hardware,Pending
+CONV-1773,Unable to access email,Verify your email settings.,118 minutes,Software,Pending
+CONV-1774,Forgot password,Reinstall the printer drivers.,78 minutes,Account,Escalated
+CONV-1775,Cannot connect to Wi-Fi,Reinstall the printer drivers.,49 minutes,Software,Escalated
+CONV-1776,Forgot password,Restart your router.,106 minutes,Account,Resolved
+CONV-1777,Cannot connect to Wi-Fi,Reset your password using the link provided.,83 minutes,Performance,Resolved after follow-up
+CONV-1778,Cannot connect to Wi-Fi,Verify your email settings.,83 minutes,Software,Resolved after follow-up
+CONV-1779,Slow system performance,Reinstall the printer drivers.,116 minutes,Network,Resolved after follow-up
+CONV-1780,Slow system performance,Verify your email settings.,62 minutes,Network,Escalated
+CONV-1781,Slow system performance,Clear cache and remove unnecessary programs.,65 minutes,Software,Escalated
+CONV-1782,Unable to access email,Run a system diagnostic tool.,88 minutes,Performance,Resolved after follow-up
+CONV-1783,Slow system performance,Follow the software installation guide.,49 minutes,Network,Resolved after follow-up
+CONV-1784,Cannot connect to Wi-Fi,Reinstall the printer drivers.,81 minutes,Account,Pending
+CONV-1785,Blue screen error,Restart your router.,60 minutes,Hardware,Pending
+CONV-1786,Cannot connect to Wi-Fi,Verify your email settings.,45 minutes,Network,Resolved
+CONV-1787,Blue screen error,Reinstall the printer drivers.,82 minutes,Account,Pending
+CONV-1788,Unable to access email,Restart your router.,50 minutes,Hardware,Resolved
+CONV-1789,Blue screen error,Clear cache and remove unnecessary programs.,95 minutes,Account,Resolved
+CONV-1790,Slow system performance,Clear cache and remove unnecessary programs.,114 minutes,Software,Resolved
+CONV-1791,Cannot connect to Wi-Fi,Clear cache and remove unnecessary programs.,98 minutes,Hardware,Resolved
+CONV-1792,Printer not responding,Restart your router.,80 minutes,Network,Resolved
+CONV-1793,Cannot connect to Wi-Fi,Verify your email settings.,23 minutes,Software,Resolved
+CONV-1794,Software installation failure,Follow the software installation guide.,111 minutes,Network,Pending
+CONV-1795,Printer not responding,Clear cache and remove unnecessary programs.,11 minutes,Account,Pending
+CONV-1796,Forgot password,Follow the software installation guide.,39 minutes,Performance,Resolved
+CONV-1797,Forgot password,Verify your email settings.,72 minutes,Software,Escalated
+CONV-1798,Unable to access email,Run a system diagnostic tool.,80 minutes,Account,Pending
+CONV-1799,Cannot connect to Wi-Fi,Reset your password using the link provided.,78 minutes,Performance,Pending
+CONV-1800,Printer not responding,Restart your router.,53 minutes,Software,Escalated
+CONV-1801,Unable to access email,Run a system diagnostic tool.,100 minutes,Network,Resolved
+CONV-1802,Slow system performance,Reinstall the printer drivers.,28 minutes,Network,Resolved
+CONV-1803,Slow system performance,Restart your router.,70 minutes,Hardware,Pending
+CONV-1804,Blue screen error,Reinstall the printer drivers.,98 minutes,Account,Resolved
+CONV-1805,Blue screen error,Reset your password using the link provided.,85 minutes,Software,Escalated
+CONV-1806,Slow system performance,Reset your password using the link provided.,6 minutes,Account,Resolved
+CONV-1807,Cannot connect to Wi-Fi,Restart your router.,20 minutes,Performance,Resolved
+CONV-1808,Blue screen error,Reset your password using the link provided.,34 minutes,Hardware,Resolved
+CONV-1809,Cannot connect to Wi-Fi,Run a system diagnostic tool.,91 minutes,Network,Resolved
+CONV-1810,Printer not responding,Follow the software installation guide.,104 minutes,Performance,Resolved
+CONV-1811,Forgot password,Reset your password using the link provided.,94 minutes,Performance,Resolved
+CONV-1812,Unable to access email,Verify your email settings.,85 minutes,Performance,Escalated
+CONV-1813,Forgot password,Follow the software installation guide.,34 minutes,Hardware,Resolved after follow-up
+CONV-1814,Slow system performance,Reinstall the printer drivers.,14 minutes,Performance,Resolved
+CONV-1815,Forgot password,Reinstall the printer drivers.,71 minutes,Account,Resolved
+CONV-1816,Blue screen error,Follow the software installation guide.,55 minutes,Software,Pending
+CONV-1817,Blue screen error,Run a system diagnostic tool.,39 minutes,Software,Resolved
+CONV-1818,Software installation failure,Reset your password using the link provided.,69 minutes,Hardware,Resolved
+CONV-1819,Cannot connect to Wi-Fi,Restart your router.,12 minutes,Software,Pending
+CONV-1820,Printer not responding,Restart your router.,100 minutes,Performance,Resolved
+CONV-1821,Blue screen error,Follow the software installation guide.,93 minutes,Network,Escalated
+CONV-1822,Software installation failure,Restart your router.,77 minutes,Hardware,Pending
+CONV-1823,Cannot connect to Wi-Fi,Restart your router.,105 minutes,Software,Resolved after follow-up
+CONV-1824,Printer not responding,Reset your password using the link provided.,87 minutes,Account,Resolved
+CONV-1825,Software installation failure,Reinstall the printer drivers.,86 minutes,Account,Resolved after follow-up
+CONV-1826,Cannot connect to Wi-Fi,Verify your email settings.,56 minutes,Account,Resolved after follow-up
+CONV-1827,Forgot password,Reinstall the printer drivers.,71 minutes,Hardware,Resolved
+CONV-1828,Blue screen error,Run a system diagnostic tool.,100 minutes,Software,Resolved
+CONV-1829,Slow system performance,Reinstall the printer drivers.,60 minutes,Software,Pending
+CONV-1830,Slow system performance,Run a system diagnostic tool.,5 minutes,Performance,Pending
+CONV-1831,Software installation failure,Run a system diagnostic tool.,62 minutes,Network,Escalated
+CONV-1832,Unable to access email,Restart your router.,98 minutes,Network,Pending
+CONV-1833,Cannot connect to Wi-Fi,Reinstall the printer drivers.,58 minutes,Hardware,Pending
+CONV-1834,Unable to access email,Restart your router.,11 minutes,Account,Resolved after follow-up
+CONV-1835,Software installation failure,Restart your router.,23 minutes,Hardware,Pending
+CONV-1836,Forgot password,Follow the software installation guide.,21 minutes,Network,Escalated
+CONV-1837,Printer not responding,Run a system diagnostic tool.,101 minutes,Hardware,Resolved
+CONV-1838,Forgot password,Run a system diagnostic tool.,20 minutes,Account,Resolved
+CONV-1839,Unable to access email,Restart your router.,78 minutes,Hardware,Escalated
+CONV-1840,Printer not responding,Reinstall the printer drivers.,82 minutes,Network,Resolved
+CONV-1841,Unable to access email,Clear cache and remove unnecessary programs.,43 minutes,Software,Escalated
+CONV-1842,Forgot password,Follow the software installation guide.,58 minutes,Software,Resolved after follow-up
+CONV-1843,Blue screen error,Restart your router.,119 minutes,Performance,Resolved
+CONV-1844,Printer not responding,Clear cache and remove unnecessary programs.,82 minutes,Performance,Escalated
+CONV-1845,Software installation failure,Reinstall the printer drivers.,85 minutes,Account,Escalated
+CONV-1846,Slow system performance,Follow the software installation guide.,46 minutes,Performance,Pending
+CONV-1847,Slow system performance,Run a system diagnostic tool.,74 minutes,Software,Escalated
+CONV-1848,Printer not responding,Restart your router.,89 minutes,Network,Resolved
+CONV-1849,Blue screen error,Reset your password using the link provided.,22 minutes,Software,Pending
+CONV-1850,Software installation failure,Follow the software installation guide.,91 minutes,Hardware,Resolved
+CONV-1851,Blue screen error,Verify your email settings.,6 minutes,Network,Pending
+CONV-1852,Printer not responding,Verify your email settings.,79 minutes,Performance,Resolved after follow-up
+CONV-1853,Software installation failure,Clear cache and remove unnecessary programs.,112 minutes,Network,Escalated
+CONV-1854,Slow system performance,Follow the software installation guide.,90 minutes,Software,Resolved
+CONV-1855,Cannot connect to Wi-Fi,Restart your router.,89 minutes,Account,Escalated
+CONV-1856,Forgot password,Run a system diagnostic tool.,40 minutes,Account,Resolved
+CONV-1857,Software installation failure,Run a system diagnostic tool.,91 minutes,Network,Resolved after follow-up
+CONV-1858,Cannot connect to Wi-Fi,Verify your email settings.,107 minutes,Software,Pending
+CONV-1859,Software installation failure,Verify your email settings.,40 minutes,Account,Resolved
+CONV-1860,Slow system performance,Run a system diagnostic tool.,41 minutes,Performance,Resolved after follow-up
+CONV-1861,Forgot password,Follow the software installation guide.,54 minutes,Software,Escalated
+CONV-1862,Unable to access email,Reset your password using the link provided.,118 minutes,Software,Resolved
+CONV-1863,Blue screen error,Follow the software installation guide.,105 minutes,Hardware,Escalated
+CONV-1864,Cannot connect to Wi-Fi,Verify your email settings.,90 minutes,Network,Pending
+CONV-1865,Cannot connect to Wi-Fi,Clear cache and remove unnecessary programs.,22 minutes,Network,Pending
+CONV-1866,Cannot connect to Wi-Fi,Verify your email settings.,32 minutes,Hardware,Resolved after follow-up
+CONV-1867,Unable to access email,Clear cache and remove unnecessary programs.,117 minutes,Network,Escalated
+CONV-1868,Cannot connect to Wi-Fi,Clear cache and remove unnecessary programs.,86 minutes,Hardware,Resolved after follow-up
+CONV-1869,Software installation failure,Follow the software installation guide.,93 minutes,Performance,Escalated
+CONV-1870,Unable to access email,Reset your password using the link provided.,105 minutes,Software,Pending
+CONV-1871,Forgot password,Restart your router.,20 minutes,Hardware,Resolved
+CONV-1872,Unable to access email,Verify your email settings.,46 minutes,Software,Resolved
+CONV-1873,Blue screen error,Reset your password using the link provided.,64 minutes,Account,Resolved
+CONV-1874,Unable to access email,Verify your email settings.,46 minutes,Network,Resolved
+CONV-1875,Cannot connect to Wi-Fi,Run a system diagnostic tool.,103 minutes,Software,Escalated
+CONV-1876,Blue screen error,Restart your router.,51 minutes,Hardware,Escalated
+CONV-1877,Software installation failure,Run a system diagnostic tool.,53 minutes,Performance,Pending
+CONV-1878,Printer not responding,Verify your email settings.,86 minutes,Network,Resolved after follow-up
+CONV-1879,Forgot password,Verify your email settings.,87 minutes,Account,Escalated
+CONV-1880,Cannot connect to Wi-Fi,Clear cache and remove unnecessary programs.,86 minutes,Account,Resolved after follow-up
+CONV-1881,Blue screen error,Restart your router.,42 minutes,Account,Escalated
+CONV-1882,Printer not responding,Run a system diagnostic tool.,69 minutes,Network,Resolved
+CONV-1883,Slow system performance,Reset your password using the link provided.,15 minutes,Network,Escalated
+CONV-1884,Printer not responding,Verify your email settings.,40 minutes,Network,Resolved after follow-up
+CONV-1885,Forgot password,Reinstall the printer drivers.,13 minutes,Hardware,Resolved after follow-up
+CONV-1886,Software installation failure,Restart your router.,66 minutes,Account,Escalated
+CONV-1887,Blue screen error,Restart your router.,114 minutes,Network,Resolved
+CONV-1888,Unable to access email,Reinstall the printer drivers.,6 minutes,Network,Resolved
+CONV-1889,Blue screen error,Run a system diagnostic tool.,94 minutes,Performance,Resolved after follow-up
+CONV-1890,Software installation failure,Reset your password using the link provided.,90 minutes,Network,Resolved after follow-up
+CONV-1891,Blue screen error,Restart your router.,107 minutes,Hardware,Resolved after follow-up
+CONV-1892,Forgot password,Verify your email settings.,95 minutes,Hardware,Escalated
+CONV-1893,Software installation failure,Run a system diagnostic tool.,13 minutes,Hardware,Resolved
+CONV-1894,Forgot password,Follow the software installation guide.,32 minutes,Network,Resolved
+CONV-1895,Blue screen error,Run a system diagnostic tool.,109 minutes,Hardware,Escalated
+CONV-1896,Unable to access email,Restart your router.,77 minutes,Network,Resolved after follow-up
