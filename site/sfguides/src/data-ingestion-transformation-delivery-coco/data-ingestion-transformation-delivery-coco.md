@@ -138,7 +138,7 @@ Make sure you are signed into your trial account. Confirm your active role is **
 
 ### Create a Git-backed Workspace
 
-1. In Snowsight, navigate to **Projects » Workspaces**.
+1. In Snowsight, select **Workspaces** in the navigation menu.
 
 2. Click the **+** icon next to **Workspaces/Databases** → **Create new Git workspace**.
 
@@ -421,7 +421,7 @@ We have clean, refreshing data. Now we need to make it accessible to analysts �
 
 A Semantic View describes the tables in **business terms**: dates to group by, sales and order values to analyze, weather conditions to compare, and the relationship that connects them. Cortex Analyst uses that model to answer questions about Hamburg sales and weather.
 
-1. In Snowsight, navigate to **AI & ML → Cortex Analyst** and click **Create in Workspaces**.
+1. In Snowsight, navigate to **AI → Analyst** and click **Create with Autopilot in Workspaces** in the top right. This opens a new semantic view file in Workspaces.
 
 2. Click **Create with CoCo**.
 
@@ -470,7 +470,7 @@ A Semantic View describes the tables in **business terms**: dates to group by, s
 
 **Cortex Analyst** is Snowflake's text-to-SQL engine — it reads the Semantic View to understand your data model and converts natural-language questions into SQL queries. The **Cortex Agent** is the AI orchestration layer that receives questions from analysts and routes them to Cortex Analyst as the tool.
 
-1. In Snowsight, navigate to **AI & ML → Agents**.
+1. In Snowsight, navigate to **AI → Agent Studio**.
 
 2. Click **Create agent** in the top right.
 
@@ -521,7 +521,7 @@ A Semantic View describes the tables in **business terms**: dates to group by, s
 
 Since you created the agent through the UI, it is already available in Snowflake CoWork.
 
-1. In Snowsight, navigate to **AI & ML → Snowflake CoWork**.
+1. In Snowsight, navigate to **AI → Snowflake CoWork**. CoWork opens in a new browser tab.
 
 ![cowork](./assets/cowork.png)
 
