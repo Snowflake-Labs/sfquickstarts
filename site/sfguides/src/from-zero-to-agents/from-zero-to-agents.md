@@ -47,7 +47,7 @@ What you’ll build to solve these issues:
 1. Cortex AI turns raw transcripts into structured sentiment and category labels
 2. Dynamic Tables automate so that data stays current as new feedback arrives
 3. Semantic View bridges campaign metrics and customer feedback into one model
-4. Snowflake Intelligence that allows analysts to ask natural language questions 
+4. Snowflake CoWork that allows analysts to ask natural language questions 
 
 
 ### Setup Instructions
@@ -55,9 +55,11 @@ Establish the secure foundation using the provided `setup.sql` script. This scri
 
 Run [setup.sql](https://github.com/Snowflake-Labs/sfquickstarts/blob/master/site/sfguides/src/from-zero-to-agents/assets/setup.sql) in a Snowsight SQL Worksheet.
 
+> **Note:** Don't run this lab on the same account as the Getting Started with Snowflake CoWork lab. Both labs create the `DASH_DB_SI` database, the `DASH_WH_SI` warehouse, and the `SNOWFLAKE_INTELLIGENCE_ADMIN` role, so running one replaces the other's objects.
+
 ### What Gets Provisioned
 
-- **Infrastructure:** Provisions the `dash_wh_si` warehouse and `snowflake_intelligence` database
+- **Infrastructure:** Provisions the `dash_wh_si` warehouse and `snowflake_intelligence` database. Snowflake CoWork was previously called Snowflake Intelligence, so some object and role names still use the old name.
 - **Ingestion:** Loads **structured metrics** (campaign spend, product sales) and **unstructured transcripts** (`support_cases`)
 
 <!-- ------------------------ -->
@@ -108,6 +110,7 @@ Transform "dark data" (raw transcripts) into analytical trends using Cortex AI F
 ```sql
 USE DATABASE DASH_DB_SI;
 USE SCHEMA RETAIL;
+-- Align the support case product name with the marketing category so the two tables can be joined later
 UPDATE support_cases SET product = 'Fitness Wear' WHERE product = 'ThermoJacket Pro';
 SELECT 
     title,
@@ -144,7 +147,9 @@ Instead of running a one-time enrichment, you define a **Dynamic Table**. This t
 
 ### Create the Enriched Dynamic Table
 
-Create a Dynamic Table that automatically joins campaign metrics with AI-generated sentiment. `AI_SENTIMENT` returns a category, so a `CASE` expression converts it to a number (positive = 1, neutral/mixed = 0, negative = -1) that can be averaged:
+Create a Dynamic Table that automatically joins campaign metrics with AI-generated sentiment. `AI_SENTIMENT` returns a category, so a `CASE` expression converts it to a number (positive = 1, neutral/mixed = 0, negative = -1) that can be averaged.
+
+The query totals clicks per campaign and averages sentiment per product **before** joining them. Joining the raw tables directly would repeat each campaign row once for every support case, which inflates the click totals.
 
 ```sql
 USE ROLE SNOWFLAKE_INTELLIGENCE_ADMIN;
@@ -154,18 +159,28 @@ CREATE OR REPLACE DYNAMIC TABLE enriched_marketing_intelligence
 TARGET_LAG = '1 hours'
 WAREHOUSE = dash_wh_si
 AS
-SELECT m.campaign_name, m.clicks, s.product AS product_name,
-       CASE AI_SENTIMENT(s.transcript):categories[0]:sentiment::STRING
-            WHEN 'positive' THEN 1
-            WHEN 'negative' THEN -1
-            ELSE 0
-       END AS avg_sentiment
-FROM marketing_campaign_metrics m
-JOIN support_cases s ON m.category = s.product;
+WITH sentiment AS (
+    SELECT product,
+           AVG(CASE AI_SENTIMENT(transcript):categories[0]:sentiment::STRING
+                   WHEN 'positive' THEN 1
+                   WHEN 'negative' THEN -1
+                   ELSE 0
+               END) AS avg_sentiment
+    FROM support_cases
+    GROUP BY product
+),
+campaigns AS (
+    SELECT campaign_name, category, SUM(clicks) AS clicks
+    FROM marketing_campaign_metrics
+    GROUP BY campaign_name, category
+)
+SELECT c.campaign_name, c.clicks, c.category AS product_name, s.avg_sentiment
+FROM campaigns c
+JOIN sentiment s ON c.category = s.product;
 ```
 Confirm the creation of the Dynamic Table by navigating to `Catalog` > `Database Explorer` > `DASH_DB_SI.RETAIL.DYNAMIC TABLES.ENRICHED_MARKETING_INTELLIGENCE`. If you do not see your table, click on the refresh button and the table should appear. 
 
-![Dynamic tbales](assets/dynamictable.png)
+![Dynamic tables](assets/dynamictable.png)
 
 <!-- ------------------------ -->
 
@@ -176,71 +191,104 @@ Provide the agent with a "map" to understand your business logic through a **Sem
 ### Create a Cortex Analyst
 This tool enables the agent to query structured data in Snowflake by generating SQL. It relies on semantic views, which are mappings between business concepts (e.g., "product name," "sales") and the underlying tables and columns in your Snowflake account. This abstraction helps the LLM understand how to query your data effectively, even if your tables have complex or arbitrary naming conventions.
 
-1. Navigate to **AI & ML > Analyst** in Snowsight then click `Create with Autopilot` in the top right
-2. At the top, confirm that the role is set to `SNOWFLAKE_INTELLIGENCE_ADMIN` and warehouse is set to `DASH_WH_SI`
-3. Click `Skip` on the `Provide context` page 
-5. Configure the following settings:
-   - **Name:** `SEMANTIC_VIEW`
-   - **Location to store:** `DASH_DB_SI.Retail`
-   - **Select tables:** Select all tables `DASH_DB_SI.Retail` (there should be 5 tables and 1 dynamic table)
-   - **Select Columns:** Select all columns
-6. Click `Create`
-7. Scroll to the `MARKETING_CAMPAIGN_METRICS` section and click `Edit`
-8. Set `+ Primary Key` to `Category` and click `Save`
+**What is CoCo?** CoCo (Cortex Code) is Snowflake's AI assistant, built into Snowsight and Workspaces. You describe what you want in natural language, and CoCo finds the right tables, writes the SQL or configuration, and explains what it did. Before it runs anything, it shows you the plan and asks for approval. Click the CoCo icon in the bottom-right corner of the browser to open the panel.
 
-![Primary key](assets/primarykey.png)
+1. Confirm that the role is set to `SNOWFLAKE_INTELLIGENCE_ADMIN` and the warehouse is set to `DASH_WH_SI`
+2. Navigate to **AI > Cortex Analyst** in Snowsight, then select **Create with Autopilot in Workspaces**
+3. Select **Create with CoCo**
+4. Send CoCo this prompt:
 
-7. Scroll down and click + on `Relationships`
-8. Configure the following settings:
-   - **From Table:** `ENRICHED_MARKETING_INTELLIGENCE`
-   - **To Table:** `MARKETING_CAMPAIGN_METRICS`
-   - **Relationship Type:** `Many to One`
-   - **From Column:** `PRODUCT_NAME`
-   - **To Column:** `CATEGORY`
+> "Create a semantic view with these details:
+> - Name: SEMANTIC_VIEW
+> - Location: DASH_DB_SI.RETAIL
+> - Tables: ENRICHED_MARKETING_INTELLIGENCE, MARKETING_CAMPAIGN_METRICS, PRODUCTS, SALES, SOCIAL_MEDIA, SUPPORT_CASES
+> - Add a description to the PRODUCT_NAME dimension on ENRICHED_MARKETING_INTELLIGENCE: 'Product category value, which matches SUPPORT_CASES.PRODUCT.'
+> - Add a description to the AVG_SENTIMENT fact on ENRICHED_MARKETING_INTELLIGENCE: 'Average sentiment of support cases for that product category, from -1 (negative) to 1 (positive).'
+> - Add one many-to-one relationship from SALES.PRODUCT_ID to PRODUCTS.PRODUCT_ID. Do not add any relationship keyed on CATEGORY.
+> - Add metrics: Total Clicks = SUM(CLICKS) and Total Impressions = SUM(IMPRESSIONS) on MARKETING_CAMPAIGN_METRICS; Click-Through Rate = SUM(CLICKS) / NULLIF(SUM(IMPRESSIONS), 0) on MARKETING_CAMPAIGN_METRICS; Total Sales = SUM(SALES_AMOUNT) and Units Sold = SUM(UNITS_SOLD) on SALES."
 
-9. Add the relationship, then save the Analyst in the top right corner
 
-![Relationship](assets/relationship.png)
+**What this prompt asks for**
 
-   
+| Part of the prompt | What it does |
+|---|---|
+| "Name: SEMANTIC_VIEW, Location: DASH_DB_SI.RETAIL" | Sets the name and where the view is stored |
+| "Tables: ..." | Names the six tables to include |
+| "Add a description to the PRODUCT_NAME dimension..." | Explains what the category field means to the agent |
+| "Add a description to the AVG_SENTIMENT fact..." | Gives the sentiment score's scale |
+| "Add one many-to-one relationship from SALES.PRODUCT_ID to PRODUCTS.PRODUCT_ID" | Connects sales to products |
+| "Do not add any relationship keyed on CATEGORY" | Prevents a join on a field that repeats across rows |
+| "Add metrics: ..." | Defines each calculation once, so the agent doesn't have to guess |
+
+**Expected:** the draft opens in the Semantic View editor and contains the items in the checklist below.
+
+5. Allow CoCo to create the semantic view draft in the Workspace. This creates an editable draft; it does not deploy it yet.
+
+#### Review the Semantic View
+Review the draft in the Semantic View editor and confirm it contains:
+
+- [ ] Under **Dimensions** for `ENRICHED_MARKETING_INTELLIGENCE`, `PRODUCT_NAME` has this description: "Product category value, which matches SUPPORT_CASES.PRODUCT."
+- [ ] Under **Facts** for `ENRICHED_MARKETING_INTELLIGENCE`, `AVG_SENTIMENT` has this description: "Average sentiment of support cases for that product category, from -1 (negative) to 1 (positive)."
+- [ ] One relationship: `SALES.PRODUCT_ID` to `PRODUCTS.PRODUCT_ID`, many-to-one.
+- [ ] In the **Relationships** list, no relationship uses `CATEGORY` as a key. `CATEGORY` repeats across many rows in `MARKETING_CAMPAIGN_METRICS`, `PRODUCTS`, and `SOCIAL_MEDIA`, so it can't identify one row. Delete any relationship that uses it.
+- [ ] Under **Metrics**, on `MARKETING_CAMPAIGN_METRICS`, these three metrics exist (each sums facts from that table):
+  - `Total Clicks`: SUM of `CLICKS`
+  - `Total Impressions`: SUM of `IMPRESSIONS`
+  - `Click-Through Rate`: SUM of `CLICKS` divided by SUM of `IMPRESSIONS`
+- [ ] Under **Metrics**, on `SALES`, these two metrics exist (each sums facts from that table):
+  - `Total Sales`: SUM of `SALES_AMOUNT`
+  - `Units Sold`: SUM of `UNITS_SOLD`
+
+CoCo may add other descriptions, synonyms, dimensions, or metrics. That's fine, as long as the items above are present and correct.
+
+If anything is missing, add or correct it in the editor. Leave the suggestions disabled.
+
+6. Select **Deploy**. In the dialog, confirm **Name** `SEMANTIC_VIEW`, **Database** `DASH_DB_SI`, and **Schema** `RETAIL`, then select **Deploy** to create the semantic view.
+
 ### Create a Cortex Search Service
 This tool allows the agent to search and retrieve information from unstructured text data, such as customer support tickets, Slack conversations, or contracts. It leverages Cortex Search to index and query these text "chunks," enabling the agent to perform Retrieval Augmented Generation (RAG).
 
-1. Navigate to **AI & ML > Search** in Snowsight
+In this lab, the search service indexes the customer support transcripts, so the agent can answer "why" questions with what customers actually said.
+
+1. Navigate to **AI > Cortex Search** in Snowsight
 2. Confirm that role is set to `SNOWFLAKE_INTELLIGENCE_ADMIN`
 3. Select **Create**
 4. Configure the following settings:
    - **Service database & schema:** `DASH_DB_SI.Retail`
-   - **Service name:** `campaign_search`
-   - **Select data:** `marketing_campaign_metrics`
-   - **Select search column:** `campaign name`
-   - **Select attribute:** `Select all`
+   - **Service name:** `support_search`
+   - **Select data:** `support_cases`
+   - **Select search column:** `TRANSCRIPT`
+   - **Select attributes:** `PRODUCT` and `TITLE`
    - **Select columns:** `Select all`
    - **Warehouse for indexing:** `DASH_WH_SI`
-5. Click `create` and click the refresh icon in the top right corner. `Serving` will update from `INITALIZING` to `ACTIVE`
+5. Click `create` and click the refresh icon in the top right corner. `Serving` will update from `INITIALIZING` to `ACTIVE`
 
 ![Active Cortex Search](assets/servingactive.png)
 
 
 ## Create the Agent
-An agent is an intelligent entity within Snowflake Intelligence that acts on behalf of the user. Agents are configured with specific tools and orchestration logic to answer questions and perform tasks on top of your data.
+An agent is an intelligent entity that acts on behalf of the user, and you can chat with it in Snowflake CoWork. Agents are configured with specific tools and orchestration logic to answer questions and perform tasks on top of your data.
 
-1. Navigate to **AI & ML > Agents** in Snowsight
+1. Navigate to **AI > Agent Studio** in Snowsight
 2. On the top right, click on **Create agent**
    - **Database and schema**: `DASH_DB_SI.Retail`
    - **Agent object name**: `MarketingAgent`
 3. Create the agent
+4. Click **Configuration**
 
 ![Creating agent](assets/marketingagent.png)
 
 
-### Add Instructions: 
-Configure to the following:
+### Configure General
+On the **General** tab, configure the following:
 - **Description**: I am a specialized Marketing & Sales Intelligence Assistant. My  primary role is to provide accurate, data-driven insights by analyzing structured marketing metrics (spend, clicks, conversions) and unstructured customer feedback (support transcripts). I bridge the gap between 'what happened' (the numbers) and 'why it happened' (customer sentiment). Always maintain a professional, analytical tone and provide clear citations for information retrieved from support transcripts.
 - **Example question**: What are the top 5 campaigns by clicks?
 
-![Instructions](assets/Instructions.png)
+![General](assets/Instructions.png)
 
+### Add Instructions
+On the **Instructions** tab, configure the following:
+- **Orchestration Instructions:** Whenever you can answer visually with a chart, always choose to generate a chart even if the user didn't specify to.
 
 ### Add Tools
 Tools are the capabilities an agent can use to accomplish a task. Think of them as the agent's skillset and note that you can add one or more of each of the following tools.
@@ -251,30 +299,22 @@ Tools are the capabilities an agent can use to accomplish a task. Think of them 
 - **Service database & schema:** `DASH_DB_SI.Retail`
 - **Select semantic view:** `SEMANTIC_VIEW`
 - **Name:** `semantic_view`
-- **Description:**
-
-  Retail analytics semantic view in DASH_DB_SI.RETAIL connecting 6 tables:
-    - ENRICHED_MARKETING_INTELLIGENCE: Campaign performance + sentiment (CAMPAIGN_NAME, PRODUCT_NAME, CLICKS, AVG_SENTIMENT)
-    - MARKETING_CAMPAIGN_METRICS: Campaign KPIs by category/date (CAMPAIGN_NAME, CATEGORY, CLICKS, IMPRESSIONS, DATE)
-    - PRODUCTS: Product catalog (PRODUCT_ID, PRODUCT_NAME, CATEGORY)
-    - SALES: Sales transactions by region (PRODUCT_ID, REGION, UNITS_SOLD, SALES_AMOUNT, DATE)
-    - SOCIAL_MEDIA: Influencer mentions by platform/category (CATEGORY, INFLUENCER, MENTIONS, PLATFORM, DATE)
-    - SUPPORT_CASES: Customer support interactions (ID, PRODUCT, TITLE, TRANSCRIPT, DATE)
-
-    Key joins: ENRICHED_MARKETING_INTELLIGENCE.PRODUCT_NAME → MARKETING_CAMPAIGN_METRICS.CATEGORY; PRODUCTS.PRODUCT_ID → SALES.PRODUCT_ID. Enables end-to-end     analysis from marketing exposure → sales performance → post-sale support.
-  
+- **Description:** Retail marketing and sales data: campaign clicks and impressions, product sales by region, social media mentions, support cases, and campaign performance paired with customer sentiment. Use for any numeric or trend question about campaigns, products, or sales.
 - **Warehouse:** `Custom` > `DASH_WH_SI`
 - **Query timeout:** 60
+3. Click **Add**
 
 **Cortex Search Services**
 1. Click on **+Add**
 2. Configure the following settings:
 - **Service database & schema:** `DASH_DB_SI.Retail`
-- **Cortex Search Services:** `DASH_DB_SI.RETAIL.CAMPAIGN_SEARCH`
+- **Cortex Search Services:** `DASH_DB_SI.RETAIL.SUPPORT_SEARCH`
 - **Max Results:** `4`
-- **ID Column:** `CAMPAIGN_NAME`
-- **Title Column:** `CLICKS`
+- **ID Column:** `ID`
+- **Title Column:** `TITLE`
 - **Name:** `Search`
+- **Description:** Search customer support transcripts to find what customers said about products, returns, and quality issues
+3. Click **Add**
 
 ![Cortex Search Tool](assets/cortexsearchtool.png)
 
@@ -288,17 +328,13 @@ Tools are the capabilities an agent can use to accomplish a task. Think of them 
 - **Name:** `Send_Email`
 - **Warehouse:** `Custom` > `DASH_WH_SI`
 - **Query timeout:** 60
-- **Paramter: body**
+- **Parameter: body**
   - Description: Use HTML-Syntax for this. If the content you get is in markdown, translate it to HTML. If body is not provided, summarize the last question and use that as content for the email.
-- **Paramter: recipient_email**
+- **Parameter: recipient_email**
   - Description: If the email is not provided, send it to the current user's email address.
-- **Paramter: subject**
-  - Description: If the subject is not provided, use "Snowflake Intelligence".
+- **Parameter: subject**
+  - Description: If the subject is not provided, use "Snowflake CoWork".
  
-**Orchestration Instructions:** Whenever you can answer visually with a chart, always choose to generate a chart even if the user didn't specify to.
-
-**Access:** `SNOWFLAKE_INTELLIGENCE_ADMIN`
-
 **Click `Save` in the top right corner**
 
 <!-- ------------------------ -->
@@ -309,20 +345,20 @@ Interact with the agent and verify that it respects enterprise-grade governance.
 
 ### Accessing the Agent
 
-Once your agent is created and enabled for **Snowflake Intelligence**, it appears in a dedicated workspace:
+Once your agent is created, it appears in **Snowflake CoWork**:
 
-1. In Snowsight, go to **AI & ML > Snowflake Intelligence**
+1. In Snowsight, go to **AI > Snowflake CoWork**
 2. You will see a list of agents you have access to
 3. Select your **MarketingAgent**
 
-![Snowflake Intelligence](assets/SI.png)
+![Snowflake CoWork](assets/SI.png)
 
 
 ### The Conversational Interface
 
 The UI is designed to handle natural language queries. It doesn't just return data; it provides a narrative response.
 
-- **Natural Language Input:** Users type questions like, *"Which campaigns had a low budget but high customer sentiment last month?"*
+- **Natural Language Input:** Users type questions like, *"What are the top 5 campaigns by clicks?"*
 - **Suggested Prompts:** Based on your Semantic View and Agent Description, the UI often provides "starter" questions to guide the user
 - **Multimodal Answers:** The agent will combine text (summarizing feedback from Cortex Search) with tables or charts (visualizing metrics from Cortex Analyst)
 
@@ -332,7 +368,7 @@ Let's ask the following questions
 
 ![Top 5](assets/topclicks.png)
 
-### Q2. Show me all campaign performance metrics and it's relationship to the product
+### Q2. Show me all campaign performance metrics and their relationship to the product
 
 ![Metrics](assets/metricsproduct.png)
 
@@ -340,7 +376,7 @@ Let's ask the following questions
 
 ![Click Satisfaction](assets/clicksatisficiation.png)
 
-### Q4. What are the main customer complains in support cases?
+### Q4. What are the main customer complaints in support cases?
 
 ![Support cases](assets/supportcase.png)
 
@@ -367,7 +403,7 @@ If you ran the `setup.sql` exactly as provided in the GitHub repo, it created `s
 USE DATABASE DASH_DB_SI;
 USE SCHEMA RETAIL;
 
--- Create the Semantic View
+-- Create a secure view
 CREATE OR REPLACE SECURE VIEW marketing_intelligence_view AS
 SELECT 
     campaign_name AS "Ad Campaign",
@@ -485,5 +521,5 @@ Congratulations! You've successfully built an end-to-end data pipeline for an AI
 - [Snowflake Cortex AI Documentation](https://docs.snowflake.com/en/user-guide/snowflake-cortex/aisql)
 - [Dynamic Tables Overview](https://docs.snowflake.com/en/user-guide/dynamic-tables-about)
 - [Semantic Views Documentation](https://docs.snowflake.com/en/user-guide/views-semantic/overview)
-- [Getting Started with Snowflake Intelligence](https://github.com/Snowflake-Labs/sfguide-getting-started-with-snowflake-intelligence)
+- [Getting Started with Snowflake CoWork](https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake-intelligence/)
 - [Snowflake Documentation](https://docs.snowflake.com/)
