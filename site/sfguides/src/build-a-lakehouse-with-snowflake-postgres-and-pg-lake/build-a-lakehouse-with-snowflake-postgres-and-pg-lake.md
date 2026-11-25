@@ -6,6 +6,7 @@ environments: web
 status: Published
 language: en
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+tags: Postgres
 
 # Build a Lakehouse with Snowflake Postgres and pg_lake
 <!-- ------------------------ -->

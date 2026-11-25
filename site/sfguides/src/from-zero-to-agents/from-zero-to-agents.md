@@ -44,7 +44,7 @@ The problem the team faces:
 3. Analysts can’t self-serve insights from these data
 
 What you’ll build to solve these issues:
-1. Cortex AI turns raw transcripts into structured sentiment scores
+1. Cortex AI turns raw transcripts into structured sentiment and category labels
 2. Dynamic Tables automate so that data stays current as new feedback arrives
 3. Semantic View bridges campaign metrics and customer feedback into one model
 4. Snowflake Intelligence that allows analysts to ask natural language questions 
@@ -78,11 +78,11 @@ Snowflake provides several task-specific functions that make enrichment simple:
 
 | Function | Description |
 |----------|-------------|
-| `SNOWFLAKE.CORTEX.AI_SENTIMENT(text)` | Returns a score from -1 (very negative) to 1 (very positive) |
-| `SNOWFLAKE.CORTEX.AI_SUMMARIZE(text)` | Creates a concise summary of long documents or transcripts |
-| `SNOWFLAKE.CORTEX.AI_EXTRACT_ANSWER(text, question)` | Finds a specific answer within a block of unstructured text |
-| `SNOWFLAKE.CORTEX.AI_CLASSIFY(text, categories)` | Buckets text into predefined labels (e.g., "Refund," "Complaint," "Sales Inquiry") |
-| `SNOWFLAKE.CORTEX.AI_TRANSLATE(text, source, target)` | Translates text between languages |
+| `AI_SENTIMENT(text)` | Returns an object with a sentiment category (`positive`, `negative`, `neutral`, or `mixed`), e.g. `{"categories":[{"name":"overall","sentiment":"mixed"}]}` |
+| `AI_SUMMARIZE(text)` | Creates a concise summary of long documents or transcripts |
+| `AI_EXTRACT(text, {'field': 'question'})` | Extracts specific fields or answers from unstructured text, e.g. `{"response":{"order_id":"123"}}` |
+| `AI_CLASSIFY(text, categories)` | Buckets text into predefined labels (e.g., "Refund," "Complaint," "Sales Inquiry"). Returns an object such as `{"labels":["Return"]}` |
+| `AI_TRANSLATE(text, source, target)` | Translates text between languages |
 
 ### Why Use AI Enrichment?
 
@@ -96,12 +96,14 @@ Snowflake provides several task-specific functions that make enrichment simple:
 AI Enrichment is the "Preprocessing" step. By enriching your data first:
 
 1. The **Agent** doesn't have to read every raw transcript
-2. It can simply query the `sentiment_score` column to find unhappy customers
+2. It can simply query the `avg_sentiment` column to find unhappy customers
 3. This makes the agent faster, cheaper, and more accurate
 
 ### Extract Trends
 
-Transform "dark data" (raw transcripts) into analytical trends using Cortex AI Functions. Run sentiment analysis on customer feedback to create measurable features:
+Transform "dark data" (raw transcripts) into analytical trends using Cortex AI Functions. Run sentiment analysis and classification on customer feedback to create measurable features.
+
+`AI_SENTIMENT` and `AI_CLASSIFY` return objects, so the query extracts the value you want from each result:
 
 ```sql
 USE DATABASE DASH_DB_SI;
@@ -109,10 +111,12 @@ USE SCHEMA RETAIL;
 UPDATE support_cases SET product = 'Fitness Wear' WHERE product = 'ThermoJacket Pro';
 SELECT 
     title,
-    SNOWFLAKE.CORTEX.AI_SENTIMENT(transcript) AS sentiment_score,
-    SNOWFLAKE.CORTEX.AI_CLASSIFY(transcript, ['Return', 'Quality', 'Shipping']) AS issue_category
+    AI_SENTIMENT(transcript):categories[0]:sentiment::STRING AS sentiment,
+    AI_CLASSIFY(transcript, ['Return', 'Quality', 'Shipping']):labels[0]::STRING AS issue_category
 FROM support_cases;
 ```
+
+The `sentiment` column is a category (`positive`, `negative`, `neutral`, or `mixed`). The next section converts it to a number so it can be averaged.
 ![Extract trends](assets/extracttrends.png)
 
 
@@ -140,7 +144,7 @@ Instead of running a one-time enrichment, you define a **Dynamic Table**. This t
 
 ### Create the Enriched Dynamic Table
 
-Create a Dynamic Table that automatically joins campaign metrics with AI-generated sentiment scores:
+Create a Dynamic Table that automatically joins campaign metrics with AI-generated sentiment. `AI_SENTIMENT` returns a category, so a `CASE` expression converts it to a number (positive = 1, neutral/mixed = 0, negative = -1) that can be averaged:
 
 ```sql
 USE ROLE SNOWFLAKE_INTELLIGENCE_ADMIN;
@@ -151,7 +155,11 @@ TARGET_LAG = '1 hours'
 WAREHOUSE = dash_wh_si
 AS
 SELECT m.campaign_name, m.clicks, s.product AS product_name,
-       SNOWFLAKE.CORTEX.SENTIMENT(s.transcript) AS avg_sentiment
+       CASE AI_SENTIMENT(s.transcript):categories[0]:sentiment::STRING
+            WHEN 'positive' THEN 1
+            WHEN 'negative' THEN -1
+            ELSE 0
+       END AS avg_sentiment
 FROM marketing_campaign_metrics m
 JOIN support_cases s ON m.category = s.product;
 ```

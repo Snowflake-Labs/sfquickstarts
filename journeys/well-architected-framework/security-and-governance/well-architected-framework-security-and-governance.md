@@ -6,7 +6,8 @@ categories: snowflake-site:taxonomy/solution-center/certification/well-architect
 language: en
 summary: The Security & Governance pillar focuses on building a secure and compliant Snowflake environment by implementing the principles of the Confidentiality, Integrity, and Availability (CIA) triad. 
 environments: web
-status: Published 
+status: Published
+fork_repo_link: https://github.com/Snowflake-Labs/cortex-code-skills/tree/main/skills/well-architected-framework-assessment
 
 
 # Security & Governance Pillar

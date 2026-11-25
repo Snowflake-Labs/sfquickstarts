@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 440" font-family="-apple-system, Segoe UI, Helvetica, Arial, sans-serif">
+  <rect x="0" y="0" width="900" height="440" rx="16" fill="#ffffff"/>
+  <text x="450" y="44" text-anchor="middle" font-size="24" font-weight="700" fill="#11567f">Capability governance: what may exist, and for whom</text>
+  <text x="450" y="72" text-anchor="middle" font-size="15" fill="#5b6b77">Model RBAC approves specific models per role; the agent is approved over the governed semantic view</text>
+
+  <defs>
+    <marker id="arrow4" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#9aa7b1"/>
+    </marker>
+  </defs>
+
+  <!-- column headers -->
+  <text x="130" y="120" text-anchor="middle" font-size="13" font-weight="700" fill="#1f8fbf">ROLE</text>
+  <text x="450" y="120" text-anchor="middle" font-size="13" font-weight="700" fill="#7D44CF">APPROVED MODEL (RBAC)</text>
+  <text x="770" y="120" text-anchor="middle" font-size="13" font-weight="700" fill="#11567f">USABLE MODELS</text>
+
+  <!-- role -->
+  <rect x="40" y="150" width="180" height="60" rx="10" fill="#eef6fb" stroke="#29B5E8" stroke-width="2"/>
+  <text x="130" y="186" text-anchor="middle" font-size="15" font-weight="700" fill="#0c3f5c">AGOV_ANALYST</text>
+
+  <!-- application role -->
+  <rect x="330" y="150" width="240" height="60" rx="10" fill="#efe7fa" stroke="#7D44CF" stroke-width="2"/>
+  <text x="450" y="178" text-anchor="middle" font-size="13" font-weight="700" fill="#3a1d6e">CORTEX-MODEL-ROLE-</text>
+  <text x="450" y="197" text-anchor="middle" font-size="13" font-weight="700" fill="#3a1d6e">CLAUDE-SONNET-5</text>
+
+  <!-- allowed model -->
+  <rect x="660" y="140" width="210" height="44" rx="10" fill="#e9f7ee" stroke="#3aa76d" stroke-width="2"/>
+  <text x="765" y="167" text-anchor="middle" font-size="14" font-weight="700" fill="#1f6b43">Claude Sonnet 5  &#10003;</text>
+
+  <!-- denied model -->
+  <rect x="660" y="196" width="210" height="44" rx="10" fill="#fdecec" stroke="#cc3b3b" stroke-width="2"/>
+  <text x="765" y="223" text-anchor="middle" font-size="14" font-weight="700" fill="#8f2020">Other models  &#10007;</text>
+
+  <g stroke="#9aa7b1" stroke-width="2.5" marker-end="url(#arrow4)">
+    <line x1="220" y1="180" x2="326" y2="180"/>
+    <line x1="570" y1="175" x2="656" y2="162"/>
+  </g>
+  <line x1="570" y1="190" x2="656" y2="214" stroke="#cc3b3b" stroke-width="2.5" stroke-dasharray="5,4" marker-end="url(#arrow4)"/>
+  <text x="612" y="232" text-anchor="middle" font-size="11" fill="#cc3b3b">no grant</text>
+
+  <!-- agent approval row -->
+  <rect x="40" y="290" width="230" height="90" rx="10" fill="#eaf1f6" stroke="#11567f" stroke-width="2"/>
+  <text x="155" y="322" text-anchor="middle" font-size="15" font-weight="700" fill="#0c3f5c">CUSTOMER_</text>
+  <text x="155" y="341" text-anchor="middle" font-size="15" font-weight="700" fill="#0c3f5c">INSIGHTS_AGENT</text>
+  <text x="155" y="364" text-anchor="middle" font-size="12" fill="#5b6b77">approved capability</text>
+
+  <rect x="400" y="290" width="270" height="90" rx="10" fill="#e9f7ee" stroke="#3aa76d" stroke-width="2"/>
+  <text x="535" y="328" text-anchor="middle" font-size="14" font-weight="700" fill="#1f6b43">GOLD semantic view</text>
+  <text x="535" y="350" text-anchor="middle" font-size="12" fill="#5b6b77">only approved tool;</text>
+  <text x="535" y="366" text-anchor="middle" font-size="12" fill="#5b6b77">inherits Part 1 policies (01-02)</text>
+
+  <line x1="270" y1="335" x2="396" y2="335" stroke="#9aa7b1" stroke-width="2.5" marker-end="url(#arrow4)"/>
+  <text x="333" y="324" text-anchor="middle" font-size="11" fill="#5b6b77">uses</text>
+
+  <text x="450" y="414" text-anchor="middle" font-size="13" fill="#11567f">"Yes, but only this model, only this agent, only these tools."</text>
+</svg>

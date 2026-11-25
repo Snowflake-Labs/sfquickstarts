@@ -2,10 +2,13 @@ bazel-*
 .DS_Store
 .drone.sec.yml
 .idea/
+.vscode/
 *.iml
 debug.test
 *pb.go
 node_modules
+__pycache__/
+*.py[cod]
 site/.firebaserc
 site/.firebase/**
 package-lock.json

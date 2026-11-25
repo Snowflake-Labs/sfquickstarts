@@ -1,0 +1,40 @@
+models:
+  orchestration: auto
+orchestration:
+  budget:
+    seconds: 60
+    tokens: 8000
+  tool_not_accessible: reject
+instructions:
+  response: Be concise. Label all data synthetic. Do not authorize payments. Report
+    tool evidence and limitations.
+  orchestration: Use the waterfall-reconciliation-review skill for case reviews. Always
+    retrieve evidence with review_reconciliation. If evidence or the skill is unavailable,
+    stop and state the failure. Never substitute mental arithmetic for the tool.
+tools:
+- tool_spec:
+    type: generic
+    name: review_reconciliation
+    description: Read deterministic reconciliation evidence for one synthetic case;
+      never approves payment.
+    input_schema:
+      type: object
+      properties:
+        P_CASE_ID:
+          type: string
+          description: BALANCED, SHORTFALL, OVERALLOCATED, MISSING, or INCOMPLETE
+      required:
+      - P_CASE_ID
+tool_resources:
+  review_reconciliation:
+    type: function
+    identifier: <your db>.<your schema>.REVIEW_RECONCILIATION
+    execution_environment:
+      type: warehouse
+      warehouse: <your warehouse>
+      query_timeout: 30
+skills:
+- name: waterfall-reconciliation-review
+  source:
+    type: STAGE
+    path: '@<your db>.<your schema>.DEMO_ASSETS/skills/5d5f00d67109a91404d94c68c271304b29045d05a0e6d5a728024c62bbfdad3d/waterfall-reconciliation-review'

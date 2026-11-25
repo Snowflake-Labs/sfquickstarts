@@ -1,0 +1,91 @@
+{
+  "seed": 42,
+  "shared_subassembly": {
+    "part_id": "P-040",
+    "products": [
+      "PR-01",
+      "PR-02",
+      "PR-03",
+      "PR-04",
+      "PR-05",
+      "PR-06",
+      "PR-07",
+      "PR-08"
+    ]
+  },
+  "hidden_shared_dependency": {
+    "tier3_supplier": "S-T3-07",
+    "tier1_suppliers": [
+      "S-T1-02",
+      "S-T1-05"
+    ],
+    "part_id": "P-141"
+  },
+  "supplier_cycle": [
+    "S-T2-11",
+    "S-T2-14"
+  ],
+  "substitute_rescue": {
+    "product_id": "PR-04",
+    "part_id": "P-121",
+    "substitute_part_id": "P-122"
+  },
+  "buildable_without_substitutes": [
+    "PR-02",
+    "PR-05",
+    "PR-10",
+    "PR-13",
+    "PR-15",
+    "PR-16",
+    "PR-17",
+    "PR-18",
+    "PR-19"
+  ],
+  "buildable_with_substitutes": [
+    "PR-02",
+    "PR-04",
+    "PR-05",
+    "PR-09",
+    "PR-10",
+    "PR-13",
+    "PR-15",
+    "PR-16",
+    "PR-17",
+    "PR-18",
+    "PR-19"
+  ],
+  "failure_S_T3_07": {
+    "failed_suppliers": [
+      "S-T1-02",
+      "S-T1-05",
+      "S-T2-03",
+      "S-T2-08",
+      "S-T3-07"
+    ],
+    "parts_without_supply": [
+      "P-141"
+    ],
+    "affected_products": [
+      "PR-01",
+      "PR-02",
+      "PR-03",
+      "PR-04",
+      "PR-05",
+      "PR-06",
+      "PR-07",
+      "PR-08"
+    ],
+    "affected_open_orders": 568,
+    "affected_order_value": 6840136.49
+  },
+  "max_bom_depth": 5,
+  "min_bom_depth": 3,
+  "qualified_alternative": {
+    "SUPPLIER_ID": "S-T1-01",
+    "PART_ID": "P-141",
+    "CAPACITY_PER_WEEK": 1500,
+    "LEAD_TIME_DAYS": 70,
+    "UNIT_PRICE": 16.41,
+    "relies_on_failed_supplier": false
+  }
+}

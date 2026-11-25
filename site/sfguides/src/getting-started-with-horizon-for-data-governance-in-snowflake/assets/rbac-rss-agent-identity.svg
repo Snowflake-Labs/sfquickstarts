@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 470" font-family="-apple-system, Segoe UI, Helvetica, Arial, sans-serif">
+  <rect width="940" height="470" rx="16" fill="#ffffff"/>
+
+  <!-- Title -->
+  <text x="470" y="40" text-anchor="middle" font-size="22" font-weight="700" fill="#11567f">Restricted Session Scope + Agent Identity: two independent controls</text>
+  <text x="470" y="64" text-anchor="middle" font-size="13" fill="#5b6b77">RSS limits the roles an agent-active session keeps; Agent Identity filters sensitive values within that reach</text>
+
+  <defs>
+    <marker id="arrowA" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#9aa7b1"/>
+    </marker>
+  </defs>
+
+  <!-- === SESSION === -->
+  <rect x="24" y="92" width="190" height="230" rx="10" fill="#eef6fb" stroke="#29B5E8" stroke-width="2"/>
+  <text x="119" y="117" text-anchor="middle" font-size="13" font-weight="700" fill="#0c3f5c">Operator session</text>
+  <text x="119" y="134" text-anchor="middle" font-size="10" fill="#0c3f5c">(same in both beats)</text>
+  <text x="119" y="160" text-anchor="middle" font-size="11.5" fill="#5b6b77">primary role</text>
+  <text x="119" y="177" text-anchor="middle" font-size="12" font-weight="700" fill="#0c3f5c">AGOV_ANALYST</text>
+  <text x="119" y="200" text-anchor="middle" font-size="11.5" fill="#5b6b77">USE SECONDARY ROLES ALL</text>
+  <text x="119" y="217" text-anchor="middle" font-size="12" font-weight="700" fill="#0c3f5c">+ AGOV_GOVERNOR</text>
+  <text x="119" y="240" text-anchor="middle" font-size="11" fill="#0c3f5c">carries UNMASK_ACCESS</text>
+  <text x="119" y="255" text-anchor="middle" font-size="11" fill="#0c3f5c">+ AGENTIC_UNMASK_ACCESS</text>
+  <line x1="36" y1="270" x2="202" y2="270" stroke="#bfe3f3" stroke-width="1"/>
+  <text x="119" y="290" text-anchor="middle" font-size="11" fill="#5b6b77">baseline, no RSS:</text>
+  <text x="119" y="306" text-anchor="middle" font-size="11" fill="#1f6b43">human + agent plaintext</text>
+
+  <!-- Intersection label -->
+  <text x="231" y="212" text-anchor="middle" font-size="20" font-weight="700" fill="#8a5a12">∩</text>
+
+  <!-- === RSS SCOPE === -->
+  <rect x="248" y="92" width="200" height="230" rx="10" fill="#fff4e0" stroke="#e0962a" stroke-width="2"/>
+  <text x="348" y="117" text-anchor="middle" font-size="13" font-weight="700" fill="#8a5a12">RSS: AGENT_ANALYST_SCOPE</text>
+  <text x="348" y="134" text-anchor="middle" font-size="10" fill="#8a5a12">(applies when IS_AGENT_ACTIVATED)</text>
+  <text x="348" y="162" text-anchor="middle" font-size="11.5" fill="#5b6b77">allowed_roles:</text>
+  <text x="348" y="179" text-anchor="middle" font-size="12" font-weight="700" fill="#8a5a12">[AGOV_ANALYST]</text>
+  <text x="348" y="202" text-anchor="middle" font-size="11.5" fill="#5b6b77">allow_role_switching: true</text>
+  <line x1="260" y1="216" x2="436" y2="216" stroke="#f0c98a" stroke-width="1"/>
+  <text x="348" y="238" text-anchor="middle" font-size="11.5" fill="#1f6b43">✓ switching within allowed roles</text>
+  <text x="348" y="262" text-anchor="middle" font-size="11.5" fill="#cc3b3b">✗ AGOV_GOVERNOR: not inherited</text>
+  <text x="348" y="278" text-anchor="middle" font-size="11.5" fill="#cc3b3b">by AGOV_ANALYST, so excluded</text>
+  <text x="348" y="294" text-anchor="middle" font-size="11.5" fill="#cc3b3b">from agent secondaries</text>
+
+  <!-- Equals label -->
+  <text x="465" y="212" text-anchor="middle" font-size="20" font-weight="700" fill="#5b6b77">=</text>
+
+  <!-- === REACHABLE ROLES === -->
+  <rect x="482" y="92" width="190" height="230" rx="10" fill="#e9f7ee" stroke="#3aa76d" stroke-width="2"/>
+  <text x="577" y="117" text-anchor="middle" font-size="13" font-weight="700" fill="#1f6b43">Reachable roles</text>
+  <text x="577" y="134" text-anchor="middle" font-size="10" fill="#1f6b43">(RSS attached)</text>
+  <text x="577" y="162" text-anchor="middle" font-size="11.5" font-weight="700" fill="#0c3f5c">Human SQL</text>
+  <text x="577" y="179" text-anchor="middle" font-size="11.5" fill="#1f6b43">ANALYST + GOVERNOR</text>
+  <text x="577" y="195" text-anchor="middle" font-size="11" fill="#5b6b77">unchanged</text>
+  <line x1="494" y1="210" x2="660" y2="210" stroke="#bde3cb" stroke-width="1"/>
+  <text x="577" y="234" text-anchor="middle" font-size="11.5" font-weight="700" fill="#0c3f5c">Agent execution</text>
+  <text x="577" y="251" text-anchor="middle" font-size="11.5" fill="#1f6b43">AGOV_ANALYST only</text>
+  <text x="577" y="275" text-anchor="middle" font-size="11" fill="#cc3b3b">governor clearances</text>
+  <text x="577" y="291" text-anchor="middle" font-size="11" fill="#cc3b3b">absent from agent context</text>
+
+  <!-- Arrow: reachable roles -> Agent Identity -->
+  <line x1="675" y1="207" x2="701" y2="207" stroke="#9aa7b1" stroke-width="2.5" marker-end="url(#arrowA)"/>
+
+  <!-- === AGENT IDENTITY === -->
+  <rect x="706" y="92" width="210" height="230" rx="10" fill="#efe7fa" stroke="#7D44CF" stroke-width="2"/>
+  <text x="811" y="117" text-anchor="middle" font-size="13" font-weight="700" fill="#3a1d6e">Agent Identity filter</text>
+  <text x="811" y="134" text-anchor="middle" font-size="10" fill="#3a1d6e">agent plaintext needs both:</text>
+  <text x="811" y="154" text-anchor="middle" font-size="11.5" font-weight="700" fill="#3a1d6e">UNMASK_ACCESS</text>
+  <text x="811" y="170" text-anchor="middle" font-size="11.5" font-weight="700" fill="#3a1d6e">+ AGENTIC_UNMASK_ACCESS</text>
+  <line x1="718" y1="182" x2="904" y2="182" stroke="#c5aef0" stroke-width="1"/>
+  <text x="811" y="202" text-anchor="middle" font-size="11.5" fill="#1f6b43">Human SQL → plaintext</text>
+  <line x1="718" y1="214" x2="904" y2="214" stroke="#c5aef0" stroke-width="1" stroke-dasharray="4,3"/>
+  <text x="811" y="234" text-anchor="middle" font-size="11.5" fill="#cc3b3b">Agent, sensitive STRING →</text>
+  <text x="811" y="251" text-anchor="middle" font-size="10.5" fill="#cc3b3b">***EXCLUDED-FROM-AGENTIC-USE***</text>
+  <line x1="718" y1="264" x2="904" y2="264" stroke="#c5aef0" stroke-width="1" stroke-dasharray="4,3"/>
+  <text x="811" y="284" text-anchor="middle" font-size="11.5" fill="#cc3b3b">Agent, sensitive DATE → NULL</text>
+  <text x="811" y="306" text-anchor="middle" font-size="10.5" fill="#5b6b77">the agent executes; it does not refuse</text>
+
+  <!-- Bottom: two independent axes -->
+  <rect x="24" y="346" width="648" height="48" rx="8" fill="#f5f8fa" stroke="#29B5E8" stroke-width="1.5"/>
+  <text x="348" y="366" text-anchor="middle" font-size="12" font-weight="700" fill="#0c3f5c">RSS axis:</text>
+  <text x="348" y="383" text-anchor="middle" font-size="11" fill="#5b6b77">limits primary and secondary roles to allowed_roles and their inherited roles; active only when IS_AGENT_ACTIVATED = TRUE</text>
+
+  <rect x="706" y="346" width="210" height="48" rx="8" fill="#f5f0fe" stroke="#7D44CF" stroke-width="1.5"/>
+  <text x="811" y="366" text-anchor="middle" font-size="12" font-weight="700" fill="#3a1d6e">Agent Identity axis:</text>
+  <text x="811" y="383" text-anchor="middle" font-size="11" fill="#5b6b77">filters values by clearance</text>
+
+  <!-- Bottom attribution -->
+  <text x="470" y="428" text-anchor="middle" font-size="11" fill="#9aa7b1">RSS = Restricted Session Scope, admin-managed through a session policy (generally available).</text>
+  <text x="470" y="446" text-anchor="middle" font-size="11" fill="#9aa7b1">Agent Identity = IS_AGENT_ACTIVATED + paired clearance in the tag-based masking policies.</text>
+</svg>

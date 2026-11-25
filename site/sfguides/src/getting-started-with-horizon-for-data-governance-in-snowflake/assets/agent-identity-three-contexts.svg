@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 440" role="img" aria-labelledby="title description" font-family="Arial, sans-serif">
+  <title id="title">Agent Identity: paired clearance</title>
+  <desc id="description">Direct plaintext needs UNMASK_ACCESS. Agent plaintext needs UNMASK_ACCESS and AGENTIC_UNMASK_ACCESS. ACCOUNTADMIN is a separate break-glass exception.</desc>
+  <rect width="1100" height="440" fill="#ffffff"/>
+  <text x="550" y="45" text-anchor="middle" font-size="25" fill="#11567f">Agent Identity: plaintext requires the right clearance</text>
+  <text x="550" y="78" text-anchor="middle" font-size="16" fill="#526674">Sensitive strings: PII, RESTRICTED, SENSITIVE</text>
+  <path d="M550 95 V125 M275 125 H825 M275 125 V155 M825 125 V155" fill="none" stroke="#29b5e8" stroke-width="3"/>
+  <text x="275" y="185" text-anchor="middle" font-size="22" fill="#11567f">Direct query</text>
+  <text x="825" y="185" text-anchor="middle" font-size="22" fill="#11567f">Agent query</text>
+  <text x="275" y="225" text-anchor="middle" font-size="17" fill="#173d50">UNMASK_ACCESS</text>
+  <text x="825" y="220" text-anchor="middle" font-size="17" fill="#173d50">UNMASK_ACCESS</text>
+  <text x="825" y="246" text-anchor="middle" font-size="17" fill="#173d50">AND AGENTIC_UNMASK_ACCESS</text>
+  <text x="275" y="290" text-anchor="middle" font-size="17" fill="#176a41">Present: plaintext</text>
+  <text x="825" y="290" text-anchor="middle" font-size="17" fill="#176a41">Both present: plaintext</text>
+  <text x="275" y="325" text-anchor="middle" font-size="16" fill="#11567f">Absent: classification-tier mask</text>
+  <text x="825" y="325" text-anchor="middle" font-size="16" fill="#a02525">Either absent: excluded from agentic use</text>
+  <text x="550" y="378" text-anchor="middle" font-size="16" fill="#526674">Governor holds both. Co-clearance alone grants no plaintext or object access.</text>
+  <text x="550" y="410" text-anchor="middle" font-size="16" fill="#526674">ACCOUNTADMIN: explicit break-glass exception. Sensitive DATE exclusion: NULL.</text>
+</svg>

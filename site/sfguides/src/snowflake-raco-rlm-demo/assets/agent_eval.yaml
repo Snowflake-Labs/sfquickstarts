@@ -1,0 +1,28 @@
+# Search-only baseline: its expected tool is support_search. Do not run this
+# unchanged as a Cortex Sense or ontology evaluation. After a built context and
+# agent are smoke-tested, make a separately reviewed dataset of definition,
+# evidence-citation and abstention questions with the actual declared tool names.
+# First run only: dataset block creates RACO_RLM_EVAL. Remove it for later runs.
+dataset:
+  dataset_type: CORTEX AGENT
+  table_name: RACO_RLM_DEMO.PUBLIC.EVAL_QUESTIONS
+  dataset_name: RACO_RLM_EVAL
+  column_mapping:
+    query_text: INPUT_QUERY
+    ground_truth: GROUND_TRUTH
+evaluation:
+  agent_params:
+    agent_name: RACO_RLM_DEMO.PUBLIC.SUPPORT_AGENT
+    agent_type: CORTEX AGENT
+  run_params:
+    label: synthetic-support-grounding
+  source_metadata:
+    type: dataset
+    dataset_name: RACO_RLM_EVAL
+metrics:
+  - name: answer_correctness
+    version: v3
+  - name: logical_consistency
+    version: v3
+  - name: tool_selection_accuracy
+    version: v3

@@ -266,8 +266,8 @@ SELECT PARSE_JSON(
     SNOWFLAKE.CORTEX.SEARCH_PREVIEW(
         'CATALOG_SEARCH_DB.APP.PRODUCT_SEARCH',
         '{
-            "query": "ridgeline",
-            "columns": ["PRODUCT_ID", "ITEM_NAME", "BRAND", "CATEGORY", "SUBCATEGORY", "PRICE"],
+            "query": "warm waterproof jacket for off-piste skiing",
+            "columns": ["ITEM_NAME", "BRAND", "CATEGORY", "PRICE"],
             "limit": 10
         }'
     )

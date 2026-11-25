@@ -63,3 +63,4 @@ SELECT
             'SELF_IMPROVING_AGENT_DB.AGENTS.MARKETING_CAMPAIGNS_AGENT',
             $${ "messages": [{ "role": "user", "content": [{ "type": "text", "text": "Which campaigns had the best A/B test lift but the worst customer sentiment?" }] }]}$$
         )
+    ) AS RESP;

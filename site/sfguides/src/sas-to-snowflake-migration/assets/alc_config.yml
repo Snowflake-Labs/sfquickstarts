@@ -1,0 +1,7 @@
+converter:
+  output_format: ipynb
+  sas:
+    libref_to_schema:
+      LDEMO:   PUBLIC
+      LDEMODI: PUBLIC
+      LMART:   PUBLIC

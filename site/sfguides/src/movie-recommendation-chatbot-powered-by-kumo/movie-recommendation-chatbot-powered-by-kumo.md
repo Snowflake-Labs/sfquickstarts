@@ -45,7 +45,7 @@ You'll create a movie recommendation chatbot built on Snowflake, powered by K
 
 - Familiarity with [Snowflake](https://signup.snowflake.com/?utm_source=snowflake-devrel&utm_medium=developer-guides&utm_cta=developer-guides) and a Snowflake account
 - A valid Kumo account installed as a [native Snowflake app](https://app.snowflake.com/marketplace/listing/GZTYZBN5P0/kumo-ai-kumo?_fsi=RSY006de&_fsi=RSY006de)
-- Familiarity with Kumo and how to run a batch prediction. For a step-by-step guide on a similar use case, check out [this quickstart tutorial](/en/developers/guides/leveraging-kumo-for-smarter-recommendations/), or refer to [Kumo documentation](https://kumo.ai/docs/examples/predictive-query) for more examples.
+- Familiarity with Kumo and how to run a batch prediction. For a step-by-step guide on a similar use case, check out [this quickstart tutorial](https://www.snowflake.com/webinars/snowflake-on-snowflake/ai-powered-recommendations-for-b2b-marketing-with-kumo-2025-07-22/), or refer to [Kumo documentation](https://kumo.ai/docs/examples/predictive-query) for more examples.
 - The [MovieLens 1M dataset](https://grouplens.org/datasets/movielens/) set up on Snowflake
 - Basic understanding of how to do [RAG on Snowflake](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/tutorials/cortex-search-tutorial-2-chat)
 

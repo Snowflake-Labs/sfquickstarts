@@ -1,0 +1,889 @@
+{
+  "generated_at": "2026-09-11T20:13:42.780326+00:00",
+  "workload": "European call, exact risk-neutral GBM terminal sampling, no dividends",
+  "parameters": {
+    "spot": 100.0,
+    "strike": 100.0,
+    "rate": 0.05,
+    "volatility": 0.2,
+    "maturity": 1.0
+  },
+  "environment": {
+    "platform": "macOS-26.6.2-arm64-arm-64bit",
+    "python": "3.11.6 (v3.11.6:8b6ee5ba3b, Oct  2 2023, 11:18:21) [Clang 13.0.0 (clang-1300.0.29.30)]",
+    "numpy": "2.4.6",
+    "numba": "0.67.0",
+    "rust": "rustc 1.98.1 (48a229cea 2026-09-01)",
+    "cpu": "Apple M4",
+    "logical_cpus": 10,
+    "compute_threads": 1
+  },
+  "methodology": {
+    "repeats": 7,
+    "seed": 20260911,
+    "rng": "NumPy default_rng PCG64, float64",
+    "kernel": "Preallocated payoff output, pregenerated normals, payoff transform + common NumPy mean; includes Python/ctypes dispatch",
+    "end_to_end": "Generator initialization, random draws, allocation, payoff transform, common NumPy mean, array release",
+    "warmup": "JIT/build excluded; all implementations warmed; randomized timing order; >=100ms target per sample",
+    "optimization": "NumPy in-place ufuncs; Numba nopython serial fastmath=False; Rust serial opt-level=3 target-cpu=native",
+    "scope": "Additional local workload, not existing pe_finance kernel, not a reproduction of FinanceBench or NVIDIA GPU timings",
+    "correctness": "Pathwise rtol=1e-12 atol=1e-12; analytical price within five sample SE; zero-volatility and expiry tests"
+  },
+  "reference": "https://www.optionseducation.org/advancedconcepts/black-scholes-formula",
+  "build_command": [
+    "<your home dir>/.cargo/bin/rustc",
+    "--edition=2021",
+    "--crate-type=cdylib",
+    "-C",
+    "opt-level=3",
+    "-C",
+    "target-cpu=native",
+    "<your home dir>/energy-price-forecasting-native-app/pe-agentic-system/integrations/rust/benchmarks/option_kernel.rs",
+    "-o",
+    "<your home dir>/energy-price-forecasting-native-app/pe-agentic-system/integrations/rust/benchmarks/liboption_benchmark.dylib"
+  ],
+  "source_hashes": {
+    "bench_option_pricing.py": "4fc7ebcde10321a6219a91168c6a9ad067907c8999e31b370df83562146e538f",
+    "option_kernel.rs": "3bb79821ddf4bdf34be73cd268409ff3ea1f8e9330a68965cb843cb602640664"
+  },
+  "validation": [
+    {
+      "paths": 10000,
+      "case": 0,
+      "parameters": [
+        100.0,
+        100.0,
+        0.05,
+        0.2,
+        1.0
+      ],
+      "price": 10.629032877165873,
+      "analytical": 10.450583572185565,
+      "standard_error": 0.14703369927030877,
+      "max_pathwise_absolute_error": {
+        "numpy": 0.0,
+        "numba": 0.0,
+        "rust": 0.0
+      }
+    },
+    {
+      "paths": 10000,
+      "case": 1,
+      "parameters": [
+        100.0,
+        80.0,
+        0.05,
+        0.0,
+        1.0
+      ],
+      "price": 23.901646039942886,
+      "analytical": 23.901646039942875,
+      "standard_error": 3.5528913278082273e-17,
+      "max_pathwise_absolute_error": {
+        "numpy": 0.0,
+        "numba": 0.0,
+        "rust": 0.0
+      }
+    },
+    {
+      "paths": 10000,
+      "case": 2,
+      "parameters": [
+        100.0,
+        120.0,
+        0.05,
+        0.0,
+        1.0
+      ],
+      "price": 0.0,
+      "analytical": 0.0,
+      "standard_error": 0.0,
+      "max_pathwise_absolute_error": {
+        "numpy": 0.0,
+        "numba": 0.0,
+        "rust": 0.0
+      }
+    },
+    {
+      "paths": 10000,
+      "case": 3,
+      "parameters": [
+        100.0,
+        90.0,
+        0.05,
+        0.2,
+        0.0
+      ],
+      "price": 10.0,
+      "analytical": 10.0,
+      "standard_error": 0.0,
+      "max_pathwise_absolute_error": {
+        "numpy": 0.0,
+        "numba": 0.0,
+        "rust": 0.0
+      }
+    },
+    {
+      "paths": 10000,
+      "case": 4,
+      "parameters": [
+        100.0,
+        100.0,
+        -0.02,
+        0.4,
+        2.0
+      ],
+      "price": 21.031499655035084,
+      "analytical": 20.73943406578828,
+      "standard_error": 0.4578545299445438,
+      "max_pathwise_absolute_error": {
+        "numpy": 0.0,
+        "numba": 0.0,
+        "rust": 0.0
+      }
+    },
+    {
+      "paths": 100000,
+      "case": 0,
+      "parameters": [
+        100.0,
+        100.0,
+        0.05,
+        0.2,
+        1.0
+      ],
+      "price": 10.453545925838304,
+      "analytical": 10.450583572185565,
+      "standard_error": 0.04658639512594251,
+      "max_pathwise_absolute_error": {
+        "numpy": 0.0,
+        "numba": 0.0,
+        "rust": 0.0
+      }
+    },
+    {
+      "paths": 100000,
+      "case": 1,
+      "parameters": [
+        100.0,
+        80.0,
+        0.05,
+        0.0,
+        1.0
+      ],
+      "price": 23.901646039942886,
+      "analytical": 23.901646039942875,
+      "standard_error": 1.1234723273202243e-17,
+      "max_pathwise_absolute_error": {
+        "numpy": 0.0,
+        "numba": 0.0,
+        "rust": 0.0
+      }
+    },
+    {
+      "paths": 100000,
+      "case": 2,
+      "parameters": [
+        100.0,
+        120.0,
+        0.05,
+        0.0,
+        1.0
+      ],
+      "price": 0.0,
+      "analytical": 0.0,
+      "standard_error": 0.0,
+      "max_pathwise_absolute_error": {
+        "numpy": 0.0,
+        "numba": 0.0,
+        "rust": 0.0
+      }
+    },
+    {
+      "paths": 100000,
+      "case": 3,
+      "parameters": [
+        100.0,
+        90.0,
+        0.05,
+        0.2,
+        0.0
+      ],
+      "price": 10.0,
+      "analytical": 10.0,
+      "standard_error": 0.0,
+      "max_pathwise_absolute_error": {
+        "numpy": 0.0,
+        "numba": 0.0,
+        "rust": 0.0
+      }
+    },
+    {
+      "paths": 100000,
+      "case": 4,
+      "parameters": [
+        100.0,
+        100.0,
+        -0.02,
+        0.4,
+        2.0
+      ],
+      "price": 20.762828717792498,
+      "analytical": 20.73943406578828,
+      "standard_error": 0.1449581653481741,
+      "max_pathwise_absolute_error": {
+        "numpy": 0.0,
+        "numba": 0.0,
+        "rust": 0.0
+      }
+    },
+    {
+      "paths": 1000000,
+      "case": 0,
+      "parameters": [
+        100.0,
+        100.0,
+        0.05,
+        0.2,
+        1.0
+      ],
+      "price": 10.441791549394829,
+      "analytical": 10.450583572185565,
+      "standard_error": 0.014708996292122205,
+      "max_pathwise_absolute_error": {
+        "numpy": 0.0,
+        "numba": 0.0,
+        "rust": 0.0
+      }
+    },
+    {
+      "paths": 1000000,
+      "case": 1,
+      "parameters": [
+        100.0,
+        80.0,
+        0.05,
+        0.0,
+        1.0
+      ],
+      "price": 23.901646039942882,
+      "analytical": 23.901646039942875,
+      "standard_error": 7.105430910317346e-18,
+      "max_pathwise_absolute_error": {
+        "numpy": 0.0,
+        "numba": 0.0,
+        "rust": 0.0
+      }
+    },
+    {
+      "paths": 1000000,
+      "case": 2,
+      "parameters": [
+        100.0,
+        120.0,
+        0.05,
+        0.0,
+        1.0
+      ],
+      "price": 0.0,
+      "analytical": 0.0,
+      "standard_error": 0.0,
+      "max_pathwise_absolute_error": {
+        "numpy": 0.0,
+        "numba": 0.0,
+        "rust": 0.0
+      }
+    },
+    {
+      "paths": 1000000,
+      "case": 3,
+      "parameters": [
+        100.0,
+        90.0,
+        0.05,
+        0.2,
+        0.0
+      ],
+      "price": 10.0,
+      "analytical": 10.0,
+      "standard_error": 0.0,
+      "max_pathwise_absolute_error": {
+        "numpy": 0.0,
+        "numba": 0.0,
+        "rust": 0.0
+      }
+    },
+    {
+      "paths": 1000000,
+      "case": 4,
+      "parameters": [
+        100.0,
+        100.0,
+        -0.02,
+        0.4,
+        2.0
+      ],
+      "price": 20.713162428011014,
+      "analytical": 20.73943406578828,
+      "standard_error": 0.04573085529491462,
+      "max_pathwise_absolute_error": {
+        "numpy": 0.0,
+        "numba": 0.0,
+        "rust": 0.0
+      }
+    },
+    {
+      "paths": 10000000,
+      "case": 0,
+      "parameters": [
+        100.0,
+        100.0,
+        0.05,
+        0.2,
+        1.0
+      ],
+      "price": 10.45196220230458,
+      "analytical": 10.450583572185565,
+      "standard_error": 0.004655012742873605,
+      "max_pathwise_absolute_error": {
+        "numpy": 0.0,
+        "numba": 0.0,
+        "rust": 0.0
+      }
+    },
+    {
+      "paths": 10000000,
+      "case": 1,
+      "parameters": [
+        100.0,
+        80.0,
+        0.05,
+        0.0,
+        1.0
+      ],
+      "price": 23.90164603994289,
+      "analytical": 23.901646039942875,
+      "standard_error": 0.0,
+      "max_pathwise_absolute_error": {
+        "numpy": 0.0,
+        "numba": 0.0,
+        "rust": 0.0
+      }
+    },
+    {
+      "paths": 10000000,
+      "case": 2,
+      "parameters": [
+        100.0,
+        120.0,
+        0.05,
+        0.0,
+        1.0
+      ],
+      "price": 0.0,
+      "analytical": 0.0,
+      "standard_error": 0.0,
+      "max_pathwise_absolute_error": {
+        "numpy": 0.0,
+        "numba": 0.0,
+        "rust": 0.0
+      }
+    },
+    {
+      "paths": 10000000,
+      "case": 3,
+      "parameters": [
+        100.0,
+        90.0,
+        0.05,
+        0.2,
+        0.0
+      ],
+      "price": 10.0,
+      "analytical": 10.0,
+      "standard_error": 0.0,
+      "max_pathwise_absolute_error": {
+        "numpy": 0.0,
+        "numba": 0.0,
+        "rust": 0.0
+      }
+    },
+    {
+      "paths": 10000000,
+      "case": 4,
+      "parameters": [
+        100.0,
+        100.0,
+        -0.02,
+        0.4,
+        2.0
+      ],
+      "price": 20.743249712537626,
+      "analytical": 20.73943406578828,
+      "standard_error": 0.014483653079411105,
+      "max_pathwise_absolute_error": {
+        "numpy": 0.0,
+        "numba": 0.0,
+        "rust": 0.0
+      }
+    }
+  ],
+  "results": [
+    {
+      "paths": 10000,
+      "scope": "kernel",
+      "implementation": "numpy",
+      "median_s": 3.8246055226824456e-05,
+      "min_s": 3.618289743589744e-05,
+      "max_s": 3.9384677021696254e-05,
+      "samples_s": [
+        3.861602169625247e-05,
+        3.9384677021696254e-05,
+        3.8246055226824456e-05,
+        3.8346564595660746e-05,
+        3.618289743589744e-05,
+        3.656562278106509e-05,
+        3.708988708086785e-05
+      ],
+      "iterations_per_sample": 2028,
+      "speedup_vs_numpy": 1.0
+    },
+    {
+      "paths": 10000,
+      "scope": "kernel",
+      "implementation": "numba",
+      "median_s": 3.0273914700544467e-05,
+      "min_s": 2.717627041742287e-05,
+      "max_s": 3.152049319419238e-05,
+      "samples_s": [
+        3.064715698729582e-05,
+        3.152049319419238e-05,
+        2.9759131125226858e-05,
+        2.9844544010889292e-05,
+        3.0273914700544467e-05,
+        3.085299455535391e-05,
+        2.717627041742287e-05
+      ],
+      "iterations_per_sample": 2204,
+      "speedup_vs_numpy": 1.2633336522592704
+    },
+    {
+      "paths": 10000,
+      "scope": "kernel",
+      "implementation": "rust",
+      "median_s": 2.9719538779256538e-05,
+      "min_s": 2.865555667737494e-05,
+      "max_s": 4.073770491050941e-05,
+      "samples_s": [
+        2.9211106011932077e-05,
+        4.073770491050941e-05,
+        2.9719538779256538e-05,
+        3.058035061955025e-05,
+        3.0203763194125744e-05,
+        2.893968930702157e-05,
+        2.865555667737494e-05
+      ],
+      "iterations_per_sample": 2179,
+      "speedup_vs_numpy": 1.2868993530114674
+    },
+    {
+      "paths": 10000,
+      "scope": "end_to_end",
+      "implementation": "numpy",
+      "median_s": 7.952751710097719e-05,
+      "min_s": 7.586407491856678e-05,
+      "max_s": 9.637713762214984e-05,
+      "samples_s": [
+        8.640937214983713e-05,
+        8.135301302931597e-05,
+        7.586407491856678e-05,
+        7.952751710097719e-05,
+        9.637713762214984e-05,
+        7.870256514657981e-05,
+        7.787269299674268e-05
+      ],
+      "iterations_per_sample": 1228,
+      "speedup_vs_numpy": 1.0
+    },
+    {
+      "paths": 10000,
+      "scope": "end_to_end",
+      "implementation": "numba",
+      "median_s": 7.307118108974359e-05,
+      "min_s": 7.108166346153847e-05,
+      "max_s": 0.0001071621923076923,
+      "samples_s": [
+        7.108166346153847e-05,
+        7.261515144230769e-05,
+        7.307118108974359e-05,
+        7.395389262820513e-05,
+        0.0001071621923076923,
+        7.701141826923076e-05,
+        7.175914823717949e-05
+      ],
+      "iterations_per_sample": 1248,
+      "speedup_vs_numpy": 1.0883568038034603
+    },
+    {
+      "paths": 10000,
+      "scope": "end_to_end",
+      "implementation": "rust",
+      "median_s": 7.256485291887793e-05,
+      "min_s": 7.097880288097043e-05,
+      "max_s": 7.480468157695224e-05,
+      "samples_s": [
+        7.325388551933283e-05,
+        7.480468157695224e-05,
+        7.097880288097043e-05,
+        7.205420773313116e-05,
+        7.21611379833207e-05,
+        7.411350189537528e-05,
+        7.256485291887793e-05
+      ],
+      "iterations_per_sample": 1319,
+      "speedup_vs_numpy": 1.0959509170353172
+    },
+    {
+      "paths": 100000,
+      "scope": "kernel",
+      "implementation": "numpy",
+      "median_s": 0.0005242156898395722,
+      "min_s": 0.0005186956310160428,
+      "max_s": 0.0005338658663101603,
+      "samples_s": [
+        0.0005338658663101603,
+        0.0005242156898395722,
+        0.0005236965240641711,
+        0.0005186956310160428,
+        0.0005299032994652407,
+        0.000528110962566845,
+        0.0005190289625668449
+      ],
+      "iterations_per_sample": 187,
+      "speedup_vs_numpy": 1.0
+    },
+    {
+      "paths": 100000,
+      "scope": "kernel",
+      "implementation": "numba",
+      "median_s": 0.0004966256613756614,
+      "min_s": 0.0004923260582010582,
+      "max_s": 0.0005054475343915344,
+      "samples_s": [
+        0.0004956457248677248,
+        0.0004941829841269841,
+        0.0004923260582010582,
+        0.0004966256613756614,
+        0.0005054475343915344,
+        0.000500121470899471,
+        0.0005023719153439154
+      ],
+      "iterations_per_sample": 189,
+      "speedup_vs_numpy": 1.055554979554391
+    },
+    {
+      "paths": 100000,
+      "scope": "kernel",
+      "implementation": "rust",
+      "median_s": 0.0004772273391812865,
+      "min_s": 0.00044714302923976604,
+      "max_s": 0.0004812941052631579,
+      "samples_s": [
+        0.0004547305087719298,
+        0.00048065326900584797,
+        0.0004772273391812865,
+        0.0004812941052631579,
+        0.00047761184210526314,
+        0.00044714302923976604,
+        0.0004642955614035088
+      ],
+      "iterations_per_sample": 171,
+      "speedup_vs_numpy": 1.0984611458742015
+    },
+    {
+      "paths": 100000,
+      "scope": "end_to_end",
+      "implementation": "numpy",
+      "median_s": 0.0009482868155339806,
+      "min_s": 0.0009141569611650485,
+      "max_s": 0.0010711193398058253,
+      "samples_s": [
+        0.000963381067961165,
+        0.0009209296116504855,
+        0.0010711193398058253,
+        0.0009141569611650485,
+        0.0009482868155339806,
+        0.000993765776699029,
+        0.0009228830970873786
+      ],
+      "iterations_per_sample": 103,
+      "speedup_vs_numpy": 1.0
+    },
+    {
+      "paths": 100000,
+      "scope": "end_to_end",
+      "implementation": "numba",
+      "median_s": 0.0009046241844660193,
+      "min_s": 0.0008837063106796116,
+      "max_s": 0.0009331144854368932,
+      "samples_s": [
+        0.0008945744368932039,
+        0.0008837063106796116,
+        0.0009143673106796117,
+        0.0009030404563106796,
+        0.0009219146504854369,
+        0.0009331144854368932,
+        0.0009046241844660193
+      ],
+      "iterations_per_sample": 103,
+      "speedup_vs_numpy": 1.0482660444168144
+    },
+    {
+      "paths": 100000,
+      "scope": "end_to_end",
+      "implementation": "rust",
+      "median_s": 0.0008644492454545455,
+      "min_s": 0.0008360950727272728,
+      "max_s": 0.0009017083363636364,
+      "samples_s": [
+        0.0008389484818181818,
+        0.0008825958363636363,
+        0.0008540776545454545,
+        0.0008932375,
+        0.0008644492454545455,
+        0.0009017083363636364,
+        0.0008360950727272728
+      ],
+      "iterations_per_sample": 110,
+      "speedup_vs_numpy": 1.0969837969322902
+    },
+    {
+      "paths": 1000000,
+      "scope": "kernel",
+      "implementation": "numpy",
+      "median_s": 0.005552226833333333,
+      "min_s": 0.0055167060555555555,
+      "max_s": 0.005600344888888889,
+      "samples_s": [
+        0.005547620333333333,
+        0.005563136611111111,
+        0.0055793564444444445,
+        0.0055167060555555555,
+        0.005552226833333333,
+        0.005600344888888889,
+        0.005541335666666667
+      ],
+      "iterations_per_sample": 18,
+      "speedup_vs_numpy": 1.0
+    },
+    {
+      "paths": 1000000,
+      "scope": "kernel",
+      "implementation": "numba",
+      "median_s": 0.005324690789473684,
+      "min_s": 0.0053029824210526315,
+      "max_s": 0.005342780736842105,
+      "samples_s": [
+        0.005342780736842105,
+        0.0053218684210526316,
+        0.0053029824210526315,
+        0.005324690789473684,
+        0.005309899157894737,
+        0.005333436368421052,
+        0.005329839894736842
+      ],
+      "iterations_per_sample": 19,
+      "speedup_vs_numpy": 1.0427322548587163
+    },
+    {
+      "paths": 1000000,
+      "scope": "kernel",
+      "implementation": "rust",
+      "median_s": 0.005242265315789474,
+      "min_s": 0.005223971473684211,
+      "max_s": 0.005423552631578947,
+      "samples_s": [
+        0.005236,
+        0.005243820157894737,
+        0.005237497789473684,
+        0.005223971473684211,
+        0.005245328947368421,
+        0.005242265315789474,
+        0.005423552631578947
+      ],
+      "iterations_per_sample": 19,
+      "speedup_vs_numpy": 1.0591273998685775
+    },
+    {
+      "paths": 1000000,
+      "scope": "end_to_end",
+      "implementation": "numpy",
+      "median_s": 0.010206533399999999,
+      "min_s": 0.010149241600000001,
+      "max_s": 0.0104885583,
+      "samples_s": [
+        0.0102123667,
+        0.010206533399999999,
+        0.0101872875,
+        0.0104885583,
+        0.0104109833,
+        0.010149241600000001,
+        0.010181425
+      ],
+      "iterations_per_sample": 10,
+      "speedup_vs_numpy": 1.0
+    },
+    {
+      "paths": 1000000,
+      "scope": "end_to_end",
+      "implementation": "numba",
+      "median_s": 0.009780700727272728,
+      "min_s": 0.009685227272727272,
+      "max_s": 0.009913151545454545,
+      "samples_s": [
+        0.009913151545454545,
+        0.009881223545454546,
+        0.009780700727272728,
+        0.009723545454545455,
+        0.009890776545454545,
+        0.009728359909090909,
+        0.009685227272727272
+      ],
+      "iterations_per_sample": 11,
+      "speedup_vs_numpy": 1.0435380536222594
+    },
+    {
+      "paths": 1000000,
+      "scope": "end_to_end",
+      "implementation": "rust",
+      "median_s": 0.009745121181818183,
+      "min_s": 0.009608776454545455,
+      "max_s": 0.00993180309090909,
+      "samples_s": [
+        0.009745121181818183,
+        0.009761409090909091,
+        0.009709178,
+        0.00993180309090909,
+        0.009831458363636364,
+        0.009659723545454545,
+        0.009608776454545455
+      ],
+      "iterations_per_sample": 11,
+      "speedup_vs_numpy": 1.0473480226231244
+    },
+    {
+      "paths": 10000000,
+      "scope": "kernel",
+      "implementation": "numpy",
+      "median_s": 0.0595256665,
+      "min_s": 0.0593860835,
+      "max_s": 0.0606445835,
+      "samples_s": [
+        0.0598417085,
+        0.0606445835,
+        0.059435708,
+        0.059620854,
+        0.0593860835,
+        0.0593949795,
+        0.0595256665
+      ],
+      "iterations_per_sample": 2,
+      "speedup_vs_numpy": 1.0
+    },
+    {
+      "paths": 10000000,
+      "scope": "kernel",
+      "implementation": "numba",
+      "median_s": 0.0537630415,
+      "min_s": 0.0536026665,
+      "max_s": 0.054175083,
+      "samples_s": [
+        0.0537630415,
+        0.0540637295,
+        0.0536026665,
+        0.0536123955,
+        0.053921271,
+        0.054175083,
+        0.05375625
+      ],
+      "iterations_per_sample": 2,
+      "speedup_vs_numpy": 1.1071856211855127
+    },
+    {
+      "paths": 10000000,
+      "scope": "kernel",
+      "implementation": "rust",
+      "median_s": 0.053436958,
+      "min_s": 0.053159,
+      "max_s": 0.053682354,
+      "samples_s": [
+        0.053159,
+        0.0532445205,
+        0.053553479,
+        0.0534180415,
+        0.053436958,
+        0.053647,
+        0.053682354
+      ],
+      "iterations_per_sample": 2,
+      "speedup_vs_numpy": 1.1139418995370207
+    },
+    {
+      "paths": 10000000,
+      "scope": "end_to_end",
+      "implementation": "numpy",
+      "median_s": 0.113952959,
+      "min_s": 0.106909333,
+      "max_s": 0.161813125,
+      "samples_s": [
+        0.106909333,
+        0.109219875,
+        0.111559292,
+        0.113952959,
+        0.161813125,
+        0.115025292,
+        0.115358333
+      ],
+      "iterations_per_sample": 1,
+      "speedup_vs_numpy": 1.0
+    },
+    {
+      "paths": 10000000,
+      "scope": "end_to_end",
+      "implementation": "numba",
+      "median_s": 0.105462916,
+      "min_s": 0.099501166,
+      "max_s": 0.130863583,
+      "samples_s": [
+        0.103372584,
+        0.103218292,
+        0.099501166,
+        0.114391583,
+        0.130863583,
+        0.106463625,
+        0.105462916
+      ],
+      "iterations_per_sample": 1,
+      "speedup_vs_numpy": 1.0805026384819476
+    },
+    {
+      "paths": 10000000,
+      "scope": "end_to_end",
+      "implementation": "rust",
+      "median_s": 0.107799583,
+      "min_s": 0.099571458,
+      "max_s": 0.157380084,
+      "samples_s": [
+        0.102379917,
+        0.114754417,
+        0.099571458,
+        0.157380084,
+        0.106549792,
+        0.116242292,
+        0.107799583
+      ],
+      "iterations_per_sample": 1,
+      "speedup_vs_numpy": 1.0570816308259745
+    }
+  ]
+}

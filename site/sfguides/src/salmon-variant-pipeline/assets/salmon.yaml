@@ -1,0 +1,35 @@
+name: salmon-pipeline
+channels:
+  - bioconda
+  - conda-forge
+  - defaults
+dependencies:
+  # Salmon 2.0 (Rust rewrite) — installed via the upstream script, not conda,
+  # because the conda package may lag behind the GitHub release.
+  # See pipeline.sh install_salmon() or run manually:
+  #   curl --proto '=https' --tlsv1.2 -LsSf \
+  #     https://github.com/COMBINE-lab/salmon/releases/latest/download/salmon-cli-installer.sh | sh
+  #
+  # Salmon 1.12.0 (final C++ release) — conda package name is salmon-cpp:
+  #   conda install -c bioconda -c conda-forge salmon-cpp
+  #
+  # Install only one at a time (both install a binary called "salmon").
+  # salmon-cpp kept here as a commented option for easy switching.
+  # - salmon-cpp        # C++ 1.12.0
+
+  - sra-tools>=3.0       # fasterq-dump for SRA downloads
+  - snakemake>=8.0
+  - multiqc
+  - python>=3.11
+  - r-base>=4.3
+  - bioconductor-tximport
+  - bioconductor-tximeta
+  - bioconductor-deseq2
+  - bioconductor-fishpond   # transcript-level testing (swish)
+  - bioconductor-drimseq    # differential transcript usage
+  - bioconductor-stager     # two-stage testing
+  - bioconductor-org.hs.eg.db
+  - r-ashr
+  - r-ggplot2
+  - r-pheatmap
+  - r-dplyr

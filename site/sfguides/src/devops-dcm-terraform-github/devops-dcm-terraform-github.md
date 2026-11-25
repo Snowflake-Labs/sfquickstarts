@@ -1,4 +1,4 @@
-author: Jeremiah Hansen
+author: Brad Culberson
 id: devops-dcm-terraform-github
 categories: snowflake-site:taxonomy/solution-center/certification/quickstart, snowflake-site:taxonomy/product/data-engineering
 language: en
@@ -53,7 +53,7 @@ You will need the following things before beginning:
 
 1. Snowflake
   1. **A Snowflake Account.**
-  1. **A Snowflake User created with appropriate permissions.** This user will need permission to create databases.
+  1. **A Snowflake User created with appropriate permissions.** This user will need permission to create databases and roles.
 1. GitHub
   1. **A GitHub Account.** If you don’t already have a GitHub account you can create one for free. Visit the [Join GitHub](https://github.com/join) page to get started.
   1. **A GitHub Repository.** If you don't already have a repository created, or would like to create a new one, then [Create a new respository](https://github.com/new). For the type, select `Public` (although you could use either). And you can skip adding the README, .gitignore and license for now.
@@ -98,14 +98,8 @@ This quickstart will be focused on the GitHub Actions service.
 ### Terraform
 [Terraform](https://www.terraform.io/) is an open-source Infrastructure as Code (IaC) tool created by [HashiCorp](https://www.hashicorp.com/) that "allows you to build, change, and version infrastructure safely and efficiently. This includes low-level components such as compute instances, storage, and networking, as well as high-level components such as DNS entries, SaaS features, etc. Terraform can manage both existing service providers and custom in-house solutions." (from [Introduction to Terraform](https://www.terraform.io/intro/index.html)). With Terraform the primary way to describe your infrastructure is by creating human-readble, declarative configuration files using the high-level configuration language known as [HashiCorp Configuration Language (HCL)](https://www.terraform.io/docs/language/index.html).
 
-### Chan Zuckerberg Provider
-While Terraform began as an IaC tool it has expanded and taken on many additional use cases (some listed above). Terraform can be extended to support these different uses cases and systems through a [Terraform Provider](https://registry.terraform.io/browse/providers). There is no official, first-party Terraform-managed Provider for Snowflake, but the [Chan Zuckerberg Initiative (CZI)](https://chanzuckerberg.com/) has created a popular [Terraform Provider for Snowflake](https://registry.terraform.io/providers/chanzuckerberg/snowflake/latest).
-
-Please note that this CZI Provider for Snowflake is a community-developed Provider, not an official Snowflake offering. It comes with no support or warranty.
-
-> 
-> 
->  **REALLY IMPORTANT** - **Do not use this provider to manage your Snowflake tables.** Currently the CZI Snowflake Provider drops and re-creates a table each time you make changes to it. So when using Terraform with Snowflake use it to create/manage the account level objects (warehouses, roles, integrations, databases, schemas, etc.) and then use a separate DCM tool for most objects within the database schema (tables, views, stored procedures, etc.).
+### Snowflake Official Provider
+While Terraform began as an IaC tool it has expanded and taken on many additional use cases (some listed above). Terraform can be extended to support these different uses cases and systems through a [Terraform Provider](https://registry.terraform.io/browse/providers). Snowflake provides an official [Terraform Provider for Snowflake](https://registry.terraform.io/providers/snowflakedb/snowflake/latest), and Snowflake Support covers it. Official support starts with provider version 2.0.0 for stable resources.
 
 ### State Files
 Another really important thing to understand about Terraform is how it tracks the state of the resources/objects being managed. Many declarative style tools like this will do a real-time comparison between the objects defined in code and the deployed objects and then figure out what changes are required. But Terraform does not operate in this manner, instead it maintains a State file which keeps track of things. See Terraform's overview of [State](https://www.terraform.io/docs/language/state/index.html) and in particular their discussion of why they chose to require a State file in [Purpose of Terraform State](https://www.terraform.io/docs/language/state/purpose.html).
@@ -136,25 +130,28 @@ From the Workspaces page click on the "+ New workspace" button near the top righ
 On the second page, where it asks for the "Workspace Name" enter `gh-actions-demo` and then click the "Create workspace" button at the bottom of the page.
 
 ### Setup Environment Variables
-In order for Terraform Cloud to be able to connect to your Snowflake account you'll need to store the settings in Environment variables. Fortunately, Terraform Cloud makes this easy. From your new workspace homepage click on the "Variables" tab. Then for each variable listed below click on "+ Add variable" button (under the "Environment Variables" section) and enter the name given below along with the appropriate value (adjusting as appropriate).
+In order for Terraform Cloud to be able to connect to your Snowflake account you'll need to store the settings in Environment variables. Fortunately, Terraform Cloud makes this easy. From your new workspace homepage click on the "Variables" tab. Then for each variable listed below click on "+ Add variable" button (under the "Workspace Variables" section) and choose Environment Variable and enter the Variable key given below along with the appropriate value (modifying as needed).
 
 | Variable key | Variable value | Sensitive? |
 |--------------|----------------|------------|
-| SNOWFLAKE_ACCOUNT | xy12345 | No |
-| SNOWFLAKE_REGION | east-us-2.azure | No |
+| SNOWFLAKE_ORGANIZATION_NAME | myorg | No |
+| SNOWFLAKE_ACCOUNT_NAME | myaccount | No |
 | SNOWFLAKE_USER | DEMO_USER | No |
 | SNOWFLAKE_PASSWORD | ***** | Yes |
 
+You can find your organization and account names in Snowflake by running `SELECT CURRENT_ORGANIZATION_NAME(), CURRENT_ACCOUNT_NAME();`.
+
+Create a Programmatic access tokens (PAT) token to use as the password for the user so that 2fa is not needed. You can also setup authentication to use a dedicated user which is of type SERVICE with a keypair. Review Terraform Provider and Snowflake Documentation if that is desired.
 > 
 > 
->  **Tip** - For more details on the supported arguments please check out the [CZI Terraform Provider for Snowflake documentation](https://registry.terraform.io/providers/chanzuckerberg/snowflake/latest/docs).
+>  **Tip** - For more details on the supported arguments please check out the [Snowflake Terraform Provider documentation](https://registry.terraform.io/providers/snowflakedb/snowflake/latest/docs).
 
 When you’re finished adding all the secrets, the page should look like this:
 
 ![assets/devops_dcm_terraform_github-6.png](assets/devops_dcm_terraform_github-6.png)
 
 ### Create an API Token
-The final thing we need to do in Terraform Cloud is to create an API Token so that GitHub Actions can securely authenticate with Terraform Cloud. Click on your user icon near the top right of the screen and then click on "User settings". Then in the left navigation bar click on the user settings page click on the "Tokens" tab.
+The final thing we need to do in Terraform Cloud is to create an API Token so that GitHub Actions can securely authenticate with Terraform Cloud. Click on your user icon near the top right of the screen and then click on "Account settings". Then in the left navigation bar click on the "Tokens" tab.
 
 Click on the "Create an API token" button, give your token a "Description" (like `GitHub Actions`) and then click on the "Create API token" button. Pay careful attention on the next screen. You need to save the API token because once you click on the "Done" button the token **will not be displayed again**. Once you've saved the token, click the "Done" button.
 
@@ -220,7 +217,7 @@ jobs:
         run: terraform apply -auto-approve
 ```
 
-Finally, click on the green "Start commit" button near the top right of the page and then click on the green "Commit new file" in the pop up window (you can leave the default comments and commit settings). You'll now be taken to the workflow folder in your repository.
+Finally, click on the green "Commit changes" button near the top right of the page and then click on the green "Commit changes" in the pop up window (you can leave the default comments and commit settings). You'll now be taken to the workflow folder in your repository.
 
 A few things to point out from the YAML pipeline definition:
 
@@ -241,8 +238,8 @@ Open up your cloned GitHub repository in your favorite IDE and create a new file
 terraform {
   required_providers {
     snowflake = {
-      source  = "chanzuckerberg/snowflake"
-      version = "0.25.17"
+      source  = "snowflakedb/snowflake"
+      version = "2.22.0"
     }
   }
 
@@ -261,6 +258,25 @@ provider "snowflake" {
 resource "snowflake_database" "demo_db" {
   name    = "DEMO_DB"
   comment = "Database for Snowflake Terraform demo"
+}
+
+resource "snowflake_account_role" "demo_db_admin" {
+  name    = "DEMO_DB_ADMIN"
+  comment = "Admin role for DEMO_DB"
+}
+
+resource "snowflake_grant_privileges_to_account_role" "demo_db_admin_all" {
+  account_role_name = snowflake_account_role.demo_db_admin.name
+  all_privileges    = true
+  on_account_object {
+    object_type = "DATABASE"
+    object_name = snowflake_database.demo_db.name
+  }
+}
+
+resource "snowflake_grant_account_role" "demo_db_admin_to_demo_user" {
+  role_name = snowflake_account_role.demo_db_admin.name
+  user_name = "DEMO_USER"
 }
 ```
 
@@ -285,7 +301,7 @@ While you'll generally be able to see all the Terraform output in the GitHub Act
 
 ### Snowflake Objects
 
-Log in to your Snowflake account and you should see your new `DEMO_DB` database! Additionaly you can review the queries that were executed by Terraform by clicking on the "History" tab at the top of the window.
+Log in to your Snowflake account and you should see your new `DEMO_DB` database and the `DEMO_DB_ADMIN` role granted to `DEMO_USER`! Additionaly you can review the queries that were executed by Terraform by clicking on the "History" tab at the top of the window.
 
 <!-- ------------------------ -->
 ## Create Your Second Database Migration
@@ -311,7 +327,8 @@ Congratulations, you now have a working CI/CD pipeline with Terraform and Snowfl
 
 In the previous sections we created and tested a simple GitHub Actions workflow with Terraform. This section provides a more advanced workflow that you can test out. This one adds the capability for having Terraform validate and plan a change before it's actually deployed. This pipeline adds CI triggers that cause it to run when a Pull Request (PR) is created/updated. During that process it will run a `terraform plan` and stick the results in the PR itself for easy review. Please give it a try!
 
-```terraform
+
+```yaml
 name: "Snowflake Terraform Demo Workflow"
 
 on:
@@ -320,16 +337,20 @@ on:
       - main
   pull_request:
 
+permissions:
+  contents: read
+  pull-requests: write
+
 jobs:
   snowflake-terraform-demo:
     name: "Snowflake Terraform Demo Job"
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v1
+        uses: hashicorp/setup-terraform@v4
         with:
           cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
 
@@ -351,7 +372,7 @@ jobs:
         run: terraform plan -no-color
         continue-on-error: true
 
-      - uses: actions/github-script@0.9.0
+      - uses: actions/github-script@v7
         if: github.event_name == 'pull_request'
         env:
           PLAN: "terraform\n${{ steps.plan.outputs.stdout }}"
@@ -373,7 +394,7 @@ jobs:
             
             *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`, Working Directory: \`${{ env.tf_actions_working_dir }}\`, Workflow: \`${{ github.workflow }}\`*`;
             
-            github.issues.createComment({
+            await github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -421,6 +442,6 @@ With that you should now have a working CI/CD pipeline in GitHub Actions and som
 ### Related Resources
 
 * [Terraform](https://www.terraform.io/)
-* [Chan Zuckerberg Terraform Provider for Snowflake](https://registry.terraform.io/providers/chanzuckerberg/snowflake/latest)
+* [Snowflake Terraform Provider](https://registry.terraform.io/providers/snowflakedb/snowflake/latest)
 * [Terraforming Snowflake Quickstart](/en/developers/guides/terraforming-snowflake/)
 * [GitHub Actions](https://github.com/features/actions)

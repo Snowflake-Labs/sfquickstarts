@@ -6,7 +6,8 @@ categories: snowflake-site:taxonomy/solution-center/certification/well-architect
 language: en
 summary: The Open and Interoperable Lens provides guidance for multi-engine data access via Apache Iceberg, external catalog integration, cross-organizational data sharing, and data portability across the Snowflake ecosystem.
 environments: web
-status: Published 
+status: Published
+fork_repo_link: https://github.com/Snowflake-Labs/cortex-code-skills/tree/main/skills/well-architected-framework-assessment
 
 
 
@@ -14,12 +15,13 @@ status: Published
 
 ## Overview
 
-| Field | Description |
-|-------|-------------|
-| Scope | Multi-engine data access via Apache Iceberg, external catalog integration, cross-organizational data sharing, CDC and data integration patterns, and data portability across the Snowflake ecosystem |
-| Target Audience | Data architects, platform engineers, data engineers, and technology leaders who design and operate data platforms spanning multiple engines, tools, and organizational boundaries |
-| Prerequisites | Familiarity with the five Snowflake Well-Architected Framework pillars. Core WAF pillar guidance should be adopted before applying this lens. |
-| Out of Scope | Foundational Snowflake architecture (covered by WAF pillars), single-engine Snowflake deployments without external integration needs, application-layer integration patterns |
+**Scope**: Multi-engine data access via Apache Iceberg, external catalog integration, cross-organizational data sharing, CDC and data integration patterns, and data portability across the Snowflake ecosystem
+
+**Target Audience**: Data architects, platform engineers, data engineers, technology leaders, solution architects, sales engineers, and technical account managers who design, operate, and advise on data platforms spanning multiple engines, tools, and organizational boundaries
+
+**Prerequisites**: Familiarity with the five Snowflake Well-Architected Framework pillars. Core WAF pillar guidance should be adopted before applying this lens.
+
+**Out of Scope**: Foundational Snowflake architecture (covered by WAF pillars), single-engine Snowflake deployments without external integration needs, application-layer integration patterns
 
 ### Why This Lens Exists
 
@@ -37,14 +39,17 @@ The core WAF pillars address universal Snowflake architecture concerns. This len
 
 ### Design Principles
 
-| # | Principle | Description |
-|---|-----------|-------------|
-| 1 | Bring compute to data, not data to compute | Let engines query data in place rather than copying it to each consumer. Snowflake enables this through Horizon Catalog, Catalog-Linked Databases, and Iceberg Tables on customer-managed storage. |
-| 2 | Embrace open standards; work toward unified governance | Use Apache Iceberg, the Iceberg REST catalog protocol, and Snowflake Horizon to provide open-format flexibility. In OSS engine deployments, Horizon can serve as a single governance control plane. In vendor co-existence deployments, governance fragmentation is a current operational reality — design policies to be duplicated across catalogs in the interim while working toward convergence on cross-vendor enforcement standards. |
-| 3 | Share data securely without copying | Prefer Secure Data Sharing and Data Clean Rooms over file extracts to eliminate governance gaps, staleness, and storage duplication. |
-| 4 | Preserve optionality through open standards | Snowflake's support for ANSI SQL, Apache Iceberg, PostgreSQL wire protocol (Snowflake Postgres), and standard APIs (JDBC, ODBC, REST, Polaris) ensures that skills and workloads remain portable. Evaluate portability alongside capability—not instead of it. |
-| 5 | Design for resilience across the integration surface | Extend continuity planning beyond databases to the full integration layer—catalog endpoints, external engine connections, Shares, Clean Rooms, and pipelines—using Failover Groups and Client Redirect. |
-| 6 | Enable semantic interoperability across tools | Adopt the Open Semantic Interchange (OSI) standard so that metrics, dimensions, and business logic definitions are portable across BI, AI, and analytics platforms—eliminating redundant semantic definitions and ensuring consistent meaning across the ecosystem. |
+**Bring compute to data, not data to compute**: Let engines query data in place rather than copying it to each consumer. Snowflake enables this through Horizon Catalog, Catalog-Linked Databases, and Iceberg Tables on customer-managed storage.
+
+**Embrace open standards; work toward unified governance**: Use Apache Iceberg, the Iceberg REST catalog protocol, and Snowflake Horizon to provide open-format flexibility. In OSS engine deployments, Horizon can serve as a single governance control plane. In vendor co-existence deployments, governance fragmentation is a current operational reality — design policies to be duplicated across catalogs in the interim while working toward convergence on cross-vendor enforcement standards.
+
+**Share data securely without copying**: Prefer Secure Data Sharing and Data Clean Rooms over file extracts to eliminate governance gaps, staleness, and storage duplication.
+
+**Preserve optionality through open standards**: Snowflake's support for ANSI SQL, Apache Iceberg, PostgreSQL wire protocol (Snowflake Postgres), and standard APIs (JDBC, ODBC, REST, Polaris) ensures that skills and workloads remain portable. Evaluate portability alongside capability—not instead of it.
+
+**Design for resilience across the integration surface**: Extend continuity planning beyond databases to the full integration layer—catalog endpoints, external engine connections, Shares, Clean Rooms, and pipelines—using Failover Groups and Client Redirect.
+
+**Enable semantic interoperability across tools**: Adopt the Open Semantic Interchange (OSI) standard so that metrics, dimensions, and business logic definitions are portable across BI, AI, and analytics platforms—eliminating redundant semantic definitions and ensuring consistent meaning across the ecosystem.
 
 ## Pillar Guidance
 
@@ -61,15 +66,23 @@ Security and governance for interoperable architectures extends the Security & G
 
 #### Recommendations
 
-| # | Recommendation | Description | Priority |
-|---|---------------|-------------|----------|
-| 1 | Serve Iceberg tables to external engines via Horizon Catalog | External engines connect to Horizon's Polaris APIs via standard Iceberg REST catalog configuration—no Snowflake-side DDL required. Reads are GA; writes are in preview (see Feature Status). RBAC controls table and namespace access; row-access policies and masking are not yet enforced for external engine queries via the Polaris API (see Feature Status). | High |
-| 2 | Consume external Iceberg tables via Catalog-Linked Databases | Catalog-Linked Databases auto-sync metadata from external Iceberg REST catalogs into Snowflake. Supported catalogs include Unity Catalog, AWS Glue REST (CATALOG_API_TYPE = AWS_GLUE with SigV4 authentication), self-hosted Apache Polaris, and any Iceberg REST-compliant catalog. Snowflake governance (RBAC, row-access policies, masking) applies to linked tables. | High |
-| 3 | Use vended credentials for storage access | Configure vended credentials so the catalog issues temporary cloud storage credentials (AWS session tokens, Azure SAS tokens, GCS OAuth tokens) to external engines. This makes the catalog the single point of access control for both metadata and data. | High |
-| 4 | Enable privacy-preserving collaboration with Data Clean Rooms | Use Data Clean Rooms for cross-organizational collaboration where regulatory or competitive concerns prevent raw data sharing. Clean Rooms support Iceberg-backed datasets and work cross-cloud. Data Clean Rooms require both parties to be Snowflake customers. | Medium |
-| 5 | Automate policy enforcement with Horizon | Use classification, tag-based masking, and Access History to scale governance. These policies apply to all Snowflake-governed access paths. For external engines querying through Polaris APIs, row-access and masking policies are not yet enforced—see Feature Status. | Medium |
-| 6 | Audit for ungoverned access paths | Identify external engines reading raw cloud storage files, manual file exports, or direct S3/ADLS access that bypasses catalog governance. Route them through Horizon or CLD. | Medium |
-| 7 | Govern semantic definitions through OSI | Adopt the Open Semantic Interchange standard to ensure metrics, dimensions, and business logic are defined once and governed centrally—then portable across BI, AI, and analytics tools without re-creation or drift. | Medium |
+<table><thead><tr><th width="30%">Recommendation</th><th width="40%">Description</th><th width="30%">Priority</th></tr></thead><tbody>
+<tr><td>Serve Iceberg tables to external engines via Horizon Catalog</td><td>External engines connect to Horizon's Polaris APIs via standard Iceberg REST catalog configuration—no Snowflake-side DDL required. Reads are GA; writes are in preview (see Feature Status). RBAC controls table and namespace access; row-access policies and masking are enforced for Spark via the Snowflake Connector for Spark (v3.1.6+); not yet enforced for other engines (Trino, Flink, DuckDB) via native Polaris API access.</td><td>High</td></tr>
+<tr><td>Consume external Iceberg tables via Catalog-Linked Databases</td><td>Catalog-Linked Databases auto-sync metadata from external Iceberg REST catalogs into Snowflake. Supported catalogs include Unity Catalog, Azure Fabric OneLake (GA), AWS Glue REST (CATALOG_API_TYPE = AWS_GLUE with SigV4 authentication), self-hosted Apache Polaris, and any Iceberg REST-compliant catalog. Snowflake governance (RBAC, row-access policies, masking) applies to linked tables.</td><td>High</td></tr>
+<tr><td>Use vended credentials for storage access</td><td>Configure vended credentials so the catalog issues temporary cloud storage credentials (AWS session tokens, Azure SAS tokens, GCS OAuth tokens) to external engines. This makes the catalog the single point of access control for both metadata and data.</td><td>High</td></tr>
+<tr><td>Enable privacy-preserving collaboration with Data Clean Rooms</td><td>Use Data Clean Rooms for cross-organizational collaboration where regulatory or competitive concerns prevent raw data sharing. Clean Rooms support Iceberg-backed datasets and work cross-cloud. Scope note: Data Clean Rooms require both parties to be Snowflake customers. For cross-organizational collaboration where the counterparty is not on Snowflake, the Open Data Sharing initiative and Iceberg REST catalog with vended credentials provide a path — external engines can access governed data without a Snowflake account.</td><td>Medium</td></tr>
+<tr><td>Automate policy enforcement with Horizon</td><td>Use classification, tag-based masking, and Access History to scale governance. These policies apply to all Snowflake-governed access paths. For external engines querying through Polaris APIs, row-access and masking policies are not yet enforced—see Feature Status.</td><td>Medium</td></tr>
+<tr><td>Audit for ungoverned access paths</td><td>Identify external engines reading raw cloud storage files, manual file exports, or direct S3/ADLS access that bypasses catalog governance. Route them through Horizon or CLD. Note on Access History: Polaris API requests do not capture the actual query text in Snowflake's Access History. In practice, external engine access flows through vendor service accounts; attribution to individual end users requires additional operational work (correlating vendor-side audit logs with Snowflake access records). Auditing is achievable but is not automatic.</td><td>Medium</td></tr>
+<tr><td>Govern semantic definitions through OSI</td><td>Adopt the Open Semantic Interchange standard to ensure metrics, dimensions, and business logic are defined once and governed centrally—then portable across BI, AI, and analytics tools without re-creation or drift.</td><td>Medium</td></tr>
+</tbody></table>
+
+#### Guidance
+
+**Outbound access**: External engines configure their Iceberg REST catalog client to point at the Horizon endpoint—no Snowflake-specific libraries required. Engines authenticate via OAuth and receive vended credentials for storage access. See Access Iceberg tables with an external engine through Horizon Catalog for engine-specific configuration (Spark, Trino, Flink, DuckDB, Dremio, and others).
+
+**Inbound access via CLD**: See Use a catalog-linked database for Iceberg tables for setup, including catalog integrations for AWS Glue REST, Unity Catalog, and other Iceberg REST catalogs.
+
+Horizon Catalog is the recommended path for all Snowflake customers. Apache Polaris and Snowflake Open Catalog serve a specific use case: organizations that require a vendor-neutral, fully decoupled catalog, or that need an open-source exit ramp. Positioning: Horizon for governed multi-engine access; Polaris/Open Catalog for OSS-first shops or where Snowflake compute is explicitly out of scope. Do not default to recommending Open Catalog in situations where Horizon would meet the requirement.
 
 #### Anti-Patterns
 
@@ -85,6 +98,7 @@ Security and governance for interoperable architectures extends the Security & G
 - Are vended credentials the default storage access model for external engines?
 - Are there cross-organizational collaboration needs that Data Clean Rooms could address?
 - Are semantic definitions (metrics, dimensions, business logic) governed centrally and exchanged via OSI-compatible formats?
+- Do Snowflake Intelligence and Cortex AI functions inherit existing row-access and column-level security policies? Validate that AI-generated outputs respect the same access controls as direct SQL queries for a given role.
 
 ### Operational Excellence
 
@@ -100,15 +114,27 @@ Operational excellence for interoperable architectures extends the Operational E
 
 #### Recommendations
 
-| # | Recommendation | Description | Priority |
-|---|---------------|-------------|----------|
-| 1 | Use Streams + Tasks for native CDC | Streams capture row-level changes with exactly-once semantics. Tasks execute incremental MERGE logic on schedule or when SYSTEM$STREAM_HAS_DATA() returns true. Iceberg table support: Snowflake-managed Iceberg (v2 or v3) supports full change data streams; externally-managed Iceberg v2 supports append-only streams only; externally-managed Iceberg v3 supports full CDC streams via row lineage. | High |
-| 2 | Use Dynamic Tables and Dynamic Iceberg Tables for declarative pipelines | Dynamic Tables express transformation results declaratively—Snowflake manages incremental refresh to meet the target lag. For multi-engine interoperability, use Dynamic Iceberg Tables to write transformation output in Iceberg format to external storage, making pipeline results directly accessible to external engines through Horizon. | High |
-| 3 | Use Catalog-Linked Databases for metadata sync | CLD automatically discovers and syncs tables from external Iceberg REST catalogs. Use for environments where Databricks, Spark, or Flink write Iceberg data that Snowflake needs to query. | High |
-| 4 | Evaluate Openflow for unified data integration | Openflow (built on Apache NiFi) provides pre-built connectors for CDC from OLTP databases, streaming from Kafka/Kinesis, SaaS integration, and file-based sources. GA for both BYOC and Snowflake Deployments (SPCS). | Medium |
-| 5 | Use Delta Direct for Delta Lake interop | Read Delta Lake tables directly in Snowflake without conversion using TABLE_FORMAT = DELTA in the catalog integration. Auto-refresh keeps tables current as upstream processes write new Delta commits. | Medium |
-| 6 | Convert externally-managed Iceberg tables to Snowflake-managed | Use ALTER ICEBERG TABLE ... CONVERT TO MANAGED to migrate tables from external catalogs to Snowflake-managed, gaining write support, automatic compaction, and full lifecycle management. Validate carefully and coordinate with upstream producers before cutting over. | Medium |
-| 7 | Curate Trusted Data Products | Identify authoritative datasets with clear ownership, freshness SLAs, and business context documented in Horizon. Enable self-service discovery through Universal Search. Evaluate Marketplace for third-party data before building acquisition pipelines. | Medium |
+<table><thead><tr><th width="30%">Recommendation</th><th width="40%">Description</th><th width="30%">Priority</th></tr></thead><tbody>
+<tr><td>Use Streams + Tasks for native CDC</td><td>Streams capture row-level changes with exactly-once semantics. Tasks execute incremental MERGE logic on schedule or when SYSTEM$STREAM_HAS_DATA() returns true. Iceberg table support: Snowflake-managed Iceberg (v2 or v3) supports full change data streams; externally-managed Iceberg v2 supports append-only streams only; externally-managed Iceberg v3 supports full CDC streams via row lineage (v3 ecosystem adoption is currently very limited). External engine CDC constraint: Snowflake does not support reading Iceberg tables written with equality deletes — no current roadmap. Flink CDC and the Tabular Kafka Connector default to equality deletes in CDC mode. Before routing Flink or Kafka CDC output to Iceberg tables that Snowflake will read, confirm the delete mode on the writer. Configure Flink to use positional deletes or deletion vectors instead.</td><td>High</td></tr>
+<tr><td>Use Dynamic Tables and Dynamic Iceberg Tables for declarative pipelines</td><td>Dynamic Tables express transformation results declaratively—Snowflake manages incremental refresh to meet the target lag. For multi-engine interoperability, use Dynamic Iceberg Tables to write transformation output in Iceberg format to external storage, making pipeline results directly accessible to external engines through Horizon. Prefer over imperative Streams + Tasks when logic is expressible as SQL.</td><td>High</td></tr>
+<tr><td>Use Catalog-Linked Databases for metadata sync</td><td>CLD automatically discovers and syncs tables from external Iceberg REST catalogs. Use for environments where Databricks, Spark, or Flink write Iceberg data that Snowflake needs to query. See the "External-First CLD" pattern for Databricks interop. Constraint: CLD auto-refresh and automatic table discovery require an Iceberg REST API endpoint. Object storage-backed catalog integrations do not support auto-refresh — customers must implement manual refresh or add a REST catalog layer.</td><td>High</td></tr>
+<tr><td>Evaluate Openflow for unified data integration</td><td>Openflow (built on Apache NiFi) provides pre-built connectors for CDC from OLTP databases, streaming from Kafka/Kinesis, SaaS integration, and file-based sources. GA for both BYOC and Snowflake Deployments (SPCS). Deploy through the Snowsight UI (Ingestion > Openflow). Individual connectors may vary in availability.</td><td>Medium</td></tr>
+<tr><td>Use Delta Direct for Delta Lake interop</td><td>Read Delta Lake tables directly in Snowflake without conversion using TABLE_FORMAT = DELTA in the catalog integration. Auto-refresh keeps tables current as upstream processes write new Delta commits. Replaces the deprecated external table approach. Scope: Delta Direct is read-only for externally-managed Delta Lake tables (CATALOG_SOURCE = OBJECT_STORE, TABLE_FORMAT = DELTA). Snowflake-managed Iceberg tables cannot be accessed via Delta Direct — there is no roadmap for managed-table support.</td><td>Medium</td></tr>
+<tr><td>Convert externally-managed Iceberg tables to Snowflake-managed</td><td>Use ALTER ICEBERG TABLE ... CONVERT TO MANAGED to migrate tables from external catalogs (AWS Glue, self-hosted Polaris) to Snowflake-managed, gaining write support, automatic compaction, and full lifecycle management. Note that this migration can be tricky in practice today — particularly when Snowflake isn't the original writer of the table — so validate carefully and coordinate with upstream producers before cutting over. Snowflake automatically compacts Iceberg data files; for high-volume small-file ingestion, control compaction with ENABLE_DATA_COMPACTION = FALSE at the table level.</td><td>Medium</td></tr>
+<tr><td>Curate Trusted Data Products</td><td>Identify authoritative datasets with clear ownership, freshness SLAs, and business context documented in Horizon. Enable self-service discovery through Universal Search. Evaluate Marketplace for third-party data before building acquisition pipelines.</td><td>Medium</td></tr>
+</tbody></table>
+
+#### Guidance
+
+**CDC with Streams + Tasks**: See Getting Started with Streams & Tasks for the imperative CDC pattern using CREATE STREAM, SYSTEM$STREAM_HAS_DATA(), and MERGE logic in scheduled Tasks.
+
+**Dynamic Tables**: See Creating Dynamic Tables for declarative pipelines where Snowflake manages incremental refresh to a target lag.
+
+**Dynamic Iceberg Tables**: See Creating Dynamic Iceberg Tables for pipelines that output to Iceberg format on external storage, making results accessible to external engines through Horizon.
+
+**Iceberg ingestion**: All standard Snowflake ingestion methods work with Iceberg tables (GA since Nov 2024): COPY INTO, Snowpipe, and Snowpipe Streaming. Teams do not sacrifice ingestion capabilities by choosing Iceberg format.
+
+**Delta Direct**: See Create an Iceberg table from Delta files for reading Delta Lake tables directly in Snowflake with auto-refresh.
 
 #### Anti-Patterns
 
@@ -117,19 +143,23 @@ Operational excellence for interoperable architectures extends the Operational E
 - Running self-managed NiFi when Openflow provides a managed equivalent
 - Extracting Delta Lake data to staging files instead of using Delta Direct
 - Relying on tribal knowledge for data discovery instead of Horizon and Universal Search
+- Routing Flink CDC or Tabular Kafka Connector output to Iceberg tables without validating delete mode — both tools default to equality deletes in CDC mode. This is a silent failure: tables appear valid but Snowflake queries fail or return incorrect results.
+- Assuming CLD auto-refresh works for all external catalog types — CLD automatic table discovery and auto-refresh require an Iceberg REST API endpoint. Object storage-backed catalogs have no auto-refresh support.
+- Expecting Delta Direct to work bidirectionally or with Snowflake-managed Iceberg tables — Delta Direct reads externally-managed Delta Lake files only. For reverse-flow scenarios, use SF-Managed Iceberg with Horizon Catalog.
 
 #### Assessment Questions
 
 - What percentage of data integration uses custom ETL vs. native Snowflake capabilities (Streams, Tasks, Dynamic Tables, Openflow)?
 - Are external catalog tables consumed through CLD or through manual individual table creation?
 - Are Delta Lake tables from upstream engines accessed via Delta Direct?
+- For external engines writing CDC data to Iceberg tables that Snowflake reads: what delete mode is configured on the writer? Equality deletes are not supported — confirm positional deletes or deletion vectors are used.
 - Are data products documented with ownership, SLAs, and business context in Horizon?
 
 ### Reliability
 
 #### Overview
 
-Reliability for interoperable architectures extends the Reliability pillar beyond database availability to the full integration surface. When external engines depend on Horizon Catalog's Polaris API endpoint, cross-organizational collaborators rely on Shares and Clean Rooms, and ingestion flows through Openflow or Snowpipe, each becomes a continuity concern the base pillar does not specifically address. Snowflake extends its managed DR capabilities to open-format data: Iceberg tables—including Dynamic Iceberg Tables—replicate through Failover Groups alongside standard tables, eliminating the need for custom replication engineering.
+Reliability for interoperable architectures extends the Reliability pillar beyond database availability to the full integration surface. When external engines depend on Horizon Catalog's Polaris API endpoint, cross-organizational collaborators rely on Shares and Clean Rooms, and ingestion flows through Openflow or Snowpipe, each becomes a continuity concern the base pillar does not specifically address. Snowflake extends its managed DR capabilities to open-format data: Iceberg tables—including Dynamic Iceberg Tables—replicate through Failover Groups alongside standard tables, eliminating the need for custom replication engineering. The unique challenge is ensuring the entire interoperability layer fails over together, not just the databases.
 
 #### Principles
 
@@ -138,25 +168,33 @@ Reliability for interoperable architectures extends the Reliability pillar beyon
 
 #### Recommendations
 
-| # | Recommendation | Description | Priority |
-|---|---------------|-------------|----------|
-| 1 | Inventory the full integration surface | Document every dependency: databases (including Iceberg Tables), Polaris API endpoints, Shares, Clean Room configurations, Openflow pipelines, Snowpipe configurations. Assign RPO/RTO to each and tier by criticality. | High |
-| 2 | Include Shares and Roles in Failover Groups | Configure Failover Groups with OBJECT_TYPES = DATABASES, SHARES, ROLES so consumers, Clean Room collaborators, and access policies fail over alongside data. | High |
-| 3 | Configure Iceberg table replication | Snowflake-managed Iceberg tables (including Dynamic Iceberg Tables) replicate through Failover Groups alongside standard tables. Pre-configure external volumes with storage locations in the target region. Enable ENABLE_ICEBERG_MANAGED_TABLE_REPLICATION on both source and target accounts. Requires Business Critical Edition or higher. | High |
-| 4 | Configure catalog endpoint failover | Use Client Redirect and Connection objects so external engines pointing at Horizon's Polaris API resolve to the active account during failover. Configure external engines to use Connection URLs rather than direct account endpoints. | High |
-| 5 | Test recovery across all interop components | Conduct planned failover exercises that verify external engine reconnection to the secondary Polaris API endpoint, Iceberg table accessibility on the replica, Share and Clean Room accessibility, and pipeline resumption. | Medium |
-| 6 | Plan pipeline continuity | Openflow runs on SPCS (regional). For critical ingestion, deploy redundant instances in the secondary region. Configure Snowpipe notification re-routing for cloud storage sources. Coordinate Snowflake Postgres cross-region replication with broader Failover Group timing. | Medium |
+<table><thead><tr><th width="30%">Recommendation</th><th width="40%">Description</th><th width="30%">Priority</th></tr></thead><tbody>
+<tr><td>Inventory the full integration surface</td><td>Document every dependency: databases (including Iceberg Tables), Polaris API endpoints, Shares, Clean Room configurations, Openflow pipelines, Snowpipe configurations. Assign RPO/RTO to each and tier by criticality.</td><td>High</td></tr>
+<tr><td>Include Shares and Roles in Failover Groups</td><td>Configure Failover Groups with OBJECT_TYPES = DATABASES, SHARES, ROLES so consumers, Clean Room collaborators, and access policies fail over alongside data.</td><td>High</td></tr>
+<tr><td>Configure Iceberg table replication</td><td>Snowflake-managed Iceberg tables (including Dynamic Iceberg Tables) replicate through Failover Groups alongside standard tables. Pre-configure external volumes with storage locations in the target region. Enable ENABLE_ICEBERG_MANAGED_TABLE_REPLICATION on both source and target accounts. Requires Business Critical Edition or higher.</td><td>High</td></tr>
+<tr><td>Configure catalog endpoint failover</td><td>Use Client Redirect and Connection objects so external engines pointing at Horizon's Polaris API resolve to the active account during failover. Configure external engines to use Connection URLs rather than direct account endpoints.</td><td>High</td></tr>
+<tr><td>Test recovery across all interop components</td><td>Conduct planned failover exercises that verify external engine reconnection to the secondary Polaris API endpoint, Iceberg table accessibility on the replica, Share and Clean Room accessibility, and pipeline resumption.</td><td>Medium</td></tr>
+<tr><td>Plan pipeline continuity</td><td>Openflow runs on SPCS (regional). For critical ingestion, deploy redundant instances in the secondary region. Configure Snowpipe notification re-routing for cloud storage sources. Coordinate Snowflake Postgres cross-region replication with broader Failover Group timing.</td><td>Medium</td></tr>
+</tbody></table>
+
+#### Guidance
+
+**Failover Groups**: Configure with OBJECT_TYPES = DATABASES, SHARES, ROLES so the entire interoperability surface fails over together. Including SHARES covers Data Sharing consumers and Clean Room collaborators; including ROLES replicates access policies. See Failover Groups for setup.
+
+**Iceberg table replication**: Iceberg tables replicate through Failover Groups like standard tables. Because they depend on external volumes (account-level objects), the source external volume must include a storage location in the target region—a one-time setup. In a self-managed Iceberg deployment, cross-region DR requires custom replication for both catalog metadata and data files; Snowflake manages both as a platform capability. See Configure replication for Iceberg tables for details.
+
+**Data protection**: Snowflake extends Time Travel and UNDROP ICEBERG TABLE to Snowflake-managed Iceberg data, providing recovery safeguards within the configured DATA_RETENTION_TIME_IN_DAYS window. These capabilities do not apply to externally-managed Iceberg tables — tables whose catalog and lifecycle are owned outside Snowflake (e.g., Databricks-managed, Glue-managed). For externally-managed tables, data recovery is the responsibility of the owning platform. Factor this into table ownership decisions when DR requirements are strict.
 
 #### Integration Surface Continuity
 
-| Component | Continuity Mechanism | Key Consideration |
-|-----------|---------------------|-------------------|
-| Snowflake databases (incl. Iceberg Tables) | Database replication + Failover Groups | Iceberg Tables replicate alongside standard tables within the same database |
-| Polaris API / Horizon Catalog endpoint | Client Redirect + Connection objects | External engines must use Connection URLs, not direct account endpoints |
-| Shares and Clean Room configurations | Include SHARES in Failover Groups | Shares fail over with the group; consumers must reconnect to secondary account |
-| Openflow pipelines | Regional — deploy redundant instances in secondary region | Openflow runs on SPCS, which is regional |
-| Snowflake Postgres instances | Cross-region replication built into Postgres | Coordinate with database failover timing |
-| Snowpipe / Snowpipe Streaming | Configure notifications and SDK connections to secondary | Cloud storage notifications may need re-routing |
+<table><thead><tr><th width="25%">Component</th><th width="35%">Continuity Mechanism</th><th width="40%">Key Consideration</th></tr></thead><tbody>
+<tr><td>Snowflake databases (incl. Iceberg Tables)</td><td>Database replication + Failover Groups</td><td>Iceberg Tables replicate alongside standard tables within the same database</td></tr>
+<tr><td>Polaris API / Horizon Catalog endpoint</td><td>Client Redirect + Connection objects</td><td>External engines must use Connection URLs, not direct account endpoints</td></tr>
+<tr><td>Shares and Clean Room configurations</td><td>Include SHARES in Failover Groups</td><td>Shares fail over with the group; consumers must reconnect to secondary account</td></tr>
+<tr><td>Openflow pipelines</td><td>Regional — deploy redundant instances in secondary region</td><td>Openflow runs on SPCS, which is regional</td></tr>
+<tr><td>Snowflake Postgres instances</td><td>Cross-region replication built into Postgres</td><td>Coordinate with database failover timing</td></tr>
+<tr><td>Snowpipe / Snowpipe Streaming</td><td>Configure notifications and SDK connections to secondary</td><td>Cloud storage notifications may need re-routing</td></tr>
+</tbody></table>
 
 #### Anti-Patterns
 
@@ -187,14 +225,14 @@ Performance for interoperable architectures extends the Performance pillar with 
 
 #### Recommendations
 
-| # | Recommendation | Description | Priority |
-|---|---------------|-------------|----------|
-| 1 | Use native tables for Snowflake-only workloads | Native tables offer Snowflake's most mature performance optimizations — micro-partition pruning, automatic clustering, result caching, and Search Optimization Service. Many of these extend to Iceberg tables too, but native tables remain the best choice when no external engine needs the data. | High |
-| 2 | Use Iceberg Tables for multi-engine access | Iceberg Tables enable external engines to query governed data through Horizon. Use Snowflake-managed Iceberg (with external volume) for Snowflake query optimization with open-format portability — today this incurs ~5% TPC-DS overhead versus native tables, with parity as the goal. For pipelines requiring open-format output, use Dynamic Iceberg Tables. | High |
-| 3 | Tune serialization and file size for cross-engine reads | Set STORAGE_SERIALIZATION_POLICY = COMPATIBLE on Iceberg tables that external engines will query—this writes Parquet files optimized for Spark, Trino, and Flink. Set TARGET_FILE_SIZE to 64MB or 128MB for tables read by external engines. These are the two most impactful interoperability tuning parameters. | High |
-| 4 | Use Snowflake Postgres with pg_lake for transactional-analytical bridging | Snowflake Postgres runs PostgreSQL with full wire-protocol compatibility. The pg_lake extension queries Iceberg Tables from Postgres, bridging transactional and analytical workloads. | Medium |
-| 5 | Optimize credential TTLs and metadata caching | Vended credential TTLs should balance security and renewal overhead. Monitor Polaris API call volumes—Horizon API requests are billed as Cloud Services. Optimize engine metadata caching to reduce catalog round-trips. | Medium |
-| 6 | Right-size integration compute | Separate integration warehouses (Dynamic Table refreshes, Openflow-triggered loads) from interactive query warehouses. Configure auto-suspend for integration warehouses. Tier refresh frequency to business SLA requirements rather than defaulting to the shortest lag available. | Medium |
+<table><thead><tr><th width="30%">Recommendation</th><th width="40%">Description</th><th width="30%">Priority</th></tr></thead><tbody>
+<tr><td>Use native tables for Snowflake-only workloads</td><td>Native tables offer Snowflake's most mature performance optimizations — micro-partition pruning, automatic clustering, result caching, and Search Optimization Service. Many of these extend to Iceberg tables too, but native tables remain the best choice when no external engine needs the data.</td><td>High</td></tr>
+<tr><td>Use Iceberg Tables for multi-engine access</td><td>Iceberg Tables enable external engines to query governed data through Horizon. Use Snowflake-managed Iceberg (with external volume) for Snowflake query optimization with open-format portability — today this incurs ~5% TPC-DS overhead versus native tables, with parity as the goal. For pipelines requiring open-format output, use Dynamic Iceberg Tables.</td><td>High</td></tr>
+<tr><td>Tune serialization and file size for cross-engine reads</td><td>Set STORAGE_SERIALIZATION_POLICY = COMPATIBLE on Iceberg tables that external engines will query—this writes Parquet files optimized for Spark, Trino, and Flink. Set TARGET_FILE_SIZE to 64MB or 128MB for tables read by external engines. These are the two most impactful interoperability tuning parameters.</td><td>High</td></tr>
+<tr><td>Use Snowflake Postgres with pg_lake for transactional-analytical bridging</td><td>Snowflake Postgres runs PostgreSQL with full wire-protocol compatibility. The pg_lake extension queries Iceberg Tables from Postgres, bridging transactional and analytical workloads.</td><td>Medium</td></tr>
+<tr><td>Optimize credential TTLs and metadata caching</td><td>Vended credential TTLs should balance security and renewal overhead. Monitor Polaris API call volumes—Horizon API requests are billed as Cloud Services. Optimize engine metadata caching to reduce catalog round-trips.</td><td>Medium</td></tr>
+<tr><td>Right-size integration compute</td><td>Separate integration warehouses (Dynamic Table refreshes, Openflow-triggered loads) from interactive query warehouses. Configure auto-suspend for integration warehouses. Tier refresh frequency to business SLA requirements rather than defaulting to the shortest lag available.</td><td>Medium</td></tr>
+</tbody></table>
 
 #### Anti-Patterns
 
@@ -224,25 +262,25 @@ Cost optimization for interoperable architectures extends the Cost Optimization 
 
 #### Recommendations
 
-| # | Recommendation | Description | Priority |
-|---|---------------|-------------|----------|
-| 1 | Apply a four-dimension TCO framework | For each integration component (catalog, ETL, orchestration, transactional DB), evaluate direct costs, hidden costs, opportunity costs, and exit costs. Include DR management burden. Use this framework when comparing Snowflake-managed alternatives against self-managed options. | High |
-| 2 | Prefer zero-copy sharing over extracts | Secure Data Sharing eliminates storage cost for consumers. Polaris APIs enable multi-engine access to data in place. File extracts are the most expensive approach: storage duplication at every destination plus transfer charges plus reconciliation engineering. | High |
-| 3 | Monitor Horizon API costs | Polaris API calls are billed at 0.5 credits per million calls (billing starts mid-2026). Consider tuning engine metadata caching to reduce catalog round-trips. | Medium |
-| 4 | Evaluate managed consolidation on TCO merits | Assess whether Openflow, Dynamic Tables, Snowflake Postgres, or Snowpark Container Services could replace self-managed components. Evaluate each on total cost—consolidation should reduce TCO, not just vendor count. | Medium |
-| 5 | Use cross-region replication selectively | Database replication adds storage and synchronization costs. Cross-cloud transfers incur additional data transfer charges. Reserve cross-region and cross-cloud replication for workloads where RPO/RTO requirements justify the expense. | Low |
+<table><thead><tr><th width="30%">Recommendation</th><th width="40%">Description</th><th width="30%">Priority</th></tr></thead><tbody>
+<tr><td>Apply a four-dimension TCO framework</td><td>For each integration component (catalog, ETL, orchestration, transactional DB), evaluate direct costs, hidden costs, opportunity costs, and exit costs. Include DR management burden. Use this framework when comparing Snowflake-managed alternatives against self-managed options.</td><td>High</td></tr>
+<tr><td>Prefer zero-copy sharing over extracts</td><td>Secure Data Sharing eliminates storage cost for consumers. Polaris APIs enable multi-engine access to data in place. File extracts are the most expensive approach: storage duplication at every destination plus transfer charges plus reconciliation engineering.</td><td>High</td></tr>
+<tr><td>Monitor Horizon API costs</td><td>Polaris API calls are billed at 0.5 credits per million calls (billing starts mid-2026). Consider tuning engine metadata caching to reduce catalog round-trips — note this trades data freshness for cost savings, which is worthwhile in some scenarios but not others (e.g., when near-real-time data is critical).</td><td>Medium</td></tr>
+<tr><td>Evaluate managed consolidation on TCO merits</td><td>Assess whether Openflow, Dynamic Tables, Snowflake Postgres, or Snowpark Container Services could replace self-managed components. Evaluate each on total cost—consolidation should reduce TCO, not just vendor count. Not every component should be consolidated; some workloads genuinely require specialized infrastructure.</td><td>Medium</td></tr>
+<tr><td>Use cross-region replication selectively</td><td>Database replication adds storage and synchronization costs. Cross-cloud transfers incur additional data transfer charges. Reserve cross-region and cross-cloud replication for workloads where RPO/RTO requirements justify the expense.</td><td>Low</td></tr>
+</tbody></table>
 
 #### Consolidation Opportunities
 
-| Self-Managed Component | Snowflake Alternative | Cost Benefit |
-|------------------------|----------------------|--------------|
-| Custom ETL scripts, self-managed NiFi | Openflow | Eliminates ETL server infrastructure; reduces engineering maintenance burden |
-| Standalone PostgreSQL instances | Snowflake Postgres | Eliminates DB server management; pg_lake bridges transactional and Iceberg/analytical data |
-| Custom orchestration (Airflow DAGs, cron) | Dynamic Tables + Tasks | Declarative pipelines eliminate orchestration infrastructure and operational toil |
-| Separate Kubernetes / ECS clusters | Snowpark Container Services | Containers run within Snowflake governance without separate cluster management |
-| Self-managed Hive Metastore | Horizon Catalog (Polaris APIs) | Unified catalog with zero additional infrastructure |
-| Separate BI / application hosting | Streamlit in Snowflake + Native Apps | Applications run within Snowflake, eliminating app server costs |
-| Separate ML training infrastructure | Snowflake ML + Cortex AI | Model training and inference within governed environment |
+<table><thead><tr><th width="30%">Self-Managed Component</th><th width="25%">Snowflake Alternative</th><th width="45%">Cost Benefit</th></tr></thead><tbody>
+<tr><td>Custom ETL scripts, self-managed NiFi</td><td>Openflow</td><td>Eliminates ETL server infrastructure; reduces engineering maintenance burden</td></tr>
+<tr><td>Standalone PostgreSQL instances</td><td>Snowflake Postgres</td><td>Eliminates DB server management; pg_lake bridges transactional and Iceberg/analytical data</td></tr>
+<tr><td>Custom orchestration (Airflow DAGs, cron)</td><td>Dynamic Tables + Tasks</td><td>Declarative pipelines eliminate orchestration infrastructure and operational toil</td></tr>
+<tr><td>Separate Kubernetes / ECS clusters</td><td>Snowpark Container Services</td><td>Containers run within Snowflake governance without separate cluster management</td></tr>
+<tr><td>Self-managed Hive Metastore</td><td>Horizon Catalog (Polaris APIs)</td><td>Unified catalog with zero additional infrastructure</td></tr>
+<tr><td>Separate BI / application hosting</td><td>Streamlit in Snowflake + Native Apps</td><td>Applications run within Snowflake, eliminating app server costs</td></tr>
+<tr><td>Separate ML training infrastructure</td><td>Snowflake ML + Cortex AI</td><td>Model training and inference within governed environment</td></tr>
+</tbody></table>
 
 #### Anti-Patterns
 
@@ -260,27 +298,29 @@ Cost optimization for interoperable architectures extends the Cost Optimization 
 
 ## Key Decisions & Tradeoffs
 
-| Decision | Option A | Option B | Choose A When | Choose B When |
-|----------|----------|----------|---------------|---------------|
-| Table format | Native tables | Iceberg Tables | Workloads run exclusively in Snowflake | Multi-engine access or open-format portability required |
-| Catalog approach | Horizon Catalog (Polaris APIs) | Open Catalog | Default recommendation — integrated governance, single endpoint, zero extra infrastructure | Organization requires fully decoupled, vendor-neutral catalog independent of Snowflake compute |
-| Catalog direction | Outbound (Snowflake as provider) | Inbound (Snowflake as consumer) | Snowflake manages the Iceberg data and external engines query through Horizon | Data is managed in an external Iceberg REST catalog (Unity Catalog, Glue, self-hosted Polaris) |
-| Storage access | Vended credentials | External volume direct | Simplest multi-engine path — catalog vends temporary storage tokens, centralizing access control | Fine-grained IAM control or engine-specific storage policies required |
-| Data integration | Openflow | Snowpipe / Connectors | Broad source coverage, CDC from OLTP, streaming from Kafka/Kinesis, or diverse source mix | Simple cloud storage loading or purpose-built SaaS connectors are sufficient |
-| Transactional workloads | Snowflake Postgres | Hybrid Tables (Unistore) | Migrating existing Postgres applications; need PostgreSQL wire-protocol compatibility | Building new OLTP + OLAP workloads natively in Snowflake without wire-protocol requirement |
-| Cross-org collaboration | Secure Data Sharing | Data Clean Rooms | Consumers need direct, governed read access to shared data | Privacy regulations or competitive concerns prohibit raw data exposure |
-| CDC pattern | Dynamic Tables (declarative) | Streams + Tasks (imperative) | Transformation logic is expressible as SQL; freshness SLAs are sufficient | Complex scheduling, multi-step dependencies, or non-SQL processing logic required |
-| Openflow deployment | Snowflake Deployment (fully managed) | BYOC (customer VPC) | Prefer fully managed with zero infrastructure overhead | Data residency requirements or network security controls require customer VPC deployment |
-| Resilience level | Built-in multi-AZ | Cross-region / cross-cloud replication | Workloads tolerate regional failure risk; RPO/RTO objectives are relaxed | RPO/RTO requirements demand protection beyond a single region or cloud provider |
-| Cross-engine governance | OSS engines via Horizon | Vendor co-existence (Databricks, AWS, Fabric) | For OSS engines, Horizon can serve as a single governance control plane | For vendor co-existence, each platform federates via service accounts — governance policies must currently be duplicated across catalogs |
+The decisions in this section involve tradeoffs that are more context-dependent than a simple table can capture. Use the table as a starting framework, not a prescriptive rulebook. Real-world deployments — particularly those involving multiple vendor platforms or multi-writer Iceberg tables — will encounter nuances not fully represented here.
+
+<table><thead><tr><th width="14%">Decision</th><th width="15%">Option A</th><th width="15%">Option B</th><th width="28%">Choose A When</th><th width="28%">Choose B When</th></tr></thead><tbody>
+<tr><td>Table format</td><td>Native tables</td><td>Iceberg Tables</td><td>Workloads run exclusively in Snowflake</td><td>Multi-engine access or open-format portability required</td></tr>
+<tr><td>Catalog approach</td><td>Horizon Catalog (Polaris APIs)</td><td>Open Catalog</td><td>Default recommendation — integrated governance, single endpoint, zero extra infrastructure</td><td>Organization requires fully decoupled, vendor-neutral catalog independent of Snowflake compute</td></tr>
+<tr><td>Catalog direction</td><td>Outbound (Snowflake as provider)</td><td>Inbound (Snowflake as consumer)</td><td>Snowflake manages the Iceberg data and external engines query through Horizon</td><td>Data is managed in an external Iceberg REST catalog (Unity Catalog, Glue, self-hosted Polaris)</td></tr>
+<tr><td>Storage access</td><td>Vended credentials</td><td>External volume direct</td><td>Simplest multi-engine path — catalog vends temporary storage tokens, centralizing access control</td><td>Fine-grained IAM control or engine-specific storage policies required</td></tr>
+<tr><td>Data integration</td><td>Openflow</td><td>Snowpipe / Connectors</td><td>Broad source coverage, CDC from OLTP, streaming from Kafka/Kinesis, or diverse source mix</td><td>Simple cloud storage loading or purpose-built SaaS connectors are sufficient</td></tr>
+<tr><td>Transactional workloads</td><td>Snowflake Postgres</td><td>Hybrid Tables (Unistore)</td><td>Migrating existing Postgres applications; need PostgreSQL wire-protocol compatibility</td><td>Building new OLTP + OLAP workloads natively in Snowflake without wire-protocol requirement</td></tr>
+<tr><td>Cross-org collaboration</td><td>Secure Data Sharing</td><td>Data Clean Rooms</td><td>Consumers need direct, governed read access to shared data</td><td>Privacy regulations or competitive concerns prohibit raw data exposure</td></tr>
+<tr><td>CDC pattern</td><td>Dynamic Tables (declarative)</td><td>Streams + Tasks (imperative)</td><td>Transformation logic is expressible as SQL; freshness SLAs are sufficient</td><td>Complex scheduling, multi-step dependencies, or non-SQL processing logic required</td></tr>
+<tr><td>Openflow deployment</td><td>Snowflake Deployment (fully managed)</td><td>BYOC (customer VPC)</td><td>Prefer fully managed with zero infrastructure overhead</td><td>Data residency requirements or network security controls require customer VPC deployment</td></tr>
+<tr><td>Resilience level</td><td>Built-in multi-AZ</td><td>Cross-region / cross-cloud replication</td><td>Workloads tolerate regional failure risk; RPO/RTO objectives are relaxed</td><td>RPO/RTO requirements demand protection beyond a single region or cloud provider</td></tr>
+<tr><td>Cross-engine governance</td><td>OSS engines via Horizon</td><td>Vendor co-existence (Databricks, AWS, Fabric)</td><td>For OSS engines, Horizon can serve as a single governance control plane; row-access and masking enforced for Spark via Snowflake Connector for Spark v3.1.6+ (GA) — queries route through Snowflake, ensuring policy enforcement</td><td>For vendor co-existence, each platform federates via service accounts — governance policies must currently be duplicated across catalogs</td></tr>
+</tbody></table>
 
 ## Maturity Model
 
-| Level | Name | Description |
-|-------|------|-------------|
-| 1 | Foundational | Ad-hoc integration. Data shared via file extracts. No catalog strategy for external engines. CDC done through custom scripts or manual loads. Governance is manual and inconsistent across access paths. DR covers databases only. |
-| 2 | Managed | Horizon Catalog governs outbound multi-engine access. CLD or catalog integrations handle inbound external data. Streams + Tasks or Dynamic Tables provide native CDC. Dynamic Iceberg Tables used for pipelines requiring open-format output. Delta Direct used for upstream Delta tables. Trusted Data Products identified with ownership and SLAs. Failover Groups cover the full integration surface including Shares and Roles. Semantic definitions beginning to adopt OSI-compatible formats. |
-| 3 | Optimized | All external engine access governed through Horizon with vended credentials. CLD auto-syncs external catalogs with namespace filtering. Dynamic Iceberg Tables power cross-engine pipeline output. Governance automated through classification and tag-based masking. Semantic models managed centrally via OSI and portable across BI/AI tools. DR tested regularly across the full integration surface including external engine reconnection. TCO reviewed periodically across all four dimensions. New Snowflake capabilities evaluated quarterly for consolidation opportunities. |
+<table><thead><tr><th width="20%">Level</th><th width="80%">Description</th></tr></thead><tbody>
+<tr><td><strong>1 — Foundational</strong></td><td>Ad-hoc integration. Data shared via file extracts. No catalog strategy for external engines. CDC done through custom scripts or manual loads. Governance is manual and inconsistent across access paths. DR covers databases only.</td></tr>
+<tr><td><strong>2 — Managed</strong></td><td>Horizon Catalog governs outbound multi-engine access. CLD or catalog integrations handle inbound external data. Streams + Tasks or Dynamic Tables provide native CDC. Dynamic Iceberg Tables used for pipelines requiring open-format output. Delta Direct used for upstream Delta tables. Trusted Data Products identified with ownership and SLAs. Failover Groups cover the full integration surface including Shares and Roles. Semantic definitions beginning to adopt OSI-compatible formats.</td></tr>
+<tr><td><strong>3 — Optimized</strong></td><td>All external engine access governed through Horizon with vended credentials. CLD auto-syncs external catalogs with namespace filtering. Dynamic Iceberg Tables power cross-engine pipeline output. Governance automated through classification and tag-based masking. Semantic models managed centrally via OSI and portable across BI/AI tools. DR tested regularly across the full integration surface including external engine reconnection. TCO reviewed periodically across all four dimensions. New Snowflake capabilities evaluated quarterly for consolidation opportunities.</td></tr>
+</tbody></table>
 
 ## Assessment Checklist
 
@@ -288,8 +328,10 @@ Cost optimization for interoperable architectures extends the Cost Optimization 
 - Inbound external catalog data consumed through Catalog-Linked Databases (Security & Governance)
 - Ungoverned access paths identified and remediated (Security & Governance)
 - Semantic definitions governed centrally and exchanged via OSI-compatible formats (Security & Governance)
+- Snowflake Intelligence and Cortex AI outputs validated to respect row-access and masking policies — AI-generated results must not expose data that direct SQL queries would mask for the same role (Security & Governance)
 - CDC implemented using Streams + Tasks, Dynamic Tables, or Dynamic Iceberg Tables (Operational Excellence)
 - Delta Lake tables from upstream engines accessed via Delta Direct (Operational Excellence)
+- CDC output from Flink or Kafka CDC writers uses positional deletes or deletion vectors — equality deletes are not supported and cause silent failures (Operational Excellence)
 - Trusted Data Products documented with ownership, SLAs, and business context (Operational Excellence)
 - Data shared via Secure Data Sharing or Clean Rooms, not file extracts (Operational Excellence)
 - Failover Groups include DATABASES, SHARES, and ROLES with Iceberg tables and external volumes configured (Reliability)
@@ -303,39 +345,59 @@ Cost optimization for interoperable architectures extends the Cost Optimization 
 
 ## Feature Status
 
-The following features referenced in this lens are not yet generally available. Status is as of the lens publication date (March 2026). Check Snowflake Release Notes for current status.
+The following table shows features referenced in this lens and their current availability status. GA items are confirmed available; preview items may have limitations. Status is as of the lens publication date — check Snowflake Release Notes for the latest.
 
-| Feature | Status | As Of |
-|---------|--------|-------|
-| External engine writes to Iceberg tables via Horizon | Public Preview | Mar 2026 |
-| Apache Iceberg v3 support (new types, deletion vectors, row lineage) | Public Preview | Mar 2026 |
-| Iceberg table replication via Failover Groups | Public Preview | Mar 2026 |
-| DCM Projects (declarative change management) | Public Preview | Mar 2026 |
-| Full change streams on externally-managed Iceberg v2 tables | Not supported (append-only only) | Apr 2026 |
-| Time Travel / UNDROP for externally-managed Iceberg tables | Not supported | Apr 2026 |
-| Row-access policies and masking for external engine queries | Not yet supported | Mar 2026 |
+<table><thead><tr><th width="55%">Feature</th><th width="30%">Status</th><th width="15%">As Of</th></tr></thead><tbody>
+<tr><td>External engine writes to Iceberg tables via Horizon</td><td>Public Preview</td><td>Mar 2026</td></tr>
+<tr><td>Apache Iceberg v3 — new data types (geography, geometry, nanosecond, variant), default values</td><td>Public Preview</td><td>Mar 2026</td></tr>
+<tr><td>Iceberg table replication via Failover Groups</td><td>Public Preview</td><td>Mar 2026</td></tr>
+<tr><td>DCM Projects (declarative change management)</td><td>Public Preview</td><td>Mar 2026</td></tr>
+<tr><td>Full change streams on externally-managed Iceberg v2 tables</td><td>Not supported (append-only only)</td><td>Apr 2026</td></tr>
+<tr><td>Time Travel / UNDROP for externally-managed Iceberg tables</td><td>Not supported</td><td>Apr 2026</td></tr>
+<tr><td>Row-access policies and masking — Spark via Snowflake Connector for Spark v3.1.6+</td><td>GA (Spark Connector v3.1.6+); not yet supported for other engines (Trino, Flink, DuckDB)</td><td>Mar 2026</td></tr>
+<tr><td>Apache Iceberg v3 — deletion vector read</td><td>Public Preview</td><td>Mar 2026</td></tr>
+<tr><td>Apache Iceberg v3 — deletion vector write</td><td>In progress</td><td>Mar 2026</td></tr>
+<tr><td>Delta Lake MOR deletion vectors (via Delta Direct, externally-managed)</td><td>GA</td><td>Mar 2026</td></tr>
+<tr><td>Equality deletes read/write — Iceberg tables (used by Flink CDC, Tabular Kafka Connector)</td><td>Not planned</td><td>Mar 2026</td></tr>
+<tr><td>ORC and Avro file format support for Iceberg CLD</td><td>Not planned</td><td>Mar 2026</td></tr>
+<tr><td>Auto-refresh for Object Storage catalog integration (non-REST)</td><td>Not planned</td><td>Mar 2026</td></tr>
+<tr><td>Azure Fabric OneLake — CLD inbound catalog integration (reads only; writes to OneLake not supported)</td><td>GA</td><td>Jan 2026</td></tr>
+<tr><td>CLD write support — Snowflake writing to externally-managed Iceberg tables (full DML)</td><td>GA</td><td>Oct 2025</td></tr>
+<tr><td>Apache Iceberg v3 — row lineage (standardized CDC semantics: INSERT, UPDATE, DELETE, MERGE readable by external engines)</td><td>Public Preview</td><td>Mar 2026</td></tr>
+</tbody></table>
 
 ## References & Resources
 
-| Resource | Type | Link |
-|----------|------|------|
-| Snowflake Well-Architected Framework | Documentation | snowflake.com |
-| Horizon Catalog (external engine access) | Documentation | docs.snowflake.com |
-| Catalog-Linked Databases | Documentation | docs.snowflake.com |
-| Apache Iceberg Tables | Documentation | docs.snowflake.com |
-| Delta Direct (Iceberg on Delta files) | Documentation | docs.snowflake.com |
-| Apache Polaris | Project | polaris.apache.org |
-| Vended Credentials | Documentation | docs.snowflake.com |
-| Streams | Documentation | docs.snowflake.com |
-| Dynamic Tables | Documentation | docs.snowflake.com |
-| Openflow | Documentation | docs.snowflake.com |
-| Secure Data Sharing | Documentation | docs.snowflake.com |
-| Data Clean Rooms | Documentation | docs.snowflake.com |
-| Snowflake Postgres | Documentation | docs.snowflake.com |
-| Snowflake Open Catalog | Documentation | docs.snowflake.com |
-| Dynamic Iceberg Tables | Documentation | docs.snowflake.com |
-| Iceberg Best Practices | Documentation | docs.snowflake.com |
-| Iceberg v3 Support | Documentation | docs.snowflake.com |
-| Open Semantic Interchange (OSI) | Standard | open-semantic-interchange.org |
-| Iceberg Table Replication | Documentation | docs.snowflake.com |
-| Failover Groups | Documentation | docs.snowflake.com |
+Feature status is tracked in the Feature Status section. Check Snowflake Release Notes for the latest.
+
+<table><thead><tr><th width="50%">Resource</th><th width="20%">Type</th><th width="30%">Link</th></tr></thead><tbody>
+<tr><td>Snowflake Well-Architected Framework</td><td>Documentation</td><td>snowflake.com</td></tr>
+<tr><td>Horizon Catalog (external engine access)</td><td>Documentation</td><td>docs.snowflake.com</td></tr>
+<tr><td>Catalog-Linked Databases</td><td>Documentation</td><td>docs.snowflake.com</td></tr>
+<tr><td>Apache Iceberg Tables</td><td>Documentation</td><td>docs.snowflake.com</td></tr>
+<tr><td>Delta Direct (Iceberg on Delta files)</td><td>Documentation</td><td>docs.snowflake.com</td></tr>
+<tr><td>Apache Polaris</td><td>Project</td><td>polaris.apache.org</td></tr>
+<tr><td>Vended Credentials</td><td>Documentation</td><td>docs.snowflake.com</td></tr>
+<tr><td>Streams</td><td>Documentation</td><td>docs.snowflake.com</td></tr>
+<tr><td>Dynamic Tables</td><td>Documentation</td><td>docs.snowflake.com</td></tr>
+<tr><td>Openflow</td><td>Documentation</td><td>docs.snowflake.com</td></tr>
+<tr><td>Secure Data Sharing</td><td>Documentation</td><td>docs.snowflake.com</td></tr>
+<tr><td>Data Clean Rooms</td><td>Documentation</td><td>docs.snowflake.com</td></tr>
+<tr><td>Snowflake Postgres</td><td>Documentation</td><td>docs.snowflake.com</td></tr>
+<tr><td>Snowflake Open Catalog</td><td>Documentation</td><td>docs.snowflake.com</td></tr>
+<tr><td>Dynamic Iceberg Tables</td><td>Documentation</td><td>docs.snowflake.com</td></tr>
+<tr><td>Iceberg Best Practices</td><td>Documentation</td><td>docs.snowflake.com</td></tr>
+<tr><td>Iceberg v3 Support</td><td>Documentation</td><td>docs.snowflake.com</td></tr>
+<tr><td>Iceberg Table Conversion (Convert to Managed)</td><td>Documentation</td><td>docs.snowflake.com</td></tr>
+<tr><td>Snowpipe Streaming with Iceberg</td><td>Documentation</td><td>docs.snowflake.com</td></tr>
+<tr><td>AWS Glue REST Catalog Integration</td><td>Documentation</td><td>docs.snowflake.com</td></tr>
+<tr><td>Open Semantic Interchange (OSI)</td><td>Standard</td><td>open-semantic-interchange.org</td></tr>
+<tr><td>OSI Specification (GitHub)</td><td>Specification</td><td>github.com/open-semantic-interchange</td></tr>
+<tr><td>OSI Specification Finalized (Snowflake blog)</td><td>Blog</td><td>snowflake.com</td></tr>
+<tr><td>Iceberg Table Replication</td><td>Documentation</td><td>docs.snowflake.com</td></tr>
+<tr><td>Failover Groups</td><td>Documentation</td><td>docs.snowflake.com</td></tr>
+<tr><td>Getting Started with Streams & Tasks</td><td>Quickstart</td><td>snowflake.com</td></tr>
+<tr><td>External-First CLD (Databricks interop)</td><td>Blog</td><td>medium.com/snowflake</td></tr>
+<tr><td>How to Choose Your Interoperable Catalog (Part 1 of 2)</td><td>Engineering Blog</td><td>snowflake.com/en/blog/engineering/snowflake-horizon-vs-databricks-unity-catalog-comparison/</td></tr>
+<tr><td>Choosing an Interoperable Catalog: Snowflake Horizon vs. Databricks Unity Catalog (Part 2 of 2)</td><td>Engineering Blog</td><td>snowflake.com/en/blog/engineering/iceberg-catalog-snowflake-horizon-vs-unity-catalog/</td></tr>
+</tbody></table>

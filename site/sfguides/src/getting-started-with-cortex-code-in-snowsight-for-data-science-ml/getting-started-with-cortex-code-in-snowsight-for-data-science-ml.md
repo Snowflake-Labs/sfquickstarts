@@ -10,6 +10,8 @@ tags: Getting Started, Data Science, Machine Learning, Snowflake ML, Model Regis
 
 # Build Your First ML Model in Snowflake with Agentic ML
 <!-- ------------------------ -->
+> 🎥 **Prefer a guided walkthrough?** Follow along in the [virtual hands-on lab](https://www.snowflake.com/en/webinars/virtual-hands-on-lab/build-your-first-agentic-ml-pipeline-with-natural-language-2026-05-28/).
+
 ## 1. Overview
 
 [Snowflake ML](http://www.snowflake.com/ml) is changing how teams work with agentic ML, an autonomous, reasoning-based system that enables developers to use agents to plan and execute tasks across the entire ML pipeline. In this quickstart, learn how to build and run a customer lifetime value (LTV) prediction model with only a handful of prompts so that you can go from raw data to production predictions in minutes, not weeks, with [Cortex Code](https://www.snowflake.com/en/product/features/cortex-code/), Snowflake's AI native coding agent. Cortex Code is available both as a CLI and directly in Snowsight, Snowflake's web interface.

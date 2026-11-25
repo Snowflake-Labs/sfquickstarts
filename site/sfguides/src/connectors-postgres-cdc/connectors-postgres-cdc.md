@@ -6,6 +6,7 @@ summary: Build real-time financial dashboards using Change Data Capture from Pos
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+tags: Postgres
 
 
 # Real-Time Financial Insights Using Change Data Capture (CDC) with the Snowflake Connector for PostgreSQL and Dynamic Tables

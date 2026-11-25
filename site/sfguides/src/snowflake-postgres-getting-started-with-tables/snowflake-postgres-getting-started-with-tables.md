@@ -6,6 +6,7 @@ summary: Follow this tutorial to learn the basics of PostgreSQL for transactiona
 environments: local, cloud
 status: Published 
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+tags: Postgres
 
 # Getting Started with Snowflake Postgres Tables
 <!-- ------------------------ -->

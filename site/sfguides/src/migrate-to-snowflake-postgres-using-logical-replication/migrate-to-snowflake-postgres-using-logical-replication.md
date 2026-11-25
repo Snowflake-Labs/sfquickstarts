@@ -6,6 +6,7 @@ summary: Learn how to lift and shift existing PostgreSQL workloads into Snowflak
 environments: web
 status: Published
 feedback link: https://github.com/Snowflake-Labs/sfguides/issues
+tags: Postgres
 
 # Migrate to Snowflake Postgres Using Logical Replication
 <!-- ------------------------ -->

@@ -6,7 +6,8 @@ categories: snowflake-site:taxonomy/solution-center/certification/well-architect
 language: en
 summary: Operational Excellence in the Snowflake AI Data Cloud is the practice of running and monitoring systems to deliver business value and continuously improve supporting processes and procedures. 
 environments: web
-status: Published 
+status: Published
+fork_repo_link: https://github.com/Snowflake-Labs/cortex-code-skills/tree/main/skills/well-architected-framework-assessment
 
 
 # Operational Excellence
@@ -307,9 +308,7 @@ users report them.
       statement. For instance, a task can run every five minutes to look
       for failed tasks.
 
-  4.  **Trigger alerts:** From the task, use an **External Function** to
-      send a notification directly to your team's incident management
-      tool, like PagerDuty or Slack.
+  4.  **Trigger alerts:** From the task, use a **Notification Integration** (webhook-based, supporting Slack, PagerDuty, email, and more) to send a notification directly to your team's incident management tool. This is the recommended approach — it requires no additional infrastructure, unlike External Functions.
 
 Build your automated alert system by following the guide [Introduction to
 Tasks](https://docs.snowflake.com/en/user-guide/tasks-intro).
@@ -345,15 +344,15 @@ operational readiness and performance.
 **Legend:** **R** - Responsible, **A** - Accountable, **C** - Consulted,
 **I** - Informed
 
-| Activity | C-Level (CIO/CDO/CFO) | Chief Enterprise Architect | Engineering | Data Science | Security | SRE |
-|---|---|---|---|---|---|---|
-| Define business SLOs & budgets | A | R | I | I | I | I |
-| Design warehouse strategy | I | A | R | C | I | R |
-| Implement & configure warehouses | I | C | A | I | I | R |
-| Monitor cost & performance | I | I | R | I | I | A |
-| Optimize queries & pipelines | I | C | A | R | I | C |
-| Define & test BCDR plan | A | R | R | C | C | R |
-| Respond to performance incidents | I | I | R | I | I | A |
+<table><thead><tr><th width="40%">Activity</th><th width="10%">C-Level (CIO/CDO/CFO)</th><th width="10%">Chief Enterprise Architect</th><th width="10%">Engineering</th><th width="10%">Data Science</th><th width="10%">Security</th><th width="10%">SRE</th></tr></thead><tbody>
+<tr><td>Define business SLOs & budgets</td><td>A</td><td>R</td><td>I</td><td>I</td><td>I</td><td>I</td></tr>
+<tr><td>Design warehouse strategy</td><td>I</td><td>A</td><td>R</td><td>C</td><td>I</td><td>R</td></tr>
+<tr><td>Implement & configure warehouses</td><td>I</td><td>C</td><td>A</td><td>I</td><td>I</td><td>R</td></tr>
+<tr><td>Monitor cost & performance</td><td>I</td><td>I</td><td>R</td><td>I</td><td>I</td><td>A</td></tr>
+<tr><td>Optimize queries & pipelines</td><td>I</td><td>C</td><td>A</td><td>R</td><td>I</td><td>C</td></tr>
+<tr><td>Define & test BCDR plan</td><td>A</td><td>R</td><td>R</td><td>C</td><td>C</td><td>R</td></tr>
+<tr><td>Respond to performance incidents</td><td>I</td><td>I</td><td>R</td><td>I</td><td>I</td><td>A</td></tr>
+</tbody></table>
 
 ## Automate infrastructure & maintenance
 
@@ -500,16 +499,16 @@ across different personas.
 **Legend:** **R** = Responsible, **A** = Accountable, **C** = Consulted,
 **I** = Informed
 
-| **Activity** | **C-Level (CIO/CDO)** | **Chief Architect** | **Engineering / SRE** | **Data Science** | **Security** |
-|----|----|----|----|----|----|
-| **Defining automation strategy & tooling** | A | R | C | C | C |
-| **Developing IaC modules & scripts** | I | C | R | I | C |
-| **Building CI/CD pipelines** | I | C | R | C | C |
-| **Managing environments via IaC** | I | A | R | I | I |
-| **Deploying workloads via CI/CD** | I | I | R | R | I |
-| **Defining & implementing monitoring alerts** | I | A | R | C | C |
-| **Automating governance & access controls** | A | C | R | I | R |
-| **Reviewing automated cost/usage reports** | A | I | C | C | I |
+<table><thead><tr><th width="40%">Activity</th><th width="12%">C-Level (CIO/CDO)</th><th width="12%">Chief Architect</th><th width="12%">Engineering / SRE</th><th width="12%">Data Science</th><th width="12%">Security</th></tr></thead><tbody>
+<tr><td><strong>Defining automation strategy & tooling</strong></td><td>A</td><td>R</td><td>C</td><td>C</td><td>C</td></tr>
+<tr><td><strong>Developing IaC modules & scripts</strong></td><td>I</td><td>C</td><td>R</td><td>I</td><td>C</td></tr>
+<tr><td><strong>Building CI/CD pipelines</strong></td><td>I</td><td>C</td><td>R</td><td>C</td><td>C</td></tr>
+<tr><td><strong>Managing environments via IaC</strong></td><td>I</td><td>A</td><td>R</td><td>I</td><td>I</td></tr>
+<tr><td><strong>Deploying workloads via CI/CD</strong></td><td>I</td><td>I</td><td>R</td><td>R</td><td>I</td></tr>
+<tr><td><strong>Defining & implementing monitoring alerts</strong></td><td>I</td><td>A</td><td>R</td><td>C</td><td>C</td></tr>
+<tr><td><strong>Automating governance & access controls</strong></td><td>A</td><td>C</td><td>R</td><td>I</td><td>R</td></tr>
+<tr><td><strong>Reviewing automated cost/usage reports</strong></td><td>A</td><td>I</td><td>C</td><td>C</td><td>I</td></tr>
+</tbody></table>
 
 ## Enhance Observability & Issue Resolution
 
@@ -582,7 +581,7 @@ preparation to start collecting and visualizing observability data.
 |---|---|
 | Cost & performance intelligence | - **Configure resource monitors:** set up warehouse-level monitors to prevent budget overruns by suspending warehouses or sending notifications at defined credit thresholds.<br>- **Build foundational dashboards:** create Snowsight dashboards to visualize credit usage by warehouse/tag, identify long-running queries (`QUERY_HISTORY`), and monitor warehouse queuing. |
 | Workload health & reliability | - **Implement error notifications:** configure notifications for failed tasks (`SYSTEM$SEND_EMAIL`) or Snowpipe copy errors to immediately alert the responsible teams.<br>- **Monitor data ingestion:** use the `COPY_HISTORY` and `PIPE_USAGE_HISTORY` views to track the latency and health of data loading processes. |
-| Security & access analytics | - **Enable access monitoring:** build dashboards on top of the `ACCESS_HISTORY` and `LOGIN_HISTORY` views to visualize user login patterns, query activity on sensitive tables, and privilege grants.<br>- **Set up security alerts:**** implement Snowflake alerts to trigger notifications for defined security events, such as a user being granted the `ACCOUNTADMIN` role. |
+| Security & access analytics | - **Enable access monitoring:** build dashboards on top of the `ACCESS_HISTORY` and `LOGIN_HISTORY` views to visualize user login patterns, query activity on sensitive tables, and privilege grants.<br>- **Set up security alerts:** implement Snowflake alerts to trigger notifications for defined security events, such as a user being granted the `ACCOUNTADMIN` role. |
 | Data integrity & lineage | - **Deploy data quality tests:** implement data quality checks as part of your data transformation pipeline (e.g., using dbt tests) that run on a schedule.<br>- **Utilize object tagging for lineage:** apply tags to tables and columns to create a basic, searchable framework for tracking data lineage. |
 
 
@@ -768,16 +767,16 @@ activities across different teams.
 **Legend:** **R** = Responsible, **A** = Accountable, **C** = Consulted,
 **I** = Informed
 
-| Activity | C-Level (CIO/CDO/CFO) | Chief Architect | Engineering | Data Science | Security | SRE |
-|---|---|---|---|---|---|---|
-| Define cost & security policies | A | R | C | C | R | C |
-| Implement & manage budgets (resource monitors) | A | C | R | I | I | R |
-| Build & maintain observability dashboards | I | C | R | C | C | R |
-| Investigate & resolve | I | C | R | C | I | R |
-| Monitor & triage workload failures (ETL, AI) | I | I | R | R | I | A |
-| Define & monitor data quality rules | C | C | C | A | I | I |
-| Investigate & remediate security incidents | A | C | C | I | R | C |
-| Conduct access & entitlement reviews | A | I | C | C | R | I |
+<table><thead><tr><th width="40%">Activity</th><th width="10%">C-Level (CIO/CDO/CFO)</th><th width="10%">Chief Architect</th><th width="10%">Engineering</th><th width="10%">Data Science</th><th width="10%">Security</th><th width="10%">SRE</th></tr></thead><tbody>
+<tr><td>Define cost & security policies</td><td>A</td><td>R</td><td>C</td><td>C</td><td>R</td><td>C</td></tr>
+<tr><td>Implement & manage budgets (resource monitors)</td><td>A</td><td>C</td><td>R</td><td>I</td><td>I</td><td>R</td></tr>
+<tr><td>Build & maintain observability dashboards</td><td>I</td><td>C</td><td>R</td><td>C</td><td>C</td><td>R</td></tr>
+<tr><td>Investigate & resolve</td><td>I</td><td>C</td><td>R</td><td>C</td><td>I</td><td>R</td></tr>
+<tr><td>Monitor & triage workload failures (ETL, AI)</td><td>I</td><td>I</td><td>R</td><td>R</td><td>I</td><td>A</td></tr>
+<tr><td>Define & monitor data quality rules</td><td>C</td><td>C</td><td>C</td><td>A</td><td>I</td><td>I</td></tr>
+<tr><td>Investigate & remediate security incidents</td><td>A</td><td>C</td><td>C</td><td>I</td><td>R</td><td>C</td></tr>
+<tr><td>Conduct access & entitlement reviews</td><td>A</td><td>I</td><td>C</td><td>C</td><td>R</td><td>I</td></tr>
+</tbody></table>
  
 
 ## Manage incidents & problems
@@ -988,6 +987,8 @@ initial investigation using Snowflake's comprehensive metadata logs to
 shorten the time from detection to diagnosis.
 
 Centralize incident detection with ACCOUNT_USAGE views
+
+> **Note:** ACCOUNT_USAGE views have up to 45 minutes of latency. They are best suited for trend analysis, dashboards, and scheduled alerting — not real-time incident detection. For zero-latency detection of active events, use **INFORMATION_SCHEMA** table functions (e.g., `INFORMATION_SCHEMA.QUERY_HISTORY()`, `INFORMATION_SCHEMA.LOGIN_HISTORY()`) which reflect data immediately.
 
 - **Action**: Your on-call SRE and Engineering teams should treat the
   SNOWFLAKE.ACCOUNT_USAGE schema as the definitive event log. Build
@@ -1340,16 +1341,16 @@ persona.
 **Legend:** **R** = Responsible, **A** = Accountable, **C** = Consulted,
 **I** = Informed
 
-| **Activity** | **CIO / CDO** | **Chief Enterprise Architect** | **Security** | **Engineering / SRE** | **Data Science** |
-|----|----|----|----|----|----|
-| Define Data Sharing & Monetization Strategy | A | C | C | I | C |
-| Establish Governance & Sharing Policies | A | C | R | I | I |
-| Design the Sharing Architecture (e.g., Shares, Views) | I | A | C | R | C |
-| Implement and Apply Security Controls (Masking/Row Access) | I | I | A | R | I |
-| Publish and Manage Marketplace Listings | A | I | C | R | C |
-| Approve and Onboard Data Consumers | I | I | C | R | A |
-| Monitor and Audit Sharing Usage | I | I | A | R | I |
-| Develop Collaborative Snowpark/Native App Assets | I | C | C | R | A |
+<table><thead><tr><th width="40%">Activity</th><th width="12%">CIO / CDO</th><th width="12%">Chief Enterprise Architect</th><th width="12%">Security</th><th width="12%">Engineering / SRE</th><th width="12%">Data Science</th></tr></thead><tbody>
+<tr><td>Define Data Sharing & Monetization Strategy</td><td>A</td><td>C</td><td>C</td><td>I</td><td>C</td></tr>
+<tr><td>Establish Governance & Sharing Policies</td><td>A</td><td>C</td><td>R</td><td>I</td><td>I</td></tr>
+<tr><td>Design the Sharing Architecture (e.g., Shares, Views)</td><td>I</td><td>A</td><td>C</td><td>R</td><td>C</td></tr>
+<tr><td>Implement and Apply Security Controls (Masking/Row Access)</td><td>I</td><td>I</td><td>A</td><td>R</td><td>I</td></tr>
+<tr><td>Publish and Manage Marketplace Listings</td><td>A</td><td>I</td><td>C</td><td>R</td><td>C</td></tr>
+<tr><td>Approve and Onboard Data Consumers</td><td>I</td><td>I</td><td>C</td><td>R</td><td>A</td></tr>
+<tr><td>Monitor and Audit Sharing Usage</td><td>I</td><td>I</td><td>A</td><td>R</td><td>I</td></tr>
+<tr><td>Develop Collaborative Snowpark/Native App Assets</td><td>I</td><td>C</td><td>C</td><td>R</td><td>A</td></tr>
+</tbody></table>
 
 ## Manage the Software Development Lifecycle (SDLC)
 
@@ -1671,19 +1672,19 @@ lifecycle.
 **Legend:** **R** = Responsible, **A** = Accountable, **C** = Consulted,
 **I** = Informed
 
-| Focus Area / Activity                 | Engineering | Data Science | SRE | Security | Architecture | C‑Level |
-|---|---|---|---|---|---|---|
-| Define SDLC toolchain & standards     | R | C | C | C | A | I |
-| Set up Git repos & branching strategy | R | R | C | I | A | I |
-| Develop & commit code/models          | R | R | I | I | C | I |
-| Conduct peer code reviews                   | R | R | C | C | I | I |
-| Build & maintain CI/CD pipelines            | R | C | A | C | C | I |
-| Write unit & integration tests              | R | R | C | I | I | I |
-| Manage environment provisioning (IaC)       | C | I | R | C | A | I |
-| Execute production deployments              | A | I | R | C | I | I |
-| Monitor production health & performance     | C | C | R | I | I | I |
-| Respond to production incidents             | C | C | R | I | I | I |
-| Optimize pipeline performance cost                           | R | R | A | I | C | I |
+<table><thead><tr><th width="40%">Focus Area / Activity</th><th width="10%">Engineering</th><th width="10%">Data Science</th><th width="10%">SRE</th><th width="10%">Security</th><th width="10%">Architecture</th><th width="10%">C-Level</th></tr></thead><tbody>
+<tr><td>Define SDLC toolchain & standards</td><td>R</td><td>C</td><td>C</td><td>C</td><td>A</td><td>I</td></tr>
+<tr><td>Set up Git repos & branching strategy</td><td>R</td><td>R</td><td>C</td><td>I</td><td>A</td><td>I</td></tr>
+<tr><td>Develop & commit code/models</td><td>R</td><td>R</td><td>I</td><td>I</td><td>C</td><td>I</td></tr>
+<tr><td>Conduct peer code reviews</td><td>R</td><td>R</td><td>C</td><td>C</td><td>I</td><td>I</td></tr>
+<tr><td>Build & maintain CI/CD pipelines</td><td>R</td><td>C</td><td>A</td><td>C</td><td>C</td><td>I</td></tr>
+<tr><td>Write unit & integration tests</td><td>R</td><td>R</td><td>C</td><td>I</td><td>I</td><td>I</td></tr>
+<tr><td>Manage environment provisioning (IaC)</td><td>C</td><td>I</td><td>R</td><td>C</td><td>A</td><td>I</td></tr>
+<tr><td>Execute production deployments</td><td>A</td><td>I</td><td>R</td><td>C</td><td>I</td><td>I</td></tr>
+<tr><td>Monitor production health & performance</td><td>C</td><td>C</td><td>R</td><td>I</td><td>I</td><td>I</td></tr>
+<tr><td>Respond to production incidents</td><td>C</td><td>C</td><td>R</td><td>I</td><td>I</td><td>I</td></tr>
+<tr><td>Optimize pipeline performance cost</td><td>R</td><td>R</td><td>A</td><td>I</td><td>C</td><td>I</td></tr>
+</tbody></table>
 | Define & enforce security policies | C | C | C | A | R | I |
 
 ## Continuously improve performance & practices
@@ -2019,15 +2020,15 @@ responsibilities.
 **Legend:** **R** - Responsible, **A** - Accountable, **C** - Consulted,
 **I** - Informed
 
-| Activity | C-Level (CIO/CDO) | Chief Architect | Engineering | Data Science | Security | SRE |
-|---|---|---|---|---|---|---|
-| Set platform budget & cost strategy | A | C | I | I | I | I |
-| Define performance & architectural standards | A | R | C | C | C | C |
-| Tune queries & optimize workloads | I | C | R | R | I | C |
-| Monitor & adjust warehouse configuration | I | C | R | C | I | R |
-| Develop & maintain CI/CD pipelines | I | C | R | C | I | A |
-| Implement cost tagging & monitoring | I | A | R | R | I | R |
-| Conduct regular FinOps reviews | A | R | C | C | I | C |
-| Establish a Center of Excellence (CoE) | A | R | C | C | C | C |
+<table><thead><tr><th width="40%">Activity</th><th width="10%">C-Level (CIO/CDO)</th><th width="10%">Chief Architect</th><th width="10%">Engineering</th><th width="10%">Data Science</th><th width="10%">Security</th><th width="10%">SRE</th></tr></thead><tbody>
+<tr><td>Set platform budget & cost strategy</td><td>A</td><td>C</td><td>I</td><td>I</td><td>I</td><td>I</td></tr>
+<tr><td>Define performance & architectural standards</td><td>A</td><td>R</td><td>C</td><td>C</td><td>C</td><td>C</td></tr>
+<tr><td>Tune queries & optimize workloads</td><td>I</td><td>C</td><td>R</td><td>R</td><td>I</td><td>C</td></tr>
+<tr><td>Monitor & adjust warehouse configuration</td><td>I</td><td>C</td><td>R</td><td>C</td><td>I</td><td>R</td></tr>
+<tr><td>Develop & maintain CI/CD pipelines</td><td>I</td><td>C</td><td>R</td><td>C</td><td>I</td><td>A</td></tr>
+<tr><td>Implement cost tagging & monitoring</td><td>I</td><td>A</td><td>R</td><td>R</td><td>I</td><td>R</td></tr>
+<tr><td>Conduct regular FinOps reviews</td><td>A</td><td>R</td><td>C</td><td>C</td><td>I</td><td>C</td></tr>
+<tr><td>Establish a Center of Excellence (CoE)</td><td>A</td><td>R</td><td>C</td><td>C</td><td>C</td><td>C</td></tr>
+</tbody></table>
 
 
