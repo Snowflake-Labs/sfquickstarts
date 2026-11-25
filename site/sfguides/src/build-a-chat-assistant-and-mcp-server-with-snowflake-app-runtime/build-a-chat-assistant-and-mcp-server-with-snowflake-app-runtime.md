@@ -164,7 +164,7 @@ import { tools } from "@/lib/tools";
 
 export const dynamic = "force-dynamic";
 
-const MODEL = "claude-sonnet-4-5";
+const MODEL = "claude-sonnet-5";
 const MAX_TURNS = 5;
 const MAX_RESULT_CHARS = 20_000;
 
