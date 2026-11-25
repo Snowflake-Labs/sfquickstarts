@@ -205,7 +205,7 @@ USE SCHEMA <YOUR_DATABASE>.<YOUR_SCHEMA>;
     /** Create the vector table from the wine review single field table **/
       CREATE or REPLACE TABLE vineyard_data_vectors AS 
             SELECT winery_or_vineyard, winery_information, 
-            snowflake.cortex.EMBED_TEXT_1024('snowflake-arctic-embed-l-v2.0', winery_information) as WINERY_EMBEDDING 
+            AI_EMBED('snowflake-arctic-embed-l-v2.0', winery_information) as WINERY_EMBEDDING 
             FROM vineyard_data_single_string;
 
 
@@ -287,6 +287,7 @@ import streamlit as st
 from snowflake.snowpark.context import get_active_session
 import pandas as pd
 import time
+import json
 
 # Change this list as needed to add/remove model capabilities.
 MODELS = [
@@ -384,7 +385,7 @@ def build_prompt (question):
         context_cmd = f"""
           with context_cte as
           (select winery_or_vineyard, winery_information as winery_chunk, vector_cosine_similarity(winery_embedding,
-                snowflake.cortex.embed_text_1024('snowflake-arctic-embed-l-v2.0', ?)) as v_sim
+                AI_EMBED('snowflake-arctic-embed-l-v2.0', ?)) as v_sim
           from vineyard_data_vectors
           having v_sim > 0
           order by v_sim desc
@@ -429,7 +430,7 @@ def get_model_token_count(prompt_or_response) -> int:
     #
     token_count = None
     try:
-        token_cmd = f"""select SNOWFLAKE.CORTEX.COUNT_TOKENS(?, ?) as token_count;"""
+        token_cmd = f"""select AI_COUNT_TOKENS('ai_complete',?, ?) as token_count;"""
         tc_data = session.sql(token_cmd, params=[st.session_state.model_name, prompt_or_response]).collect()
         token_count = tc_data[0][0]
     except Exception:
@@ -465,7 +466,7 @@ def run_prompt(question):
     token_count = get_model_token_count(formatted_prompt)
     start_time = time.time()
     cortex_cmd = f"""
-             select SNOWFLAKE.CORTEX.COMPLETE(?,?) as response
+             select AI_COMPLETE(?,?) as response
            """
     sql_resp = session.sql(cortex_cmd, params=[st.session_state.model_name, formatted_prompt])
     first_token_time = time.time()
@@ -487,6 +488,16 @@ def main():
                 token_count = 0
                 data, time_to_first_token, time_for_remaining_tokens, tokens_per_second, token_count, chunks_used = run_prompt(question)
                 response = data[0][0]
+                # AI_COMPLETE can return a JSON-quoted string; decode it to real text with real newlines.
+                if isinstance(response, str):
+                    try:
+                        decoded = json.loads(response)
+                        if isinstance(decoded, str):
+                            response = decoded
+                        elif isinstance(decoded, dict) and "choices" in decoded:
+                            response = decoded["choices"][0]["messages"]
+                    except json.JSONDecodeError:
+                        pass  # Already plain text.
                 # Add the response token count to the token total so we get a better prediction of the costs.
                 if response:
                     response_token_count = get_model_token_count(response)
@@ -525,7 +536,9 @@ def main():
                     # Display the token count in a specific format
                     st.markdown(f"**{label}** {message}", unsafe_allow_html=True)
                 elif i % 2 == 0:
-                    st.write(f":wine_glass:**{label}** {message}")
+                    # Label and answer are rendered separately so markdown headings in the answer start on their own line.
+                    st.markdown(f":wine_glass:**{label}**")
+                    st.markdown(message)
                 else:
                     st.write(f":question:**{label}** {message}")
 
@@ -550,7 +563,7 @@ Now we can breakdown the Python functions in the code relatively easy.  The firs
 
 The `build_prompt` function builds much of the "persona" for you as well as builds the RAG or non-RAG prompt depending if you check the box to use your data.  It is suggested that you try both to see the differences in responses.  The rest of the prompt structure such as content, task, format, and possibly example are added by you...where truly, those are not needed to get results.  But, a better prompt structure typically means better results, and each model will render those results based on the model's training.  We give some pretty fun examples in the following sections, but you can see that they do not conform to any single format.
 
-The `get_model_token_count` function calculates what Snowflake will use to run the prompt against the LLM.  This calculation helps understand the cost implications of using Cortex.  See the [Cost Considerations](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions#cost-considerations) in the docs.  By default, the lab will generate the token count for the prompt, plus the RAG data is used, as well as the response from the LLM chosen.  `COUNT_TOKENS` does not support every model (the Claude and OpenAI models are not supported), so for those the app shows "token count not available for this model" and only the timings.
+The `get_model_token_count` function calculates what Snowflake will use to run the prompt against the LLM.  This calculation helps understand the cost implications of using Cortex.  See the [Cost Considerations](https://docs.snowflake.com/en/user-guide/snowflake-cortex/llm-functions#cost-considerations) in the docs.  By default, the lab will generate the token count for the prompt, plus the RAG data is used, as well as the response from the LLM chosen.  `AI_COUNT_TOKENS` does not support every model (the Claude and OpenAI models are not supported), so for those the app shows "token count not available for this model" and only the timings.
 
 The `calc_times` function performs some additional insight into how fast various Cortex calls take to help benchmark LLM efficiency.
 

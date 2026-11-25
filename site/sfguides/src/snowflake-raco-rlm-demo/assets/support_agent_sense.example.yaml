@@ -1,0 +1,44 @@
+# REVIEW TEMPLATE ONLY. Not deployable until the context FQN and warehouse are
+# replaced with verified values and the existing agent spec is read/merged.
+# Preserve every deployed tool, tool_resource, instruction and experimental key.
+models:
+  orchestration: claude-sonnet-4-6
+instructions:
+  response: |
+    Answer remediation questions only from validated resolved issues returned
+    by support_search. State the source thread ID and evidence message IDs.
+    Cortex Sense can ground terminology, grain and source selection, but a
+    definition alone does not prove any ticket was fixed. Do not treat the
+    public CSV's publisher status or suggested response as a confirmed fix.
+    If Search provides no validated fix, say so clearly. If Sense is missing,
+    empty or inaccessible, do not guess a definition or SQL result.
+  orchestration: |
+    For questions about support terminology, data grain, governed definitions
+    or the support data estate, call support_context first with the question.
+    Use retrieved context to choose tables; never invent a schema, column,
+    ontology edge or fix. For remediation questions always call support_search
+    to check for an evidence-backed resolved issue, even when Sense returns a
+    related concept. Do not answer ontology relationship questions unless a
+    separate governed ontology walk was actually performed and supplied;
+    this spec does not declare an ontology-search tool.
+    Do not use arbitrary SQL for remediation or bypass support_search.
+tools:
+  - tool_spec:
+      type: cortex_search
+      name: support_search
+      description: Validated resolved support issues with source thread and evidence IDs.
+  - tool_spec:
+      type: cortex_sense
+      name: support_context
+      description: Ground support terminology, data grain and governed source selection in the reviewed support context. This does not confirm individual fixes.
+tool_resources:
+  support_search:
+    search_service: RACO_RLM_DEMO.PUBLIC.SUPPORT_SEARCH
+    max_results: 3
+    title_column: TITLE
+    id_column: CHUNK_ID
+  support_context:
+    context_name: __REPLACE_WITH_REGISTERED_CONTEXT_FQN__
+    execution_environment:
+      type: warehouse
+      warehouse: __REPLACE_WITH_VERIFIED_WAREHOUSE__
