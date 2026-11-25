@@ -100,7 +100,10 @@ CREATE API INTEGRATION IF NOT EXISTS GITHUB_MERGER_LAB
 
 Then create the workspace:
 
-1. In the **Workspaces** menu, select **From Git repository**.
+1. At the top of the file explorer, next to the **Workspaces** and **Databases** tabs, select **+**. Under **Create new**, select **Git workspace**.
+
+   ![Create new menu showing Git workspace](assets/create-git-workspace.png)
+
 2. For **Repository URL**, enter `https://github.com/sfc-gh-JCHAEARLEY/sfguide-merge-two-order-systems-with-cortex-code`.
 3. Optional: rename the workspace, for example to `the-merger`.
 4. In the **API Integration** menu, select `GITHUB_MERGER_LAB`.
@@ -112,7 +115,7 @@ The workspace opens with the repo's files in the file explorer on the left:
 | File | What it's for |
 |------|---------------|
 | `setup.sql` | Creates the lab role, warehouse, database, and source data |
-| `checks.sql` | One check block per step, with the expected answers |
+| `checks.ipynb` | A notebook with one check cell per step, with the expected answers. `checks.sql` has the same queries as plain SQL |
 | `break_batch.sql` | The surprise schema change in step 4 |
 | `solutions/` | Reference answers, if you fall behind |
 
@@ -132,7 +135,7 @@ In the user menu in the lower-left corner, switch your role to **MERGER_ROLE**. 
 
 ### CHECK 1
 
-Open **`checks.sql`**. You'll run one block from it after each step. Select and run the **CHECK 1** block. Every row should say **PASS**:
+Open **`checks.ipynb`**. You'll run one cell from it after each step. Run the first cell to select `MERGER_ROLE` and `MERGER_WH`, then run the **CHECK 1** cell. Every row should say **PASS**:
 
 | check_name | expected |
 |---|---|
@@ -180,7 +183,7 @@ If CoCo misses one, ask about it directly, for example: *"Are there duplicate or
 
 ### CHECK 2
 
-Run the **CHECK 2** block in `checks.sql`. These numbers should match what CoCo reported:
+Run the **CHECK 2** cell in `checks.ipynb`. These numbers should match what CoCo reported:
 
 | check_name | expected |
 |---|---|
@@ -248,7 +251,7 @@ If something is off, tell CoCo in plain language before approving. When the plan
 
 ### CHECK 3
 
-Run the **CHECK 3** block in `checks.sql`:
+Run the **CHECK 3** cell in `checks.ipynb`:
 
 | check_name | expected |
 |---|---|
@@ -318,7 +321,7 @@ CoCo may use `CREATE OR ALTER DYNAMIC TABLE` or `CREATE OR REPLACE DYNAMIC TABLE
 
 ### CHECK 4
 
-Run the **CHECK 4** block in `checks.sql`. Before the fix, every row fails, and the last one shows `UPSTREAM_FAILED`. After the fix, every row should say **PASS**:
+Run the **CHECK 4** cell in `checks.ipynb`. Before the fix, every row fails, and the last one shows `UPSTREAM_FAILED`. After the fix, every row should say **PASS**:
 
 | check_name | expected |
 |---|---|
