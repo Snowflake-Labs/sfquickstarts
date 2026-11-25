@@ -18,10 +18,10 @@ You build, preview, and deploy the app in a Snowsight workspace, with nothing to
 
 ### What You'll Learn
 
-* How to define an app's tools once, in `lib/tools.ts`
-* How to build a chat assistant at `/api/chat` on the Cortex Chat Completions API
-* How to serve the same tools over MCP at `/api/mcp`
-* How to preview and deploy the app from Workspaces
+* How to give an app one set of tools for both chat and agents
+* How to build a chat assistant on the Cortex Chat Completions API
+* How to serve the same tools over MCP
+* How to build, preview, and deploy the app with CoCo in Workspaces
 
 ### What You'll Build
 
@@ -53,264 +53,66 @@ Getting a listing needs the `ACCOUNTADMIN` role or a role with the `IMPORT SHARE
 3. In the workspace, select **+ Add new » Next.js App**.
 4. Keep the suggested project name.
 
-Workspaces creates a Next.js project from the Snowflake App Runtime template. You'll use these parts of it:
+Workspaces creates a Next.js project from the Snowflake App Runtime template. The template already connects to Snowflake with the app's credentials, and **app.yml** tells Snowflake how to build, run, and deploy the app. CoCo builds the rest from your prompts.
 
-* **lib/snowflake.ts** exports `snowflake`, the app's Snowflake client. It runs queries and calls account REST APIs with the app's credentials.
-* **package.json** lists the app's packages.
-* **app.yml** tells Snowflake how to build, run, and deploy the app.
+<!-- ------------------------ -->
+## Preview the App
 
-### Add the packages
+In the file explorer, hover over your project folder and select the eye icon (**Open to full screen**). This starts Preview, opens it full screen, and opens the CoCo chat next to it. Wait for the dev server to start: Preview shows its progress in the logs pane, then shows the starter app.
 
-The app needs Zod, which describes each tool's arguments, and the MCP SDK. Open **package.json** and add two lines to `"dependencies"`:
-
-```json
-"@modelcontextprotocol/sdk": "^1.32.2",
-"zod": "^4.6.7",
-```
-
-Preview installs packages when it starts, and again whenever `package.json` changes.
-
-### Start Preview
-
-In the file explorer, hover over your project folder and select the eye icon (**Open to full screen**). Preview starts the dev server and shows the starter app. Leave it open: each file you save reloads the app.
+Leave Preview open while you work. You build the rest of the app by pasting prompts into CoCo. Before CoCo changes a file, it asks you to accept the change. Review it and accept it, and the app reloads in place.
 
 <!-- ------------------------ -->
 ## Define the Tools
 
-In the file explorer, select **+** next to the **lib** folder and create **tools.ts**. Paste the following code. Each tool has a name, a description that tells a model when to use it, an argument schema, and a function that runs a query. The chat route and the MCP route both read this list.
+The chat assistant and the MCP server share one set of tools. Each tool has a description that tells a model when to use it, checked arguments, and a query. Paste the following prompt into CoCo:
 
-```typescript
-import { z } from "zod";
-import { snowflake } from "@/lib/snowflake";
+```text
+Repo Radar answers questions about trending GitHub repos, both in an
+in-app chat and over MCP, from one shared set of tools. Use the GitHub
+star data in SNOWFLAKE_CURATED_DATA_FREE.PUBLIC_DATA_FREE.
 
-const DATA = "SNOWFLAKE_CURATED_DATA_FREE.PUBLIC_DATA_FREE";
+Add a trending_repos tool for the repos that gained the most stars over
+the last 7 to 90 days (default 30), up to the latest day in the data:
+10 repos by default, at most 25. Leave out brand-new repos and repos whose
+stars came in short bursts, which removes most star spam.
 
-export type Tool = {
-  name: string;
-  description: string;
-  schema: z.ZodObject;
-  run: (args: any, request: Request) => Promise<unknown>;
-};
+Add a repo_stars tool for one repo's new stars per week between two dates.
 
-export const tools: Tool[] = [
-  {
-    name: "trending_repos",
-    description:
-      "Public GitHub repos that gained the most stars in the last `days` days, up to the latest " +
-      "day in the data. Skips repos first seen in the last 90 days and repos that got stars on " +
-      "fewer than a third of those days, which removes most star spam. Returns REPO_NAME " +
-      "(owner/name), STARS gained, and LATEST_DAY.",
-    schema: z.object({
-      days: z.number().int().min(7).max(90).default(30),
-      limit: z.number().int().min(1).max(25).default(10),
-    }),
-    run: async ({ days, limit }) => {
-      const { rows } = await snowflake.query(
-        `WITH latest AS (SELECT MAX(DATE) AS DAY FROM ${DATA}.GITHUB_STARS)
-         SELECT r.REPO_NAME, SUM(s.COUNT) AS STARS, TO_VARCHAR(latest.DAY) AS LATEST_DAY
-           FROM ${DATA}.GITHUB_STARS s
-           JOIN ${DATA}.GITHUB_REPOS r USING (REPO_ID), latest
-          WHERE s.DATE > DATEADD(day, -?, latest.DAY)
-            AND r.FIRST_SEEN < DATEADD(day, -90, latest.DAY)
-          GROUP BY r.REPO_NAME, latest.DAY
-         HAVING COUNT(DISTINCT s.DATE) >= ? / 3
-          ORDER BY STARS DESC
-          LIMIT ?`,
-        { binds: [days, days, limit] },
-      );
-      return rows;
-    },
-  },
-  {
-    name: "repo_stars",
-    description:
-      "New stars per week for one public GitHub repo, by week start date. Use the exact " +
-      "owner/name, for example one returned by trending_repos.",
-    schema: z.object({
-      repo: z.string().regex(/^[\w.-]+\/[\w.-]+$/).describe("owner/name"),
-      start: z.string().date().describe("ISO date"),
-      end: z.string().date().describe("ISO date"),
-    }),
-    run: async ({ repo, start, end }) => {
-      const { rows } = await snowflake.query(
-        `SELECT TO_VARCHAR(DATE_TRUNC('week', s.DATE), 'YYYY-MM-DD') AS WEEK, SUM(s.COUNT) AS STARS
-           FROM ${DATA}.GITHUB_STARS s
-           JOIN ${DATA}.GITHUB_REPOS r USING (REPO_ID)
-          WHERE r.REPO_NAME = ?
-            AND s.DATE BETWEEN ? AND ?
-          GROUP BY WEEK
-          ORDER BY WEEK`,
-        { binds: [repo, start, end] },
-      );
-      return rows;
-    },
-  },
-];
+Describe each tool so a model knows when to use it, check every argument,
+and bind arguments into the SQL instead of writing them into it.
 ```
 
-Every argument goes into the SQL as a bind variable, never as text in the statement. A model writes these arguments, so treat them like any other user input.
+Before you accept CoCo's change, check two things:
 
-The queries run with the app owner's rights, so everyone who opens the app gets the same answers. To run a tool as the signed-in user instead, query with `await asCaller()` from `@/lib/snowflake`. Preview has no caller's rights, so test those tools in the deployed app. See [Query Snowflake](https://docs.snowflake.com/en/developer-guide/snowflake-app-runtime/query-snowflake).
+* Every argument goes into the SQL as a bind variable, never as text in the statement. A model writes these arguments, so treat them like any other user input.
+* Each argument has limits, such as at most 25 repos, so a model can't ask for the whole table.
+
+The queries run with the app owner's rights, so everyone who opens the app gets the same answers. A tool can run as the signed-in user instead. Preview has no caller's rights, so test those tools in the deployed app. See [Query Snowflake](https://docs.snowflake.com/en/developer-guide/snowflake-app-runtime/query-snowflake).
 
 <!-- ------------------------ -->
 ## Add the Chat Assistant
 
-Create **app/api/chat/route.ts**: create the folders **api** and **chat** under **app**, then the file. For each question, the route sends the conversation and the tools to the [Cortex Chat Completions API](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-rest-api), runs any tools the model asks for, and repeats until the model answers. `snowflake.fetch()` signs each request with the app's credentials.
+For each question, the chat assistant sends the conversation and the tools to the [Cortex Chat Completions API](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-rest-api), runs any tools the model asks for, and repeats until the model answers. Paste the following prompt into CoCo:
 
-```typescript
-import { z } from "zod";
-import { snowflake } from "@/lib/snowflake";
-import { tools } from "@/lib/tools";
-
-export const dynamic = "force-dynamic";
-
-const MODEL = "claude-sonnet-5";
-const MAX_TURNS = 5;
-const MAX_RESULT_CHARS = 20_000;
-
-const SYSTEM_PROMPT =
-  "You answer questions about public GitHub repos from GitHub Archive star data. Use the " +
-  "tools to look up figures, say which tool each figure came from, and give the latest day " +
-  "the data covers. If the tools can't answer, say so.";
-
-const requestSchema = z.object({
-  messages: z
-    .array(z.object({ role: z.enum(["user", "assistant"]), content: z.string().max(4_000) }))
-    .min(1)
-    .max(40),
-});
-
-const toolDefinitions = tools.map((tool) => ({
-  type: "function",
-  function: { name: tool.name, description: tool.description, parameters: z.toJSONSchema(tool.schema, { io: "input" }) },
-}));
-
-async function complete(messages: unknown[]) {
-  const response = await snowflake.fetch("/api/v2/cortex/v1/chat/completions", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ model: MODEL, messages, tools: toolDefinitions }),
-  });
-  if (!response.ok) {
-    console.error("[chat] Cortex returned", response.status, (await response.text()).slice(0, 300));
-    throw new Error("The model request failed");
-  }
-  const body = await response.json();
-  return body.choices[0].message;
-}
-
-async function runTool(name: string, rawArgs: string, request: Request): Promise<string> {
-  const tool = tools.find((t) => t.name === name);
-  if (!tool) return JSON.stringify({ error: `Unknown tool: ${name}` });
-  try {
-    const args = tool.schema.parse(JSON.parse(rawArgs || "{}"));
-    const text = JSON.stringify(await tool.run(args, request));
-    return text.length > MAX_RESULT_CHARS ? text.slice(0, MAX_RESULT_CHARS) + " [result cut]" : text;
-  } catch (e) {
-    console.error(`[chat] ${name} failed`, e);
-    return JSON.stringify({ error: "The tool failed. Try different arguments." });
-  }
-}
-
-export async function POST(request: Request): Promise<Response> {
-  const parsed = requestSchema.safeParse(await request.json().catch(() => null));
-  if (!parsed.success) return Response.json({ error: "Invalid request" }, { status: 400 });
-
-  const messages: any[] = [{ role: "system", content: SYSTEM_PROMPT }, ...parsed.data.messages];
-  try {
-    for (let turn = 0; turn < MAX_TURNS; turn++) {
-      const message = await complete(messages);
-      if (!message.tool_calls?.length) return Response.json({ reply: message.content ?? "" });
-      messages.push(message);
-      for (const call of message.tool_calls) {
-        console.log(`[chat] tool=${call.function.name}`);
-        messages.push({
-          role: "tool",
-          tool_call_id: call.id,
-          content: await runTool(call.function.name, call.function.arguments, request),
-        });
-      }
-    }
-    return Response.json({ reply: "I couldn't finish that answer. Try a narrower question." });
-  } catch {
-    return Response.json({ error: "The assistant is unavailable. Try again." }, { status: 502 });
-  }
-}
+```text
+Add an Ask Repo Radar chat page and link to it from the home page. Answer
+each question with the Cortex Chat Completions API and the claude-sonnet-5
+model, and let the model call the Repo Radar tools until it can answer,
+for at most 5 rounds. Send a failed tool call back to the model so it can
+try again, and say which argument was wrong. Keep long tool results short
+enough for the model, keep no conversation state on the server, and log
+each tool call.
 ```
 
-A few choices keep the loop safe and cheap:
+The app calls Cortex with its own credentials, so you don't create an API key. A few choices keep the loop safe and cheap:
 
-* The route checks each tool's arguments against its schema before it runs the tool.
+* Each tool's arguments are checked before the tool runs.
 * A tool that fails returns an error to the model, which can then try different arguments.
-* `MAX_TURNS` and `MAX_RESULT_CHARS` limit the work for each question.
+* The round limit and the cap on result size limit the work for each question.
 * The browser sends the whole conversation each time, so the server keeps no state.
 
-Now create **app/chat/page.tsx**, the chat page:
-
-```tsx
-"use client";
-
-import { useState } from "react";
-
-type Message = { role: "user" | "assistant"; content: string };
-
-export default function ChatPage() {
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [input, setInput] = useState("");
-  const [busy, setBusy] = useState(false);
-
-  async function send(event: React.FormEvent) {
-    event.preventDefault();
-    if (!input.trim() || busy) return;
-    const next: Message[] = [...messages, { role: "user", content: input.trim() }];
-    setMessages(next);
-    setInput("");
-    setBusy(true);
-    try {
-      const response = await fetch("/api/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: next }),
-      });
-      const body = await response.json();
-      setMessages([...next, { role: "assistant", content: body.reply ?? body.error }]);
-    } finally {
-      setBusy(false);
-    }
-  }
-
-  return (
-    <main className="mx-auto max-w-2xl p-6">
-      <h1 className="mb-4 text-2xl font-semibold">Repo Radar</h1>
-      <div className="space-y-3">
-        {messages.map((m, i) => (
-          <p key={i} className={m.role === "user" ? "font-medium" : "whitespace-pre-wrap"}>
-            {m.content}
-          </p>
-        ))}
-        {busy && <p className="text-gray-500">Thinking...</p>}
-      </div>
-      <form onSubmit={send} className="mt-4 flex gap-2">
-        <input
-          className="flex-1 rounded border px-3 py-2"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          placeholder="Which repos are trending this month?"
-        />
-        <button className="rounded border px-4 py-2" disabled={busy}>
-          Send
-        </button>
-      </form>
-    </main>
-  );
-}
-```
-
-Finally, link to it from the home page. Open **app/page.tsx** and add this line inside the page's main content:
-
-```tsx
-<a href="/chat" className="underline">Ask Repo Radar</a>
-```
+To use a different model, ask CoCo to switch to one that supports tool calling. See [Tool calling](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-rest-api).
 
 ### Try the chat
 
@@ -319,56 +121,22 @@ In Preview, select **Ask Repo Radar** and ask:
 * "Which 5 repos gained the most stars in the last 30 days?"
 * "Pick the top one and show its weekly stars since August."
 
-The Preview logs show a `[chat] tool=` line for each tool the model called. The first question takes a few seconds while the warehouse resumes.
+The Preview logs show a line for each tool the model called. The first question takes a few seconds while the warehouse resumes. If something's wrong, tell CoCo in plain words, for example "the chat answers but never calls a tool." CoCo reads the Preview logs and fixes it.
 
 <!-- ------------------------ -->
 ## Add the MCP Server
 
-Create **app/api/mcp/route.ts**. It registers every tool in the same list, and creates a new server for each request, so it works when App Runtime runs more than one copy of the app or restarts it.
+The MCP server gives AI agents the same tools as the chat. Paste the following prompt into CoCo:
 
-```typescript
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { WebStandardStreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js";
-import { tools } from "@/lib/tools";
-
-export const dynamic = "force-dynamic";
-
-function createServer(request: Request): McpServer {
-  const server = new McpServer({ name: "repo-radar", version: "1.0.0" });
-  for (const tool of tools) {
-    server.registerTool(
-      tool.name,
-      { description: tool.description, inputSchema: tool.schema.shape },
-      async (args) => {
-        console.log(`[mcp] tool=${tool.name}`);
-        try {
-          const result = await tool.run(args, request);
-          return { content: [{ type: "text", text: JSON.stringify(result) }] };
-        } catch (e) {
-          console.error(`[mcp] ${tool.name} failed`, e);
-          return { content: [{ type: "text", text: "Query failed" }], isError: true };
-        }
-      },
-    );
-  }
-  return server;
-}
-
-async function handle(request: Request): Promise<Response> {
-  const server = createServer(request);
-  const transport = new WebStandardStreamableHTTPServerTransport({
-    sessionIdGenerator: undefined,
-    enableJsonResponse: true,
-  });
-  await server.connect(transport);
-  return transport.handleRequest(request);
-}
-
-// POST only: Next.js answers GET and DELETE with 405.
-export const POST = handle;
+```text
+Serve the same Repo Radar tools to AI agents as an MCP server at /api/mcp.
+Keep it stateless so it works when the app restarts or runs more than one
+instance, return tool failures as MCP tool errors, and log each tool call.
 ```
 
-The route has no API key check. App Runtime signs each caller in before a request reaches the deployed app, the same way it does for the app's pages. You'll call it once the app is deployed.
+A stateless server handles each request on its own, so any copy of the app can answer it.
+
+The MCP server has no API key check. App Runtime signs each caller in before a request reaches the deployed app, the same way it does for the app's pages. You'll call it once the app is deployed.
 
 <!-- ------------------------ -->
 ## Deploy the App
@@ -425,8 +193,8 @@ cortex mcp remove repo-radar
 
 ### What You Learned
 
-* Define an app's tools once in `lib/tools.ts`
-* Build a chat assistant on the Cortex Chat Completions API at `/api/chat`
+* Give an app one set of tools for both chat and agents
+* Build a chat assistant on the Cortex Chat Completions API
 * Serve the same tools to agents over MCP at `/api/mcp`
 * Preview and deploy the app from a Snowsight workspace
 
