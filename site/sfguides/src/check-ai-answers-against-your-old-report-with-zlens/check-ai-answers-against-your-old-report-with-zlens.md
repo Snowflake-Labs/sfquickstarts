@@ -254,6 +254,7 @@ To try it on your own data, grant ZLens one of your databases (the app's README 
 ### Related Resources
 
 - [ZLens on Snowflake Marketplace](https://app.snowflake.com/marketplace/listing/GZT1Z603GBK/duckcode-ai-labs-inc-zlens-governed-analytics-with-certified-answers)
+- [ZLens for Snowflake](https://zlens.app/snowflake.html): what the app does, what it costs, and a note to send your Snowflake admin
 - [ZLens app README](https://github.com/duckcode-ai-labs/zlens/blob/main/deploy/snowflake-app/app/README.md): setup, operations, costs and privileges
 - [ZLens architecture](https://github.com/duckcode-ai-labs/zlens/blob/main/deploy/snowflake-app/ARCHITECTURE.md): how every part of the app connects
 - [Install an app from a listing](https://docs.snowflake.com/en/developer-guide/native-apps/ui-consumer-installing)
