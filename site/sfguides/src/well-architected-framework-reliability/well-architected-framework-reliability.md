@@ -80,6 +80,10 @@ Reliability:
 
   - Immutable Snapshots (WORM) & Archival Storage
 
+  - Automated Change Management (DCM Projects)
+
+  - Environment Parity
+
 - **High Availability & Fault Tolerance**
 
   - Availability Zones
@@ -116,6 +120,10 @@ Reliability:
   - Load History Replication
 
   - Exactly Once Delivery without Data Loss
+
+  - Declarative Pipeline Definitions (DCM Projects)
+
+  - Declarative Data Quality Checks (DMFs)
 
 - **Monitoring & Operations**
 
@@ -238,6 +246,28 @@ stringent requirements, we recommend leverage Snowflake Snapshots to
 periodically create immutable backups of your tables, schemas and
 databases.. This process should be documented thoroughly to provide a
 clear audit trail for regulatory bodies.
+
+**Automated change management with DCM Projects**
+
+Unreviewed, manual changes to production are a leading cause of
+outages. [DCM Projects](https://docs.snowflake.com/en/user-guide/dcm-projects/dcm-projects-overview) provide a Snowflake-native, declarative way to manage
+change: every change is planned, reviewed, deployed and recorded as an
+immutable deployment artifact. Running `PLAN` previews the exact
+changes before they are applied, and each `DEPLOY` leaves an auditable
+record of what changed and when. In cases of disaster recovery, the
+same versioned definitions can be deployed to the secondary account to
+recreate or verify objects that are not covered by replication. We
+recommend you make a declarative, Git-based workflow the only path for
+changing production infrastructure.
+
+**Environment parity**
+
+Many production incidents are configuration failures, where something
+works in development but breaks in production. With DCM Projects,
+development, staging and production use the same definitions and
+differ only in parameters. We recommend you promote the same project
+through every environment instead of maintaining separate scripts per
+environment, so that what you tested is exactly what you deploy.
 
 ### How-To’s
 
@@ -670,6 +700,26 @@ to architect pipelines that achieve exactly-once semantics. For
 real-time ingestion, we advise using [<u>Snowpipe
 Streaming</u>](https://www.google.com/search?q=https://docs.snowflake.com/en/user-guide/snowpipe-streaming-overview),
 which is designed to provide these guarantees out of the box.
+
+**Declarative pipeline definitions**
+
+Pipelines often fail at deployment time because objects are created in
+the wrong order, for example a task that references a stream that does
+not exist yet. With [DCM Projects](https://docs.snowflake.com/en/user-guide/dcm-projects/dcm-projects-overview), pipes, streams, tasks and dynamic tables are
+defined together in one project, and DCM resolves the dependency order
+automatically. This removes failures caused by deploying objects in the
+wrong order. We recommend you define each pipeline and the objects it
+depends on in a single project.
+
+**Declarative data quality checks**
+
+A pipeline is only reliable if the data it produces can be trusted. In
+DCM Projects, [Data Metric Functions (DMFs)](https://docs.snowflake.com/en/user-guide/data-quality-intro)
+and expectations are attached declaratively with
+`ATTACH DATA METRIC FUNCTION`, so quality checks are deployed together
+with the pipelines they validate. We recommend you define data quality
+expectations in the same project as the pipeline, so that no pipeline
+reaches production without its checks.
 
 ### How-To’s
 
