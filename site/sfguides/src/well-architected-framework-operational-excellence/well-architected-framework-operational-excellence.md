@@ -431,7 +431,7 @@ successful automation.
 
 | Focus Area | Activities |
 |---|---|
-| Infrastructure as Code (IaC) | - Evaluate and select a declarative IaC tool (DCM Projects, Terraform).<br>- Prefer declarative definitions of the desired state over imperative, ordered change scripts, as its complexity does not grow as maintained entities change in time.<br>- Define and document naming conventions and standards for all Snowflake objects.<br>- Establish a Git repository structure for managing your IaC configurations. |
+| Infrastructure as Code (IaC) | - Evaluate and select a declarative IaC tool (DCM Projects, Terraform).<br>- Prefer declarative definitions of the desired state over imperative, ordered change scripts, as their complexity does not grow as the managed entities change over time.<br>- Define and document naming conventions and standards for all Snowflake objects.<br>- Establish a Git repository structure for managing your IaC configurations. |
 | CI/CD for data & applications | - Choose CI/CD tools (e.g., GitHub Actions, Jenkins, GitLab CI) that integrate with your code repositories.<br>- Define a branching and deployment strategy (e.g., GitFlow) for promoting changes from development to production. |
 | Observability & monitoring | - Identify key metrics for cost, performance, and security that need to be tracked. Evaluate tools for collecting and visualizing data from the Snowflake `ACCOUNT_USAGE` schema.<br>- Define initial alert thresholds for critical events like high credit usage or long-running queries. |
 | Automated governance | - Define your RBAC model and map business roles to Snowflake roles.<br>- Document your data classification standards and corresponding security controls (e.g., masking policies for PII). |
