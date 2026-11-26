@@ -257,6 +257,14 @@ needs without interference.
   USAGE permission *only* on the INGESTION_WH. This simple step makes it
   impossible for an ingestion process to impact analytics performance.
 
+- **Codify workload separation with DCM Projects:** Standard warehouse
+  classes (for example INGESTION, TRANSFORMATION, ANALYTICS and
+  DATA_SCIENCE) can be packaged as a reusable Jinja macro in a
+  [DCM Project](https://docs.snowflake.com/en/user-guide/dcm-projects/dcm-projects-overview).
+  Declaring each warehouse's USAGE grants in the same project enforces
+  workload isolation, so the separation is defined once, applied
+  consistently in every environment, and cannot silently drift.
+
 For additional information, review the best practices in [Virtual
 Warehouse
 Considerations](https://docs.snowflake.com/en/user-guide/warehouses-considerations).
@@ -380,7 +388,12 @@ human error.
   definition files rather than manual setup. This includes creating and
   managing databases, schemas, warehouses, roles, users, and resource
   monitors declaratively. This ensures environments are consistent,
-  repeatable, and version-controlled.
+  repeatable, and version-controlled. We recommend the declarative
+  approach as the default for managing Snowflake infrastructure: you
+  describe the desired end state and the platform computes the changes
+  needed to reach it, instead of maintaining ordered, imperative
+  scripts. [DCM Projects](https://docs.snowflake.com/en/user-guide/dcm-projects/dcm-projects-overview)
+  are the Snowflake-native way to do this.
 
 - **CI/CD for data & applications:** Continuous Integration and
   Continuous Deployment (CI/CD) automates the build, test, and
@@ -418,7 +431,7 @@ successful automation.
 
 | Focus Area | Activities |
 |---|---|
-| Infrastructure as Code (IaC) | - Evaluate and select an IaC tool (e.g., Terraform, Schemachange).<br>- Define and document naming conventions and standards for all Snowflake objects.<br>- Establish a Git repository structure for managing your IaC configurations. |
+| Infrastructure as Code (IaC) | - Evaluate and select a declarative IaC tool, starting with Snowflake-native DCM Projects (other options include Terraform, or imperative migration tools such as Schemachange).<br>- Prefer declarative definitions of the desired state over imperative, ordered change scripts.<br>- Define and document naming conventions and standards for all Snowflake objects.<br>- Establish a Git repository structure for managing your IaC configurations. |
 | CI/CD for data & applications | - Choose CI/CD tools (e.g., GitHub Actions, Jenkins, GitLab CI) that integrate with your code repositories.<br>- Define a branching and deployment strategy (e.g., GitFlow) for promoting changes from development to production. |
 | Observability & monitoring | - Identify key metrics for cost, performance, and security that need to be tracked. Evaluate tools for collecting and visualizing data from the Snowflake `ACCOUNT_USAGE` schema.<br>- Define initial alert thresholds for critical events like high credit usage or long-running queries. |
 | Automated governance | - Define your RBAC model and map business roles to Snowflake roles.<br>- Document your data classification standards and corresponding security controls (e.g., masking policies for PII). |
@@ -472,6 +485,23 @@ increase efficiency and capability.
   configurations, and definitions (IaC, CI/CD, etc.) should be stored in
   a version control system like Git. Use pull requests and code reviews
   to manage changes. Decide early on rollback versus fix forward.
+
+- **Adopt a declarative approach as the default:** Manage Snowflake
+  infrastructure by declaring the desired state rather than writing
+  one-off imperative scripts. Declarative definitions are easier to
+  review, reproduce across environments, and reconcile against drift.
+
+- **Apply Software Development Lifecycle (SDLC) best practices with DCM
+  Projects:** [DCM Projects](https://docs.snowflake.com/en/user-guide/dcm-projects/dcm-projects-overview)
+  keep Snowflake infrastructure as declarative definitions in Git, so
+  every change is versioned and peer-reviewed. CI/CD pipelines run
+  `PLAN` to preview the exact changes before anything is deployed. The
+  same definitions, parameterized per environment, are promoted from dev
+  to staging to production with a single `DEPLOY`. Data quality
+  expectations ship alongside the pipelines they validate. Each
+  deployment is kept as an auditable artifact, so infrastructure changes
+  run as a predictable, automated process instead of manual one-off
+  scripts.
 
 - **Empower teams with self-service:** The goal of automation is to
   enable teams (Data Engineering, AI, Analytics) to provision the
