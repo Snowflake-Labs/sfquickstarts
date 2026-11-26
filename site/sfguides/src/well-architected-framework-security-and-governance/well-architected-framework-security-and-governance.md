@@ -96,9 +96,8 @@ Security & Governance:
     principle known as **least privilege**. Modern authentication
     methods like federated authentication with SSO (Single Sign-On)
     should be used whenever possible to simplify user management and
-    improve security. Define roles and grants declaratively, for example
-    with DCM Projects, so that your RBAC implementation is versioned
-    and auditable.
+    improve security. Define roles and grants declaratively so that your
+    RBAC implementation is versioned and auditable.
 
 - **Data Protection**
 
@@ -121,8 +120,8 @@ Security & Governance:
     control who can see what data under what conditions.
     **Classification** and **Object Tracking** are also critical for
     identifying and protecting sensitive data and maintaining data
-    lineage. Defining these policies and tags as code, for example with
-    DCM Projects, keeps every change versioned and auditable.
+    lineage. Defining these policies and tags as code keeps every
+    change versioned and auditable.
 
 - **Incident Response**
 
