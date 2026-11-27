@@ -257,13 +257,13 @@ needs without interference.
   USAGE permission *only* on the INGESTION_WH. This simple step makes it
   impossible for an ingestion process to impact analytics performance.
 
-- **Codify workload separation with DCM Projects:** Standard warehouse
-  classes (for example INGESTION, TRANSFORMATION, ANALYTICS and
-  DATA_SCIENCE) can be packaged as a reusable Jinja macro in a
-  [DCM Project](https://docs.snowflake.com/en/user-guide/dcm-projects/dcm-projects-overview).
-  Declaring each warehouse's USAGE grants in the same project enforces
-  workload isolation, so the separation is defined once, applied
-  consistently in every environment, and cannot silently drift.
+- **Enforce consistent warehouse settings with DCM Projects:** A
+  [DCM Project](https://docs.snowflake.com/en/user-guide/dcm-projects/dcm-projects-overview)
+  can define each warehouse class (for example INGESTION,
+  TRANSFORMATION, ANALYTICS and DATA_SCIENCE) from a template that loops
+  over every warehouse. This enforces the right settings, such as
+  auto-suspend or maximum concurrency, for every warehouse in every
+  environment.
 
 For additional information, review the best practices in [Virtual
 Warehouse
@@ -390,10 +390,12 @@ human error.
   monitors declaratively. This ensures environments are consistent,
   repeatable, and version-controlled. We recommend the declarative
   approach as the default for managing Snowflake infrastructure: you
-  describe the desired end state and the platform computes the changes
+  describe the desired end state and Snowflake computes the changes
   needed to reach it, instead of maintaining ordered, imperative
-  scripts. [DCM Projects](https://docs.snowflake.com/en/user-guide/dcm-projects/dcm-projects-overview)
-  are the Snowflake-native way to do this.
+  scripts. [DCM Projects](https://docs.snowflake.com/en/user-guide/dcm-projects/dcm-projects-overview) are the Snowflake-native way to do this for objects such
+  as databases, schemas, warehouses, roles and grants. For objects that
+  DCM Projects do not support yet, such as users and resource monitors,
+  use Terraform.
 
 - **CI/CD for data & applications:** Continuous Integration and
   Continuous Deployment (CI/CD) automates the build, test, and
@@ -494,14 +496,15 @@ increase efficiency and capability.
 - **Apply Software Development Lifecycle (SDLC) best practices with DCM
   Projects:** [DCM Projects](https://docs.snowflake.com/en/user-guide/dcm-projects/dcm-projects-overview)
   keep Snowflake infrastructure as declarative definitions in Git, so
-  every change is versioned and peer-reviewed. CI/CD pipelines run
-  `PLAN` to preview the exact changes before anything is deployed. The
-  same definitions, parameterized per environment, are promoted from dev
-  to staging to production with a single `DEPLOY`. Data quality
-  expectations ship alongside the pipelines they validate. Each
-  deployment is kept as an auditable artifact, so infrastructure changes
-  run as a predictable, automated process instead of manual one-off
-  scripts.
+  every change is versioned and peer-reviewed. The same definitions,
+  parameterized per environment, are deployed to dev, staging and
+  production. Define your CI/CD pipeline so that it automatically runs
+  `PLAN` when a change is proposed for review and `DEPLOY` when it is
+  merged. `PLAN` previews the exact changes and catches deployment
+  failures before they happen. You can also run checks against the
+  `PLAN` output to ensure that new code changes do not violate your
+  security and cost guidelines. Each deployment is also kept as an
+  auditable artifact, so you can trace what changed, when and why.
 
 - **Empower teams with self-service:** The goal of automation is to
   enable teams (Data Engineering, AI, Analytics) to provision the
