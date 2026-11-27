@@ -392,10 +392,10 @@ human error.
   approach as the default for managing Snowflake infrastructure: you
   describe the desired end state and Snowflake computes the changes
   needed to reach it, instead of maintaining ordered, imperative
-  scripts. [DCM Projects](https://docs.snowflake.com/en/user-guide/dcm-projects/dcm-projects-overview) are the Snowflake-native way to do this for objects such
-  as databases, schemas, warehouses, roles and grants. For objects that
-  DCM Projects do not support yet, such as users and resource monitors,
-  use Terraform.
+  scripts. [DCM Projects](https://docs.snowflake.com/en/user-guide/dcm-projects/dcm-projects-overview) are the Snowflake-native way to do this for objects within
+  a Snowflake database. For account-level configurations and connections
+  to external sources, we recommend using the
+  [Snowflake Terraform provider](https://docs.snowflake.com/en/user-guide/terraform).
 
 - **CI/CD for data & applications:** Continuous Integration and
   Continuous Deployment (CI/CD) automates the build, test, and
