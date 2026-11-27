@@ -257,6 +257,14 @@ needs without interference.
   USAGE permission *only* on the INGESTION_WH. This simple step makes it
   impossible for an ingestion process to impact analytics performance.
 
+- **Enforce consistent warehouse settings with DCM Projects:** A
+  [DCM Project](https://docs.snowflake.com/en/user-guide/dcm-projects/dcm-projects-overview)
+  can define each warehouse class (for example INGESTION,
+  TRANSFORMATION, ANALYTICS and DATA_SCIENCE) from a template that loops
+  over every warehouse. This enforces the right settings, such as
+  auto-suspend or maximum concurrency, for every warehouse in every
+  environment.
+
 For additional information, review the best practices in [Virtual
 Warehouse
 Considerations](https://docs.snowflake.com/en/user-guide/warehouses-considerations).
@@ -380,7 +388,14 @@ human error.
   definition files rather than manual setup. This includes creating and
   managing databases, schemas, warehouses, roles, users, and resource
   monitors declaratively. This ensures environments are consistent,
-  repeatable, and version-controlled.
+  repeatable, and version-controlled. We recommend the declarative
+  approach as the default for managing Snowflake infrastructure: you
+  describe the desired end state and Snowflake computes the changes
+  needed to reach it, instead of maintaining ordered, imperative
+  scripts. [DCM Projects](https://docs.snowflake.com/en/user-guide/dcm-projects/dcm-projects-overview) are the Snowflake-native way to do this for objects within
+  a Snowflake database. For account-level configurations and connections
+  to external sources, we recommend using the
+  [Snowflake Terraform provider](https://docs.snowflake.com/en/user-guide/terraform).
 
 - **CI/CD for data & applications:** Continuous Integration and
   Continuous Deployment (CI/CD) automates the build, test, and
@@ -418,7 +433,7 @@ successful automation.
 
 | Focus Area | Activities |
 |---|---|
-| Infrastructure as Code (IaC) | - Evaluate and select an IaC tool (e.g., Terraform, Schemachange).<br>- Define and document naming conventions and standards for all Snowflake objects.<br>- Establish a Git repository structure for managing your IaC configurations. |
+| Infrastructure as Code (IaC) | - Evaluate and select a declarative IaC tool (DCM Projects, Terraform).<br>- Prefer declarative definitions of the desired state over imperative, ordered change scripts, as their complexity does not grow as the managed entities change over time.<br>- Define and document naming conventions and standards for all Snowflake objects.<br>- Establish a Git repository structure for managing your IaC configurations. |
 | CI/CD for data & applications | - Choose CI/CD tools (e.g., GitHub Actions, Jenkins, GitLab CI) that integrate with your code repositories.<br>- Define a branching and deployment strategy (e.g., GitFlow) for promoting changes from development to production. |
 | Observability & monitoring | - Identify key metrics for cost, performance, and security that need to be tracked. Evaluate tools for collecting and visualizing data from the Snowflake `ACCOUNT_USAGE` schema.<br>- Define initial alert thresholds for critical events like high credit usage or long-running queries. |
 | Automated governance | - Define your RBAC model and map business roles to Snowflake roles.<br>- Document your data classification standards and corresponding security controls (e.g., masking policies for PII). |
@@ -472,6 +487,24 @@ increase efficiency and capability.
   configurations, and definitions (IaC, CI/CD, etc.) should be stored in
   a version control system like Git. Use pull requests and code reviews
   to manage changes. Decide early on rollback versus fix forward.
+
+- **Adopt a declarative approach as the default:** Manage Snowflake
+  infrastructure by declaring the desired state rather than writing
+  one-off imperative scripts. Declarative definitions are easier to
+  review, reproduce across environments, and reconcile against drift.
+
+- **Apply Software Development Lifecycle (SDLC) best practices with DCM
+  Projects:** [DCM Projects](https://docs.snowflake.com/en/user-guide/dcm-projects/dcm-projects-overview)
+  keep Snowflake infrastructure as declarative definitions in Git, so
+  every change is versioned and peer-reviewed. The same definitions,
+  parameterized per environment, are deployed to dev, staging and
+  production. Define your CI/CD pipeline so that it automatically runs
+  `PLAN` when a change is proposed for review and `DEPLOY` when it is
+  merged. `PLAN` previews the exact changes and catches deployment
+  failures before they happen. You can also run checks against the
+  `PLAN` output to ensure that new code changes do not violate your
+  security and cost guidelines. Each deployment is also kept as an
+  auditable artifact, so you can trace what changed, when and why.
 
 - **Empower teams with self-service:** The goal of automation is to
   enable teams (Data Engineering, AI, Analytics) to provision the
