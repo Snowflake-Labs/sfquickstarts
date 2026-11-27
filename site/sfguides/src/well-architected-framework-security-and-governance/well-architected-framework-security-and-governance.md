@@ -301,10 +301,7 @@ pipeline.
 
 Masking policies and row access policies can be defined and attached in
 code in the same DCM Project, and tags can be attached to objects with
-`ATTACH TAG`. Tag-based masking, where a tag carries its associated
-masking policy to every object it is attached to, requires assigning
-the masking policy to the tag. DCM Projects do not support this
-assignment yet, so manage it separately. As with RBAC, every policy and tag assignment is
+`ATTACH TAG`. As with RBAC, every policy and tag assignment is
 versioned and auditable, so you can show exactly which protections were
 in place at any point in time. We recommend you define policies and
 their attachments alongside the objects they protect, so that no
