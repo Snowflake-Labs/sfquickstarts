@@ -96,7 +96,9 @@ Security & Governance:
     principle known as **least privilege**. Modern authentication
     methods like federated authentication with SSO (Single Sign-On)
     should be used whenever possible to simplify user management and
-    improve security.
+    improve security. Define roles and grants declaratively: because
+    declarative definitions are idempotent and self-contained, they make
+    your RBAC implementation easier to version and audit.
 
 - **Data Protection**
 
@@ -119,7 +121,8 @@ Security & Governance:
     control who can see what data under what conditions.
     **Classification** and **Object Tracking** are also critical for
     identifying and protecting sensitive data and maintaining data
-    lineage.
+    lineage. Defining these policies and tags as code keeps every
+    change versioned and auditable.
 
 - **Incident Response**
 
@@ -276,6 +279,33 @@ evidence.
 
 7.  Review governance scorecard quarterly (coverage,
     exceptions, audit readiness)
+
+8.  Manage roles, grants, tags and policies as code
+    (for example with DCM Projects)
+
+**RBAC as code**
+
+Access control that is configured by hand drifts over time and is hard
+to audit. With [DCM Projects](https://docs.snowflake.com/en/user-guide/dcm-projects/dcm-projects-overview), account roles, database roles,
+object-level grants, inherited container-level grants and account-level
+grants can all be defined declaratively. This gives you a versioned,
+auditable RBAC implementation: every change to
+access is reviewed in Git, previewed with `PLAN` and recorded with each
+`DEPLOY`. We recommend you define your RBAC hierarchy as code and treat
+the definitions in Git as the source of truth for who can access what.
+This only holds if manual modifications are blocked, so use RBAC to
+restrict who can change roles and grants outside the deployment
+pipeline.
+
+**Declarative data protection**
+
+Masking policies and row access policies can be defined and attached in
+code in the same DCM Project, and tags can be attached to objects with
+`ATTACH TAG`. As with RBAC, every policy and tag assignment is
+versioned and auditable, so you can show exactly which protections were
+in place at any point in time. We recommend you define policies and
+their attachments alongside the objects they protect, so that no
+sensitive object reaches production without its controls.
 
 ### Data privacy & protection
 
