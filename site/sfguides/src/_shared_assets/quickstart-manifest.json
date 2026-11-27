@@ -3425,17 +3425,6 @@
       "lastUpdatedAt": "2025-12-19"
     },
     {
-      "title": "Getting Started with Snowflake DevOps",
-      "categories": [
-        "snowflake-site:taxonomy/solution-center/certification/quickstart",
-        "snowflake-site:taxonomy/product/data-engineering"
-      ],
-      "contentType": "quickstart",
-      "url": "https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake-devops/",
-      "summary": "Getting Started with Snowflake DevOps",
-      "lastUpdatedAt": "2025-12-19"
-    },
-    {
       "title": "Getting Started with Snowflake Intelligence",
       "categories": [
         "snowflake-site:taxonomy/solution-center/certification/quickstart",
