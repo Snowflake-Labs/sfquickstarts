@@ -96,8 +96,9 @@ Security & Governance:
     principle known as **least privilege**. Modern authentication
     methods like federated authentication with SSO (Single Sign-On)
     should be used whenever possible to simplify user management and
-    improve security. Define roles and grants declaratively so that your
-    RBAC implementation is versioned and auditable.
+    improve security. Define roles and grants declaratively: because
+    declarative definitions are idempotent and self-contained, they make
+    your RBAC implementation easier to version and audit.
 
 - **Data Protection**
 
@@ -285,20 +286,25 @@ evidence.
 **RBAC as code**
 
 Access control that is configured by hand drifts over time and is hard
-to audit. With [DCM Projects](https://docs.snowflake.com/en/user-guide/dcm-projects/dcm-projects-overview), roles, database roles, `GRANT ON FUTURE`,
-`GRANT ON ALL`, `OWNERSHIP` grants, inherited grants and
-container-level `MANAGE GRANTS` can all be defined declaratively. This
-gives you a versioned, auditable RBAC implementation: every change to
+to audit. With [DCM Projects](https://docs.snowflake.com/en/user-guide/dcm-projects/dcm-projects-overview), account roles, database roles,
+object-level grants, inherited container-level grants and account-level
+grants can all be defined declaratively. This gives you a versioned,
+auditable RBAC implementation: every change to
 access is reviewed in Git, previewed with `PLAN` and recorded with each
 `DEPLOY`. We recommend you define your RBAC hierarchy as code and treat
-the project as the source of truth for who can access what.
+the definitions in Git as the source of truth for who can access what.
+This only holds if manual modifications are blocked, so use RBAC to
+restrict who can change roles and grants outside the deployment
+pipeline.
 
 **Declarative data protection**
 
 Masking policies and row access policies can be defined and attached in
-code in the same DCM Project. `ATTACH TAG` enables tag-based masking,
-because a tag carries its associated masking policy to every object it
-is attached to. As with RBAC, every policy and tag assignment is
+code in the same DCM Project, and tags can be attached to objects with
+`ATTACH TAG`. Tag-based masking, where a tag carries its associated
+masking policy to every object it is attached to, requires assigning
+the masking policy to the tag. DCM Projects do not support this
+assignment yet, so manage it separately. As with RBAC, every policy and tag assignment is
 versioned and auditable, so you can show exactly which protections were
 in place at any point in time. We recommend you define policies and
 their attachments alongside the objects they protect, so that no
